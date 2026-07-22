@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Olaso POS Component Catalog</title>
+  <style>
+    :root {
+      --olaso-sage: #909f78;
+      --catalog-backdrop: #74816f;
+      --action: #006a2b;
+      --action-border: #0b6b36;
+      --surface: #f8f7ea;
+      --raised: #fff;
+      --soft: #fafaf7;
+      --text: #101611;
+      --muted: #566057;
+      --divider: #dde3d9;
+      --danger: #ff6863;
+      --font: Inter, Arial, ui-sans-serif, system-ui, sans-serif;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--catalog-backdrop);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--catalog-backdrop);
+    }
+
+    button,
+    input,
+    select { font: inherit; }
+
+    button { cursor: pointer; }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--action) 55%, white);
+      outline-offset: 2px;
+    }
+
+    button:active { transform: translateY(1px); }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+    }
+
+    .catalog-shell {
+      width: min(1240px, calc(100% - 32px));
+      margin: 16px auto;
+      padding: 32px;
+      border-radius: 32px;
+      background: var(--surface);
+      box-shadow: 0 8px 24px rgb(38 57 43 / .16);
+    }
+
+    .catalog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-lockup img {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+
+    h1,
+    h2,
+    p { margin: 0; }
+
+    h1 { font-size: 28px; line-height: 1.1; }
+
+    h2 {
+      margin-bottom: 16px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .subtitle,
+    .component-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .catalog-section {
+      padding: 28px 0;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .catalog-section:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .component-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 8px;
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .swatch {
+      min-height: 90px;
+      padding: 14px;
+      border: 1px solid rgb(16 22 17 / .12);
+      border-radius: 20px;
+      background: var(--swatch);
+      color: var(--swatch-text, var(--text));
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .swatch code {
+      display: block;
+      margin-top: 6px;
+      color: inherit;
+      font: 11px/1.2 ui-monospace, monospace;
+      opacity: .78;
+    }
+
+    .pos-header {
+      display: flex;
+      width: min(1304px, 100%);
+      height: 60px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      overflow-x: auto;
+    }
+
+    .pos-header-left,
+    .pos-header-actions {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pos-header-left { gap: 22px; }
+
+    .pos-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .date,
+    .header-meta {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .date { color: var(--action); }
+
+    .header-pill {
+      display: inline-flex;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--raised);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .cashier {
+      display: flex;
+      min-width: 164px;
+      height: 50px;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 12px 5px 6px;
+      border-radius: 999px;
+      background: var(--raised);
+    }
+
+    .cashier-avatar {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border: 2px solid var(--action-border);
+      border-radius: 50%;
+      background: var(--olaso-sage);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .cashier strong,
+    .cashier small { display: block; }
+
+    .cashier strong { font-size: 12px; }
+    .cashier small { margin-top: 2px; font-size: 10px; font-weight: 400; }
+
+    .search-field {
+      display: flex;
+      width: min(966px, 100%);
+      height: 50px;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+      border: 1px solid var(--action-border);
+      border-radius: 999px;
+      background: var(--raised);
+    }
+
+    .search-field input {
+      min-width: 0;
+      flex: 1;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .search-symbol,
+    .shortcut { font-size: 14px; }
+    .shortcut { color: var(--action); font-weight: 700; }
+
+    .category-card {
+      position: relative;
+      width: 234px;
+      height: 120px;
+      overflow: hidden;
+      border: 1px solid #ecefe7;
+      border-radius: 22px;
+      background: var(--raised);
+    }
+
+    .category-card.active {
+      border-color: var(--action);
+      background: var(--action);
+      color: white;
+    }
+
+    .category-status {
+      position: absolute;
+      z-index: 2;
+      top: 14px;
+      left: 16px;
+      min-height: 24px;
+      padding: 5px 11px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      background: var(--raised);
+      color: var(--text);
+      font-size: 9px;
+      line-height: 1.2;
+    }
+
+    .active .category-status {
+      border-color: white;
+      background: var(--action);
+      color: white;
+    }
+
+    .category-card.warning .category-status {
+      border-color: var(--danger);
+      background: var(--danger);
+      color: var(--text);
+    }
+
+    .category-title {
+      position: absolute;
+      z-index: 2;
+      top: 70px;
+      left: 16px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .category-count {
+      position: absolute;
+      z-index: 2;
+      top: 96px;
+      left: 16px;
+      font-size: 10px;
+    }
+
+    .category-art {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 149px;
+      height: 98px;
+      object-fit: cover;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 174px);
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .product-card {
+      position: relative;
+      width: 174px;
+      height: 162px;
+      overflow: hidden;
+      border: 1.2px solid var(--action-border);
+      border-radius: 20px;
+      background: var(--raised);
+    }
+
+    .product-photo {
+      position: absolute;
+      top: 10px;
+      left: 51px;
+      width: 72px;
+      height: 92px;
+      object-fit: contain;
+    }
+
+    .product-name,
+    .product-price { position: absolute; left: 14px; }
+
+    .product-name {
+      top: 114px;
+      max-width: 106px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .product-price {
+      top: 138px;
+      color: #4b564d;
+      font-size: 11px;
+    }
+
+    .icon-button {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border: 1.2px solid var(--action-border);
+      border-radius: 50%;
+      background: var(--raised);
+      color: var(--action-border);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .product-card .icon-button {
+      position: absolute;
+      top: 107px;
+      left: 122px;
+    }
+
+    .segmented-control {
+      display: grid;
+      width: 266px;
+      height: 50px;
+      grid-template-columns: repeat(3, 1fr);
+      overflow: hidden;
+      border: 1px solid var(--action-border);
+      border-radius: 999px;
+      background: var(--raised);
+    }
+
+    .segment {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .segment[aria-selected="true"] {
+      background: var(--action);
+      color: white;
+      font-weight: 600;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .field input,
+    .field select {
+      width: 129px;
+      height: 48px;
+      padding: 0 16px;
+      border: 1.1px solid var(--action-border);
+      border-radius: 24px;
+      background: var(--raised);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .quantity-stepper {
+      display: grid;
+      width: 82px;
+      height: 42px;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      border-radius: 999px;
+      background: var(--soft);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .quantity-stepper button {
+      height: 42px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .primary-action {
+      display: grid;
+      width: 266px;
+      height: 50px;
+      grid-template-columns: 42px 1fr 28px;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--action);
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .primary-action .leading {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 50%;
+      background: white;
+      color: var(--action);
+      font-size: 18px;
+    }
+
+    .primary-action .trailing { font-size: 20px; }
+
+    .order-card {
+      position: relative;
+      width: 266px;
+      height: 236px;
+      border: 1.2px solid var(--action-border);
+      border-radius: 22px;
+      background: var(--raised);
+    }
+
+    .order-photo {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 60px;
+      height: 76px;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+
+    .order-name,
+    .order-total,
+    .order-meta,
+    .order-note { position: absolute; }
+
+    .order-name { top: 18px; left: 88px; font-size: 13px; font-weight: 700; }
+    .order-total { top: 18px; right: 14px; font-size: 13px; font-weight: 700; }
+    .order-meta { top: 45px; left: 88px; color: #6a746c; font-size: 11px; }
+    .order-note { top: 76px; left: 111px; color: #6a746c; font-size: 11px; }
+    .order-card .quantity-stepper { position: absolute; top: 65px; right: 18px; }
+
+    .receipt-panel {
+      width: 320px;
+      height: 692px;
+      padding: 12px;
+      border-radius: 28px;
+      background: var(--raised);
+    }
+
+    .receipt-header {
+      display: grid;
+      height: 50px;
+      grid-template-columns: 50px 1fr 50px;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .round-action {
+      display: grid;
+      width: 50px;
+      height: 50px;
+      place-items: center;
+      border: 1px solid var(--action-border);
+      border-radius: 50%;
+      background: var(--raised);
+      color: var(--action-border);
+      font-size: 22px;
+    }
+
+    .round-action.primary {
+      border-color: var(--action);
+      background: var(--action);
+      color: white;
+    }
+
+    .receipt-title { font-size: 12px; font-weight: 600; }
+    .receipt-title strong { display: block; margin-top: 2px; }
+
+    .receipt-panel .segmented-control { margin-top: 8px; }
+
+    .receipt-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .receipt-label {
+      margin: 12px 0 6px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .payment-summary { margin-top: 16px; }
+
+    .payment-summary h3 {
+      margin: 0 0 10px;
+      font-size: 13px;
+    }
+
+    .payment-row {
+      display: flex;
+      min-height: 28px;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .payment-row.total {
+      margin-top: 2px;
+      padding-top: 10px;
+      border-top: 1px solid var(--divider);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .receipt-panel > .primary-action { margin-top: 12px; }
+
+    .implementation-note {
+      max-width: 72ch;
+      padding: 16px;
+      border-left: 4px solid var(--action);
+      background: white;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 760px) {
+      .catalog-shell {
+        width: calc(100% - 16px);
+        margin: 8px;
+        padding: 20px;
+        border-radius: 24px;
+      }
+
+      .catalog-header { align-items: flex-start; flex-direction: column; }
+      .pos-header-actions .header-meta { display: none; }
+      .component-row { gap: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0s !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="catalog-shell">
+    <header class="catalog-header">
+      <div class="brand-lockup">
+        <img src="assets/brand/olaso-logo-on-sage.png" alt="Olaso wordmark on sage">
+        <div>
+          <h1>Olaso POS Components</h1>
+          <p class="subtitle">Approved Pencil geometry in portable HTML and CSS. The sage outside this catalog is documentation chrome, not application UI.</p>
+        </div>
+      </div>
+      <p class="component-note">Target: Samsung Galaxy Tab A9, 1340 x 800 landscape</p>
+    </header>
+
+    <section class="catalog-section" aria-labelledby="colors-heading">
+      <h2 id="colors-heading">Color tokens</h2>
+      <div class="swatches">
+        <div class="swatch" style="--swatch:#909f78"><span>Olaso Sage</span><code>#909F78</code></div>
+        <div class="swatch" style="--swatch:#74816f;--swatch-text:white"><span>Catalog Backdrop (reference only)</span><code>#74816F</code></div>
+        <div class="swatch" style="--swatch:#006a2b;--swatch-text:white"><span>Operational Green</span><code>#006A2B</code></div>
+        <div class="swatch" style="--swatch:#f8f7ea"><span>Cream Surface</span><code>#F8F7EA</code></div>
+        <div class="swatch" style="--swatch:#ffffff"><span>Raised White</span><code>#FFFFFF</code></div>
+        <div class="swatch" style="--swatch:#101611;--swatch-text:white"><span>Espresso Text</span><code>#101611</code></div>
+        <div class="swatch" style="--swatch:#ff6863"><span>Danger Coral</span><code>#FF6863</code></div>
+      </div>
+    </section>
+
+    <section class="catalog-section" aria-labelledby="header-heading">
+      <h2 id="header-heading">Header and search</h2>
+      <div class="stack">
+        <div class="pos-header">
+          <div class="pos-header-left">
+            <img class="pos-logo" src="assets/brand/olaso-logo-on-sage.png" alt="Olaso">
+            <span class="date">Thursday, 23 June</span>
+          </div>
+          <div class="pos-header-actions">
+            <span class="header-meta">Total: 20 Orders</span>
+            <button class="header-pill" type="button">Report</button>
+            <button class="icon-button" type="button" aria-label="Notifications">1</button>
+            <div class="cashier">
+              <span class="cashier-avatar" aria-hidden="true">MW</span>
+              <span><strong>Samantha W.</strong><small>Cashier</small></span>
+            </div>
+          </div>
+        </div>
+        <label class="search-field">
+          <span class="search-symbol" aria-hidden="true">⌕</span>
+          <input type="search" aria-label="Search products" placeholder="Search">
+          <span class="shortcut" aria-hidden="true">⌘</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="catalog-section" aria-labelledby="categories-heading">
+      <h2 id="categories-heading">CategoryCard</h2>
+      <div class="component-row">
+        <article class="category-card active">
+          <span class="category-status">Available</span>
+          <strong class="category-title">Coffee</strong>
+          <span class="category-count">50 items</span>
+          <img class="category-art" src="pencil-assets/category-coffee.png" alt="Coffee category illustration">
+        </article>
+        <article class="category-card">
+          <span class="category-status">Available</span>
+          <strong class="category-title">Tea</strong>
+          <span class="category-count">20 items</span>
+          <img class="category-art" src="pencil-assets/category-tea.png" alt="Tea category illustration">
+        </article>
+        <article class="category-card warning">
+          <span class="category-status">Need to re-stock</span>
+          <strong class="category-title">Snack</strong>
+          <span class="category-count">10 items</span>
+          <img class="category-art" src="pencil-assets/category-snack.png" alt="Snack category illustration">
+        </article>
+      </div>
+    </section>
+
+    <section class="catalog-section" aria-labelledby="products-heading">
+      <h2 id="products-heading">ProductCard</h2>
+      <div class="product-grid">
+        <article class="product-card">
+          <img class="product-photo" src="pencil-assets/espresso.png" alt="Espresso">
+          <strong class="product-name">Espresso</strong>
+          <span class="product-price">$4.2</span>
+          <button class="icon-button" type="button" aria-label="Add Espresso">+</button>
+        </article>
+        <article class="product-card">
+          <img class="product-photo" src="pencil-assets/cappuccino.png" alt="Cappuccino">
+          <strong class="product-name">Cappuccino</strong>
+          <span class="product-price">$3.3</span>
+          <button class="icon-button" type="button" aria-label="Add Cappuccino">+</button>
+        </article>
+        <article class="product-card">
+          <img class="product-photo" src="pencil-assets/latte.png" alt="Latte">
+          <strong class="product-name">Latte</strong>
+          <span class="product-price">$4.0</span>
+          <button class="icon-button" type="button" aria-label="Add Latte">+</button>
+        </article>
+        <article class="product-card">
+          <img class="product-photo" src="pencil-assets/americano.png" alt="Americano">
+          <strong class="product-name">Americano</strong>
+          <span class="product-price">$4.0</span>
+          <button class="icon-button" type="button" aria-label="Add Americano">+</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="catalog-section" aria-labelledby="controls-heading">
+      <h2 id="controls-heading">Controls</h2>
+      <div class="component-row">
+        <div class="segmented-control" role="tablist" aria-label="Service type">
+          <button class="segment" type="button" role="tab" aria-selected="true">Dine In</button>
+          <button class="segment" type="button" role="tab" aria-selected="false">Take Away</button>
+          <button class="segment" type="button" role="tab" aria-selected="false">Order Online</button>
+        </div>
+        <div class="field">
+          <label for="customer">Customer name</label>
+          <input id="customer" type="text" value="Muadz">
+        </div>
+        <div class="field">
+          <label for="table">Table</label>
+          <select id="table">
+            <option>B12 - Indoor</option>
+          </select>
+        </div>
+        <div class="quantity-stepper" aria-label="Quantity">
+          <button type="button" aria-label="Decrease quantity">−</button>
+          <output aria-label="Current quantity">2</output>
+          <button type="button" aria-label="Increase quantity">+</button>
+        </div>
+        <button class="primary-action" type="button">
+          <span class="leading" aria-hidden="true">→</span>
+          <span>Place Order&nbsp;&nbsp; $26.4</span>
+          <span class="trailing" aria-hidden="true">»</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="catalog-section" aria-labelledby="order-heading">
+      <h2 id="order-heading">OrderCard and ReceiptRail</h2>
+      <div class="component-row">
+        <article class="order-card">
+          <img class="order-photo" src="pencil-assets/americano.png" alt="Americano">
+          <strong class="order-name">Americano</strong>
+          <strong class="order-total">$16.8</strong>
+          <span class="order-meta">$8.4 x 2, Medium</span>
+          <span class="order-note">Less Sugar</span>
+          <div class="quantity-stepper" aria-label="Americano quantity">
+            <button type="button" aria-label="Decrease Americano quantity">−</button>
+            <output>2</output>
+            <button type="button" aria-label="Increase Americano quantity">+</button>
+          </div>
+        </article>
+
+        <aside class="receipt-panel" aria-label="Purchase receipt">
+          <div class="receipt-header">
+            <button class="round-action primary" type="button" aria-label="Back">›</button>
+            <span class="receipt-title">Purchase Receipt<strong>#27362</strong></span>
+            <button class="round-action" type="button" aria-label="Receipt menu">≡</button>
+          </div>
+          <div class="segmented-control" role="tablist" aria-label="Receipt service type">
+            <button class="segment" type="button" role="tab" aria-selected="true">Dine In</button>
+            <button class="segment" type="button" role="tab" aria-selected="false">Take Away</button>
+            <button class="segment" type="button" role="tab" aria-selected="false">Order Online</button>
+          </div>
+          <div class="receipt-fields">
+            <div class="field">
+              <label for="receipt-customer">Customer name</label>
+              <input id="receipt-customer" type="text" value="Muadz">
+            </div>
+            <div class="field">
+              <label for="receipt-table">Table</label>
+              <select id="receipt-table"><option>B12 - Indoor</option></select>
+            </div>
+          </div>
+          <p class="receipt-label">Order list</p>
+          <article class="order-card">
+            <img class="order-photo" src="pencil-assets/americano.png" alt="Americano">
+            <strong class="order-name">Americano</strong>
+            <strong class="order-total">$16.8</strong>
+            <span class="order-meta">$8.4 x 2, Medium</span>
+            <span class="order-note">Less Sugar</span>
+            <div class="quantity-stepper" aria-label="Receipt item quantity">
+              <button type="button" aria-label="Decrease receipt item quantity">−</button>
+              <output>2</output>
+              <button type="button" aria-label="Increase receipt item quantity">+</button>
+            </div>
+          </article>
+          <div class="payment-summary">
+            <h3>Payment Details</h3>
+            <div class="payment-row"><span>Subtotal</span><strong>$59</strong></div>
+            <div class="payment-row"><span>Tax</span><strong>$5.9</strong></div>
+            <div class="payment-row total"><span>Total</span><strong>$64.8</strong></div>
+          </div>
+          <button class="primary-action" type="button">
+            <span class="leading" aria-hidden="true">→</span>
+            <span>Place Order&nbsp;&nbsp; $26.4</span>
+            <span class="trailing" aria-hidden="true">»</span>
+          </button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="catalog-section" aria-labelledby="implementation-heading">
+      <h2 id="implementation-heading">Implementation rule</h2>
+      <p class="implementation-note">Reuse the contracts named in DESIGN.md. This HTML file is the visual parity check. The Android app should implement the same contracts as Jetpack Compose composables, not embed this page in a WebView.</p>
+    </section>
+  </main>
+</body>
+</html>

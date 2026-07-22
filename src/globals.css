@@ -1,0 +1,50 @@
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/inter/latin-800.css';
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+
+:root {
+  font-family: Inter, Arial, sans-serif;
+  color: #101611;
+  background: #f8f7ea;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  --olaso-canvas: #f8f7ea;
+  --olaso-white: #ffffff;
+  --olaso-green: #006a2b;
+  --olaso-border: #0b6b36;
+  --olaso-text: #101611;
+  --olaso-muted: #566057;
+  --olaso-soft: #fafaf7;
+  --olaso-divider: #dde3d9;
+  --olaso-danger: #ff6863;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root,
+[data-astryx-theme] {
+  width: 100%;
+  min-width: 1340px;
+  height: 100%;
+  min-height: 800px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--olaso-canvas);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}

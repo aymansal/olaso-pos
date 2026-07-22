@@ -1,0 +1,83 @@
+.card {
+  position: relative;
+  flex: 0 0 234px;
+  overflow: hidden;
+  border: 1px solid #ecefe7 !important;
+  border-radius: 22px !important;
+  background: var(--olaso-white) !important;
+}
+
+.active {
+  border-color: var(--olaso-green) !important;
+  color: white;
+  background: var(--olaso-green) !important;
+}
+
+.status,
+.name,
+.count {
+  position: absolute;
+  z-index: 1;
+  left: 16px;
+}
+
+.status {
+  top: 14px;
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 11px;
+  border: 1px solid #57645a;
+  border-radius: 12px;
+  color: #222a23;
+  background: white;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.active .status {
+  border-color: white;
+  color: white;
+  background: var(--olaso-green);
+}
+
+.warning .status {
+  border-color: var(--olaso-danger);
+  color: white;
+  background: var(--olaso-danger);
+}
+
+.name {
+  top: 72px;
+  color: var(--olaso-text);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+.count {
+  top: 98px;
+  color: var(--olaso-text);
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.active .name,
+.active .count {
+  color: white;
+}
+
+.illustration {
+  position: absolute;
+  top: 22px;
+  left: 95px;
+  width: 138.5px;
+  height: 98px;
+  object-fit: cover;
+}
+
+.active .illustration {
+  left: 85px;
+  width: 148.5px;
+}

@@ -1,0 +1,33 @@
+.button {
+  position: absolute !important;
+  top: 628px;
+  left: 12px;
+  display: flex !important;
+  width: 296px !important;
+  height: 50px !important;
+  min-height: 50px !important;
+  justify-content: space-between !important;
+  padding: 4px 8px !important;
+  border: 0 !important;
+  border-radius: 25px !important;
+  color: white !important;
+  background: var(--olaso-green) !important;
+  box-shadow: none !important;
+}
+
+.button > span > span:first-child {
+  display: grid;
+  width: 42px !important;
+  height: 42px !important;
+  flex: 0 0 42px !important;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--olaso-green);
+  background: white;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}

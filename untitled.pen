@@ -1,0 +1,3995 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "type": "frame",
+      "id": "W26Y6",
+      "x": 0,
+      "y": 0,
+      "name": "Samsung Galaxy Tab A9 — Green Grounds POS Replica",
+      "clip": true,
+      "width": 1340,
+      "height": 800,
+      "fill": "#F8F7EA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "hQoHz",
+          "layoutPosition": "absolute",
+          "x": 18,
+          "y": 16,
+          "name": "Reference Header",
+          "width": 1304,
+          "height": 60,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "anU3n",
+              "name": "Brand and Date",
+              "gap": 42,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dx1Jg",
+                  "name": "Green Grounds Mark",
+                  "width": 86,
+                  "height": 52,
+                  "gap": 7,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "HqLwO",
+                      "name": "Brand Dot",
+                      "fill": "#FFFFFF",
+                      "width": 9,
+                      "height": 9,
+                      "stroke": "#006A2B",
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "sl0Ub",
+                      "name": "Green Grounds Wordmark",
+                      "fill": "#006A2B",
+                      "textGrowth": "fixed-width",
+                      "width": 68,
+                      "content": "GREEN\nGROUNDS\nCOFFEE",
+                      "lineHeight": 0.78,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "c1U4k6",
+                  "name": "Current Date",
+                  "fill": "#006A2B",
+                  "content": "Thursday, 23 June",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "R2wxa",
+              "name": "Header Actions",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J5WdzI",
+                  "name": "Total Orders",
+                  "fill": "#151B16",
+                  "content": "Total : 20 Orders",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "HdRho",
+                  "name": "Report Button",
+                  "width": 112,
+                  "height": 46,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 23,
+                  "gap": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X8eNhg",
+                      "name": "Report Label",
+                      "fill": "#151B16",
+                      "content": "Report",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Wnhnc",
+                      "name": "Report Document Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "file-text",
+                      "library": "lucide",
+                      "fill": "#151B16"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r38dbO",
+                  "name": "Notification Button",
+                  "width": 46,
+                  "height": 46,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 23,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "A6CeSD",
+                      "x": 14,
+                      "y": 14,
+                      "name": "Notification Bell",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "bell",
+                      "library": "lucide",
+                      "fill": "#151B16"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "N713V",
+                      "x": 30,
+                      "y": 0,
+                      "name": "Unread Badge",
+                      "fill": "#F0443E",
+                      "width": 16,
+                      "height": 16
+                    },
+                    {
+                      "type": "text",
+                      "id": "fGPQt",
+                      "x": 35,
+                      "y": 2,
+                      "name": "Unread Count",
+                      "fill": "#FFFFFF",
+                      "content": "1",
+                      "fontFamily": "Inter",
+                      "fontSize": 9,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JvPko",
+                  "name": "Cashier Profile",
+                  "width": 178,
+                  "height": 50,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 25,
+                  "gap": 10,
+                  "padding": [
+                    5,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Eidy0",
+                      "name": "Cashier Photo",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "#EFE4D6",
+                      "cornerRadius": 18,
+                      "stroke": "#006A2B",
+                      "strokeWidth": 2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "vtNEt",
+                          "x": 8,
+                          "y": 8,
+                          "name": "Cashier Avatar Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "user",
+                          "library": "lucide",
+                          "fill": "#2F3B32"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BUiaY",
+                      "name": "Cashier Details",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "HKI5P",
+                          "name": "Cashier Name",
+                          "fill": "#151B16",
+                          "content": "Samantha W",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "f2JRB",
+                          "name": "Cashier Role",
+                          "fill": "#556057",
+                          "content": "Cashier",
+                          "fontFamily": "Inter",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZBcIQ",
+          "layoutPosition": "absolute",
+          "x": 18,
+          "y": 90,
+          "name": "Search Field",
+          "width": 966,
+          "height": 50,
+          "fill": "#FFFFFF",
+          "cornerRadius": 25,
+          "stroke": "#086A35",
+          "strokeWidth": 1.2,
+          "gap": 12,
+          "padding": [
+            0,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "lolU5",
+              "name": "Search Icon",
+              "width": 20,
+              "height": 20,
+              "icon": "search",
+              "library": "lucide",
+              "fill": "#151B16"
+            },
+            {
+              "type": "text",
+              "id": "V2oFY0",
+              "name": "Search Text",
+              "fill": "#151B16",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Search",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "I3377U",
+              "name": "Search Shortcut",
+              "width": 20,
+              "height": 20,
+              "icon": "command",
+              "library": "lucide",
+              "fill": "#006A2B"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TTRt6",
+          "layoutPosition": "absolute",
+          "x": 18,
+          "y": 148,
+          "name": "Category Cards",
+          "width": 966,
+          "height": 120,
+          "gap": 10,
+          "children": [
+            {
+              "type": "frame",
+              "id": "UGxzp",
+              "name": "Coffee Category",
+              "clip": true,
+              "width": 234,
+              "height": "fill_container",
+              "fill": "#006A2B",
+              "cornerRadius": 22,
+              "stroke": "#006A2B",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "whj3t",
+                  "x": 16,
+                  "y": 14,
+                  "name": "Coffee Status",
+                  "height": 24,
+                  "fill": "#006A2B",
+                  "cornerRadius": 12,
+                  "stroke": "#FFFFFF",
+                  "strokeWidth": 1,
+                  "padding": [
+                    5,
+                    11
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YDXgI",
+                      "name": "Coffee Status Text",
+                      "fill": "#FFFFFF",
+                      "content": "Available",
+                      "fontFamily": "Inter",
+                      "fontSize": 9,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "MXbot",
+                  "x": 16,
+                  "y": 72,
+                  "name": "Coffee Category Name",
+                  "fill": "#FFFFFF",
+                  "content": "Coffee",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "gupdA",
+                  "x": 16,
+                  "y": 98,
+                  "name": "Coffee Item Count",
+                  "fill": "#FFFFFF",
+                  "content": "50 items",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "dLteu",
+                  "x": 85,
+                  "y": 22,
+                  "name": "Coffee Illustration",
+                  "width": 148.5,
+                  "height": 98,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784305991267.png",
+                    "mode": "fill"
+                  },
+                  "layout": "none"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f830E",
+              "name": "Tea Category",
+              "clip": true,
+              "width": 234,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "stroke": "#ECEFE7",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AXxEe",
+                  "x": 16,
+                  "y": 14,
+                  "name": "Tea Status",
+                  "height": 24,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": "#57645A",
+                  "strokeWidth": 1,
+                  "padding": [
+                    5,
+                    11
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ksHcl",
+                      "name": "Tea Status Text",
+                      "fill": "#222A23",
+                      "content": "Available",
+                      "fontFamily": "Inter",
+                      "fontSize": 9,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "veBPe",
+                  "x": 16,
+                  "y": 72,
+                  "name": "Tea Category Name",
+                  "fill": "#101611",
+                  "content": "Tea",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "HyGWC",
+                  "x": 16,
+                  "y": 98,
+                  "name": "Tea Item Count",
+                  "fill": "#101611",
+                  "content": "20 items",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "tknx5",
+                  "x": 95,
+                  "y": 22,
+                  "name": "Tea Illustration",
+                  "width": 138.5,
+                  "height": 98,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784305780745.png",
+                    "mode": "fill"
+                  },
+                  "layout": "none"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "npQ5h",
+              "name": "Snack Category",
+              "clip": true,
+              "width": 234,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "stroke": "#ECEFE7",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qtHY6",
+                  "x": 16,
+                  "y": 14,
+                  "name": "Snack Status",
+                  "height": 24,
+                  "fill": "#FF6863",
+                  "cornerRadius": 12,
+                  "stroke": "#FF6863",
+                  "strokeWidth": 1,
+                  "padding": [
+                    5,
+                    11
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ASQPB",
+                      "name": "Snack Status Text",
+                      "fill": "#FFFFFF",
+                      "content": "Need to re-stock",
+                      "fontFamily": "Inter",
+                      "fontSize": 9,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "n0FKW",
+                  "x": 16,
+                  "y": 72,
+                  "name": "Snack Category Name",
+                  "fill": "#101611",
+                  "content": "Snack",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "TJp0E",
+                  "x": 16,
+                  "y": 98,
+                  "name": "Snack Item Count",
+                  "fill": "#101611",
+                  "content": "10 items",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "F6tb0",
+                  "x": 95,
+                  "y": 22,
+                  "name": "Snack Illustration",
+                  "width": 138.5,
+                  "height": 98,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784305874723.png",
+                    "mode": "fill"
+                  },
+                  "layout": "none"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hup5V",
+          "x": 18,
+          "y": 276,
+          "name": "Product Menu Grid",
+          "width": 966,
+          "height": 502,
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "LJixA",
+              "name": "Product Row 1",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 8,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "m29YNh",
+                  "name": "Espresso Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "iZ9CL",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Espresso Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "itfeelslikefilm",
+                        "link": "https://unsplash.com/@itfeelslikefilm",
+                        "author": "🇸🇮 Janko Ferlič"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303398789.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "DoOih",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Espresso Product Name",
+                      "fill": "#111711",
+                      "content": "Espresso",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "r5MPbT",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Espresso Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.2",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "B7yk8o",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Espresso",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "iFWN3",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Espresso Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rlnJd",
+                  "name": "Cappuccino Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "JjVsE",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Cappuccino Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "frank_leuderalbert",
+                        "link": "https://unsplash.com/@frank_leuderalbert",
+                        "author": "Frank Leuderalbert"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303397619.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "YzqL6",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Cappuccino Product Name",
+                      "fill": "#111711",
+                      "content": "Cappuccino",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YKzoR",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Cappuccino Product Price",
+                      "fill": "#4B564D",
+                      "content": "$3.3",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JWmBX",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Cappuccino",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "FkZsI",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Cappuccino Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "MDUJ7",
+                  "name": "Latte Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "jns4m",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Latte Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "kennykennethh",
+                        "link": "https://unsplash.com/@kennykennethh",
+                        "author": "Kenny Kennethh"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303397938.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "EGLrj",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Latte Product Name",
+                      "fill": "#111711",
+                      "content": "Latte",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "dyeNI",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Latte Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "d2uDsk",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Latte",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "pYwmp",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Latte Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "s79Xo",
+                  "name": "Americano Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "EVMyU",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Americano Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "oakandbondcoffee",
+                        "link": "https://unsplash.com/@oakandbondcoffee",
+                        "author": "Oak & Bond Coffee Co."
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303398691.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "hKKzs",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Americano Product Name",
+                      "fill": "#111711",
+                      "content": "Americano",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Ps0jx",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Americano Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tPiLL",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Americano",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "pIKvN",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Americano Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WlaNI",
+                  "name": "Mocha Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YSvDs",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Mocha Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "keer_yay",
+                        "link": "https://unsplash.com/@keer_yay",
+                        "author": "Kyrie Isaac"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303398686.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "Rpf0W",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Mocha Product Name",
+                      "fill": "#111711",
+                      "content": "Mocha",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "E77s7X",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Mocha Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wtLc9",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Mocha",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "AuDkJ",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Mocha Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nn6bC",
+              "name": "Product Row 2",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 8,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Luton",
+                  "name": "Iced Coffee Milk Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Y6tpDm",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Iced Coffee Milk Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "nadyeldems",
+                        "link": "https://unsplash.com/@nadyeldems",
+                        "author": "Dan Smedley"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303399328.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "PYF6p",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Iced Coffee Milk Product Name",
+                      "fill": "#111711",
+                      "content": "Iced Coffee Milk",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Y3F5j",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Iced Coffee Milk Product Price",
+                      "fill": "#4B564D",
+                      "content": "$3.8",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HUcV4",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Iced Coffee Milk",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "UobaC",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Iced Coffee Milk Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "c9h7B5",
+                  "name": "Cold Brew Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "LttBA",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Cold Brew Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "danjoso",
+                        "link": "https://unsplash.com/@danjoso",
+                        "author": "Dannie Sorum"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303397988.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "gsDse",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Cold Brew Product Name",
+                      "fill": "#111711",
+                      "content": "Cold Brew",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "X1Sj1",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Cold Brew Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vow54",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Cold Brew",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "q920JA",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Cold Brew Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "M6vtQ2",
+                  "name": "Flat White Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "gyLsH",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Flat White Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "valeriiamiller",
+                        "link": "https://unsplash.com/@valeriiamiller",
+                        "author": "Valeriia Miller"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303397633.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "q60AIQ",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Flat White Product Name",
+                      "fill": "#111711",
+                      "content": "Flat White",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "rAqAw",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Flat White Product Price",
+                      "fill": "#4B564D",
+                      "content": "$3.8",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q6assp",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Flat White",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "dSpmp",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Flat White Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u7ARN0",
+                  "name": "Caramel Mac Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CljJv",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Caramel Mac Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "pariwatt",
+                        "link": "https://unsplash.com/@pariwatt",
+                        "author": "pariwat pannium"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303398948.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "Bmlrh",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Caramel Mac Product Name",
+                      "fill": "#111711",
+                      "content": "Caramel Mac",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Qvr2v",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Caramel Mac Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jVVkV",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Caramel Mac",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "L1zTq",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Caramel Mac Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "h6mKu9",
+                  "name": "Salted Caramel Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "AJuoq",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Salted Caramel Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "deeliver",
+                        "link": "https://unsplash.com/@deeliver",
+                        "author": "Deeliver"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303397863.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "ItcfW",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Salted Caramel Product Name",
+                      "fill": "#111711",
+                      "content": "Salted Caramel",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YrmWi",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Salted Caramel Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.2",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ijvqf",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Salted Caramel",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "w4ATx",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Salted Caramel Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eWDZP",
+              "name": "Product Row 3",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "aWyNd",
+                  "name": "Hazelnut Latte Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "R3vA8",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Hazelnut Latte Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "kiki_1323",
+                        "link": "https://unsplash.com/@kiki_1323",
+                        "author": "Z Graphica"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303398701.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "czKnO",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Hazelnut Latte Product Name",
+                      "fill": "#111711",
+                      "content": "Hazelnut Latte",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kgmBu",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Hazelnut Latte Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "daqWf",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Hazelnut Latte",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "mDkd5",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Hazelnut Latte Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AQzcr",
+                  "name": "Pour Over Product Card",
+                  "width": 174,
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "o1S2Kv",
+                      "x": 51,
+                      "y": 10,
+                      "name": "Pour Over Product Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "nate_dumlao",
+                        "link": "https://unsplash.com/@nate_dumlao",
+                        "author": "Nathan Dumlao"
+                      },
+                      "clip": true,
+                      "width": 72,
+                      "height": 92,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303398638.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "iYRCK",
+                      "x": 14,
+                      "y": 115,
+                      "name": "Pour Over Product Name",
+                      "fill": "#111711",
+                      "content": "Pour Over",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YwuKF",
+                      "x": 14,
+                      "y": 139,
+                      "name": "Pour Over Product Price",
+                      "fill": "#4B564D",
+                      "content": "$4.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MfgND",
+                      "x": 122,
+                      "y": 107,
+                      "name": "Add Pour Over",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 22,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "juvY9",
+                          "x": 13,
+                          "y": 13,
+                          "name": "Add Pour Over Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "IbxY9",
+          "x": 1002,
+          "y": 90,
+          "name": "Purchase Receipt Rail",
+          "clip": true,
+          "width": 320,
+          "height": 688,
+          "fill": "#FFFFFF",
+          "cornerRadius": 28,
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "I6DCGZ",
+              "x": 12,
+              "y": 12,
+              "name": "Receipt Header",
+              "width": 296,
+              "height": 50,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "x9Lk1",
+                  "name": "Receipt Back Button",
+                  "width": 50,
+                  "height": 50,
+                  "fill": "#006A2B",
+                  "cornerRadius": 25,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "tDzTy",
+                      "x": 15,
+                      "y": 15,
+                      "name": "Receipt Back Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oEWwS",
+                  "name": "Receipt Heading",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GF0Jo",
+                      "name": "Receipt Title",
+                      "fill": "#101611",
+                      "content": "Purchase Receipt",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LsUh5",
+                      "name": "Receipt Number",
+                      "fill": "#101611",
+                      "content": "#27362",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "U1nqdv",
+                  "name": "Receipt Menu Button",
+                  "width": 50,
+                  "height": 50,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 25,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "GFxL7",
+                      "x": 15,
+                      "y": 15,
+                      "name": "Receipt Menu Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "list",
+                      "library": "lucide",
+                      "fill": "#0B6B36"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pIocz",
+              "x": 12,
+              "y": 70,
+              "name": "Service Type Tabs",
+              "width": 296,
+              "height": 50,
+              "fill": "#FFFFFF",
+              "cornerRadius": 25,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "B4H7WN",
+                  "name": "Dine In Service Tab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#006A2B",
+                  "cornerRadius": 25,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qXwO2",
+                      "name": "Dine In Service Label",
+                      "fill": "#FFFFFF",
+                      "content": "Dine In",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sAkcN",
+                  "name": "Take Away Service Tab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 25,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tgqSJ",
+                      "name": "Take Away Service Label",
+                      "fill": "#626B63",
+                      "content": "Take Away",
+                      "fontFamily": "Inter",
+                      "fontSize": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sTAdQ",
+                  "name": "Order Online Service Tab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 25,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "esFU1",
+                      "name": "Order Online Service Label",
+                      "fill": "#626B63",
+                      "content": "Order Online",
+                      "fontFamily": "Inter",
+                      "fontSize": 11
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "l46eLP",
+              "x": 12,
+              "y": 134,
+              "name": "Customer Label",
+              "fill": "#566057",
+              "content": "Customer name",
+              "fontFamily": "Inter",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Ae6Jp",
+              "x": 164,
+              "y": 134,
+              "name": "Table Label",
+              "fill": "#566057",
+              "content": "Table",
+              "fontFamily": "Inter",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "c2wyFE",
+              "x": 12,
+              "y": 150,
+              "name": "Customer Name Input",
+              "width": 144,
+              "height": 48,
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.1,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ilinw",
+                  "name": "Customer Value",
+                  "fill": "#101611",
+                  "content": "Muadz",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HAa9d",
+              "x": 164,
+              "y": 150,
+              "name": "Table Select",
+              "width": 144,
+              "height": 48,
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.1,
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GAwq9",
+                  "name": "Table Value",
+                  "fill": "#101611",
+                  "content": "B12 - Indoor",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon",
+                  "id": "pZ1Lb",
+                  "name": "Table Chevron",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "#101611"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "kbitK",
+              "x": 12,
+              "y": 214,
+              "name": "Order List Label",
+              "fill": "#566057",
+              "content": "Order list",
+              "fontFamily": "Inter",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "coVuO",
+              "x": 12,
+              "y": 232,
+              "name": "Order List Card",
+              "width": 296,
+              "height": 236,
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.2,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ebt58",
+                  "x": 16,
+                  "y": 16,
+                  "name": "Americano Order Photo",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "oakandbondcoffee",
+                    "link": "https://unsplash.com/@oakandbondcoffee",
+                    "author": "Oak & Bond Coffee Co."
+                  },
+                  "clip": true,
+                  "width": 60,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784303397627.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 10
+                },
+                {
+                  "type": "text",
+                  "id": "GqojP",
+                  "x": 88,
+                  "y": 18,
+                  "name": "Order Item Name",
+                  "fill": "#101611",
+                  "content": "Americano",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "Dy3af",
+                  "x": 244,
+                  "y": 18,
+                  "name": "Order Item Total",
+                  "fill": "#101611",
+                  "content": "$16.8",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "D0ETEj",
+                  "x": 88,
+                  "y": 45,
+                  "name": "Order Item Meta",
+                  "fill": "#6A746C",
+                  "content": "$8.4 × 2 · Medium",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "rzmhc",
+                  "x": 88,
+                  "y": 75,
+                  "name": "Order Note Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "file-text",
+                  "library": "lucide",
+                  "fill": "#6A746C"
+                },
+                {
+                  "type": "text",
+                  "id": "luVVd",
+                  "x": 111,
+                  "y": 76,
+                  "name": "Order Note",
+                  "fill": "#6A746C",
+                  "content": "Less Sugar",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "yFFPF",
+                  "x": 196,
+                  "y": 65,
+                  "name": "Order Quantity",
+                  "width": 82,
+                  "height": 42,
+                  "fill": "#FAFAF7",
+                  "cornerRadius": 21,
+                  "justifyContent": "space_around",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "rXFvC",
+                      "name": "Decrease Quantity",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "minus",
+                      "library": "lucide",
+                      "fill": "#59645B"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FQdWq",
+                      "name": "Order Quantity Value",
+                      "fill": "#101611",
+                      "content": "2",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "xPXxQ",
+                      "name": "Increase Quantity",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "plus",
+                      "library": "lucide",
+                      "fill": "#59645B"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "GE3Sa",
+              "x": 12,
+              "y": 488,
+              "name": "Payment Details Heading",
+              "fill": "#101611",
+              "content": "Payment Details",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "jSaeJ",
+              "x": 12,
+              "y": 516,
+              "name": "Subtotal Payment Label",
+              "fill": "#232A24",
+              "content": "Subtotal",
+              "fontFamily": "Inter",
+              "fontSize": 11
+            },
+            {
+              "type": "text",
+              "id": "OuH8W",
+              "x": 260,
+              "y": 516,
+              "name": "Subtotal Payment Value",
+              "fill": "#101611",
+              "textGrowth": "fixed-width",
+              "width": 48,
+              "content": "$59",
+              "textAlign": "right",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "EDxzg",
+              "x": 12,
+              "y": 544,
+              "name": "Tax Payment Label",
+              "fill": "#232A24",
+              "content": "Tax",
+              "fontFamily": "Inter",
+              "fontSize": 11
+            },
+            {
+              "type": "text",
+              "id": "vuQKj",
+              "x": 260,
+              "y": 544,
+              "name": "Tax Payment Value",
+              "fill": "#101611",
+              "textGrowth": "fixed-width",
+              "width": 48,
+              "content": "$5.9",
+              "textAlign": "right",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "WK2BF",
+              "x": 12,
+              "y": 586,
+              "name": "Total Payment Label",
+              "fill": "#232A24",
+              "content": "Total",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "Hg7KU",
+              "x": 260,
+              "y": 586,
+              "name": "Total Payment Value",
+              "fill": "#101611",
+              "textGrowth": "fixed-width",
+              "width": 48,
+              "content": "$64.8",
+              "textAlign": "right",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "700"
+            },
+            {
+              "type": "rectangle",
+              "id": "Y7aEtm",
+              "x": 12,
+              "y": 572,
+              "name": "Payment Separator",
+              "fill": "#DDE3D9",
+              "width": 296,
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "sJXze",
+              "x": 12,
+              "y": 628,
+              "name": "Place Order Button",
+              "width": 296,
+              "height": 50,
+              "fill": "#006A2B",
+              "cornerRadius": 25,
+              "padding": [
+                4,
+                8
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "T7kY3",
+                  "name": "Place Order Arrow",
+                  "width": 42,
+                  "height": 42,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 21,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "knLgZ",
+                      "x": 12,
+                      "y": 12,
+                      "name": "Place Order Arrow Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "#006A2B"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Yg9fX",
+                  "name": "Place Order Text",
+                  "fill": "#FFFFFF",
+                  "content": "Place Order    $26.4",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon",
+                  "id": "WGjX5",
+                  "name": "Place Order Chevrons",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "chevrons-right",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "iTB42",
+      "x": 1460,
+      "y": 0,
+      "name": "Olaso POS Component Library",
+      "clip": true,
+      "width": 1420,
+      "height": 1100,
+      "fill": "#74816F",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "g4X18",
+          "x": 40,
+          "y": 40,
+          "name": "Component Library Surface",
+          "width": 1340,
+          "height": 1000,
+          "fill": "#F8F7EA",
+          "cornerRadius": 32,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "iCBLO",
+              "x": 32,
+              "y": 28,
+              "name": "Library Title",
+              "fill": "#101611",
+              "content": "Olaso POS Components",
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "dzTSP",
+              "x": 32,
+              "y": 66,
+              "name": "Library Subtitle",
+              "fill": "#566057",
+              "content": "Approved masters for the Samsung Galaxy Tab A9 landscape POS",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "xBxqz",
+              "layoutPosition": "absolute",
+              "x": 32,
+              "y": 104,
+              "name": "Component / Header Bar",
+              "reusable": true,
+              "width": 1304,
+              "height": 60,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SfVhN",
+                  "name": "Brand and Date",
+                  "gap": 42,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "p5bmw",
+                      "name": "Green Grounds Mark",
+                      "width": 86,
+                      "height": 52,
+                      "gap": 7,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "t2GofY",
+                          "name": "Brand Dot",
+                          "fill": "#FFFFFF",
+                          "width": 9,
+                          "height": 9,
+                          "stroke": "#006A2B",
+                          "strokeWidth": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "xlfRt",
+                          "name": "Green Grounds Wordmark",
+                          "fill": "#006A2B",
+                          "textGrowth": "fixed-width",
+                          "width": 68,
+                          "content": "GREEN\nGROUNDS\nCOFFEE",
+                          "lineHeight": 0.78,
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "iJut4",
+                      "name": "Current Date",
+                      "fill": "#006A2B",
+                      "content": "Thursday, 23 June",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Gva2g",
+                  "name": "Header Actions",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X0Evz",
+                      "name": "Total Orders",
+                      "fill": "#151B16",
+                      "content": "Total : 20 Orders",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RbQk6",
+                      "name": "Report Button",
+                      "width": 112,
+                      "height": 46,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 23,
+                      "gap": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lMbqF",
+                          "name": "Report Label",
+                          "fill": "#151B16",
+                          "content": "Report",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "OllfJ",
+                          "name": "Report Document Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "file-text",
+                          "library": "lucide",
+                          "fill": "#151B16"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dqxKa",
+                      "name": "Notification Button",
+                      "width": 46,
+                      "height": 46,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 23,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "ocguP",
+                          "x": 14,
+                          "y": 14,
+                          "name": "Notification Bell",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "bell",
+                          "library": "lucide",
+                          "fill": "#151B16"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "ULxzj",
+                          "x": 30,
+                          "y": 0,
+                          "name": "Unread Badge",
+                          "fill": "#F0443E",
+                          "width": 16,
+                          "height": 16
+                        },
+                        {
+                          "type": "text",
+                          "id": "Acbgf",
+                          "x": 35,
+                          "y": 2,
+                          "name": "Unread Count",
+                          "fill": "#FFFFFF",
+                          "content": "1",
+                          "fontFamily": "Inter",
+                          "fontSize": 9,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GMz6P",
+                      "name": "Cashier Profile",
+                      "width": 178,
+                      "height": 50,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 25,
+                      "gap": 10,
+                      "padding": [
+                        5,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ed8pN",
+                          "name": "Cashier Photo",
+                          "width": 36,
+                          "height": 36,
+                          "fill": "#EFE4D6",
+                          "cornerRadius": 18,
+                          "stroke": "#006A2B",
+                          "strokeWidth": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "cNHmm",
+                              "x": 8,
+                              "y": 8,
+                              "name": "Cashier Avatar Icon",
+                              "width": 20,
+                              "height": 20,
+                              "icon": "user",
+                              "library": "lucide",
+                              "fill": "#2F3B32"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pEUUE",
+                          "name": "Cashier Details",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "U8Rjzk",
+                              "name": "Cashier Name",
+                              "fill": "#151B16",
+                              "content": "Samantha W",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "vEBJy",
+                              "name": "Cashier Role",
+                              "fill": "#556057",
+                              "content": "Cashier",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "N9YE6E",
+              "layoutPosition": "absolute",
+              "x": 32,
+              "y": 180,
+              "name": "Component / Search Field",
+              "reusable": true,
+              "width": 966,
+              "height": 50,
+              "fill": "#FFFFFF",
+              "cornerRadius": 25,
+              "stroke": "#086A35",
+              "strokeWidth": 1.2,
+              "gap": 12,
+              "padding": [
+                0,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "ltQ6U",
+                  "name": "Search Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "search",
+                  "library": "lucide",
+                  "fill": "#151B16"
+                },
+                {
+                  "type": "text",
+                  "id": "QXrvS",
+                  "name": "Search Text",
+                  "fill": "#151B16",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Search",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "lvgnS",
+                  "name": "Search Shortcut",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "command",
+                  "library": "lucide",
+                  "fill": "#006A2B"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "g23Kz",
+              "x": 32,
+              "y": 252,
+              "name": "Component / Category Card / Active",
+              "reusable": true,
+              "clip": true,
+              "width": 234,
+              "height": 120,
+              "fill": "#006A2B",
+              "cornerRadius": 22,
+              "stroke": "#006A2B",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nJDsl",
+                  "x": 16,
+                  "y": 14,
+                  "name": "Coffee Status",
+                  "height": 24,
+                  "fill": "#006A2B",
+                  "cornerRadius": 12,
+                  "stroke": "#FFFFFF",
+                  "strokeWidth": 1,
+                  "padding": [
+                    5,
+                    11
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ag2Dd",
+                      "name": "Coffee Status Text",
+                      "fill": "#FFFFFF",
+                      "content": "Available",
+                      "fontFamily": "Inter",
+                      "fontSize": 9,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "pFxpn",
+                  "x": 16,
+                  "y": 72,
+                  "name": "Coffee Category Name",
+                  "fill": "#FFFFFF",
+                  "content": "Coffee",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "CeDnR",
+                  "x": 16,
+                  "y": 98,
+                  "name": "Coffee Item Count",
+                  "fill": "#FFFFFF",
+                  "content": "50 items",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "HggY5",
+                  "x": 85,
+                  "y": 22,
+                  "name": "Coffee Illustration",
+                  "width": 148.5,
+                  "height": 98,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784305991267.png",
+                    "mode": "fill"
+                  },
+                  "layout": "none"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MfM4K",
+              "x": 278,
+              "y": 252,
+              "name": "Component / Category Card / Default",
+              "reusable": true,
+              "clip": true,
+              "width": 234,
+              "height": 120,
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "stroke": "#ECEFE7",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Olrow",
+                  "x": 16,
+                  "y": 14,
+                  "name": "Tea Status",
+                  "height": 24,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": "#57645A",
+                  "strokeWidth": 1,
+                  "padding": [
+                    5,
+                    11
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EP8bV",
+                      "name": "Tea Status Text",
+                      "fill": "#222A23",
+                      "content": "Available",
+                      "fontFamily": "Inter",
+                      "fontSize": 9,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Rmskn",
+                  "x": 16,
+                  "y": 72,
+                  "name": "Tea Category Name",
+                  "fill": "#101611",
+                  "content": "Tea",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "feiAP",
+                  "x": 16,
+                  "y": 98,
+                  "name": "Tea Item Count",
+                  "fill": "#101611",
+                  "content": "20 items",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "TZXUb",
+                  "x": 95,
+                  "y": 22,
+                  "name": "Tea Illustration",
+                  "width": 138.5,
+                  "height": 98,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784305780745.png",
+                    "mode": "fill"
+                  },
+                  "layout": "none"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f0Ldp",
+              "x": 524,
+              "y": 252,
+              "name": "Component / Category Card / Warning",
+              "reusable": true,
+              "clip": true,
+              "width": 234,
+              "height": 120,
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "stroke": "#ECEFE7",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vymun",
+                  "x": 16,
+                  "y": 14,
+                  "name": "Snack Status",
+                  "height": 24,
+                  "fill": "#FF6863",
+                  "cornerRadius": 12,
+                  "stroke": "#FF6863",
+                  "strokeWidth": 1,
+                  "padding": [
+                    5,
+                    11
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vEUa3",
+                      "name": "Snack Status Text",
+                      "fill": "#FFFFFF",
+                      "content": "Need to re-stock",
+                      "fontFamily": "Inter",
+                      "fontSize": 9,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "ASlLz",
+                  "x": 16,
+                  "y": 72,
+                  "name": "Snack Category Name",
+                  "fill": "#101611",
+                  "content": "Snack",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "ldv96",
+                  "x": 16,
+                  "y": 98,
+                  "name": "Snack Item Count",
+                  "fill": "#101611",
+                  "content": "10 items",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "L693n",
+                  "x": 95,
+                  "y": 22,
+                  "name": "Snack Illustration",
+                  "width": 138.5,
+                  "height": 98,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784305874723.png",
+                    "mode": "fill"
+                  },
+                  "layout": "none"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "e0wXTE",
+              "x": 32,
+              "y": 398,
+              "name": "Component / Product Card",
+              "reusable": true,
+              "width": 174,
+              "height": 162,
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.2,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "YOmkT",
+                  "x": 51,
+                  "y": 10,
+                  "name": "Espresso Product Photo",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "itfeelslikefilm",
+                    "link": "https://unsplash.com/@itfeelslikefilm",
+                    "author": "🇸🇮 Janko Ferlič"
+                  },
+                  "clip": true,
+                  "width": 72,
+                  "height": 92,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784303398789.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 10
+                },
+                {
+                  "type": "text",
+                  "id": "n6wiL",
+                  "x": 14,
+                  "y": 115,
+                  "name": "Espresso Product Name",
+                  "fill": "#111711",
+                  "content": "Espresso",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "rE3P3",
+                  "x": 14,
+                  "y": 139,
+                  "name": "Espresso Product Price",
+                  "fill": "#4B564D",
+                  "content": "$4.2",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "P08Z8Z",
+                  "x": 122,
+                  "y": 107,
+                  "name": "Add Espresso",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 22,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "PRt9Z",
+                      "x": 13,
+                      "y": 13,
+                      "name": "Add Espresso Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "plus",
+                      "library": "lucide",
+                      "fill": "#0B6B36"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kopUN",
+              "x": 230,
+              "y": 398,
+              "name": "Component / Segmented Control",
+              "reusable": true,
+              "width": 266,
+              "height": 50,
+              "fill": "#FFFFFF",
+              "cornerRadius": 25,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "g2S3i",
+                  "name": "Dine In Service Tab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#006A2B",
+                  "cornerRadius": 25,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CJFbw",
+                      "name": "Dine In Service Label",
+                      "fill": "#FFFFFF",
+                      "content": "Dine In",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "azabx",
+                  "name": "Take Away Service Tab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 25,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "nnwRW",
+                      "name": "Take Away Service Label",
+                      "fill": "#626B63",
+                      "content": "Take Away",
+                      "fontFamily": "Inter",
+                      "fontSize": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "E1NTax",
+                  "name": "Order Online Service Tab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 25,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sKvyS",
+                      "name": "Order Online Service Label",
+                      "fill": "#626B63",
+                      "content": "Order Online",
+                      "fontFamily": "Inter",
+                      "fontSize": 11
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KmkTT",
+              "x": 520,
+              "y": 398,
+              "name": "Component / Text Field",
+              "reusable": true,
+              "width": 129,
+              "height": 48,
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.1,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HuiA6",
+                  "name": "Customer Value",
+                  "fill": "#101611",
+                  "content": "Muadz",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KTlhM",
+              "x": 663,
+              "y": 398,
+              "name": "Component / Select Field",
+              "reusable": true,
+              "width": 129,
+              "height": 48,
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.1,
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "y0HKJO",
+                  "name": "Table Value",
+                  "fill": "#101611",
+                  "content": "B12 - Indoor",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon",
+                  "id": "y8igK",
+                  "name": "Table Chevron",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "#101611"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SjDEJ",
+              "x": 816,
+              "y": 398,
+              "name": "Component / Add Button",
+              "reusable": true,
+              "width": 44,
+              "height": 44,
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.2,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "oLM1G",
+                  "x": 13,
+                  "y": 13,
+                  "name": "Add Espresso Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "plus",
+                  "library": "lucide",
+                  "fill": "#0B6B36"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "z0Fy8",
+              "x": 230,
+              "y": 478,
+              "name": "Component / Primary Action",
+              "reusable": true,
+              "width": 266,
+              "height": 50,
+              "fill": "#006A2B",
+              "cornerRadius": 25,
+              "padding": [
+                4,
+                8
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AfvKZ",
+                  "name": "Place Order Arrow",
+                  "width": 42,
+                  "height": 42,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 21,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "l3lXD",
+                      "x": 12,
+                      "y": 12,
+                      "name": "Place Order Arrow Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "#006A2B"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "HfQEA",
+                  "name": "Place Order Text",
+                  "fill": "#FFFFFF",
+                  "content": "Place Order    $26.4",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon",
+                  "id": "VzuZ4",
+                  "name": "Place Order Chevrons",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "chevrons-right",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PkIBm",
+              "x": 32,
+              "y": 584,
+              "name": "Component / Order Card",
+              "reusable": true,
+              "width": 266,
+              "height": 236,
+              "fill": "#FFFFFF",
+              "cornerRadius": 22,
+              "stroke": "#0B6B36",
+              "strokeWidth": 1.2,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hSPiZ",
+                  "x": 16,
+                  "y": 16,
+                  "name": "Americano Order Photo",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "oakandbondcoffee",
+                    "link": "https://unsplash.com/@oakandbondcoffee",
+                    "author": "Oak & Bond Coffee Co."
+                  },
+                  "clip": true,
+                  "width": 60,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1784303397627.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 10
+                },
+                {
+                  "type": "text",
+                  "id": "xjlG5",
+                  "x": 88,
+                  "y": 18,
+                  "name": "Order Item Name",
+                  "fill": "#101611",
+                  "content": "Americano",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "MBUfp",
+                  "x": 214,
+                  "y": 18,
+                  "name": "Order Item Total",
+                  "fill": "#101611",
+                  "content": "$16.8",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "IvA50",
+                  "x": 88,
+                  "y": 45,
+                  "name": "Order Item Meta",
+                  "fill": "#6A746C",
+                  "content": "$8.4 × 2 · Medium",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "D0qR3",
+                  "x": 88,
+                  "y": 75,
+                  "name": "Order Note Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "file-text",
+                  "library": "lucide",
+                  "fill": "#6A746C"
+                },
+                {
+                  "type": "text",
+                  "id": "bnl84",
+                  "x": 111,
+                  "y": 76,
+                  "name": "Order Note",
+                  "fill": "#6A746C",
+                  "content": "Less Sugar",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "mhcRc",
+                  "x": 166,
+                  "y": 65,
+                  "name": "Order Quantity",
+                  "width": 82,
+                  "height": 42,
+                  "fill": "#FAFAF7",
+                  "cornerRadius": 21,
+                  "justifyContent": "space_around",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "lPR6S",
+                      "name": "Decrease Quantity",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "minus",
+                      "library": "lucide",
+                      "fill": "#59645B"
+                    },
+                    {
+                      "type": "text",
+                      "id": "E88I3Q",
+                      "name": "Order Quantity Value",
+                      "fill": "#101611",
+                      "content": "2",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Zclx0",
+                      "name": "Increase Quantity",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "plus",
+                      "library": "lucide",
+                      "fill": "#59645B"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qrdwN",
+              "x": 920,
+              "y": 252,
+              "name": "Component / Receipt Rail",
+              "reusable": true,
+              "clip": true,
+              "width": 320,
+              "height": 692,
+              "fill": "#FFFFFF",
+              "cornerRadius": 28,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "K1HK3K",
+                  "x": 12,
+                  "y": 12,
+                  "name": "Receipt Header",
+                  "width": 296,
+                  "height": 50,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "TkZtL",
+                      "name": "Receipt Back Button",
+                      "width": 50,
+                      "height": 50,
+                      "fill": "#006A2B",
+                      "cornerRadius": 25,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "L6gQSI",
+                          "x": 15,
+                          "y": 15,
+                          "name": "Receipt Back Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PHuPf",
+                      "name": "Receipt Heading",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "SrCka",
+                          "name": "Receipt Title",
+                          "fill": "#101611",
+                          "content": "Purchase Receipt",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "IyUS5",
+                          "name": "Receipt Number",
+                          "fill": "#101611",
+                          "content": "#27362",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RKgXv",
+                      "name": "Receipt Menu Button",
+                      "width": 50,
+                      "height": 50,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 25,
+                      "stroke": "#0B6B36",
+                      "strokeWidth": 1.2,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "I4NFW",
+                          "x": 15,
+                          "y": 15,
+                          "name": "Receipt Menu Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "list",
+                          "library": "lucide",
+                          "fill": "#0B6B36"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WodLi",
+                  "x": 12,
+                  "y": 70,
+                  "name": "Service Type Tabs",
+                  "width": 296,
+                  "height": 50,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 25,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "txoY1",
+                      "name": "Dine In Service Tab",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#006A2B",
+                      "cornerRadius": 25,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rl8RH",
+                          "name": "Dine In Service Label",
+                          "fill": "#FFFFFF",
+                          "content": "Dine In",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mKmXv",
+                      "name": "Take Away Service Tab",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 25,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "PFxls",
+                          "name": "Take Away Service Label",
+                          "fill": "#626B63",
+                          "content": "Take Away",
+                          "fontFamily": "Inter",
+                          "fontSize": 11
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g8NYV",
+                      "name": "Order Online Service Tab",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 25,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "b2kvKS",
+                          "name": "Order Online Service Label",
+                          "fill": "#626B63",
+                          "content": "Order Online",
+                          "fontFamily": "Inter",
+                          "fontSize": 11
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "VHUb8",
+                  "x": 12,
+                  "y": 134,
+                  "name": "Customer Label",
+                  "fill": "#566057",
+                  "content": "Customer name",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hwHfK",
+                  "x": 164,
+                  "y": 134,
+                  "name": "Table Label",
+                  "fill": "#566057",
+                  "content": "Table",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "Z39U0Q",
+                  "x": 12,
+                  "y": 150,
+                  "name": "Customer Name Input",
+                  "width": 144,
+                  "height": 48,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.1,
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iEGjP",
+                      "name": "Customer Value",
+                      "fill": "#101611",
+                      "content": "Muadz",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nGTN3",
+                  "x": 164,
+                  "y": 150,
+                  "name": "Table Select",
+                  "width": 144,
+                  "height": 48,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 24,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.1,
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Y8kGp",
+                      "name": "Table Value",
+                      "fill": "#101611",
+                      "content": "B12 - Indoor",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "K6f0p",
+                      "name": "Table Chevron",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "#101611"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "IRcNl",
+                  "x": 12,
+                  "y": 214,
+                  "name": "Order List Label",
+                  "fill": "#566057",
+                  "content": "Order list",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "dn5EL",
+                  "x": 12,
+                  "y": 232,
+                  "name": "Order List Card",
+                  "width": 296,
+                  "height": 236,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 22,
+                  "stroke": "#0B6B36",
+                  "strokeWidth": 1.2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kmEQ3",
+                      "x": 16,
+                      "y": 16,
+                      "name": "Americano Order Photo",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "oakandbondcoffee",
+                        "link": "https://unsplash.com/@oakandbondcoffee",
+                        "author": "Oak & Bond Coffee Co."
+                      },
+                      "clip": true,
+                      "width": 60,
+                      "height": 76,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1784303397627.png",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 10
+                    },
+                    {
+                      "type": "text",
+                      "id": "drE7p",
+                      "x": 88,
+                      "y": 18,
+                      "name": "Order Item Name",
+                      "fill": "#101611",
+                      "content": "Americano",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SQ4ZN",
+                      "x": 244,
+                      "y": 18,
+                      "name": "Order Item Total",
+                      "fill": "#101611",
+                      "content": "$16.8",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "VR1cC",
+                      "x": 88,
+                      "y": 45,
+                      "name": "Order Item Meta",
+                      "fill": "#6A746C",
+                      "content": "$8.4 × 2 · Medium",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "KQAL1",
+                      "x": 88,
+                      "y": 75,
+                      "name": "Order Note Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "file-text",
+                      "library": "lucide",
+                      "fill": "#6A746C"
+                    },
+                    {
+                      "type": "text",
+                      "id": "OWD2K",
+                      "x": 111,
+                      "y": 76,
+                      "name": "Order Note",
+                      "fill": "#6A746C",
+                      "content": "Less Sugar",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SUrZa",
+                      "x": 196,
+                      "y": 65,
+                      "name": "Order Quantity",
+                      "width": 82,
+                      "height": 42,
+                      "fill": "#FAFAF7",
+                      "cornerRadius": 21,
+                      "justifyContent": "space_around",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "FgthW",
+                          "name": "Decrease Quantity",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "minus",
+                          "library": "lucide",
+                          "fill": "#59645B"
+                        },
+                        {
+                          "type": "text",
+                          "id": "G7nerO",
+                          "name": "Order Quantity Value",
+                          "fill": "#101611",
+                          "content": "2",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "YLsWC",
+                          "name": "Increase Quantity",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "#59645B"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "v2geZ",
+                  "x": 12,
+                  "y": 488,
+                  "name": "Payment Details Heading",
+                  "fill": "#101611",
+                  "content": "Payment Details",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "FqTUl",
+                  "x": 12,
+                  "y": 516,
+                  "name": "Subtotal Payment Label",
+                  "fill": "#232A24",
+                  "content": "Subtotal",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                },
+                {
+                  "type": "text",
+                  "id": "YEcPB",
+                  "x": 260,
+                  "y": 516,
+                  "name": "Subtotal Payment Value",
+                  "fill": "#101611",
+                  "textGrowth": "fixed-width",
+                  "width": 48,
+                  "content": "$59",
+                  "textAlign": "right",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "cYZnt",
+                  "x": 12,
+                  "y": 544,
+                  "name": "Tax Payment Label",
+                  "fill": "#232A24",
+                  "content": "Tax",
+                  "fontFamily": "Inter",
+                  "fontSize": 11
+                },
+                {
+                  "type": "text",
+                  "id": "QU6dT",
+                  "x": 260,
+                  "y": 544,
+                  "name": "Tax Payment Value",
+                  "fill": "#101611",
+                  "textGrowth": "fixed-width",
+                  "width": 48,
+                  "content": "$5.9",
+                  "textAlign": "right",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "lzSVG",
+                  "x": 12,
+                  "y": 586,
+                  "name": "Total Payment Label",
+                  "fill": "#232A24",
+                  "content": "Total",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "fmDMX",
+                  "x": 260,
+                  "y": 586,
+                  "name": "Total Payment Value",
+                  "fill": "#101611",
+                  "textGrowth": "fixed-width",
+                  "width": 48,
+                  "content": "$64.8",
+                  "textAlign": "right",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "U578TI",
+                  "x": 12,
+                  "y": 572,
+                  "name": "Payment Separator",
+                  "fill": "#DDE3D9",
+                  "width": 296,
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "rMfKo",
+                  "x": 12,
+                  "y": 628,
+                  "name": "Place Order Button",
+                  "width": 296,
+                  "height": 50,
+                  "fill": "#006A2B",
+                  "cornerRadius": 25,
+                  "padding": [
+                    4,
+                    8
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "W7FJA",
+                      "name": "Place Order Arrow",
+                      "width": 42,
+                      "height": 42,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 21,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "SBh5A",
+                          "x": 12,
+                          "y": 12,
+                          "name": "Place Order Arrow Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "arrow-right",
+                          "library": "lucide",
+                          "fill": "#006A2B"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "N4XfQ",
+                      "name": "Place Order Text",
+                      "fill": "#FFFFFF",
+                      "content": "Place Order    $26.4",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "kKLR9",
+                      "name": "Place Order Chevrons",
+                      "width": 22,
+                      "height": 22,
+                      "icon": "chevrons-right",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

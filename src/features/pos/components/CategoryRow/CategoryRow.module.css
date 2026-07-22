@@ -1,0 +1,9 @@
+.row {
+  position: absolute;
+  top: 58px;
+  left: 0;
+  display: flex;
+  width: 966px;
+  height: 120px;
+  gap: 10px;
+}

@@ -1,0 +1,35 @@
+.search {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  width: 966px;
+  height: 50px;
+  gap: 12px;
+  padding: 0 20px;
+  border: 1.2px solid #086a35;
+  border-radius: 25px;
+  color: #151b16;
+  background: var(--olaso-white);
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: #151b16;
+  background: transparent;
+  font-size: 13px;
+}
+
+.search input::placeholder {
+  color: #151b16;
+  opacity: 1;
+}
+
+.command {
+  color: var(--olaso-green);
+}

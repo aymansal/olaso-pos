@@ -1,0 +1,57 @@
+.summary {
+  position: absolute;
+  top: 488px;
+  left: 12px;
+  width: 296px;
+  height: 115px;
+}
+
+.summary h2 {
+  height: 16px;
+  margin: 0 0 12px;
+  color: var(--olaso-text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+.summary dl {
+  margin: 0;
+}
+
+.summary dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  height: 28px;
+  color: #232a24;
+  font-size: 11px;
+  line-height: 13px;
+}
+
+.summary dt,
+.summary dd {
+  margin: 0;
+}
+
+.summary dd {
+  width: 48px;
+  color: var(--olaso-text);
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary .total {
+  height: 31px;
+  padding-top: 12px;
+  border-top: 1px solid var(--olaso-divider);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.summary .total dd {
+  font-size: 14px;
+  font-weight: 700;
+}

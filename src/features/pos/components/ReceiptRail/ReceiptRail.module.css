@@ -1,0 +1,35 @@
+.rail {
+  position: absolute;
+  top: 90px;
+  left: 1002px;
+  width: 320px !important;
+  height: 688px !important;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 28px !important;
+  background: var(--olaso-white) !important;
+}
+
+.fields {
+  position: absolute;
+  top: 134px;
+  left: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 144px);
+  gap: 8px;
+}
+
+.orderSection {
+  position: absolute;
+  top: 214px;
+  left: 12px;
+  width: 296px;
+}
+
+.sectionLabel {
+  display: block;
+  height: 12px;
+  color: var(--olaso-muted);
+  font-size: 10px;
+  line-height: 12px;
+}

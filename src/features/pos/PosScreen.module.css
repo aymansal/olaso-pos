@@ -1,0 +1,15 @@
+.screen {
+  position: relative;
+  width: 1340px;
+  height: 800px;
+  overflow: hidden;
+  background: var(--olaso-canvas);
+}
+
+.menu {
+  position: absolute;
+  top: 90px;
+  left: 18px;
+  width: 966px;
+  height: 688px;
+}

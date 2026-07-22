@@ -1,0 +1,65 @@
+.card {
+  position: relative;
+  width: 296px;
+  height: 236px;
+  margin-top: 6px;
+  border: 1.2px solid var(--olaso-border);
+  border-radius: 22px;
+  background: white;
+}
+
+.photo {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 60px;
+  height: 76px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.name,
+.total,
+.meta,
+.note,
+.quantity {
+  position: absolute;
+}
+
+.name {
+  top: 18px;
+  left: 88px;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.total {
+  top: 18px;
+  right: 16px;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.meta {
+  top: 45px;
+  left: 88px;
+  color: #6a746c;
+  font-size: 11px;
+  line-height: 13px;
+}
+
+.note {
+  top: 75px;
+  left: 88px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #6a746c;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.quantity {
+  top: 65px;
+  left: 196px;
+}

@@ -1,0 +1,26 @@
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 82px;
+  height: 42px;
+  border-radius: 21px;
+  color: var(--olaso-text);
+  background: var(--olaso-soft);
+}
+
+.stepper button {
+  display: grid;
+  width: 24px;
+  height: 42px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  color: #59645b;
+  background: transparent;
+}
+
+.stepper strong {
+  font-size: 12px;
+  font-weight: 600;
+}

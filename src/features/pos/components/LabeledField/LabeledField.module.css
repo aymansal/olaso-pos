@@ -1,0 +1,38 @@
+.field {
+  display: flex;
+  width: 144px;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--olaso-muted);
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 144px;
+  height: 48px;
+  padding: 0 16px;
+  border: 1.1px solid var(--olaso-border);
+  border-radius: 24px;
+  color: var(--olaso-text);
+  background: white;
+}
+
+.control input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.control svg {
+  flex: 0 0 auto;
+}
