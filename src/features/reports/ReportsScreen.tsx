@@ -10,9 +10,13 @@ import styles from './ReportsScreen.module.css';
 
 interface ReportsScreenProps {
   onNavigate?: (page: NavigationPage) => void;
+  onOpenSettings?: () => void;
 }
 
-export function ReportsScreen({ onNavigate }: ReportsScreenProps) {
+export function ReportsScreen({
+  onNavigate,
+  onOpenSettings,
+}: ReportsScreenProps) {
   const [range, setRange] = useState(() => {
     const toDate = localBusinessDate();
     return { fromDate: shiftBusinessDate(toDate, -6), toDate };
@@ -26,6 +30,7 @@ export function ReportsScreen({ onNavigate }: ReportsScreenProps) {
       <Header
         activePage="Reports"
         brand="olaso"
+        onOpenSettings={onOpenSettings}
         dateLabel={now.toLocaleDateString('en-GB', {
           weekday: 'long',
           day: 'numeric',

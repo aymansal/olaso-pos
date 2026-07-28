@@ -2,8 +2,8 @@
 
 ## Purpose
 
-Owns the six top-level application screens and their local components,
-temporary fixture data where still required, and CSS Modules.
+Owns the application screens and their local components, temporary fixture
+data where still required, and CSS Modules.
 
 ## Ownership
 
@@ -15,11 +15,12 @@ Each feature owns:
 - temporary static data under `data/`.
 
 The POS feature currently also owns the Header and TopNavigation used by every
-screen.
+screen; the shared profile control opens Settings.
 
 ## Local Contracts
 
-- Screens receive `onNavigate` and identify their active `NavigationPage`.
+- Permanent-navigation screens receive `onNavigate` and identify their active
+  `NavigationPage`. Settings reuses the Header with no active top-level item.
 - A screen module places regions; child modules style child internals.
 - Keep any remaining static screen data in the feature's `data/` folder instead
   of embedding large arrays in JSX.
@@ -53,3 +54,5 @@ screen.
 - [`stock/AGENTS.md`](stock/AGENTS.md) — ingredient inventory and detail.
 - [`reports/AGENTS.md`](reports/AGENTS.md) — report summaries, charts, and
   product performance.
+- [`settings/AGENTS.md`](settings/AGENTS.md) — profile-owned terminal settings,
+  synchronization controls, and local lock presentation.

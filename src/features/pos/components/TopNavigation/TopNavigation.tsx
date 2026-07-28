@@ -20,7 +20,7 @@ const navigationItems = [
 export type NavigationPage = (typeof navigationItems)[number]['label'];
 
 interface TopNavigationProps {
-  activePage: NavigationPage;
+  activePage?: NavigationPage;
   onNavigate?: (page: NavigationPage) => void;
 }
 

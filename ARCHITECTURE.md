@@ -95,6 +95,9 @@ It stores the minimum data needed for service:
 
 All local effects of a completed order are committed in one SQLite transaction.
 If that transaction fails, nothing from the order is treated as complete.
+The application serializes transactions on its shared SQLite connection so
+concurrent React effects, checkout, cache refresh, and synchronization work
+cannot overlap `BEGIN`/`COMMIT` boundaries.
 
 #### Capacitor SQLite package decision
 
@@ -609,6 +612,10 @@ longer answer the owner's confirmed reports.
 
 Authentication and PIN/session design will be selected after the owner
 confirms roles and operational login expectations.
+
+The current beta therefore stores only a non-secret local terminal-lock flag.
+It survives restart and preserves the in-memory order while the application
+remains open, but its explicit unlock action does not authenticate a user.
 
 ## Printing boundary
 

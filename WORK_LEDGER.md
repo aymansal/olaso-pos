@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-09 done; APP-10 pending
+**Status:** in progress — APP-10 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -91,7 +91,7 @@ hardware are available.
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | done | Bounded history/detail, local fallback and retry, policy states, regression, Graphify, and visual QA passed; implementation commit `70c605365b6d242bb4000b033867db14eb42f9a9` pushed to `origin/codex/goal-02-functional-app` |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | done | One bounded snapshot, live/recovery states, full regression, Graphify, and visual QA passed; implementation commit `b1dd49c77b1a864cefcb10a029dc7f5513f5624c` pushed to `origin/codex/goal-02-functional-app` |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | done | Bounded saved-summary query, all tabs/period/recovery states, regression, Graphify, and visual QA passed; implementation commit `573a1863d1ee24889450ee90e63dc358b64e9ad5` pushed to `origin/codex/goal-02-functional-app` |
-| APP-10 | Make settings, synchronization controls, and the designed lock flow functional | pending | Settings survive restart; lock/session behavior documented and verified; commit pushed |
+| APP-10 | Make settings, synchronization controls, and the designed lock flow functional | in progress | Settings survive restart; lock/session behavior documented and verified; commit pushed |
 | APP-11 | Produce and verify the Android beta without printer integration | pending | APK builds; offline startup, restart, migration, and upgrade checks pass; commit pushed |
 | APP-12 | Run full-system regression, quota/security review, documentation closeout, and final push | pending | All checks/builds/QA pass; Graphify and docs current; final commit pushed |
 
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-09 are done; APP-10 is pending and no card is in progress.
+- APP-00 through APP-09 are done; APP-10 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -510,10 +510,34 @@ hardware are available.
 - APP-09 implementation commit
   `573a1863d1ee24889450ee90e63dc358b64e9ad5` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-10 now persists immutable device identity, terminal label, 12/24-hour
+  display, local lock state, and bounded synchronization status in SQLite. One
+  deliberate `Sync now` action releases retry backoff, processes at most ten
+  existing sale outbox entries, and refreshes operational data only after the
+  outbox is empty.
+- Settings is owned by the shared profile control and preserves the approved
+  Pencil `bELEf` geometry. The split local lock preserves the approved `QfSKg`
+  composition and active in-memory POS session without inventing a PIN, role,
+  credential, or production-authentication claim.
+- Browser verification at exactly 1340 × 800 covers preference/restart
+  persistence, immutable identity, lock/reload/unlock, cart preservation,
+  successful manual sync, controlled authorization failure and recovery, About
+  scope, disabled pending-policy categories, touch targets, overflow, and clean
+  final console diagnostics.
+- Full serial APP-10 regression passes: Convex validation/deployment,
+  management, inventory, sales, Orders, Dashboard, Reports, seed verification,
+  POS, local SQLite, Settings, TypeScript, production build, and whitespace.
+  The dedicated deployment is restored to 13 sales, 17 sale lines, 65
+  movements, and seven daily summaries.
+- The optional semantic Graphify update remains unavailable without its model
+  key. Its documented local AST merge refreshed the 31 changed structural
+  files with exact source pruning; the graph now has 1,956 nodes and 4,576
+  edges and contains the Settings, Lock, terminal-settings, transaction
+  serialization, and manual-sync boundaries with no absolute or generated
+  output source.
 
-**Exact next action:** Start APP-10 by querying Graphify and re-reading the
-Settings, lock/session, data, persistence, product, architecture, design, and
-brand contracts before marking it in progress.
+**Exact next action:** Complete the APP-10 diff, secret/exclusion, bounded-read,
+and DOX-chain review; finalize browser sessions; then commit and push the card.
 
 ## Decisions and Blockers
 
@@ -535,6 +559,98 @@ brand contracts before marking it in progress.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-10 started
+
+- Queried Graphify first for settings, device identity, synchronization,
+  session, lock, local SQLite, and application navigation boundaries.
+- Re-read the complete current root/source/feature/data DOX chains, durable
+  ledger, and the relevant product, architecture, design, and brand contracts.
+- Inspected approved Pencil Settings frame `bELEf` and Lock frame `QfSKg`.
+  Settings belongs under the profile instead of permanent navigation; the lock
+  keeps its split tablet composition.
+- Confirmed APP-00 through APP-09 are done and marked APP-10 as the only card
+  in progress.
+- Confirmed device identity, local settings, synchronization status, and a
+  deliberate `Sync now` action. Device ID remains immutable because changing it
+  would break sale idempotency; terminal label and 12/24-hour display are safe
+  non-secret local preferences.
+- Roles, PIN/login policy, staff access, and production authentication remain
+  unconfirmed. APP-10 will persist a local terminal lock, preserve the active
+  in-memory POS session, and expose an explicitly non-authenticating unlock
+  action instead of inventing a PIN.
+- Printer/hardware settings and transport remain excluded. Unsupported staff,
+  printer, receipt-policy, and stock-policy categories stay truthfully
+  unavailable rather than exposing decorative controls.
+- Added one local settings boundary over the existing `device_settings`,
+  `sync_state`, and bounded outbox tables. It generates an immutable device ID
+  once, persists a terminal label, 12/24-hour display preference, and local lock
+  state, and validates every saved preference.
+- Added deliberate manual synchronization using the existing idempotent sale
+  mutation and operational snapshot. A click releases local retry backoff,
+  processes at most 10 sales, reports remaining work, and refreshes the menu
+  only after the outbox is empty.
+- Successful operational-cache refresh now records local synchronization
+  success; failed manual attempts persist an actionable local error.
+- `npm run check:settings`, `npx tsc -b`, and `git diff --check` pass. The
+  focused check verifies first-run defaults, immutable identity, normalized
+  preference persistence, persistent lock state, sync summary state, and
+  invalid-name rejection.
+- Connected the shared profile control to the approved profile-owned Settings
+  workspace without adding permanent navigation. General, Data & sync, and
+  About are functional; staff, printer, receipt-policy, and stock-policy
+  categories are visibly disabled.
+- Added the approved split lock composition with live time, connection state,
+  persisted terminal identity, and one explicit local-session unlock action.
+  It contains no keypad, credential, role, or production-authentication claim.
+- Browser verification saved a terminal label and 12-hour preference, reloaded
+  the app, and confirmed both values and the same immutable device ID survived.
+  Lock/unlock preserved an active one-item POS cart; a second lock survived a
+  full reload and returned to POS after deliberate unlock.
+- React Strict Mode exposed overlapping first-run SQLite transactions. The
+  shared transaction boundary now serializes local transactions, fixing the
+  root race for settings, checkout, cache, and outbox callers.
+- Manual sync now adds a bounded request ID so each deliberate click performs a
+  fresh authorized Convex query rather than reusing a cached result. A
+  controlled access failure rendered safe actionable feedback, and restoring
+  the development POS flag plus `Sync now` recovered to `Up to date`.
+- Exact 1340 × 800 screenshots match the Pencil-derived panel and split-lock
+  geometry. Settings and Lock have no outside element, document overflow, or
+  sub-44-pixel control; browser diagnostics contain no warnings or errors.
+- Restored the local browser terminal label/clock to `Olaso POS` and 24-hour
+  format, left it unlocked, removed the temporary test environment variable,
+  and restored `OLASO_ALLOW_DEV_POS=true`.
+- Updated root, product, architecture, design, source, data, feature, Settings,
+  and Convex DOX for the local settings/sync boundary, serialized SQLite
+  transactions, approved frame authorities, local non-authenticating lock, and
+  explicitly unavailable owner-policy/hardware areas.
+- Full serial regression passes: `check:convex`, explicit Convex deployment,
+  management, inventory, sales, Orders, Dashboard, Reports, seed, POS, local
+  SQLite, Settings, TypeScript, production build, and whitespace checks. The
+  deterministic development seed is restored.
+- Standard incremental detection includes changed documents and images while
+  no optional semantic model key is configured. Used Graphify's documented
+  local AST merge with exact source pruning for 31 changed structural files.
+  The graph is refreshed to 1,956 nodes and 4,576 edges.
+- Queried the refreshed graph across `SettingsScreen`, `LockScreen`,
+  `useSettingsData`, `terminalSettings`, and
+  `serializeLocalTransaction`. Graph and manifest assertions find every new
+  Settings source, no generated-output source, and no absolute path.
+- Closeout review re-read the complete root/source/features and all touched
+  feature/data/Convex DOX chains; the new Settings child index is current.
+  Diff review finds only the intended profile wiring, local settings/lock/sync
+  boundary, shared transaction serialization, approved styles, checks, docs,
+  and portable Graphify outputs.
+- Final scans find no unbounded Convex collection read, feature-level
+  backend/database import, Graphify application import, tracked environment
+  value, credential, signing/APK/AAB material, or printer transport,
+  permission, or invocation. `.env.local` remains ignored.
+- Reset both temporary QA viewports and finalized the in-app and Chrome QA tabs.
+  A final `check:settings`, TypeScript, and whitespace pass succeeds after the
+  Graphify and ledger updates.
+- Exact next action: stage only the reviewed APP-10 files, verify the staged
+  tree excludes secrets and generated package artifacts, commit with the card
+  ID, and push immediately.
 
 ### 2026-07-28 — APP-09 complete
 

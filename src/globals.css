@@ -92,6 +92,15 @@
   --olaso-report-category-cold: #8db696;
   --olaso-report-category-bakery: #c5d9c3;
   --olaso-report-payment-card: #6b9b73;
+  --olaso-lock-ink: #12351d;
+  --olaso-lock-copy: #58705d;
+  --olaso-lock-copy-strong: #355e3b;
+  --olaso-lock-meta: #5e7863;
+  --olaso-lock-surface: #f0f3e4;
+  --olaso-lock-shape-large: #dde8d3;
+  --olaso-lock-shape-upper: #e4ecd8;
+  --olaso-lock-identity: #d7e7d3;
+  --olaso-lock-status: #ffffffb8;
 }
 
 * {

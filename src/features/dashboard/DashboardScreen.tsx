@@ -8,9 +8,13 @@ import styles from './DashboardScreen.module.css';
 
 interface DashboardScreenProps {
   onNavigate?: (page: NavigationPage) => void;
+  onOpenSettings?: () => void;
 }
 
-export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
+export function DashboardScreen({
+  onNavigate,
+  onOpenSettings,
+}: DashboardScreenProps) {
   const data = useDashboardData();
   const date = new Date(`${data.businessDate}T12:00:00`);
 
@@ -19,6 +23,7 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
       <Header
         activePage="Dashboard"
         brand="olaso"
+        onOpenSettings={onOpenSettings}
         dateLabel={date.toLocaleDateString('en-GB', {
           weekday: 'long',
           day: 'numeric',

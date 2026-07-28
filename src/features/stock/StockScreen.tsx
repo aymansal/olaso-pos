@@ -21,11 +21,15 @@ import styles from './StockScreen.module.css';
 
 interface StockScreenProps {
   onNavigate?: (page: NavigationPage) => void;
+  onOpenSettings?: () => void;
 }
 
 const PAGE_SIZE = 5;
 
-export function StockScreen({ onNavigate }: StockScreenProps) {
+export function StockScreen({
+  onNavigate,
+  onOpenSettings,
+}: StockScreenProps) {
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>();
   const [search, setSearch] = useState('');
   const [unitGroup, setUnitGroup] = useState<StockUnitGroup>('all');
@@ -91,6 +95,7 @@ export function StockScreen({ onNavigate }: StockScreenProps) {
       <Header
         activePage="Stock"
         brand="olaso"
+        onOpenSettings={onOpenSettings}
         dateLabel={new Intl.DateTimeFormat('en-GB', {
           weekday: 'long',
           day: 'numeric',

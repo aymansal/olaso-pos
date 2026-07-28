@@ -8,7 +8,8 @@ application, global tokens, and the feature screens under `features/`.
 ## Ownership
 
 - `main.tsx` mounts React and applies the pre-built Astryx Olaso theme.
-- `App.tsx` selects the active top-level screen.
+- `App.tsx` selects the active top-level screen and restores the non-secret
+  local terminal-lock state before exposing the application.
 - `data/` owns the application-level Convex provider, feature-facing data
   hooks, local SQLite boundary, operational cache, and outbox.
 - `components/` and `lib/` hold only proven cross-feature UI and formatting
@@ -28,6 +29,8 @@ application, global tokens, and the feature screens under `features/`.
   selectors.
 - Keep persistence, synchronization, reporting queries, and printing outside
   React components.
+- Keep Settings under the shared profile control rather than permanent
+  navigation, and never present the local beta lock as authentication.
 - Do not add a shared-state library while local React state is sufficient.
 
 ## Work Guidance

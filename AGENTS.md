@@ -85,8 +85,8 @@ decision changes.
   printer-protocol logic. Follow `ARCHITECTURE.md` when those layers arrive.
 - The current repository includes a Convex development backend, live product,
   inventory, Orders, Dashboard, and Reports data, a Capacitor Android shell,
-  and local-first SQLite/outbox checkout with idempotent Convex
-  synchronization.
+  profile-owned local Settings and Lock flows, and local-first SQLite/outbox
+  checkout with idempotent Convex synchronization.
   Do not imply that production authentication or ESC/POS behavior already
   exists.
 

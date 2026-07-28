@@ -295,6 +295,13 @@ export async function replaceOperationalCache(
       [String(snapshot.updatedAt), snapshot.updatedAt],
       false,
     );
+    await database.run(
+      `UPDATE sync_state
+       SET last_success_at = ?, last_error = NULL
+       WHERE id = 1`,
+      [Date.now()],
+      false,
+    );
   });
 }
 

@@ -15,12 +15,16 @@ import styles from './ProductsScreen.module.css';
 
 interface ProductsScreenProps {
   onNavigate?: (page: NavigationPage) => void;
+  onOpenSettings?: () => void;
 }
 
 type AvailabilityFilter = 'all' | ManagedProduct['status'];
 type ProductSort = 'updated' | 'name' | 'price';
 
-export function ProductsScreen({ onNavigate }: ProductsScreenProps) {
+export function ProductsScreen({
+  onNavigate,
+  onOpenSettings,
+}: ProductsScreenProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState<string>();
   const [creating, setCreating] = useState(false);
@@ -148,6 +152,7 @@ export function ProductsScreen({ onNavigate }: ProductsScreenProps) {
       <Header
         activePage="Products"
         brand="olaso"
+        onOpenSettings={onOpenSettings}
         dateLabel={new Intl.DateTimeFormat('en-GB', {
           weekday: 'long',
           day: 'numeric',

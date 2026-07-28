@@ -39,6 +39,7 @@ interface PosScreenProps {
   session: PosSession;
   onSessionChange: Dispatch<SetStateAction<PosSession>>;
   onNavigate?: (page: NavigationPage) => void;
+  onOpenSettings?: () => void;
 }
 
 function localServiceType(
@@ -53,6 +54,7 @@ export function PosScreen({
   session,
   onSessionChange,
   onNavigate,
+  onOpenSettings,
 }: PosScreenProps) {
   const { menu, completeOrder, isLoading, error: dataWarning } = usePosData();
   const [configuringProductId, setConfiguringProductId] = useState<string>();
@@ -264,7 +266,11 @@ export function PosScreen({
 
   return (
     <main className={styles.screen} aria-label="Olaso point of sale">
-      <Header activePage="POS" onNavigate={onNavigate} />
+      <Header
+        activePage="POS"
+        onNavigate={onNavigate}
+        onOpenSettings={onOpenSettings}
+      />
       <section className={styles.menu} aria-label="Product menu">
         <SearchField
           value={session.query}

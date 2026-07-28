@@ -207,7 +207,8 @@ Use the authority that owns the decision:
 
 1. `PRODUCT.md` owns product purpose, scope, workflows, and operational behavior.
 2. `ARCHITECTURE.md` owns persistence, synchronization, backend, printing, and release behavior.
-3. Approved Pencil production screen `W26Y6` owns geometry and visual composition.
+3. Approved Pencil production frames own geometry and visual composition: POS
+   `W26Y6`, Settings `bELEf`, and Lock `QfSKg`.
 4. This `DESIGN.md` owns tokens, interaction presentation, and reusable UI contracts.
 5. `BRAND.md` owns confirmed brand assets, personality, and provisional brand facts.
 6. `Olasotheme-theme.ts` implements the tokens after alignment with this document.

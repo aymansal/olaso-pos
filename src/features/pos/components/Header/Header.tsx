@@ -7,11 +7,12 @@ import {
 import styles from './Header.module.css';
 
 interface HeaderProps {
-  activePage: NavigationPage;
+  activePage?: NavigationPage;
   brand?: 'reference' | 'olaso';
   dateLabel?: string;
   dateTime?: string;
   onNavigate?: (page: NavigationPage) => void;
+  onOpenSettings?: () => void;
 }
 
 export function Header({
@@ -20,6 +21,7 @@ export function Header({
   dateLabel = 'Thursday, 23 June',
   dateTime = '2026-06-23',
   onNavigate,
+  onOpenSettings,
 }: HeaderProps) {
   return (
     <header className={styles.header}>
@@ -47,13 +49,18 @@ export function Header({
           <IconButton label="Notifications" icon={<Bell size={18} />} />
           <span className={styles.badge}>1</span>
         </div>
-        <div className={styles.profile}>
+        <button
+          className={styles.profile}
+          type="button"
+          aria-label="Open settings"
+          onClick={onOpenSettings}
+        >
           <span className={styles.avatar}><User size={22} /></span>
           <span className={styles.profileCopy}>
             <strong>Samantha W</strong>
             <small>Cashier</small>
           </span>
-        </div>
+        </button>
       </div>
     </header>
   );

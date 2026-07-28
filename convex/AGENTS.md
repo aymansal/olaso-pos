@@ -13,6 +13,8 @@ data, reporting summaries, and development seeding.
   `products.ts`, `modifiers.ts`, `recipes.ts`, `ingredients.ts`,
   `inventory.ts`, `sales.ts`, and `reports.ts`.
 - `sync.ts` owns the bounded operational snapshot consumed by the tablet cache.
+  An optional validated request ID lets deliberate manual sync bypass a stale
+  client cache without changing the bounded read.
 - `sales.ts` owns the idempotent sale mutation and the bounded, cursor-paginated
   receipt-snapshot history query.
 - `dashboard.ts` owns the one-call saved-summary, current-warning, and
@@ -57,6 +59,8 @@ data, reporting summaries, and development seeding.
   inventory-schema changes.
 - Run `npm run check:sales` after operational snapshot, sale, receipt, stock
   deduction, or POS-authorization changes.
+- Run `npm run check:settings` after changing the manual snapshot request
+  boundary.
 - Run `npm run check:orders` after sale-history pagination or receipt-snapshot
   read changes.
 - Run `npm run check:dashboard` after Dashboard summary, warning, or

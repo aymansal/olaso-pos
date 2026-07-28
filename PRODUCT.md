@@ -124,6 +124,12 @@ The approved shell contains these top-level destinations:
 Settings and staff management may be added under the owner profile instead of
 adding another permanent navigation item.
 
+The functional beta exposes confirmed device and synchronization settings from
+that profile. Its local lock prevents accidental terminal use and survives an
+application restart, but it is not staff authentication. PIN entry, role
+selection, and login enforcement remain unavailable until the owner confirms
+their policy.
+
 ## POS workflow
 
 ### Starting an order

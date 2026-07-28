@@ -73,3 +73,15 @@ export function acknowledgeOutbox(operationId: string) {
     ),
   );
 }
+
+export function makePendingOutboxAvailable() {
+  return withLocalTransaction((database) =>
+    database.run(
+      `UPDATE outbox
+       SET state = 'pending', available_at = 0
+       WHERE state IN ('pending', 'failed')`,
+      [],
+      false,
+    ),
+  );
+}

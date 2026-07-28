@@ -13,6 +13,7 @@ import {
 
 let connectionPromise: Promise<SQLiteDBConnection> | undefined;
 let sqliteConnection: SQLiteConnection | undefined;
+let transactionTail: Promise<void> = Promise.resolve();
 
 async function initializeWebStore(sqlite: SQLiteConnection) {
   if (Capacitor.getPlatform() !== 'web') return;
@@ -64,22 +65,33 @@ export function openLocalDatabase() {
   return connectionPromise;
 }
 
-export async function withLocalTransaction<T>(
+export function withLocalTransaction<T>(
   operation: (database: SQLiteDBConnection) => Promise<T>,
 ) {
-  const database = await openLocalDatabase();
-  await database.beginTransaction();
-  try {
-    const result = await operation(database);
-    await database.commitTransaction();
-    await persistLocalDatabase();
-    return result;
-  } catch (error) {
-    if ((await database.isTransactionActive()).result) {
-      await database.rollbackTransaction();
+  return serializeLocalTransaction(async () => {
+    const database = await openLocalDatabase();
+    await database.beginTransaction();
+    try {
+      const result = await operation(database);
+      await database.commitTransaction();
+      await persistLocalDatabase();
+      return result;
+    } catch (error) {
+      if ((await database.isTransactionActive()).result) {
+        await database.rollbackTransaction();
+      }
+      throw error;
     }
-    throw error;
-  }
+  });
+}
+
+export function serializeLocalTransaction<T>(operation: () => Promise<T>) {
+  const transaction = transactionTail.then(operation);
+  transactionTail = transaction.then(
+    () => undefined,
+    () => undefined,
+  );
+  return transaction;
 }
 
 export async function persistLocalDatabase() {

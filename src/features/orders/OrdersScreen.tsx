@@ -8,9 +8,13 @@ import styles from './OrdersScreen.module.css';
 
 interface OrdersScreenProps {
   onNavigate?: (page: NavigationPage) => void;
+  onOpenSettings?: () => void;
 }
 
-export function OrdersScreen({ onNavigate }: OrdersScreenProps) {
+export function OrdersScreen({
+  onNavigate,
+  onOpenSettings,
+}: OrdersScreenProps) {
   const data = useOrdersData();
   const [selectedKey, setSelectedKey] = useState<string>();
   const selectedOrder = data.orders.find((order) => order.key === selectedKey);
@@ -27,6 +31,7 @@ export function OrdersScreen({ onNavigate }: OrdersScreenProps) {
       <Header
         activePage="Orders"
         brand="olaso"
+        onOpenSettings={onOpenSettings}
         dateLabel={now.toLocaleDateString('en-GB', {
           weekday: 'long',
           day: 'numeric',
