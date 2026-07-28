@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-02 done; APP-03 pending
+**Status:** in progress — APP-03 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -84,7 +84,7 @@ hardware are available.
 | APP-00 | Establish the verified Goal 01 Git baseline and goal branch | done | `npm run check:pos` and `npm run build` passed; baseline commit `cade8a913cafebb91f571903820b8253236b841e` pushed to `origin/codex/goal-02-functional-app` |
 | APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | done | Dev deployment `colorful-newt-937` connected; schema/codegen/checks/browser smoke pass; commit `5189a4eb6a52f363313b650be076a116864ff153` pushed to `origin/codex/goal-02-functional-app` |
 | APP-02 | Add protected deterministic Convex development seed/reset data | done | Two resets and relationship checks passed; implementation commit `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` pushed to `origin/codex/goal-02-functional-app` |
-| APP-03 | Make categories, products, modifiers, and recipe management functional | pending | Validated CRUD/archive/version flows and live Products UI; commit pushed |
+| APP-03 | Make categories, products, modifiers, and recipe management functional | in progress | Validated CRUD/archive/version flows and live Products UI; commit pushed |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | pending | Exact base-unit operations and live Stock UI verified; commit pushed |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | pending | Restart-safe local data checks and Android sync pass; commit pushed |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | pending | Atomic/offline/retry/duplicate tests pass; POS checkout works; commit pushed |
@@ -260,8 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-02 are done; no card is currently in progress and APP-03
-  is pending.
+- APP-00 through APP-02 are done; APP-03 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -274,10 +273,28 @@ hardware are available.
 - APP-02 implementation commit
   `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-03's category, product, modifier, and recipe functions are deployed with
+  bounded reads, runtime validation, role-gated management access, revision
+  checks, retry identifiers, archive/restore behavior, and immutable recipe
+  versioning. The CLI-driven integration check passes and restores the
+  deterministic seed.
+- The Products fixtures are removed. One application data hook now maps Convex
+  records into plain feature types, while the existing catalog, editor, list,
+  sidebar, modifier, and recipe components remain prop-driven. TypeScript and
+  whitespace checks pass.
+- Browser verification exercised search/filter/sort, category
+  create/rename/archive/restore, product create/edit, modifier save, and recipe
+  version creation against the development deployment. The seed was restored,
+  and the clean 1340 × 800 pass has no clipping, overflow, console warnings, or
+  console errors.
+- Product, source, feature, Convex, and root DOX now describe the live boundary.
+  Graphify is refreshed to 739 nodes and 992 edges. Convex codegen/deployment,
+  management integration, seed verification, POS checks, TypeScript, production
+  build, and diff checks all pass.
 
-**Exact next action:** Start APP-03 by re-reading the ledger and applicable DOX,
-querying the refreshed Graphify graph, and implementing its product, modifier,
-and recipe-management contract without starting another card.
+**Exact next action:** Stage only the APP-03 card files, commit with the card
+ID, and push the goal branch before recording its SHA and marking the card
+done.
 
 ## Decisions and Blockers
 
@@ -299,6 +316,78 @@ and recipe-management contract without starting another card.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-03 started
+
+- Re-read the applicable root, source, feature, Products, and Convex DOX chains
+  plus the complete durable ledger.
+- Queried the refreshed Graphify graph first for the current Products component
+  tree, fixture boundary, app data provider, and Convex product-management
+  schema.
+- Confirmed APP-00 through APP-02 are done and marked APP-03 as the only card
+  in progress.
+- Confirmed the existing Products workspace is entirely fixture-driven while
+  its component and CSS boundaries already match the approved geometry.
+- Chose the documented fail-closed management boundary: authenticated
+  `owner`/`manager` claims are required outside the dedicated development
+  deployment; a deployment-scoped non-secret development override will keep
+  the current beta testable without claiming production authentication.
+- Management mutations will combine revision checks with client mutation IDs
+  for stale-write rejection and retry safety; recipe saves will create and
+  activate a new immutable version in one mutation.
+- Added `categories.ts`, `products.ts`, `modifiers.ts`, `recipes.ts`, and the
+  shared management guard/validation helper. Schema metadata now records the
+  responsible actor and retry identifier without making existing seeded rows
+  invalid.
+- Added `npm run check:management`, which exercises create/retry/update,
+  archive/restore, batched modifier options, two recipe versions, immutable
+  supersession, and stale revision behavior against the dedicated deployment,
+  then reseeds it.
+- `npm run check:convex`, `npx convex dev --once --typecheck enable`,
+  `npm run check:management`, and `npm run check:seed` pass.
+- Temporarily disabled the development management override and confirmed an
+  unauthenticated public query is rejected; restored the flag only on
+  `colorful-newt-937`.
+- Added one application-level product-management hook and replaced the Products
+  fixtures with live categories, products, modifier groups/options, ingredients,
+  and immutable recipe data.
+- Connected search, availability and sort controls, category selection and
+  lifecycle actions, product create/edit/status actions, batched modifier
+  editing, and recipe version creation while retaining prop-driven child
+  components and their existing CSS-module boundaries.
+- Prevented query or parent rerenders from resetting in-progress product,
+  modifier, and recipe drafts. `npx tsc -b` and `git diff --check` pass.
+- Browser verification at 1340 × 800 exercised search/filter/sort, product
+  create/edit and save feedback, modifier save, recipe version creation, and
+  category create/rename/archive/restore.
+- Replaced the unsupported native category prompt with a compact accessible
+  in-app editor, kept reversible category lifecycle actions explicit, and
+  corrected the modifier dialog so its footer is never clipped at tablet
+  height.
+- Ran the protected reset after the UI mutations. `npm run check:seed` confirms
+  the original 4 categories, 15 products, 4 modifier groups, 15 recipe
+  versions, and all representative relationships are restored.
+- The final clean-tab layout is exactly 1340 × 800; body, app, catalog, and
+  editor have no clipping or overflow, and the console has no warnings or
+  errors.
+- Updated the applicable root, Convex, source, feature, and Products DOX for
+  the deployed management backend, application hook, plain feature types, and
+  prop-driven component contracts.
+- Refreshed Graphify to 739 nodes and 992 edges and confirmed the graph includes
+  the management guard, product-management hook, category dialog, and editor
+  flow.
+- Final verification passes: `npm run check:convex`, `npx convex dev --once
+  --typecheck enable`, `npm run check:management`, `npm run check:seed`, `npm
+  run check:pos`, `npx tsc -b`, `npm run build`, and `git diff --check`.
+- Corrected the final selection edge case found in diff review: empty categories
+  clear unrelated product selection, and a new product defaults to the selected
+  active category.
+- Closeout review found no unbounded Convex collection/database filter, tracked
+  secret-like file, machine-local Graphify path, committed environment file,
+  deployment credential, signing material, or printer implementation. The
+  complete applicable DOX chain was re-read and its indexes remain correct.
+- Exact next action: stage only APP-03 files, commit with the card ID, and push
+  before recording the SHA.
 
 ### 2026-07-28 — APP-02 complete
 

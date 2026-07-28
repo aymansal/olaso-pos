@@ -1,0 +1,155 @@
+.overlay {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(28 33 27 / 38%);
+}
+
+.dialog {
+  width: 680px;
+  max-height: 650px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.dialog header,
+.dialog header > span,
+.item label,
+.dialog footer {
+  display: flex;
+}
+
+.dialog header,
+.dialog footer {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog header > span,
+.item label {
+  flex-direction: column;
+}
+
+.dialog header small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dialog h2 {
+  margin: 3px 0 0;
+  color: var(--olaso-text);
+  font-size: 18px;
+}
+
+.dialog header button,
+.item > button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.version {
+  margin: 18px 0 12px;
+  color: var(--olaso-copy);
+  font-size: 10px;
+}
+
+.items {
+  max-height: 390px;
+  overflow-y: auto;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr 170px 44px;
+  align-items: end;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--olaso-line-soft);
+}
+
+.item label {
+  position: relative;
+  gap: 6px;
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.item select,
+.item input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font: inherit;
+}
+
+.quantity small {
+  position: absolute;
+  right: 14px;
+  bottom: 15px;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 0 14px;
+  border: 1px solid var(--olaso-category-border);
+  border-radius: 20px;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.add:disabled,
+.save:disabled {
+  opacity: 0.45;
+}
+
+.error {
+  margin: 10px 0 0;
+  color: var(--olaso-danger);
+  font-size: 9px;
+}
+
+.dialog footer {
+  margin-top: 18px;
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+}
+
+.save {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  gap: 8px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 22px;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+  font-size: 9px;
+  font-weight: 700;
+}

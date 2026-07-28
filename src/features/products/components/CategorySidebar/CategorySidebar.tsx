@@ -6,43 +6,79 @@ import {
   Snowflake,
   SquaresFour,
 } from '@phosphor-icons/react';
-import { productCategories } from '../../data/productsData';
+import type { ManagedCategory } from '../../productManagementTypes';
 import styles from './CategorySidebar.module.css';
 
-const icons = {
-  all: SquaresFour,
-  coffee: Coffee,
-  leaf: Leaf,
-  package: Package,
-  snowflake: Snowflake,
-};
+interface CategorySidebarProps {
+  categories: ManagedCategory[];
+  selectedCategoryId: string;
+  totalProducts: number;
+  onSelect: (categoryId: string) => void;
+  onAdd: () => void;
+}
 
-export function CategorySidebar() {
+function iconForCategory(key: string) {
+  if (key.includes('coffee')) return Coffee;
+  if (key.includes('matcha') || key.includes('tea')) return Leaf;
+  if (key.includes('cold') || key.includes('sweet')) return Snowflake;
+  if (key.includes('bakery') || key.includes('savoury')) return Package;
+  return SquaresFour;
+}
+
+export function CategorySidebar({
+  categories,
+  selectedCategoryId,
+  totalProducts,
+  onSelect,
+  onAdd,
+}: CategorySidebarProps) {
+  const rows = [
+    {
+      id: 'all',
+      key: 'all',
+      name: 'All products',
+      count: totalProducts,
+      status: 'active' as const,
+    },
+    ...categories.map((category) => ({
+      id: category.id,
+      key: category.key,
+      name: category.name,
+      count: category.productCount,
+      status: category.status,
+    })),
+  ];
+
   return (
     <aside className={styles.sidebar} aria-label="Product categories">
       <h2>Categories</h2>
-      <p>Four menu groups</p>
+      <p>{categories.filter((category) => category.status === 'active').length} menu groups</p>
       <div className={styles.categories}>
-        {productCategories.map((category) => {
-          const Icon = icons[category.icon];
+        {rows.map((category) => {
+          const Icon = iconForCategory(category.key);
+          const active = category.id === selectedCategoryId;
 
           return (
             <button
               type="button"
-              className={category.active ? styles.categoryActive : styles.category}
-              aria-pressed={category.active ?? false}
-              key={category.name}
+              className={active ? styles.categoryActive : styles.category}
+              aria-pressed={active}
+              onClick={() => onSelect(category.id)}
+              key={category.id}
             >
               <Icon size={15} weight="regular" aria-hidden="true" />
               <span>
                 <strong>{category.name}</strong>
-                <small>{category.count}</small>
+                <small>
+                  {category.count} product{category.count === 1 ? '' : 's'}
+                  {category.status === 'archived' ? ' · Archived' : ''}
+                </small>
               </span>
             </button>
           );
         })}
       </div>
-      <button type="button" className={styles.addCategory}>
+      <button type="button" className={styles.addCategory} onClick={onAdd}>
         <Plus size={13} weight="regular" aria-hidden="true" />
         <span>Add category</span>
       </button>

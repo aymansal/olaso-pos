@@ -2,25 +2,33 @@
 
 ## Purpose
 
-Provides owner-facing category browsing, product selection, and product/recipe
-editing presentation.
+Provides owner-facing live category, product, modifier, and recipe management.
 
 ## Ownership
 
-- `ProductsScreen.tsx` composes catalog and editor panels.
+- `ProductsScreen.tsx` owns live workspace state and composes the catalog,
+  editor, and category dialog.
 - `ProductCatalogPanel`, `CategorySidebar`, and `ProductList` own catalog
   browsing.
-- `ProductEditorPanel` owns the selected product form and recipe presentation.
-- `data/productsData.ts` owns current static product fixtures.
+- `ProductEditorPanel` owns product editing and opens the modifier and recipe
+  dialogs.
+- `productManagementTypes.ts` owns the plain feature contracts passed to child
+  components.
+- `src/data/useProductManagement.ts` is the application data boundary that maps
+  Convex results and exposes deliberate feature actions.
 
 ## Local Contracts
 
 - Keep category, product, availability, price, and recipe presentation in one
   coherent editing workspace.
-- Controls are visual fixtures until validated CRUD operations exist.
-- Recipe editing must eventually create versions; never overwrite historical
+- Keep leaf components prop-driven; only the application data hook imports
+  Convex.
+- Category, product, modifier, and recipe writes use the validated domain
+  actions and surface backend failures without optimistic false claims.
+- Every recipe save creates a new immutable version; never overwrite historical
   recipe meaning.
-- Product records are editable data, not hardcoded permanent categories.
+- Archive and restore records that history may reference; do not expose
+  destructive deletion.
 
 ## Work Guidance
 
@@ -29,6 +37,8 @@ editing presentation.
 - Keep list selection and editor content synchronized through the screen/panel
   boundary.
 - Do not add database mutations directly to form components.
+- Keep dialogs inside the tablet viewport, with bounded internal scrolling when
+  option or recipe rows exceed the available height.
 
 ## Verification
 

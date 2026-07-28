@@ -110,6 +110,17 @@
   font-weight: 600;
 }
 
+.filter select,
+.sort select {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--olaso-text);
+  background: transparent;
+  font: inherit;
+}
+
 .filter {
   width: 190px;
 }
@@ -121,9 +132,4 @@
 .filter svg:first-child,
 .sort svg:first-child {
   color: var(--olaso-green);
-}
-
-.filter svg:last-child,
-.sort svg:last-child {
-  color: var(--olaso-copy);
 }

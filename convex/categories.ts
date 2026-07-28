@@ -1,0 +1,122 @@
+import { v } from 'convex/values';
+import { mutation, query } from './_generated/server';
+import {
+  boundedInteger,
+  cleanKey,
+  cleanText,
+  conflict,
+  expectRevision,
+  mutationId,
+  notFound,
+  requireManagement,
+} from './lib/management';
+
+const MAX_CATEGORIES = 50;
+
+export const list = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireManagement(ctx);
+    const categories = await ctx.db
+      .query('categories')
+      .withIndex('by_updated_at')
+      .take(MAX_CATEGORIES + 1);
+    if (categories.length > MAX_CATEGORIES) {
+      throw new Error(`Category limit of ${MAX_CATEGORIES} exceeded.`);
+    }
+    return categories.sort(
+      (left, right) =>
+        left.sortOrder - right.sortOrder || left.name.localeCompare(right.name),
+    );
+  },
+});
+
+export const save = mutation({
+  args: {
+    id: v.optional(v.id('categories')),
+    key: v.optional(v.string()),
+    name: v.string(),
+    sortOrder: v.number(),
+    expectedRevision: v.optional(v.number()),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const updatedBy = await requireManagement(ctx);
+    const clientMutationId = mutationId(args.clientMutationId);
+    const name = cleanText(args.name, 'Category name', 80);
+    const sortOrder = boundedInteger(args.sortOrder, 'Sort order', 0, 10_000);
+    const updatedAt = Date.now();
+
+    if (args.id) {
+      const category = await ctx.db.get(args.id);
+      if (!category) return notFound('Category');
+      if (category.lastMutationId === clientMutationId) {
+        return { id: category._id, revision: category.revision, created: false };
+      }
+      expectRevision(args.expectedRevision, category.revision);
+      await ctx.db.patch(category._id, {
+        name,
+        sortOrder,
+        revision: category.revision + 1,
+        updatedAt,
+        updatedBy,
+        lastMutationId: clientMutationId,
+      });
+      return {
+        id: category._id,
+        revision: category.revision + 1,
+        created: false,
+      };
+    }
+
+    const key = cleanKey(args.key, 'Category key');
+    const existing = await ctx.db
+      .query('categories')
+      .withIndex('by_key', (index) => index.eq('key', key))
+      .unique();
+    if (existing) {
+      if (existing.lastMutationId === clientMutationId) {
+        return { id: existing._id, revision: existing.revision, created: false };
+      }
+      return conflict('A category with this key already exists.');
+    }
+    const id = await ctx.db.insert('categories', {
+      key,
+      name,
+      sortOrder,
+      status: 'active',
+      revision: 1,
+      updatedAt,
+      updatedBy,
+      lastMutationId: clientMutationId,
+    });
+    return { id, revision: 1, created: true };
+  },
+});
+
+export const setArchived = mutation({
+  args: {
+    id: v.id('categories'),
+    archived: v.boolean(),
+    expectedRevision: v.number(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const updatedBy = await requireManagement(ctx);
+    const clientMutationId = mutationId(args.clientMutationId);
+    const category = await ctx.db.get(args.id);
+    if (!category) return notFound('Category');
+    if (category.lastMutationId === clientMutationId) {
+      return { id: category._id, revision: category.revision };
+    }
+    expectRevision(args.expectedRevision, category.revision);
+    await ctx.db.patch(category._id, {
+      status: args.archived ? 'archived' : 'active',
+      revision: category.revision + 1,
+      updatedAt: Date.now(),
+      updatedBy,
+      lastMutationId: clientMutationId,
+    });
+    return { id: category._id, revision: category.revision + 1 };
+  },
+});

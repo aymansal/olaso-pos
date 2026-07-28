@@ -85,6 +85,15 @@
   background: var(--olaso-success);
 }
 
+.inactiveStatus {
+  color: var(--olaso-danger-ink);
+  background: var(--olaso-danger-soft);
+}
+
+.inactiveStatus > span {
+  background: var(--olaso-danger);
+}
+
 .headerActions button {
   display: grid;
   place-items: center;
@@ -95,6 +104,10 @@
   border-radius: 50%;
   color: var(--olaso-muted);
   background: transparent;
+}
+
+.headerActions button:disabled {
+  opacity: 0.4;
 }
 
 .identity {
@@ -175,6 +188,7 @@
 
 .field input,
 .field button,
+.field select,
 .priceInput {
   display: flex;
   align-items: center;
@@ -186,6 +200,10 @@
   background: transparent;
   font-size: 9px;
   font-weight: 600;
+}
+
+.field select {
+  appearance: auto;
 }
 
 .nameField {
@@ -219,6 +237,18 @@
   gap: 7px;
 }
 
+.priceInput input {
+  width: 58px;
+  min-width: 0;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+}
+
 .priceInput small {
   color: var(--olaso-copy);
   font-size: 8px;
@@ -230,14 +260,9 @@
   left: 134px;
 }
 
-.categoryField button {
-  justify-content: space-between;
+.categoryField select {
   width: 176px;
   color: var(--olaso-text);
-}
-
-.categoryField svg {
-  color: var(--olaso-copy);
 }
 
 .availabilityField {
@@ -277,6 +302,14 @@
   background: var(--olaso-white);
 }
 
+.availabilityOff > span {
+  background: var(--olaso-control-border);
+}
+
+.availabilityOff > span > span {
+  left: 3px;
+}
+
 .infoDivider { top: 344px; }
 
 .optionsHeader {
@@ -294,10 +327,18 @@
   font-size: 11px;
 }
 
-.optionsHeader small {
-  color: var(--olaso-copy);
+.optionsHeader button {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid var(--olaso-category-border);
+  border-radius: 14px;
+  color: var(--olaso-green);
+  background: transparent;
   font-size: 8px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .options {
@@ -317,6 +358,13 @@
   border-radius: 14px;
   color: var(--olaso-green);
   background: var(--olaso-table-head);
+  border: 1px solid transparent;
+  text-align: left;
+}
+
+.optionSelected {
+  border-color: var(--olaso-green);
+  background: var(--olaso-green-icon);
 }
 
 .option > span {
@@ -354,6 +402,10 @@
   height: 6px;
   border-radius: 50%;
   background: var(--olaso-recipe-dot);
+}
+
+.recipeHeader > span > .recipeDotLinked {
+  background: var(--olaso-success);
 }
 
 .recipeHeader small {
@@ -412,6 +464,22 @@
   font-weight: 700;
 }
 
+.recipeEmpty button:disabled {
+  opacity: 0.42;
+}
+
+.notice {
+  position: absolute;
+  top: 586px;
+  left: 22px;
+  width: 396px;
+  margin: 0;
+  color: var(--olaso-green);
+  text-align: center;
+  font-size: 8px;
+  font-weight: 600;
+}
+
 .save {
   position: absolute;
   top: 620px;
@@ -426,4 +494,32 @@
   background: var(--olaso-green);
   font-size: 9px;
   font-weight: 700;
+}
+
+.save:disabled {
+  opacity: 0.45;
+}
+
+.empty {
+  position: absolute;
+  top: 255px;
+  left: 60px;
+  width: 320px;
+  color: var(--olaso-text-meta);
+  text-align: center;
+}
+
+.empty svg {
+  color: var(--olaso-green);
+}
+
+.empty h2 {
+  margin: 12px 0 5px;
+  color: var(--olaso-text);
+  font-size: 16px;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 9px;
 }

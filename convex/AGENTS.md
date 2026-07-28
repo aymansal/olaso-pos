@@ -17,6 +17,9 @@ data, reporting summaries, and development seeding.
 ## Local Contracts
 
 - Public functions validate every argument and authorization boundary.
+- Public management functions require an `owner` or `manager` identity claim;
+  the unauthenticated override is allowed only as an explicit deployment
+  setting on the dedicated development deployment.
 - Use indexed, bounded reads; sales, sale items, stock movements, and reports
   are never read with an unbounded `.collect()`.
 - Store money as integer centimes and stock in integer ingredient base units.
@@ -31,6 +34,8 @@ data, reporting summaries, and development seeding.
 ## Verification
 
 - Run `npm run check:convex`.
+- Run `npm run check:management` after category, product, modifier, recipe, or
+  management-authorization changes.
 - Run `npx convex dev --once` when schema or deployed functions change.
 - Review every new index against an implemented access path.
 

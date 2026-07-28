@@ -2,8 +2,8 @@
 
 ## Purpose
 
-Owns the six top-level application screens and their local components, fixture
-data, and CSS Modules.
+Owns the six top-level application screens and their local components,
+temporary fixture data where still required, and CSS Modules.
 
 ## Ownership
 
@@ -21,8 +21,8 @@ screen.
 
 - Screens receive `onNavigate` and identify their active `NavigationPage`.
 - A screen module places regions; child modules style child internals.
-- Keep static screen data in the feature's `data/` folder instead of embedding
-  large arrays in JSX.
+- Keep any remaining static screen data in the feature's `data/` folder instead
+  of embedding large arrays in JSX.
 - Components receive plain data and callbacks through props.
 - Do not import another feature's private components. The current shared
   Header/TopNavigation import from POS is the only established exception.
@@ -34,8 +34,8 @@ screen.
   identical new component.
 - Create a component file only for a reusable, independently interactive, or
   clearly named screen region.
-- Keep fixture data visibly temporary; product and operational records will
-  move behind the data layer defined in `ARCHITECTURE.md`.
+- Keep fixture data visibly temporary; operational records move behind the data
+  layer defined in `ARCHITECTURE.md` one feature at a time.
 
 ## Verification
 

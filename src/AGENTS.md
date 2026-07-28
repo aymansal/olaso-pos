@@ -9,12 +9,12 @@ application, global tokens, and the feature screens under `features/`.
 
 - `main.tsx` mounts React and applies the pre-built Astryx Olaso theme.
 - `App.tsx` selects the active top-level screen.
-- `data/` owns the application-level Convex provider boundary and later local
-  persistence and synchronization operations.
+- `data/` owns the application-level Convex provider, feature-facing data
+  hooks, and later local persistence and synchronization operations.
 - `globals.css` owns only font/reset imports, semantic root variables, body
   defaults, and the full-viewport baseline.
-- `features/` owns screen-specific composition, data fixtures, components, and
-  styles.
+- `features/` owns screen-specific composition, temporary fixtures where still
+  required, components, plain feature types, and styles.
 
 ## Local Contracts
 

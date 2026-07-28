@@ -57,6 +57,8 @@ export default defineSchema({
     status: activeStatus,
     revision: v.number(),
     updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
   })
     .index('by_key', ['key'])
     .index('by_status_sort_order', ['status', 'sortOrder'])
@@ -75,6 +77,8 @@ export default defineSchema({
     currentRecipeVersionId: v.optional(v.id('recipeVersions')),
     revision: v.number(),
     updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
   })
     .index('by_key', ['key'])
     .index('by_category_status_sort_order', [
@@ -94,6 +98,8 @@ export default defineSchema({
     sortOrder: v.number(),
     revision: v.number(),
     updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
   })
     .index('by_key', ['key'])
     .index('by_status_sort_order', ['status', 'sortOrder'])
@@ -114,6 +120,7 @@ export default defineSchema({
     sortOrder: v.number(),
     revision: v.number(),
     updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
   })
     .index('by_group_key', ['groupId', 'key'])
     .index('by_group_status_sort_order', ['groupId', 'status', 'sortOrder'])
@@ -140,14 +147,20 @@ export default defineSchema({
     status: recipeStatus,
     activationAt: v.optional(v.number()),
     firstUsedAt: v.optional(v.number()),
+    clientMutationId: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
   })
     .index('by_product_version', ['productId', 'versionNumber'])
     .index('by_product_status_activation', [
       'productId',
       'status',
       'activationAt',
+    ])
+    .index('by_product_client_mutation', [
+      'productId',
+      'clientMutationId',
     ])
     .index('by_updated_at', ['updatedAt']),
 

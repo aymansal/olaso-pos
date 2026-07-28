@@ -8,6 +8,11 @@
  * @module
  */
 
+import type * as categories from "../categories.js";
+import type * as lib_management from "../lib/management.js";
+import type * as modifiers from "../modifiers.js";
+import type * as products from "../products.js";
+import type * as recipes from "../recipes.js";
 import type * as seed from "../seed.js";
 
 import type {
@@ -17,6 +22,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  categories: typeof categories;
+  "lib/management": typeof lib_management;
+  modifiers: typeof modifiers;
+  products: typeof products;
+  recipes: typeof recipes;
   seed: typeof seed;
 }>;
 

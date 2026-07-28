@@ -1,15 +1,65 @@
 import {
   ArrowsDownUp,
-  CaretDown,
   CheckCircle,
   MagnifyingGlass,
   Plus,
 } from '@phosphor-icons/react';
+import type {
+  ManagedCategory,
+  ManagedProduct,
+} from '../../productManagementTypes';
 import { CategorySidebar } from '../CategorySidebar/CategorySidebar';
 import { ProductList } from '../ProductList/ProductList';
 import styles from './ProductCatalogPanel.module.css';
 
-export function ProductCatalogPanel() {
+type AvailabilityFilter = 'all' | ManagedProduct['status'];
+type ProductSort = 'updated' | 'name' | 'price';
+
+interface ProductCatalogPanelProps {
+  categories: ManagedCategory[];
+  products: ManagedProduct[];
+  selectedCategoryId: string;
+  selectedProductId?: string;
+  search: string;
+  availability: AvailabilityFilter;
+  sort: ProductSort;
+  isLoading: boolean;
+  error?: string;
+  onSearchChange: (value: string) => void;
+  onAvailabilityChange: (value: AvailabilityFilter) => void;
+  onSortChange: (value: ProductSort) => void;
+  onSelectCategory: (categoryId: string) => void;
+  onSelectProduct: (productId: string) => void;
+  onAddCategory: () => void;
+  onRenameCategory: () => void;
+  onSetCategoryArchived: () => void;
+  onAddProduct: () => void;
+}
+
+export function ProductCatalogPanel({
+  categories,
+  products,
+  selectedCategoryId,
+  selectedProductId,
+  search,
+  availability,
+  sort,
+  isLoading,
+  error,
+  onSearchChange,
+  onAvailabilityChange,
+  onSortChange,
+  onSelectCategory,
+  onSelectProduct,
+  onAddCategory,
+  onRenameCategory,
+  onSetCategoryArchived,
+  onAddProduct,
+}: ProductCatalogPanelProps) {
+  const selectedCategory = categories.find(
+    (category) => category.id === selectedCategoryId,
+  );
+
   return (
     <section className={styles.panel} aria-labelledby="products-title">
       <header className={styles.header}>
@@ -17,7 +67,11 @@ export function ProductCatalogPanel() {
           <h1 id="products-title">Products</h1>
           <small>Manage the menu, pricing and availability</small>
         </span>
-        <button type="button" className={styles.addProduct}>
+        <button
+          type="button"
+          className={styles.addProduct}
+          onClick={onAddProduct}
+        >
           <Plus size={15} weight="regular" aria-hidden="true" />
           <span>Add product</span>
         </button>
@@ -26,22 +80,65 @@ export function ProductCatalogPanel() {
       <div className={styles.toolbar}>
         <label className={styles.search}>
           <MagnifyingGlass size={16} weight="regular" aria-hidden="true" />
-          <input aria-label="Search products" placeholder="Search product" />
+          <input
+            aria-label="Search products"
+            placeholder="Search product"
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+          />
         </label>
-        <button type="button" className={styles.filter}>
+        <label className={styles.filter}>
           <CheckCircle size={15} weight="regular" aria-hidden="true" />
-          <span>All availability</span>
-          <CaretDown size={13} weight="regular" aria-hidden="true" />
-        </button>
-        <button type="button" className={styles.sort}>
+          <select
+            aria-label="Filter availability"
+            value={availability}
+            onChange={(event) =>
+              onAvailabilityChange(event.target.value as AvailabilityFilter)
+            }
+          >
+            <option value="all">All availability</option>
+            <option value="active">Available</option>
+            <option value="unavailable">Unavailable</option>
+            <option value="archived">Archived</option>
+          </select>
+        </label>
+        <label className={styles.sort}>
           <ArrowsDownUp size={15} weight="regular" aria-hidden="true" />
-          <span>Recently updated</span>
-          <CaretDown size={13} weight="regular" aria-hidden="true" />
-        </button>
+          <select
+            aria-label="Sort products"
+            value={sort}
+            onChange={(event) =>
+              onSortChange(event.target.value as ProductSort)
+            }
+          >
+            <option value="updated">Recently updated</option>
+            <option value="name">Product name</option>
+            <option value="price">Price</option>
+          </select>
+        </label>
       </div>
 
-      <CategorySidebar />
-      <ProductList />
+      <CategorySidebar
+        categories={categories}
+        selectedCategoryId={selectedCategoryId}
+        totalProducts={categories.reduce(
+          (total, category) => total + category.productCount,
+          0,
+        )}
+        onSelect={onSelectCategory}
+        onAdd={onAddCategory}
+      />
+      <ProductList
+        category={selectedCategory}
+        categoryName={selectedCategory?.name ?? 'All products'}
+        products={products}
+        selectedProductId={selectedProductId}
+        isLoading={isLoading}
+        error={error}
+        onSelect={onSelectProduct}
+        onRenameCategory={onRenameCategory}
+        onSetCategoryArchived={onSetCategoryArchived}
+      />
     </section>
   );
 }
