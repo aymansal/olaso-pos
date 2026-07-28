@@ -10,7 +10,8 @@ recent orders.
 - `DashboardScreen.tsx` composes the page and shared Header.
 - `SalesPulse`, `StockAttentionPanel`, and `RecentOrdersPanel` own the three
   dashboard regions.
-- `data/dashboardData.ts` owns current static dashboard fixtures.
+- `useDashboardData` supplies one bounded saved-summary snapshot through the
+  application data boundary.
 
 ## Local Contracts
 
@@ -18,7 +19,10 @@ recent orders.
   Reports.
 - Preserve the approved dashboard frame in `untitled.pen` and the shared
   navigation geometry.
-- Dashboard data is presentation-only until the reporting/data layer exists.
+- Child regions stay prop-driven and render loading, empty, error, and live
+  states without importing Convex.
+- `View all` opens Orders; detailed stock and reporting work remains in its
+  owning screen.
 
 ## Work Guidance
 
@@ -29,6 +33,8 @@ recent orders.
 ## Verification
 
 - Run `npm run build`.
+- Run `npm run check:dashboard` after summary, warning, recent-order, or
+  Dashboard data-boundary changes.
 - Inspect Dashboard at 1340 × 800, including metric alignment, charts, stock
   rows, and recent orders.
 

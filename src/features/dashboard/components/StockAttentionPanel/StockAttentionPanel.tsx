@@ -5,7 +5,8 @@ import {
   Package,
   Warning,
 } from '@phosphor-icons/react';
-import { stockItems } from '../../data/dashboardData';
+import type { DashboardSnapshot } from '../../../../data/useDashboardData';
+import { formatStockQuantity } from '../../../../lib/stock';
 import styles from './StockAttentionPanel.module.css';
 
 const icons = {
@@ -15,7 +16,35 @@ const icons = {
   package: Package,
 };
 
-export function StockAttentionPanel() {
+function warningPresentation(
+  warning: DashboardSnapshot['warnings'][number],
+) {
+  const icon = warning.key.includes('matcha')
+    || warning.key.includes('tea')
+    || warning.key.includes('hojicha')
+    ? 'leaf'
+    : warning.key.includes('syrup')
+      ? 'flask'
+      : warning.baseUnit === 'millilitre'
+        ? 'drop'
+        : 'package';
+  if (warning.currentStockQuantity <= 0) {
+    return { icon, status: 'Out', tone: 'danger' } as const;
+  }
+  return warning.currentStockQuantity * 2 <= warning.lowStockThreshold
+    ? { icon, status: 'Critical', tone: 'danger' } as const
+    : { icon, status: 'Low', tone: 'gold' } as const;
+}
+
+export function StockAttentionPanel({
+  warnings,
+  isLoading,
+  error,
+}: {
+  warnings: DashboardSnapshot['warnings'];
+  isLoading: boolean;
+  error: string;
+}) {
   return (
     <section className={styles.panel} aria-labelledby="stock-attention-title">
       <header className={styles.header}>
@@ -25,27 +54,43 @@ export function StockAttentionPanel() {
         </span>
         <span className={styles.warning}>
           <Warning size={14} weight="regular" aria-hidden="true" />
-          <strong>4 items</strong>
+          <strong>
+            {isLoading ? 'Loading' : error ? 'Unavailable' : `${warnings.length} items`}
+          </strong>
         </span>
       </header>
 
       <div className={styles.list}>
-        {stockItems.map((item, index) => {
-          const Icon = icons[item.icon];
+        {error || isLoading || warnings.length === 0 ? (
+          <p className={styles.state} role={error ? 'alert' : 'status'}>
+            {error
+              ? 'Stock warnings are unavailable.'
+              : isLoading
+                ? 'Loading current stock…'
+                : 'All active ingredients are above their thresholds.'}
+          </p>
+        ) : warnings.map((warning, index) => {
+          const presentation = warningPresentation(warning);
+          const Icon = icons[presentation.icon];
 
           return (
-            <article className={styles.row} key={item.name}>
-              <span className={`${styles.icon} ${styles[item.tone]}`}>
+            <article className={styles.row} key={warning.id}>
+              <span className={`${styles.icon} ${styles[presentation.tone]}`}>
                 <Icon size={16} weight="regular" aria-hidden="true" />
               </span>
               <span className={styles.copy}>
-                <strong>{item.name}</strong>
-                <small>{item.remaining}</small>
+                <strong>{warning.name}</strong>
+                <small>
+                  {formatStockQuantity(
+                    warning.currentStockQuantity,
+                    warning.baseUnit,
+                  )} left
+                </small>
               </span>
-              <span className={`${styles.status} ${styles[item.tone]}`}>
-                {item.status}
+              <span className={`${styles.status} ${styles[presentation.tone]}`}>
+                {presentation.status}
               </span>
-              {index < stockItems.length - 1 ? <span className={styles.divider} /> : null}
+              {index < warnings.length - 1 ? <span className={styles.divider} /> : null}
             </article>
           );
         })}

@@ -25,28 +25,23 @@
     "semantic_hash": ""
   },
   "src/features/dashboard/DashboardScreen.tsx": {
-    "mtime": 1784987480.7944686,
-    "ast_hash": "e52ce3ddcacd1963d15e80ea375bb45f",
+    "mtime": 1785268209.8024638,
+    "ast_hash": "a5b522042f98e006015c62ef1e875212",
     "semantic_hash": ""
   },
   "src/features/dashboard/components/RecentOrdersPanel/RecentOrdersPanel.tsx": {
-    "mtime": 1784987480.8014019,
-    "ast_hash": "36533a54efc28721c69ab00ee4ed463a",
+    "mtime": 1785268228.2776349,
+    "ast_hash": "3262e27057159d4c2b70fecc8ecdf715",
     "semantic_hash": ""
   },
   "src/features/dashboard/components/SalesPulse/SalesPulse.tsx": {
-    "mtime": 1784987505.6880252,
-    "ast_hash": "cbfbfb7c9a31c33d7b47ad3bf6ef89ee",
+    "mtime": 1785268209.8047588,
+    "ast_hash": "cf4659ec2f22bb6f7de747d98549a813",
     "semantic_hash": ""
   },
   "src/features/dashboard/components/StockAttentionPanel/StockAttentionPanel.tsx": {
-    "mtime": 1784987480.8014019,
-    "ast_hash": "9f49e95dbc989bbd0ad9df83d7c6d262",
-    "semantic_hash": ""
-  },
-  "src/features/dashboard/data/dashboardData.ts": {
-    "mtime": 1784987480.7934666,
-    "ast_hash": "d9d803b946ca45c2cb2718c64b3bf38c",
+    "mtime": 1785268209.8067696,
+    "ast_hash": "d597720387fcba0b2260eb0790001129",
     "semantic_hash": ""
   },
   "src/features/orders/OrdersScreen.tsx": {
@@ -620,8 +615,8 @@
     "semantic_hash": ""
   },
   "convex/_generated/api.d.ts": {
-    "mtime": 1785263530.219974,
-    "ast_hash": "b97b9ff91154affb33eeb6dcd79bb1d0",
+    "mtime": 1785268237.0384593,
+    "ast_hash": "c1ead8ee16b9776db58acb8caad42bb9",
     "semantic_hash": ""
   },
   "convex/_generated/api.js": {
@@ -675,8 +670,8 @@
     "semantic_hash": ""
   },
   "convex/lib/management.ts": {
-    "mtime": 1785255655.761113,
-    "ast_hash": "72785cd509bcb950e45c84cfcd99e203",
+    "mtime": 1785268084.7672737,
+    "ast_hash": "85377ca0152ba442b456baa12599ebba",
     "semantic_hash": ""
   },
   "convex/modifiers.ts": {
@@ -725,8 +720,8 @@
     "semantic_hash": ""
   },
   "convex/inventory.ts": {
-    "mtime": 1785258147.2711482,
-    "ast_hash": "62a7d3a7a8a163a21cf9e8ecfedee5bc",
+    "mtime": 1785268084.770024,
+    "ast_hash": "15caadab8c8941063b6ca95941adf795",
     "semantic_hash": ""
   },
   "scripts/check-inventory.mjs": {
@@ -760,8 +755,8 @@
     "semantic_hash": ""
   },
   "src/features/stock/stockPresentation.ts": {
-    "mtime": 1785258289.0863206,
-    "ast_hash": "951810309a25a515c67c0f3832d263a8",
+    "mtime": 1785268100.1648638,
+    "ast_hash": "3f86ad793df4e0e8b0c5ceaa81ab6e6d",
     "semantic_hash": ""
   },
   "android/app/build.gradle": {
@@ -1177,6 +1172,26 @@
   "src/lib/money.ts": {
     "mtime": 1785266370.0690384,
     "ast_hash": "1ae2be6b4deecf33d49bf9cb67bae3a2",
+    "semantic_hash": ""
+  },
+  "convex/dashboard.ts": {
+    "mtime": 1785268084.7720232,
+    "ast_hash": "ee62fd91a795d9b05603376400198ae0",
+    "semantic_hash": ""
+  },
+  "scripts/check-dashboard.mjs": {
+    "mtime": 1785268289.9786274,
+    "ast_hash": "821d311f2a3481d333de2e6bf7cb52b9",
+    "semantic_hash": ""
+  },
+  "src/data/useDashboardData.ts": {
+    "mtime": 1785268114.8822842,
+    "ast_hash": "533720f1ec39b0aa54aeda0a18286312",
+    "semantic_hash": ""
+  },
+  "src/lib/stock.ts": {
+    "mtime": 1785268100.1628754,
+    "ast_hash": "cbacb8b984de1ed2aca1a8ab6ac374ef",
     "semantic_hash": ""
   }
 }

@@ -12,8 +12,8 @@ application, global tokens, and the feature screens under `features/`.
 - `data/` owns the application-level Convex provider, feature-facing data
   hooks, local SQLite boundary, operational cache, and outbox.
 - `components/` and `lib/` hold only proven cross-feature UI and formatting
-  contracts; the shared receipt preview and money formatter are the current
-  examples.
+  contracts; the shared receipt preview, money formatter, and stock-quantity
+  formatter are the current examples.
 - `globals.css` owns only font/reset imports, semantic root variables, body
   defaults, and the full-viewport baseline.
 - `features/` owns screen-specific composition, temporary fixtures where still

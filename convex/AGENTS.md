@@ -15,6 +15,8 @@ data, reporting summaries, and development seeding.
 - `sync.ts` owns the bounded operational snapshot consumed by the tablet cache.
 - `sales.ts` owns the idempotent sale mutation and the bounded, cursor-paginated
   receipt-snapshot history query.
+- `dashboard.ts` owns the one-call saved-summary, current-warning, and
+  recent-order snapshot.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts
@@ -28,6 +30,8 @@ data, reporting summaries, and development seeding.
   development deployment.
 - Use indexed, bounded reads; sales, sale items, stock movements, and reports
   are never read with an unbounded `.collect()`.
+- Dashboard snapshots read at most 12 daily summaries, 100 ingredients, four
+  warnings, and four recent sales.
 - Store money as integer centimes and stock in integer ingredient base units.
 - Archive records referenced by history and keep stock movements append-only.
 - One synchronized sale is one retry-safe mutation keyed by
@@ -51,6 +55,8 @@ data, reporting summaries, and development seeding.
   deduction, or POS-authorization changes.
 - Run `npm run check:orders` after sale-history pagination or receipt-snapshot
   read changes.
+- Run `npm run check:dashboard` after Dashboard summary, warning, or
+  recent-order read changes.
 - Run `npx convex dev --once` when schema or deployed functions change.
 - Review every new index against an implemented access path.
 

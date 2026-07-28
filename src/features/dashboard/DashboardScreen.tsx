@@ -1,3 +1,4 @@
+import { useDashboardData } from '../../data/useDashboardData';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { RecentOrdersPanel } from './components/RecentOrdersPanel/RecentOrdersPanel';
@@ -10,18 +11,39 @@ interface DashboardScreenProps {
 }
 
 export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
+  const data = useDashboardData();
+  const date = new Date(`${data.businessDate}T12:00:00`);
+
   return (
     <main className={styles.screen} aria-label="Olaso operations dashboard">
       <Header
         activePage="Dashboard"
         brand="olaso"
-        dateLabel="Friday, 24 July"
-        dateTime="2026-07-24"
+        dateLabel={date.toLocaleDateString('en-GB', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+        })}
+        dateTime={data.businessDate}
         onNavigate={onNavigate}
       />
-      <SalesPulse />
-      <StockAttentionPanel />
-      <RecentOrdersPanel />
+      <SalesPulse
+        snapshot={data.snapshot}
+        isLoading={data.isLoading}
+        error={data.error}
+        onRetry={data.refresh}
+      />
+      <StockAttentionPanel
+        warnings={data.snapshot?.warnings ?? []}
+        isLoading={data.isLoading}
+        error={data.error}
+      />
+      <RecentOrdersPanel
+        orders={data.snapshot?.recentOrders ?? []}
+        isLoading={data.isLoading}
+        error={data.error}
+        onViewAll={() => onNavigate?.('Orders')}
+      />
     </main>
   );
 }

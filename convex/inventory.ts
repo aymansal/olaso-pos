@@ -2,6 +2,7 @@ import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 import {
   boundedInteger,
+  businessDate,
   cleanKey,
   cleanText,
   conflict,
@@ -22,18 +23,6 @@ const baseUnit = v.union(
   v.literal('milligram'),
   v.literal('piece'),
 );
-
-function businessDate(value: string) {
-  const parsed = Date.parse(`${value}T00:00:00.000Z`);
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(value) ||
-    !Number.isFinite(parsed) ||
-    new Date(parsed).toISOString().slice(0, 10) !== value
-  ) {
-    return invalid('Business date must use YYYY-MM-DD.');
-  }
-  return value;
-}
 
 export const list = query({
   args: { businessDate: v.string() },

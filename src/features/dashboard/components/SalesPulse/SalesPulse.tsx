@@ -1,22 +1,82 @@
 import {
+  ArrowClockwise,
   Calculator,
   Coffee,
   Lightning,
   Pulse,
   Receipt,
   Star,
+  TrendDown,
   TrendUp,
 } from '@phosphor-icons/react';
-import { hourlySales } from '../../data/dashboardData';
+import type { DashboardSnapshot } from '../../../../data/useDashboardData';
+import { formatMoney } from '../../../../lib/money';
 import styles from './SalesPulse.module.css';
 
-const metrics = [
-  { label: 'Orders', value: '126', icon: Receipt },
-  { label: 'Average order', value: '67 MAD', icon: Calculator },
-  { label: 'Items sold', value: '294', icon: Coffee },
-] as const;
+export function SalesPulse({
+  snapshot,
+  isLoading,
+  error,
+  onRetry,
+}: {
+  snapshot?: DashboardSnapshot;
+  isLoading: boolean;
+  error: string;
+  onRetry: () => void;
+}) {
+  const today = snapshot?.today;
+  const yesterday = snapshot?.yesterday;
+  const metrics = [
+    {
+      label: 'Orders',
+      value: isLoading ? '—' : String(today?.orderCount ?? 0),
+      icon: Receipt,
+    },
+    {
+      label: 'Average order',
+      value: isLoading
+        ? '—'
+        : formatMoney(
+            today?.orderCount
+              ? Math.round(today.netCentimes / today.orderCount)
+              : 0,
+          ),
+      icon: Calculator,
+    },
+    {
+      label: 'Items sold',
+      value: isLoading ? '—' : String(today?.itemCount ?? 0),
+      icon: Coffee,
+    },
+  ] as const;
+  const comparison =
+    yesterday && yesterday.netCentimes > 0 && today
+      ? ((today.netCentimes - yesterday.netCentimes)
+        / yesterday.netCentimes) * 100
+      : undefined;
+  const isPositive = comparison === undefined || comparison >= 0;
+  const ComparisonIcon = isPositive ? TrendUp : TrendDown;
+  const changeLabel = comparison === undefined
+    ? 'No comparison yet'
+    : `${Math.abs(comparison).toFixed(1)}% ${
+        isPositive ? 'up' : 'down'
+      } vs yesterday`;
+  const chart = snapshot?.dailySales ?? Array.from(
+    { length: 12 },
+    (_, index) => ({
+      businessDate: String(index + 1),
+      netCentimes: 0,
+      orderCount: 0,
+    }),
+  );
+  const maximum = Math.max(...chart.map((day) => day.netCentimes), 1);
+  const peak = chart.reduce(
+    (highest, day) =>
+      day.netCentimes > highest.netCentimes ? day : highest,
+    chart[0],
+  );
+  const bestSeller = today?.bestSeller;
 
-export function SalesPulse() {
   return (
     <section className={styles.panel} aria-labelledby="sales-pulse-title">
       <header className={styles.panelHeader}>
@@ -26,17 +86,37 @@ export function SalesPulse() {
         </div>
         <div className={styles.live}>
           <span />
-          <strong>Live · 24 Jul</strong>
+          <strong>
+            {error
+              ? 'Unavailable'
+              : isLoading
+                ? 'Loading'
+                : `Saved · ${new Date(
+                    `${snapshot?.businessDate}T12:00:00`,
+                  ).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                  })}`}
+          </strong>
         </div>
       </header>
 
       <div className={styles.accent} />
       <p className={styles.netLabel}>NET SALES</p>
-      <p className={styles.netValue}>8,460 MAD</p>
-      <div className={styles.change}>
-        <TrendUp size={14} weight="regular" aria-hidden="true" />
-        <strong>12.4% vs yesterday</strong>
-      </div>
+      <p className={styles.netValue}>
+        {isLoading ? '—' : formatMoney(today?.netCentimes ?? 0)}
+      </p>
+      {error ? (
+        <button type="button" className={styles.change} onClick={onRetry}>
+          <ArrowClockwise size={14} weight="regular" aria-hidden="true" />
+          <strong>Retry summary</strong>
+        </button>
+      ) : (
+        <div className={styles.change}>
+          <ComparisonIcon size={14} weight="regular" aria-hidden="true" />
+          <strong>{isLoading ? 'Loading saved summary' : changeLabel}</strong>
+        </div>
+      )}
 
       <div className={styles.summaryDividerTop} />
       <div className={styles.summary} aria-label="Today’s sales summary">
@@ -60,30 +140,53 @@ export function SalesPulse() {
       <div className={styles.chartHeader}>
         <span>
           <strong>Sales rhythm</strong>
-          <small>Orders by hour</small>
+          <small>Daily net sales</small>
         </span>
         <span className={styles.peak}>
           <Lightning size={14} weight="regular" aria-hidden="true" />
-          <strong>Peak 18:00 to 20:00</strong>
+          <strong>
+            {peak?.netCentimes
+              ? `Peak ${new Date(
+                  `${peak.businessDate}T12:00:00`,
+                ).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
+                })}`
+              : 'No sales in period'}
+          </strong>
         </span>
       </div>
 
-      <div className={styles.chart} aria-label="Orders by hour from 09:00 to 20:00">
+      <div className={styles.chart} aria-label="Daily net sales for the latest 12 days">
         <div className={styles.guides} aria-hidden="true">
           <span /><span /><span /><span /><span />
         </div>
         <div className={styles.bars} aria-hidden="true">
-          {hourlySales.map(({ hour, height, tone }) => (
-            <span className={styles.barColumn} key={hour}>
+          {chart.map((day) => {
+            const intensity = day.netCentimes / maximum;
+            const height = day.netCentimes
+              ? Math.max(14, Math.round(intensity * 206))
+              : 4;
+            const tone = day.netCentimes
+              ? Math.max(1, Math.ceil(intensity * 10))
+              : 1;
+            return (
+            <span className={styles.barColumn} key={day.businessDate}>
               <span
                 className={`${styles.bar} ${styles[`tone${tone}`]}`}
                 style={{ height }}
               />
             </span>
-          ))}
+          )})}
         </div>
         <div className={styles.axis}>
-          {hourlySales.map(({ hour }) => <span key={hour}>{hour}</span>)}
+          {chart.map((day) => (
+            <span key={day.businessDate}>
+              {day.businessDate.length === 10
+                ? day.businessDate.slice(8)
+                : '—'}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -95,12 +198,18 @@ export function SalesPulse() {
           </span>
           <span className={styles.bestCopy}>
             <small>TODAY’S BEST SELLER</small>
-            <strong>Iced Pistachio Matcha</strong>
+            <strong>
+              {isLoading
+                ? 'Loading sales…'
+                : error
+                  ? 'Summary unavailable'
+                  : bestSeller?.name ?? 'No sales yet'}
+            </strong>
           </span>
         </div>
         <span className={styles.bestStats}>
-          <strong>1,176 MAD</strong>
-          <small>28 sold</small>
+          <strong>{formatMoney(bestSeller?.totalCentimes ?? 0)}</strong>
+          <small>{bestSeller?.quantity ?? 0} sold</small>
         </span>
       </div>
     </section>

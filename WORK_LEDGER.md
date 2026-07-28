@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-07 complete; APP-08 pending
+**Status:** in progress — APP-08 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -89,7 +89,7 @@ hardware are available.
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | done | Compatibility, persistence, restart/migration, Android sync, and browser evidence passed; implementation commit `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` pushed to `origin/codex/goal-02-functional-app` |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | done | Atomic/offline/retry/duplicate checks, full regression, Graphify refresh, and visual QA passed; implementation commit `07db73f350f7e43c87b6f7b3497559d02a08cf42` pushed to `origin/codex/goal-02-functional-app` |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | done | Bounded history/detail, local fallback and retry, policy states, regression, Graphify, and visual QA passed; implementation commit `70c605365b6d242bb4000b033867db14eb42f9a9` pushed to `origin/codex/goal-02-functional-app` |
-| APP-08 | Connect dashboard summaries, recent orders, and stock warnings | pending | Saved-summary reads and Dashboard states verified; commit pushed |
+| APP-08 | Connect dashboard summaries, recent orders, and stock warnings | in progress | Saved-summary reads, bounded warnings/orders, Dashboard states, verification, and push evidence pending |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | pending | Bounded report queries and all report tabs verified; commit pushed |
 | APP-10 | Make settings, synchronization controls, and the designed lock flow functional | pending | Settings survive restart; lock/session behavior documented and verified; commit pushed |
 | APP-11 | Produce and verify the Android beta without printer integration | pending | APK builds; offline startup, restart, migration, and upgrade checks pass; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-07 are done; APP-08 is pending and no card is in progress.
+- APP-00 through APP-07 are done; APP-08 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -415,10 +415,52 @@ hardware are available.
 - APP-07 implementation commit
   `70c605365b6d242bb4000b033867db14eb42f9a9` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-08 starts from a fixture-driven Dashboard whose approved component/CSS
+  regions already match the 1340 × 800 frame. The cloud schema already stores
+  incrementally maintained indexed daily metrics, current ingredient
+  quantities/thresholds, and completed sale snapshots.
+- The APP-08 access path is one mounted-screen snapshot request: at most 12
+  indexed daily summaries, 100 current ingredients to derive four warnings,
+  and four recent indexed sales. It will not poll, subscribe while hidden, or
+  scan sale/movement history.
+- The deployed `dashboard:getSnapshot` query validates management access and
+  business date, returns a 12-day zero-filled saved-summary series, today's
+  pulse/best seller, at most four current low-stock warnings, and four recent
+  sale snapshots in one call.
+- One `useDashboardData` hook performs the request only while Dashboard is
+  mounted. The existing three regions are prop-driven with live,
+  loading, empty, and error/retry states; recent-order navigation opens Orders
+  and fixture data is removed.
+- `npm run check:dashboard` resets deterministic data and verifies the indexed
+  12-day window, today's saved metrics, previous-day comparison, bounded
+  warnings, descending four-order result, item totals, and invalid-date
+  rejection. Convex codegen/deployment and TypeScript also pass.
+- Full APP-08 regression passes: Convex codegen/deployment, management,
+  inventory, sales, Orders, Dashboard, seed verification, POS, local
+  restart/migration, TypeScript, production build, and whitespace checks. The
+  deterministic seed remains restored at 13 sales, 17 sale lines, 65 movements,
+  and 7 daily summaries.
+- Browser verification at exactly 1340 × 800 shows the live 12-day chart,
+  today's saved pulse/best seller, two current warnings, and four recent
+  orders inside the approved regions. Body, document, and main are exactly the
+  viewport with no outside element or overflow; `View all` opens Orders and
+  browser diagnostics are clean.
+- With only the development management override disabled, Dashboard renders
+  its bounded unavailable/zero/alert states. Restoring that non-secret flag and
+  pressing `Retry summary` returns the same saved live data without reload.
+- The standard Graphify update could not perform semantic extraction without
+  an LLM key. Its documented local AST merge refreshed the 12 changed code
+  files with exact source pruning; the graph now has 1,865 nodes and 4,416
+  edges and queries the complete query/hook/region path.
+- Closeout review finds no unbounded Convex collection/database filter,
+  feature-level backend/database import, printer transport or invocation, or
+  tracked environment, signing, APK, or AAB material. The applicable root,
+  source, feature, Dashboard, Stock, data, and Convex DOX chains and indexes
+  remain current.
 
-**Exact next action:** Start APP-08 by querying Graphify, re-reading its
-applicable DOX and authority contracts, and connecting the Dashboard to small
-saved summaries, current warnings, and bounded recent orders.
+**Exact next action:** Stage only the reviewed APP-08 files, commit with the
+card ID, push `codex/goal-02-functional-app`, and record the implementation SHA
+and remote branch before marking APP-08 done.
 
 ## Decisions and Blockers
 
@@ -440,6 +482,59 @@ saved summaries, current warnings, and bounded recent orders.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-08 started
+
+- Queried the refreshed Graphify graph first for Dashboard composition, daily
+  summaries, current stock warnings, recent sales, and hidden-screen
+  subscription risks.
+- Re-read the complete current root/source/feature/Dashboard, data, and Convex
+  DOX chains plus the APP-08 ledger, product, architecture, design, and brand
+  contracts.
+- Confirmed APP-00 through APP-07 are done and marked APP-08 as the only card
+  in progress.
+- Confirmed the existing Dashboard is entirely fixture-driven while
+  `SalesPulse`, `StockAttentionPanel`, and `RecentOrdersPanel` already own the
+  approved regions and CSS geometry.
+- Chose one management-authorized snapshot request only while Dashboard is
+  mounted. It will read at most 12 indexed daily summaries, 100 current
+  ingredients to derive at most four warnings, and four recent indexed sales;
+  no polling, raw-history scan, or second data path is needed.
+- Added and deployed `dashboard:getSnapshot`. It validates the business date,
+  reads only the implemented indexes and limits, zero-fills the 12-day
+  saved-summary series, and returns today's pulse/best seller, four warnings,
+  and four recent immutable sale summaries.
+- Added one one-shot Dashboard hook and removed the fixture module. The
+  existing three regions now render prop-driven live, loading, empty, and
+  error/retry states, while `View all` navigates to Orders.
+- Promoted the stock quantity formatter only after Dashboard became its second
+  consumer; Stock keeps its established import surface and no formatting logic
+  was duplicated.
+- `npm run check:convex`, explicit Convex deployment, `npx tsc -b`, and the new
+  `npm run check:dashboard` pass. The Dashboard check reseeds the dedicated
+  development deployment and proves bounded summary, warning, order, and date
+  validation behavior.
+- Ran the full regression serially: Convex codegen/deployment, management,
+  inventory, sales, Orders, Dashboard, seed, POS, local database, TypeScript,
+  production build, and whitespace checks all pass. The deterministic seed is
+  restored.
+- Browser verification at exactly 1340 × 800 confirms the live saved metrics,
+  12-day chart, two warnings, four recent orders, and Orders navigation fit the
+  existing approved regions with no clipping or overflow.
+- Disabled only the non-secret development management override and confirmed
+  Dashboard exposes its unavailable alerts and explicit retry. Restored the
+  flag and confirmed one retry returns the saved live snapshot; browser
+  diagnostics contain no warnings or errors.
+- The standard Graphify update stopped because no LLM API key is configured.
+  Used its documented local AST merge with exact old-source pruning for all 12
+  changed code files, refreshed to 1,865 nodes and 4,416 edges, and queried the
+  new backend-to-region flow.
+- Updated and re-read the owning DOX chains. Closeout scans find no unbounded
+  backend query, feature-level backend/database import, printer
+  implementation, or tracked environment/signing/package artifact.
+- Exact next action: stage only the reviewed APP-08 files, commit with the card
+  ID, push the goal branch, and record the implementation SHA and remote branch
+  before marking APP-08 done.
 
 ### 2026-07-28 — APP-07 complete
 
