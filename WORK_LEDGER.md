@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-07 in progress
+**Status:** in progress — APP-07 complete; APP-08 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -88,7 +88,7 @@ hardware are available.
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | done | Inventory/backend/UI/check/browser evidence passed; implementation commit `b4fd2a8de4306bd1e353ef0cfee2da037f909733` pushed to `origin/codex/goal-02-functional-app` |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | done | Compatibility, persistence, restart/migration, Android sync, and browser evidence passed; implementation commit `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` pushed to `origin/codex/goal-02-functional-app` |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | done | Atomic/offline/retry/duplicate checks, full regression, Graphify refresh, and visual QA passed; implementation commit `07db73f350f7e43c87b6f7b3497559d02a08cf42` pushed to `origin/codex/goal-02-functional-app` |
-| APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | in progress | Bounded history/detail, sync-state recovery, truthful policy states, verification, and push evidence pending |
+| APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | done | Bounded history/detail, local fallback and retry, policy states, regression, Graphify, and visual QA passed; implementation commit `70c605365b6d242bb4000b033867db14eb42f9a9` pushed to `origin/codex/goal-02-functional-app` |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | pending | Saved-summary reads and Dashboard states verified; commit pushed |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | pending | Bounded report queries and all report tabs verified; commit pushed |
 | APP-10 | Make settings, synchronization controls, and the designed lock flow functional | pending | Settings survive restart; lock/session behavior documented and verified; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-06 are done; APP-07 is the only card in progress.
+- APP-00 through APP-07 are done; APP-08 is pending and no card is in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -412,10 +412,13 @@ hardware are available.
   feature-level backend/database import, printer transport or invocation, or
   tracked environment, signing, APK, or AAB material. The applicable DOX chain
   and indexes remain current.
+- APP-07 implementation commit
+  `70c605365b6d242bb4000b033867db14eb42f9a9` is confirmed on
+  `origin/codex/goal-02-functional-app`.
 
-**Exact next action:** Stage only the reviewed APP-07 files, commit with the
-card ID, push `codex/goal-02-functional-app`, and record the implementation SHA
-and remote branch before marking APP-07 done.
+**Exact next action:** Start APP-08 by querying Graphify, re-reading its
+applicable DOX and authority contracts, and connecting the Dashboard to small
+saved summaries, current warnings, and bounded recent orders.
 
 ## Decisions and Blockers
 
@@ -437,6 +440,21 @@ and remote branch before marking APP-07 done.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-07 complete
+
+- Pushed `APP-07: connect bounded order history` as
+  `70c605365b6d242bb4000b033867db14eb42f9a9` and confirmed
+  `origin/codex/goal-02-functional-app` resolves to the same SHA.
+- Completion evidence: bounded local/cloud pagination, immutable receipt
+  snapshots, offline local fallback, deliberate idempotent recovery, truthful
+  corrective/print policy states, full regression, restored seed, refreshed
+  Graphify, and clean 1340 × 800 Orders verification all pass.
+- `.env.local`, credentials, deployment secrets, signing material, APK/AAB
+  outputs, and printer implementation were not committed.
+- APP-07 is done; APP-08 is pending and no card is in progress.
+- Exact next action: query Graphify and re-read the Dashboard DOX/authority
+  contracts before marking APP-08 in progress.
 
 ### 2026-07-28 — APP-07 started
 
