@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-05 in progress
+**Status:** in progress — APP-05 done; APP-06 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -86,7 +86,7 @@ hardware are available.
 | APP-02 | Add protected deterministic Convex development seed/reset data | done | Two resets and relationship checks passed; implementation commit `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` pushed to `origin/codex/goal-02-functional-app` |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | done | Management/UI/check/browser evidence passed; implementation commit `3438fae935aedbca8ec8709a508d5127f522ff19` pushed to `origin/codex/goal-02-functional-app` |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | done | Inventory/backend/UI/check/browser evidence passed; implementation commit `b4fd2a8de4306bd1e353ef0cfee2da037f909733` pushed to `origin/codex/goal-02-functional-app` |
-| APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | in progress | Compatibility, persistence, restart/migration, and Android sync evidence pending |
+| APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | done | Compatibility, persistence, restart/migration, Android sync, and browser evidence passed; implementation commit `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` pushed to `origin/codex/goal-02-functional-app` |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | pending | Atomic/offline/retry/duplicate tests pass; POS checkout works; commit pushed |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | pending | Pagination/snapshots/sync states verified in Orders UI; commit pushed |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | pending | Saved-summary reads and Dashboard states verified; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-04 are done; APP-05 is the only card in progress.
+- APP-00 through APP-05 are done; APP-06 is pending and no card is in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -348,10 +348,13 @@ hardware are available.
   checks.
 - The final clean browser reload mounts the POS at exactly 1340 × 800 with no
   body/document overflow and no new console warnings or errors.
+- APP-05 implementation commit
+  `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` is confirmed on
+  `origin/codex/goal-02-functional-app`.
 
-**Exact next action:** Review the final APP-05 diff and generated Android shell,
-scan the intended card files for secrets and excluded printer work, re-read the
-complete closeout DOX chain, then commit and push.
+**Exact next action:** Start APP-06 with its DOX/ledger/Graphify reads and
+implement the atomic local-first sale plus idempotent Convex synchronization
+contract without printer transport.
 
 ## Decisions and Blockers
 
@@ -373,6 +376,22 @@ complete closeout DOX chain, then commit and push.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-05 complete
+
+- Pushed `APP-05: add local operational foundation` as
+  `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` and confirmed
+  `origin/codex/goal-02-functional-app` resolves to the same SHA.
+- Completion evidence: exact compatible Capacitor/SQLite packages, Android
+  sync, versioned local schema, bounded operational cache and outbox, protected
+  stock refresh, restart/migration check, clean 1340 × 800 browser startup,
+  current DOX/Graphify, and all existing domain/build checks pass.
+- `.env.local`, credentials, deployment secrets, signing material, APK/AAB
+  outputs, and printer implementation were not committed.
+- APP-05 is done; APP-06 is pending and no card is in progress.
+- Exact next action: start APP-06 with its DOX/ledger/Graphify reads and
+  implement the atomic local-first sale plus idempotent Convex synchronization
+  contract without printer transport.
 
 ### 2026-07-28 — APP-05 started
 
