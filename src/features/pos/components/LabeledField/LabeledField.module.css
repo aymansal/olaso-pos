@@ -23,6 +23,7 @@
 
 .control input {
   width: 100%;
+  height: 100%;
   min-width: 0;
   padding: 0;
   border: 0;
@@ -33,6 +34,7 @@
   font-weight: 600;
 }
 
-.control svg {
-  flex: 0 0 auto;
+.field:focus-within .control {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
 }

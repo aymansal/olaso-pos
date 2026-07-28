@@ -1,19 +1,30 @@
-import { CaretDown } from '@phosphor-icons/react';
 import styles from './LabeledField.module.css';
 
 type LabeledFieldProps = {
   label: string;
   value: string;
-  isSelect?: boolean;
+  onChange: (value: string) => void;
+  placeholder?: string;
 };
 
-export function LabeledField({ label, value, isSelect = false }: LabeledFieldProps) {
+export function LabeledField({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: LabeledFieldProps) {
   return (
     <label className={styles.field}>
       <span>{label}</span>
       <span className={styles.control}>
-        <input value={value} readOnly aria-label={label} />
-        {isSelect ? <CaretDown size={18} aria-hidden="true" /> : null}
+        <input
+          aria-label={label}
+          autoComplete="off"
+          placeholder={placeholder}
+          type="text"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
       </span>
     </label>
   );

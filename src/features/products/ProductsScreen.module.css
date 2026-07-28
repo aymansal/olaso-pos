@@ -1,0 +1,7 @@
+.screen {
+  position: relative;
+  width: 1340px;
+  height: 800px;
+  overflow: hidden;
+  background: var(--olaso-canvas);
+}

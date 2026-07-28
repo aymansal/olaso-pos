@@ -1,6 +1,25 @@
+.button {
+  width: 234px;
+  height: 120px;
+  flex: 0 0 234px;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  text-align: left;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.button:active .card {
+  filter: brightness(0.94);
+}
+
 .card {
   position: relative;
-  flex: 0 0 234px;
   overflow: hidden;
   border: 1px solid #ecefe7 !important;
   border-radius: 22px !important;

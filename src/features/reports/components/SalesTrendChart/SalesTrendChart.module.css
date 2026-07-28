@@ -1,0 +1,192 @@
+.chart {
+  position: absolute;
+  top: 228px;
+  left: 24px;
+  width: 798px;
+  height: 260px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 20px;
+}
+
+.header {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 766px;
+  height: 38px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heading h2 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.heading small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.legend,
+.legend > span {
+  display: flex;
+  align-items: center;
+}
+
+.legend {
+  gap: 10px;
+}
+
+.legend > span {
+  gap: 5px;
+  color: var(--olaso-muted);
+  font-size: 7px;
+  font-weight: 600;
+}
+
+.legend > span:last-child {
+  color: var(--olaso-text-meta);
+}
+
+.legend i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.currentDot {
+  background: var(--olaso-green);
+}
+
+.previousDot {
+  background: var(--olaso-report-previous);
+}
+
+.guides {
+  position: absolute;
+  top: 72px;
+  left: 16px;
+  width: 756px;
+}
+
+.guides > span {
+  position: relative;
+  display: block;
+  height: 38px;
+}
+
+.guides small {
+  position: absolute;
+  top: -5px;
+  left: 0;
+  color: var(--olaso-text-faint);
+  font-size: 7px;
+  font-weight: 600;
+}
+
+.guides i {
+  position: absolute;
+  top: 6px;
+  left: 32px;
+  width: 724px;
+  height: 1px;
+  background: var(--olaso-report-guide);
+}
+
+.guides > span:last-child i {
+  background: var(--olaso-report-baseline);
+}
+
+.bars {
+  position: absolute;
+  top: 62px;
+  left: 54px;
+  display: flex;
+  align-items: flex-end;
+  width: 712px;
+  height: 156px;
+  gap: 9px;
+}
+
+.barGroup {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  height: 156px;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bar {
+  position: relative;
+  display: block;
+  width: 24px;
+  border-radius: 7px 7px 3px 3px;
+  background: var(--olaso-report-bar);
+}
+
+.peakBar {
+  background: var(--olaso-green);
+}
+
+.peakBar > span {
+  position: absolute;
+  top: 8px;
+  left: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--olaso-white);
+}
+
+.barGroup small {
+  color: var(--olaso-text-faint);
+  font-size: 7px;
+  font-weight: 500;
+}
+
+.barGroup small.peakLabel {
+  color: var(--olaso-green);
+  font-weight: 700;
+}
+
+.footer {
+  position: absolute;
+  top: 228px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 766px;
+  height: 20px;
+  color: var(--olaso-muted);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.footer span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer svg {
+  color: var(--olaso-green);
+}
+
+.footer strong {
+  color: var(--olaso-text);
+  font-size: 8px;
+}

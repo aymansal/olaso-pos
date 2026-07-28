@@ -1,0 +1,204 @@
+.table {
+  position: absolute;
+  top: 232px;
+  left: 24px;
+  width: 798px;
+  height: 428px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 20px;
+}
+
+.header {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 766px;
+  height: 24px;
+}
+
+.header h2 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.header small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.columns,
+.row {
+  display: grid;
+  grid-template-columns: 230px 120px 110px 110px 100px 128px;
+  width: 798px;
+}
+
+.columns {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  height: 32px;
+  background: var(--olaso-product-head);
+}
+
+.columns span,
+.cell,
+.statusCell {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.columns span:first-child {
+  padding-left: 16px;
+}
+
+.columns span {
+  color: var(--olaso-copy);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.rows {
+  position: absolute;
+  top: 78px;
+  left: 0;
+}
+
+.row {
+  height: 62px;
+  border-bottom: 1px solid var(--olaso-line-soft);
+  background: var(--olaso-white);
+}
+
+.selected {
+  background: var(--olaso-table-selected);
+}
+
+.ingredient {
+  display: flex;
+  align-items: center;
+  height: 62px;
+  gap: 10px;
+  padding: 0 16px;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 12px;
+  color: var(--olaso-copy);
+  background: var(--olaso-neutral-icon);
+}
+
+.selectedIcon {
+  color: var(--olaso-green);
+  background: var(--olaso-product-art);
+}
+
+.ingredientCopy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ingredientCopy strong {
+  color: var(--olaso-text);
+  font-size: 9px;
+}
+
+.ingredientCopy small {
+  color: var(--olaso-text-faint);
+  font-size: 7px;
+  font-weight: 500;
+}
+
+.cell {
+  color: var(--olaso-muted);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+strong.cell {
+  color: var(--olaso-text);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+strong.lowValue {
+  color: var(--olaso-stock-low);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  gap: 5px;
+  padding: 0 9px;
+  border-radius: 12px;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.status > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.low {
+  color: var(--olaso-stock-low);
+  background: var(--olaso-stock-low-soft);
+}
+
+.healthy {
+  color: var(--olaso-green);
+  background: var(--olaso-green-icon);
+}
+
+.watch {
+  color: var(--olaso-stock-watch);
+  background: var(--olaso-stock-watch-soft);
+}
+
+.footer {
+  position: absolute;
+  top: 396px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 766px;
+  height: 20px;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--olaso-text-faint);
+}
+
+.pagination strong {
+  color: var(--olaso-muted);
+  font-size: 8px;
+}
+
+.pagination svg:last-child {
+  color: var(--olaso-green);
+}

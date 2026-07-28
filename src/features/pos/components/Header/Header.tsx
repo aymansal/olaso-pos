@@ -1,20 +1,42 @@
 import { Bell, FileText, User } from '@phosphor-icons/react';
 import { IconButton } from '../IconButton/IconButton';
-import { TopNavigation } from '../TopNavigation/TopNavigation';
+import {
+  TopNavigation,
+  type NavigationPage,
+} from '../TopNavigation/TopNavigation';
 import styles from './Header.module.css';
 
-export function Header() {
+interface HeaderProps {
+  activePage: NavigationPage;
+  brand?: 'reference' | 'olaso';
+  dateLabel?: string;
+  dateTime?: string;
+  onNavigate?: (page: NavigationPage) => void;
+}
+
+export function Header({
+  activePage,
+  brand = 'reference',
+  dateLabel = 'Thursday, 23 June',
+  dateTime = '2026-06-23',
+  onNavigate,
+}: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.brandSide}>
-        <div className={styles.wordmark} aria-label="Green Grounds Coffee">
+        <div
+          className={`${styles.wordmark} ${brand === 'olaso' ? styles.olasoWordmark : ''}`}
+          aria-label={brand === 'olaso' ? 'Olaso' : 'Green Grounds Coffee'}
+        >
           <span className={styles.brandDot} />
-          <span>GREEN<br />GROUNDS<br />COFFEE</span>
+          {brand === 'olaso'
+            ? <span>OLASO</span>
+            : <span>GREEN<br />GROUNDS<br />COFFEE</span>}
         </div>
-        <time className={styles.date} dateTime="2026-06-23">Thursday, 23 June</time>
+        <time className={styles.date} dateTime={dateTime}>{dateLabel}</time>
       </div>
 
-      <TopNavigation />
+      <TopNavigation activePage={activePage} onNavigate={onNavigate} />
 
       <div className={styles.actions}>
         <button className={styles.report} type="button">

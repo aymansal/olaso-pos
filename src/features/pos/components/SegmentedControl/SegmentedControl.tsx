@@ -1,17 +1,23 @@
+import type { ServiceMode } from '../../posSession';
 import styles from './SegmentedControl.module.css';
 
-const options = ['Dine In', 'Take Away', 'Order Online'];
+const options: ServiceMode[] = ['Dine In', 'Take Away', 'Order Online'];
 
-export function SegmentedControl() {
+type SegmentedControlProps = {
+  value: ServiceMode;
+  onChange: (value: ServiceMode) => void;
+};
+
+export function SegmentedControl({ value, onChange }: SegmentedControlProps) {
   return (
-    <div className={styles.control} role="tablist" aria-label="Service type">
-      {options.map((option, index) => (
+    <div className={styles.control} role="group" aria-label="Service type">
+      {options.map((option) => (
         <button
           key={option}
-          className={index === 0 ? styles.active : undefined}
+          className={option === value ? styles.active : undefined}
           type="button"
-          role="tab"
-          aria-selected={index === 0}
+          aria-pressed={option === value}
+          onClick={() => onChange(option)}
         >
           {option}
         </button>

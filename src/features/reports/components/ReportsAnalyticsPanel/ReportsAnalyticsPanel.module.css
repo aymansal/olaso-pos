@@ -1,0 +1,103 @@
+.panel {
+  position: absolute;
+  top: 92px;
+  left: 18px;
+  width: 846px;
+  height: 686px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.header {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 798px;
+  height: 44px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heading h1 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.heading small {
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  gap: 9px;
+  padding: 0 14px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 21px;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.dateRange svg:first-child {
+  color: var(--olaso-green);
+}
+
+.dateRange svg:last-child {
+  color: var(--olaso-copy);
+}
+
+.tabs {
+  position: absolute;
+  top: 80px;
+  left: 24px;
+  display: flex;
+  width: 798px;
+  height: 42px;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 21px;
+  background: var(--olaso-table-head);
+}
+
+.tabs button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 17px;
+  color: var(--olaso-text-meta);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.tabs button.activeTab {
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  box-shadow: 0 1px 4px rgba(24, 53, 30, 0.07);
+  font-weight: 700;
+}
+
+.activeTab svg {
+  color: var(--olaso-green);
+}

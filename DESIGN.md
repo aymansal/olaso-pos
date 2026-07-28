@@ -1,9 +1,9 @@
 ---
-version: 0.2
+version: 0.3
 name: Olaso POS
 description: Touch-first landscape point-of-sale system for Olaso Club on the Samsung Galaxy Tab A9.
 status: active
-updated: 2026-07-21
+updated: 2026-07-24
 platform: React, Vite, and Capacitor Android
 visualAuthority: Pencil node W26Y6
 colors:
@@ -20,42 +20,42 @@ colors:
   on-action: "#FFFFFF"
 typography:
   category-title:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 18px
     fontWeight: 700
     lineHeight: 1.1
   title-md:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 14px
     fontWeight: 700
     lineHeight: 1.2
   body-md:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 13px
     fontWeight: 400
     lineHeight: 1.35
   body-strong:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 13px
     fontWeight: 700
     lineHeight: 1.2
   label-md:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 12px
     fontWeight: 600
     lineHeight: 1.2
   label-sm:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 11px
     fontWeight: 400
     lineHeight: 1.2
   caption:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 10px
     fontWeight: 400
     lineHeight: 1.2
   price:
-    fontFamily: Inter
+    fontFamily: DM Sans
     fontSize: 11px
     fontWeight: 400
     lineHeight: 1.2
@@ -150,8 +150,8 @@ components:
     backgroundColor: "{colors.surface-soft}"
     textColor: "{colors.text}"
     rounded: "{rounded.full}"
-    width: 82px
-    height: 42px
+    width: 116px
+    height: 44px
   divider-line:
     backgroundColor: "{colors.divider}"
     height: 1px
@@ -203,14 +203,16 @@ Principles, in priority order:
 
 ## Authority and Change Rules
 
-When sources disagree, use this order:
+Use the authority that owns the decision:
 
-1. Approved Pencil production screen `W26Y6` for geometry and visual composition.
-2. This `DESIGN.md` for tokens, behavior, architecture, and reusable contracts.
-3. `BRAND.md` for confirmed brand assets, personality, and provisional brand facts.
-4. `Olasotheme-theme.ts` for Astryx token implementation after it has been aligned with this document.
-5. `components.html` as a visual catalog and comparison aid only.
-6. Astryx defaults only where none of the sources above defines the decision.
+1. `PRODUCT.md` owns product purpose, scope, workflows, and operational behavior.
+2. `ARCHITECTURE.md` owns persistence, synchronization, backend, printing, and release behavior.
+3. Approved Pencil production screen `W26Y6` owns geometry and visual composition.
+4. This `DESIGN.md` owns tokens, interaction presentation, and reusable UI contracts.
+5. `BRAND.md` owns confirmed brand assets, personality, and provisional brand facts.
+6. `Olasotheme-theme.ts` implements the tokens after alignment with this document.
+7. `components.html` is a visual catalog and comparison aid only.
+8. Astryx defaults apply only when none of the sources above defines the decision.
 
 The sage background visible around presentation mockups is not application UI. The production app fills the tablet viewport with Cream Surface. Any intentional design change must update the Pencil master and this file in the same change. Confirmed owner assets and values override provisional ones.
 
@@ -230,7 +232,7 @@ Do not use white body text on Olaso Sage. Its contrast is suitable for the large
 
 ## Typography
 
-Inter is the approved utility family because the POS needs compact labels, fast number recognition, and consistent metrics across Android and web references. The custom OLASO wordmark is artwork, not typography.
+DM Sans is the approved operational family. Its softer geometry feels more human than Inter while preserving compact labels, clear number recognition, and consistent metrics across Android and web references. The custom OLASO wordmark remains the expressive display voice and is artwork, not typography.
 
 - Category names use `{typography.category-title}`.
 - Product names and order item names use `{typography.body-strong}`.
@@ -238,7 +240,7 @@ Inter is the approved utility family because the POS needs compact labels, fast 
 - Prices, metadata, helper text, and status labels use `{typography.price}`, `{typography.label-sm}`, and `{typography.caption}`.
 - Prices and totals should use tabular figures when the implementation stack supports them.
 
-Never replace the OLASO wordmark with typed text. Until official font files are supplied, implementations may use Inter, Arial, and the platform sans-serif as the fallback stack.
+Never replace the OLASO wordmark with typed text. Implementations use DM Sans, Arial, and the platform sans-serif as the fallback stack. Prices, quantities, and totals use tabular figures.
 
 ## Layout
 
@@ -302,7 +304,7 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `SegmentedControl` | options, selected option | 266 by 50. Only one selected segment. Selection uses Operational Green plus text. |
 | `LabeledField` | visible label, current value | Text and select variants. Control is 129 by 48. |
 | `OrderLine` | product, unit price, quantity, size, note, total | Keep the total right-aligned. A note is optional. |
-| `QuantityStepper` | decrement, quantity, increment | 82 by 42. Disable decrement at the minimum and expose an accessible value. |
+| `QuantityStepper` | decrement, quantity, increment | 116 by 44 so both actions retain independent 44-pixel targets. Disable decrement at the minimum and expose an accessible value. |
 | `PaymentSummary` | subtotal, tax, total | Right-align values and emphasize only the total. Use tabular figures. |
 | `PrimaryAction` | action label, order total | 266 by 50. One primary action per screen. Disable it while submitting. |
 | `ReceiptRail` | navigation, service mode, customer, table, order, totals, primary action | 320 by 688 at the target viewport. The rail owns the final action and all order-editing controls. |
@@ -334,8 +336,9 @@ src/
   features/pos/
     PosScreen.tsx
     PosScreen.module.css
-    catalog.ts
-    calculations.ts
+    data/
+      categories.ts
+      products.ts
     components/
       HeaderBar.tsx
       HeaderBar.module.css
@@ -357,11 +360,15 @@ src/
       QuantityStepper.module.css
       PaymentSummary.tsx
       PaymentSummary.module.css
+  data/
+    localDatabase.ts
+    sync.ts
+    outbox.ts
+  printing/
+    printReceipt.ts
+    receiptModel.ts
+    mockPrinter.ts
   lib/
-    api/
-      orders.ts
-    printing/
-      printReceipt.ts
     theme/
       Olasotheme-theme.ts
 ```
@@ -383,12 +390,12 @@ Do not split ordinary markup into meaningless components. A component earns a fi
 ### UI and data boundary
 
 - React components contain presentation and local interaction logic only. They never create database clients, run SQL, read secrets, or contain persistence queries.
-- `catalog.ts` holds temporary static product and category data until the real source is chosen.
-- `calculations.ts` owns pure subtotal, tax, and total calculations and must have one runnable unit check.
-- `lib/api/orders.ts` is the browser-facing order API boundary. Components call it through screen-level event handlers.
-- `lib/api/orders.ts` calls the separately hosted application API; the APK never contains database credentials or direct administrative access.
-- Database vendor code belongs in a server-only module introduced when the database is selected. Do not create speculative repositories, interfaces, or adapters before then.
-- Validate every order again at the server boundary; never trust totals calculated by the client.
+- `features/pos/data/` holds temporary static product and category data until the local database is introduced.
+- Money and stock calculations are pure functions outside components and keep the runnable checks required by `ARCHITECTURE.md`.
+- Feature hooks or screen actions call the application data layer; leaf components only receive data and callbacks.
+- SQLite, outbox synchronization, and Convex client code live in the data/sync layer defined by `ARCHITECTURE.md`.
+- The APK contains no administrative secret. Public Convex operations validate every argument, identity, permission, price, and stock effect.
+- Do not create speculative repositories, interfaces, or adapters around the selected data tools.
 
 ### Printing boundary and deferred hardware test
 
@@ -419,9 +426,10 @@ The application may reach software-complete status without the physical devices.
 - Search filters product names and categories without clearing the current order.
 - Service mode has exactly one selected option.
 - `Place order` is disabled for an empty order and while submission is in progress.
-- Successful submission shows a concise confirmation and starts a fresh receipt only after the server confirms persistence.
-- After persistence succeeds, printing is attempted once. A failure preserves the completed sale and exposes `Reprint receipt` without resubmitting the order.
-- Failed submission keeps the order intact and states what happened and how to retry.
+- Successful submission shows a concise confirmation and starts a fresh receipt only after the local sale transaction commits.
+- After local persistence succeeds, printing is attempted once and cloud synchronization runs in the background.
+- A print failure preserves the completed sale and exposes `Reprint receipt` without resubmitting the order.
+- A local persistence failure keeps the order intact. A cloud failure marks the saved sale as waiting to sync without blocking service.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
 Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate layout dimensions. Respect `prefers-reduced-motion`.

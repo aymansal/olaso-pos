@@ -1,22 +1,26 @@
+import type { CategoryId } from './categories';
+
 export type Product = {
+  id: string;
+  categoryId: CategoryId;
   name: string;
-  price: string;
+  priceCentimes: number;
   image: string;
 };
 
 export const products: Product[] = [
-  { name: 'Espresso', price: '$4.2', image: espresso },
-  { name: 'Cappuccino', price: '$3.3', image: cappuccino },
-  { name: 'Latte', price: '$4.0', image: latte },
-  { name: 'Americano', price: '$4.0', image: americano },
-  { name: 'Mocha', price: '$4.0', image: mocha },
-  { name: 'Iced Coffee Milk', price: '$3.8', image: icedCoffeeMilk },
-  { name: 'Cold Brew', price: '$4.0', image: coldBrew },
-  { name: 'Flat White', price: '$3.8', image: flatWhite },
-  { name: 'Caramel Mac', price: '$4.0', image: caramelMac },
-  { name: 'Salted Caramel', price: '$4.2', image: saltedCaramel },
-  { name: 'Hazelnut Latte', price: '$4.0', image: hazelnutLatte },
-  { name: 'Pour Over', price: '$4.0', image: pourOver },
+  { id: 'espresso', categoryId: 'coffee', name: 'Espresso', priceCentimes: 1000, image: espresso },
+  { id: 'cappuccino', categoryId: 'coffee', name: 'Cappuccino', priceCentimes: 1700, image: cappuccino },
+  { id: 'latte', categoryId: 'coffee', name: 'Latte', priceCentimes: 1800, image: latte },
+  { id: 'americano', categoryId: 'coffee', name: 'Americano', priceCentimes: 1300, image: americano },
+  { id: 'mocha', categoryId: 'coffee', name: 'Mocha', priceCentimes: 2600, image: mocha },
+  { id: 'iced-coffee-milk', categoryId: 'coffee', name: 'Iced Coffee Milk', priceCentimes: 2200, image: icedCoffeeMilk },
+  { id: 'cold-brew', categoryId: 'coffee', name: 'Cold Brew', priceCentimes: 1800, image: coldBrew },
+  { id: 'flat-white', categoryId: 'coffee', name: 'Flat White', priceCentimes: 1800, image: flatWhite },
+  { id: 'caramel-mac', categoryId: 'coffee', name: 'Caramel Mac', priceCentimes: 2700, image: caramelMac },
+  { id: 'salted-caramel', categoryId: 'coffee', name: 'Salted Caramel', priceCentimes: 2900, image: saltedCaramel },
+  { id: 'hazelnut-latte', categoryId: 'coffee', name: 'Hazelnut Latte', priceCentimes: 2300, image: hazelnutLatte },
+  { id: 'pour-over', categoryId: 'coffee', name: 'Pour Over', priceCentimes: 4500, image: pourOver },
 ];
 
 export const americanoOrderImage = americanoOrder;

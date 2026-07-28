@@ -24,6 +24,7 @@
   top: 214px;
   left: 12px;
   width: 296px;
+  height: 268px;
 }
 
 .sectionLabel {
@@ -32,4 +33,54 @@
   color: var(--olaso-muted);
   font-size: 10px;
   line-height: 12px;
+}
+
+.orderList {
+  display: flex;
+  width: 296px;
+  height: 250px;
+  margin-top: 6px;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.orderList > article:only-child {
+  min-height: 236px;
+}
+
+.emptyOrder {
+  display: grid;
+  min-height: 116px;
+  margin: 0;
+  place-items: center;
+  border: 1px dashed var(--olaso-divider);
+  border-radius: 22px;
+  color: var(--olaso-muted);
+  font-size: 11px;
+}
+
+.feedback {
+  position: absolute;
+  top: 608px;
+  left: 12px;
+  width: 296px;
+  height: 20px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  color: var(--olaso-muted);
+  font-size: 9px;
+  line-height: 10px;
+  text-align: center;
+}
+
+.error {
+  color: var(--olaso-danger);
+}
+
+.success {
+  color: var(--olaso-green);
 }

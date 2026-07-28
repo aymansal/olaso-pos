@@ -99,7 +99,7 @@ export const OlasothemeTheme = defineTheme({
     '--radius-page': '28px',
     '--font-family-body': '"DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     '--font-family-code': '"JetBrains Mono", "SF Mono", Monaco, Consolas, monospace',
-    '--font-family-heading': '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    '--font-family-heading': '"DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     '--font-size-4xs': '0.3125rem',
     '--font-size-sm': '0.8125rem',
     '--font-size-base': '1rem',

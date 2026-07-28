@@ -120,7 +120,7 @@ The supplied material points toward a two-voice system:
 - **Display:** warm, characterful, slightly retro; use sparingly for campaigns and large moments.
 - **Utility/body:** clean, open, highly legible sans serif for menus, prices, labels, and operational UI.
 
-No font family is confirmed yet. Do not lock fonts until the owner or original creative team provides the names and licenses. For the POS, readability and fast number recognition take priority over campaign typography.
+The official campaign/display typefaces are not confirmed. Do not claim a campaign font until the owner or original creative team provides the names and licenses. **DM Sans is approved only as the operational POS family** because readability and fast number recognition take priority in the staff interface.
 
 ## 6. Photography and content
 

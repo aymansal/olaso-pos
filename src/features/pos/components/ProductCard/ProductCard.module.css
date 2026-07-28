@@ -58,3 +58,12 @@
   color: var(--olaso-green);
   background: white;
 }
+
+.add:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.add:active {
+  background: var(--olaso-soft);
+}

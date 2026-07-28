@@ -1,20 +1,50 @@
-import { FileText } from '@phosphor-icons/react';
+import { Trash } from '@phosphor-icons/react';
+import type { Product } from '../../data/products';
+import { formatMoney } from '../../posSession';
 import { QuantityStepper } from '../QuantityStepper/QuantityStepper';
 import styles from './OrderItemCard.module.css';
 
 type OrderItemCardProps = {
-  image: string;
+  product: Product;
+  quantity: number;
+  onDecrement: () => void;
+  onIncrement: () => void;
+  onRemove: () => void;
 };
 
-export function OrderItemCard({ image }: OrderItemCardProps) {
+export function OrderItemCard({
+  product,
+  quantity,
+  onDecrement,
+  onIncrement,
+  onRemove,
+}: OrderItemCardProps) {
   return (
     <article className={styles.card}>
-      <img className={styles.photo} src={image} alt="" />
-      <strong className={styles.name}>Americano</strong>
-      <strong className={styles.total}>$16.8</strong>
-      <span className={styles.meta}>$8.4 × 2 · Medium</span>
-      <span className={styles.note}><FileText size={16} />Less Sugar</span>
-      <div className={styles.quantity}><QuantityStepper /></div>
+      <img className={styles.photo} src={product.image} alt={product.name} />
+      <strong className={styles.name}>{product.name}</strong>
+      <strong className={styles.total}>
+        {formatMoney(product.priceCentimes * quantity)}
+      </strong>
+      <span className={styles.meta}>
+        {formatMoney(product.priceCentimes)} × {quantity}
+      </span>
+      <div className={styles.quantity}>
+        <QuantityStepper
+          productName={product.name}
+          quantity={quantity}
+          onDecrement={onDecrement}
+          onIncrement={onIncrement}
+        />
+      </div>
+      <button
+        className={styles.remove}
+        type="button"
+        aria-label={`Remove ${product.name}`}
+        onClick={onRemove}
+      >
+        <Trash size={18} aria-hidden="true" />
+      </button>
     </article>
   );
 }

@@ -1,0 +1,429 @@
+.panel {
+  position: absolute;
+  top: 92px;
+  left: 882px;
+  width: 440px;
+  height: 686px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.header {
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 396px;
+  height: 42px;
+}
+
+.heading,
+.identityCopy,
+.priceSummary,
+.field,
+.option > span,
+.recipeCopy {
+  display: flex;
+  flex-direction: column;
+}
+
+.heading {
+  gap: 3px;
+}
+
+.heading small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.heading h2 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.headerActions,
+.activeStatus,
+.identity,
+.identityLeft,
+.optionsHeader,
+.options,
+.option,
+.recipeHeader,
+.recipeHeader > span,
+.recipeEmpty,
+.save {
+  display: flex;
+  align-items: center;
+}
+
+.headerActions {
+  gap: 8px;
+}
+
+.activeStatus {
+  height: 28px;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: 14px;
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-icon);
+  font-size: 8px;
+}
+
+.activeStatus > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--olaso-success);
+}
+
+.headerActions button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.identity {
+  position: absolute;
+  top: 76px;
+  left: 22px;
+  justify-content: space-between;
+  width: 396px;
+  height: 66px;
+}
+
+.identityLeft {
+  gap: 12px;
+}
+
+.artwork {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  color: var(--olaso-green);
+  background: var(--olaso-product-art);
+}
+
+.identityCopy {
+  gap: 4px;
+}
+
+.identityCopy strong {
+  color: var(--olaso-text);
+  font-size: 12px;
+}
+
+.identityCopy small,
+.priceSummary small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.priceSummary {
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.priceSummary strong {
+  color: var(--olaso-text);
+  font-size: 14px;
+}
+
+.divider {
+  position: absolute;
+  left: 22px;
+  width: 396px;
+  height: 1px;
+  background: var(--olaso-order-divider);
+}
+
+.identityDivider { top: 156px; }
+
+.infoTitle {
+  position: absolute;
+  top: 174px;
+  left: 22px;
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.field {
+  position: absolute;
+  gap: 7px;
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.field input,
+.field button,
+.priceInput {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 13px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 20px;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.nameField {
+  top: 198px;
+  left: 22px;
+}
+
+.nameField input {
+  width: 270px;
+}
+
+.codeField {
+  top: 198px;
+  left: 304px;
+}
+
+.codeField input {
+  width: 114px;
+  background: var(--olaso-readonly);
+}
+
+.priceField {
+  top: 266px;
+  left: 22px;
+}
+
+.priceInput {
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100px;
+  gap: 7px;
+}
+
+.priceInput small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.categoryField {
+  top: 266px;
+  left: 134px;
+}
+
+.categoryField button {
+  justify-content: space-between;
+  width: 176px;
+  color: var(--olaso-text);
+}
+
+.categoryField svg {
+  color: var(--olaso-copy);
+}
+
+.availabilityField {
+  top: 266px;
+  left: 322px;
+}
+
+.availability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 96px;
+  height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 20px;
+  color: var(--olaso-text);
+  background: var(--olaso-table-head);
+  font-size: 8px;
+}
+
+.availability > span {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--olaso-green);
+}
+
+.availability > span > span {
+  position: absolute;
+  top: 3px;
+  left: 17px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--olaso-white);
+}
+
+.infoDivider { top: 344px; }
+
+.optionsHeader {
+  position: absolute;
+  top: 366px;
+  left: 22px;
+  justify-content: space-between;
+  width: 396px;
+  height: 20px;
+}
+
+.optionsHeader strong,
+.recipeHeader > strong {
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.optionsHeader small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.options {
+  position: absolute;
+  top: 394px;
+  left: 22px;
+  width: 396px;
+  height: 42px;
+  gap: 8px;
+}
+
+.option {
+  flex: 1;
+  height: 42px;
+  gap: 8px;
+  padding: 0 10px;
+  border-radius: 14px;
+  color: var(--olaso-green);
+  background: var(--olaso-table-head);
+}
+
+.option > span {
+  gap: 2px;
+}
+
+.option strong {
+  color: var(--olaso-text);
+  font-size: 7.5px;
+}
+
+.option small {
+  color: var(--olaso-text-meta);
+  font-size: 7px;
+  font-weight: 500;
+}
+
+.optionsDivider { top: 458px; }
+
+.recipeHeader {
+  position: absolute;
+  top: 480px;
+  left: 22px;
+  justify-content: space-between;
+  width: 396px;
+  height: 20px;
+}
+
+.recipeHeader > span {
+  gap: 5px;
+}
+
+.recipeHeader > span > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--olaso-recipe-dot);
+}
+
+.recipeHeader small {
+  color: var(--olaso-gold);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.recipeEmpty {
+  position: absolute;
+  top: 508px;
+  left: 22px;
+  width: 396px;
+  height: 62px;
+  gap: 11px;
+  padding: 0 14px;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 16px;
+}
+
+.recipeIcon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--olaso-gold);
+  background: var(--olaso-status-gold);
+}
+
+.recipeCopy {
+  flex: 1;
+  gap: 3px;
+}
+
+.recipeCopy strong {
+  color: var(--olaso-recipe-title);
+  font-size: 9px;
+}
+
+.recipeCopy small {
+  color: var(--olaso-recipe-copy);
+  font-size: 7.5px;
+  font-weight: 500;
+}
+
+.recipeEmpty button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.save {
+  position: absolute;
+  top: 620px;
+  left: 22px;
+  justify-content: center;
+  width: 396px;
+  height: 48px;
+  gap: 8px;
+  border: 0;
+  border-radius: 24px;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+  font-size: 9px;
+  font-weight: 700;
+}

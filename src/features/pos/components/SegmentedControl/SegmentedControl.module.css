@@ -28,3 +28,12 @@
   background: var(--olaso-green);
   font-weight: 600;
 }
+
+.control button:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: -3px;
+}
+
+.control button:active {
+  filter: brightness(0.92);
+}

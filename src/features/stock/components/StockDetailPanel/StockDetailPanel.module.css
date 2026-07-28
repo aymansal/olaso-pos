@@ -1,0 +1,366 @@
+.panel {
+  position: absolute;
+  top: 92px;
+  left: 882px;
+  width: 440px;
+  height: 686px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.header {
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 396px;
+  height: 42px;
+}
+
+.heading,
+.identityCopy,
+.unit,
+.level,
+.movement > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.heading {
+  gap: 3px;
+}
+
+.heading h2 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 10px;
+}
+
+.heading small,
+.identityCopy small,
+.levelHeader small,
+.sectionHeader small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.lowStatus {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  gap: 5px;
+  padding: 0 9px;
+  border-radius: 13px;
+  color: var(--olaso-stock-low);
+  background: var(--olaso-stock-low-soft);
+  font-size: 7px;
+}
+
+.lowStatus > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.identity {
+  position: absolute;
+  top: 76px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 396px;
+  height: 66px;
+}
+
+.identityLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.artwork {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  color: var(--olaso-green);
+  background: var(--olaso-green-icon);
+}
+
+.identityCopy {
+  gap: 3px;
+}
+
+.identityCopy strong {
+  color: var(--olaso-text);
+  font-size: 12px;
+}
+
+.unit {
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.unit small {
+  color: var(--olaso-text-faint);
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.unit strong {
+  color: var(--olaso-muted);
+  font-size: 9px;
+}
+
+.divider {
+  position: absolute;
+  left: 22px;
+  width: 396px;
+  height: 1px;
+  background: var(--olaso-order-divider);
+}
+
+.identityDivider {
+  top: 158px;
+}
+
+.levelHeader,
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 396px;
+  height: 20px;
+}
+
+.levelHeader {
+  position: absolute;
+  top: 176px;
+  left: 22px;
+}
+
+.levelHeader h3,
+.sectionHeader h3 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.levelStrip {
+  position: absolute;
+  top: 208px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  width: 396px;
+  height: 68px;
+  padding: 0 14px;
+  border-radius: 16px;
+  background: var(--olaso-stock-strip);
+}
+
+.level {
+  position: relative;
+  flex: 1;
+  align-items: center;
+  gap: 3px;
+}
+
+.levelDivider {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: 1px;
+  height: 34px;
+  background: var(--olaso-stock-separator);
+}
+
+.level small {
+  color: var(--olaso-text-faint);
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.level strong {
+  color: var(--olaso-text);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.level strong.low {
+  color: var(--olaso-stock-low);
+}
+
+.level strong.green {
+  color: var(--olaso-green);
+}
+
+.warning {
+  position: absolute;
+  top: 288px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  width: 396px;
+  height: 42px;
+  gap: 9px;
+  padding: 0 12px;
+  border-radius: 14px;
+  color: var(--olaso-stock-low);
+  background: var(--olaso-stock-warning-soft);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.warning span {
+  color: var(--olaso-stock-warning-copy);
+}
+
+.levelSectionDivider {
+  top: 346px;
+}
+
+.recipes {
+  position: absolute;
+  top: 364px;
+  left: 22px;
+  width: 396px;
+  height: 140px;
+}
+
+.recipeList {
+  margin-top: 10px;
+}
+
+.recipe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 396px;
+  height: 38px;
+}
+
+.recipeIdentity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recipeIcon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  color: var(--olaso-copy);
+  background: var(--olaso-neutral-icon);
+}
+
+.recipeIdentity strong,
+.movement strong {
+  color: var(--olaso-text);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.recipe > small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.movements {
+  position: absolute;
+  top: 516px;
+  left: 22px;
+  width: 396px;
+  height: 92px;
+}
+
+.sectionHeader button {
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.movementList {
+  margin-top: 8px;
+}
+
+.movement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 396px;
+  height: 34px;
+}
+
+.movement > span {
+  gap: 2px;
+}
+
+.movement small {
+  color: var(--olaso-text-faint);
+  font-size: 7px;
+  font-weight: 500;
+}
+
+.movement > strong {
+  font-weight: 700;
+}
+
+.movement > strong.low {
+  color: var(--olaso-stock-low);
+}
+
+.movement > strong.green {
+  color: var(--olaso-green);
+}
+
+.actions {
+  position: absolute;
+  top: 620px;
+  left: 22px;
+  display: flex;
+  width: 396px;
+  height: 48px;
+  gap: 10px;
+}
+
+.actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  gap: 7px;
+  border-radius: 24px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.adjust {
+  width: 148px;
+  border: 1px solid var(--olaso-green);
+  color: var(--olaso-green);
+  background: transparent;
+}
+
+.receive {
+  flex: 1;
+  border: 0;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}

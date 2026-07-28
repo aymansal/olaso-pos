@@ -25,3 +25,12 @@
   color: var(--olaso-green) !important;
   background: var(--olaso-white) !important;
 }
+
+.button:focus-visible {
+  outline: 2px solid var(--olaso-green) !important;
+  outline-offset: 2px;
+}
+
+.button:active {
+  filter: brightness(0.92);
+}

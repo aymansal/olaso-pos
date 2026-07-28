@@ -1,8 +1,7 @@
 .card {
   position: relative;
   width: 296px;
-  height: 236px;
-  margin-top: 6px;
+  min-height: 116px;
   border: 1.2px solid var(--olaso-border);
   border-radius: 22px;
   background: white;
@@ -21,16 +20,20 @@
 .name,
 .total,
 .meta,
-.note,
-.quantity {
+.quantity,
+.remove {
   position: absolute;
 }
 
 .name {
   top: 18px;
   left: 88px;
+  max-width: 116px;
+  overflow: hidden;
   font-size: 13px;
   line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .total {
@@ -48,18 +51,30 @@
   line-height: 13px;
 }
 
-.note {
-  top: 75px;
-  left: 88px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #6a746c;
-  font-size: 11px;
-  line-height: 16px;
-}
-
 .quantity {
   top: 65px;
-  left: 196px;
+  left: 88px;
+}
+
+.remove {
+  top: 64px;
+  right: 12px;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-danger);
+  background: white;
+}
+
+.remove:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.remove:active {
+  background: var(--olaso-soft);
 }

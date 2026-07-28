@@ -1,0 +1,371 @@
+.panel {
+  position: absolute;
+  top: 92px;
+  left: 18px;
+  width: 846px;
+  height: 686px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.panel p,
+.panel h1 {
+  margin: 0;
+}
+
+.panelHeader {
+  position: absolute;
+  top: 24px;
+  left: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 794px;
+  height: 32px;
+}
+
+.title,
+.live,
+.change,
+.peak,
+.bestProduct {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  gap: 10px;
+  color: var(--olaso-green);
+}
+
+.title h1 {
+  color: var(--olaso-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.live {
+  height: 28px;
+  gap: 7px;
+  padding: 0 11px;
+  border-radius: 14px;
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-soft);
+  font-size: 9px;
+}
+
+.live span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--olaso-success);
+}
+
+.accent {
+  position: absolute;
+  top: 84px;
+  left: 24px;
+  width: 4px;
+  height: 67px;
+  border-radius: 2px;
+  background: var(--olaso-green);
+}
+
+.netLabel {
+  position: absolute;
+  top: 86px;
+  left: 40px;
+  color: var(--olaso-copy-green);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.netValue {
+  position: absolute;
+  top: 103px;
+  left: 40px;
+  color: var(--olaso-text);
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1.8px;
+}
+
+.change {
+  position: absolute;
+  top: 119px;
+  left: 320px;
+  height: 28px;
+  gap: 5px;
+  padding: 0 10px;
+  border-radius: 14px;
+  color: var(--olaso-green);
+  background: var(--olaso-green-icon);
+  font-size: 9px;
+}
+
+.summaryDividerTop,
+.summaryDividerBottom,
+.bestSellerDivider {
+  position: absolute;
+  left: 26px;
+  width: 794px;
+  height: 1px;
+  background: var(--olaso-line);
+}
+
+.summaryDividerTop {
+  top: 176px;
+}
+
+.summaryDividerBottom {
+  top: 258px;
+}
+
+.summary {
+  position: absolute;
+  top: 192px;
+  left: 26px;
+  display: grid;
+  grid-template-columns: 264px 264px 266px;
+  width: 794px;
+  height: 62px;
+}
+
+.metricSlot {
+  position: relative;
+  height: 62px;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  gap: 12px;
+}
+
+.metricIcon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--olaso-green);
+  background: var(--olaso-green-soft);
+}
+
+.metricCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metricCopy strong {
+  color: var(--olaso-text);
+  font-size: 19px;
+  line-height: 1;
+}
+
+.metricCopy small {
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.metricDivider {
+  position: absolute;
+  top: 3px;
+  right: 17px;
+  width: 1px;
+  height: 38px;
+  background: var(--olaso-line);
+}
+
+.chartHeader {
+  position: absolute;
+  top: 278px;
+  left: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 794px;
+  height: 34px;
+}
+
+.chartHeader > span:first-child,
+.bestCopy,
+.bestStats {
+  display: flex;
+  flex-direction: column;
+}
+
+.chartHeader > span:first-child {
+  gap: 2px;
+}
+
+.chartHeader strong {
+  color: var(--olaso-text);
+  font-size: 13px;
+}
+
+.chartHeader small {
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.peak {
+  gap: 7px;
+  color: var(--olaso-green);
+}
+
+.peak strong {
+  color: var(--olaso-copy-green);
+  font-size: 9px;
+}
+
+.chart {
+  position: absolute;
+  top: 328px;
+  left: 26px;
+  width: 794px;
+  height: 244px;
+}
+
+.guides {
+  position: absolute;
+  inset: 0 0 28px;
+}
+
+.guides span {
+  position: absolute;
+  left: 0;
+  width: 794px;
+  height: 1px;
+  background: var(--olaso-line-soft);
+}
+
+.guides span:nth-child(1) { top: 14px; }
+.guides span:nth-child(2) { top: 64px; }
+.guides span:nth-child(3) { top: 114px; }
+.guides span:nth-child(4) { top: 164px; }
+.guides span:nth-child(5) { top: 214px; }
+
+.bars,
+.axis {
+  position: absolute;
+  left: 0;
+  display: flex;
+  width: 794px;
+  gap: 22px;
+}
+
+.bars {
+  top: 0;
+  align-items: flex-end;
+  height: 216px;
+}
+
+.barColumn {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex: 0 0 46px;
+  height: 216px;
+}
+
+.bar {
+  width: 22px;
+  border-radius: 8px 8px 2px 2px;
+}
+
+.tone1 { background: var(--olaso-chart-1); }
+.tone2 { background: var(--olaso-chart-2); }
+.tone3 { background: var(--olaso-chart-3); }
+.tone4 { background: var(--olaso-chart-4); }
+.tone5 { background: var(--olaso-chart-5); }
+.tone6 { background: var(--olaso-chart-6); }
+.tone7 { background: var(--olaso-chart-7); }
+.tone8 { background: var(--olaso-chart-8); }
+.tone9 { background: var(--olaso-chart-9); }
+.tone10 { background: var(--olaso-green); }
+
+.axis {
+  top: 230px;
+  height: 14px;
+}
+
+.axis span {
+  flex: 0 0 46px;
+  color: var(--olaso-axis);
+  font-size: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.bestSellerDivider {
+  top: 594px;
+}
+
+.bestSeller {
+  position: absolute;
+  top: 604px;
+  left: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 794px;
+  height: 58px;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: var(--olaso-green-row);
+}
+
+.bestProduct {
+  gap: 12px;
+}
+
+.bestIcon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--olaso-green);
+  background: var(--olaso-white);
+}
+
+.bestCopy {
+  gap: 3px;
+}
+
+.bestCopy small {
+  color: var(--olaso-copy-green);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.bestCopy strong {
+  color: var(--olaso-text);
+  font-size: 13px;
+}
+
+.bestStats {
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.bestStats strong {
+  color: var(--olaso-text);
+  font-size: 14px;
+}
+
+.bestStats small {
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 600;
+}

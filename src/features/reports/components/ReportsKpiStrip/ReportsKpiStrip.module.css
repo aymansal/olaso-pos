@@ -1,0 +1,80 @@
+.strip {
+  position: absolute;
+  top: 138px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  width: 798px;
+  height: 74px;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: var(--olaso-stock-strip);
+}
+
+.kpi {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  gap: 9px;
+}
+
+.divider {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  width: 1px;
+  height: 32px;
+  background: var(--olaso-stock-separator);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 50%;
+  color: var(--olaso-green);
+  background: var(--olaso-green-icon);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.copy > strong {
+  color: var(--olaso-text);
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.kpi:first-child .copy > strong {
+  font-size: 13px;
+}
+
+.copy > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.copy small {
+  color: var(--olaso-text-meta);
+  font-size: 7px;
+  font-weight: 500;
+}
+
+.copy small.up {
+  color: var(--olaso-green);
+  font-weight: 700;
+}
+
+.copy small.down {
+  color: var(--olaso-stock-low);
+  font-weight: 700;
+}

@@ -1,13 +1,23 @@
-import { products } from '../../data/products';
+import type { Product } from '../../data/products';
 import { ProductCard } from '../ProductCard/ProductCard';
 import styles from './ProductGrid.module.css';
 
-export function ProductGrid() {
+type ProductGridProps = {
+  products: Product[];
+  onAdd: (productId: string) => void;
+};
+
+export function ProductGrid({ products, onAdd }: ProductGridProps) {
   return (
-    <section className={styles.grid} aria-label="Coffee products">
-      {products.map((product) => (
-        <ProductCard key={product.name} {...product} />
-      ))}
+    <section className={styles.grid} aria-label="Products">
+      {products.length > 0
+        ? products.map((product) =>
+            <ProductCard
+              key={product.id}
+              {...product}
+              onAdd={() => onAdd(product.id)}
+            />)
+        : <p className={styles.empty} role="status">No products match this category and search.</p>}
     </section>
   );
 }

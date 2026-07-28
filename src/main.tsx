@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Theme } from '@astryxdesign/core/theme';
-import { OlasothemeTheme } from '../Olasotheme-theme';
+import { OlasothemeTheme } from '../Olasotheme';
 import { App } from './App';
 import './globals.css';
 

@@ -1,0 +1,129 @@
+.panel {
+  position: absolute;
+  top: 92px;
+  left: 18px;
+  width: 846px;
+  height: 686px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.header {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 798px;
+  height: 44px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heading h1 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.heading small {
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.addProduct {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  gap: 8px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 18px;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.toolbar {
+  position: absolute;
+  top: 80px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  width: 798px;
+  height: 42px;
+  gap: 10px;
+}
+
+.search,
+.filter,
+.sort {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 21px;
+  background: transparent;
+}
+
+.search {
+  width: 390px;
+  gap: 9px;
+  padding: 0 14px;
+  color: var(--olaso-muted);
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.search input::placeholder {
+  color: var(--olaso-text-placeholder);
+  opacity: 1;
+}
+
+.filter,
+.sort {
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 13px;
+  color: var(--olaso-text);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.filter {
+  width: 190px;
+}
+
+.sort {
+  width: 198px;
+}
+
+.filter svg:first-child,
+.sort svg:first-child {
+  color: var(--olaso-green);
+}
+
+.filter svg:last-child,
+.sort svg:last-child {
+  color: var(--olaso-copy);
+}

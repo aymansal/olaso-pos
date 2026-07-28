@@ -24,3 +24,14 @@
   justify-self: start;
   margin-left: -16px;
 }
+
+.empty {
+  display: grid;
+  width: 966px;
+  height: 502px;
+  margin: 0;
+  grid-column: 1 / -1;
+  place-items: center;
+  color: var(--olaso-muted);
+  font-size: 13px;
+}

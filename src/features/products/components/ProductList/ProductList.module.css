@@ -1,0 +1,218 @@
+.list {
+  position: absolute;
+  top: 138px;
+  left: 210px;
+  width: 612px;
+  height: 522px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 20px;
+}
+
+.header {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 580px;
+  height: 34px;
+}
+
+.header > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header h2 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.header small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.header button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.columns {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  width: 612px;
+  height: 32px;
+  background: var(--olaso-product-head);
+}
+
+.columns span {
+  position: absolute;
+  top: 11px;
+  color: var(--olaso-product-label);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+}
+
+.columns span:nth-child(1) { left: 62px; }
+.columns span:nth-child(2) { left: 316px; }
+.columns span:nth-child(3) { left: 390px; }
+.columns span:nth-child(4) { left: 500px; }
+
+.rows {
+  position: absolute;
+  top: 88px;
+  left: 0;
+  width: 612px;
+}
+
+.row {
+  position: relative;
+  width: 612px;
+  height: 66px;
+  background: var(--olaso-white);
+}
+
+.selected {
+  background: var(--olaso-table-selected);
+}
+
+.selectedMark {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  width: 3px;
+  height: 42px;
+  border-radius: 2px;
+  background: var(--olaso-green);
+}
+
+.productIcon {
+  position: absolute;
+  top: 13px;
+  left: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  color: var(--olaso-muted);
+  background: var(--olaso-neutral-icon);
+}
+
+.productIconActive {
+  color: var(--olaso-green);
+  background: var(--olaso-product-art);
+}
+
+.productCopy {
+  position: absolute;
+  top: 13px;
+  left: 62px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.productCopy strong,
+.price {
+  color: var(--olaso-text);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.productCopy small {
+  color: var(--olaso-text-meta);
+  font-size: 7.5px;
+  font-weight: 500;
+}
+
+.price {
+  position: absolute;
+  top: 25px;
+  left: 316px;
+}
+
+.available,
+.recipe {
+  position: absolute;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  gap: 5px;
+  border-radius: 13px;
+  font-size: 7.5px;
+}
+
+.available {
+  left: 390px;
+  width: 88px;
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-icon);
+}
+
+.available > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--olaso-success);
+}
+
+.recipe {
+  left: 500px;
+  width: 96px;
+  color: var(--olaso-gold);
+  background: var(--olaso-status-gold);
+}
+
+.divider {
+  position: absolute;
+  bottom: 0;
+  left: 62px;
+  width: 534px;
+  height: 1px;
+  background: var(--olaso-line-soft);
+}
+
+.footer {
+  position: absolute;
+  top: 490px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 580px;
+  height: 24px;
+  color: var(--olaso-text-meta);
+  font-size: 7.5px;
+  font-weight: 500;
+}
+
+.footer button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 8px;
+  font-weight: 700;
+}

@@ -1,0 +1,125 @@
+.table {
+  position: absolute;
+  top: 138px;
+  left: 24px;
+  width: 798px;
+  height: 448px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 16px;
+}
+
+.head,
+.row {
+  display: grid;
+  grid-template-columns: 108px 155px 160px 85px 105px 185px;
+  width: 798px;
+}
+
+.head {
+  height: 40px;
+  background: var(--olaso-table-head);
+}
+
+.head > span,
+.row > span,
+.row > strong {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0 12px;
+}
+
+.head > span {
+  color: var(--olaso-table-label);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+.row {
+  height: 68px;
+  border-bottom: 1px solid var(--olaso-line-soft);
+  background: var(--olaso-white);
+}
+
+.selected {
+  background: var(--olaso-table-selected);
+}
+
+.row > strong {
+  color: var(--olaso-text-dark-soft);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.row .total {
+  color: var(--olaso-text);
+  font-weight: 700;
+}
+
+.identityCell {
+  gap: 9px;
+}
+
+.selectedMark {
+  width: 3px;
+  height: 32px;
+  border-radius: 2px;
+  background: var(--olaso-green);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.identity strong {
+  color: var(--olaso-text);
+  font-size: 10px;
+}
+
+.identity small {
+  color: var(--olaso-text-time);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.service {
+  color: var(--olaso-text-service);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: 13px;
+  font-size: 8px;
+}
+
+.status > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.preparing {
+  color: var(--olaso-gold);
+  background: var(--olaso-status-gold);
+}
+
+.ready {
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-icon);
+}
+
+.completed {
+  color: var(--olaso-text-neutral);
+  background: var(--olaso-neutral-icon);
+}

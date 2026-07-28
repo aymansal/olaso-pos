@@ -16,6 +16,7 @@
 
 .search input {
   flex: 1;
+  height: 100%;
   min-width: 0;
   padding: 0;
   border: 0;
@@ -23,6 +24,11 @@
   color: #151b16;
   background: transparent;
   font-size: 13px;
+}
+
+.search:focus-within {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
 }
 
 .search input::placeholder {
