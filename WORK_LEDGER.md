@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-06 in progress
+**Status:** in progress — APP-06 complete; APP-07 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -87,7 +87,7 @@ hardware are available.
 | APP-03 | Make categories, products, modifiers, and recipe management functional | done | Management/UI/check/browser evidence passed; implementation commit `3438fae935aedbca8ec8709a508d5127f522ff19` pushed to `origin/codex/goal-02-functional-app` |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | done | Inventory/backend/UI/check/browser evidence passed; implementation commit `b4fd2a8de4306bd1e353ef0cfee2da037f909733` pushed to `origin/codex/goal-02-functional-app` |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | done | Compatibility, persistence, restart/migration, Android sync, and browser evidence passed; implementation commit `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` pushed to `origin/codex/goal-02-functional-app` |
-| APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | in progress | Atomic/offline/retry/duplicate checks, full regression, Graphify refresh, and visual QA pass; implementation commit and push pending |
+| APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | done | Atomic/offline/retry/duplicate checks, full regression, Graphify refresh, and visual QA passed; implementation commit `07db73f350f7e43c87b6f7b3497559d02a08cf42` pushed to `origin/codex/goal-02-functional-app` |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | pending | Pagination/snapshots/sync states verified in Orders UI; commit pushed |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | pending | Saved-summary reads and Dashboard states verified; commit pushed |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | pending | Bounded report queries and all report tabs verified; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-05 are done; APP-06 is the only card in progress.
+- APP-00 through APP-06 are done; APP-07 is pending and no card is in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -380,9 +380,9 @@ hardware are available.
   Convex/SQLite import, unbounded Convex `.collect()`, printer transport/print
   invocation, tracked environment file, signing key, APK, or AAB.
 
-**Exact next action:** Stage only the reviewed APP-06 files, commit with the
-card ID, push `codex/goal-02-functional-app`, and record the implementation SHA
-and remote branch before marking APP-06 done.
+**Exact next action:** Start APP-07 with its DOX/ledger/Graphify reads, then
+replace fixture order history with the bounded snapshot, sync-state, recovery,
+and confirmed-policy actions in its card contract.
 
 ## Decisions and Blockers
 
@@ -404,6 +404,20 @@ and remote branch before marking APP-06 done.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-06 complete
+
+- Pushed `APP-06: complete local-first checkout` as
+  `07db73f350f7e43c87b6f7b3497559d02a08cf42` and confirmed
+  `origin/codex/goal-02-functional-app` resolves to the same SHA.
+- Completion evidence: atomic SQLite sale/line/receipt/movement/outbox commit,
+  exact modifier-aware recipe deduction, offline completion and retry,
+  duplicate-safe Convex acceptance, immutable on-screen receipt preview, full
+  card regression, refreshed Graphify code graph, and approved 1340 × 800 POS
+  verification all pass.
+- Exact next action: start APP-07 with its DOX/ledger/Graphify reads and replace
+  order fixtures with bounded snapshot, sync-state, recovery, and
+  confirmed-policy behavior.
 
 ### 2026-07-28 — APP-06 started
 
