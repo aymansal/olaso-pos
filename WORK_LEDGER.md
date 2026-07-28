@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-06 complete; APP-07 pending
+**Status:** in progress — APP-07 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -88,7 +88,7 @@ hardware are available.
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | done | Inventory/backend/UI/check/browser evidence passed; implementation commit `b4fd2a8de4306bd1e353ef0cfee2da037f909733` pushed to `origin/codex/goal-02-functional-app` |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | done | Compatibility, persistence, restart/migration, Android sync, and browser evidence passed; implementation commit `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` pushed to `origin/codex/goal-02-functional-app` |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | done | Atomic/offline/retry/duplicate checks, full regression, Graphify refresh, and visual QA passed; implementation commit `07db73f350f7e43c87b6f7b3497559d02a08cf42` pushed to `origin/codex/goal-02-functional-app` |
-| APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | pending | Pagination/snapshots/sync states verified in Orders UI; commit pushed |
+| APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | in progress | Bounded history/detail, sync-state recovery, truthful policy states, verification, and push evidence pending |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | pending | Saved-summary reads and Dashboard states verified; commit pushed |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | pending | Bounded report queries and all report tabs verified; commit pushed |
 | APP-10 | Make settings, synchronization controls, and the designed lock flow functional | pending | Settings survive restart; lock/session behavior documented and verified; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-06 are done; APP-07 is pending and no card is in progress.
+- APP-00 through APP-06 are done; APP-07 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -379,10 +379,43 @@ hardware are available.
   trusted synchronization boundaries. Closeout scans find no feature-level
   Convex/SQLite import, unbounded Convex `.collect()`, printer transport/print
   invocation, tracked environment file, signing key, APK, or AAB.
+- APP-07 now has a v4 local history index, bounded keyset SQLite reader, saved
+  receipt parser, sync summary, and deliberate retry reset. One deployed
+  `sales:listOrders` query pages the existing embedded receipt snapshots by the
+  completed-time index with a validated maximum page size of 20.
+- The Orders data hook performs one page request only while the screen is
+  mounted, merges and deduplicates local/cloud records by
+  `deviceId + localSaleId`, preserves offline local history, and retries the
+  existing outbox mutation without polling or a second write path.
+- Orders fixtures are removed. Search, status/date filtering, selection,
+  pagination/load-more, immutable detail, sync/recovery state, and shared
+  on-screen receipt preview are wired to live data. Cancellation, refund, and
+  print controls remain truthfully unavailable.
+- Controlled recovery verification completed a sale while cloud POS access was
+  disabled, showed it from SQLite as `Needs sync`, restored access, retried it
+  once, and confirmed the same order changed to `Completed · Synced` with a
+  last-success time and no duplicate.
+- APP-07 regression passes: Convex codegen/deployment, management, inventory,
+  sales, order history/recovery, seed restore, POS, local restart/migration,
+  TypeScript, production build, and whitespace checks. The deterministic
+  cloud seed is restored to 13 sales, 17 sale lines, 65 movements, and 7 daily
+  summaries.
+- Graphify is refreshed to 1,854 nodes and 4,477 edges and queries the local
+  page, merged Orders hook, cloud page, recovery, detail, and shared receipt
+  preview paths.
+- Final Orders verification at exactly 1340 × 800 covers the compact native
+  date menu, two non-overlapping six-record pages, preserved selection,
+  cancelled-state policy messaging, receipt preview, local fallback, and retry
+  recovery. The full-bleed frame has no clipping or document overflow and the
+  browser diagnostics are clean.
+- Closeout review finds no unbounded Convex collection/database filter,
+  feature-level backend/database import, printer transport or invocation, or
+  tracked environment, signing, APK, or AAB material. The applicable DOX chain
+  and indexes remain current.
 
-**Exact next action:** Start APP-07 with its DOX/ledger/Graphify reads, then
-replace fixture order history with the bounded snapshot, sync-state, recovery,
-and confirmed-policy actions in its card contract.
+**Exact next action:** Stage only the reviewed APP-07 files, commit with the
+card ID, push `codex/goal-02-functional-app`, and record the implementation SHA
+and remote branch before marking APP-07 done.
 
 ## Decisions and Blockers
 
@@ -404,6 +437,63 @@ and confirmed-policy actions in its card contract.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-07 started
+
+- Queried the refreshed Graphify graph first for Orders composition, fixtures,
+  paginated history, saved sale snapshots, local/cloud sync state, outbox
+  recovery, and corrective-action boundaries.
+- Re-read the complete root/source/feature/Orders, data, and Convex DOX chain
+  from the uninterrupted closeout context plus the APP-07 product,
+  architecture, design, brand, and durable ledger contracts.
+- Confirmed APP-00 through APP-06 are done and marked APP-07 as the only card in
+  progress.
+- Confirmed the card contract: replace fixture history with bounded/paginated
+  records, show immutable saved snapshots and local/cloud recovery state, never
+  hard-delete sales or movements, and expose cancellation/refund/reprint as
+  unavailable until owner policy and later printer work authorize them.
+- Added local migration v4 for the implemented history and outbox recovery
+  access paths. The keyset reader parses saved receipt snapshots, returns at
+  most 20 records, reports per-order sync attempts/errors, and can deliberately
+  make one failed sale available for an immediate retry.
+- Added one indexed Convex order query with validated page size and opaque
+  cursor. It returns only the sale and embedded immutable receipt snapshot
+  needed by Orders; it does not fan out into sale-item queries.
+- Added one Orders hook that requests pages only while the screen is mounted,
+  merges local/cloud rows by the sale idempotency key, preserves local history
+  when cloud reads fail, and reuses the existing sale-sync mutation for
+  recovery.
+- Removed Orders fixtures and connected search, sale-status and native date
+  filters, list pagination, selection, saved detail, sync state, retry, and
+  shared on-screen receipt preview. Printer and corrective controls are not
+  exposed while those workflows remain outside the goal or owner policy.
+- Promoted the now-two-feature receipt preview and money formatter to direct
+  shared source modules instead of duplicating the POS implementation.
+- `npm run check:convex`, explicit `npx convex dev --once --typecheck enable`,
+  `npx tsc -b`, and the new `npm run check:orders` pass. The order check proves
+  local keyset pages, failed-sync visibility, deliberate retry reset, two
+  non-overlapping cloud pages, immutable snapshot data, and page-limit
+  rejection.
+- Controlled browser recovery completed a local sale while cloud POS access was
+  disabled, showed the saved snapshot and recovery state in Orders, then
+  synchronized that same record once after access was restored. The deterministic
+  cloud seed was restored afterward.
+- Full regression passes: `npm run check:convex`, explicit Convex deployment,
+  management, inventory, sales, Orders, seed, POS, and local checks, TypeScript,
+  production build, and whitespace review.
+- Refreshed Graphify through its documented local AST merge path to 1,854 nodes
+  and 4,477 edges, then queried the complete local/cloud history and recovery
+  flow.
+- Final browser verification at exactly 1340 × 800 covers date controls,
+  pagination, selection, cancelled policy state, detail, preview, offline
+  fallback, and retry recovery with no clipping, document overflow, console
+  warning, or console error.
+- Re-read the closeout DOX chain. Scans find no unbounded backend read,
+  feature-level backend/database import, printer implementation, or tracked
+  secret/signing/package artifact.
+- Exact next action: stage only the reviewed APP-07 files, commit with the card
+  ID, push the goal branch, and record the implementation SHA and remote branch
+  before marking APP-07 done.
 
 ### 2026-07-28 — APP-06 complete
 

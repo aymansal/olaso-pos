@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 import type { Doc, Id } from './_generated/dataModel';
-import { internalQuery, mutation } from './_generated/server';
+import { internalQuery, mutation, query } from './_generated/server';
 import {
   boundedInteger,
   cleanOptionalText,
@@ -56,6 +56,43 @@ function checkedTotal(value: number, label: string) {
   }
   return value;
 }
+
+export const listOrders = query({
+  args: {
+    cursor: v.optional(v.string()),
+    limit: v.number(),
+  },
+  handler: async (ctx, args) => {
+    await requireOperationalAccess(ctx);
+    const limit = boundedInteger(args.limit, 'Order page size', 1, 20);
+    if (args.cursor && args.cursor.length > 2_048) {
+      return invalid('The order cursor is invalid.');
+    }
+    const result = await ctx.db
+      .query('sales')
+      .withIndex('by_completed_at')
+      .order('desc')
+      .paginate({
+        cursor: args.cursor ?? null,
+        numItems: limit,
+      });
+    return {
+      ...result,
+      page: result.page.map((sale) => ({
+        id: sale._id,
+        deviceId: sale.deviceId,
+        localSaleId: sale.localSaleId,
+        receiptNumber: sale.receiptNumber,
+        ...(sale.cashierName ? { cashierName: sale.cashierName } : {}),
+        status: sale.status,
+        businessDate: sale.businessDate,
+        completedAt: sale.completedAt,
+        acknowledgedAt: sale.acknowledgedAt,
+        receiptSnapshot: sale.receiptSnapshot,
+      })),
+    };
+  },
+});
 
 export const accept = mutation({
   args: {

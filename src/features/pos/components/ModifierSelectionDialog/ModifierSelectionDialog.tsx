@@ -1,6 +1,6 @@
 import { Plus, X } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { formatMoney } from '../../posSession';
+import { formatMoney } from '../../../../lib/money';
 import styles from './ModifierSelectionDialog.module.css';
 
 export type PosModifierGroup = {

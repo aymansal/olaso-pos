@@ -9,6 +9,11 @@ tablet's local SQLite operational record.
 
 - `usePosData.ts` hydrates the POS from the local operational cache and
   coordinates bounded cloud refresh plus sale retries.
+- `useOrdersData.ts` requests bounded history pages only while Orders is
+  mounted, merges local/cloud rows by the sale idempotency key, and coordinates
+  deliberate retry.
+- `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt parsing,
+  sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
   immutable receipt snapshots, and outbox acknowledgement/failure state.
 - `operationalCache.ts` owns the bounded cloud-to-local menu, modifier, recipe,
@@ -27,6 +32,8 @@ tablet's local SQLite operational record.
 - Represent offline sale usage as a signed local stock delta over the cached
   cloud balance so low stock never blocks a valid sale.
 - Keep operational and outbox reads explicitly bounded.
+- Page local sale history by the created-time keyset index and keep public cloud
+  history page sizes at 20 or fewer.
 - Never refresh cloud cache data over pending local outbox work.
 - Web development uses the same SQL through `jeep-sqlite`; it is not a second
   persistence architecture.

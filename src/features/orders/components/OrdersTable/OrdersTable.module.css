@@ -39,8 +39,18 @@
 
 .row {
   height: 68px;
+  padding: 0;
+  border: 0;
   border-bottom: 1px solid var(--olaso-line-soft);
   background: var(--olaso-white);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: -2px;
 }
 
 .selected {
@@ -122,4 +132,18 @@
 .completed {
   color: var(--olaso-text-neutral);
   background: var(--olaso-neutral-icon);
+}
+
+.failed {
+  color: var(--olaso-danger-ink);
+  background: var(--olaso-danger-soft);
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  height: 408px;
+  margin: 0;
+  color: var(--olaso-text-meta);
+  font-size: 10px;
 }

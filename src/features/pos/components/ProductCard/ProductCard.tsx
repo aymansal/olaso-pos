@@ -1,7 +1,7 @@
 import { Card } from '@astryxdesign/core/Card';
 import { Plus } from '@phosphor-icons/react';
+import { formatMoney } from '../../../../lib/money';
 import type { Product } from '../../data/products';
-import { formatMoney } from '../../posSession';
 import styles from './ProductCard.module.css';
 
 type ProductCardProps = Product & {

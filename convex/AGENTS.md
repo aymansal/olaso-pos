@@ -13,6 +13,8 @@ data, reporting summaries, and development seeding.
   `products.ts`, `modifiers.ts`, `recipes.ts`, `ingredients.ts`,
   `inventory.ts`, `sales.ts`, and `reports.ts`.
 - `sync.ts` owns the bounded operational snapshot consumed by the tablet cache.
+- `sales.ts` owns the idempotent sale mutation and the bounded, cursor-paginated
+  receipt-snapshot history query.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts
@@ -47,6 +49,8 @@ data, reporting summaries, and development seeding.
   inventory-schema changes.
 - Run `npm run check:sales` after operational snapshot, sale, receipt, stock
   deduction, or POS-authorization changes.
+- Run `npm run check:orders` after sale-history pagination or receipt-snapshot
+  read changes.
 - Run `npx convex dev --once` when schema or deployed functions change.
 - Review every new index against an implemented access path.
 

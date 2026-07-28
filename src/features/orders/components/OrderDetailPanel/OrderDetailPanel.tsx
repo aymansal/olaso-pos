@@ -1,45 +1,100 @@
 import {
   CheckCircle,
   Clock,
-  Coffee,
   DotsThree,
   Info,
-  Leaf,
   MapPin,
   Package,
-  Printer,
+  Receipt,
+  ArrowsClockwise,
   Storefront,
   User,
 } from '@phosphor-icons/react';
-import { selectedOrderItems } from '../../data/ordersData';
+import { useState } from 'react';
+import { ReceiptPreviewDialog } from '../../../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
+import type { OrderHistoryRecord } from '../../../../data/orderHistory';
+import { formatMoney } from '../../../../lib/money';
 import styles from './OrderDetailPanel.module.css';
 
-const itemIcons = {
-  coffee: Coffee,
-  leaf: Leaf,
-  package: Package,
-};
+function serviceLabel(order: OrderHistoryRecord) {
+  if (order.receipt.serviceType === 'dine-in') return 'Dine in';
+  if (order.receipt.serviceType === 'take-away') return 'Take away';
+  return 'Order online';
+}
 
-const metadata = [
-  { icon: Storefront, value: 'Dine in', label: 'Service' },
-  { icon: MapPin, value: 'B12', label: 'Table' },
-  { icon: Clock, value: '10:42', label: 'Created' },
-] as const;
+function stateLabel(order: OrderHistoryRecord) {
+  if (order.syncState === 'failed') return 'Needs sync';
+  if (order.syncState === 'pending') return 'Waiting to sync';
+  if (order.status === 'cancelled') return 'Cancelled';
+  if (order.status === 'refunded') return 'Refunded';
+  return 'Completed';
+}
 
-export function OrderDetailPanel() {
+export function OrderDetailPanel({
+  order,
+  retrying,
+  onRetry,
+}: {
+  order?: OrderHistoryRecord;
+  retrying: boolean;
+  onRetry: (localSaleId: string) => Promise<void>;
+}) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  if (!order) {
+    return (
+      <aside className={`${styles.panel} ${styles.empty}`} aria-live="polite">
+        <Receipt size={28} aria-hidden="true" />
+        <strong>No order selected</strong>
+        <span>Choose a saved order to inspect its receipt snapshot.</span>
+      </aside>
+    );
+  }
+
+  const itemCount = order.receipt.lines.reduce(
+    (total, line) => total + line.quantity,
+    0,
+  );
+  const metadata = [
+    { icon: Storefront, value: serviceLabel(order), label: 'Service' },
+    { icon: MapPin, value: order.receipt.tableLabel ?? '—', label: 'Table' },
+    {
+      icon: Clock,
+      value: new Date(order.receipt.completedAt).toLocaleTimeString(
+        'en-GB',
+        { hour: '2-digit', minute: '2-digit' },
+      ),
+      label: 'Created',
+    },
+  ] as const;
+  const canRetry = order.syncState !== 'synced';
+  const statusTone = canRetry || order.status !== 'completed'
+    ? styles.statusAttention
+    : styles.statusComplete;
+  const syncNote = order.syncState === 'failed'
+    ? 'Cloud synchronization needs attention. Retry when online.'
+    : order.syncState === 'pending'
+      ? 'Saved locally · waiting for cloud acknowledgement'
+      : 'Cancellation and refund permissions await owner confirmation';
+
   return (
     <aside className={styles.panel} aria-labelledby="selected-order-title">
       <header className={styles.header}>
         <span className={styles.heading}>
           <small>SELECTED ORDER</small>
-          <h2 id="selected-order-title">#27362</h2>
+          <h2 id="selected-order-title">{order.receipt.receiptNumber}</h2>
         </span>
         <span className={styles.headerActions}>
-          <span className={styles.preparing}>
+          <span className={`${styles.orderStatus} ${statusTone}`}>
             <span />
-            <strong>Preparing</strong>
+            <strong>{stateLabel(order)}</strong>
           </span>
-          <button type="button" aria-label="More order actions">
+          <button
+            type="button"
+            aria-label="Corrective actions unavailable"
+            title="Cancellation and refund permissions await owner confirmation"
+            disabled
+          >
             <DotsThree size={16} weight="regular" aria-hidden="true" />
           </button>
         </span>
@@ -64,34 +119,42 @@ export function OrderDetailPanel() {
           </span>
           <span>
             <small>Customer</small>
-            <strong>Muadz</strong>
+            <strong>{order.receipt.customerName ?? 'Walk-in'}</strong>
           </span>
         </span>
-        <small>No order note</small>
+        <small>{order.cashierName ?? 'Cashier unavailable'}</small>
       </div>
 
       <div className={`${styles.divider} ${styles.customerDivider}`} />
 
       <div className={styles.itemsHeader}>
         <strong>Order items</strong>
-        <small>4 items</small>
+        <small>{itemCount} {itemCount === 1 ? 'item' : 'items'}</small>
       </div>
 
       <div className={styles.items}>
-        {selectedOrderItems.map((item, index) => {
-          const Icon = itemIcons[item.icon];
-
+        {order.receipt.lines.map((item, index) => {
+          const options = item.modifiers
+            .map((modifier) => modifier.optionName)
+            .join(', ');
           return (
-            <article className={styles.item} key={item.name}>
-              <span className={`${styles.itemIcon} ${item.active ? styles.itemIconActive : ''}`}>
-                <Icon size={17} weight="regular" aria-hidden="true" />
+            <article className={styles.item} key={`${item.productName}-${index}`}>
+              <span className={`${styles.itemIcon} ${index === 0 ? styles.itemIconActive : ''}`}>
+                <Package size={17} weight="regular" aria-hidden="true" />
               </span>
               <span className={styles.itemCopy}>
-                <strong>{item.name}</strong>
-                <small>{item.quantity}</small>
+                <strong>{item.productName}</strong>
+                <small>
+                  {options ? `${options} · ` : ''}
+                  {formatMoney(item.unitPriceCentimes)} × {item.quantity}
+                </small>
               </span>
-              <strong className={styles.itemTotal}>{item.total}</strong>
-              {index < selectedOrderItems.length - 1 ? <span className={styles.itemDivider} /> : null}
+              <strong className={styles.itemTotal}>
+                {formatMoney(item.lineTotalCentimes)}
+              </strong>
+              {index < order.receipt.lines.length - 1
+                ? <span className={styles.itemDivider} />
+                : null}
             </article>
           );
         })}
@@ -103,33 +166,63 @@ export function OrderDetailPanel() {
         <strong>Payment</strong>
         <span>
           <span />
-          <small>Paid in cash</small>
+          <small>{order.receipt.paymentMethod}</small>
         </span>
       </div>
 
       <dl className={styles.payment}>
-        <div><dt>Subtotal</dt><dd>151 MAD</dd></div>
-        <div><dt>Tax</dt><dd>13 MAD</dd></div>
-        <div className={styles.total}><dt>Total</dt><dd>164 MAD</dd></div>
+        <div>
+          <dt>Subtotal</dt>
+          <dd>{formatMoney(order.receipt.subtotalCentimes)}</dd>
+        </div>
+        <div><dt>Tax</dt><dd>{formatMoney(order.receipt.taxCentimes)}</dd></div>
+        <div className={styles.total}>
+          <dt>Total</dt>
+          <dd>{formatMoney(order.receipt.totalCentimes)}</dd>
+        </div>
       </dl>
 
       <div className={`${styles.divider} ${styles.actionsDivider}`} />
 
       <div className={styles.actions}>
-        <button type="button" className={styles.print}>
-          <Printer size={17} weight="regular" aria-hidden="true" />
-          <span>Print receipt</span>
+        <button
+          type="button"
+          className={styles.preview}
+          onClick={() => setPreviewOpen(true)}
+        >
+          <Receipt size={17} weight="regular" aria-hidden="true" />
+          <span>View receipt</span>
         </button>
-        <button type="button" className={styles.ready}>
-          <CheckCircle size={18} weight="regular" aria-hidden="true" />
-          <span>Mark as ready</span>
+        <button
+          type="button"
+          className={styles.sync}
+          disabled={!canRetry || retrying}
+          onClick={() => void onRetry(order.localSaleId)}
+        >
+          {canRetry ? (
+            <ArrowsClockwise size={18} weight="regular" aria-hidden="true" />
+          ) : (
+            <CheckCircle size={18} weight="regular" aria-hidden="true" />
+          )}
+          <span>{retrying ? 'Retrying…' : canRetry ? 'Retry sync' : 'Synced'}</span>
         </button>
       </div>
 
       <div className={styles.stockNote}>
         <Info size={13} weight="regular" aria-hidden="true" />
-        <span>Stock deductions were recorded with this sale</span>
+        <span>{syncNote}</span>
       </div>
+      {previewOpen ? (
+        <ReceiptPreviewDialog
+          receipt={order.receipt}
+          statusMessage={
+            order.syncState === 'synced'
+              ? 'Cloud copy confirmed · saved receipt snapshot'
+              : syncNote
+          }
+          onClose={() => setPreviewOpen(false)}
+        />
+      ) : null}
     </aside>
   );
 }

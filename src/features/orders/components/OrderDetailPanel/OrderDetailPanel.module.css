@@ -48,7 +48,7 @@
 }
 
 .headerActions,
-.preparing,
+.orderStatus,
 .metadata,
 .metaItem,
 .customer,
@@ -66,21 +66,29 @@
   gap: 8px;
 }
 
-.preparing {
+.orderStatus {
   height: 28px;
   gap: 6px;
   padding: 0 10px;
   border-radius: 14px;
-  color: var(--olaso-gold);
-  background: var(--olaso-status-gold);
   font-size: 8px;
 }
 
-.preparing > span {
+.orderStatus > span {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--olaso-gold);
+  background: currentColor;
+}
+
+.statusAttention {
+  color: var(--olaso-gold);
+  background: var(--olaso-status-gold);
+}
+
+.statusComplete {
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-icon);
 }
 
 .headerActions button {
@@ -93,6 +101,11 @@
   border-radius: 50%;
   color: var(--olaso-muted);
   background: transparent;
+}
+
+.headerActions button:disabled {
+  color: var(--olaso-disabled);
+  cursor: not-allowed;
 }
 
 .metadata {
@@ -202,6 +215,8 @@
   top: 270px;
   left: 22px;
   width: 396px;
+  height: 176px;
+  overflow-y: auto;
 }
 
 .item {
@@ -233,11 +248,21 @@
   top: 10px;
   left: 52px;
   gap: 6px;
+  width: 250px;
 }
 
 .itemCopy strong {
+  overflow: hidden;
   color: var(--olaso-text);
   font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemCopy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .itemTotal {
@@ -351,18 +376,24 @@
   font-weight: 700;
 }
 
-.print {
+.preview {
   width: 166px;
   border: 1px solid var(--olaso-green);
   color: var(--olaso-green);
   background: transparent;
 }
 
-.ready {
+.sync {
   flex: 1;
   border: 0;
   color: var(--olaso-white);
   background: var(--olaso-green);
+}
+
+.sync:disabled {
+  color: var(--olaso-copy-green);
+  background: var(--olaso-green-soft);
+  cursor: default;
 }
 
 .stockNote {
@@ -376,4 +407,19 @@
   color: var(--olaso-note);
   font-size: 8px;
   font-weight: 500;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+}
+
+.empty strong {
+  color: var(--olaso-text);
+  font-size: 13px;
 }

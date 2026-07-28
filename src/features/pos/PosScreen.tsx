@@ -5,6 +5,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
+import { ReceiptPreviewDialog } from '../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { usePosData } from '../../data/usePosData';
 import type { SavedReceipt } from '../../data/localSales.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
@@ -14,7 +15,6 @@ import {
   type PosModifierGroup,
 } from './components/ModifierSelectionDialog/ModifierSelectionDialog';
 import { ProductGrid } from './components/ProductGrid/ProductGrid';
-import { ReceiptPreviewDialog } from './components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { ReceiptRail } from './components/ReceiptRail/ReceiptRail';
 import { SearchField } from './components/SearchField/SearchField';
 import type { NavigationPage } from './components/TopNavigation/TopNavigation';

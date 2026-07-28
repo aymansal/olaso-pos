@@ -1,4 +1,4 @@
-import { formatMoney } from '../../posSession';
+import { formatMoney } from '../../../../lib/money';
 import styles from './PaymentSummary.module.css';
 
 type PaymentSummaryProps = {

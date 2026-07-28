@@ -1,6 +1,6 @@
 import { Trash } from '@phosphor-icons/react';
+import { formatMoney } from '../../../../lib/money';
 import type { Product } from '../../data/products';
-import { formatMoney } from '../../posSession';
 import { QuantityStepper } from '../QuantityStepper/QuantityStepper';
 import styles from './OrderItemCard.module.css';
 

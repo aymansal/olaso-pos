@@ -37,7 +37,7 @@ owns the shared Header and TopNavigation currently used across the application.
 ## Work Guidance
 
 - Reuse existing controls before adding variants.
-- Keep modifier and receipt dialogs prop-driven.
+- Keep the modifier dialog and shared receipt preview prop-driven.
 - Keep receipt presentation separate from any later printer boundary.
 
 ## Verification

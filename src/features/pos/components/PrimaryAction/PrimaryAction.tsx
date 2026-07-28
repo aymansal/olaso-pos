@@ -1,6 +1,6 @@
 import { Button } from '@astryxdesign/core/Button';
 import { ArrowRight, CaretDoubleRight } from '@phosphor-icons/react';
-import { formatMoney } from '../../posSession';
+import { formatMoney } from '../../../../lib/money';
 import styles from './PrimaryAction.module.css';
 
 type PrimaryActionProps = {

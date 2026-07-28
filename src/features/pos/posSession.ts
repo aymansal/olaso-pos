@@ -36,11 +36,6 @@ type FilterableProduct = {
 
 export const TEMPORARY_TAX_RATE_BASIS_POINTS = 0;
 
-const moneyFormatter = new Intl.NumberFormat('fr-MA', {
-  style: 'currency',
-  currency: 'MAD',
-});
-
 export function createInitialPosSession(): PosSession {
   return {
     query: '',
@@ -168,8 +163,4 @@ export function taxCentimes(
 
 export function totalCentimes(subtotal: number, tax: number): number {
   return subtotal + tax;
-}
-
-export function formatMoney(centimes: number): string {
-  return moneyFormatter.format(centimes / 100);
 }

@@ -17,6 +17,24 @@ import {
   type OperationalCacheSnapshot,
 } from './operationalCache.ts';
 
+export function toConvexSaleArgs(input: SaleSyncPayload) {
+  return {
+    ...input,
+    lines: input.lines.map(({ recipeVersionId, ...line }) => ({
+      ...line,
+      productId: line.productId as Id<'products'>,
+      ...(recipeVersionId
+        ? {
+            recipeVersionId: recipeVersionId as Id<'recipeVersions'>,
+          }
+        : {}),
+      modifierOptionIds: line.modifierOptionIds.map(
+        (id) => id as Id<'modifierOptions'>,
+      ),
+    })),
+  };
+}
+
 export function usePosData() {
   const snapshotQuery = useQuery({
     query: api.sync.getOperationalSnapshot,
@@ -30,21 +48,7 @@ export function usePosData() {
 
   const acceptSale = useCallback(
     async (input: SaleSyncPayload) => {
-      const result = await acceptMutation({
-        ...input,
-        lines: input.lines.map(({ recipeVersionId, ...line }) => ({
-          ...line,
-          productId: line.productId as Id<'products'>,
-          ...(recipeVersionId
-            ? {
-                recipeVersionId: recipeVersionId as Id<'recipeVersions'>,
-              }
-            : {}),
-          modifierOptionIds: line.modifierOptionIds.map(
-            (id) => id as Id<'modifierOptions'>,
-          ),
-        })),
-      });
+      const result = await acceptMutation(toConvexSaleArgs(input));
       return {
         saleId: String(result.saleId),
         acknowledgedAt: result.acknowledgedAt,

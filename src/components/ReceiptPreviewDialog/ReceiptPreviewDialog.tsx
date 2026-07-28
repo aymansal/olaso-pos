@@ -1,14 +1,37 @@
 import { X } from '@phosphor-icons/react';
-import type { SavedReceipt } from '../../../../data/localSales.ts';
-import { formatMoney } from '../../posSession';
+import { formatMoney } from '../../lib/money';
 import styles from './ReceiptPreviewDialog.module.css';
+
+export type ReceiptPreviewValue = {
+  receiptNumber: string;
+  completedAt: number;
+  serviceType: 'dine-in' | 'take-away' | 'order-online';
+  customerName?: string;
+  tableLabel?: string;
+  lines: Array<{
+    productName: string;
+    receiptName?: string;
+    quantity: number;
+    unitPriceCentimes: number;
+    lineTotalCentimes: number;
+    modifiers: Array<{ optionName: string }>;
+  }>;
+  subtotalCentimes: number;
+  discountCentimes: number;
+  taxCentimes: number;
+  totalCentimes: number;
+  taxPolicyLabel: string;
+  paymentMethod: string;
+};
 
 export function ReceiptPreviewDialog({
   receipt,
   onClose,
+  statusMessage = 'Saved locally · synchronization continues automatically',
 }: {
-  receipt: SavedReceipt;
+  receipt: ReceiptPreviewValue;
   onClose: () => void;
+  statusMessage?: string;
 }) {
   return (
     <div className={styles.overlay} role="presentation">
@@ -45,9 +68,9 @@ export function ReceiptPreviewDialog({
         </dl>
         <div className={styles.lines}>
           {receipt.lines.map((line, index) => (
-            <article key={`${line.productId}-${index}`}>
+            <article key={`${line.productName}-${index}`}>
               <span>
-                <strong>{line.receiptName}</strong>
+                <strong>{line.receiptName ?? line.productName}</strong>
                 {line.modifiers.length > 0 ? (
                   <small>
                     {line.modifiers.map((modifier) => modifier.optionName).join(', ')}
@@ -61,13 +84,19 @@ export function ReceiptPreviewDialog({
         </div>
         <dl className={styles.totals}>
           <div><dt>Subtotal</dt><dd>{formatMoney(receipt.subtotalCentimes)}</dd></div>
+          {receipt.discountCentimes > 0 ? (
+            <div>
+              <dt>Discount</dt>
+              <dd>-{formatMoney(receipt.discountCentimes)}</dd>
+            </div>
+          ) : null}
           <div><dt>Tax</dt><dd>{formatMoney(receipt.taxCentimes)}</dd></div>
           <div><dt>Total</dt><dd>{formatMoney(receipt.totalCentimes)}</dd></div>
         </dl>
         <p>{receipt.taxPolicyLabel}</p>
         <p>{receipt.paymentMethod}</p>
         <footer>
-          <span>Saved locally · synchronization continues automatically</span>
+          <span>{statusMessage}</span>
           <button type="button" onClick={onClose}>Close preview</button>
         </footer>
       </section>

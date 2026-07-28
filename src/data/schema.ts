@@ -194,6 +194,15 @@ export const localMigrations = [
         ADD COLUMN local_stock_delta INTEGER NOT NULL DEFAULT 0`,
     ],
   },
+  {
+    toVersion: 4,
+    statements: [
+      `CREATE INDEX IF NOT EXISTS sales_by_created_at
+        ON sales(created_at DESC, local_sale_id DESC)`,
+      `CREATE INDEX IF NOT EXISTS outbox_by_local_record
+        ON outbox(operation_type, local_record_id)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

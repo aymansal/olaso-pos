@@ -127,11 +127,17 @@
   font-weight: 700;
 }
 
+.dateWrap {
+  position: relative;
+  width: 166px;
+  height: 42px;
+}
+
 .date {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 166px;
+  width: 100%;
   height: 42px;
   gap: 8px;
   padding: 0 13px;
@@ -151,6 +157,43 @@
   color: var(--olaso-copy);
 }
 
+.dateMenu {
+  position: absolute;
+  z-index: 3;
+  top: 48px;
+  right: 0;
+  width: 190px;
+  padding: 10px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 16px;
+  background: var(--olaso-white);
+}
+
+.dateMenu > span {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.dateMenu button,
+.dateMenu input {
+  min-height: 36px;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 10px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font-size: 9px;
+}
+
+.dateMenu button {
+  flex: 1;
+}
+
+.dateMenu input {
+  width: 100%;
+  padding: 0 8px;
+}
+
 .footer {
   position: absolute;
   top: 610px;
@@ -163,6 +206,13 @@
   color: var(--olaso-copy);
   font-size: 9px;
   font-weight: 500;
+}
+
+.footer > span {
+  max-width: 660px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pagination {
@@ -185,8 +235,9 @@
   font-weight: 700;
 }
 
-.pagination button:first-child {
+.pagination button:disabled {
   color: var(--olaso-disabled);
+  cursor: not-allowed;
 }
 
 .pagination .current {
