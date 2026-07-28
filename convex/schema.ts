@@ -81,11 +81,6 @@ export default defineSchema({
     lastMutationId: v.optional(v.string()),
   })
     .index('by_key', ['key'])
-    .index('by_category_status_sort_order', [
-      'categoryId',
-      'status',
-      'sortOrder',
-    ])
     .index('by_updated_at', ['updatedAt']),
 
   modifierGroups: defineTable({
@@ -155,16 +150,10 @@ export default defineSchema({
     updatedBy: v.optional(v.string()),
   })
     .index('by_product_version', ['productId', 'versionNumber'])
-    .index('by_product_status_activation', [
-      'productId',
-      'status',
-      'activationAt',
-    ])
     .index('by_product_client_mutation', [
       'productId',
       'clientMutationId',
-    ])
-    .index('by_updated_at', ['updatedAt']),
+    ]),
 
   recipeItems: defineTable({
     recipeVersionId: v.id('recipeVersions'),
@@ -210,11 +199,6 @@ export default defineSchema({
     }),
   })
     .index('by_device_local_sale', ['deviceId', 'localSaleId'])
-    .index('by_business_date_status_completed_at', [
-      'businessDate',
-      'status',
-      'completedAt',
-    ])
     .index('by_completed_at', ['completedAt']),
 
   saleItems: defineTable({

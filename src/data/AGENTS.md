@@ -9,9 +9,9 @@ tablet's local SQLite operational record.
 
 - `usePosData.ts` hydrates the POS from the local operational cache and
   coordinates bounded cloud refresh plus sale retries.
-- `useOrdersData.ts` requests bounded history pages only while Orders is
-  mounted, merges local/cloud rows by the sale idempotency key, and coordinates
-  deliberate retry.
+- `useOrdersData.ts` renders the bounded local history page before remote work
+  settles, requests cloud pages only while Orders is mounted, merges rows by
+  the sale idempotency key, and coordinates deliberate retry.
 - `useDashboardData.ts` makes one saved-summary snapshot request only while
   Dashboard is mounted and exposes explicit retry state.
 - `useReportsData.ts` makes one saved-summary range request only while Reports

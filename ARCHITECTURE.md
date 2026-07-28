@@ -487,21 +487,22 @@ Indexes are added for real access paths, not speculatively.
 
 Expected indexes include:
 
-- Categories by active state and sort order.
-- Products by category, active state, and sort order.
-- Products by updated revision for synchronization.
-- Recipe versions by product and activation/version.
-- Ingredients by active state and updated revision.
+- Categories by key, active sort order, and update time.
+- Products by key and update time; the bounded management/cache result handles
+  category and status presentation locally.
+- Modifier records by group/key or status/sort order.
+- Recipe versions by product/version and retry identifier.
+- Ingredients by key, active name, and update time.
 - Sales by device and local sale ID for idempotency.
-- Sales by business date and status.
-- Sales by cashier/date only when that report is implemented.
+- Sales by completion time for paginated history.
 - Sale items by sale.
 - Stock movements by ingredient and creation time.
 - Stock movements by related sale.
 - Daily metrics by business date.
 
-Redundant prefix indexes are avoided because every index consumes storage and
-adds write work.
+Redundant and unused indexes are removed because every index consumes storage
+and adds write work. Add a cashier/date, category/status, sale/date/status, or
+activation index only with the implemented query that uses it.
 
 ## CRUD behavior
 
@@ -537,7 +538,8 @@ adds write work.
 
 ## Quota and performance budget
 
-As of 2026-07-24, Convex documents these Free plan totals:
+Rechecked against Convex's official limits on 2026-07-28, the Free plan totals
+remain:
 
 - 1,000,000 function calls per month.
 - 1 GB of database I/O per month.
@@ -545,7 +547,9 @@ As of 2026-07-24, Convex documents these Free plan totals:
 - 20 GB-hours of action compute.
 
 Free has hard caps. Starter can continue beyond the included amounts with
-usage-based billing. Current limits must be checked before production launch:
+usage-based billing. Explicit client calls and subscription updates count as
+function calls, and writes can fail after the Free cap is reached. Current
+limits must be checked again before production launch:
 <https://docs.convex.dev/production/state/limits>.
 
 ### Per-operation budget

@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-11 done; APP-12 pending
+**Status:** in progress — APP-12 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -93,7 +93,7 @@ hardware are available.
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | done | Bounded saved-summary query, all tabs/period/recovery states, regression, Graphify, and visual QA passed; implementation commit `573a1863d1ee24889450ee90e63dc358b64e9ad5` pushed to `origin/codex/goal-02-functional-app` |
 | APP-10 | Make settings, synchronization controls, and the designed lock flow functional | done | Local settings/sync/lock, regression, Graphify, and visual QA passed; implementation commit `2284ecdb6b217dbdc816cee3a9b9040db7364e8a` pushed to `origin/codex/goal-02-functional-app` |
 | APP-11 | Produce and verify the Android beta without printer integration | done | Build/device/migration/sync/regression evidence passed; implementation commit `c5a6ef166a54830c2fbc19b3a5c03844788d454b` pushed to `origin/codex/goal-02-functional-app` |
-| APP-12 | Run full-system regression, quota/security review, documentation closeout, and final push | pending | All checks/builds/QA pass; Graphify and docs current; final commit pushed |
+| APP-12 | Run full-system regression, quota/security review, documentation closeout, and final push | in progress | Full regression, all-screen QA, quota/security audit, docs, Graphify, commit, and push in progress |
 
 ## Task Contracts
 
@@ -573,10 +573,46 @@ hardware are available.
 - APP-11 implementation commit
   `c5a6ef166a54830c2fbc19b3a5c03844788d454b` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-11 ledger closeout commit
+  `af0aa731e03d6307710b564ca95201af9a8828e3` is confirmed on the same
+  remote branch.
+- APP-12's backend audit finds 21 public queries/mutations with 21 matching
+  management/operational authorization gates, zero actions, zero unbounded
+  `.collect()` reads, no database `.filter()`, bounded indexed growth paths,
+  deliberate retry keys, and one mounted screen at a time.
+- Four schema indexes had no implemented reader and were removed to avoid
+  needless write/storage cost. Official Convex Free limits were rechecked on
+  2026-07-28 and remain 1,000,000 monthly calls, 1 GB monthly database I/O,
+  0.5 GB storage, and 20 GB-hours monthly action compute.
+- Orders no longer waits for synchronization or cloud history before rendering
+  its bounded SQLite page; disconnected local history now remains visible while
+  remote work settles in the background. Its runnable order check passes.
+- Dashboard, POS, Orders, Products, Stock, Reports, Settings, and Lock all pass
+  visual inspection at exactly 1340 × 800 with matching document bounds, no
+  clipping or overflow, and zero captured browser warnings/errors. The terminal
+  was returned to unlocked POS state.
+- The rebuilt Android beta passes package/version/permission checks and Gradle
+  assembly. On the API 35 emulator, a cold disconnected start rendered the
+  persisted local receipt `DEV-20260728-DAA8A710` in Orders within two seconds;
+  captured logs contain no fatal exception or SQLite error. Networking and the
+  application were restored afterward.
+- The Windows Gradle launcher now invokes the wrapper through `cmd.exe` with
+  fixed arguments instead of Node's deprecated `shell: true` path; the
+  126-task debug assembly passes without the Node deprecation warning.
+- The complete serial suite passes: POS, Convex type/deployment, deterministic
+  seed verification, management, inventory, local migrations, atomic/idempotent
+  sales, Orders, Dashboard, Reports, Settings, Android package checks, and the
+  production web build. A final protected reset plus verification restored the
+  expected 4 categories, 15 products, 14 ingredients, 13 sales, and all related
+  deterministic records.
+- Graphify's exact-source AST refresh replaced the four changed structural
+  sources, reclustered the portable graph to 1,980 nodes and 4,600 edges, and
+  confirmed no absolute, dependency, temporary, distribution, or Android
+  build-output source path.
 
-**Exact next action:** Commit and push the APP-11 ledger closeout, then start
-APP-12 with its Graphify, instruction-chain, authority, and quota/security
-review reads.
+**Exact next action:** Re-read the applicable instruction chain, review the
+final diff and sensitive-artifact scan, commit and push APP-12, then record its
+remote SHA before marking the card and goal done.
 
 ## Decisions and Blockers
 
@@ -592,12 +628,80 @@ review reads.
 
 ### Blockers
 
-- APP-01 may require the user to complete Convex login/project selection in the
-  browser or terminal.
-- Production tax, receipt, permission, role/PIN, fiche-technique, and hardware
-  decisions remain owner-dependent; Goal 02 must represent them honestly.
+- Owner confirmation remains required for legal/receipt identity, menu and
+  prices, tax, payment, discount/cancellation/refund policy, insufficient-stock
+  behavior, roles and PIN/login, languages, receipt numbering, required
+  customer/table fields, fiche technique/units, business-day cutoff/timezone,
+  remote dashboard need, export/backup retention, and local encryption.
+- Hardware/release work remains blocked on the target Galaxy Tab A9/Android
+  version, printer model/transport/workflow, physical tablet and printer
+  acceptance, production signing-key custody, signed distribution, and tested
+  backup/recovery. No production or physical-print claim is made.
 
 ## Journal
+
+### 2026-07-28 — APP-12 started
+
+- Queried the refreshed Graphify graph first for full-system regression,
+  Convex quota/security, documentation, release, and printer-exclusion
+  boundaries.
+- Re-read the complete root, Android, Convex, source, data, and feature DOX
+  chains plus the APP-12 contract, completion criteria, current checkpoint,
+  architecture quota/security/testing/checklist sections, and product delivery,
+  owner-decision, and definition-of-done boundaries.
+- Confirmed APP-00 through APP-11 are done and pushed; APP-12 is the only card
+  in progress.
+- Confirmed APP-12 must close the functional development beta without claiming
+  production authentication, signing/distribution, backup/recovery readiness,
+  owner policy decisions, or real tablet/printer acceptance.
+- Audited all public Convex functions: 21 public queries/mutations have 21
+  matching management/operational gates; there are no actions, unbounded
+  `.collect()` calls, or database `.filter()` operations. All growing reads
+  use implemented indexes and explicit caps, while management, stock, recipe,
+  and sale retries use deliberate mutation identities.
+- Verified the development-only management, POS, and seed gates are enabled on
+  the dedicated development deployment. Production authentication remains an
+  explicit owner-dependent blocker.
+- Removed four indexes with no implemented reader: product category/status,
+  recipe activation, recipe update time, and sale date/status. This eliminates
+  speculative write/storage cost and aligns the index plan with actual queries.
+- Rechecked the official Convex Free limits on 2026-07-28; the recorded
+  1,000,000 calls, 1 GB database I/O, 0.5 GB storage, and 20 GB-hours action
+  compute remain current. Explicit calls and subscription updates count toward
+  calls; Free-cap writes can fail.
+- `npm audit` reports zero vulnerabilities. Current tracked-file and content
+  scans find no environment file, key/signing material, deployment key, APK,
+  AAB, or `local.properties`.
+- Device QA exposed a real local-history orchestration defect: Orders awaited
+  pending synchronization/cloud history before rendering SQLite. It now
+  renders the bounded local page first and lets remote work settle in the
+  background; the order check guards that ordering and passes.
+- Browser QA at exactly 1340 × 800 inspected Dashboard, POS, Orders, Products,
+  Stock, Reports, Settings, Data & sync, About, and Lock. Every top-level
+  screen reports matching document bounds, has no clipping/overflow, and
+  produced zero warning/error logs. The terminal was returned to unlocked POS.
+- `npm run android:beta` passes the package/version/permission check, web build,
+  Capacitor sync, and Gradle assembly. The subsequent direct native build also
+  passes all 126 tasks without Node's deprecated Windows shell-spawn warning.
+- On the API 35 emulator, APP-12 disabled all networking, cold-started the
+  updated beta, opened Orders, and rendered the persisted local receipt
+  `DEV-20260728-DAA8A710` within two seconds. There was no loading wait, fatal
+  exception, or SQLite error; networking and the application were restored.
+- Updated data DOX to make the local-before-remote Orders contract explicit.
+- The full serial suite passes for POS, Convex deployment/type generation,
+  seed, management, inventory, local SQLite, sales, Orders, Dashboard, Reports,
+  Settings, Android package checks, and production build. The protected final
+  reset and verification restored the exact deterministic development counts.
+- Refreshed the four changed structural sources through Graphify's exact-source
+  AST path and reclustered the graph to 1,980 nodes and 4,600 edges. The graph
+  has no absolute, dependency, temporary, distribution, or Android build-output
+  source path, and post-refresh Orders/build queries resolve.
+- Replaced the resolved APP-01 setup blocker with the remaining owner,
+  production-release, backup/recovery, target-tablet, and printer-hardware
+  blockers. These are explicitly outside the functional development beta.
+- Exact next action: re-read the applicable instruction chain, review the
+  final diff and sensitive-artifact scan, commit and push APP-12, then record
+  its remote SHA before marking the card and goal done.
 
 ### 2026-07-28 — APP-11 complete
 

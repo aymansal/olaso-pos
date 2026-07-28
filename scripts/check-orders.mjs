@@ -151,4 +151,16 @@ await assert.rejects(
   /Order page size/,
 );
 
+const ordersHook = readFileSync(
+  new URL('../src/data/useOrdersData.ts', import.meta.url),
+  'utf8',
+);
+assert(
+  ordersHook.indexOf('setIsLoading(false)')
+    < ordersHook.indexOf(
+      'Promise.allSettled([cloudHistory, synchronization])',
+    ),
+  'Local order history must render before cloud work settles.',
+);
+
 console.log('Bounded local/cloud order history and recovery checks passed.');

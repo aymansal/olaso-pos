@@ -99,13 +99,15 @@ export function useOrdersData() {
     cloudCursor.current = undefined;
     localDone.current = false;
     cloudDone.current = false;
-    const sync = await syncPendingSales(acceptSale).catch(() => ({
+    const synchronization = syncPendingSales(acceptSale).catch(() => ({
       synced: 0,
       failed: 1,
     }));
-    const [localResult, cloudResult, summaryResult] = await Promise.allSettled([
+    const cloudHistory = convex.query(api.sales.listOrders, {
+      limit: PAGE_SIZE,
+    });
+    const [localResult, summaryResult] = await Promise.allSettled([
       loadLocalOrderPage({ limit: PAGE_SIZE }),
-      convex.query(api.sales.listOrders, { limit: PAGE_SIZE }),
       loadLocalSyncSummary(),
     ]);
     if (!mounted.current) return;
@@ -119,26 +121,48 @@ export function useOrdersData() {
       localDone.current = true;
       errors.push('Local order history is unavailable.');
     }
-    if (cloudResult.status === 'fulfilled') {
-      firstOrders.push(...cloudResult.value.page.map(cloudOrder));
-      cloudCursor.current = cloudResult.value.continueCursor;
-      cloudDone.current = cloudResult.value.isDone;
-    } else {
-      cloudDone.current = true;
-      errors.push('Cloud history is unavailable; saved local orders remain visible.');
-    }
     if (summaryResult.status === 'fulfilled') {
       setLastSuccessAt(summaryResult.value.lastSuccessAt);
       if (summaryResult.value.lastError) {
         errors.push('Some saved orders still need synchronization.');
       }
     }
-    if (sync.failed > 0 && !errors.some((error) => error.includes('synchron'))) {
-      errors.push('Some saved orders still need synchronization.');
-    }
     setOrders(mergeOrders([], firstOrders));
     setMessage(errors[0] ?? '');
     setIsLoading(false);
+
+    void Promise.allSettled([cloudHistory, synchronization]).then(
+      ([cloudResult, syncResult]) => {
+        if (!mounted.current) return;
+        const backgroundErrors: string[] = [];
+        if (cloudResult.status === 'fulfilled') {
+          cloudCursor.current = cloudResult.value.continueCursor;
+          cloudDone.current = cloudResult.value.isDone;
+          setOrders((current) =>
+            mergeOrders(current, cloudResult.value.page.map(cloudOrder))
+          );
+        } else {
+          cloudDone.current = true;
+          backgroundErrors.push(
+            'Cloud history is unavailable; saved local orders remain visible.',
+          );
+        }
+        if (
+          (
+            syncResult.status === 'rejected'
+            || syncResult.value.failed > 0
+          )
+          && !errors.some((error) => error.includes('synchron'))
+        ) {
+          backgroundErrors.push(
+            'Some saved orders still need synchronization.',
+          );
+        }
+        if (!errors.length && backgroundErrors.length) {
+          setMessage(backgroundErrors[0]);
+        }
+      },
+    );
   }, [acceptSale, convex]);
 
   useEffect(() => {
