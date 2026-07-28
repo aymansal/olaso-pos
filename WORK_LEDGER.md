@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-04 done; APP-05 pending
+**Status:** in progress — APP-05 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -86,7 +86,7 @@ hardware are available.
 | APP-02 | Add protected deterministic Convex development seed/reset data | done | Two resets and relationship checks passed; implementation commit `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` pushed to `origin/codex/goal-02-functional-app` |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | done | Management/UI/check/browser evidence passed; implementation commit `3438fae935aedbca8ec8709a508d5127f522ff19` pushed to `origin/codex/goal-02-functional-app` |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | done | Inventory/backend/UI/check/browser evidence passed; implementation commit `b4fd2a8de4306bd1e353ef0cfee2da037f909733` pushed to `origin/codex/goal-02-functional-app` |
-| APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | pending | Restart-safe local data checks and Android sync pass; commit pushed |
+| APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | in progress | Compatibility, persistence, restart/migration, and Android sync evidence pending |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | pending | Atomic/offline/retry/duplicate tests pass; POS checkout works; commit pushed |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | pending | Pagination/snapshots/sync states verified in Orders UI; commit pushed |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | pending | Saved-summary reads and Dashboard states verified; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-04 are done; APP-05 is pending and no card is in progress.
+- APP-00 through APP-04 are done; APP-05 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -294,9 +294,9 @@ hardware are available.
 - APP-03 implementation commit
   `3438fae935aedbca8ec8709a508d5127f522ff19` is confirmed on
   `origin/codex/goal-02-functional-app`.
-- APP-04 is the only card in progress. The Stock fixtures are removed; one
-  application data hook now connects the existing screen, inventory, table,
-  detail, and icon boundaries to live Convex data.
+- APP-04 is complete. The Stock fixtures are removed; one application data hook
+  connects the existing screen, inventory, table, detail, and icon boundaries
+  to live Convex data.
 - APP-04's bounded inventory list/detail queries, ingredient lifecycle
   mutations, and atomic receive/count adjustment mutation are deployed.
   `npm run check:inventory` verifies retry safety, stale revision rejection,
@@ -318,9 +318,40 @@ hardware are available.
 - APP-04 implementation commit
   `b4fd2a8de4306bd1e353ef0cfee2da037f909733` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-05 is the only card in progress. The compatibility review selects exact
+  Capacitor core/CLI/Android `8.4.2` and
+  `@capacitor-community/sqlite` `8.1.0`; their peer requirements align on
+  Capacitor 8 and Node `24.11.0` satisfies the CLI requirement.
+- The exact packages are installed with zero reported vulnerabilities. The
+  generated Android platform uses application ID `com.olaso.pos`, discovers the
+  SQLite plugin, and completes its initial Capacitor sync.
+- The versioned SQLite schema, operational-cache/outbox helpers, deterministic
+  browser WASM preparation, and restart/migration check are implemented.
+- `sql.js` is pinned to `1.11.0` because `jeep-sqlite` `2.8.0` ships prebuilt
+  glue for that WASM shape. The migration/restart check, TypeScript build, and
+  clean 1340 × 800 web startup pass after the pin.
+- Review completed the cache boundary: active product-modifier links and recipe
+  versions now load with the other bounded operational data, refreshed recipe
+  items replace stale active rows, and pending outbox work blocks stock cache
+  replacement.
+- Root, source, data, and Android DOX now own the new boundaries. Android
+  signing material is ignored, the generated shell requests only Internet
+  access, and no printer integration or permissions exist.
+- `npm run check:local` and `npm run android:sync` pass after review. The sync
+  builds the production web app and discovers only the SQLite native plugin.
+- Graphify is refreshed to 1,771 nodes and 4,364 edges and traces the provider,
+  shared local connection, migrations, transaction wrapper, operational cache,
+  outbox, deterministic check, and Android activity.
+- Final APP-05 verification passes: Convex codegen/deployment, management and
+  inventory integrations, seed verification, POS checks, local restart and
+  migration checks, TypeScript, production build, Android sync, and whitespace
+  checks.
+- The final clean browser reload mounts the POS at exactly 1340 × 800 with no
+  body/document overflow and no new console warnings or errors.
 
-**Exact next action:** Start APP-05 with its DOX/ledger/Graphify reads and the
-required maintained Capacitor-compatible SQLite package compatibility check.
+**Exact next action:** Review the final APP-05 diff and generated Android shell,
+scan the intended card files for secrets and excluded printer work, re-read the
+complete closeout DOX chain, then commit and push.
 
 ## Decisions and Blockers
 
@@ -342,6 +373,93 @@ required maintained Capacitor-compatible SQLite package compatibility check.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-05 started
+
+- Queried the refreshed Graphify graph first for the current application data
+  provider, POS session, operational menu fixtures, and documented SQLite/outbox
+  ownership.
+- Re-read the complete applicable root/source/feature/POS DOX chain and the full
+  durable ledger.
+- Re-read the local-first, SQLite, outbox, data-boundary, failure, migration,
+  and offline contracts in `ARCHITECTURE.md` plus the offline behavior in
+  `PRODUCT.md`.
+- Confirmed APP-00 through APP-04 are done and marked APP-05 as the only card in
+  progress.
+- Confirmed the contract: choose one maintained Capacitor-compatible SQLite
+  package after a documented compatibility check; add Android plus the minimum
+  local schema/migrations for active operational data, sales, stock, and outbox;
+  keep web development deterministic without creating another production
+  database architecture; verify restart and migration behavior.
+- Selected exact Capacitor core/CLI/Android `8.4.2` and
+  `@capacitor-community/sqlite` `8.1.0`. Capacitor Android requires core
+  `^8.4.0`, the SQLite plugin supports core `>=8.0.0`, Node `24.11.0` satisfies
+  the CLI's Node 22+ requirement, and both projects have current 2026 releases.
+- Chose the MIT community plugin over the paid private-registry Capawesome
+  package and a custom native bridge. Its Android and `jeep-sqlite` web
+  implementations can run the same SQL/migrations without adding an ORM.
+- Recorded the plugin's bundled-SQLCipher export-classification caveat in
+  `ARCHITECTURE.md`; encryption remains an open production security decision.
+- The workstation does not currently expose a JDK or Android SDK. This does not
+  block Capacitor project generation/synchronization in APP-05, but APP-11 must
+  install or locate the Android build toolchain before producing the APK.
+- Installed the exact Capacitor and community SQLite packages; npm reports zero
+  vulnerabilities.
+- Added the Capacitor Android platform with application ID `com.olaso.pos`.
+  The CLI discovered `@capacitor-community/sqlite@8.1.0`, copied the current web
+  build, and completed the initial Android sync.
+- Capacitor's TypeScript-config loader failed against the project's TypeScript 7
+  module shape before creating Android. Switched the small config to supported
+  JSON instead of downgrading TypeScript; the next scaffold attempt passed.
+- Added two ordered SQLite migrations covering the active operational catalog,
+  modifier and recipe data, ingredient balances, completed sales and lines,
+  append-only stock movements, device settings, synchronization state, and a
+  retryable outbox.
+- Added bounded operational-cache/outbox helpers, one shared Capacitor SQLite
+  connection, and a deterministic web WASM copy step. The app now waits for the
+  local operational store before rendering.
+- Added `npm run check:local`; it creates a version-1 database, inserts
+  representative operational/sale/outbox data, closes and reopens it, upgrades
+  to version 2, and verifies the data across another restart.
+- Web initialization exposed a known `jeep-sqlite` `2.8.0` compatibility issue:
+  its prebuilt JavaScript glue cannot instantiate newer `sql.js` WASM resolved
+  by the package's broad range. Pinned the documented compatible `sql.js`
+  `1.11.0`; no polyfill or alternate browser database was added.
+- `npm run prepare:sqlite-web`, `npm run check:local`, and `npx tsc -b` pass.
+  A clean reload reaches the POS at exactly 1340 × 800 with no new warning or
+  error diagnostics and no body or document overflow.
+- Reviewed the operational cache and closed its two unsafe gaps: cached
+  product-modifier links and recipe versions are included in bounded reads,
+  active recipe items replace stale rows, and any pending outbox work prevents
+  cloud cache replacement from overwriting local stock.
+- Added focused `src/data` and Android DOX files and updated both parent indexes.
+  The Android shell keeps `com.olaso.pos`, ignores signing material, requests
+  only Internet access, and contains no printer dependency, transport, or
+  permission.
+- `npm run check:local` and `npm run android:sync` pass after review. Dependency
+  resolution confirms one exact `sql.js` `1.11.0`; the sync copies the current
+  production build and discovers only
+  `@capacitor-community/sqlite@8.1.0`.
+- Refreshed Graphify to 1,771 nodes and 4,364 edges. Queries trace
+  `AppDataProvider` through the local connection, migrations, transactions,
+  bounded cache/outbox operations, restart check, and the generated Android
+  `MainActivity`.
+- Final verification passes: `npm run check:convex`, `npx convex dev --once
+  --typecheck enable`, `npm run check:management`, `npm run check:inventory`,
+  `npm run check:seed`, `npm run check:pos`, `npm run check:local`, `npx tsc
+  -b`, `npm run build` through `npm run android:sync`, and `git diff --check`.
+- Vite retains its chunk-size advisory and reports `jeep-sqlite`'s unreachable
+  Node `crypto` fallback as browser-externalized; the library uses the browser
+  `crypto.getRandomValues` path, and the exact 1340 × 800 runtime reload has no
+  new warning or error diagnostics.
+- The final web pass mounts the POS, shows no startup failure, and has exact
+  viewport/body/document dimensions without overflow.
+- Removed Capacitor's generated sample tests because they tested only arithmetic
+  and a hard-coded sample package rather than Olaso behavior; the final graph
+  refresh excludes them.
+- Exact next action: review the final APP-05 diff and generated Android shell,
+  scan the intended card files for secrets and excluded printer work, re-read
+  the complete closeout DOX chain, then commit and push.
 
 ### 2026-07-28 — APP-04 complete
 

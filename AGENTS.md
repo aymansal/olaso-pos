@@ -83,9 +83,11 @@ decision changes.
   interface icons, and the built Olaso theme for tokens.
 - React components never contain database, sync, reporting-query, secret, or
   printer-protocol logic. Follow `ARCHITECTURE.md` when those layers arrive.
-- The current repository includes a Convex development backend plus live
-  product and inventory management. Do not imply that planned SQLite,
-  Capacitor, production authentication, or ESC/POS behavior already exists.
+- The current repository includes a Convex development backend, live product
+  and inventory management, a Capacitor Android shell, and the local SQLite
+  operational foundation. Do not imply that local-first checkout,
+  synchronization, production authentication, or ESC/POS behavior already
+  exists.
 
 ### Visual baseline
 
@@ -115,6 +117,8 @@ Before finishing a meaningful change:
 
 ## Child DOX Index
 
+- [`android/AGENTS.md`](android/AGENTS.md) — generated Capacitor Android shell,
+  native configuration, and packaging safeguards.
 - [`convex/AGENTS.md`](convex/AGENTS.md) — synchronized cloud schema, domain
   functions, reporting summaries, and development seeding.
 - [`src/AGENTS.md`](src/AGENTS.md) — React application entry points, global

@@ -1,16 +1,16 @@
 # Graph Report - Olaso  (2026-07-28)
 
 ## Corpus Check
-- 105 files · ~520,016 words
+- 132 files · ~823,670 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 785 nodes · 1132 edges · 58 communities (51 shown, 7 thin omitted)
-- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
+- 1771 nodes · 4364 edges · 101 communities (93 shown, 8 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 346 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `eeb7ff92`
+- Built from commit: `6d8b2aa8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -70,39 +70,72 @@
 - [[_COMMUNITY_Community 55|Community 55]]
 - [[_COMMUNITY_Community 56|Community 56]]
 - [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
+- [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
+- [[_COMMUNITY_Community 64|Community 64]]
+- [[_COMMUNITY_Community 65|Community 65]]
+- [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
+- [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 72|Community 72]]
+- [[_COMMUNITY_Community 73|Community 73]]
+- [[_COMMUNITY_Community 74|Community 74]]
+- [[_COMMUNITY_Community 75|Community 75]]
+- [[_COMMUNITY_Community 76|Community 76]]
+- [[_COMMUNITY_Community 77|Community 77]]
+- [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
+- [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 83|Community 83]]
+- [[_COMMUNITY_Community 84|Community 84]]
+- [[_COMMUNITY_Community 85|Community 85]]
+- [[_COMMUNITY_Community 86|Community 86]]
+- [[_COMMUNITY_Community 87|Community 87]]
+- [[_COMMUNITY_Community 88|Community 88]]
+- [[_COMMUNITY_Community 90|Community 90]]
+- [[_COMMUNITY_Community 91|Community 91]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Olaso POS Architecture` - 25 edges
-2. `Olaso POS Product Specification` - 19 edges
-3. `NavigationPage` - 16 edges
-4. `compilerOptions` - 16 edges
-5. `Olaso POS Design System` - 15 edges
-6. `ManagedIngredient` - 14 edges
-7. `Task Contracts` - 14 edges
-8. `compilerOptions` - 13 edges
-9. `ManagedCategory` - 13 edges
-10. `Journal` - 13 edges
+1. `$()` - 586 edges
+2. `_()` - 287 edges
+3. `i()` - 66 edges
+4. `lc()` - 52 edges
+5. `t()` - 48 edges
+6. `uc()` - 44 edges
+7. `get()` - 40 edges
+8. `ensureJeepSqliteIsAvailable()` - 37 edges
+9. `E()` - 35 edges
+10. `dc()` - 34 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `businessDate()` --calls--> `invalid()`  [EXTRACTED]
-  convex/inventory.ts → convex/lib/management.ts
-- `validateRelations()` --calls--> `invalid()`  [EXTRACTED]
-  convex/products.ts → convex/lib/management.ts
-- `DashboardScreenProps` --references--> `NavigationPage`  [EXTRACTED]
-  src/features/dashboard/DashboardScreen.tsx → src/features/pos/components/TopNavigation/TopNavigation.tsx
-- `OrdersScreenProps` --references--> `NavigationPage`  [EXTRACTED]
-  src/features/orders/OrdersScreen.tsx → src/features/pos/components/TopNavigation/TopNavigation.tsx
-- `PosScreenProps` --references--> `NavigationPage`  [EXTRACTED]
-  src/features/pos/PosScreen.tsx → src/features/pos/components/TopNavigation/TopNavigation.tsx
+- `el()` --calls--> `t()`  [EXTRACTED]
+  android/app/src/main/assets/public/assets/jeep-sqlite.entry-DnP_fj-E.js → android/app/src/main/assets/public/assets/index-BfAbLoMV.js
+- `ie()` --calls--> `_()`  [INFERRED]
+  android/app/src/main/assets/public/assets/index-BfAbLoMV.js → android/app/src/main/assets/public/assets/jeep-sqlite.entry-DnP_fj-E.js
+- `ve()` --calls--> `_e()`  [INFERRED]
+  android/app/src/main/assets/public/assets/index-BfAbLoMV.js → android/app/src/main/assets/public/assets/jeep-sqlite.entry-DnP_fj-E.js
+- `Dn()` --calls--> `h()`  [INFERRED]
+  android/app/src/main/assets/public/assets/index-BfAbLoMV.js → android/app/src/main/assets/public/assets/jeep-sqlite.entry-DnP_fj-E.js
+- `to()` --calls--> `h()`  [INFERRED]
+  android/app/src/main/assets/public/assets/index-BfAbLoMV.js → android/app/src/main/assets/public/assets/jeep-sqlite.entry-DnP_fj-E.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (58 total, 7 thin omitted)
+## Communities (101 total, 8 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (54): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, categories, Category, CategoryId, americanoOrderImage (+46 more)
+Cohesion: 0.11
+Nodes (19): americanoOrderImage, LabeledField(), LabeledFieldProps, OrderItemCard(), OrderItemCardProps, PaymentSummary(), PaymentSummaryProps, formatMoney() (+11 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.11
@@ -117,8 +150,8 @@ Cohesion: 0.05
 Nodes (36): 2026-07-28 — Goal 01 started, 2026-07-28 — Goal 01 tasks established, 2026-07-28 — Ledger initialized, 2026-07-28 — POS-01 baseline and ownership complete, 2026-07-28 — POS-02 data and pure operations complete, 2026-07-28 — POS-03 menu discovery complete, 2026-07-28 — POS-04 cart and receipt complete, 2026-07-28 — POS-05 order details complete (+28 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.06
-Nodes (39): DashboardScreen(), DashboardScreenProps, AppDataProvider(), convexClient, hourlySales, recentOrders, stockItems, orders (+31 more)
+Cohesion: 0.18
+Nodes (15): Header(), HeaderProps, OrdersScreen(), OrdersScreenProps, filters, OrdersListPanel(), createInitialPosSession(), ProductsScreenProps (+7 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.06
@@ -126,11 +159,11 @@ Nodes (33): 10. Approval checklist, 11. Evidence and confidence, 1. Brand snapsh
 
 ### Community 6 - "Community 6"
 Cohesion: 0.05
-Nodes (39): 2026-07-28 — APP-00 complete, 2026-07-28 — APP-00 started, 2026-07-28 — APP-01 complete, 2026-07-28 — APP-01 started, 2026-07-28 — APP-02 complete, 2026-07-28 — APP-02 started, 2026-07-28 — APP-03 complete, 2026-07-28 — APP-03 started (+31 more)
+Nodes (41): 2026-07-28 — APP-00 complete, 2026-07-28 — APP-00 started, 2026-07-28 — APP-01 complete, 2026-07-28 — APP-01 started, 2026-07-28 — APP-02 complete, 2026-07-28 — APP-02 started, 2026-07-28 — APP-03 complete, 2026-07-28 — APP-03 started (+33 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.07
-Nodes (29): dependencies, @astryxdesign/core, convex, @fontsource/dm-sans, @phosphor-icons/react, react, react-dom, devDependencies (+21 more)
+Cohesion: 0.05
+Nodes (37): dependencies, @astryxdesign/core, @capacitor/android, @capacitor-community/sqlite, @capacitor/core, convex, @fontsource/dm-sans, @phosphor-icons/react (+29 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.09
@@ -153,8 +186,8 @@ Cohesion: 0.12
 Nodes (15): compilerOptions, allowJs, allowSyntheticDefaultImports, forceConsistentCasingInFileNames, isolatedModules, jsx, lib, module (+7 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.10
-Nodes (34): CategoryDialog(), CategoryDialogProps, CategorySidebar(), CategorySidebarProps, keyFromName(), newMutationId(), useProductManagement(), blankGroup() (+26 more)
+Cohesion: 0.06
+Nodes (50): CategoryDialog(), CategoryDialogProps, CategorySidebar(), CategorySidebarProps, keyFromName(), newMutationId(), useProductManagement(), api (+42 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.13
@@ -229,20 +262,20 @@ Cohesion: 0.33
 Nodes (5): ActionCtx, DatabaseReader, DatabaseWriter, MutationCtx, QueryCtx
 
 ### Community 33 - "Community 33"
-Cohesion: 0.13
-Nodes (16): api, components, client, convexUrl, localEnv, mutationId(), projectRoot, reseed() (+8 more)
+Cohesion: 0.02
+Nodes (56): $(), addListener(), addUpgradeStatement(), addWindowListener(), beginTransaction(), Bo(), checkConnectionsConsistency(), clearAllCookies() (+48 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.40
 Nodes (5): Exact deduction, Low stock, No theoretical waste model, Stock behavior, Stock movement history
 
 ### Community 37 - "Community 37"
-Cohesion: 0.06
-Nodes (23): categorySeeds, coffeeModifiers, DailyAccumulator, drinkModifiers, IngredientEffectSeed, ingredientSeeds, ModifierChoiceSeed, modifierGroupSeeds (+15 more)
+Cohesion: 0.11
+Nodes (62): a(), ae(), b(), ce(), d(), De(), E(), Ee() (+54 more)
 
 ### Community 39 - "Community 39"
-Cohesion: 0.40
-Nodes (5): APK, Convex, Responsibility of each platform, SQLite, Vercel
+Cohesion: 0.33
+Nodes (6): APK, Capacitor SQLite package decision, Convex, Responsibility of each platform, SQLite, Vercel
 
 ### Community 43 - "Community 43"
 Cohesion: 0.40
@@ -253,8 +286,8 @@ Cohesion: 0.40
 Nodes (5): Current scaling limit, Download synchronization, Idempotency, Outbox rule, Synchronization
 
 ### Community 45 - "Community 45"
-Cohesion: 0.11
-Nodes (37): list, save, setArchived, baseUnit, businessDate(), getDetail, list, recordAdjustment (+29 more)
+Cohesion: 0.05
+Nodes (60): list, save, setArchived, baseUnit, businessDate(), getDetail, list, recordAdjustment (+52 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.50
@@ -292,25 +325,153 @@ Nodes (3): Printer, Tablet, Target environment
 Cohesion: 0.67
 Nodes (3): Required reports, Sales and reports, Sales record
 
+### Community 58 - "Community 58"
+Cohesion: 0.14
+Nodes (34): ac(), ao(), bi(), ca(), dc(), ea(), gi(), hc() (+26 more)
+
+### Community 59 - "Community 59"
+Cohesion: 0.03
+Nodes (80): _(), addPrefixToWhereClause(), arraysIntersection(), bb(), blob2uint(), checkColumnTypes(), checkConnectionsConsistency(), checkValuesMatch() (+72 more)
+
+### Community 60 - "Community 60"
+Cohesion: 0.07
+Nodes (38): addUpgradeStatement(), beginTransaction(), checkConnectionsConsistency(), close(), closeConnection(), commitTransaction(), copyFromAssets(), createConnection() (+30 more)
+
+### Community 61 - "Community 61"
+Cohesion: 0.10
+Nodes (41): ad(), Au(), bu(), cd(), Du(), et(), Eu(), Fu() (+33 more)
+
+### Community 62 - "Community 62"
+Cohesion: 0.12
+Nodes (37): addOnTransitionHandler(), assembleTransition(), bl(), Cl(), constructor(), dl(), ec(), el() (+29 more)
+
+### Community 63 - "Community 63"
+Cohesion: 0.07
+Nodes (45): actionInternal(), activePageQueryTokens(), addPageToPaginatedQuery(), applyOptimisticUpdate(), closeAllConnections(), closeConnection(), closeNCConnection(), completePaginatedQuerySplit() (+37 more)
+
+### Community 64 - "Community 64"
+Cohesion: 0.10
+Nodes (23): cleanupNetworkListener(), close(), closeAndReconnect(), connect(), log(), logVerbose(), nextBackoff(), reportLargeTransition() (+15 more)
+
+### Community 65 - "Community 65"
+Cohesion: 0.13
+Nodes (25): ar(), bd(), cn(), cr(), dd(), dr(), Ed(), Er() (+17 more)
+
+### Community 66 - "Community 66"
+Cohesion: 0.10
+Nodes (24): AppDataProvider(), convexClient, closeLocalDatabase(), createConnection(), initializeWebStore(), openLocalDatabase(), persistLocalDatabase(), withLocalTransaction() (+16 more)
+
+### Community 67 - "Community 67"
+Cohesion: 0.11
+Nodes (28): checkIndexesValidity(), checkSchemaValidity(), checkTriggersValidity(), checkUpdate(), createExportObject(), createQuestionMarkString(), createRowStatement(), createTableData() (+20 more)
+
+### Community 68 - "Community 68"
+Cohesion: 0.16
+Nodes (22): PosScreen(), PosScreenProps, productById, addProduct(), CartLine, decrementCartLine(), FilterableProduct, filterProducts() (+14 more)
+
+### Community 69 - "Community 69"
+Cohesion: 0.18
+Nodes (28): addLogLineListener(), af(), cf(), df(), Dn(), ef(), ff(), gf() (+20 more)
+
+### Community 70 - "Community 70"
+Cohesion: 0.10
+Nodes (33): ap(), Bt(), cp(), Cu(), dp(), ft(), ip(), it() (+25 more)
+
+### Community 71 - "Community 71"
+Cohesion: 0.08
+Nodes (58): backupTable(), backupTables(), beginTransaction(), close(), closeConnection(), commitTransaction(), createDatabaseSchema(), createSchema() (+50 more)
+
+### Community 72 - "Community 72"
+Cohesion: 0.09
+Nodes (48): be(), Ge(), he(), je(), Le(), qe(), Re(), Ue() (+40 more)
+
+### Community 73 - "Community 73"
+Cohesion: 0.13
+Nodes (26): allQueryTokens(), clearAuth(), decodeToken(), error(), fetchTokenAndGuardAgainstRace(), G(), getAuth(), getCurrentAuthClaims() (+18 more)
+
+### Community 74 - "Community 74"
+Cohesion: 0.16
+Nodes (28): as(), bs(), cs(), ds(), eo(), es(), fo(), fs() (+20 more)
+
+### Community 75 - "Community 75"
+Cohesion: 0.21
+Nodes (24): C(), Cc(), Da(), F(), fa(), ga(), gc(), Ji() (+16 more)
+
+### Community 76 - "Community 76"
+Cohesion: 0.22
+Nodes (13): ba(), fd(), Ht(), jt(), Nd(), nn(), pn(), qt() (+5 more)
+
+### Community 77 - "Community 77"
+Cohesion: 0.21
+Nodes (10): DashboardScreen(), DashboardScreenProps, hourlySales, recentOrders, stockItems, RecentOrdersPanel(), metrics, SalesPulse() (+2 more)
+
+### Community 78 - "Community 78"
+Cohesion: 0.26
+Nodes (19): aa(), bc(), Do(), fc(), Ja(), jo(), ko(), lc() (+11 more)
+
+### Community 79 - "Community 79"
+Cohesion: 0.17
+Nodes (13): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, categories, Category, CategoryId, Product (+5 more)
+
+### Community 80 - "Community 80"
+Cohesion: 0.24
+Nodes (7): orders, selectedOrderItems, itemIcons, metadata, OrderDetailPanel(), columns, OrdersTable()
+
+### Community 81 - "Community 81"
+Cohesion: 0.20
+Nodes (17): at(), ci(), ct(), di(), fi(), Ii(), J(), Ke() (+9 more)
+
+### Community 82 - "Community 82"
+Cohesion: 0.32
+Nodes (8): comp(), equals(), fromNumber(), fromValue(), isLong(), lessThanOrEqual(), observedTimestamp(), removeCompleted()
+
+### Community 83 - "Community 83"
+Cohesion: 0.18
+Nodes (12): dt(), at(), dt(), it(), lt(), mt(), Oa(), rb() (+4 more)
+
+### Community 84 - "Community 84"
+Cohesion: 0.33
+Nodes (5): Android Shell DOX, Local Contracts, Purpose, Verification, Workflow
+
+### Community 85 - "Community 85"
+Cohesion: 0.14
+Nodes (17): action(), addQuery(), Al(), destroy(), getAllQueries(), getLocalResults(), getQuery(), mutation() (+9 more)
+
+### Community 86 - "Community 86"
+Cohesion: 0.40
+Nodes (4): Application Data DOX, Local Contracts, Purpose, Verification
+
+### Community 87 - "Community 87"
+Cohesion: 0.33
+Nodes (6): ep(), gs(), Io(), ma(), pt(), s()
+
+### Community 88 - "Community 88"
+Cohesion: 0.50
+Nodes (3): IconButton(), IconButtonProps, ReceiptHeader()
+
+### Community 90 - "Community 90"
+Cohesion: 0.50
+Nodes (3): source, target, targetDirectory
+
 ## Knowledge Gaps
-- **459 isolated node(s):** `OlasothemeTheme`, `components`, `TableNames`, `Doc`, `Id` (+454 more)
+- **484 isolated node(s):** `OlasothemeTheme`, `components`, `TableNames`, `Doc`, `Id` (+479 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `NavigationPage` connect `Community 4` to `Community 0`, `Community 10`, `Community 13`?**
-  _High betweenness centrality (0.013) - this node is a cross-community bridge._
-- **Why does `Header()` connect `Community 4` to `Community 0`, `Community 10`, `Community 13`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `api` connect `Community 33` to `Community 10`, `Community 13`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+- **Why does `$()` connect `Community 33` to `Community 37`, `Community 58`, `Community 59`, `Community 60`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 69`, `Community 70`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 76`, `Community 78`, `Community 81`, `Community 82`, `Community 83`, `Community 85`, `Community 87`?**
+  _High betweenness centrality (0.234) - this node is a cross-community bridge._
+- **Why does `_()` connect `Community 59` to `Community 33`, `Community 67`, `Community 69`, `Community 37`, `Community 70`, `Community 71`, `Community 72`, `Community 83`, `Community 87`?**
+  _High betweenness centrality (0.124) - this node is a cross-community bridge._
+- **Why does `t()` connect `Community 37` to `Community 64`, `Community 33`, `Community 69`, `Community 70`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 78`, `Community 83`, `Community 87`, `Community 58`, `Community 59`, `Community 62`, `Community 63`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Are the 13 inferred relationships involving `lc()` (e.g. with `Iu()` and `bd()`) actually correct?**
+  _`lc()` has 13 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 2 inferred relationships involving `t()` (e.g. with `E()` and `te()`) actually correct?**
+  _`t()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `OlasothemeTheme`, `components`, `TableNames` to the rest of the system?**
-  _459 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _484 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
-- **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
-- **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11384615384615385 - nodes in this community are weakly interconnected._

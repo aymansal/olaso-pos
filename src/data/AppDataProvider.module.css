@@ -1,0 +1,18 @@
+.startup {
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  gap: 8px;
+  color: var(--olaso-text);
+  text-align: center;
+  background: var(--olaso-canvas);
+}
+
+.startup strong {
+  font-size: 18px;
+}
+
+.startup span {
+  color: var(--olaso-muted);
+  font-size: 13px;
+}

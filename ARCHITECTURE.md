@@ -35,8 +35,10 @@ the system.
 | Initial topology | One cafe and one POS tablet |
 | Updates | Signed APKs attached to GitHub Releases and installed manually |
 
-Capacitor, SQLite, and Convex are planned architecture and are not yet installed
-in the current interface-shell repository.
+The repository now includes the Convex development backend. Goal 02 adds the
+Capacitor Android shell and local SQLite operational record incrementally; do
+not claim Android release or offline-checkout completion before their owning
+cards are verified.
 
 ## System shape
 
@@ -93,6 +95,38 @@ It stores the minimum data needed for service:
 
 All local effects of a completed order are committed in one SQLite transaction.
 If that transaction fails, nothing from the order is treated as complete.
+
+#### Capacitor SQLite package decision
+
+As of 2026-07-28, use exact versions `@capacitor/core`,
+`@capacitor/cli`, and `@capacitor/android` `8.4.2` with
+`@capacitor-community/sqlite` `8.1.0` and `sql.js` `1.11.0`.
+
+- Capacitor Android `8.4.2` requires Capacitor core `^8.4.0`; the selected
+  SQLite plugin declares support for Capacitor core `>=8.0.0`.
+- Capacitor CLI 8 requires Node 22 or newer; the development toolchain uses
+  Node 24.
+- The SQLite plugin is MIT-licensed, actively published, supports Android and a
+  `jeep-sqlite`/SQLite-WASM web implementation, and exposes transactions plus
+  versioned upgrade statements without another ORM.
+- Keep `sql.js` pinned to `1.11.0`: `jeep-sqlite` `2.8.0` ships prebuilt
+  JavaScript glue for that WASM version, while its broad dependency range can
+  otherwise resolve an incompatible newer binary.
+- The paid Capawesome SQLite package is not used because it requires a private
+  registry license, and a custom native SQLite bridge would duplicate a
+  maintained plugin.
+
+The community plugin bundles SQLCipher even when database encryption is not
+enabled. Encryption remains an open product/security decision, and applicable
+encryption-export classification must be reviewed before production
+distribution. Sources:
+[Capacitor releases](https://github.com/ionic-team/capacitor/releases),
+[@capacitor-community/sqlite](https://github.com/capacitor-community/sqlite).
+
+The Android application ID is `com.olaso.pos`. Keep it unchanged across beta
+and production upgrades. Capacitor configuration uses JSON because the
+Capacitor 8 CLI TypeScript-config loader is not compatible with the project's
+TypeScript 7 compiler; this avoids downgrading the application toolchain.
 
 ### Convex
 
@@ -720,7 +754,6 @@ Do not build these before the trigger occurs:
 
 ## Open technical decisions
 
-- Exact Capacitor SQLite package after compatibility review.
 - Exact Convex authentication approach after role confirmation.
 - Business-day cutoff and cafe timezone behavior.
 - Receipt numbering authority while offline.
@@ -728,4 +761,3 @@ Do not build these before the trigger occurs:
 - Export destination and backup retention.
 - Bluetooth versus USB printer transport.
 - Local encryption requirements for the tablet database.
-

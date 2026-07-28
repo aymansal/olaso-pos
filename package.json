@@ -11,20 +11,28 @@
     "check:seed": "convex run seed:verify",
     "check:management": "node scripts/check-management.mjs",
     "check:inventory": "node scripts/check-inventory.mjs",
-    "dev": "npm run theme:build && vite --host 0.0.0.0",
-    "build": "npm run theme:build && tsc -b && vite build",
+    "check:local": "node --disable-warning=ExperimentalWarning scripts/check-local-database.mjs",
+    "prepare:sqlite-web": "node scripts/prepare-sqlite-web.mjs",
+    "dev": "npm run theme:build && npm run prepare:sqlite-web && vite --host 0.0.0.0",
+    "build": "npm run theme:build && npm run prepare:sqlite-web && tsc -b && vite build",
+    "android:sync": "npm run build && cap sync android",
     "preview": "vite --host 0.0.0.0"
   },
   "dependencies": {
     "@astryxdesign/core": "0.1.7",
+    "@capacitor-community/sqlite": "8.1.0",
+    "@capacitor/android": "8.4.2",
+    "@capacitor/core": "8.4.2",
     "@fontsource/dm-sans": "^5.3.0",
     "@phosphor-icons/react": "2.1.10",
     "convex": "^1.42.3",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "sql.js": "1.11.0"
   },
   "devDependencies": {
     "@astryxdesign/cli": "^0.1.7",
+    "@capacitor/cli": "8.4.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "6.0.3",

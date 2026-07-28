@@ -10,7 +10,7 @@ application, global tokens, and the feature screens under `features/`.
 - `main.tsx` mounts React and applies the pre-built Astryx Olaso theme.
 - `App.tsx` selects the active top-level screen.
 - `data/` owns the application-level Convex provider, feature-facing data
-  hooks, and later local persistence and synchronization operations.
+  hooks, local SQLite boundary, operational cache, and outbox.
 - `globals.css` owns only font/reset imports, semantic root variables, body
   defaults, and the full-viewport baseline.
 - `features/` owns screen-specific composition, temporary fixtures where still
@@ -43,5 +43,7 @@ application, global tokens, and the feature screens under `features/`.
 
 ## Child DOX Index
 
+- [`data/AGENTS.md`](data/AGENTS.md) — application data providers, local
+  persistence, operational cache, and outbox boundaries.
 - [`features/AGENTS.md`](features/AGENTS.md) — feature boundaries and shared
   screen conventions.
