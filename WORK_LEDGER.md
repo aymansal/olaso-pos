@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-10 in progress
+**Status:** in progress — APP-10 done; APP-11 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -91,7 +91,7 @@ hardware are available.
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | done | Bounded history/detail, local fallback and retry, policy states, regression, Graphify, and visual QA passed; implementation commit `70c605365b6d242bb4000b033867db14eb42f9a9` pushed to `origin/codex/goal-02-functional-app` |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | done | One bounded snapshot, live/recovery states, full regression, Graphify, and visual QA passed; implementation commit `b1dd49c77b1a864cefcb10a029dc7f5513f5624c` pushed to `origin/codex/goal-02-functional-app` |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | done | Bounded saved-summary query, all tabs/period/recovery states, regression, Graphify, and visual QA passed; implementation commit `573a1863d1ee24889450ee90e63dc358b64e9ad5` pushed to `origin/codex/goal-02-functional-app` |
-| APP-10 | Make settings, synchronization controls, and the designed lock flow functional | in progress | Settings survive restart; lock/session behavior documented and verified; commit pushed |
+| APP-10 | Make settings, synchronization controls, and the designed lock flow functional | done | Local settings/sync/lock, regression, Graphify, and visual QA passed; implementation commit `2284ecdb6b217dbdc816cee3a9b9040db7364e8a` pushed to `origin/codex/goal-02-functional-app` |
 | APP-11 | Produce and verify the Android beta without printer integration | pending | APK builds; offline startup, restart, migration, and upgrade checks pass; commit pushed |
 | APP-12 | Run full-system regression, quota/security review, documentation closeout, and final push | pending | All checks/builds/QA pass; Graphify and docs current; final commit pushed |
 
@@ -535,9 +535,13 @@ hardware are available.
   edges and contains the Settings, Lock, terminal-settings, transaction
   serialization, and manual-sync boundaries with no absolute or generated
   output source.
+- APP-10 implementation commit
+  `2284ecdb6b217dbdc816cee3a9b9040db7364e8a` is confirmed on
+  `origin/codex/goal-02-functional-app`.
 
-**Exact next action:** Complete the APP-10 diff, secret/exclusion, bounded-read,
-and DOX-chain review; finalize browser sessions; then commit and push the card.
+**Exact next action:** Start APP-11 by querying the refreshed graph and
+re-reading the Android beta, release, persistence, offline, migration, upgrade,
+and no-printer contracts before marking it in progress.
 
 ## Decisions and Blockers
 
@@ -559,6 +563,23 @@ and DOX-chain review; finalize browser sessions; then commit and push the card.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-10 complete
+
+- Pushed `APP-10: connect settings and local lock` as
+  `2284ecdb6b217dbdc816cee3a9b9040db7364e8a` and confirmed
+  `origin/codex/goal-02-functional-app` resolves to the same SHA.
+- Completion evidence: restart-safe immutable identity and preferences,
+  bounded manual sale/menu synchronization, local non-authenticating
+  lock/reload/unlock with cart preservation, controlled failure recovery, full
+  regression, refreshed portable Graphify, and clean exact 1340 × 800 Settings
+  and Lock QA all pass.
+- `.env.local`, credentials, deployment secrets, signing material, APK/AAB
+  outputs, and printer implementation were not committed.
+- APP-10 is done; APP-11 is pending and no card is in progress.
+- Exact next action: start APP-11 with its DOX/ledger/Graphify reads and produce
+  the reproducible Android beta without printer integration or signing
+  material.
 
 ### 2026-07-28 — APP-10 started
 
