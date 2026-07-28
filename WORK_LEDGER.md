@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-02 in progress
+**Status:** in progress — APP-02 done; APP-03 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -83,7 +83,7 @@ hardware are available.
 | --- | --- | --- | --- |
 | APP-00 | Establish the verified Goal 01 Git baseline and goal branch | done | `npm run check:pos` and `npm run build` passed; baseline commit `cade8a913cafebb91f571903820b8253236b841e` pushed to `origin/codex/goal-02-functional-app` |
 | APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | done | Dev deployment `colorful-newt-937` connected; schema/codegen/checks/browser smoke pass; commit `5189a4eb6a52f363313b650be076a116864ff153` pushed to `origin/codex/goal-02-functional-app` |
-| APP-02 | Add protected deterministic Convex development seed/reset data | in progress | Internal seed runs twice safely; table counts/sample data verified; commit pushed |
+| APP-02 | Add protected deterministic Convex development seed/reset data | done | Two resets and relationship checks passed; implementation commit `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` pushed to `origin/codex/goal-02-functional-app` |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | pending | Validated CRUD/archive/version flows and live Products UI; commit pushed |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | pending | Exact base-unit operations and live Stock UI verified; commit pushed |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | pending | Restart-safe local data checks and Android sync pass; commit pushed |
@@ -245,8 +245,7 @@ hardware are available.
 - The completed Goal 01 baseline is committed at
   `cade8a913cafebb91f571903820b8253236b841e`.
 - The local goal branch tracks `origin/codex/goal-02-functional-app`; the
-  recorded baseline commit is present on the remote branch and APP-00's ledger
-  closeout is its current head.
+  recorded baseline and completed card commits are present in its history.
 - Official Convex package `1.42.3` is installed.
 - Convex project `ayman-salmouni/olaso-pos` has a dedicated cloud development
   deployment `colorful-newt-937`; its deployment name and public Vite URLs are
@@ -261,7 +260,8 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 and APP-01 are done; APP-02 is the only card in progress.
+- APP-00 through APP-02 are done; no card is currently in progress and APP-03
+  is pending.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -271,10 +271,13 @@ hardware are available.
 - Graphify is refreshed to 665 nodes and 799 edges. Convex type/deployment,
   seed verification, POS, production build, diff, bounded-read, and sensitive
   content checks pass.
+- APP-02 implementation commit
+  `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` is confirmed on
+  `origin/codex/goal-02-functional-app`.
 
-**Exact next action:** Re-read the closeout DOX chain, stage only the reviewed
-APP-02 files, commit with the card prefix, push, and record the resulting SHA
-and remote branch before marking APP-02 done.
+**Exact next action:** Start APP-03 by re-reading the ledger and applicable DOX,
+querying the refreshed Graphify graph, and implementing its product, modifier,
+and recipe-management contract without starting another card.
 
 ## Decisions and Blockers
 
@@ -296,6 +299,21 @@ and remote branch before marking APP-02 done.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-02 complete
+
+- Pushed `APP-02: seed Convex development data` as
+  `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` and confirmed
+  `origin/codex/goal-02-functional-app` resolved to the same SHA.
+- Completion evidence: the protected internal reset ran twice with identical
+  counts across all 11 tables; both relationship-verification reports matched;
+  the disabled deployment flag rejected the reset; Graphify and all required
+  checks passed.
+- `.env.local`, deployment credentials, signing material, and printer secrets
+  were not committed.
+- APP-02 is done; APP-03 is pending and no card is in progress.
+- Exact next action: start APP-03 with its DOX/ledger/Graphify reads and
+  implement validated product, modifier, and recipe management.
 
 ### 2026-07-28 — APP-02 started
 
