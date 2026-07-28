@@ -18,12 +18,19 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
 
 ## Workflow
 
+- Run `npm run check:android` before native packaging changes.
 - Run `npm run android:sync` from the repository root after web or plugin
   changes.
+- Run `npm run android:beta` for the checked development beta build. Its
+  ignored output is `android/app/build/outputs/apk/debug/app-debug.apk`.
 - The generated project requires Java 21 and Android SDK 36 for Gradle builds.
+- The Goal 02 beta uses Android's local debug identity. Production signing and
+  distribution remain later release work.
 
 ## Verification
 
 - APP-05 requires a successful Capacitor Android sync.
-- APP-11 owns Gradle/APK, offline, restart, migration, and install-over-upgrade
-  verification.
+- APP-11 verified the API-36-targeted beta on an API-35 emulator: Gradle/APK,
+  offline startup and checkout, process-restart recovery, schema 2-to-4
+  migration, install-over-upgrade, and acknowledged Convex synchronization.
+- Real Galaxy Tab A9 and production-signature acceptance remain release checks.

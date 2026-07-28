@@ -84,9 +84,9 @@ decision changes.
 - React components never contain database, sync, reporting-query, secret, or
   printer-protocol logic. Follow `ARCHITECTURE.md` when those layers arrive.
 - The current repository includes a Convex development backend, live product,
-  inventory, Orders, Dashboard, and Reports data, a Capacitor Android shell,
-  profile-owned local Settings and Lock flows, and local-first SQLite/outbox
-  checkout with idempotent Convex synchronization.
+  inventory, Orders, Dashboard, and Reports data, a verified Capacitor Android
+  development beta, profile-owned local Settings and Lock flows, and
+  local-first SQLite/outbox checkout with idempotent Convex synchronization.
   Do not imply that production authentication or ESC/POS behavior already
   exists.
 

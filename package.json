@@ -17,10 +17,12 @@
     "check:dashboard": "node scripts/check-dashboard.mjs",
     "check:reports": "node scripts/check-reports.mjs",
     "check:settings": "node scripts/check-settings.mjs",
+    "check:android": "node scripts/check-android-beta.mjs",
     "prepare:sqlite-web": "node scripts/prepare-sqlite-web.mjs",
     "dev": "npm run theme:build && npm run prepare:sqlite-web && vite --host 0.0.0.0",
     "build": "npm run theme:build && npm run prepare:sqlite-web && tsc -b && vite build",
     "android:sync": "npm run build && cap sync android",
+    "android:beta": "npm run check:android && npm run android:sync && node scripts/build-android-beta.mjs",
     "preview": "vite --host 0.0.0.0"
   },
   "dependencies": {

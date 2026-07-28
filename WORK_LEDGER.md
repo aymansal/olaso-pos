@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-10 done; APP-11 pending
+**Status:** in progress — APP-11 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -92,7 +92,7 @@ hardware are available.
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | done | One bounded snapshot, live/recovery states, full regression, Graphify, and visual QA passed; implementation commit `b1dd49c77b1a864cefcb10a029dc7f5513f5624c` pushed to `origin/codex/goal-02-functional-app` |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | done | Bounded saved-summary query, all tabs/period/recovery states, regression, Graphify, and visual QA passed; implementation commit `573a1863d1ee24889450ee90e63dc358b64e9ad5` pushed to `origin/codex/goal-02-functional-app` |
 | APP-10 | Make settings, synchronization controls, and the designed lock flow functional | done | Local settings/sync/lock, regression, Graphify, and visual QA passed; implementation commit `2284ecdb6b217dbdc816cee3a9b9040db7364e8a` pushed to `origin/codex/goal-02-functional-app` |
-| APP-11 | Produce and verify the Android beta without printer integration | pending | APK builds; offline startup, restart, migration, and upgrade checks pass; commit pushed |
+| APP-11 | Produce and verify the Android beta without printer integration | in progress | Reproducible APK and permission checks pass; install-over-upgrade and device flows in progress |
 | APP-12 | Run full-system regression, quota/security review, documentation closeout, and final push | pending | All checks/builds/QA pass; Graphify and docs current; final commit pushed |
 
 ## Task Contracts
@@ -538,10 +538,42 @@ hardware are available.
 - APP-10 implementation commit
   `2284ecdb6b217dbdc816cee3a9b9040db7364e8a` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-11 has a checksum-verified project-local Temurin `21.0.11+10` JDK and
+  Android command-line toolchain under ignored `tmp/`. Android platform/target
+  36, build tools, platform tools, emulator, and default API-35/API-36 images
+  are installed; no SDK, AVD, local properties, or build artifact is tracked.
+- `npm run android:beta` now provides one repeatable checked sync/build command.
+  The resulting 30,961,524-byte development APK declares `com.olaso.pos`,
+  version code/name `2`/`0.1.0-beta.1`, compile/target 36, and min SDK 24.
+  Its merged manifest contains only internet and Android's app-scoped dynamic
+  receiver permission; unused inherited biometric/fingerprint and all
+  printer/Bluetooth/USB permissions are absent.
+- Two API-36 image variants remained ADB-offline on this host. The mature
+  official API-35 default x86_64 image booted to `sys.boot_completed=1` and is
+  the real verification device; the APK still compiles and targets API 36.
+- In-place installation upgraded the emulator from package version code 1 to
+  2 without clearing application data. The first cold launch migrated SQLite
+  schema version 2 to 4, preserved the prepared device ID, terminal name,
+  clock preference, lock state, and sentinel, populated 4 categories and 15
+  products, and created every expected column and index.
+- With Android networking disabled and no external route, cold startup rendered
+  the cached menu and saved a take-away Espresso sale with one line, two recipe
+  stock movements, an immutable receipt snapshot, and one pending outbox row.
+  A full process stop/restart preserved that exact pending transaction.
+- Restoring connectivity synchronized the sale once, assigned Convex ID
+  `k972fa9c9pk06v3hwcjfyd11q98bdmpy`, removed the acknowledged outbox row, and
+  advanced the successful-sync timestamp. The bounded protected verification
+  query reports exactly one line, two movements, and total 1,000 centimes.
+- The development deployment is restored to its deterministic 13-sale,
+  17-line, 65-movement baseline. All APP-11 regression checks and the production
+  web build pass.
+- The exact-source Graphify refresh records the two Android beta scripts; the
+  portable graph now has 1,969 nodes and 4,588 edges with no absolute,
+  dependency, temporary, copied-asset, or Android build-output source.
 
-**Exact next action:** Start APP-11 by querying the refreshed graph and
-re-reading the Android beta, release, persistence, offline, migration, upgrade,
-and no-printer contracts before marking it in progress.
+**Exact next action:** Re-read the APP-11 instruction chain and authority
+boundaries, inspect the staged scope, commit `APP-11: build and verify Android
+beta`, push it, then record the pushed SHA in the ledger closeout commit.
 
 ## Decisions and Blockers
 
@@ -563,6 +595,93 @@ and no-printer contracts before marking it in progress.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-11 started
+
+- Queried the refreshed Graphify graph first for the Capacitor/Gradle shell,
+  application ID, SQLite connection and migrations, Android sync, offline,
+  upgrade, and printer boundaries.
+- Re-read the complete root/Android DOX chain, APP-11 ledger contract, and the
+  product, architecture, design, and brand authorities.
+- Confirmed APP-00 through APP-10 are done and marked APP-11 as the only card
+  in progress.
+- Confirmed the beta must retain application ID `com.olaso.pos`, package its
+  interface/assets locally, preserve SQLite and settings across replacement,
+  use Java 21 with Android SDK 36, and commit neither APK/AAB nor signing
+  material.
+- Printer transport, ESC/POS, Bluetooth/USB permissions, physical hardware
+  acceptance, production signing, and public distribution remain outside this
+  card.
+- The host had no Java/Android toolchain on PATH. Downloaded official Temurin
+  `21.0.11+10` and Android command-line tools `15859902`, verified their
+  published SHA-256 checksums, and installed platform/target 36, build tools,
+  platform tools, emulator, and default API-35/API-36 images under ignored
+  `tmp/`.
+- `npm run android:sync` and the existing Gradle wrapper's
+  `assembleDebug --no-daemon` pass. Package inspection confirms
+  `com.olaso.pos`, version code/name `1`/`1.0`, compile/target 36, min SDK 24,
+  four ABIs, a valid local debug signature, and no printer permission.
+- The first APK is 30,961,588 bytes with SHA-256
+  `8C558B42FC733BAFA3D8E3D05B328D9F383DC2A734C044E29A0ED732D62C0589`.
+  The APK remains ignored and will not be committed.
+- The packaged manifest inherits biometric/fingerprint permissions from the
+  SQLite dependency even though this beta uses neither biometric
+  authentication nor encrypted database secrets. APP-11 will remove both
+  unused permissions at the app manifest merge boundary.
+- API-36 Google APIs and default guests both stayed ADB-offline. The official
+  API-35 default x86_64 image booted cleanly to `sys.boot_completed=1` and will
+  provide the functional device evidence while the app continues to compile
+  and target API 36.
+- Built and installed the historical APP-05 APK from an ignored detached
+  worktree. Its database reports schema version 2; a preserved terminal name,
+  device ID, and upgrade sentinel were added while the baseline process was
+  stopped.
+- Added checked stdlib-only Android beta scripts, bumped the development beta
+  to version code/name `2`/`0.1.0-beta.1`, and removed unused inherited
+  biometric/fingerprint permissions at the manifest merge boundary.
+- `npm run check:android`, `git diff --check`, and the repeatable
+  `npm run android:beta` command pass. The 30,961,524-byte APK has SHA-256
+  `DB6492BC4DA68A768DFF73035C2D381615F765A52932410022155DF1E90F9DAE`;
+  its merged permissions contain only internet and Android's app-scoped
+  receiver permission.
+- `adb install -r -t` replaced version code 1 with code 2 under the unchanged
+  `com.olaso.pos` identity. Cold launch migrated the prepared database from
+  schema version 2 to 4 while preserving the sentinel, device identity,
+  terminal name, clock preference, and unlocked state.
+- Post-upgrade inspection confirms all migration columns and the
+  `sales_by_created_at`/`outbox_by_local_record` indexes, plus a refreshed
+  operational cache of 4 categories and 15 products. The 1340 × 800 emulator
+  frame renders the approved POS cleanly after upgrade.
+- Airplane mode plus disabled guest transports removed the external route.
+  Cold startup still rendered the cached menu and completed a local take-away
+  Espresso checkout with one line, two recipe deductions, a receipt snapshot,
+  and one pending outbox operation.
+- A full process stop and cold restart preserved the same sale, receipt number,
+  item, movements, and outbox operation, proving recovery without memory state.
+- Restoring emulator connectivity let the normal synchronizer acknowledge the
+  transaction: the local sale is `synced`, has cloud ID
+  `k972fa9c9pk06v3hwcjfyd11q98bdmpy`, the outbox row is gone, and the successful
+  sync timestamp advanced without an error.
+- Protected bounded backend verification finds one 1,000-centime sale with one
+  line and exactly two movement deltas, so the device/local identity remained
+  idempotent.
+- Reset and verified the development deployment back to its deterministic
+  13-sale, 17-line, 65-movement baseline after device synchronization.
+- Updated the Android DOX, architecture, and README with the reproducible
+  `npm run android:beta` workflow, verified development scope, and explicit
+  production-signing/hardware/printer exclusions.
+- Full serial regression passed: POS, Convex type/codegen, seed, management,
+  inventory, local migrations, atomic/idempotent sales, bounded Orders,
+  Dashboard, Reports, terminal settings, Android identity/permissions, and the
+  production web build. A final seed verification still reports the exact
+  deterministic baseline.
+- Refreshed Graphify with exact AST sources for the two new stdlib-only scripts.
+  The portable graph has 1,969 nodes and 4,588 edges and contains no absolute,
+  dependency, temporary, copied-asset, or Android build-output source.
+- Exact next action: re-read the APP-11 instruction chain and authority
+  boundaries, inspect the staged scope, commit `APP-11: build and verify
+  Android beta`, push it, then record the pushed SHA in the ledger closeout
+  commit.
 
 ### 2026-07-28 — APP-10 complete
 

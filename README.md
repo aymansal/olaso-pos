@@ -6,15 +6,18 @@ Tablet-first point-of-sale interface for Olaso Coffee, designed for the Samsung 
 
 ## Current status
 
-The repository currently contains the approved POS interface shell. Product ordering, stock calculations, reporting, authentication, database access, Android packaging, and ESC/POS receipt printing will be added in later stages.
-
-The product behavior and local-first technical architecture are now documented
-before backend implementation begins.
+The repository contains a functional development beta: live catalog and stock
+management, local-first checkout and receipt previews, synchronized orders,
+dashboard and reports, terminal settings, and the approved tablet interface.
+Production authentication, signed distribution, and receipt-printer transport
+remain later work.
 
 ## Stack
 
 - React 19 and TypeScript
 - Vite
+- Capacitor Android with SQLite
+- Convex development backend
 - Astryx Design Core with the custom Olaso theme
 - Phosphor Icons
 - CSS Modules
@@ -35,14 +38,29 @@ npm run build
 
 The development and production commands automatically compile `Olasotheme-theme.ts` into static Astryx theme assets. Run `npm run theme:build` directly after changing only the theme.
 
+## Build the Android development beta
+
+With Java 21 and Android SDK 36 configured:
+
+```bash
+npm run android:beta
+```
+
+This checks the package and permission boundary, synchronizes Capacitor, and
+creates the ignored debug APK at
+`android/app/build/outputs/apk/debug/app-debug.apk`. It is a local development
+artifact, not a production-signed release.
+
 ## Project structure
 
 ```text
 src/features/pos/
   components/       Reusable POS interface components
-  data/             Temporary menu data
   PosScreen.tsx     Main tablet POS screen
 
+src/data/            SQLite, cache, outbox, and synchronization boundaries
+convex/              Development backend schema and functions
+android/             Capacitor Android shell
 Olasotheme-theme.ts Astryx design tokens
 BRAND.md            Olaso brand reference
 DESIGN.md           Product interface rules and design system
@@ -61,13 +79,12 @@ untitled.pen        Pencil source design
 - [`WORK_LEDGER.md`](WORK_LEDGER.md) — active goal, task board, checkpoint, and
   implementation journal.
 
-## Planned work
+## Production follow-ups
 
-- Complete product menu and editable recipes
-- Sales, orders, stock, and reports
-- Local/offline operation with synchronization
-- Android packaging for the target tablet
-- ESC/POS thermal receipt printing through Bluetooth or USB
+- Confirm roles, PIN/login, tax, and receipt policy with the owner
+- Add protected production signing and release handling
+- Run acceptance on the target tablet
+- Add printer transport only after the real workflow and hardware are supplied
 
 ## Target hardware
 

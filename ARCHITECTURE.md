@@ -35,10 +35,11 @@ the system.
 | Initial topology | One cafe and one POS tablet |
 | Updates | Signed APKs attached to GitHub Releases and installed manually |
 
-The repository now includes the Convex development backend. Goal 02 adds the
-Capacitor Android shell and local SQLite operational record incrementally; do
-not claim Android release or offline-checkout completion before their owning
-cards are verified.
+The repository includes the Convex development backend, Capacitor Android
+shell, and local SQLite operational record. APP-11 verified a development
+debug beta through offline checkout, restart, migration, install-over-upgrade,
+and synchronization. This is not a production-signed or publicly distributed
+release.
 
 ## System shape
 
@@ -644,6 +645,19 @@ Rules:
 - Only the transport supported by the client's real printer is implemented.
 
 ## APK release and update
+
+The reproducible Goal 02 development beta is built with `npm run android:beta`
+using Java 21 and Android SDK 36. It retains application ID `com.olaso.pos`,
+uses version code/name `2`/`0.1.0-beta.1`, and writes only the ignored debug
+APK at `android/app/build/outputs/apk/debug/app-debug.apk`. Its merged manifest
+contains no printer, Bluetooth, USB, biometric, or fingerprint permission.
+
+APP-11 verified install-over-upgrade from schema version 2 to 4, preserved
+terminal settings, cached offline startup and checkout, process-restart
+recovery, and acknowledged idempotent Convex synchronization on an API-35
+emulator while compiling and targeting API 36. Production signing, Galaxy Tab
+A9 acceptance, public distribution, and physical hardware verification remain
+outside this development beta.
 
 ```text
 GitHub tag

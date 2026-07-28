@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+
+const capacitor = JSON.parse(readFileSync('capacitor.config.json', 'utf8'));
+const appBuild = readFileSync('android/app/build.gradle', 'utf8');
+const variables = readFileSync('android/variables.gradle', 'utf8');
+const manifest = readFileSync(
+  'android/app/src/main/AndroidManifest.xml',
+  'utf8',
+);
+
+assert.equal(capacitor.appId, 'com.olaso.pos');
+assert.match(appBuild, /namespace = "com\.olaso\.pos"/);
+assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
+assert.match(appBuild, /versionCode 2/);
+assert.match(appBuild, /versionName "0\.1\.0-beta\.1"/);
+assert.match(variables, /compileSdkVersion = 36/);
+assert.match(variables, /targetSdkVersion = 36/);
+assert.match(manifest, /android\.permission\.INTERNET/);
+assert.match(
+  manifest,
+  /android\.permission\.USE_BIOMETRIC"[\s\S]*?tools:node="remove"/,
+);
+assert.match(
+  manifest,
+  /android\.permission\.USE_FINGERPRINT"[\s\S]*?tools:node="remove"/,
+);
+assert.doesNotMatch(
+  manifest,
+  /BLUETOOTH|USB_PERMISSION|MANAGE_USB|ESC_POS|BIND_PRINT_SERVICE/i,
+);
+
+const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' });
+assert.doesNotMatch(
+  tracked,
+  /(?:^|\/)(?:local\.properties|.*\.(?:apk|aab|jks|keystore|p12|pem|key))$/im,
+);
+
+console.log('Android beta identity, version, permission, and artifact checks passed.');
