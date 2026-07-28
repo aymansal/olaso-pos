@@ -327,6 +327,8 @@ Stock movements are append-only. Corrections create another movement.
 - Order count.
 - Cancel/refund totals.
 - Totals by payment method, service mode, product, and category as required.
+- Exact ingredient usage in each ingredient's base unit and its deduction-event
+  count.
 
 This table is incrementally updated when a sale is accepted or corrected.
 Reports do not recalculate every historical sale on every screen load.
@@ -581,6 +583,8 @@ When a sale is accepted, the same mutation updates:
 - Daily money totals.
 - Product/category counters required by active reports.
 - Payment and service-mode counters required by active reports.
+- Exact recipe ingredient usage and deduction-event counters required by the
+  Stock Usage report.
 
 Corrections reverse the original summary effect and apply the new effect.
 Detailed reports load paginated sales or stock movements only when the user

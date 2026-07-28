@@ -16,6 +16,7 @@ import type * as lib_operational from "../lib/operational.js";
 import type * as modifiers from "../modifiers.js";
 import type * as products from "../products.js";
 import type * as recipes from "../recipes.js";
+import type * as reports from "../reports.js";
 import type * as sales from "../sales.js";
 import type * as seed from "../seed.js";
 import type * as sync from "../sync.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   modifiers: typeof modifiers;
   products: typeof products;
   recipes: typeof recipes;
+  reports: typeof reports;
   sales: typeof sales;
   seed: typeof seed;
   sync: typeof sync;

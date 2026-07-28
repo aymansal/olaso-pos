@@ -185,38 +185,33 @@
     "semantic_hash": ""
   },
   "src/features/reports/ReportsScreen.tsx": {
-    "mtime": 1784989101.6513205,
-    "ast_hash": "3c7d240673d3aa0f34c1a06b2294cf2e",
+    "mtime": 1785269769.4217634,
+    "ast_hash": "daa0b5f93a019d4af86bfe2ee7db5d45",
     "semantic_hash": ""
   },
   "src/features/reports/components/ProductPerformanceTable/ProductPerformanceTable.tsx": {
-    "mtime": 1784989194.966964,
-    "ast_hash": "aa3b109d76d616293e63e6e0e9a6962b",
+    "mtime": 1785270866.5320485,
+    "ast_hash": "3aefd2611efb65749d8b9b7deebfa416",
     "semantic_hash": ""
   },
   "src/features/reports/components/ReportSummaryPanel/ReportSummaryPanel.tsx": {
-    "mtime": 1784989261.1995888,
-    "ast_hash": "19a802685d4eb304f24649b51d4d3106",
+    "mtime": 1785270580.5872645,
+    "ast_hash": "660b7c87fa539556444e291d6ceb0ef4",
     "semantic_hash": ""
   },
   "src/features/reports/components/ReportsAnalyticsPanel/ReportsAnalyticsPanel.tsx": {
-    "mtime": 1784989194.9562669,
-    "ast_hash": "67aef9b7226ef303892774c1a1323174",
+    "mtime": 1785270866.5270479,
+    "ast_hash": "d61abeaf8b252f8d3b957116beacd2d0",
     "semantic_hash": ""
   },
   "src/features/reports/components/ReportsKpiStrip/ReportsKpiStrip.tsx": {
-    "mtime": 1784989194.9562669,
-    "ast_hash": "1d57cb9d81cbfcebd0891a4412ad958e",
+    "mtime": 1785271468.7352593,
+    "ast_hash": "aad399f4ab0ea5fbf3af6adc16d5c6df",
     "semantic_hash": ""
   },
   "src/features/reports/components/SalesTrendChart/SalesTrendChart.tsx": {
-    "mtime": 1784989194.9647074,
-    "ast_hash": "ac9fb88033ee59e0414bf559a6adb9e4",
-    "semantic_hash": ""
-  },
-  "src/features/reports/data/reportsData.ts": {
-    "mtime": 1784989292.823857,
-    "ast_hash": "d5318db62f21d8742281b86ed764e32f",
+    "mtime": 1785270705.3225894,
+    "ast_hash": "e5f3cff577f83173b6c33d8f7bce11d7",
     "semantic_hash": ""
   },
   "src/features/stock/StockScreen.tsx": {
@@ -615,8 +610,8 @@
     "semantic_hash": ""
   },
   "convex/_generated/api.d.ts": {
-    "mtime": 1785268237.0384593,
-    "ast_hash": "c1ead8ee16b9776db58acb8caad42bb9",
+    "mtime": 1785269598.068151,
+    "ast_hash": "8bf1cf8705724fd51eb0c7bbe306da13",
     "semantic_hash": ""
   },
   "convex/_generated/api.js": {
@@ -640,8 +635,8 @@
     "semantic_hash": ""
   },
   "convex/schema.ts": {
-    "mtime": 1785258147.2701504,
-    "ast_hash": "a285cc255dd3b068372e35e32f49fe80",
+    "mtime": 1785269936.1571283,
+    "ast_hash": "b4569b4580889ff73be72db98494b636",
     "semantic_hash": ""
   },
   "convex/tsconfig.json": {
@@ -660,8 +655,8 @@
     "semantic_hash": ""
   },
   "convex/seed.ts": {
-    "mtime": 1785254634.9298751,
-    "ast_hash": "701bd46e7aefb674d96ec14dc04bc345",
+    "mtime": 1785269936.159312,
+    "ast_hash": "38e4831256b1a14ee22f25f0b9ce4c49",
     "semantic_hash": ""
   },
   "convex/categories.ts": {
@@ -1120,8 +1115,8 @@
     "semantic_hash": ""
   },
   "convex/sales.ts": {
-    "mtime": 1785266320.168018,
-    "ast_hash": "b61e5f7c76993015abb09ef481a5d988",
+    "mtime": 1785271373.867196,
+    "ast_hash": "fc3023654faded1066da791c7fa9c52f",
     "semantic_hash": ""
   },
   "convex/sync.ts": {
@@ -1130,8 +1125,8 @@
     "semantic_hash": ""
   },
   "scripts/check-sales.mjs": {
-    "mtime": 1785264744.6742256,
-    "ast_hash": "3761c2b8c31d22fd6a5f4b885ccd5992",
+    "mtime": 1785269698.2737482,
+    "ast_hash": "34fb7692c998fc9365a101dfd166faeb",
     "semantic_hash": ""
   },
   "src/data/localSales.ts": {
@@ -1185,13 +1180,38 @@
     "semantic_hash": ""
   },
   "src/data/useDashboardData.ts": {
-    "mtime": 1785268114.8822842,
-    "ast_hash": "533720f1ec39b0aa54aeda0a18286312",
+    "mtime": 1785269751.5580213,
+    "ast_hash": "dd83054ef3245565a23ab94c2a80d6ac",
     "semantic_hash": ""
   },
   "src/lib/stock.ts": {
     "mtime": 1785268100.1628754,
     "ast_hash": "cbacb8b984de1ed2aca1a8ab6ac374ef",
+    "semantic_hash": ""
+  },
+  "convex/reports.ts": {
+    "mtime": 1785271743.6704688,
+    "ast_hash": "4e2c45190747d49be10d0ce5160be4b4",
+    "semantic_hash": ""
+  },
+  "scripts/check-reports.mjs": {
+    "mtime": 1785271743.6724656,
+    "ast_hash": "41bfd7c65024c3fa14c06ad71ea99604",
+    "semantic_hash": ""
+  },
+  "src/data/useReportsData.ts": {
+    "mtime": 1785270146.4558935,
+    "ast_hash": "dedf7d30c0e73b3fb7b3ff14f8c43541",
+    "semantic_hash": ""
+  },
+  "src/features/reports/reportTypes.ts": {
+    "mtime": 1785269751.560027,
+    "ast_hash": "c2e600eeb0c830ab88b81d4b2edf4b46",
+    "semantic_hash": ""
+  },
+  "src/lib/date.ts": {
+    "mtime": 1785269751.5560255,
+    "ast_hash": "b3b287952f057368863bd651895e243b",
     "semantic_hash": ""
   }
 }

@@ -442,6 +442,7 @@ export const accept = mutation({
       && (
         metric.productTotals.length > 500
         || metric.categoryTotals.length > 100
+        || (metric.ingredientTotals?.length ?? 0) > 100
         || metric.totalsByPaymentMethod.length > 20
         || metric.totalsByServiceMode.length > 10
       )
@@ -486,17 +487,22 @@ export const accept = mutation({
     const categoryTotals = metric
       ? metric.categoryTotals.map((row) => ({ ...row }))
       : [];
+    const ingredientTotals = metric?.ingredientTotals
+      ? metric.ingredientTotals.map((row) => ({ ...row }))
+      : [];
     for (const line of preparedLines) {
       const productTotal = productTotals.find(
         (row) => row.productId === line.product._id,
       );
       if (productTotal) {
+        productTotal.categoryName ??= line.category.name;
         productTotal.quantity += line.quantity;
         productTotal.totalCentimes += line.lineTotalCentimes;
       } else {
         productTotals.push({
           productId: line.product._id,
           productName: line.product.name,
+          categoryName: line.category.name,
           quantity: line.quantity,
           totalCentimes: line.lineTotalCentimes,
         });
@@ -516,6 +522,27 @@ export const accept = mutation({
         });
       }
     }
+    let ingredientUsageEventCount =
+      metric?.ingredientUsageEventCount ?? 0;
+    for (const [ingredientId, quantity] of saleIngredientUsage) {
+      if (quantity === 0) continue;
+      const ingredient = ingredientRecords.get(ingredientId);
+      if (!ingredient) return conflict('A recipe ingredient is missing.');
+      const ingredientTotal = ingredientTotals.find(
+        (row) => row.ingredientId === ingredientId,
+      );
+      if (ingredientTotal) {
+        ingredientTotal.quantity += quantity;
+      } else {
+        ingredientTotals.push({
+          ingredientId,
+          ingredientName: ingredient.name,
+          baseUnit: ingredient.baseUnit,
+          quantity,
+        });
+      }
+      ingredientUsageEventCount += 1;
+    }
     const metricValue = {
       businessDate: args.businessDate,
       grossCentimes: (metric?.grossCentimes ?? 0) + subtotalCentimes,
@@ -527,6 +554,8 @@ export const accept = mutation({
       totalsByServiceMode,
       productTotals,
       categoryTotals,
+      ingredientTotals,
+      ingredientUsageEventCount,
       updatedAt: acknowledgedAt,
     };
     if (metric) {

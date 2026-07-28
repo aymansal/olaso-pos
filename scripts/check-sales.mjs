@@ -270,6 +270,10 @@ const reseed = () =>
 reseed();
 try {
   const before = await client.query(api.sync.getOperationalSnapshot, {});
+  const beforeReport = await client.query(api.reports.getSummary, {
+    fromDate: '2026-07-28',
+    toDate: '2026-07-28',
+  });
   const product = before.products.find((row) => row.name === 'Cappuccino');
   assert(product?.currentRecipeVersionId, 'Seeded Cappuccino is unavailable');
   const sizeGroup = before.modifierGroups.find((row) => row.name === 'Size');
@@ -348,6 +352,10 @@ try {
   assert.deepEqual(verification.movementDeltas, [-200, -18, -1]);
 
   const after = await client.query(api.sync.getOperationalSnapshot, {});
+  const afterReport = await client.query(api.reports.getSummary, {
+    fromDate: '2026-07-28',
+    toDate: '2026-07-28',
+  });
   const balance = (snapshot, name) =>
     snapshot.ingredients.find((ingredient) => ingredient.name === name)
       ?.currentStockQuantity;
@@ -355,6 +363,42 @@ try {
   assert.equal(balance(after, 'Whole milk'), balance(before, 'Whole milk'));
   assert.equal(balance(after, 'Oat milk'), balance(before, 'Oat milk') - 200);
   assert.equal(balance(after, 'Paper cups'), balance(before, 'Paper cups') - 1);
+  const reportQuantity = (report, name) =>
+    report.current.ingredientTotals.find(
+      (ingredient) => ingredient.ingredientName === name,
+    )?.quantity ?? 0;
+  assert.equal(
+    afterReport.current.netCentimes,
+    beforeReport.current.netCentimes + 2100,
+  );
+  assert.equal(
+    afterReport.current.orderCount,
+    beforeReport.current.orderCount + 1,
+  );
+  assert.equal(
+    afterReport.current.itemCount,
+    beforeReport.current.itemCount + 1,
+  );
+  assert.equal(
+    afterReport.current.ingredientUsageEventCount,
+    beforeReport.current.ingredientUsageEventCount + 3,
+  );
+  assert.equal(
+    reportQuantity(afterReport, 'Coffee beans'),
+    reportQuantity(beforeReport, 'Coffee beans') + 18,
+  );
+  assert.equal(
+    reportQuantity(afterReport, 'Oat milk'),
+    reportQuantity(beforeReport, 'Oat milk') + 200,
+  );
+  assert.equal(
+    reportQuantity(afterReport, 'Paper cups'),
+    reportQuantity(beforeReport, 'Paper cups') + 1,
+  );
+  assert.equal(
+    reportQuantity(afterReport, 'Whole milk'),
+    reportQuantity(beforeReport, 'Whole milk'),
+  );
 } finally {
   reseed();
 }

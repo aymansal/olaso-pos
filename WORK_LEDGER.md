@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-08 complete; APP-09 pending
+**Status:** in progress — APP-09 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -90,7 +90,7 @@ hardware are available.
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | done | Atomic/offline/retry/duplicate checks, full regression, Graphify refresh, and visual QA passed; implementation commit `07db73f350f7e43c87b6f7b3497559d02a08cf42` pushed to `origin/codex/goal-02-functional-app` |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | done | Bounded history/detail, local fallback and retry, policy states, regression, Graphify, and visual QA passed; implementation commit `70c605365b6d242bb4000b033867db14eb42f9a9` pushed to `origin/codex/goal-02-functional-app` |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | done | One bounded snapshot, live/recovery states, full regression, Graphify, and visual QA passed; implementation commit `b1dd49c77b1a864cefcb10a029dc7f5513f5624c` pushed to `origin/codex/goal-02-functional-app` |
-| APP-09 | Connect sales, product, and stock-usage report tabs and period controls | pending | Bounded report queries and all report tabs verified; commit pushed |
+| APP-09 | Connect sales, product, and stock-usage report tabs and period controls | in progress | Bounded saved-summary query, all report tabs/period states, verification, and push evidence pending |
 | APP-10 | Make settings, synchronization controls, and the designed lock flow functional | pending | Settings survive restart; lock/session behavior documented and verified; commit pushed |
 | APP-11 | Produce and verify the Android beta without printer integration | pending | APK builds; offline startup, restart, migration, and upgrade checks pass; commit pushed |
 | APP-12 | Run full-system regression, quota/security review, documentation closeout, and final push | pending | All checks/builds/QA pass; Graphify and docs current; final commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-08 are done; APP-09 is pending and no card is in progress.
+- APP-00 through APP-08 are done; APP-09 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -460,10 +460,56 @@ hardware are available.
 - APP-08 implementation commit
   `b1dd49c77b1a864cefcb10a029dc7f5513f5624c` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-09 starts from a fixture-driven Reports screen whose approved summary,
+  KPI, chart, and table component/CSS regions already fit the tablet frame.
+  Existing daily metrics already save sales, product, category, payment, and
+  service totals; exact ingredient usage needs one optional saved-summary
+  field maintained by seed and sale acceptance.
+- The APP-09 access path is one management-authorized range query for at most
+  31 current and 31 comparison daily summaries. Sales, Products, and Stock
+  Usage tabs switch locally over that snapshot; no sale or stock-movement
+  history scan, tab-triggered query, analytics pipeline, or export destination
+  is needed.
+- Daily summaries now save product category names plus exact per-ingredient
+  recipe usage and event counts. Seed and sale acceptance maintain those
+  optional fields from the same authoritative deductions used for stock.
+- `reports:getSummary` validates a one-to-31-day range and returns zero-filled
+  daily series plus bounded product, category, payment, service, and ingredient
+  aggregates for the current and same-length prior periods.
+- The Reports fixture module is removed. One one-shot hook now drives the
+  existing Sales, Products, and Stock Usage regions, native date inputs and
+  7/30-day shortcuts; exports remain disabled pending owner policy.
+- `npm run check:convex`, `npm run check:reports`, `npm run check:sales`, and
+  `npx tsc -b` pass. The sale check proves idempotent daily report increments
+  and restores the deterministic seed.
+- Browser verification at exactly 1340 × 800 exercises all three tabs, 7/30-day
+  shortcuts, native custom dates, the 31-day client limit, an empty period,
+  authorization failure, and explicit retry. The live layout has no outside
+  element, body/document overflow, console warning, or final-code console
+  error.
+- Long report ranges identify their multi-day buckets and retain a true daily
+  average. All touched period and tab controls meet the documented 44-pixel
+  touch target, while the approved panel geometry remains unchanged.
+- Root, architecture, Reports, data, and Convex DOX now describe the live
+  saved-summary query, exact-unit usage fields, local tab behavior, range/detail
+  bounds, checks, and pending export policy.
+- Full serial regression passes: Convex codegen/deployment, management,
+  inventory, sales, Orders, Dashboard, Reports, seed verification, POS, local
+  SQLite restart/migration, TypeScript, production build, and whitespace.
+- Standard Graphify update again stopped at the absent optional LLM key. Its
+  documented local AST path refreshed the 17 changed code files with exact
+  source pruning; the graph now has 1,885 nodes and 4,471 edges, includes every
+  new APP-09 boundary, and contains no removed-fixture or absolute-path entry.
+- Closeout review re-read the complete applicable DOX chain and confirmed
+  parent/child indexes remain current. It added legacy category backfill,
+  duplicate-day rejection, correct prior average-order comparison, and a
+  44-pixel recovery target; targeted verification passes afterward.
+- Final scans find no unbounded report read, feature-level backend/database
+  import, tracked secret/signing/package artifact, printer implementation, or
+  machine-local Graphify path. The development management flag is restored.
 
-**Exact next action:** Start APP-09 by querying Graphify, re-reading its
-applicable DOX and authority contracts, and connecting the Sales, Products, and
-Stock Usage report tabs to saved summaries and bounded detail.
+**Exact next action:** Stage only the reviewed APP-09 files, commit with the
+card ID, push immediately, and record its remote SHA before marking it done.
 
 ## Decisions and Blockers
 
@@ -485,6 +531,84 @@ Stock Usage report tabs to saved summaries and bounded detail.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-09 started
+
+- Queried the refreshed Graphify graph first for Reports composition, fixtures,
+  tabs, period controls, saved daily metrics, and bounded detail paths.
+- Re-read the complete current root/source/feature/Reports, data, and Convex
+  DOX chains plus the APP-09 ledger, product, architecture, design, and brand
+  contracts.
+- Confirmed APP-00 through APP-08 are done and marked APP-09 as the only card
+  in progress.
+- Confirmed the existing Reports shell is fixture-driven while its summary,
+  KPI, trend, and table component/CSS boundaries already match the approved
+  geometry.
+- Chose one management-authorized query for at most 31 current and 31
+  comparison daily summaries. Tab changes remain local, and the report never
+  scans raw sale history or stock movements.
+- Exact ingredient usage will be added to the incrementally maintained daily
+  metric from the same trusted recipe deductions already computed by sale
+  acceptance and deterministic seeding. Mixed base units will remain separate;
+  the UI will not invent a cross-unit total or share.
+- Export controls remain truthfully disabled until the owner approves a format
+  and destination.
+- Added optional product-category and exact ingredient-usage fields to saved
+  daily metrics. Deterministic seed and idempotent sale acceptance update them
+  from authoritative product snapshots and recipe deductions.
+- Added and deployed one management-authorized indexed range query. It reads
+  at most 32 rows for each current/prior range, enforces a maximum of 31 days,
+  zero-fills missing days, and caps every aggregate detail list at 20.
+- Added `npm run check:reports` and extended `npm run check:sales`. They verify
+  bounded/empty/invalid periods, aggregate integrity, and exact ingredient
+  report updates after a retried local-first sale; the seed is restored.
+- Replaced all Reports fixtures with one one-shot hook, local tab switching,
+  native date inputs, 7/30-day shortcuts, saved-summary KPIs/chart/detail,
+  exact-unit ingredient usage, truthful prior-period states, and disabled
+  export controls.
+- `npm run check:convex`, `npm run check:reports`, `npm run check:sales`, and
+  `npx tsc -b` pass.
+- Browser verification at exactly 1340 × 800 exercises Sales, Products, and
+  Stock Usage; 7/30-day shortcuts; native custom dates; invalid 31-day client
+  gating; empty summaries; authorization failure; and explicit retry after the
+  development management flag is restored.
+- Corrected two QA findings: multi-day chart buckets are now labeled as such
+  with a true daily average, and touched date/tab controls meet the 44-pixel
+  touch target. Live and empty layouts have no clipping or page overflow.
+- Browser diagnostics contain no warning and no error after the final code
+  changes; the earlier transient Vite error occurred only while a component
+  file was atomically replaced and did not recur.
+- Updated root, architecture, data, Reports, and Convex DOX for the live
+  boundary, exact ingredient daily summary, range/detail caps, verification,
+  and disabled export policy.
+- Full serial regression passes: `check:convex`, explicit Convex deployment,
+  management, inventory, sales, Orders, Dashboard, Reports, seed, POS, local
+  SQLite, TypeScript, production build, and whitespace checks. The dedicated
+  development deployment is restored to 13 deterministic sales, 17 lines, 65
+  movements, and seven daily summaries.
+- Standard Graphify update stopped because semantic document/image extraction
+  has no optional LLM key. Used the documented local AST path with exact-source
+  pruning across 17 changed code files and removed the obsolete fixture
+  source; the graph is refreshed to 1,885 nodes and 4,471 edges.
+- Queried the refreshed graph across `reports:getSummary`, `useReportsData`,
+  `ReportsScreen`, tab types, date utilities, and all four analytics regions.
+  Graph and manifest assertions find all new files, no fixture nodes, and no
+  absolute source or manifest paths.
+- Closeout review re-read the complete root/source/features/Reports/data/Convex
+  DOX chain and confirmed its indexes remain current.
+- Corrected review findings with the smallest shared fixes: saved rows without
+  a product category backfill it on the next sale, duplicate daily dates fail
+  the range query, average-order comparison uses the prior average, and the
+  failure retry target is 44 pixels. Deployment, Reports, sales, seed,
+  TypeScript, production build, Graphify, and browser checks pass afterward.
+- Final 1340 × 800 recovery QA measures Retry at 49 × 44, restores development
+  authorization, and returns to live data without clipping, overflow, or a new
+  console problem.
+- Final scans find only bounded indexed report reads, the expected data-layer
+  Convex import, no tracked environment/key/signing/APK/AAB material, no
+  printer implementation, and no machine-local Graphify path.
+- Exact next action: stage only reviewed APP-09 files, commit with the card ID,
+  push immediately, then record its remote SHA before marking the card done.
 
 ### 2026-07-28 — APP-08 complete
 

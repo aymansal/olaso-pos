@@ -17,6 +17,8 @@ data, reporting summaries, and development seeding.
   receipt-snapshot history query.
 - `dashboard.ts` owns the one-call saved-summary, current-warning, and
   recent-order snapshot.
+- `reports.ts` owns the one-call current/prior saved-summary range and bounded
+  product, category, payment, service, and exact-unit ingredient aggregates.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts
@@ -32,6 +34,8 @@ data, reporting summaries, and development seeding.
   are never read with an unbounded `.collect()`.
 - Dashboard snapshots read at most 12 daily summaries, 100 ingredients, four
   warnings, and four recent sales.
+- Report snapshots read at most 32 indexed daily summaries per current/prior
+  range, accept no more than 31 days, and cap each detail aggregate at 20.
 - Store money as integer centimes and stock in integer ingredient base units.
 - Archive records referenced by history and keep stock movements append-only.
 - One synchronized sale is one retry-safe mutation keyed by
@@ -57,6 +61,8 @@ data, reporting summaries, and development seeding.
   read changes.
 - Run `npm run check:dashboard` after Dashboard summary, warning, or
   recent-order read changes.
+- Run `npm run check:reports` after saved report ranges or daily summary
+  aggregation changes.
 - Run `npx convex dev --once` when schema or deployed functions change.
 - Review every new index against an implemented access path.
 

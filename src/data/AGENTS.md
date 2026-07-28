@@ -14,6 +14,8 @@ tablet's local SQLite operational record.
   deliberate retry.
 - `useDashboardData.ts` makes one saved-summary snapshot request only while
   Dashboard is mounted and exposes explicit retry state.
+- `useReportsData.ts` makes one saved-summary range request only while Reports
+  is mounted or its period changes, and exposes explicit retry state.
 - `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt parsing,
   sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
@@ -38,6 +40,8 @@ tablet's local SQLite operational record.
   history page sizes at 20 or fewer.
 - Dashboard reads use one bounded snapshot request on mount or deliberate
   retry; never poll or subscribe while the screen is hidden.
+- Reports reads use one bounded saved-summary request per selected range or
+  deliberate retry; tab switches remain local and never start another query.
 - Never refresh cloud cache data over pending local outbox work.
 - Web development uses the same SQL through `jeep-sqlite`; it is not a second
   persistence architecture.

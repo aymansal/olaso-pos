@@ -1,44 +1,172 @@
 import { TrendUp } from '@phosphor-icons/react';
-import { salesBars } from '../../data/reportsData';
+import type { ReportsSnapshot } from '../../../../data/useReportsData';
+import { formatMoney } from '../../../../lib/money';
+import type { ReportTab } from '../../reportTypes';
 import styles from './SalesTrendChart.module.css';
 
-export function SalesTrendChart() {
+function metricValue(
+  point: ReportsSnapshot['daily'][number],
+  tab: ReportTab,
+) {
+  if (tab === 'sales') return point.netCentimes;
+  if (tab === 'products') return point.itemCount;
+  return point.ingredientUsageEventCount;
+}
+
+function compactValue(value: number, tab: ReportTab) {
+  if (tab !== 'sales') return String(Math.round(value));
+  return `${new Intl.NumberFormat('en-MA', {
+    maximumFractionDigits: 1,
+  }).format(value / 100)} MAD`;
+}
+
+function averageValue(value: number, tab: ReportTab) {
+  if (tab === 'sales') return compactValue(value, tab);
+  return new Intl.NumberFormat('en-MA', {
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+export function SalesTrendChart({
+  tab,
+  snapshot,
+}: {
+  tab: ReportTab;
+  snapshot?: ReportsSnapshot;
+}) {
+  const daily = snapshot?.daily ?? [];
+  const bucketSize = Math.max(1, Math.ceil(daily.length / 12));
+  const points = Array.from(
+    { length: Math.ceil(daily.length / bucketSize) },
+    (_, index) => {
+      const days = daily.slice(
+        index * bucketSize,
+        (index + 1) * bucketSize,
+      );
+      return {
+        label: days.at(-1)?.businessDate.slice(8) ?? '—',
+        fromDate: days[0]?.businessDate,
+        toDate: days.at(-1)?.businessDate,
+        value: days.reduce(
+          (total, point) => total + metricValue(point, tab),
+          0,
+        ),
+      };
+    },
+  );
+  const maximum = Math.max(...points.map((point) => point.value), 0);
+  const scaleMaximum = Math.max(maximum, 1);
+  const peak = points.reduce(
+    (highest, point) => point.value > highest.value ? point : highest,
+    {
+      label: '—',
+      value: 0,
+      fromDate: undefined as string | undefined,
+      toDate: undefined as string | undefined,
+    },
+  );
+  const average = daily.length
+    ? daily.reduce(
+        (total, point) => total + metricValue(point, tab),
+        0,
+      ) / daily.length
+    : 0;
+  const title = tab === 'sales'
+    ? 'Net sales trend'
+    : tab === 'products'
+      ? 'Units sold trend'
+      : 'Recipe usage activity';
+  const metricSubtitle = tab === 'sales'
+    ? 'Daily saved net sales'
+    : tab === 'products'
+      ? 'Daily saved item quantities'
+      : 'Daily ingredient deduction events';
+  const subtitle = bucketSize === 1
+    ? metricSubtitle
+    : `${bucketSize}-day buckets · ${metricSubtitle}`;
+
   return (
-    <section className={styles.chart} aria-labelledby="sales-trend-title">
+    <section className={styles.chart} aria-labelledby="report-trend-title">
       <header className={styles.header}>
         <span className={styles.heading}>
-          <h2 id="sales-trend-title">Net sales trend</h2>
-          <small>Daily sales · compared with 01–24 June</small>
+          <h2 id="report-trend-title">{title}</h2>
+          <small>{subtitle}</small>
         </span>
         <span className={styles.legend}>
-          <span><i className={styles.currentDot} />July</span>
-          <span><i className={styles.previousDot} />June avg</span>
+          <span><i className={styles.currentDot} />Current period</span>
+          <span><i className={styles.previousDot} />Saved summaries</span>
         </span>
       </header>
 
       <div className={styles.guides} aria-hidden="true">
-        {['8k', '6k', '4k', '2k'].map((label) => (
-          <span key={label}><small>{label}</small><i /></span>
-        ))}
-      </div>
-
-      <div className={styles.bars} aria-label="Daily sales from 01 to 23 July">
-        {salesBars.map(({ day, height, peak }) => (
-          <span className={styles.barGroup} key={day}>
-            <i
-              className={`${styles.bar} ${peak ? styles.peakBar : ''}`}
-              style={{ height }}
-            >
-              {peak ? <span aria-hidden="true" /> : null}
-            </i>
-            <small className={peak ? styles.peakLabel : ''}>{day}</small>
+        {[1, 0.75, 0.5, 0.25].map((ratio) => (
+          <span key={ratio}>
+            <small>{compactValue(maximum * ratio, tab)}</small><i />
           </span>
         ))}
       </div>
 
+      <div
+        className={styles.bars}
+        aria-label={`${title} by saved ${
+          bucketSize === 1 ? 'day' : 'period bucket'
+        }`}
+      >
+        {points.map((point) => {
+          const isPeak = point.value > 0 && point === peak;
+          return (
+          <span className={styles.barGroup} key={point.toDate}>
+            <i
+              className={`${styles.bar} ${isPeak ? styles.peakBar : ''}`}
+              style={{
+                height: point.value
+                  ? Math.max(
+                      8,
+                      Math.round((point.value / scaleMaximum) * 124),
+                    )
+                  : 4,
+              }}
+            >
+              {isPeak ? <span aria-hidden="true" /> : null}
+            </i>
+            <small className={isPeak ? styles.peakLabel : ''}>
+              {point.label}
+            </small>
+          </span>
+        )})}
+      </div>
+
       <footer className={styles.footer}>
-        <span><TrendUp size={12} aria-hidden="true" />Peak day: 21 July · 8,920 MAD</span>
-        <strong>Daily average 5,496 MAD</strong>
+        <span>
+          <TrendUp size={12} aria-hidden="true" />
+          {peak.value && peak.toDate
+            ? `Peak ${
+                peak.fromDate !== peak.toDate
+                  ? `${new Date(
+                      `${peak.fromDate}T12:00:00`,
+                    ).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'short',
+                    })}–${new Date(
+                      `${peak.toDate}T12:00:00`,
+                    ).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'short',
+                    })}`
+                  : new Date(
+                      `${peak.toDate}T12:00:00`,
+                    ).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'short',
+                    })
+              } · ${
+                tab === 'sales'
+                  ? formatMoney(peak.value)
+                  : compactValue(peak.value, tab)
+              }`
+            : 'No saved activity in this period'}
+        </span>
+        <strong>Daily average {averageValue(average, tab)}</strong>
       </footer>
     </section>
   );

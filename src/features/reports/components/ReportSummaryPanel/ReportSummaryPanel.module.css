@@ -96,6 +96,11 @@
   border-radius: 14px;
 }
 
+.comparison.negative {
+  color: var(--olaso-stock-low);
+  background: var(--olaso-stock-low-soft);
+}
+
 .divider {
   position: absolute;
   left: 22px;
@@ -196,6 +201,20 @@
   background: var(--olaso-report-category-bakery);
 }
 
+.empty,
+.stockEmpty {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.empty {
+  height: 130px;
+}
+
 .paymentSection {
   position: absolute;
   top: 372px;
@@ -205,8 +224,7 @@
 }
 
 .paymentBar {
-  display: grid;
-  grid-template-columns: 62fr 26fr 12fr;
+  display: flex;
   width: 396px;
   height: 10px;
   margin-top: 12px;
@@ -282,6 +300,10 @@
   margin-top: 10px;
 }
 
+.stockEmpty {
+  height: 94px;
+}
+
 .stockItem {
   display: flex;
   align-items: center;
@@ -336,6 +358,11 @@
   border-radius: 24px;
   font-size: 9px;
   font-weight: 700;
+}
+
+.actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
 }
 
 .csv {

@@ -2,35 +2,40 @@
 
 ## Purpose
 
-Provides saved report summaries, trend visualization, product performance, and
-the presentation shell for alternate report tabs.
+Provides live saved report summaries, trend visualization, product
+performance, ingredient usage, and bounded period controls.
 
 ## Ownership
 
 - `ReportsScreen.tsx` composes the summary and analytics panels.
-- `ReportSummaryPanel` owns period selection and high-level summary.
-- `ReportsAnalyticsPanel`, `ReportsKpiStrip`, `SalesTrendChart`, and
-  `ProductPerformanceTable` own analytics regions.
-- `data/reportsData.ts` owns current static report fixtures.
+- `ReportsAnalyticsPanel` owns local Sales, Products, and Stock Usage tab
+  selection plus native date and quick-period controls.
+- `ReportSummaryPanel`, `ReportsKpiStrip`, `SalesTrendChart`, and
+  `ProductPerformanceTable` own prop-driven analytics regions.
 
 ## Local Contracts
 
 - Report metrics and charts read bounded summaries; they must not trigger
   unbounded historical scans.
-- Date ranges and tabs change presentation only until report queries exist.
-- Export actions are visual only until a real export format is approved.
+- One application data hook requests a one-to-31-day saved-summary range;
+  tabs change presentation locally without another backend call.
+- Export actions remain disabled until a real format and destination are
+  approved.
 - Stock-usage and product tabs must share the established report shell rather
   than duplicate it.
+- Keep ingredient base units separate; never invent a cross-unit stock total.
 
 ## Work Guidance
 
 - Keep metrics centered and chart labels readable at the target viewport.
-- Prefer stored daily summaries and paginated detail when backend work begins.
+- Prefer stored daily summaries and bounded detail; add pagination only when a
+  confirmed report outgrows the current cap.
 - Do not add a general analytics pipeline without a confirmed report it serves.
 
 ## Verification
 
 - Run `npm run build`.
+- Run `npm run check:reports` after report query or aggregation changes.
 - Inspect Reports at 1340 × 800, checking summary alignment, tab states, chart
   labels, legends, and product rows.
 

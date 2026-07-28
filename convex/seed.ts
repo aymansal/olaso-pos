@@ -29,6 +29,11 @@ const resetOrder = [
 type SeedTable = (typeof resetOrder)[number];
 type ServiceMode = 'dine-in' | 'take-away' | 'online';
 type SaleStatus = 'completed' | 'cancelled' | 'refunded';
+type IngredientBaseUnit =
+  | 'millilitre'
+  | 'gram'
+  | 'milligram'
+  | 'piece';
 
 type IngredientEffectSeed = {
   ingredientKey: string;
@@ -94,6 +99,7 @@ type DailyAccumulator = {
     {
       productId: Id<'products'>;
       productName: string;
+      categoryName?: string;
       quantity: number;
       totalCentimes: number;
     }
@@ -107,6 +113,16 @@ type DailyAccumulator = {
       totalCentimes: number;
     }
   >;
+  ingredients: Map<
+    string,
+    {
+      ingredientId: Id<'ingredients'>;
+      ingredientName: string;
+      baseUnit: IngredientBaseUnit;
+      quantity: number;
+    }
+  >;
+  ingredientUsageEventCount: number;
 };
 
 const categorySeeds = [
@@ -838,6 +854,8 @@ function createDailyAccumulator(): DailyAccumulator {
     serviceModes: new Map(),
     products: new Map(),
     categories: new Map(),
+    ingredients: new Map(),
+    ingredientUsageEventCount: 0,
   };
 }
 
@@ -1257,6 +1275,28 @@ export const resetAndSeed = internalMutation({
       }
 
       metrics.netCentimes += subtotalCentimes;
+      for (const [ingredientKey, quantity] of saleIngredientUsage) {
+        if (quantity === 0) continue;
+        const ingredient = ingredientSeeds.find(
+          (candidate) => candidate.key === ingredientKey,
+        );
+        if (!ingredient) {
+          throw new Error(`Unknown metric ingredient: ${ingredientKey}`);
+        }
+        const ingredientTotal = metrics.ingredients.get(ingredientKey) ?? {
+          ingredientId: mustGet(
+            ingredientIds,
+            ingredientKey,
+            'metric ingredient',
+          ),
+          ingredientName: ingredient.name,
+          baseUnit: ingredient.baseUnit,
+          quantity: 0,
+        };
+        ingredientTotal.quantity += quantity;
+        metrics.ingredients.set(ingredientKey, ingredientTotal);
+        metrics.ingredientUsageEventCount += 1;
+      }
       const payment = metrics.paymentMethods.get(saleSeed.paymentMethod) ?? {
         paymentMethod: saleSeed.paymentMethod,
         totalCentimes: 0,
@@ -1279,6 +1319,11 @@ export const resetAndSeed = internalMutation({
         const productTotal = metrics.products.get(line.product.key) ?? {
           productId: line.productId,
           productName: line.product.name,
+          categoryName: mustGet(
+            categoryNames,
+            line.product.categoryKey,
+            'metric product category name',
+          ),
           quantity: 0,
           totalCentimes: 0,
         };
@@ -1329,6 +1374,10 @@ export const resetAndSeed = internalMutation({
         categoryTotals: [...metrics.categories.values()].sort((a, b) =>
           a.categoryName.localeCompare(b.categoryName),
         ),
+        ingredientTotals: [...metrics.ingredients.values()].sort((a, b) =>
+          a.ingredientName.localeCompare(b.ingredientName),
+        ),
+        ingredientUsageEventCount: metrics.ingredientUsageEventCount,
         updatedAt: SEED_AT,
       });
       counts.dailyMetrics += 1;

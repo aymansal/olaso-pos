@@ -43,7 +43,7 @@
 .dateRange {
   display: flex;
   align-items: center;
-  height: 42px;
+  height: 44px;
   gap: 9px;
   padding: 0 14px;
   border: 1px solid var(--olaso-control-border);
@@ -62,16 +62,91 @@
   color: var(--olaso-copy);
 }
 
+.dateMenu {
+  position: absolute;
+  top: 68px;
+  right: 24px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: 1fr 1fr 62px;
+  width: 408px;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 18px;
+  background: var(--olaso-white);
+}
+
+.quickPeriods {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+.quickPeriods button,
+.applyPeriod {
+  height: 44px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.quickPeriods button {
+  padding: 0 12px;
+}
+
+.dateMenu label {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  gap: 6px;
+  color: var(--olaso-copy);
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.dateMenu input {
+  width: 122px;
+  height: 44px;
+  padding: 0 7px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font: inherit;
+}
+
+.applyPeriod {
+  border-color: var(--olaso-green);
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.applyPeriod:disabled {
+  opacity: 0.45;
+}
+
+.dateRange:focus-visible,
+.tabs button:focus-visible,
+.dateMenu button:focus-visible,
+.dateMenu input:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
 .tabs {
   position: absolute;
   top: 80px;
   left: 24px;
   display: flex;
   width: 798px;
-  height: 42px;
+  height: 44px;
   gap: 4px;
-  padding: 4px;
-  border-radius: 21px;
+  padding: 0;
+  border-radius: 22px;
   background: var(--olaso-table-head);
 }
 
@@ -80,11 +155,11 @@
   flex: 1;
   align-items: center;
   justify-content: center;
-  height: 34px;
+  height: 44px;
   gap: 7px;
   padding: 0;
   border: 0;
-  border-radius: 17px;
+  border-radius: 22px;
   color: var(--olaso-text-meta);
   background: transparent;
   font-size: 9px;

@@ -274,6 +274,7 @@ export default defineSchema({
       v.object({
         productId: v.id('products'),
         productName: v.string(),
+        categoryName: v.optional(v.string()),
         quantity: v.number(),
         totalCentimes: v.number(),
       }),
@@ -286,6 +287,17 @@ export default defineSchema({
         totalCentimes: v.number(),
       }),
     ),
+    ingredientTotals: v.optional(
+      v.array(
+        v.object({
+          ingredientId: v.id('ingredients'),
+          ingredientName: v.string(),
+          baseUnit,
+          quantity: v.number(),
+        }),
+      ),
+    ),
+    ingredientUsageEventCount: v.optional(v.number()),
     updatedAt: v.number(),
   }).index('by_business_date', ['businessDate']),
 });
