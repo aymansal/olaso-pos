@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-00  
+**Status:** in progress — APP-00 done; APP-01 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -81,7 +81,7 @@ hardware are available.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| APP-00 | Establish the verified Goal 01 Git baseline and goal branch | in progress | Checks pass; baseline commit pushed; SHA and branch recorded |
+| APP-00 | Establish the verified Goal 01 Git baseline and goal branch | done | `npm run check:pos` and `npm run build` passed; baseline commit `cade8a913cafebb91f571903820b8253236b841e` pushed to `origin/codex/goal-02-functional-app` |
 | APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | pending | Dev deployment connected; schema/codegen/checks pass; commit pushed |
 | APP-02 | Add protected deterministic Convex development seed/reset data | pending | Internal seed runs twice safely; table counts/sample data verified; commit pushed |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | pending | Validated CRUD/archive/version flows and live Products UI; commit pushed |
@@ -242,16 +242,18 @@ hardware are available.
 - Goal 01 is complete and archived at
   [`goals/GOAL-01-FUNCTIONAL-POS.md`](goals/GOAL-01-FUNCTIONAL-POS.md).
 - Goal 01 checks and build passed at its closeout.
-- The entire current working tree is still uncommitted on `main`; only the
-  initial repository commit exists remotely.
+- The completed Goal 01 baseline is committed at
+  `cade8a913cafebb91f571903820b8253236b841e`.
+- The local goal branch tracks `origin/codex/goal-02-functional-app`, and the
+  remote branch resolves to the same baseline commit.
 - Convex is not installed locally or globally, no `convex/` directory exists,
   and no `.env.local` exists.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- Goal 02 is active with APP-00 as the only card in progress.
+- APP-00 is done; no card is currently in progress and APP-01 remains pending.
 
-**Exact next action:** Commit the reviewed baseline with
-`APP-00: establish functional app baseline`, push the goal branch, then record
-the pushed commit SHA and remote branch before marking APP-00 done.
+**Exact next action:** Start APP-01 by re-reading the ledger and applicable DOX,
+then bootstrap the dedicated Convex development infrastructure exactly as its
+card contract requires.
 
 ## Decisions and Blockers
 
@@ -273,6 +275,23 @@ the pushed commit SHA and remote branch before marking APP-00 done.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-00 complete
+
+- Committed the verified Goal 01 project baseline with
+  `APP-00: establish functional app baseline`.
+- Pushed commit `cade8a913cafebb91f571903820b8253236b841e` to
+  `origin/codex/goal-02-functional-app` and confirmed the remote branch resolves
+  to the same SHA.
+- Kept machine-local Graphify interpreter, scan, and cache state untracked;
+  committed the portable graph, report, visualization, and manifest.
+- Verification: `npm run check:pos` passed; `npm run build` passed;
+  `git diff --check` passed; staged secret and sensitive-file scans were clean.
+- Files changed for APP-00 closeout: `.gitignore`, `WORK_LEDGER.md`, and the
+  reviewed completed Goal 01 baseline recorded by the baseline commit.
+- APP-00 is done; APP-01 is pending and no card is in progress.
+- Exact next action: start APP-01 with its DOX/ledger read and Convex
+  development bootstrap.
 
 ### 2026-07-28 — APP-00 started
 
