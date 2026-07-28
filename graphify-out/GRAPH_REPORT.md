@@ -1,16 +1,16 @@
 # Graph Report - Olaso  (2026-07-28)
 
 ## Corpus Check
-- 76 files · ~497,487 words
+- 87 files · ~503,494 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 532 nodes · 680 edges · 39 communities (37 shown, 2 thin omitted)
+- 632 nodes · 763 edges · 50 communities (37 shown, 13 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6727dae6`
+- Built from commit: `3b5140ce`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -51,6 +51,15 @@
 - [[_COMMUNITY_Community 33|Community 33]]
 - [[_COMMUNITY_Community 34|Community 34]]
 - [[_COMMUNITY_Community 35|Community 35]]
+- [[_COMMUNITY_Community 36|Community 36]]
+- [[_COMMUNITY_Community 38|Community 38]]
+- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 41|Community 41]]
+- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Community 43|Community 43]]
+- [[_COMMUNITY_Community 44|Community 44]]
+- [[_COMMUNITY_Community 45|Community 45]]
+- [[_COMMUNITY_Community 46|Community 46]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Olaso POS Architecture` - 25 edges
@@ -58,11 +67,11 @@
 3. `NavigationPage` - 16 edges
 4. `compilerOptions` - 16 edges
 5. `Olaso POS Design System` - 15 edges
-6. `Olaso Brand Foundation` - 12 edges
-7. `Journal` - 12 edges
-8. `Cloud data model` - 11 edges
-9. `Olaso Work Ledger` - 10 edges
-10. `Task Contracts` - 10 edges
+6. `Task Contracts` - 14 edges
+7. `compilerOptions` - 13 edges
+8. `Journal` - 13 edges
+9. `Olaso Brand Foundation` - 12 edges
+10. `Cloud data model` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `DashboardScreenProps` --references--> `NavigationPage`  [EXTRACTED]
@@ -79,163 +88,155 @@
 ## Import Cycles
 - None detected.
 
-## Communities (39 total, 2 thin omitted)
+## Communities (50 total, 13 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.11
-Nodes (26): DashboardScreen(), DashboardScreenProps, hourlySales, recentOrders, stockItems, Header(), HeaderProps, OlasothemeTheme (+18 more)
+Cohesion: 0.05
+Nodes (58): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, categories, Category, CategoryId, americanoOrderImage (+50 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.08
-Nodes (28): americanoOrderImage, Product, products, IconButton(), IconButtonProps, LabeledField(), LabeledFieldProps, OrderItemCard() (+20 more)
+Cohesion: 0.04
+Nodes (46): Actions, APK, APK release and update, Backend ownership, Backup and recovery, Convex, Convex function rules, Create (+38 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.05
 Nodes (39): Adding products, Cashier, Completing a sale, Delivery phases, Distribution and updates, Exact deduction, Explicit non-goals for the first release, Low stock (+31 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.11
-Nodes (30): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, categories, Category, CategoryId, PosScreen() (+22 more)
+Cohesion: 0.05
+Nodes (36): 2026-07-28 — Goal 01 started, 2026-07-28 — Goal 01 tasks established, 2026-07-28 — Ledger initialized, 2026-07-28 — POS-01 baseline and ownership complete, 2026-07-28 — POS-02 data and pure operations complete, 2026-07-28 — POS-03 menu discovery complete, 2026-07-28 — POS-04 cart and receipt complete, 2026-07-28 — POS-05 order details complete (+28 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.06
-Nodes (35): 2026-07-28 — Goal 01 started, 2026-07-28 — Goal 01 tasks established, 2026-07-28 — Ledger initialized, 2026-07-28 — POS-01 baseline and ownership complete, 2026-07-28 — POS-02 data and pure operations complete, 2026-07-28 — POS-03 menu discovery complete, 2026-07-28 — POS-04 cart and receipt complete, 2026-07-28 — POS-05 order details complete (+27 more)
+Cohesion: 0.12
+Nodes (24): DashboardScreen(), DashboardScreenProps, hourlySales, recentOrders, stockItems, Header(), HeaderProps, OrdersScreen() (+16 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.06
 Nodes (33): 10. Approval checklist, 11. Evidence and confidence, 1. Brand snapshot, 2. Brand character, 3. Logo system, 4. Color, 5. Typography, 6. Photography and content (+25 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.08
-Nodes (23): dependencies, @astryxdesign/core, @fontsource/dm-sans, @phosphor-icons/react, react, react-dom, devDependencies, @astryxdesign/cli (+15 more)
+Cohesion: 0.06
+Nodes (33): 2026-07-28 — APP-00 complete, 2026-07-28 — APP-00 started, 2026-07-28 — APP-01 started, 2026-07-28 — Goal 02 drafted, Active Goal, APP-00 — Baseline and branch, APP-01 — Convex foundation, APP-02 — Development seed data (+25 more)
 
 ### Community 7 - "Community 7"
+Cohesion: 0.08
+Nodes (25): dependencies, @astryxdesign/core, convex, @fontsource/dm-sans, @phosphor-icons/react, react, react-dom, devDependencies (+17 more)
+
+### Community 8 - "Community 8"
 Cohesion: 0.09
 Nodes (22): Accessibility and Operational Safety, Astryx and icon rules, Authority and Change Rules, Colors, Components, CSS ownership, Definition of Done, Do's and Don'ts (+14 more)
 
-### Community 8 - "Community 8"
+### Community 9 - "Community 9"
 Cohesion: 0.15
 Nodes (15): paymentMethods, reportKpis, salesBars, salesCategories, stockConsumed, topProducts, columns, ProductPerformanceTable() (+7 more)
 
-### Community 9 - "Community 9"
+### Community 10 - "Community 10"
 Cohesion: 0.18
 Nodes (14): linkedRecipes, StockIconName, stockItems, stockMovements, StockStatus, stockSummaries, StockDetailPanel(), stockLevels (+6 more)
-
-### Community 10 - "Community 10"
-Cohesion: 0.11
-Nodes (17): APK release and update, Backend ownership, Backup and recovery, Failure behavior, Frontend ownership, Initial index plan, Local-first checkout transaction, Locked decisions (+9 more)
 
 ### Community 11 - "Community 11"
 Cohesion: 0.11
 Nodes (17): compilerOptions, allowJs, allowSyntheticDefaultImports, esModuleInterop, forceConsistentCasingInFileNames, isolatedModules, jsx, lib (+9 more)
 
 ### Community 12 - "Community 12"
+Cohesion: 0.12
+Nodes (15): compilerOptions, allowJs, allowSyntheticDefaultImports, forceConsistentCasingInFileNames, isolatedModules, jsx, lib, module (+7 more)
+
+### Community 13 - "Community 13"
 Cohesion: 0.19
 Nodes (10): CategorySidebar(), icons, productCategories, productOptions, products, ProductCatalogPanel(), optionIcons, ProductEditorPanel() (+2 more)
 
-### Community 13 - "Community 13"
+### Community 14 - "Community 14"
+Cohesion: 0.13
+Nodes (13): activeStatus, baseUnit, modifierSnapshot, productStatus, receiptLine, recipeStatus, saleStatus, serviceMode (+5 more)
+
+### Community 15 - "Community 15"
 Cohesion: 0.14
 Nodes (14): Brioche, Coffee, Croissants, Frappes, Hot coffee and V60, Hot drinks, Iced coffee, Iced hojicha and ube (+6 more)
 
-### Community 14 - "Community 14"
+### Community 16 - "Community 16"
+Cohesion: 0.15
+Nodes (12): Card commits and pushes, Child DOX Index, Closeout, Core Contract, DOX — Olaso POS, Graphify first, Implementation, Project Authorities (+4 more)
+
+### Community 17 - "Community 17"
 Cohesion: 0.19
 Nodes (9): orders, selectedOrderItems, itemIcons, metadata, OrderDetailPanel(), filters, OrdersListPanel(), columns (+1 more)
 
-### Community 15 - "Community 15"
-Cohesion: 0.17
-Nodes (11): Child DOX Index, Closeout, Core Contract, DOX — Olaso POS, Graphify first, Implementation, Project Authorities, Repository Rails (+3 more)
-
-### Community 16 - "Community 16"
+### Community 18 - "Community 18"
 Cohesion: 0.18
 Nodes (11): `categories`, Cloud data model, `dailyMetrics`, Deferred tables, `ingredients`, `modifierGroups` and `modifierOptions`, `products`, `recipeVersions` and `recipeItems` (+3 more)
 
-### Community 17 - "Community 17"
+### Community 19 - "Community 19"
 Cohesion: 0.22
 Nodes (8): Current status, Documentation, Olaso POS, Planned work, Project structure, Run locally, Stack, Target hardware
 
-### Community 18 - "Community 18"
+### Community 20 - "Community 20"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Dashboard Feature DOX, Local Contracts, Ownership, Purpose, Verification, Work Guidance
 
-### Community 19 - "Community 19"
+### Community 21 - "Community 21"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Feature DOX, Local Contracts, Ownership, Purpose, Verification, Work Guidance
 
-### Community 20 - "Community 20"
+### Community 22 - "Community 22"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Local Contracts, Orders Feature DOX, Ownership, Purpose, Verification, Work Guidance
 
-### Community 21 - "Community 21"
+### Community 23 - "Community 23"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Local Contracts, Ownership, POS Feature DOX, Purpose, Verification, Work Guidance
 
-### Community 22 - "Community 22"
+### Community 24 - "Community 24"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Local Contracts, Ownership, Products Feature DOX, Purpose, Verification, Work Guidance
 
-### Community 23 - "Community 23"
+### Community 25 - "Community 25"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Local Contracts, Ownership, Purpose, Reports Feature DOX, Verification, Work Guidance
 
-### Community 24 - "Community 24"
+### Community 26 - "Community 26"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Local Contracts, Ownership, Purpose, Source Application DOX, Verification, Work Guidance
 
-### Community 25 - "Community 25"
+### Community 27 - "Community 27"
 Cohesion: 0.25
 Nodes (7): Child DOX Index, Local Contracts, Ownership, Purpose, Stock Feature DOX, Verification, Work Guidance
 
-### Community 26 - "Community 26"
+### Community 28 - "Community 28"
+Cohesion: 0.29
+Nodes (6): Child DOX Index, Convex Backend DOX, Local Contracts, Ownership, Purpose, Verification
+
+### Community 29 - "Community 29"
+Cohesion: 0.38
+Nodes (4): AppDataProvider(), convexClient, OlasothemeTheme, App()
+
+### Community 30 - "Community 30"
 Cohesion: 0.29
 Nodes (6): compilerOptions, composite, module, moduleResolution, skipLibCheck, include
 
-### Community 27 - "Community 27"
-Cohesion: 0.40
-Nodes (5): APK, Convex, Responsibility of each platform, SQLite, Vercel
-
-### Community 28 - "Community 28"
-Cohesion: 0.40
-Nodes (5): Create, CRUD behavior, Delete, Read, Update
-
-### Community 29 - "Community 29"
-Cohesion: 0.40
-Nodes (5): Current scaling limit, Download synchronization, Idempotency, Outbox rule, Synchronization
-
-### Community 30 - "Community 30"
-Cohesion: 0.50
-Nodes (4): Actions, Convex function rules, Mutations, Queries
-
 ### Community 31 - "Community 31"
-Cohesion: 0.50
-Nodes (4): Hardware tests, Persistence tests, Pure calculation tests, Testing strategy
-
-### Community 32 - "Community 32"
-Cohesion: 0.67
-Nodes (3): Money, Money and quantity representation, Stock
-
-### Community 33 - "Community 33"
-Cohesion: 0.67
-Nodes (3): Per-operation budget, Quota and performance budget, Required reviews
+Cohesion: 0.33
+Nodes (5): ActionCtx, DatabaseReader, DatabaseWriter, MutationCtx, QueryCtx
 
 ## Knowledge Gaps
-- **314 isolated node(s):** `OlasothemeTheme`, `name`, `private`, `version`, `type` (+309 more)
+- **395 isolated node(s):** `OlasothemeTheme`, `components`, `TableNames`, `Doc`, `Id` (+390 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `NavigationPage` connect `Community 0` to `Community 3`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
-- **Why does `Olaso POS Architecture` connect `Community 10` to `Community 32`, `Community 33`, `Community 16`, `Community 27`, `Community 28`, `Community 29`, `Community 30`, `Community 31`?**
+- **Why does `NavigationPage` connect `Community 4` to `Community 0`?**
   _High betweenness centrality (0.011) - this node is a cross-community bridge._
-- **Why does `Olaso POS Product Specification` connect `Community 2` to `Community 13`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **What connects `OlasothemeTheme`, `name`, `private` to the rest of the system?**
-  _314 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `Olaso POS Architecture` connect `Community 1` to `Community 18`?**
+  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+- **Why does `Olaso POS Product Specification` connect `Community 2` to `Community 15`?**
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
+- **What connects `OlasothemeTheme`, `components`, `TableNames` to the rest of the system?**
+  _395 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.1064102564102564 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05126452494873548 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.08076923076923077 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._

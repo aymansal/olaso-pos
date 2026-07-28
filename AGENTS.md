@@ -114,5 +114,7 @@ Before finishing a meaningful change:
 
 ## Child DOX Index
 
+- [`convex/AGENTS.md`](convex/AGENTS.md) — synchronized cloud schema, domain
+  functions, reporting summaries, and development seeding.
 - [`src/AGENTS.md`](src/AGENTS.md) — React application entry points, global
   styling, navigation, and source-level boundaries.

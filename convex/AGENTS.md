@@ -1,0 +1,39 @@
+# Convex Backend DOX
+
+## Purpose
+
+Owns the synchronized cloud schema and Convex functions for Olaso operational
+data, reporting summaries, and development seeding.
+
+## Ownership
+
+- `schema.ts` owns table shapes and indexes.
+- `_generated/` is produced by the Convex CLI and committed.
+- Business functions live in domain files such as `categories.ts`,
+  `products.ts`, `modifiers.ts`, `recipes.ts`, `ingredients.ts`,
+  `inventory.ts`, `sales.ts`, and `reports.ts`.
+- `lib/` holds only helpers genuinely shared by multiple domain operations.
+
+## Local Contracts
+
+- Public functions validate every argument and authorization boundary.
+- Use indexed, bounded reads; sales, sale items, stock movements, and reports
+  are never read with an unbounded `.collect()`.
+- Store money as integer centimes and stock in integer ingredient base units.
+- Archive records referenced by history and keep stock movements append-only.
+- One synchronized sale is one retry-safe mutation keyed by
+  `deviceId + localSaleId`.
+- Seed/reset work is internal, development-only, deterministic, and runnable
+  through the CLI.
+- Do not add actions for ordinary database work or import backend clients into
+  React components.
+
+## Verification
+
+- Run `npm run check:convex`.
+- Run `npx convex dev --once` when schema or deployed functions change.
+- Review every new index against an implemented access path.
+
+## Child DOX Index
+
+No child DOX files.

@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-00 done; APP-01 pending
+**Status:** in progress — APP-01
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -82,7 +82,7 @@ hardware are available.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | APP-00 | Establish the verified Goal 01 Git baseline and goal branch | done | `npm run check:pos` and `npm run build` passed; baseline commit `cade8a913cafebb91f571903820b8253236b841e` pushed to `origin/codex/goal-02-functional-app` |
-| APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | pending | Dev deployment connected; schema/codegen/checks pass; commit pushed |
+| APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | in progress | Dev deployment connected; schema/codegen/checks pass; commit pushed |
 | APP-02 | Add protected deterministic Convex development seed/reset data | pending | Internal seed runs twice safely; table counts/sample data verified; commit pushed |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | pending | Validated CRUD/archive/version flows and live Products UI; commit pushed |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | pending | Exact base-unit operations and live Stock UI verified; commit pushed |
@@ -244,16 +244,25 @@ hardware are available.
 - Goal 01 checks and build passed at its closeout.
 - The completed Goal 01 baseline is committed at
   `cade8a913cafebb91f571903820b8253236b841e`.
-- The local goal branch tracks `origin/codex/goal-02-functional-app`, and the
-  remote branch resolves to the same baseline commit.
-- Convex is not installed locally or globally, no `convex/` directory exists,
-  and no `.env.local` exists.
+- The local goal branch tracks `origin/codex/goal-02-functional-app`; the
+  recorded baseline commit is present on the remote branch and APP-00's ledger
+  closeout is its current head.
+- Official Convex package `1.42.3` is installed.
+- Convex project `ayman-salmouni/olaso-pos` has a dedicated cloud development
+  deployment `colorful-newt-937`; its deployment name and public Vite URLs are
+  stored only in ignored `.env.local`.
+- The typed schema is deployed and exposes 11 operational tables; generated
+  bindings, Convex DOX, and the app-level provider boundary are verified.
+- `npm run check:convex`, `npm run check:pos`, and `npm run build` pass.
+- Browser smoke testing at 1340 × 800 confirms the provider-wrapped app mounts
+  without overflow, console warnings, or console errors.
+- Graphify's code graph is refreshed to 632 nodes and 763 edges.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 is done; no card is currently in progress and APP-01 remains pending.
+- APP-00 is done and APP-01 is the only card in progress.
 
-**Exact next action:** Start APP-01 by re-reading the ledger and applicable DOX,
-then bootstrap the dedicated Convex development infrastructure exactly as its
-card contract requires.
+**Exact next action:** Review and stage the APP-01 diff, verify no local
+deployment credentials are staged, re-read the applicable DOX chain, then
+commit and push APP-01 before recording its SHA.
 
 ## Decisions and Blockers
 
@@ -275,6 +284,41 @@ card contract requires.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-01 started
+
+- Re-read the applicable DOX chain and durable ledger, and retained the complete
+  project authority documents from the uninterrupted Goal 02 context.
+- Queried the existing Graphify graph for the current React entry point, package
+  scripts, data boundary, and Convex architecture before source inspection.
+- Confirmed APP-00 is done and marked APP-01 as the only card in progress.
+- Corrected the checkpoint wording so the baseline commit is recorded as an
+  ancestor of the remote branch head rather than incorrectly calling it the
+  head after APP-00's ledger closeout.
+- Installed official Convex package `1.42.3`; npm reported zero vulnerabilities.
+- Created Convex project `ayman-salmouni/olaso-pos` and provisioned dedicated
+  cloud development deployment `colorful-newt-937` through the CLI.
+- Confirmed `.env.local` is ignored and contains only the generated deployment
+  name plus public Vite client/site URL keys; no deploy key was created.
+- Added the typed operational schema and real access-path indexes, Convex DOX,
+  generated code boundary, one application-level Convex provider, and a
+  repeatable `check:convex` script.
+- Removed the generated Convex README because its unbounded `.collect()` example
+  conflicts with this repository's bounded-read contract.
+- Files changed so far: `package.json`, `package-lock.json`, `AGENTS.md`,
+  `src/AGENTS.md`, `src/main.tsx`, `src/data/AppDataProvider.tsx`, and
+  `convex/`.
+- Generated typed bindings and deployed the schema with
+  `npx convex dev --once --typecheck enable`; `npx convex data` lists all 11
+  schema tables on the development deployment.
+- Verification: `npm run check:convex`, `npm run check:pos`, `npm run build`,
+  and `git diff --check` passed.
+- Runtime verification at 1340 × 800 found a mounted app, exact viewport/body
+  dimensions, no overflow, and no console warnings or errors.
+- Refreshed Graphify's structural code graph to 632 nodes and 763 edges and
+  queried the resulting `main.tsx` → `AppDataProvider` boundary.
+- Exact next action: review/stage the APP-01 diff, scan it for secrets, re-read
+  the DOX chain, then commit and push.
 
 ### 2026-07-28 — APP-00 complete
 
