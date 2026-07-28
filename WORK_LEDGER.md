@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-05 done; APP-06 pending
+**Status:** in progress — APP-06 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -87,7 +87,7 @@ hardware are available.
 | APP-03 | Make categories, products, modifiers, and recipe management functional | done | Management/UI/check/browser evidence passed; implementation commit `3438fae935aedbca8ec8709a508d5127f522ff19` pushed to `origin/codex/goal-02-functional-app` |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | done | Inventory/backend/UI/check/browser evidence passed; implementation commit `b4fd2a8de4306bd1e353ef0cfee2da037f909733` pushed to `origin/codex/goal-02-functional-app` |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | done | Compatibility, persistence, restart/migration, Android sync, and browser evidence passed; implementation commit `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` pushed to `origin/codex/goal-02-functional-app` |
-| APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | pending | Atomic/offline/retry/duplicate tests pass; POS checkout works; commit pushed |
+| APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | in progress | Atomic/offline/retry/duplicate checks, full regression, Graphify refresh, and visual QA pass; implementation commit and push pending |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | pending | Pagination/snapshots/sync states verified in Orders UI; commit pushed |
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | pending | Saved-summary reads and Dashboard states verified; commit pushed |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | pending | Bounded report queries and all report tabs verified; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-05 are done; APP-06 is pending and no card is in progress.
+- APP-00 through APP-05 are done; APP-06 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -318,7 +318,7 @@ hardware are available.
 - APP-04 implementation commit
   `b4fd2a8de4306bd1e353ef0cfee2da037f909733` is confirmed on
   `origin/codex/goal-02-functional-app`.
-- APP-05 is the only card in progress. The compatibility review selects exact
+- APP-05 is complete. Its compatibility review selected exact
   Capacitor core/CLI/Android `8.4.2` and
   `@capacitor-community/sqlite` `8.1.0`; their peer requirements align on
   Capacitor 8 and Node `24.11.0` satisfies the CLI requirement.
@@ -351,10 +351,38 @@ hardware are available.
 - APP-05 implementation commit
   `6f16c6e3c4b3e9ec830cfb68934d073e5bb5463a` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-06 implementation and review are complete. One trusted SQLite transaction
+  now saves the sale, immutable lines and receipt, consolidated recipe
+  movements, signed local stock deltas, and one outbox operation. Cart/customer
+  state clears only after that commit.
+- The bounded operational snapshot and single Convex sale mutation are deployed
+  to `colorful-newt-937`. The mutation authoritatively revalidates revisions,
+  modifiers, current recipes, prices, deductions, and real calendar dates, then
+  writes all cloud effects once by `deviceId + localSaleId`.
+- `npm run check:convex`, `npx convex dev --once --typecheck enable`,
+  `npm run check:management`, `npm run check:inventory`,
+  `npm run check:sales`, `npm run check:seed`, `npm run check:pos`,
+  `npm run check:local`, `npx tsc -b`, `npm run build`, and
+  `git diff --check` pass. The deterministic seed is restored to 13 sales,
+  17 sale lines, 65 stock movements, and 7 daily summaries.
+- The standard semantic Graphify update stopped because no LLM API key is
+  configured. Its documented local AST merge path refreshed all 27 changed
+  code files without importing Graphify into the app; the graph now has 1,819
+  nodes and 4,447 edges and queries the local sale, outbox, POS hook, Convex
+  acceptance, and receipt-preview paths.
+- Final browser verification uses a fresh tab at exactly 1340 × 800. The body,
+  document, and main frame are exactly 1340 × 800 with no overflow; the live
+  four-category menu and required-modifier dialog render inside the approved
+  full-bleed frame. The earlier complete checkout/retry pass had no console
+  warnings or errors.
+- Root, data, POS, and Convex DOX now describe the local-first checkout and
+  trusted synchronization boundaries. Closeout scans find no feature-level
+  Convex/SQLite import, unbounded Convex `.collect()`, printer transport/print
+  invocation, tracked environment file, signing key, APK, or AAB.
 
-**Exact next action:** Start APP-06 with its DOX/ledger/Graphify reads and
-implement the atomic local-first sale plus idempotent Convex synchronization
-contract without printer transport.
+**Exact next action:** Stage only the reviewed APP-06 files, commit with the
+card ID, push `codex/goal-02-functional-app`, and record the implementation SHA
+and remote branch before marking APP-06 done.
 
 ## Decisions and Blockers
 
@@ -376,6 +404,119 @@ contract without printer transport.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-06 started
+
+- Queried the refreshed Graphify graph first for the POS session/cart,
+  local-first checkout contract, SQLite transaction boundary, outbox,
+  `deviceId + localSaleId` idempotency, and Convex ownership.
+- Re-read the complete root/source/data/feature/POS/Convex DOX chains and the
+  full durable ledger.
+- Re-read the POS completion, exact recipe deduction, immutable sale snapshot,
+  offline retry, cloud mutation, failure, security, preview-only receipt, and
+  approved interaction contracts in `PRODUCT.md`, `ARCHITECTURE.md`,
+  `DESIGN.md`, and `BRAND.md`.
+- Confirmed APP-00 through APP-05 are done and marked APP-06 as the only card in
+  progress.
+- Confirmed the card contract: one trusted local transaction saves the sale,
+  lines, recipe movements, local balances, receipt snapshot, and outbox;
+  cart clearing waits for commit; one validated Convex mutation is idempotent
+  by `deviceId + localSaleId`; failed sync remains retryable; receipts are
+  preview-only with no hardware or transport work.
+- Completed the implementation inspection. The POS still uses temporary
+  fixtures and a non-saving check action; the local schema already owns the
+  transaction tables but needs category keys, modifier ingredient effects, and
+  a local stock delta; the deployed schema already has the sale idempotency
+  index, receipt snapshots, related-sale movements, and daily summaries.
+- Chose a v3 `local_stock_delta` instead of rebuilding the released ingredient
+  table. It preserves exact negative operational balances without weakening
+  foreign-key migrations: cloud stock remains the cached base and each offline
+  sale atomically changes the signed local delta.
+- Required seeded modifier groups will be selected explicitly in one focused
+  POS dialog. The implementation will not silently choose modifiers or trust
+  client prices, totals, revisions, recipes, or deductions.
+- Added ordered migration v3 for category keys, modifier ingredient effects,
+  and the signed local stock delta. The restart/migration check passes and
+  proves an exact negative derived balance survives without changing released
+  migrations.
+- Added the authoritative local sale preparation and commit. One transaction
+  re-reads the local operational cache, validates required modifier counts,
+  recalculates trusted prices and recipe effects, saves immutable snapshots,
+  inserts consolidated movements, updates local balances, and queues one
+  outbox operation.
+- Added `npm run check:sales`. Its local section verifies the exact oat-milk
+  recipe substitution, centime total, immutable revision/recipe/modifier
+  snapshots, three consolidated movements, outbox creation, and full rollback
+  when the final outbox insert collides.
+- `npm run check:sales`, `npm run check:local`, and `npx tsc -b` pass after the
+  local transaction implementation.
+- Added an operational authorization helper and enabled its non-secret
+  unauthenticated override only on dedicated development deployment
+  `colorful-newt-937`.
+- Added one bounded operational snapshot query and one sale-acceptance
+  mutation. The server re-reads products, revisions, recipes, modifiers, and
+  ingredients; recomputes prices and deductions; writes the sale, lines,
+  consolidated stock movements, balances, recipe-use metadata, and daily
+  summary in one Convex transaction.
+- The mutation checks `deviceId + localSaleId` before any sale effects and
+  returns the prior acknowledgement on retry. Reads are indexed and explicitly
+  bounded; negative low-stock balances remain allowed as required by product
+  policy.
+- Extended `npm run check:sales` against the dedicated deployment. It resets
+  deterministic data, submits the same Cappuccino/oat-milk sale twice, proves
+  one cloud sale, one line, three exact movements, one stock deduction, and the
+  same acknowledgement, then restores the seed.
+- `npm run check:convex`, `npx convex dev --once --typecheck enable`, and the
+  extended `npm run check:sales` pass.
+- Added one application POS data hook. It hydrates from SQLite before network
+  data is available, refreshes the bounded cloud snapshot only when no outbox
+  work remains, completes sales through the local transaction, and retries
+  pending sale operations through the single Convex mutation.
+- Removed the POS menu fixtures. The approved category/product/card/receipt
+  geometry now renders the four seeded categories and active local products;
+  existing assets remain content and non-coffee items use their approved
+  category artwork fallback.
+- Added one explicit required-modifier dialog and one saved on-screen receipt
+  preview. The POS now shows modifier-adjusted centime totals, uses the approved
+  Place Order action, clears the cart and customer fields only after local
+  commit, and never exposes a print action or printer transport.
+- `npm run check:pos`, `npm run check:sales`, `npx tsc -b`, and `npm run build`
+  pass after the live POS wiring.
+- Browser verification at exactly 1340 × 800 selected Standard and Oat milk,
+  saved a 21.00 MAD Cappuccino, cleared the committed cart, displayed the
+  immutable local receipt preview, and confirmed the synchronized cloud record.
+  The viewport, body, document, main, and preview all fit without overflow and
+  the online pass had no console warnings or errors.
+- Deliberately disabled only the development POS cloud override, reloaded the
+  app from its SQLite menu, and completed a 15.00 MAD Butter Croissant sale.
+  The cart cleared and receipt preview opened while cloud access was rejected.
+  After restoring the override and reloading, the exact pending local receipt
+  synchronized once; CLI inspection confirmed its cloud record. The
+  deterministic seed was restored to 13 sales, 17 lines, 65 movements, and 7
+  daily summaries.
+- Replaced the raw Convex query error exposed by that failure pass with a short
+  truthful saved-menu/retry message.
+- Added server-side real-calendar-date rejection and confirmed missing required
+  modifiers and impossible dates are rejected by the deployed mutation.
+- Re-ran the full card regression serially against the dedicated deployment:
+  Convex codegen/deployment, product management, inventory, atomic/idempotent
+  sales, deterministic seed, POS, SQLite restart/migration, TypeScript,
+  production build, and whitespace checks all pass.
+- The standard Graphify semantic update stopped without an LLM API key. Used
+  the documented serial AST extraction and old-graph-first prune/merge path for
+  all 27 changed code files, re-clustered locally, and queried the refreshed
+  1,819-node/4,447-edge graph for the APP-06 transaction and sync paths.
+- Re-read the closeout DOX chain and corrected the stale root/POS status text so
+  it now owns the implemented local-first checkout and preview boundary.
+- Final fresh-tab browser verification at exactly 1340 × 800 confirms the body,
+  document, main frame, live menu, and required-modifier dialog fit the approved
+  full-bleed viewport without document overflow.
+- Closeout review finds no feature-level backend/database import, unbounded
+  Convex `.collect()`, printer transport or print invocation, tracked
+  environment/signing/package artifact, or whitespace error.
+- Exact next action: stage only the reviewed APP-06 files, commit with the card
+  ID, push `codex/goal-02-functional-app`, and record the implementation SHA and
+  remote branch before marking APP-06 done.
 
 ### 2026-07-28 — APP-05 complete
 

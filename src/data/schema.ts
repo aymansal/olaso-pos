@@ -182,6 +182,18 @@ export const localMigrations = [
       `INSERT OR IGNORE INTO sync_state (id) VALUES (1)`,
     ],
   },
+  {
+    toVersion: 3,
+    statements: [
+      `ALTER TABLE categories
+        ADD COLUMN key TEXT NOT NULL DEFAULT ''`,
+      `UPDATE categories SET key = id WHERE key = ''`,
+      `ALTER TABLE modifier_options
+        ADD COLUMN ingredient_effects_json TEXT NOT NULL DEFAULT '[]'`,
+      `ALTER TABLE ingredients
+        ADD COLUMN local_stock_delta INTEGER NOT NULL DEFAULT 0`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

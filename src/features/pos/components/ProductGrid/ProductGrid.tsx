@@ -4,10 +4,15 @@ import styles from './ProductGrid.module.css';
 
 type ProductGridProps = {
   products: Product[];
+  emptyMessage?: string;
   onAdd: (productId: string) => void;
 };
 
-export function ProductGrid({ products, onAdd }: ProductGridProps) {
+export function ProductGrid({
+  products,
+  emptyMessage = 'No products match this category and search.',
+  onAdd,
+}: ProductGridProps) {
   return (
     <section className={styles.grid} aria-label="Products">
       {products.length > 0
@@ -17,7 +22,7 @@ export function ProductGrid({ products, onAdd }: ProductGridProps) {
               {...product}
               onAdd={() => onAdd(product.id)}
             />)
-        : <p className={styles.empty} role="status">No products match this category and search.</p>}
+        : <p className={styles.empty} role="status">{emptyMessage}</p>}
     </section>
   );
 }

@@ -1,20 +1,20 @@
-# Graph Report - Olaso  (2026-07-28)
+# Graph Report - .  (2026-07-28)
 
 ## Corpus Check
-- 132 files · ~823,670 words
-- Verdict: corpus is large enough that graph structure adds value.
+- cluster-only mode — file stats not available
 
 ## Summary
-- 1771 nodes · 4364 edges · 101 communities (93 shown, 8 thin omitted)
+- 1819 nodes · 4447 edges · 119 communities (111 shown, 8 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 346 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6d8b2aa8`
+- Built from commit: `c08c9c4b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
+- [[_COMMUNITY_Community -1|Community -1]]
 - [[_COMMUNITY_Community 0|Community 0]]
 - [[_COMMUNITY_Community 1|Community 1]]
 - [[_COMMUNITY_Community 2|Community 2]]
@@ -101,12 +101,29 @@
 - [[_COMMUNITY_Community 86|Community 86]]
 - [[_COMMUNITY_Community 87|Community 87]]
 - [[_COMMUNITY_Community 88|Community 88]]
+- [[_COMMUNITY_Community 89|Community 89]]
 - [[_COMMUNITY_Community 90|Community 90]]
 - [[_COMMUNITY_Community 91|Community 91]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
+- [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
+- [[_COMMUNITY_Community 106|Community 106]]
+- [[_COMMUNITY_Community 107|Community 107]]
+- [[_COMMUNITY_Community 108|Community 108]]
+- [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
+- [[_COMMUNITY_Community 111|Community 111]]
+- [[_COMMUNITY_Community 112|Community 112]]
+- [[_COMMUNITY_Community 113|Community 113]]
+- [[_COMMUNITY_Community 114|Community 114]]
+- [[_COMMUNITY_Community 115|Community 115]]
+- [[_COMMUNITY_Community 116|Community 116]]
+- [[_COMMUNITY_Community 117|Community 117]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `$()` - 586 edges
-2. `_()` - 287 edges
+1. `$()` - 584 edges
+2. `_()` - 285 edges
 3. `i()` - 66 edges
 4. `lc()` - 52 edges
 5. `t()` - 48 edges
@@ -131,11 +148,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (101 total, 8 thin omitted)
+## Communities (119 total, 8 thin omitted)
+
+### Community -1 - "Community -1"
+Cohesion: 0.05
+Nodes (38): dependencies, @astryxdesign/core, @capacitor/android, @capacitor-community/sqlite, @capacitor/core, convex, @fontsource/dm-sans, @phosphor-icons/react (+30 more)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.11
-Nodes (19): americanoOrderImage, LabeledField(), LabeledFieldProps, OrderItemCard(), OrderItemCardProps, PaymentSummary(), PaymentSummaryProps, formatMoney() (+11 more)
+Cohesion: 0.09
+Nodes (16): LabeledField(), LabeledFieldProps, OrderItemCard(), OrderItemCardProps, PaymentSummary(), PaymentSummaryProps, ServiceMode, QuantityStepper() (+8 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.11
@@ -146,28 +167,28 @@ Cohesion: 0.17
 Nodes (11): Distribution and updates, Explicit non-goals for the first release, Offline and synchronization behavior, Olaso POS Product Specification, Open owner decisions, Primary navigation, Product definition of done, Product principles (+3 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.05
-Nodes (36): 2026-07-28 — Goal 01 started, 2026-07-28 — Goal 01 tasks established, 2026-07-28 — Ledger initialized, 2026-07-28 — POS-01 baseline and ownership complete, 2026-07-28 — POS-02 data and pure operations complete, 2026-07-28 — POS-03 menu discovery complete, 2026-07-28 — POS-04 cart and receipt complete, 2026-07-28 — POS-05 order details complete (+28 more)
+Cohesion: 0.17
+Nodes (12): 2026-07-28 — Goal 01 tasks established, 2026-07-28 — Ledger initialized, 2026-07-28 — POS-01 baseline and ownership complete, 2026-07-28 — POS-02 data and pure operations complete, 2026-07-28 — POS-03 menu discovery complete, 2026-07-28 — POS-04 cart and receipt complete, 2026-07-28 — POS-05 order details complete, 2026-07-28 — POS-06 totals and checkout boundary complete (+4 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.18
-Nodes (15): Header(), HeaderProps, OrdersScreen(), OrdersScreenProps, filters, OrdersListPanel(), createInitialPosSession(), ProductsScreenProps (+7 more)
+Nodes (13): DashboardScreenProps, Header(), HeaderProps, IconButton(), IconButtonProps, OrdersScreenProps, ProductsScreenProps, ReportsScreenProps (+5 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.06
-Nodes (33): 10. Approval checklist, 11. Evidence and confidence, 1. Brand snapshot, 2. Brand character, 3. Logo system, 4. Color, 5. Typography, 6. Photography and content (+25 more)
+Cohesion: 0.18
+Nodes (10): 10. Approval checklist, 1. Brand snapshot, 6. Photography and content, 8. Brand behavior in the POS product, 9. Initial product context — pending confirmation, Art direction, Olaso Brand Foundation, One-line essence (+2 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.05
-Nodes (41): 2026-07-28 — APP-00 complete, 2026-07-28 — APP-00 started, 2026-07-28 — APP-01 complete, 2026-07-28 — APP-01 started, 2026-07-28 — APP-02 complete, 2026-07-28 — APP-02 started, 2026-07-28 — APP-03 complete, 2026-07-28 — APP-03 started (+33 more)
+Cohesion: 0.14
+Nodes (14): APP-00 — Baseline and branch, APP-01 — Convex foundation, APP-02 — Development seed data, APP-03 — Products and recipes, APP-04 — Stock, APP-05 — Local operational foundation, APP-06 — Sales and synchronization, APP-07 — Orders (+6 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.05
-Nodes (37): dependencies, @astryxdesign/core, @capacitor/android, @capacitor-community/sqlite, @capacitor/core, convex, @fontsource/dm-sans, @phosphor-icons/react (+29 more)
+Cohesion: 0.13
+Nodes (29): closeLocalDatabase(), createConnection(), initializeWebStore(), openLocalDatabase(), persistLocalDatabase(), withLocalTransaction(), acknowledgeSale(), businessDate() (+21 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.09
-Nodes (22): Accessibility and Operational Safety, Astryx and icon rules, Authority and Change Rules, Colors, Components, CSS ownership, Definition of Done, Do's and Don'ts (+14 more)
+Cohesion: 0.13
+Nodes (14): Accessibility and Operational Safety, Authority and Change Rules, Colors, Components, Definition of Done, Do's and Don'ts, Elevation & Depth, Interaction and State (+6 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.15
@@ -178,8 +199,8 @@ Cohesion: 0.12
 Nodes (36): currentBusinessDate(), useInventoryManagement(), IngredientDialog(), IngredientDialogProps, units, IngredientSaveInput, InventoryMetrics, ManagedIngredient (+28 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.11
-Nodes (17): compilerOptions, allowJs, allowSyntheticDefaultImports, esModuleInterop, forceConsistentCasingInFileNames, isolatedModules, jsx, lib (+9 more)
+Cohesion: 0.19
+Nodes (21): list, save, setArchived, list, productStatus, save, setStatus, getEditorData (+13 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.12
@@ -263,15 +284,15 @@ Nodes (5): ActionCtx, DatabaseReader, DatabaseWriter, MutationCtx, QueryCtx
 
 ### Community 33 - "Community 33"
 Cohesion: 0.02
-Nodes (56): $(), addListener(), addUpgradeStatement(), addWindowListener(), beginTransaction(), Bo(), checkConnectionsConsistency(), clearAllCookies() (+48 more)
+Nodes (60): $(), addListener(), addUpgradeStatement(), addWindowListener(), beginTransaction(), Bo(), checkConnectionsConsistency(), clearAllCookies() (+52 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.40
 Nodes (5): Exact deduction, Low stock, No theoretical waste model, Stock behavior, Stock movement history
 
 ### Community 37 - "Community 37"
-Cohesion: 0.11
-Nodes (62): a(), ae(), b(), ce(), d(), De(), E(), Ee() (+54 more)
+Cohesion: 0.13
+Nodes (59): a(), ae(), b(), ce(), d(), De(), E(), Ee() (+51 more)
 
 ### Community 39 - "Community 39"
 Cohesion: 0.33
@@ -286,8 +307,8 @@ Cohesion: 0.40
 Nodes (5): Current scaling limit, Download synchronization, Idempotency, Outbox rule, Synchronization
 
 ### Community 45 - "Community 45"
-Cohesion: 0.05
-Nodes (60): list, save, setArchived, baseUnit, businessDate(), getDetail, list, recordAdjustment (+52 more)
+Cohesion: 0.07
+Nodes (22): categorySeeds, coffeeModifiers, DailyAccumulator, drinkModifiers, IngredientEffectSeed, ingredientSeeds, ModifierChoiceSeed, modifierGroupSeeds (+14 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.50
@@ -326,12 +347,12 @@ Cohesion: 0.67
 Nodes (3): Required reports, Sales and reports, Sales record
 
 ### Community 58 - "Community 58"
-Cohesion: 0.14
-Nodes (34): ac(), ao(), bi(), ca(), dc(), ea(), gi(), hc() (+26 more)
+Cohesion: 0.21
+Nodes (22): ac(), bi(), cf(), dc(), gi(), hi(), i(), ia() (+14 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.03
-Nodes (80): _(), addPrefixToWhereClause(), arraysIntersection(), bb(), blob2uint(), checkColumnTypes(), checkConnectionsConsistency(), checkValuesMatch() (+72 more)
+Nodes (78): _(), addPrefixToWhereClause(), bb(), blob2uint(), checkColumnTypes(), checkConnectionsConsistency(), checkValuesMatch(), checkViewsValidity() (+70 more)
 
 ### Community 60 - "Community 60"
 Cohesion: 0.07
@@ -339,139 +360,207 @@ Nodes (38): addUpgradeStatement(), beginTransaction(), checkConnectionsConsisten
 
 ### Community 61 - "Community 61"
 Cohesion: 0.10
-Nodes (41): ad(), Au(), bu(), cd(), Du(), et(), Eu(), Fu() (+33 more)
+Nodes (45): ad(), at(), Au(), bu(), cd(), ct(), Cu(), di() (+37 more)
 
 ### Community 62 - "Community 62"
 Cohesion: 0.12
 Nodes (37): addOnTransitionHandler(), assembleTransition(), bl(), Cl(), constructor(), dl(), ec(), el() (+29 more)
 
 ### Community 63 - "Community 63"
-Cohesion: 0.07
-Nodes (45): actionInternal(), activePageQueryTokens(), addPageToPaginatedQuery(), applyOptimisticUpdate(), closeAllConnections(), closeConnection(), closeNCConnection(), completePaginatedQuerySplit() (+37 more)
+Cohesion: 0.09
+Nodes (27): closeAllConnections(), closeConnection(), closeNCConnection(), comp(), cp(), delete(), equals(), fromNumber() (+19 more)
 
 ### Community 64 - "Community 64"
-Cohesion: 0.10
-Nodes (23): cleanupNetworkListener(), close(), closeAndReconnect(), connect(), log(), logVerbose(), nextBackoff(), reportLargeTransition() (+15 more)
+Cohesion: 0.07
+Nodes (33): actionInternal(), applyOptimisticUpdate(), cleanupNetworkListener(), close(), closeAndReconnect(), connect(), enqueueMutation(), log() (+25 more)
 
 ### Community 65 - "Community 65"
-Cohesion: 0.13
-Nodes (25): ar(), bd(), cn(), cr(), dd(), dr(), Ed(), Er() (+17 more)
+Cohesion: 0.10
+Nodes (30): bd(), cn(), cr(), dd(), dr(), Ed(), Er(), fr() (+22 more)
 
 ### Community 66 - "Community 66"
-Cohesion: 0.10
-Nodes (24): AppDataProvider(), convexClient, closeLocalDatabase(), createConnection(), initializeWebStore(), openLocalDatabase(), persistLocalDatabase(), withLocalTransaction() (+16 more)
+Cohesion: 0.24
+Nodes (7): DashboardScreen(), AppDataProvider(), convexClient, OlasothemeTheme, OrdersScreen(), ReportsScreen(), App()
 
 ### Community 67 - "Community 67"
-Cohesion: 0.11
-Nodes (28): checkIndexesValidity(), checkSchemaValidity(), checkTriggersValidity(), checkUpdate(), createExportObject(), createQuestionMarkString(), createRowStatement(), createTableData() (+20 more)
+Cohesion: 0.08
+Nodes (39): arraysIntersection(), backupTables(), checkIndexesValidity(), checkSchemaValidity(), checkTriggersValidity(), checkUpdate(), createExportObject(), createQuestionMarkString() (+31 more)
 
 ### Community 68 - "Community 68"
-Cohesion: 0.16
-Nodes (22): PosScreen(), PosScreenProps, productById, addProduct(), CartLine, decrementCartLine(), FilterableProduct, filterProducts() (+14 more)
+Cohesion: 0.14
+Nodes (23): usePosData(), PosScreen(), PosScreenProps, addProduct(), CartLine, decrementCartLine(), FilterableProduct, filterProducts() (+15 more)
 
 ### Community 69 - "Community 69"
-Cohesion: 0.18
-Nodes (28): addLogLineListener(), af(), cf(), df(), Dn(), ef(), ff(), gf() (+20 more)
+Cohesion: 0.20
+Nodes (27): af(), df(), Dn(), ef(), ff(), get(), gf(), go() (+19 more)
 
 ### Community 70 - "Community 70"
 Cohesion: 0.10
-Nodes (33): ap(), Bt(), cp(), Cu(), dp(), ft(), ip(), it() (+25 more)
+Nodes (17): localMigrations, databasePath, migrate(), schemaVersion(), testDirectory, adapter, cachedMenu, client (+9 more)
 
 ### Community 71 - "Community 71"
-Cohesion: 0.08
-Nodes (58): backupTable(), backupTables(), beginTransaction(), close(), closeConnection(), commitTransaction(), createDatabaseSchema(), createSchema() (+50 more)
+Cohesion: 0.10
+Nodes (49): backupTable(), beginTransaction(), close(), closeConnection(), commitTransaction(), createDatabaseSchema(), createSchema(), createSchemaStatement() (+41 more)
 
 ### Community 72 - "Community 72"
 Cohesion: 0.09
-Nodes (48): be(), Ge(), he(), je(), Le(), qe(), Re(), Ue() (+40 more)
+Nodes (51): be(), Ge(), he(), je(), Le(), qe(), Re(), Ue() (+43 more)
 
 ### Community 73 - "Community 73"
-Cohesion: 0.13
-Nodes (26): allQueryTokens(), clearAuth(), decodeToken(), error(), fetchTokenAndGuardAgainstRace(), G(), getAuth(), getCurrentAuthClaims() (+18 more)
+Cohesion: 0.15
+Nodes (23): clearAuth(), decodeToken(), error(), fetchTokenAndGuardAgainstRace(), G(), getAuth(), getCurrentAuthClaims(), hasAuth() (+15 more)
 
 ### Community 74 - "Community 74"
-Cohesion: 0.16
-Nodes (28): as(), bs(), cs(), ds(), eo(), es(), fo(), fs() (+20 more)
+Cohesion: 0.08
+Nodes (53): ap(), as(), bs(), ci(), cs(), dp(), ds(), ep() (+45 more)
 
 ### Community 75 - "Community 75"
-Cohesion: 0.21
-Nodes (24): C(), Cc(), Da(), F(), fa(), ga(), gc(), Ji() (+16 more)
+Cohesion: 0.19
+Nodes (26): activePageQueryTokens(), C(), Cc(), Da(), F(), fa(), ga(), gc() (+18 more)
 
 ### Community 76 - "Community 76"
-Cohesion: 0.22
-Nodes (13): ba(), fd(), Ht(), jt(), Nd(), nn(), pn(), qt() (+5 more)
+Cohesion: 0.15
+Nodes (18): ba(), Bt(), fd(), Ht(), jt(), lt(), Nd(), nn() (+10 more)
 
 ### Community 77 - "Community 77"
-Cohesion: 0.21
-Nodes (10): DashboardScreen(), DashboardScreenProps, hourlySales, recentOrders, stockItems, RecentOrdersPanel(), metrics, SalesPulse() (+2 more)
+Cohesion: 0.26
+Nodes (8): hourlySales, recentOrders, stockItems, RecentOrdersPanel(), metrics, SalesPulse(), icons, StockAttentionPanel()
 
 ### Community 78 - "Community 78"
-Cohesion: 0.26
-Nodes (19): aa(), bc(), Do(), fc(), Ja(), jo(), ko(), lc() (+11 more)
+Cohesion: 0.19
+Nodes (25): aa(), ar(), bc(), ca(), Do(), eo(), fc(), Ja() (+17 more)
 
 ### Community 79 - "Community 79"
-Cohesion: 0.17
-Nodes (13): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, categories, Category, CategoryId, Product (+5 more)
+Cohesion: 0.13
+Nodes (14): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, Category, CategoryId, categoryImage(), Product (+6 more)
 
 ### Community 80 - "Community 80"
-Cohesion: 0.24
-Nodes (7): orders, selectedOrderItems, itemIcons, metadata, OrderDetailPanel(), columns, OrdersTable()
+Cohesion: 0.19
+Nodes (9): orders, selectedOrderItems, itemIcons, metadata, OrderDetailPanel(), filters, OrdersListPanel(), columns (+1 more)
 
 ### Community 81 - "Community 81"
-Cohesion: 0.20
-Nodes (17): at(), ci(), ct(), di(), fi(), Ii(), J(), Ke() (+9 more)
+Cohesion: 0.19
+Nodes (15): addLogLineListener(), Du(), fi(), Ii(), J(), li(), ni(), Pi() (+7 more)
 
 ### Community 82 - "Community 82"
-Cohesion: 0.32
-Nodes (8): comp(), equals(), fromNumber(), fromValue(), isLong(), lessThanOrEqual(), observedTimestamp(), removeCompleted()
+Cohesion: 0.11
+Nodes (18): compilerOptions, allowImportingTsExtensions, allowJs, allowSyntheticDefaultImports, esModuleInterop, forceConsistentCasingInFileNames, isolatedModules, jsx (+10 more)
 
 ### Community 83 - "Community 83"
 Cohesion: 0.18
-Nodes (12): dt(), at(), dt(), it(), lt(), mt(), Oa(), rb() (+4 more)
+Nodes (12): dt(), v(), dt(), lt(), mt(), rb(), read(), vt() (+4 more)
 
 ### Community 84 - "Community 84"
 Cohesion: 0.33
 Nodes (5): Android Shell DOX, Local Contracts, Purpose, Verification, Workflow
 
 ### Community 85 - "Community 85"
-Cohesion: 0.14
-Nodes (17): action(), addQuery(), Al(), destroy(), getAllQueries(), getLocalResults(), getQuery(), mutation() (+9 more)
+Cohesion: 0.13
+Nodes (18): action(), addQuery(), Al(), destroy(), getAllQueries(), getLocalResults(), getQuery(), mutation() (+10 more)
 
 ### Community 86 - "Community 86"
 Cohesion: 0.40
 Nodes (4): Application Data DOX, Local Contracts, Purpose, Verification
 
 ### Community 87 - "Community 87"
-Cohesion: 0.33
-Nodes (6): ep(), gs(), Io(), ma(), pt(), s()
+Cohesion: 0.16
+Nodes (9): accept, PreparedLine, saleLine, serviceMode, verifyDevelopmentSale, getOperationalSnapshot, internalQuery, query (+1 more)
 
 ### Community 88 - "Community 88"
-Cohesion: 0.50
-Nodes (3): IconButton(), IconButtonProps, ReceiptHeader()
+Cohesion: 0.42
+Nodes (11): ao(), ea(), hc(), ic(), k(), mo(), nc(), oo() (+3 more)
+
+### Community 89 - "Community 89"
+Cohesion: 0.24
+Nodes (8): SavedReceipt, ModifierSelectionDialog(), ModifierSelectionDialogProps, PosModifierGroup, formatMoney(), PrimaryAction(), PrimaryActionProps, ReceiptPreviewDialog()
 
 ### Community 90 - "Community 90"
 Cohesion: 0.50
 Nodes (3): source, target, targetDirectory
 
+### Community 102 - "Community 102"
+Cohesion: 0.18
+Nodes (10): Blockers, Completed Goals, Current Checkpoint, Decisions, Decisions and Blockers, Git Workflow, Goal Completion Criteria, Ledger Rules (+2 more)
+
+### Community 103 - "Community 103"
+Cohesion: 0.24
+Nodes (10): addPageToPaginatedQuery(), allQueryTokens(), completePaginatedQuerySplit(), loadMoreOfPaginatedQuery(), mustGetPaginatedQuery(), onBaseTransition(), processPaginatedQuerySplits(), queriesContainingTokens() (+2 more)
+
+### Community 104 - "Community 104"
+Cohesion: 0.22
+Nodes (9): baseUnit, businessDate(), getDetail, list, recordAdjustment, saveIngredient, setIngredientArchived, validateRelations() (+1 more)
+
+### Community 105 - "Community 105"
+Cohesion: 0.20
+Nodes (9): Blockers, Completed Goals, Current Checkpoint, Decisions, Decisions and Blockers, Goal 01 Archive — Functional POS Interactions, Goal Completion Criteria, Ledger Rules (+1 more)
+
+### Community 106 - "Community 106"
+Cohesion: 0.20
+Nodes (10): POS-01 — Baseline and ownership, POS-02 — Data and pure operations, POS-03 — Menu discovery, POS-04 — Cart and receipt, POS-05 — Order details, POS-06 — Totals and checkout boundary, POS-07 — Navigation survival, POS-08 — Interaction and accessibility states (+2 more)
+
+### Community 107 - "Community 107"
+Cohesion: 0.25
+Nodes (6): activeStatus, ingredientEffect, list, optionInput, saveGroup, setGroupArchived
+
+### Community 108 - "Community 108"
+Cohesion: 0.25
+Nodes (8): 2026-07-28 — APP-01 complete, 2026-07-28 — APP-02 started, 2026-07-28 — APP-03 complete, 2026-07-28 — APP-04 complete, 2026-07-28 — APP-04 started, 2026-07-28 — APP-05 started, 2026-07-28 — Goal 02 drafted, Journal
+
+### Community 109 - "Community 109"
+Cohesion: 0.29
+Nodes (7): Astryx and icon rules, CSS ownership, Implementation Contract, Printing boundary and deferred hardware test, Required file ownership, Stack, UI and data boundary
+
+### Community 110 - "Community 110"
+Cohesion: 0.50
+Nodes (4): 11. Evidence and confidence, Contextual evidence, Primary evidence, Rule for future work
+
+### Community 111 - "Community 111"
+Cohesion: 0.50
+Nodes (4): 2. Brand character, Personality pillars, Personality scales, What Olaso is not
+
+### Community 112 - "Community 112"
+Cohesion: 0.50
+Nodes (4): 3. Logo system, Master asset, Missing masters to request, Usage rules
+
+### Community 113 - "Community 113"
+Cohesion: 0.50
+Nodes (4): 4. Color, Accessibility guardrail, Core references, Provisional supporting palette
+
+### Community 114 - "Community 114"
+Cohesion: 0.50
+Nodes (4): 7. Voice and writing, Language status, Voice, Writing rules
+
+### Community 115 - "Community 115"
+Cohesion: 0.50
+Nodes (4): Active Goal, Excluded, Goal 01 — Functional POS interactions, Included
+
+### Community 116 - "Community 116"
+Cohesion: 0.50
+Nodes (4): Active Goal, Excluded, Goal 02 — Functional Full Application Beta, Included
+
+### Community 117 - "Community 117"
+Cohesion: 0.67
+Nodes (3): Supporting type direction, Wordmark, Typography
+
 ## Knowledge Gaps
-- **484 isolated node(s):** `OlasothemeTheme`, `components`, `TableNames`, `Doc`, `Id` (+479 more)
+- **497 isolated node(s):** `OlasothemeTheme`, `components`, `TableNames`, `Doc`, `Id` (+492 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$()` connect `Community 33` to `Community 37`, `Community 58`, `Community 59`, `Community 60`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 69`, `Community 70`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 76`, `Community 78`, `Community 81`, `Community 82`, `Community 83`, `Community 85`, `Community 87`?**
-  _High betweenness centrality (0.234) - this node is a cross-community bridge._
-- **Why does `_()` connect `Community 59` to `Community 33`, `Community 67`, `Community 69`, `Community 37`, `Community 70`, `Community 71`, `Community 72`, `Community 83`, `Community 87`?**
-  _High betweenness centrality (0.124) - this node is a cross-community bridge._
-- **Why does `t()` connect `Community 37` to `Community 64`, `Community 33`, `Community 69`, `Community 70`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 78`, `Community 83`, `Community 87`, `Community 58`, `Community 59`, `Community 62`, `Community 63`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Why does `$()` connect `Community 33` to `Community 37`, `Community 58`, `Community 59`, `Community 60`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 69`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 76`, `Community 78`, `Community 81`, `Community 83`, `Community 85`, `Community 88`, `Community 103`?**
+  _High betweenness centrality (0.223) - this node is a cross-community bridge._
+- **Why does `_()` connect `Community 59` to `Community 33`, `Community 67`, `Community 69`, `Community 37`, `Community 71`, `Community 72`, `Community 74`, `Community 76`, `Community 83`?**
+  _High betweenness centrality (0.119) - this node is a cross-community bridge._
+- **Why does `NavigationPage` connect `Community 4` to `Community 66`, `Community 68`, `Community 9`, `Community 10`, `Community 13`, `Community 77`?**
+  _High betweenness centrality (0.007) - this node is a cross-community bridge._
 - **Are the 13 inferred relationships involving `lc()` (e.g. with `Iu()` and `bd()`) actually correct?**
   _`lc()` has 13 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `t()` (e.g. with `E()` and `te()`) actually correct?**
   _`t()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `OlasothemeTheme`, `components`, `TableNames` to the rest of the system?**
-  _484 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.11384615384615385 - nodes in this community are weakly interconnected._
+  _497 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Community -1` be split into smaller, more focused modules?**
+  _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._

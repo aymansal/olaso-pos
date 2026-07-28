@@ -6,4 +6,10 @@
   width: 966px;
   height: 120px;
   gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.row > * {
+  flex: 0 0 auto;
 }

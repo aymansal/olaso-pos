@@ -1,9 +1,16 @@
-import { openLocalDatabase, withLocalTransaction } from './localDatabase';
+import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
+
+export type IngredientEffect = {
+  ingredientId: string;
+  quantityDelta: number;
+};
 
 export type OperationalCacheSnapshot = {
   updatedAt: number;
   categories: Array<{
     id: string;
+    key: string;
     name: string;
     sortOrder: number;
     revision: number;
@@ -32,6 +39,7 @@ export type OperationalCacheSnapshot = {
     modifierGroupId: string;
     name: string;
     priceDeltaCentimes: number;
+    ingredientEffects: IngredientEffect[];
     sortOrder: number;
     revision: number;
   }>;
@@ -105,9 +113,10 @@ export async function replaceOperationalCache(
     for (const category of snapshot.categories) {
       await database.run(
         `INSERT INTO categories
-          (id, name, sort_order, status, revision, updated_at)
-         VALUES (?, ?, ?, 'active', ?, ?)
+          (id, key, name, sort_order, status, revision, updated_at)
+         VALUES (?, ?, ?, ?, 'active', ?, ?)
          ON CONFLICT(id) DO UPDATE SET
+           key = excluded.key,
            name = excluded.name,
            sort_order = excluded.sort_order,
            status = 'active',
@@ -115,6 +124,7 @@ export async function replaceOperationalCache(
            updated_at = excluded.updated_at`,
         [
           category.id,
+          category.key,
           category.name,
           category.sortOrder,
           category.revision,
@@ -185,13 +195,14 @@ export async function replaceOperationalCache(
       await database.run(
         `INSERT INTO modifier_options
           (id, modifier_group_id, name, price_delta_centimes, status,
-           sort_order, revision, updated_at)
-         VALUES (?, ?, ?, ?, 'active', ?, ?, ?)
+           ingredient_effects_json, sort_order, revision, updated_at)
+         VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            modifier_group_id = excluded.modifier_group_id,
            name = excluded.name,
            price_delta_centimes = excluded.price_delta_centimes,
            status = 'active',
+           ingredient_effects_json = excluded.ingredient_effects_json,
            sort_order = excluded.sort_order,
            revision = excluded.revision,
            updated_at = excluded.updated_at`,
@@ -200,6 +211,7 @@ export async function replaceOperationalCache(
           option.modifierGroupId,
           option.name,
           option.priceDeltaCentimes,
+          JSON.stringify(option.ingredientEffects),
           option.sortOrder,
           option.revision,
           snapshot.updatedAt,
@@ -217,11 +229,13 @@ export async function replaceOperationalCache(
       );
     }
     for (const ingredient of snapshot.ingredients) {
+      const cachedStock = Math.max(0, ingredient.currentStockQuantity);
+      const localStockDelta = Math.min(0, ingredient.currentStockQuantity);
       await database.run(
         `INSERT INTO ingredients
           (id, name, base_unit, current_stock_quantity, low_stock_threshold,
-           status, revision, updated_at)
-         VALUES (?, ?, ?, ?, ?, 'active', ?, ?)
+           status, revision, updated_at, local_stock_delta)
+         VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            name = excluded.name,
            base_unit = excluded.base_unit,
@@ -229,15 +243,17 @@ export async function replaceOperationalCache(
            low_stock_threshold = excluded.low_stock_threshold,
            status = 'active',
            revision = excluded.revision,
-           updated_at = excluded.updated_at`,
+           updated_at = excluded.updated_at,
+           local_stock_delta = excluded.local_stock_delta`,
         [
           ingredient.id,
           ingredient.name,
           ingredient.baseUnit,
-          ingredient.currentStockQuantity,
+          cachedStock,
           ingredient.lowStockThreshold,
           ingredient.revision,
           snapshot.updatedAt,
+          localStockDelta,
         ],
         false,
       );
@@ -282,8 +298,30 @@ export async function replaceOperationalCache(
   });
 }
 
-export async function loadOperationalCache() {
-  const database = await openLocalDatabase();
+function parseIngredientEffects(value: unknown): IngredientEffect[] {
+  try {
+    const parsed = JSON.parse(String(value));
+    if (
+      !Array.isArray(parsed)
+      || parsed.some(
+        (effect) =>
+          !effect
+          || typeof effect.ingredientId !== 'string'
+          || !Number.isSafeInteger(effect.quantityDelta),
+      )
+    ) {
+      throw new Error();
+    }
+    return parsed;
+  } catch {
+    throw new Error('The local modifier cache is corrupted.');
+  }
+}
+
+export async function loadOperationalCache(
+  connection?: SQLiteDBConnection,
+): Promise<OperationalCacheSnapshot> {
+  const database = connection ?? await openLocalDatabase();
   const [
     categories,
     products,
@@ -293,9 +331,10 @@ export async function loadOperationalCache() {
     recipeVersions,
     recipeItems,
     ingredients,
+    cacheState,
   ] = await Promise.all([
       database.query(
-        `SELECT id, name, sort_order, revision
+        `SELECT id, key, name, sort_order, revision
          FROM categories
          WHERE status = 'active'
          ORDER BY sort_order
@@ -317,7 +356,7 @@ export async function loadOperationalCache() {
       ),
       database.query(
         `SELECT id, modifier_group_id, name, price_delta_centimes, sort_order,
-          revision
+          ingredient_effects_json, revision
          FROM modifier_options
          WHERE status = 'active'
          LIMIT ${LIMITS.modifierOptions}`,
@@ -341,21 +380,84 @@ export async function loadOperationalCache() {
          LIMIT ${LIMITS.recipeItems}`,
       ),
       database.query(
-        `SELECT id, name, base_unit, current_stock_quantity,
+        `SELECT id, name, base_unit,
+          current_stock_quantity + local_stock_delta AS current_stock_quantity,
           low_stock_threshold, revision
          FROM ingredients
          WHERE status = 'active'
          LIMIT ${LIMITS.ingredients}`,
       ),
+      database.query(
+        `SELECT value
+         FROM device_settings
+         WHERE key = 'operational_cache_updated_at'
+         LIMIT 1`,
+      ),
     ]);
   return {
-    categories: categories.values ?? [],
-    products: products.values ?? [],
-    modifierGroups: modifierGroups.values ?? [],
-    modifierOptions: modifierOptions.values ?? [],
-    productModifierGroups: productModifierGroups.values ?? [],
-    recipeVersions: recipeVersions.values ?? [],
-    recipeItems: recipeItems.values ?? [],
-    ingredients: ingredients.values ?? [],
+    updatedAt: Number(cacheState.values?.[0]?.value ?? 0),
+    categories: (categories.values ?? []).map((row) => ({
+      id: String(row.id),
+      key: String(row.key),
+      name: String(row.name),
+      sortOrder: Number(row.sort_order),
+      revision: Number(row.revision),
+    })),
+    products: (products.values ?? []).map((row) => ({
+      id: String(row.id),
+      categoryId: String(row.category_id),
+      name: String(row.name),
+      receiptName: String(row.receipt_name),
+      priceCentimes: Number(row.price_centimes),
+      status: row.status === 'active' ? 'active' : 'unavailable',
+      ...(row.image_asset_key
+        ? { imageAssetKey: String(row.image_asset_key) }
+        : {}),
+      sortOrder: Number(row.sort_order),
+      ...(row.current_recipe_version_id
+        ? { currentRecipeVersionId: String(row.current_recipe_version_id) }
+        : {}),
+      revision: Number(row.revision),
+    })),
+    modifierGroups: (modifierGroups.values ?? []).map((row) => ({
+      id: String(row.id),
+      name: String(row.name),
+      minimumSelections: Number(row.minimum_selections),
+      maximumSelections: Number(row.maximum_selections),
+      revision: Number(row.revision),
+    })),
+    modifierOptions: (modifierOptions.values ?? []).map((row) => ({
+      id: String(row.id),
+      modifierGroupId: String(row.modifier_group_id),
+      name: String(row.name),
+      priceDeltaCentimes: Number(row.price_delta_centimes),
+      ingredientEffects: parseIngredientEffects(row.ingredient_effects_json),
+      sortOrder: Number(row.sort_order),
+      revision: Number(row.revision),
+    })),
+    productModifierGroups: (productModifierGroups.values ?? []).map((row) => ({
+      productId: String(row.product_id),
+      modifierGroupId: String(row.modifier_group_id),
+      sortOrder: Number(row.sort_order),
+    })),
+    recipeVersions: (recipeVersions.values ?? []).map((row) => ({
+      id: String(row.id),
+      productId: String(row.product_id),
+      version: Number(row.version),
+      createdAt: Number(row.created_at),
+    })),
+    recipeItems: (recipeItems.values ?? []).map((row) => ({
+      recipeVersionId: String(row.recipe_version_id),
+      ingredientId: String(row.ingredient_id),
+      quantity: Number(row.quantity),
+    })),
+    ingredients: (ingredients.values ?? []).map((row) => ({
+      id: String(row.id),
+      name: String(row.name),
+      baseUnit: row.base_unit,
+      currentStockQuantity: Number(row.current_stock_quantity),
+      lowStockThreshold: Number(row.low_stock_threshold),
+      revision: Number(row.revision),
+    })),
   };
 }

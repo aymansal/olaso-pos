@@ -1,0 +1,175 @@
+.overlay {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(28 33 27 / 38%);
+}
+
+.dialog {
+  width: 520px;
+  max-height: 680px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.dialog header,
+.dialog header > span,
+.meta,
+.meta div,
+.lines,
+.lines article,
+.lines article > span:first-child,
+.totals,
+.totals div,
+.dialog footer {
+  display: flex;
+}
+
+.dialog header,
+.lines article,
+.totals div,
+.dialog footer {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog header > span,
+.meta,
+.meta div,
+.lines,
+.lines article > span:first-child,
+.totals {
+  flex-direction: column;
+}
+
+.dialog header small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dialog h2 {
+  margin: 3px 0 0;
+  color: var(--olaso-text);
+  font-size: 18px;
+}
+
+.dialog header button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 18px;
+  margin: 18px 0 0;
+}
+
+.meta div {
+  gap: 2px;
+}
+
+.meta dt,
+.meta dd,
+.totals dt,
+.totals dd {
+  margin: 0;
+}
+
+.meta dt {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.meta dd {
+  color: var(--olaso-text);
+  font-size: 10px;
+  text-transform: capitalize;
+}
+
+.lines {
+  max-height: 300px;
+  margin-top: 16px;
+  overflow-y: auto;
+  border-block: 1px solid var(--olaso-line-soft);
+}
+
+.lines article {
+  min-height: 58px;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--olaso-line-soft);
+  color: var(--olaso-text);
+  font-size: 9px;
+}
+
+.lines article:first-child {
+  border-top: 0;
+}
+
+.lines article > span:first-child {
+  flex: 1;
+  gap: 2px;
+}
+
+.lines small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+}
+
+.totals {
+  gap: 6px;
+  margin: 16px 0 0;
+}
+
+.totals div {
+  color: var(--olaso-copy);
+  font-size: 10px;
+}
+
+.totals div:last-child {
+  color: var(--olaso-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dialog > p {
+  margin: 8px 0 0;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+}
+
+.dialog footer {
+  margin-top: 20px;
+}
+
+.dialog footer span {
+  color: var(--olaso-green);
+  font-size: 8px;
+}
+
+.dialog footer button {
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 22px;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+  font-size: 9px;
+  font-weight: 700;
+}

@@ -4,12 +4,12 @@ import {
   SQLiteConnection,
   type SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
-import { defineCustomElements } from 'jeep-sqlite/loader';
+import { defineCustomElements } from 'jeep-sqlite/loader/index.js';
 import {
   LOCAL_DATABASE_NAME,
   LOCAL_SCHEMA_VERSION,
   localMigrations,
-} from './schema';
+} from './schema.ts';
 
 let connectionPromise: Promise<SQLiteDBConnection> | undefined;
 let sqliteConnection: SQLiteConnection | undefined;

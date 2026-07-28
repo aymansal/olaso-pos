@@ -12,6 +12,7 @@ data, reporting summaries, and development seeding.
 - Business functions live in domain files such as `categories.ts`,
   `products.ts`, `modifiers.ts`, `recipes.ts`, `ingredients.ts`,
   `inventory.ts`, `sales.ts`, and `reports.ts`.
+- `sync.ts` owns the bounded operational snapshot consumed by the tablet cache.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts
@@ -20,12 +21,18 @@ data, reporting summaries, and development seeding.
 - Public management functions require an `owner` or `manager` identity claim;
   the unauthenticated override is allowed only as an explicit deployment
   setting on the dedicated development deployment.
+- Public POS functions require an authenticated operational identity; the
+  separate unauthenticated POS override is allowed only on the dedicated
+  development deployment.
 - Use indexed, bounded reads; sales, sale items, stock movements, and reports
   are never read with an unbounded `.collect()`.
 - Store money as integer centimes and stock in integer ingredient base units.
 - Archive records referenced by history and keep stock movements append-only.
 - One synchronized sale is one retry-safe mutation keyed by
   `deviceId + localSaleId`.
+- The sale mutation re-reads current products, revisions, recipes, modifiers,
+  and ingredients and computes trusted totals and deductions before writing any
+  effect.
 - Seed/reset work is internal, development-only, deterministic, and runnable
   through the CLI.
 - Do not add actions for ordinary database work or import backend clients into
@@ -38,6 +45,8 @@ data, reporting summaries, and development seeding.
   management-authorization changes.
 - Run `npm run check:inventory` after ingredient, stock balance, movement, or
   inventory-schema changes.
+- Run `npm run check:sales` after operational snapshot, sale, receipt, stock
+  deduction, or POS-authorization changes.
 - Run `npx convex dev --once` when schema or deployed functions change.
 - Review every new index against an implemented access path.
 

@@ -149,6 +149,32 @@ try {
     0,
   );
   assert.equal(
+    database.prepare('SELECT key FROM categories').get().key,
+    'category-coffee',
+  );
+  assert.equal(
+    database
+      .prepare('SELECT ingredient_effects_json FROM modifier_options')
+      .get(),
+    undefined,
+  );
+  database
+    .prepare(
+      `UPDATE ingredients
+       SET local_stock_delta = -10000
+       WHERE id = 'ingredient-coffee'`,
+    )
+    .run();
+  assert.equal(
+    database
+      .prepare(
+        `SELECT current_stock_quantity + local_stock_delta AS balance
+         FROM ingredients`,
+      )
+      .get().balance,
+    -1000,
+  );
+  assert.equal(
     database.prepare('SELECT COUNT(*) AS count FROM sync_state').get().count,
     1,
   );

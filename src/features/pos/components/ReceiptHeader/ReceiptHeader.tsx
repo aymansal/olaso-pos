@@ -8,7 +8,7 @@ export function ReceiptHeader() {
       <IconButton label="Close receipt" icon={<CaretRight size={20} />} size={50} variant="green" />
       <div className={styles.title}>
         <span>Purchase Receipt</span>
-        <strong>#27362</strong>
+        <strong>Local draft</strong>
       </div>
       <IconButton label="Receipt menu" icon={<ListBullets size={20} />} size={50} variant="outlined" />
     </div>

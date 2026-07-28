@@ -3,8 +3,10 @@ import type { CategoryId } from './data/categories';
 export type ServiceMode = 'Dine In' | 'Take Away' | 'Order Online';
 
 export type CartLine = {
+  id: string;
   productId: string;
   quantity: number;
+  modifierOptionIds: string[];
 };
 
 export type PosSession = {
@@ -20,6 +22,11 @@ export type PosSession = {
 type PricedProduct = {
   id: string;
   priceCentimes: number;
+};
+
+type PricedModifierOption = {
+  id: string;
+  priceDeltaCentimes: number;
 };
 
 type FilterableProduct = {
@@ -46,12 +53,26 @@ export function createInitialPosSession(): PosSession {
   };
 }
 
-export function addProduct(cart: CartLine[], productId: string): CartLine[] {
-  const existing = cart.find((line) => line.productId === productId);
+export function addProduct(
+  cart: CartLine[],
+  productId: string,
+  modifierOptionIds: string[] = [],
+): CartLine[] {
+  const normalizedOptions = [...new Set(modifierOptionIds)].sort();
+  const id = JSON.stringify([productId, normalizedOptions]);
+  const existing = cart.find((line) => line.id === id);
 
   return existing
     ? cart.map((line) => line === existing ? { ...line, quantity: line.quantity + 1 } : line)
-    : [...cart, { productId, quantity: 1 }];
+    : [
+        ...cart,
+        {
+          id,
+          productId,
+          quantity: 1,
+          modifierOptionIds: normalizedOptions,
+        },
+      ];
 }
 
 export function filterProducts<T extends FilterableProduct>(
@@ -67,51 +88,66 @@ export function filterProducts<T extends FilterableProduct>(
   );
 }
 
-export function incrementCartLine(cart: CartLine[], productId: string): CartLine[] {
+export function incrementCartLine(cart: CartLine[], lineId: string): CartLine[] {
   return cart.map((line) =>
-    line.productId === productId ? { ...line, quantity: line.quantity + 1 } : line
+    line.id === lineId ? { ...line, quantity: line.quantity + 1 } : line
   );
 }
 
-export function decrementCartLine(cart: CartLine[], productId: string): CartLine[] {
+export function decrementCartLine(cart: CartLine[], lineId: string): CartLine[] {
   return cart.map((line) =>
-    line.productId === productId && line.quantity > 1
+    line.id === lineId && line.quantity > 1
       ? { ...line, quantity: line.quantity - 1 }
       : line
   );
 }
 
-export function removeCartLine(cart: CartLine[], productId: string): CartLine[] {
-  return cart.filter((line) => line.productId !== productId);
+export function removeCartLine(cart: CartLine[], lineId: string): CartLine[] {
+  return cart.filter((line) => line.id !== lineId);
 }
 
 export function subtotalCentimes(
   cart: CartLine[],
   products: readonly PricedProduct[],
+  modifierOptions: readonly PricedModifierOption[] = [],
 ): number {
   const prices = new Map(products.map((product) => [product.id, product.priceCentimes]));
+  const optionPrices = new Map(
+    modifierOptions.map((option) => [option.id, option.priceDeltaCentimes]),
+  );
 
   return cart.reduce((subtotal, line) => {
-    const price = prices.get(line.productId);
+    const basePrice = prices.get(line.productId);
+    const modifierPrice = line.modifierOptionIds.reduce((sum, optionId) => {
+      const price = optionPrices.get(optionId);
+      if (price === undefined) throw new Error(`Invalid modifier: ${optionId}`);
+      return sum + price;
+    }, 0);
 
-    if (price === undefined || !Number.isInteger(line.quantity) || line.quantity < 1) {
+    if (
+      basePrice === undefined
+      || !Number.isInteger(line.quantity)
+      || line.quantity < 1
+      || basePrice + modifierPrice < 0
+    ) {
       throw new Error(`Invalid cart line: ${line.productId}`);
     }
 
-    return subtotal + price * line.quantity;
+    return subtotal + (basePrice + modifierPrice) * line.quantity;
   }, 0);
 }
 
 export function validatePosSession(
   session: PosSession,
   products: readonly PricedProduct[],
+  modifierOptions: readonly PricedModifierOption[] = [],
 ): { kind: 'empty' | 'error' | 'valid'; message: string } {
   if (session.cart.length === 0) {
     return { kind: 'empty', message: 'Add a product to begin.' };
   }
 
   try {
-    subtotalCentimes(session.cart, products);
+    subtotalCentimes(session.cart, products, modifierOptions);
   } catch {
     return { kind: 'error', message: 'The order contains an invalid product or quantity.' };
   }
@@ -120,7 +156,7 @@ export function validatePosSession(
     return { kind: 'error', message: 'Table is required for dine in.' };
   }
 
-  return { kind: 'valid', message: 'Ready to check — nothing will be saved yet.' };
+  return { kind: 'valid', message: 'Ready to place the order.' };
 }
 
 export function taxCentimes(

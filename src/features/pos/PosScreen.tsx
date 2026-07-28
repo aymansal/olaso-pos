@@ -1,11 +1,25 @@
-import type { Dispatch, SetStateAction } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
+import { usePosData } from '../../data/usePosData';
+import type { SavedReceipt } from '../../data/localSales.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
 import { Header } from './components/Header/Header';
+import {
+  ModifierSelectionDialog,
+  type PosModifierGroup,
+} from './components/ModifierSelectionDialog/ModifierSelectionDialog';
 import { ProductGrid } from './components/ProductGrid/ProductGrid';
+import { ReceiptPreviewDialog } from './components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { ReceiptRail } from './components/ReceiptRail/ReceiptRail';
 import { SearchField } from './components/SearchField/SearchField';
 import type { NavigationPage } from './components/TopNavigation/TopNavigation';
-import { products } from './data/products';
+import { categoryImage, type Category } from './data/categories';
+import { productImage, type Product } from './data/products';
 import {
   addProduct,
   decrementCartLine,
@@ -17,10 +31,9 @@ import {
   totalCentimes,
   validatePosSession,
   type PosSession,
+  type ServiceMode,
 } from './posSession';
 import styles from './PosScreen.module.css';
-
-const productById = new Map(products.map((product) => [product.id, product]));
 
 interface PosScreenProps {
   session: PosSession;
@@ -28,14 +41,87 @@ interface PosScreenProps {
   onNavigate?: (page: NavigationPage) => void;
 }
 
+function localServiceType(
+  serviceMode: ServiceMode,
+): 'dine-in' | 'take-away' | 'order-online' {
+  if (serviceMode === 'Dine In') return 'dine-in';
+  if (serviceMode === 'Take Away') return 'take-away';
+  return 'order-online';
+}
+
 export function PosScreen({
   session,
   onSessionChange,
   onNavigate,
 }: PosScreenProps) {
+  const { menu, completeOrder, isLoading, error: dataWarning } = usePosData();
+  const [configuringProductId, setConfiguringProductId] = useState<string>();
+  const [receiptPreview, setReceiptPreview] = useState<SavedReceipt>();
+  const [checkoutError, setCheckoutError] = useState('');
+
   function editSession(edit: (current: PosSession) => PosSession) {
+    setCheckoutError('');
     onSessionChange((current) => ({ ...edit(current), checkoutStatus: 'idle' }));
   }
+
+  const categoryKeyById = useMemo(
+    () => new Map(menu?.categories.map((category) => [category.id, category.key])),
+    [menu],
+  );
+  const categories: Category[] = useMemo(
+    () =>
+      (menu?.categories ?? []).map((category) => ({
+        id: category.key,
+        name: category.name,
+        count:
+          menu?.products.filter(
+            (product) =>
+              product.categoryId === category.id
+              && product.status === 'active',
+          ).length ?? 0,
+        status: 'Available',
+        variant: 'default',
+        image: categoryImage(category.key),
+      })),
+    [menu],
+  );
+  const products: Product[] = useMemo(
+    () =>
+      (menu?.products ?? [])
+        .filter((product) => product.status === 'active')
+        .map((product) => {
+          const categoryKey = categoryKeyById.get(product.categoryId) ?? '';
+          return {
+            id: product.id,
+            categoryId: categoryKey,
+            name: product.name,
+            priceCentimes: product.priceCentimes,
+            image: productImage(product.imageAssetKey, categoryKey),
+          };
+        }),
+    [categoryKeyById, menu],
+  );
+  const productById = useMemo(
+    () => new Map(products.map((product) => [product.id, product])),
+    [products],
+  );
+  const optionById = useMemo(
+    () => new Map(menu?.modifierOptions.map((option) => [option.id, option])),
+    [menu],
+  );
+
+  useEffect(() => {
+    if (
+      categories[0]
+      && !categories.some((category) => category.id === session.selectedCategoryId)
+    ) {
+      onSessionChange((current) => ({
+        ...current,
+        selectedCategoryId: categories[0].id,
+        checkoutStatus: 'idle',
+      }));
+    }
+  }, [categories, onSessionChange, session.selectedCategoryId]);
 
   const visibleProducts = filterProducts(
     products,
@@ -44,33 +130,136 @@ export function PosScreen({
   );
   const receiptLines = session.cart.flatMap((line) => {
     const product = productById.get(line.productId);
-    return product ? [{ product, quantity: line.quantity }] : [];
+    if (!product) return [];
+    const selectedOptions = line.modifierOptionIds.flatMap((id) => {
+      const option = optionById.get(id);
+      return option ? [option] : [];
+    });
+    return [{
+      id: line.id,
+      product: {
+        ...product,
+        priceCentimes:
+          product.priceCentimes
+          + selectedOptions.reduce(
+            (sum, option) => sum + option.priceDeltaCentimes,
+            0,
+          ),
+      },
+      quantity: line.quantity,
+      modifierSummary: selectedOptions
+        .map((option) => option.name)
+        .join(', '),
+    }];
   });
-  const subtotal = subtotalCentimes(session.cart, products);
+  let subtotal = 0;
+  try {
+    subtotal = subtotalCentimes(
+      session.cart,
+      products,
+      menu?.modifierOptions ?? [],
+    );
+  } catch {
+    subtotal = 0;
+  }
   const tax = taxCentimes(subtotal);
   const total = totalCentimes(subtotal, tax);
-  const validation = validatePosSession(session, products);
+  const validation = validatePosSession(
+    session,
+    products,
+    menu?.modifierOptions ?? [],
+  );
   const checkoutFeedback: {
     kind: 'neutral' | 'error' | 'success';
     message: string;
-  } = validation.kind === 'error'
-    ? { kind: 'error', message: validation.message }
+  } = checkoutError
+    ? { kind: 'error', message: checkoutError }
     : session.checkoutStatus === 'processing'
-      ? { kind: 'neutral', message: 'Checking only — nothing is being saved.' }
+      ? { kind: 'neutral', message: 'Saving this order on the tablet…' }
       : session.checkoutStatus === 'success'
-        ? { kind: 'success', message: 'Valid — ready for future local save; not recorded.' }
-        : { kind: 'neutral', message: validation.message };
+        ? {
+            kind: 'success',
+            message: 'Saved locally. Synchronization continues automatically.',
+          }
+        : dataWarning
+          ? { kind: 'neutral', message: dataWarning }
+          : validation.kind === 'error'
+            ? { kind: 'error', message: validation.message }
+            : { kind: 'neutral', message: validation.message };
 
-  async function checkOrder() {
-    if (validation.kind !== 'valid') return;
+  const configuringProduct = configuringProductId
+    ? productById.get(configuringProductId)
+    : undefined;
+  const configuringGroups: PosModifierGroup[] = useMemo(() => {
+    if (!menu || !configuringProductId) return [];
+    return menu.productModifierGroups
+      .filter((link) => link.productId === configuringProductId)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .flatMap((link) => {
+        const group = menu.modifierGroups.find(
+          (candidate) => candidate.id === link.modifierGroupId,
+        );
+        return group
+          ? [{
+              id: group.id,
+              name: group.name,
+              minimumSelections: group.minimumSelections,
+              maximumSelections: group.maximumSelections,
+              options: menu.modifierOptions
+                .filter((option) => option.modifierGroupId === group.id)
+                .sort((a, b) => a.sortOrder - b.sortOrder)
+                .map((option) => ({
+                  id: option.id,
+                  name: option.name,
+                  priceDeltaCentimes: option.priceDeltaCentimes,
+                })),
+            }]
+          : [];
+      });
+  }, [configuringProductId, menu]);
 
-    onSessionChange((current) => ({ ...current, checkoutStatus: 'processing' }));
-    await new Promise((resolve) => setTimeout(resolve, 350));
-    onSessionChange((current) =>
-      current.checkoutStatus === 'processing'
-        ? { ...current, checkoutStatus: 'success' }
-        : current
+  function beginAdd(productId: string) {
+    const hasModifiers = menu?.productModifierGroups.some(
+      (link) => link.productId === productId,
     );
+    if (hasModifiers) {
+      setConfiguringProductId(productId);
+      return;
+    }
+    editSession((current) => ({
+      ...current,
+      cart: addProduct(current.cart, productId),
+    }));
+  }
+
+  async function placeOrder() {
+    if (validation.kind !== 'valid') return;
+    setCheckoutError('');
+    onSessionChange((current) => ({ ...current, checkoutStatus: 'processing' }));
+    try {
+      const result = await completeOrder({
+        cart: session.cart,
+        serviceType: localServiceType(session.serviceMode),
+        customerName: session.customerName,
+        tableLabel: session.table,
+      });
+      setReceiptPreview(result.receipt);
+      onSessionChange((current) => ({
+        ...current,
+        cart: [],
+        customerName: '',
+        table: '',
+        checkoutStatus: 'success',
+      }));
+    } catch (caught) {
+      setCheckoutError(
+        caught instanceof Error ? caught.message : 'The order could not be saved.',
+      );
+      onSessionChange((current) => ({
+        ...current,
+        checkoutStatus: 'idle',
+      }));
+    }
   }
 
   return (
@@ -82,17 +271,21 @@ export function PosScreen({
           onChange={(query) => editSession((current) => ({ ...current, query }))}
         />
         <CategoryRow
+          categories={categories}
           selectedCategoryId={session.selectedCategoryId}
           onSelect={(selectedCategoryId) =>
             editSession((current) => ({ ...current, selectedCategoryId }))}
         />
         <ProductGrid
           products={visibleProducts}
-          onAdd={(productId) =>
-            editSession((current) => ({
-              ...current,
-              cart: addProduct(current.cart, productId),
-            }))}
+          emptyMessage={
+            isLoading
+              ? 'Loading the saved menu…'
+              : dataWarning && products.length === 0
+                ? dataWarning
+                : 'No products match this category and search.'
+          }
+          onAdd={beginAdd}
         />
       </section>
       <ReceiptRail
@@ -108,20 +301,20 @@ export function PosScreen({
           validation.kind !== 'valid' || session.checkoutStatus === 'processing'
         }
         checkoutProcessing={session.checkoutStatus === 'processing'}
-        onDecrement={(productId) =>
+        onDecrement={(lineId) =>
           editSession((current) => ({
             ...current,
-            cart: decrementCartLine(current.cart, productId),
+            cart: decrementCartLine(current.cart, lineId),
           }))}
-        onIncrement={(productId) =>
+        onIncrement={(lineId) =>
           editSession((current) => ({
             ...current,
-            cart: incrementCartLine(current.cart, productId),
+            cart: incrementCartLine(current.cart, lineId),
           }))}
-        onRemove={(productId) =>
+        onRemove={(lineId) =>
           editSession((current) => ({
             ...current,
-            cart: removeCartLine(current.cart, productId),
+            cart: removeCartLine(current.cart, lineId),
           }))}
         onServiceModeChange={(serviceMode) =>
           editSession((current) => ({ ...current, serviceMode }))}
@@ -129,8 +322,33 @@ export function PosScreen({
           editSession((current) => ({ ...current, customerName }))}
         onTableChange={(table) =>
           editSession((current) => ({ ...current, table }))}
-        onCheckOrder={checkOrder}
+        onPlaceOrder={placeOrder}
       />
+      {configuringProduct ? (
+        <ModifierSelectionDialog
+          productName={configuringProduct.name}
+          basePriceCentimes={configuringProduct.priceCentimes}
+          groups={configuringGroups}
+          onClose={() => setConfiguringProductId(undefined)}
+          onAdd={(modifierOptionIds) => {
+            editSession((current) => ({
+              ...current,
+              cart: addProduct(
+                current.cart,
+                configuringProduct.id,
+                modifierOptionIds,
+              ),
+            }));
+            setConfiguringProductId(undefined);
+          }}
+        />
+      ) : null}
+      {receiptPreview ? (
+        <ReceiptPreviewDialog
+          receipt={receiptPreview}
+          onClose={() => setReceiptPreview(undefined)}
+        />
+      ) : null}
     </main>
   );
 }

@@ -7,30 +7,30 @@ type PrimaryActionProps = {
   totalCentimes: number;
   disabled: boolean;
   processing: boolean;
-  onCheckOrder: () => Promise<void>;
+  onPlaceOrder: () => Promise<void>;
 };
 
 export function PrimaryAction({
   totalCentimes,
   disabled,
   processing,
-  onCheckOrder,
+  onPlaceOrder,
 }: PrimaryActionProps) {
   const amount = formatMoney(totalCentimes);
 
   return (
     <Button
       className={styles.button}
-      label={`Check order, ${amount}`}
+      label={`Place order, ${amount}`}
       width={296}
       variant="primary"
       icon={<ArrowRight size={18} />}
       endContent={<CaretDoubleRight size={22} />}
       isDisabled={disabled}
       isLoading={processing}
-      clickAction={onCheckOrder}
+      clickAction={onPlaceOrder}
     >
-      <span className={styles.label}>Check Order&nbsp;&nbsp;&nbsp; {amount}</span>
+      <span className={styles.label}>Place Order&nbsp;&nbsp;&nbsp; {amount}</span>
     </Button>
   );
 }

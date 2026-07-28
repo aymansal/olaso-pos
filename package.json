@@ -12,6 +12,7 @@
     "check:management": "node scripts/check-management.mjs",
     "check:inventory": "node scripts/check-inventory.mjs",
     "check:local": "node --disable-warning=ExperimentalWarning scripts/check-local-database.mjs",
+    "check:sales": "node --disable-warning=ExperimentalWarning scripts/check-sales.mjs",
     "prepare:sqlite-web": "node scripts/prepare-sqlite-web.mjs",
     "dev": "npm run theme:build && npm run prepare:sqlite-web && vite --host 0.0.0.0",
     "build": "npm run theme:build && npm run prepare:sqlite-web && tsc -b && vite build",

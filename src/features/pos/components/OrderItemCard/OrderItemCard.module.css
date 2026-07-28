@@ -46,9 +46,13 @@
 .meta {
   top: 45px;
   left: 88px;
+  max-width: 188px;
+  overflow: hidden;
   color: #6a746c;
   font-size: 11px;
   line-height: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .quantity {

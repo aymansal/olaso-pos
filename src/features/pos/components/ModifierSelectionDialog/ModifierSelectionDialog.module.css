@@ -1,0 +1,153 @@
+.overlay {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(28 33 27 / 38%);
+}
+
+.dialog {
+  width: 560px;
+  max-height: 680px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.dialog header,
+.dialog header > span,
+.dialog footer,
+.options,
+.options label {
+  display: flex;
+}
+
+.dialog header,
+.dialog footer {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog header > span,
+.options {
+  flex-direction: column;
+}
+
+.dialog header small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dialog h2 {
+  margin: 3px 0 0;
+  color: var(--olaso-text);
+  font-size: 18px;
+}
+
+.dialog header > button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.groups {
+  max-height: 500px;
+  margin-top: 16px;
+  overflow-y: auto;
+}
+
+.groups fieldset {
+  margin: 0;
+  padding: 14px 0;
+  border: 0;
+  border-top: 1px solid var(--olaso-line-soft);
+}
+
+.groups legend {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.groups legend span {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.options {
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.options label {
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  color: var(--olaso-text);
+  font-size: 10px;
+}
+
+.options input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--olaso-green);
+}
+
+.options label > span {
+  flex: 1;
+}
+
+.options label > strong {
+  color: var(--olaso-green);
+  font-size: 9px;
+}
+
+.dialog footer {
+  margin-top: 16px;
+}
+
+.cancel,
+.add {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 22px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.cancel {
+  border: 1px solid var(--olaso-control-border);
+  color: var(--olaso-copy);
+  background: transparent;
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.add:disabled {
+  opacity: 0.45;
+}

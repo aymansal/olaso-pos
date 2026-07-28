@@ -10,8 +10,10 @@ import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
 import styles from './ReceiptRail.module.css';
 
 type ReceiptLine = {
+  id: string;
   product: Product;
   quantity: number;
+  modifierSummary: string;
 };
 
 type ReceiptRailProps = {
@@ -28,13 +30,13 @@ type ReceiptRailProps = {
   };
   checkoutDisabled: boolean;
   checkoutProcessing: boolean;
-  onDecrement: (productId: string) => void;
-  onIncrement: (productId: string) => void;
-  onRemove: (productId: string) => void;
+  onDecrement: (lineId: string) => void;
+  onIncrement: (lineId: string) => void;
+  onRemove: (lineId: string) => void;
   onServiceModeChange: (serviceMode: ServiceMode) => void;
   onCustomerNameChange: (customerName: string) => void;
   onTableChange: (table: string) => void;
-  onCheckOrder: () => Promise<void>;
+  onPlaceOrder: () => Promise<void>;
 };
 
 export function ReceiptRail({
@@ -54,7 +56,7 @@ export function ReceiptRail({
   onServiceModeChange,
   onCustomerNameChange,
   onTableChange,
-  onCheckOrder,
+  onPlaceOrder,
 }: ReceiptRailProps) {
   return (
     <Card className={styles.rail} width={320} height={688} padding={0}>
@@ -78,14 +80,15 @@ export function ReceiptRail({
         <span className={styles.sectionLabel}>Order list</span>
         <div className={styles.orderList}>
           {lines.length > 0
-            ? lines.map(({ product, quantity }) => (
+            ? lines.map(({ id, product, quantity, modifierSummary }) => (
                 <OrderItemCard
-                  key={product.id}
+                  key={id}
                   product={product}
                   quantity={quantity}
-                  onDecrement={() => onDecrement(product.id)}
-                  onIncrement={() => onIncrement(product.id)}
-                  onRemove={() => onRemove(product.id)}
+                  modifierSummary={modifierSummary}
+                  onDecrement={() => onDecrement(id)}
+                  onIncrement={() => onIncrement(id)}
+                  onRemove={() => onRemove(id)}
                 />
               ))
             : <p className={styles.emptyOrder} role="status">Add a product to start the order.</p>}
@@ -106,7 +109,7 @@ export function ReceiptRail({
         totalCentimes={totalCentimes}
         disabled={checkoutDisabled}
         processing={checkoutProcessing}
-        onCheckOrder={onCheckOrder}
+        onPlaceOrder={onPlaceOrder}
       />
     </Card>
   );

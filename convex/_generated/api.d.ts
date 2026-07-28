@@ -11,10 +11,13 @@
 import type * as categories from "../categories.js";
 import type * as inventory from "../inventory.js";
 import type * as lib_management from "../lib/management.js";
+import type * as lib_operational from "../lib/operational.js";
 import type * as modifiers from "../modifiers.js";
 import type * as products from "../products.js";
 import type * as recipes from "../recipes.js";
+import type * as sales from "../sales.js";
 import type * as seed from "../seed.js";
+import type * as sync from "../sync.js";
 
 import type {
   ApiFromModules,
@@ -26,10 +29,13 @@ declare const fullApi: ApiFromModules<{
   categories: typeof categories;
   inventory: typeof inventory;
   "lib/management": typeof lib_management;
+  "lib/operational": typeof lib_operational;
   modifiers: typeof modifiers;
   products: typeof products;
   recipes: typeof recipes;
+  sales: typeof sales;
   seed: typeof seed;
+  sync: typeof sync;
 }>;
 
 /**

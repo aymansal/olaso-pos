@@ -1,4 +1,4 @@
-import { openLocalDatabase, withLocalTransaction } from './localDatabase';
+import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 
 export type PendingOutboxEntry = {
   operationId: string;

@@ -7,6 +7,7 @@ import styles from './OrderItemCard.module.css';
 type OrderItemCardProps = {
   product: Product;
   quantity: number;
+  modifierSummary: string;
   onDecrement: () => void;
   onIncrement: () => void;
   onRemove: () => void;
@@ -15,6 +16,7 @@ type OrderItemCardProps = {
 export function OrderItemCard({
   product,
   quantity,
+  modifierSummary,
   onDecrement,
   onIncrement,
   onRemove,
@@ -27,6 +29,7 @@ export function OrderItemCard({
         {formatMoney(product.priceCentimes * quantity)}
       </strong>
       <span className={styles.meta}>
+        {modifierSummary ? `${modifierSummary} · ` : ''}
         {formatMoney(product.priceCentimes)} × {quantity}
       </span>
       <div className={styles.quantity}>
