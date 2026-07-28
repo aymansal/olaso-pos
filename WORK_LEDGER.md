@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-01
+**Status:** in progress — APP-01 done; APP-02 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -82,7 +82,7 @@ hardware are available.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | APP-00 | Establish the verified Goal 01 Git baseline and goal branch | done | `npm run check:pos` and `npm run build` passed; baseline commit `cade8a913cafebb91f571903820b8253236b841e` pushed to `origin/codex/goal-02-functional-app` |
-| APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | in progress | Dev deployment connected; schema/codegen/checks pass; commit pushed |
+| APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | done | Dev deployment `colorful-newt-937` connected; schema/codegen/checks/browser smoke pass; commit `5189a4eb6a52f363313b650be076a116864ff153` pushed to `origin/codex/goal-02-functional-app` |
 | APP-02 | Add protected deterministic Convex development seed/reset data | pending | Internal seed runs twice safely; table counts/sample data verified; commit pushed |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | pending | Validated CRUD/archive/version flows and live Products UI; commit pushed |
 | APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | pending | Exact base-unit operations and live Stock UI verified; commit pushed |
@@ -257,12 +257,16 @@ hardware are available.
 - Browser smoke testing at 1340 × 800 confirms the provider-wrapped app mounts
   without overflow, console warnings, or console errors.
 - Graphify's code graph is refreshed to 632 nodes and 763 edges.
+- APP-01 implementation commit
+  `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
+  `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 is done and APP-01 is the only card in progress.
+- APP-00 and APP-01 are done; no card is currently in progress and APP-02 is
+  pending.
 
-**Exact next action:** Review and stage the APP-01 diff, verify no local
-deployment credentials are staged, re-read the applicable DOX chain, then
-commit and push APP-01 before recording its SHA.
+**Exact next action:** Start APP-02 by re-reading the ledger and Convex DOX,
+then implement the protected deterministic development seed/reset function
+exactly as its card contract requires.
 
 ## Decisions and Blockers
 
@@ -284,6 +288,21 @@ commit and push APP-01 before recording its SHA.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-01 complete
+
+- Pushed `APP-01: bootstrap Convex foundation` as
+  `5189a4eb6a52f363313b650be076a116864ff153` and confirmed the remote branch
+  resolves to that SHA.
+- Completion evidence: dedicated cloud development deployment connected; typed
+  schema deployed; generated bindings and 11 tables verified; Convex, POS, and
+  production checks passed; 1340 × 800 runtime smoke and console passed;
+  Graphify structural code graph refreshed.
+- `.env.local`, deployment configuration, credentials, and signing material
+  were not committed.
+- APP-01 is done; APP-02 is pending and no card is in progress.
+- Exact next action: start APP-02 and implement the internal deterministic
+  development seed/reset.
 
 ### 2026-07-28 — APP-01 started
 
