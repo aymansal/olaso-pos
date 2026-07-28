@@ -1,16 +1,16 @@
 # Graph Report - Olaso  (2026-07-28)
 
 ## Corpus Check
-- 87 files · ~503,494 words
+- 88 files · ~507,549 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 632 nodes · 763 edges · 50 communities (37 shown, 13 thin omitted)
+- 665 nodes · 799 edges · 54 communities (43 shown, 11 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3b5140ce`
+- Built from commit: `268ed903`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -52,7 +52,9 @@
 - [[_COMMUNITY_Community 34|Community 34]]
 - [[_COMMUNITY_Community 35|Community 35]]
 - [[_COMMUNITY_Community 36|Community 36]]
+- [[_COMMUNITY_Community 37|Community 37]]
 - [[_COMMUNITY_Community 38|Community 38]]
+- [[_COMMUNITY_Community 39|Community 39]]
 - [[_COMMUNITY_Community 40|Community 40]]
 - [[_COMMUNITY_Community 41|Community 41]]
 - [[_COMMUNITY_Community 42|Community 42]]
@@ -60,6 +62,10 @@
 - [[_COMMUNITY_Community 44|Community 44]]
 - [[_COMMUNITY_Community 45|Community 45]]
 - [[_COMMUNITY_Community 46|Community 46]]
+- [[_COMMUNITY_Community 50|Community 50]]
+- [[_COMMUNITY_Community 51|Community 51]]
+- [[_COMMUNITY_Community 52|Community 52]]
+- [[_COMMUNITY_Community 53|Community 53]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Olaso POS Architecture` - 25 edges
@@ -88,15 +94,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (50 total, 13 thin omitted)
+## Communities (54 total, 11 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.05
-Nodes (58): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, categories, Category, CategoryId, americanoOrderImage (+50 more)
+Cohesion: 0.06
+Nodes (55): CategoryCard(), CategoryCardProps, CategoryRow(), CategoryRowProps, categories, Category, CategoryId, americanoOrderImage (+47 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.04
-Nodes (46): Actions, APK, APK release and update, Backend ownership, Backup and recovery, Convex, Convex function rules, Create (+38 more)
+Cohesion: 0.11
+Nodes (17): APK release and update, Backend ownership, Backup and recovery, Failure behavior, Frontend ownership, Initial index plan, Local-first checkout transaction, Locked decisions (+9 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.05
@@ -107,8 +113,8 @@ Cohesion: 0.05
 Nodes (36): 2026-07-28 — Goal 01 started, 2026-07-28 — Goal 01 tasks established, 2026-07-28 — Ledger initialized, 2026-07-28 — POS-01 baseline and ownership complete, 2026-07-28 — POS-02 data and pure operations complete, 2026-07-28 — POS-03 menu discovery complete, 2026-07-28 — POS-04 cart and receipt complete, 2026-07-28 — POS-05 order details complete (+28 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.12
-Nodes (24): DashboardScreen(), DashboardScreenProps, hourlySales, recentOrders, stockItems, Header(), HeaderProps, OrdersScreen() (+16 more)
+Cohesion: 0.10
+Nodes (27): DashboardScreen(), DashboardScreenProps, hourlySales, recentOrders, stockItems, Header(), HeaderProps, IconButton() (+19 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.06
@@ -116,11 +122,11 @@ Nodes (33): 10. Approval checklist, 11. Evidence and confidence, 1. Brand snapsh
 
 ### Community 6 - "Community 6"
 Cohesion: 0.06
-Nodes (33): 2026-07-28 — APP-00 complete, 2026-07-28 — APP-00 started, 2026-07-28 — APP-01 started, 2026-07-28 — Goal 02 drafted, Active Goal, APP-00 — Baseline and branch, APP-01 — Convex foundation, APP-02 — Development seed data (+25 more)
+Nodes (35): 2026-07-28 — APP-00 complete, 2026-07-28 — APP-00 started, 2026-07-28 — APP-01 complete, 2026-07-28 — APP-01 started, 2026-07-28 — APP-02 started, 2026-07-28 — Goal 02 drafted, Active Goal, APP-00 — Baseline and branch (+27 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.08
-Nodes (25): dependencies, @astryxdesign/core, convex, @fontsource/dm-sans, @phosphor-icons/react, react, react-dom, devDependencies (+17 more)
+Cohesion: 0.07
+Nodes (27): dependencies, @astryxdesign/core, convex, @fontsource/dm-sans, @phosphor-icons/react, react, react-dom, devDependencies (+19 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.09
@@ -218,25 +224,57 @@ Nodes (6): compilerOptions, composite, module, moduleResolution, skipLibCheck, i
 Cohesion: 0.33
 Nodes (5): ActionCtx, DatabaseReader, DatabaseWriter, MutationCtx, QueryCtx
 
+### Community 37 - "Community 37"
+Cohesion: 0.06
+Nodes (23): categorySeeds, coffeeModifiers, DailyAccumulator, drinkModifiers, IngredientEffectSeed, ingredientSeeds, ModifierChoiceSeed, modifierGroupSeeds (+15 more)
+
+### Community 39 - "Community 39"
+Cohesion: 0.40
+Nodes (5): APK, Convex, Responsibility of each platform, SQLite, Vercel
+
+### Community 43 - "Community 43"
+Cohesion: 0.40
+Nodes (5): Create, CRUD behavior, Delete, Read, Update
+
+### Community 44 - "Community 44"
+Cohesion: 0.40
+Nodes (5): Current scaling limit, Download synchronization, Idempotency, Outbox rule, Synchronization
+
+### Community 50 - "Community 50"
+Cohesion: 0.50
+Nodes (4): Actions, Convex function rules, Mutations, Queries
+
+### Community 51 - "Community 51"
+Cohesion: 0.50
+Nodes (4): Hardware tests, Persistence tests, Pure calculation tests, Testing strategy
+
+### Community 52 - "Community 52"
+Cohesion: 0.67
+Nodes (3): Money, Money and quantity representation, Stock
+
+### Community 53 - "Community 53"
+Cohesion: 0.67
+Nodes (3): Per-operation budget, Quota and performance budget, Required reviews
+
 ## Knowledge Gaps
-- **395 isolated node(s):** `OlasothemeTheme`, `components`, `TableNames`, `Doc`, `Id` (+390 more)
+- **420 isolated node(s):** `OlasothemeTheme`, `components`, `TableNames`, `Doc`, `Id` (+415 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `NavigationPage` connect `Community 4` to `Community 0`?**
-  _High betweenness centrality (0.011) - this node is a cross-community bridge._
-- **Why does `Olaso POS Architecture` connect `Community 1` to `Community 18`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
+- **Why does `Olaso POS Architecture` connect `Community 1` to `Community 39`, `Community 43`, `Community 44`, `Community 18`, `Community 50`, `Community 52`, `Community 53`, `Community 51`?**
+  _High betweenness centrality (0.007) - this node is a cross-community bridge._
 - **Why does `Olaso POS Product Specification` connect `Community 2` to `Community 15`?**
   _High betweenness centrality (0.006) - this node is a cross-community bridge._
 - **What connects `OlasothemeTheme`, `components`, `TableNames` to the rest of the system?**
-  _395 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _420 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05126452494873548 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05594679186228482 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._

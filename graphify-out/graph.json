@@ -200,7 +200,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "generated_server",
-      "community": 39,
+      "community": 37,
       "norm_label": "server.js"
     },
     {
@@ -302,6 +302,296 @@
       "id": "convex_schema_receiptline",
       "community": 14,
       "norm_label": "receiptline"
+    },
+    {
+      "label": "seed.ts",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "convex_seed",
+      "community": 37,
+      "norm_label": "seed.ts"
+    },
+    {
+      "label": "SEED_AT",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "convex_seed_seed_at",
+      "community": 37,
+      "norm_label": "seed_at"
+    },
+    {
+      "label": "SeedTable",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "convex_seed_seedtable",
+      "community": 37,
+      "norm_label": "seedtable"
+    },
+    {
+      "label": "ServiceMode",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "convex_seed_servicemode",
+      "community": 37,
+      "norm_label": "servicemode"
+    },
+    {
+      "label": "SaleStatus",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "convex_seed_salestatus",
+      "community": 37,
+      "norm_label": "salestatus"
+    },
+    {
+      "label": "IngredientEffectSeed",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "convex_seed_ingredienteffectseed",
+      "community": 37,
+      "norm_label": "ingredienteffectseed"
+    },
+    {
+      "label": "ProductSeed",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "convex_seed_productseed",
+      "community": 37,
+      "norm_label": "productseed"
+    },
+    {
+      "label": "ModifierChoiceSeed",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "convex_seed_modifierchoiceseed",
+      "community": 37,
+      "norm_label": "modifierchoiceseed"
+    },
+    {
+      "label": "SaleLineSeed",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "convex_seed_salelineseed",
+      "community": 37,
+      "norm_label": "salelineseed"
+    },
+    {
+      "label": "SaleSeed",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L64",
+      "_origin": "ast",
+      "id": "convex_seed_saleseed",
+      "community": 37,
+      "norm_label": "saleseed"
+    },
+    {
+      "label": "DailyAccumulator",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L78",
+      "_origin": "ast",
+      "id": "convex_seed_dailyaccumulator",
+      "community": 37,
+      "norm_label": "dailyaccumulator"
+    },
+    {
+      "label": "categorySeeds",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L112",
+      "_origin": "ast",
+      "id": "convex_seed_categoryseeds",
+      "community": 37,
+      "norm_label": "categoryseeds"
+    },
+    {
+      "label": "ingredientSeeds",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L123",
+      "_origin": "ast",
+      "id": "convex_seed_ingredientseeds",
+      "community": 37,
+      "norm_label": "ingredientseeds"
+    },
+    {
+      "label": "modifierGroupSeeds",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L224",
+      "_origin": "ast",
+      "id": "convex_seed_modifiergroupseeds",
+      "community": 37,
+      "norm_label": "modifiergroupseeds"
+    },
+    {
+      "label": "modifierOptionSeeds",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L259",
+      "_origin": "ast",
+      "id": "convex_seed_modifieroptionseeds",
+      "community": 37,
+      "norm_label": "modifieroptionseeds"
+    },
+    {
+      "label": "drinkModifiers",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L344",
+      "_origin": "ast",
+      "id": "convex_seed_drinkmodifiers",
+      "community": 37,
+      "norm_label": "drinkmodifiers"
+    },
+    {
+      "label": "coffeeModifiers",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L345",
+      "_origin": "ast",
+      "id": "convex_seed_coffeemodifiers",
+      "community": 37,
+      "norm_label": "coffeemodifiers"
+    },
+    {
+      "label": "productSeeds",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L347",
+      "_origin": "ast",
+      "id": "convex_seed_productseeds",
+      "community": 37,
+      "norm_label": "productseeds"
+    },
+    {
+      "label": "stockAdjustmentSeeds",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L559",
+      "_origin": "ast",
+      "id": "convex_seed_stockadjustmentseeds",
+      "community": 37,
+      "norm_label": "stockadjustmentseeds"
+    },
+    {
+      "label": "saleSeeds",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L586",
+      "_origin": "ast",
+      "id": "convex_seed_saleseeds",
+      "community": 37,
+      "norm_label": "saleseeds"
+    },
+    {
+      "label": "assertSeedEnabled()",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L791",
+      "_origin": "ast",
+      "id": "convex_seed_assertseedenabled",
+      "community": 37,
+      "norm_label": "assertseedenabled()"
+    },
+    {
+      "label": "mustGet()",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L799",
+      "_origin": "ast",
+      "id": "convex_seed_mustget",
+      "community": 37,
+      "norm_label": "mustget()"
+    },
+    {
+      "label": "clearTable()",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L807",
+      "_origin": "ast",
+      "id": "convex_seed_cleartable",
+      "community": 37,
+      "norm_label": "cleartable()"
+    },
+    {
+      "label": "createCounts()",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L824",
+      "_origin": "ast",
+      "id": "convex_seed_createcounts",
+      "community": 37,
+      "norm_label": "createcounts()"
+    },
+    {
+      "label": "createDailyAccumulator()",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L830",
+      "_origin": "ast",
+      "id": "convex_seed_createdailyaccumulator",
+      "community": 37,
+      "norm_label": "createdailyaccumulator()"
+    },
+    {
+      "label": "incrementStockDelta()",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L844",
+      "_origin": "ast",
+      "id": "convex_seed_incrementstockdelta",
+      "community": 37,
+      "norm_label": "incrementstockdelta()"
+    },
+    {
+      "label": "resetAndSeed",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L852",
+      "_origin": "ast",
+      "id": "convex_seed_resetandseed",
+      "community": 37,
+      "norm_label": "resetandseed"
+    },
+    {
+      "label": "boundedCount()",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L1357",
+      "_origin": "ast",
+      "id": "convex_seed_boundedcount",
+      "community": 37,
+      "norm_label": "boundedcount()"
+    },
+    {
+      "label": "verify",
+      "file_type": "code",
+      "source_file": "convex/seed.ts",
+      "source_location": "L1370",
+      "_origin": "ast",
+      "id": "convex_seed_verify",
+      "community": 37,
+      "norm_label": "verify"
     },
     {
       "label": "tsconfig.json",
@@ -554,10 +844,30 @@
       "norm_label": "check:convex"
     },
     {
-      "label": "dev",
+      "label": "seed:dev",
       "file_type": "code",
       "source_file": "package.json",
       "source_location": "L10",
+      "_origin": "ast",
+      "id": "package_scripts_seed_dev",
+      "community": 7,
+      "norm_label": "seed:dev"
+    },
+    {
+      "label": "check:seed",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "package_scripts_check_seed",
+      "community": 7,
+      "norm_label": "check:seed"
+    },
+    {
+      "label": "dev",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L12",
       "_origin": "ast",
       "id": "package_scripts_dev",
       "community": 7,
@@ -567,7 +877,7 @@
       "label": "build",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L11",
+      "source_location": "L13",
       "_origin": "ast",
       "id": "package_scripts_build",
       "community": 7,
@@ -577,7 +887,7 @@
       "label": "preview",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L12",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "package_scripts_preview",
       "community": 7,
@@ -587,7 +897,7 @@
       "label": "dependencies",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L14",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "package_dependencies",
       "community": 7,
@@ -597,7 +907,7 @@
       "label": "@astryxdesign/core",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L15",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "package_dependencies_astryxdesign_core",
       "community": 7,
@@ -607,7 +917,7 @@
       "label": "@fontsource/dm-sans",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L16",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "package_dependencies_fontsource_dm_sans",
       "community": 7,
@@ -617,7 +927,7 @@
       "label": "@phosphor-icons/react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L17",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "package_dependencies_phosphor_icons_react",
       "community": 7,
@@ -627,7 +937,7 @@
       "label": "convex",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L18",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "package_dependencies_convex",
       "community": 7,
@@ -637,7 +947,7 @@
       "label": "react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L19",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "package_dependencies_react",
       "community": 7,
@@ -647,7 +957,7 @@
       "label": "react-dom",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L20",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "package_dependencies_react_dom",
       "community": 7,
@@ -657,7 +967,7 @@
       "label": "devDependencies",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L22",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "package_devdependencies",
       "community": 7,
@@ -667,7 +977,7 @@
       "label": "@astryxdesign/cli",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "package_devdependencies_astryxdesign_cli",
       "community": 7,
@@ -677,7 +987,7 @@
       "label": "@types/react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L24",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "package_devdependencies_types_react",
       "community": 7,
@@ -687,7 +997,7 @@
       "label": "@types/react-dom",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L25",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "package_devdependencies_types_react_dom",
       "community": 7,
@@ -697,7 +1007,7 @@
       "label": "@vitejs/plugin-react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L26",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "package_devdependencies_vitejs_plugin_react",
       "community": 7,
@@ -707,7 +1017,7 @@
       "label": "typescript",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L27",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "package_devdependencies_typescript",
       "community": 7,
@@ -717,7 +1027,7 @@
       "label": "vite",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L28",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "package_devdependencies_vite",
       "community": 7,
@@ -1260,7 +1570,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "iconbutton_iconbutton",
-      "community": 0,
+      "community": 4,
       "norm_label": "iconbutton.tsx"
     },
     {
@@ -1270,7 +1580,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "iconbutton_iconbutton_iconbuttonprops",
-      "community": 0,
+      "community": 4,
       "norm_label": "iconbuttonprops"
     },
     {
@@ -1280,7 +1590,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "iconbutton_iconbutton_iconbutton",
-      "community": 0,
+      "community": 4,
       "norm_label": "iconbutton()"
     },
     {
@@ -1500,7 +1810,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "receiptheader_receiptheader",
-      "community": 0,
+      "community": 4,
       "norm_label": "receiptheader.tsx"
     },
     {
@@ -1510,7 +1820,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "receiptheader_receiptheader_receiptheader",
-      "community": 0,
+      "community": 4,
       "norm_label": "receiptheader()"
     },
     {
@@ -3060,7 +3370,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "architecture_responsibility_of_each_platform",
-      "community": 1,
+      "community": 39,
       "norm_label": "responsibility of each platform"
     },
     {
@@ -3070,7 +3380,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "architecture_apk",
-      "community": 1,
+      "community": 39,
       "norm_label": "apk"
     },
     {
@@ -3080,7 +3390,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "architecture_sqlite",
-      "community": 1,
+      "community": 39,
       "norm_label": "sqlite"
     },
     {
@@ -3090,7 +3400,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "architecture_convex",
-      "community": 1,
+      "community": 39,
       "norm_label": "convex"
     },
     {
@@ -3100,7 +3410,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "architecture_vercel",
-      "community": 1,
+      "community": 39,
       "norm_label": "vercel"
     },
     {
@@ -3120,7 +3430,7 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "architecture_synchronization",
-      "community": 1,
+      "community": 44,
       "norm_label": "synchronization"
     },
     {
@@ -3130,7 +3440,7 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "architecture_outbox_rule",
-      "community": 1,
+      "community": 44,
       "norm_label": "outbox rule"
     },
     {
@@ -3140,7 +3450,7 @@
       "source_location": "L177",
       "_origin": "ast",
       "id": "architecture_idempotency",
-      "community": 1,
+      "community": 44,
       "norm_label": "idempotency"
     },
     {
@@ -3150,7 +3460,7 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "architecture_download_synchronization",
-      "community": 1,
+      "community": 44,
       "norm_label": "download synchronization"
     },
     {
@@ -3160,7 +3470,7 @@
       "source_location": "L200",
       "_origin": "ast",
       "id": "architecture_current_scaling_limit",
-      "community": 1,
+      "community": 44,
       "norm_label": "current scaling limit"
     },
     {
@@ -3280,7 +3590,7 @@
       "source_location": "L311",
       "_origin": "ast",
       "id": "architecture_money_and_quantity_representation",
-      "community": 1,
+      "community": 52,
       "norm_label": "money and quantity representation"
     },
     {
@@ -3290,7 +3600,7 @@
       "source_location": "L313",
       "_origin": "ast",
       "id": "architecture_money",
-      "community": 1,
+      "community": 52,
       "norm_label": "money"
     },
     {
@@ -3300,7 +3610,7 @@
       "source_location": "L323",
       "_origin": "ast",
       "id": "architecture_stock",
-      "community": 1,
+      "community": 52,
       "norm_label": "stock"
     },
     {
@@ -3330,7 +3640,7 @@
       "source_location": "L411",
       "_origin": "ast",
       "id": "architecture_convex_function_rules",
-      "community": 1,
+      "community": 50,
       "norm_label": "convex function rules"
     },
     {
@@ -3340,7 +3650,7 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "architecture_queries",
-      "community": 1,
+      "community": 50,
       "norm_label": "queries"
     },
     {
@@ -3350,7 +3660,7 @@
       "source_location": "L424",
       "_origin": "ast",
       "id": "architecture_mutations",
-      "community": 1,
+      "community": 50,
       "norm_label": "mutations"
     },
     {
@@ -3360,7 +3670,7 @@
       "source_location": "L435",
       "_origin": "ast",
       "id": "architecture_actions",
-      "community": 1,
+      "community": 50,
       "norm_label": "actions"
     },
     {
@@ -3380,7 +3690,7 @@
       "source_location": "L466",
       "_origin": "ast",
       "id": "architecture_crud_behavior",
-      "community": 1,
+      "community": 43,
       "norm_label": "crud behavior"
     },
     {
@@ -3390,7 +3700,7 @@
       "source_location": "L468",
       "_origin": "ast",
       "id": "architecture_create",
-      "community": 1,
+      "community": 43,
       "norm_label": "create"
     },
     {
@@ -3400,7 +3710,7 @@
       "source_location": "L475",
       "_origin": "ast",
       "id": "architecture_read",
-      "community": 1,
+      "community": 43,
       "norm_label": "read"
     },
     {
@@ -3410,7 +3720,7 @@
       "source_location": "L483",
       "_origin": "ast",
       "id": "architecture_update",
-      "community": 1,
+      "community": 43,
       "norm_label": "update"
     },
     {
@@ -3420,7 +3730,7 @@
       "source_location": "L490",
       "_origin": "ast",
       "id": "architecture_delete",
-      "community": 1,
+      "community": 43,
       "norm_label": "delete"
     },
     {
@@ -3430,7 +3740,7 @@
       "source_location": "L498",
       "_origin": "ast",
       "id": "architecture_quota_and_performance_budget",
-      "community": 1,
+      "community": 53,
       "norm_label": "quota and performance budget"
     },
     {
@@ -3440,7 +3750,7 @@
       "source_location": "L511",
       "_origin": "ast",
       "id": "architecture_per_operation_budget",
-      "community": 1,
+      "community": 53,
       "norm_label": "per-operation budget"
     },
     {
@@ -3450,7 +3760,7 @@
       "source_location": "L531",
       "_origin": "ast",
       "id": "architecture_required_reviews",
-      "community": 1,
+      "community": 53,
       "norm_label": "required reviews"
     },
     {
@@ -3520,7 +3830,7 @@
       "source_location": "L650",
       "_origin": "ast",
       "id": "architecture_testing_strategy",
-      "community": 1,
+      "community": 51,
       "norm_label": "testing strategy"
     },
     {
@@ -3530,7 +3840,7 @@
       "source_location": "L652",
       "_origin": "ast",
       "id": "architecture_pure_calculation_tests",
-      "community": 1,
+      "community": 51,
       "norm_label": "pure calculation tests"
     },
     {
@@ -3540,7 +3850,7 @@
       "source_location": "L663",
       "_origin": "ast",
       "id": "architecture_persistence_tests",
-      "community": 1,
+      "community": 51,
       "norm_label": "persistence tests"
     },
     {
@@ -3550,7 +3860,7 @@
       "source_location": "L672",
       "_origin": "ast",
       "id": "architecture_hardware_tests",
-      "community": 1,
+      "community": 51,
       "norm_label": "hardware tests"
     },
     {
@@ -5037,7 +5347,7 @@
       "label": "Decisions and Blockers",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L263",
+      "source_location": "L276",
       "_origin": "ast",
       "id": "work_ledger_decisions_and_blockers",
       "community": 6,
@@ -5047,7 +5357,7 @@
       "label": "Decisions",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L265",
+      "source_location": "L278",
       "_origin": "ast",
       "id": "work_ledger_decisions",
       "community": 6,
@@ -5057,7 +5367,7 @@
       "label": "Blockers",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L275",
+      "source_location": "L288",
       "_origin": "ast",
       "id": "work_ledger_blockers",
       "community": 6,
@@ -5067,17 +5377,37 @@
       "label": "Journal",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L282",
+      "source_location": "L295",
       "_origin": "ast",
       "id": "work_ledger_journal",
       "community": 6,
       "norm_label": "journal"
     },
     {
+      "label": "2026-07-28 \u2014 APP-02 started",
+      "file_type": "document",
+      "source_file": "WORK_LEDGER.md",
+      "source_location": "L297",
+      "_origin": "ast",
+      "id": "work_ledger_2026_07_28_app_02_started",
+      "community": 6,
+      "norm_label": "2026-07-28 \u2014 app-02 started"
+    },
+    {
+      "label": "2026-07-28 \u2014 APP-01 complete",
+      "file_type": "document",
+      "source_file": "WORK_LEDGER.md",
+      "source_location": "L330",
+      "_origin": "ast",
+      "id": "work_ledger_2026_07_28_app_01_complete",
+      "community": 6,
+      "norm_label": "2026-07-28 \u2014 app-01 complete"
+    },
+    {
       "label": "2026-07-28 \u2014 APP-01 started",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L284",
+      "source_location": "L345",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_01_started",
       "community": 6,
@@ -5087,7 +5417,7 @@
       "label": "2026-07-28 \u2014 APP-00 complete",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L310",
+      "source_location": "L380",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_00_complete",
       "community": 6,
@@ -5097,7 +5427,7 @@
       "label": "2026-07-28 \u2014 APP-00 started",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L327",
+      "source_location": "L397",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_00_started",
       "community": 6,
@@ -5107,7 +5437,7 @@
       "label": "2026-07-28 \u2014 Goal 02 drafted",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L352",
+      "source_location": "L422",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_goal_02_drafted",
       "community": 6,
@@ -5117,7 +5447,7 @@
       "label": "Completed Goals",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L365",
+      "source_location": "L435",
       "_origin": "ast",
       "id": "work_ledger_completed_goals",
       "community": 6,
@@ -6260,7 +6590,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "generated_server_internalquery",
-      "community": 44,
+      "community": 37,
       "norm_label": "internalquery"
     },
     {
@@ -6280,7 +6610,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "generated_server_internalmutation",
-      "community": 43,
+      "community": 37,
       "norm_label": "internalmutation"
     },
     {
@@ -6368,14 +6698,25 @@
       "target": "olasotheme_olasothemetheme"
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/_generated/api.d.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "generated_api_d",
+      "target": "convex_seed",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "convex/_generated/api.js",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_api",
-      "target": "generated_api_components",
-      "confidence_score": 1.0
+      "target": "generated_api_components"
     },
     {
       "relation": "imports_from",
@@ -6384,9 +6725,9 @@
       "source_file": "convex/_generated/dataModel.d.ts",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_datamodel_d",
-      "target": "convex_schema",
-      "confidence_score": 1.0
+      "target": "convex_schema"
     },
     {
       "relation": "contains",
@@ -6394,9 +6735,9 @@
       "source_file": "convex/_generated/dataModel.d.ts",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_datamodel_d",
-      "target": "generated_datamodel_d_datamodel",
-      "confidence_score": 1.0
+      "target": "generated_datamodel_d_datamodel"
     },
     {
       "relation": "contains",
@@ -6404,9 +6745,9 @@
       "source_file": "convex/_generated/dataModel.d.ts",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_datamodel_d",
-      "target": "generated_datamodel_d_doc",
-      "confidence_score": 1.0
+      "target": "generated_datamodel_d_doc"
     },
     {
       "relation": "contains",
@@ -6414,9 +6755,9 @@
       "source_file": "convex/_generated/dataModel.d.ts",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_datamodel_d",
-      "target": "generated_datamodel_d_id",
-      "confidence_score": 1.0
+      "target": "generated_datamodel_d_id"
     },
     {
       "relation": "contains",
@@ -6424,9 +6765,9 @@
       "source_file": "convex/_generated/dataModel.d.ts",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_datamodel_d",
-      "target": "generated_datamodel_d_tablenames",
-      "confidence_score": 1.0
+      "target": "generated_datamodel_d_tablenames"
     },
     {
       "relation": "contains",
@@ -6434,9 +6775,9 @@
       "source_file": "convex/_generated/server.d.ts",
       "source_location": "L123",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_server_d",
-      "target": "generated_server_d_actionctx",
-      "confidence_score": 1.0
+      "target": "generated_server_d_actionctx"
     },
     {
       "relation": "contains",
@@ -6444,9 +6785,9 @@
       "source_file": "convex/_generated/server.d.ts",
       "source_location": "L132",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_server_d",
-      "target": "generated_server_d_databasereader",
-      "confidence_score": 1.0
+      "target": "generated_server_d_databasereader"
     },
     {
       "relation": "contains",
@@ -6454,9 +6795,9 @@
       "source_file": "convex/_generated/server.d.ts",
       "source_location": "L143",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_server_d",
-      "target": "generated_server_d_databasewriter",
-      "confidence_score": 1.0
+      "target": "generated_server_d_databasewriter"
     },
     {
       "relation": "contains",
@@ -6464,9 +6805,9 @@
       "source_file": "convex/_generated/server.d.ts",
       "source_location": "L115",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_server_d",
-      "target": "generated_server_d_mutationctx",
-      "confidence_score": 1.0
+      "target": "generated_server_d_mutationctx"
     },
     {
       "relation": "contains",
@@ -6474,8 +6815,19 @@
       "source_file": "convex/_generated/server.d.ts",
       "source_location": "L107",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "generated_server_d",
-      "target": "generated_server_d_queryctx",
+      "target": "generated_server_d_queryctx"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "generated_server",
       "confidence_score": 1.0
     },
     {
@@ -6484,9 +6836,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_activestatus",
-      "confidence_score": 1.0
+      "target": "convex_schema_activestatus"
     },
     {
       "relation": "contains",
@@ -6494,9 +6846,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_baseunit",
-      "confidence_score": 1.0
+      "target": "convex_schema_baseunit"
     },
     {
       "relation": "contains",
@@ -6504,9 +6856,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_modifiersnapshot",
-      "confidence_score": 1.0
+      "target": "convex_schema_modifiersnapshot"
     },
     {
       "relation": "contains",
@@ -6514,9 +6866,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_productstatus",
-      "confidence_score": 1.0
+      "target": "convex_schema_productstatus"
     },
     {
       "relation": "contains",
@@ -6524,9 +6876,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_receiptline",
-      "confidence_score": 1.0
+      "target": "convex_schema_receiptline"
     },
     {
       "relation": "contains",
@@ -6534,9 +6886,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_recipestatus",
-      "confidence_score": 1.0
+      "target": "convex_schema_recipestatus"
     },
     {
       "relation": "contains",
@@ -6544,9 +6896,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_salestatus",
-      "confidence_score": 1.0
+      "target": "convex_schema_salestatus"
     },
     {
       "relation": "contains",
@@ -6554,9 +6906,9 @@
       "source_file": "convex/schema.ts",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_servicemode",
-      "confidence_score": 1.0
+      "target": "convex_schema_servicemode"
     },
     {
       "relation": "contains",
@@ -6564,8 +6916,310 @@
       "source_file": "convex/schema.ts",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_schema",
-      "target": "convex_schema_stockmovementtype",
+      "target": "convex_schema_stockmovementtype"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L791",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_assertseedenabled",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L1357",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_boundedcount",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_categoryseeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L807",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_cleartable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L345",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_coffeemodifiers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L824",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_createcounts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L830",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_createdailyaccumulator",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_dailyaccumulator",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L344",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_drinkmodifiers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L844",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_incrementstockdelta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_ingredienteffectseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_ingredientseeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_modifierchoiceseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L224",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_modifiergroupseeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L259",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_modifieroptionseeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L799",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_mustget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_productseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L347",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_productseeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L852",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_resetandseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_salelineseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_saleseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L586",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_saleseeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_salestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_seed_at",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_seedtable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_servicemode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L559",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_stockadjustmentseeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L1370",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "convex_seed_verify",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "generated_server_internalmutation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/seed.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "convex_seed",
+      "target": "generated_server_internalquery",
       "confidence_score": 1.0
     },
     {
@@ -6574,9 +7228,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig",
-      "target": "convex_tsconfig_compileroptions",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions"
     },
     {
       "relation": "contains",
@@ -6584,9 +7238,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig",
-      "target": "convex_tsconfig_exclude",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_exclude"
     },
     {
       "relation": "contains",
@@ -6594,9 +7248,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig",
-      "target": "convex_tsconfig_include",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_include"
     },
     {
       "relation": "contains",
@@ -6604,9 +7258,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_allowjs",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_allowjs"
     },
     {
       "relation": "contains",
@@ -6614,9 +7268,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_allowsyntheticdefaultimports",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_allowsyntheticdefaultimports"
     },
     {
       "relation": "contains",
@@ -6624,9 +7278,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_forceconsistentcasinginfilenames",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_forceconsistentcasinginfilenames"
     },
     {
       "relation": "contains",
@@ -6634,9 +7288,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_isolatedmodules",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_isolatedmodules"
     },
     {
       "relation": "contains",
@@ -6644,9 +7298,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_jsx",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_jsx"
     },
     {
       "relation": "contains",
@@ -6654,9 +7308,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_lib",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_lib"
     },
     {
       "relation": "contains",
@@ -6664,9 +7318,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_module",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_module"
     },
     {
       "relation": "contains",
@@ -6674,9 +7328,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_moduleresolution",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_moduleresolution"
     },
     {
       "relation": "contains",
@@ -6684,9 +7338,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_noemit",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_noemit"
     },
     {
       "relation": "contains",
@@ -6694,9 +7348,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_skiplibcheck",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_skiplibcheck"
     },
     {
       "relation": "contains",
@@ -6704,9 +7358,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_strict",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_strict"
     },
     {
       "relation": "contains",
@@ -6714,9 +7368,9 @@
       "source_file": "convex/tsconfig.json",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_tsconfig_compileroptions",
-      "target": "convex_tsconfig_compileroptions_target",
-      "confidence_score": 1.0
+      "target": "convex_tsconfig_compileroptions_target"
     },
     {
       "relation": "contains",
@@ -6804,9 +7458,9 @@
       "source_file": "package.json",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_check_convex",
-      "confidence_score": 1.0
+      "target": "package_scripts_check_convex"
     },
     {
       "relation": "contains",
@@ -6817,6 +7471,16 @@
       "confidence_score": 1.0,
       "source": "package_scripts",
       "target": "package_scripts_check_pos"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_check_seed",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6837,6 +7501,16 @@
       "confidence_score": 1.0,
       "source": "package_scripts",
       "target": "package_scripts_preview"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_seed_dev",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -6864,9 +7538,9 @@
       "source_file": "package.json",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_dependencies",
-      "target": "package_dependencies_convex",
-      "confidence_score": 1.0
+      "target": "package_dependencies_convex"
     },
     {
       "relation": "contains",
@@ -7322,9 +7996,9 @@
       "source_file": "src/data/AppDataProvider.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "data_appdataprovider",
-      "target": "data_appdataprovider_appdataprovider",
-      "confidence_score": 1.0
+      "target": "data_appdataprovider_appdataprovider"
     },
     {
       "relation": "contains",
@@ -7332,9 +8006,9 @@
       "source_file": "src/data/AppDataProvider.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "data_appdataprovider",
-      "target": "data_appdataprovider_convexclient",
-      "confidence_score": 1.0
+      "target": "data_appdataprovider_convexclient"
     },
     {
       "relation": "imports_from",
@@ -7343,9 +8017,9 @@
       "source_file": "src/main.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_main",
-      "target": "data_appdataprovider",
-      "confidence_score": 1.0
+      "target": "data_appdataprovider"
     },
     {
       "relation": "imports",
@@ -7354,9 +8028,9 @@
       "source_file": "src/main.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_main",
-      "target": "data_appdataprovider_appdataprovider",
-      "confidence_score": 1.0
+      "target": "data_appdataprovider_appdataprovider"
     },
     {
       "relation": "contains",
@@ -11089,9 +11763,9 @@
       "source_file": "AGENTS.md",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "agents_repository_rails",
-      "target": "agents_card_commits_and_pushes",
-      "confidence_score": 1.0
+      "target": "agents_card_commits_and_pushes"
     },
     {
       "relation": "contains",
@@ -12919,9 +13593,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L67",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_olaso_work_ledger",
-      "target": "work_ledger_git_workflow",
-      "confidence_score": 1.0
+      "target": "work_ledger_git_workflow"
     },
     {
       "relation": "contains",
@@ -12989,9 +13663,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_active_goal",
-      "target": "work_ledger_goal_02_functional_full_application_beta",
-      "confidence_score": 1.0
+      "target": "work_ledger_goal_02_functional_full_application_beta"
     },
     {
       "relation": "contains",
@@ -13009,9 +13683,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L98",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_00_baseline_and_branch",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_00_baseline_and_branch"
     },
     {
       "relation": "contains",
@@ -13019,9 +13693,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_01_convex_foundation",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_01_convex_foundation"
     },
     {
       "relation": "contains",
@@ -13029,9 +13703,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_02_development_seed_data",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_02_development_seed_data"
     },
     {
       "relation": "contains",
@@ -13039,9 +13713,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L130",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_03_products_and_recipes",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_03_products_and_recipes"
     },
     {
       "relation": "contains",
@@ -13049,9 +13723,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L140",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_04_stock",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_04_stock"
     },
     {
       "relation": "contains",
@@ -13059,9 +13733,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L149",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_05_local_operational_foundation",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_05_local_operational_foundation"
     },
     {
       "relation": "contains",
@@ -13069,9 +13743,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L160",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_06_sales_and_synchronization",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_06_sales_and_synchronization"
     },
     {
       "relation": "contains",
@@ -13079,9 +13753,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L171",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_07_orders",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_07_orders"
     },
     {
       "relation": "contains",
@@ -13089,9 +13763,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L179",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_08_dashboard",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_08_dashboard"
     },
     {
       "relation": "contains",
@@ -13099,9 +13773,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L186",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_09_reports",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_09_reports"
     },
     {
       "relation": "contains",
@@ -13109,9 +13783,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L194",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_10_settings_and_lock",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_10_settings_and_lock"
     },
     {
       "relation": "contains",
@@ -13119,9 +13793,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L204",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_11_android_beta",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_11_android_beta"
     },
     {
       "relation": "contains",
@@ -13129,9 +13803,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L212",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_task_contracts",
-      "target": "work_ledger_app_12_closeout",
-      "confidence_score": 1.0
+      "target": "work_ledger_app_12_closeout"
     },
     {
       "relation": "contains",
@@ -13159,9 +13833,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L310",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_journal",
-      "target": "work_ledger_2026_07_28_app_00_complete",
-      "confidence_score": 1.0
+      "target": "work_ledger_2026_07_28_app_00_complete"
     },
     {
       "relation": "contains",
@@ -13169,8 +13843,18 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L327",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_journal",
-      "target": "work_ledger_2026_07_28_app_00_started",
+      "target": "work_ledger_2026_07_28_app_00_started"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "WORK_LEDGER.md",
+      "source_location": "L330",
+      "weight": 1.0,
+      "source": "work_ledger_journal",
+      "target": "work_ledger_2026_07_28_app_01_complete",
       "confidence_score": 1.0
     },
     {
@@ -13179,8 +13863,18 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L284",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_journal",
-      "target": "work_ledger_2026_07_28_app_01_started",
+      "target": "work_ledger_2026_07_28_app_01_started"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "WORK_LEDGER.md",
+      "source_location": "L297",
+      "weight": 1.0,
+      "source": "work_ledger_journal",
+      "target": "work_ledger_2026_07_28_app_02_started",
       "confidence_score": 1.0
     },
     {
@@ -13189,9 +13883,9 @@
       "source_file": "WORK_LEDGER.md",
       "source_location": "L274",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "work_ledger_journal",
-      "target": "work_ledger_2026_07_28_goal_02_drafted",
-      "confidence_score": 1.0
+      "target": "work_ledger_2026_07_28_goal_02_drafted"
     },
     {
       "relation": "contains",
@@ -13199,9 +13893,9 @@
       "source_file": "convex/AGENTS.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_agents",
-      "target": "convex_agents_convex_backend_dox",
-      "confidence_score": 1.0
+      "target": "convex_agents_convex_backend_dox"
     },
     {
       "relation": "contains",
@@ -13209,9 +13903,9 @@
       "source_file": "convex/AGENTS.md",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_agents_convex_backend_dox",
-      "target": "convex_agents_child_dox_index",
-      "confidence_score": 1.0
+      "target": "convex_agents_child_dox_index"
     },
     {
       "relation": "contains",
@@ -13219,9 +13913,9 @@
       "source_file": "convex/AGENTS.md",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_agents_convex_backend_dox",
-      "target": "convex_agents_local_contracts",
-      "confidence_score": 1.0
+      "target": "convex_agents_local_contracts"
     },
     {
       "relation": "contains",
@@ -13229,9 +13923,9 @@
       "source_file": "convex/AGENTS.md",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_agents_convex_backend_dox",
-      "target": "convex_agents_ownership",
-      "confidence_score": 1.0
+      "target": "convex_agents_ownership"
     },
     {
       "relation": "contains",
@@ -13239,9 +13933,9 @@
       "source_file": "convex/AGENTS.md",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_agents_convex_backend_dox",
-      "target": "convex_agents_purpose",
-      "confidence_score": 1.0
+      "target": "convex_agents_purpose"
     },
     {
       "relation": "contains",
@@ -13249,9 +13943,9 @@
       "source_file": "convex/AGENTS.md",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "convex_agents_convex_backend_dox",
-      "target": "convex_agents_verification",
-      "confidence_score": 1.0
+      "target": "convex_agents_verification"
     },
     {
       "relation": "contains",
@@ -13259,9 +13953,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos",
-      "target": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions"
     },
     {
       "relation": "contains",
@@ -13269,9 +13963,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_active_goal",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_active_goal"
     },
     {
       "relation": "contains",
@@ -13279,9 +13973,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L364",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_completed_goals",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_completed_goals"
     },
     {
       "relation": "contains",
@@ -13289,9 +13983,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L168",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_current_checkpoint",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_current_checkpoint"
     },
     {
       "relation": "contains",
@@ -13299,9 +13993,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L182",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_decisions_and_blockers",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_decisions_and_blockers"
     },
     {
       "relation": "contains",
@@ -13309,9 +14003,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L157",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_goal_completion_criteria",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_goal_completion_criteria"
     },
     {
       "relation": "contains",
@@ -13319,9 +14013,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L201",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_journal",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_journal"
     },
     {
       "relation": "contains",
@@ -13329,9 +14023,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_ledger_rules",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_ledger_rules"
     },
     {
       "relation": "contains",
@@ -13339,9 +14033,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_task_board",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_task_board"
     },
     {
       "relation": "contains",
@@ -13349,9 +14043,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L76",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_goal_01_archive_functional_pos_interactions",
-      "target": "goals_goal_01_functional_pos_task_contracts",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_task_contracts"
     },
     {
       "relation": "contains",
@@ -13359,9 +14053,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_active_goal",
-      "target": "goals_goal_01_functional_pos_excluded",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_excluded"
     },
     {
       "relation": "contains",
@@ -13369,9 +14063,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_active_goal",
-      "target": "goals_goal_01_functional_pos_goal_01_functional_pos_interactions",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_goal_01_functional_pos_interactions"
     },
     {
       "relation": "contains",
@@ -13379,9 +14073,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L36",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_active_goal",
-      "target": "goals_goal_01_functional_pos_included",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_included"
     },
     {
       "relation": "contains",
@@ -13389,9 +14083,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_01_baseline_and_ownership",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_01_baseline_and_ownership"
     },
     {
       "relation": "contains",
@@ -13399,9 +14093,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_02_data_and_pure_operations",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_02_data_and_pure_operations"
     },
     {
       "relation": "contains",
@@ -13409,9 +14103,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_03_menu_discovery",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_03_menu_discovery"
     },
     {
       "relation": "contains",
@@ -13419,9 +14113,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L104",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_04_cart_and_receipt",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_04_cart_and_receipt"
     },
     {
       "relation": "contains",
@@ -13429,9 +14123,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L114",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_05_order_details",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_05_order_details"
     },
     {
       "relation": "contains",
@@ -13439,9 +14133,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L121",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_06_totals_and_checkout_boundary",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_06_totals_and_checkout_boundary"
     },
     {
       "relation": "contains",
@@ -13449,9 +14143,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L131",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_07_navigation_survival",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_07_navigation_survival"
     },
     {
       "relation": "contains",
@@ -13459,9 +14153,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L139",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_08_interaction_and_accessibility_states",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_08_interaction_and_accessibility_states"
     },
     {
       "relation": "contains",
@@ -13469,9 +14163,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L147",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_task_contracts",
-      "target": "goals_goal_01_functional_pos_pos_09_goal_closeout",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_pos_09_goal_closeout"
     },
     {
       "relation": "contains",
@@ -13479,9 +14173,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L197",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_decisions_and_blockers",
-      "target": "goals_goal_01_functional_pos_blockers",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_blockers"
     },
     {
       "relation": "contains",
@@ -13489,9 +14183,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_decisions_and_blockers",
-      "target": "goals_goal_01_functional_pos_decisions",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_decisions"
     },
     {
       "relation": "contains",
@@ -13499,9 +14193,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L339",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_goal_01_started",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_goal_01_started"
     },
     {
       "relation": "contains",
@@ -13509,9 +14203,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L348",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_goal_01_tasks_established",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_goal_01_tasks_established"
     },
     {
       "relation": "contains",
@@ -13519,9 +14213,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L357",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_ledger_initialized",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_ledger_initialized"
     },
     {
       "relation": "contains",
@@ -13529,9 +14223,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L327",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_01_baseline_and_ownership_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_01_baseline_and_ownership_complete"
     },
     {
       "relation": "contains",
@@ -13539,9 +14233,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L313",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_02_data_and_pure_operations_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_02_data_and_pure_operations_complete"
     },
     {
       "relation": "contains",
@@ -13549,9 +14243,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L298",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_03_menu_discovery_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_03_menu_discovery_complete"
     },
     {
       "relation": "contains",
@@ -13559,9 +14253,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L281",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_04_cart_and_receipt_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_04_cart_and_receipt_complete"
     },
     {
       "relation": "contains",
@@ -13569,9 +14263,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L269",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_05_order_details_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_05_order_details_complete"
     },
     {
       "relation": "contains",
@@ -13579,9 +14273,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L251",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_06_totals_and_checkout_boundary_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_06_totals_and_checkout_boundary_complete"
     },
     {
       "relation": "contains",
@@ -13589,9 +14283,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L237",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_07_navigation_survival_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_07_navigation_survival_complete"
     },
     {
       "relation": "contains",
@@ -13599,9 +14293,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L221",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_08_interaction_and_accessibility_states_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_08_interaction_and_accessibility_states_complete"
     },
     {
       "relation": "contains",
@@ -13609,9 +14303,9 @@
       "source_file": "goals/GOAL-01-FUNCTIONAL-POS.md",
       "source_location": "L203",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_01_functional_pos_journal",
-      "target": "goals_goal_01_functional_pos_2026_07_28_pos_09_goal_closeout_complete",
-      "confidence_score": 1.0
+      "target": "goals_goal_01_functional_pos_2026_07_28_pos_09_goal_closeout_complete"
     },
     {
       "relation": "contains",
@@ -13619,9 +14313,9 @@
       "source_file": "goals/GOAL-02-START-PROMPT.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "goals_goal_02_start_prompt",
-      "target": "goals_goal_02_start_prompt_goal_02_start_prompt",
-      "confidence_score": 1.0
+      "target": "goals_goal_02_start_prompt_goal_02_start_prompt"
     },
     {
       "relation": "contains",
@@ -14185,5 +14879,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3b5140ce1d929ff0d5ff4894a9bb3e8d26aa330e"
+  "built_at_commit": "268ed903351dd01b54bfa020a8f983337a9f2957"
 }
