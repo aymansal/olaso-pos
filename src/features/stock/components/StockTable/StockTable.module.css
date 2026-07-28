@@ -74,8 +74,15 @@
 
 .row {
   height: 62px;
+  padding: 0;
   border-bottom: 1px solid var(--olaso-line-soft);
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
   background: var(--olaso-white);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
 }
 
 .selected {
@@ -173,6 +180,17 @@ strong.lowValue {
   background: var(--olaso-stock-watch-soft);
 }
 
+.archived {
+  color: var(--olaso-copy);
+  background: var(--olaso-neutral-icon);
+}
+
+.state {
+  margin: 24px 16px;
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+}
+
 .footer {
   position: absolute;
   top: 396px;
@@ -191,6 +209,21 @@ strong.lowValue {
   display: flex;
   align-items: center;
   gap: 6px;
+  color: var(--olaso-text-faint);
+}
+
+.pagination button {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
+  background: transparent;
+}
+
+.pagination button:disabled {
   color: var(--olaso-text-faint);
 }
 

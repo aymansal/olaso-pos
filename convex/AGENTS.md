@@ -36,6 +36,8 @@ data, reporting summaries, and development seeding.
 - Run `npm run check:convex`.
 - Run `npm run check:management` after category, product, modifier, recipe, or
   management-authorization changes.
+- Run `npm run check:inventory` after ingredient, stock balance, movement, or
+  inventory-schema changes.
 - Run `npx convex dev --once` when schema or deployed functions change.
 - Review every new index against an implemented access path.
 

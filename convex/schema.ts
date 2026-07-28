@@ -135,6 +135,8 @@ export default defineSchema({
     status: activeStatus,
     revision: v.number(),
     updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
   })
     .index('by_key', ['key'])
     .index('by_status_name', ['status', 'name'])
@@ -169,7 +171,9 @@ export default defineSchema({
     ingredientId: v.id('ingredients'),
     quantity: v.number(),
     createdAt: v.number(),
-  }).index('by_recipe_version', ['recipeVersionId']),
+  })
+    .index('by_recipe_version', ['recipeVersionId'])
+    .index('by_ingredient_created_at', ['ingredientId', 'createdAt']),
 
   sales: defineTable({
     deviceId: v.string(),
@@ -235,8 +239,13 @@ export default defineSchema({
     actorLabel: v.optional(v.string()),
     businessDate: v.string(),
     createdAt: v.number(),
+    clientMutationId: v.optional(v.string()),
   })
     .index('by_ingredient_created_at', ['ingredientId', 'createdAt'])
+    .index('by_ingredient_client_mutation', [
+      'ingredientId',
+      'clientMutationId',
+    ])
     .index('by_related_sale', ['relatedSaleId'])
     .index('by_business_date_created_at', ['businessDate', 'createdAt']),
 

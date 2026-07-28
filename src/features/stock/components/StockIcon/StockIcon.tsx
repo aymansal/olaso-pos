@@ -1,5 +1,5 @@
 import { Coffee, Drop, Leaf, Package } from '@phosphor-icons/react';
-import type { StockIconName } from '../../data/stockData';
+export type StockIconName = 'package' | 'drop' | 'leaf' | 'coffee';
 
 interface StockIconProps {
   name: StockIconName;

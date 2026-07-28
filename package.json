@@ -10,6 +10,7 @@
     "seed:dev": "convex run seed:resetAndSeed \"{\\\"confirm\\\":\\\"RESET_OLASO_DEV\\\"}\"",
     "check:seed": "convex run seed:verify",
     "check:management": "node scripts/check-management.mjs",
+    "check:inventory": "node scripts/check-inventory.mjs",
     "dev": "npm run theme:build && vite --host 0.0.0.0",
     "build": "npm run theme:build && tsc -b && vite build",
     "preview": "vite --host 0.0.0.0"

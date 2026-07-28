@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-03 done; APP-04 next
+**Status:** in progress — APP-04 in progress
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -85,7 +85,7 @@ hardware are available.
 | APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | done | Dev deployment `colorful-newt-937` connected; schema/codegen/checks/browser smoke pass; commit `5189a4eb6a52f363313b650be076a116864ff153` pushed to `origin/codex/goal-02-functional-app` |
 | APP-02 | Add protected deterministic Convex development seed/reset data | done | Two resets and relationship checks passed; implementation commit `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` pushed to `origin/codex/goal-02-functional-app` |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | done | Management/UI/check/browser evidence passed; implementation commit `3438fae935aedbca8ec8709a508d5127f522ff19` pushed to `origin/codex/goal-02-functional-app` |
-| APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | pending | Exact base-unit operations and live Stock UI verified; commit pushed |
+| APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | in progress | Backend and live Stock UI implemented; closeout verification pending |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | pending | Restart-safe local data checks and Android sync pass; commit pushed |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | pending | Atomic/offline/retry/duplicate tests pass; POS checkout works; commit pushed |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | pending | Pagination/snapshots/sync states verified in Orders UI; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-03 are done; no card is currently in progress.
+- APP-00 through APP-03 are done; APP-04 is the only card in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -294,10 +294,30 @@ hardware are available.
 - APP-03 implementation commit
   `3438fae935aedbca8ec8709a508d5127f522ff19` is confirmed on
   `origin/codex/goal-02-functional-app`.
+- APP-04 is the only card in progress. The Stock fixtures are removed; one
+  application data hook now connects the existing screen, inventory, table,
+  detail, and icon boundaries to live Convex data.
+- APP-04's bounded inventory list/detail queries, ingredient lifecycle
+  mutations, and atomic receive/count adjustment mutation are deployed.
+  `npm run check:inventory` verifies retry safety, stale revision rejection,
+  exact integer balances, append-only signed movement history, and seed restore.
+- Browser verification at 1340 × 800 exercises unit/status filters, pagination,
+  selection, ingredient create/edit/archive/restore, receiving, physical count,
+  and full movement history. The live Stock layout has no clipping or overflow,
+  and browser diagnostics have no warnings or errors.
+- The deterministic seed is restored to 14 ingredients and 65 movements. Stock,
+  Convex, and root DOX describe the live inventory boundary, and Graphify is
+  refreshed to 785 nodes and 1,132 edges.
+- APP-04 verification passes: Convex codegen/deployment, management and
+  inventory integrations, seed verification, POS checks, TypeScript,
+  production build, and whitespace checks.
+- Closeout review finds no unbounded inventory read, feature-level Convex
+  import, tracked environment/key material, machine-local Graphify path, or
+  printer implementation. The complete applicable DOX chain is re-read and its
+  indexes remain current.
 
-**Exact next action:** Start APP-04 by re-reading its applicable DOX and
-authority sections, querying the refreshed graph for the Stock feature and
-inventory schema, and marking APP-04 as the sole card in progress.
+**Exact next action:** Stage only the reviewed APP-04 files, commit with the
+card ID, and push before recording the remote SHA.
 
 ## Decisions and Blockers
 
@@ -319,6 +339,71 @@ inventory schema, and marking APP-04 as the sole card in progress.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-04 started
+
+- Queried the refreshed Graphify graph first for the Stock screen/component
+  tree, ingredient schema, stock movements, and documented inventory access
+  paths.
+- Re-read the applicable root/source/feature/Stock/Convex DOX chain, the full
+  durable ledger, and the Stock sections of `PRODUCT.md`, `ARCHITECTURE.md`, and
+  `DESIGN.md`.
+- Confirmed APP-00 through APP-03 are done and marked APP-04 as the only card in
+  progress.
+- Confirmed the contract: owner/manager management boundary, integer ingredient
+  base units, explicit low-stock thresholds, append-only movements with
+  reason/actor/time, and no theoretical-waste calculation.
+- Confirmed the Stock workspace is fixture-driven but its screen,
+  inventory/table, detail, and icon boundaries already match the approved
+  geometry.
+- Confirmed the schema already stores integer balances/thresholds and
+  append-only reason/actor/date movements with ingredient/time indexes. APP-04
+  will add only optional management retry metadata and the ingredient/client
+  mutation index required for deliberate adjustment retries.
+- Inventory valuation is omitted because no confirmed ingredient cost data
+  exists; live summary cards will report exact record/movement counts instead.
+- Added and deployed bounded inventory list/detail queries, ingredient
+  create/edit/archive/restore, and one atomic receive/physical-count mutation.
+  Optional retry metadata and only the two implemented access-path indexes were
+  added to the existing schema.
+- Added `npm run check:inventory`; it verifies create/retry/edit,
+  archive/restore, receive/retry, physical-count correction, stale revision
+  rejection, exact current balance, and three append-only signed movements,
+  then restores the deterministic seed.
+- `npm run check:convex`, `npx convex dev --once --typecheck enable`, `npm run
+  check:inventory`, and `npm run check:seed` pass.
+- Added one application inventory hook and replaced the Stock fixtures with
+  live metrics, search, unit/status filters, pagination, selection, exact
+  balance/detail display, ingredient lifecycle actions, receive/count actions,
+  and append-only movement history.
+- Kept the existing prop-driven component/CSS boundaries, added only the two
+  focused dialogs required by the interactions, and omitted inventory valuation
+  because no confirmed ingredient cost data exists.
+- `npx tsc -b` passes after the UI wiring.
+- Browser verification at 1340 × 800 exercises filtering, pagination,
+  ingredient create/edit/archive/restore, stock receiving, physical-count
+  correction, and full movement history. The tablet layout has no clipping or
+  overflow, and browser diagnostics have no warnings or errors.
+- Ran the protected reset after the UI mutations. `npm run check:seed` confirms
+  the original 14 ingredients, 65 stock movements, and representative
+  relationships are restored.
+- The final clean post-reset screen is exactly 1340 × 800; body, document, and
+  main have no page overflow, and browser diagnostics have no warnings or
+  errors.
+- Updated root, Stock, and Convex DOX for the live hook, plain feature
+  contracts, exact adjustment dialogs, and inventory verification.
+- Refreshed Graphify to 785 nodes and 1,132 edges and confirmed it includes
+  `useInventoryManagement`, `IngredientDialog`, and `recordAdjustment`.
+- Final verification passes: `npm run check:convex`, `npx convex dev --once
+  --typecheck enable`, `npm run check:management`, `npm run check:inventory`,
+  `npm run check:seed`, `npm run check:pos`, `npx tsc -b`, `npm run build`, and
+  `git diff --check`.
+- Closeout review found no unbounded inventory read, feature-level Convex
+  import, tracked `.env.local` or key material, machine-local Graphify path, or
+  printer implementation. The full applicable root/source/feature/Stock/Convex
+  DOX chain was re-read and its parent/child indexes remain correct.
+- Exact next action: stage only the reviewed APP-04 files, commit with the card
+  ID, and push before recording the remote SHA.
 
 ### 2026-07-28 — APP-03 complete
 

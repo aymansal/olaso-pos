@@ -9,6 +9,7 @@
  */
 
 import type * as categories from "../categories.js";
+import type * as inventory from "../inventory.js";
 import type * as lib_management from "../lib/management.js";
 import type * as modifiers from "../modifiers.js";
 import type * as products from "../products.js";
@@ -23,6 +24,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   categories: typeof categories;
+  inventory: typeof inventory;
   "lib/management": typeof lib_management;
   modifiers: typeof modifiers;
   products: typeof products;

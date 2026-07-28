@@ -12,20 +12,7 @@ import type {
   ManagedRecipeData,
   ProductSaveInput,
 } from '../features/products/productManagementTypes';
-
-function keyFromName(name: string, fallback: string) {
-  const key = name
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-  return key || fallback;
-}
-
-function newMutationId() {
-  return crypto.randomUUID();
-}
+import { keyFromName, newMutationId } from './managementMutations';
 
 export function useProductManagement(selectedProductId?: string) {
   const categoryQuery = useQuery({ query: api.categories.list, args: {} });

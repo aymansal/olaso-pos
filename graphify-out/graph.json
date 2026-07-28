@@ -244,6 +244,86 @@
       "norm_label": "setarchived"
     },
     {
+      "label": "inventory.ts",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "convex_inventory",
+      "community": 45,
+      "norm_label": "inventory.ts"
+    },
+    {
+      "label": "baseUnit",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "convex_inventory_baseunit",
+      "community": 45,
+      "norm_label": "baseunit"
+    },
+    {
+      "label": "businessDate()",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "convex_inventory_businessdate",
+      "community": 45,
+      "norm_label": "businessdate()"
+    },
+    {
+      "label": "list",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "convex_inventory_list",
+      "community": 45,
+      "norm_label": "list"
+    },
+    {
+      "label": "getDetail",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L100",
+      "_origin": "ast",
+      "id": "convex_inventory_getdetail",
+      "community": 45,
+      "norm_label": "getdetail"
+    },
+    {
+      "label": "saveIngredient",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L168",
+      "_origin": "ast",
+      "id": "convex_inventory_saveingredient",
+      "community": 45,
+      "norm_label": "saveingredient"
+    },
+    {
+      "label": "setIngredientArchived",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L270",
+      "_origin": "ast",
+      "id": "convex_inventory_setingredientarchived",
+      "community": 45,
+      "norm_label": "setingredientarchived"
+    },
+    {
+      "label": "recordAdjustment",
+      "file_type": "code",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L297",
+      "_origin": "ast",
+      "id": "convex_inventory_recordadjustment",
+      "community": 45,
+      "norm_label": "recordadjustment"
+    },
+    {
       "label": "management.ts",
       "file_type": "code",
       "source_file": "convex/lib/management.ts",
@@ -1214,10 +1294,20 @@
       "norm_label": "check:management"
     },
     {
-      "label": "dev",
+      "label": "check:inventory",
       "file_type": "code",
       "source_file": "package.json",
       "source_location": "L13",
+      "_origin": "ast",
+      "id": "package_scripts_check_inventory",
+      "community": 7,
+      "norm_label": "check:inventory"
+    },
+    {
+      "label": "dev",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "package_scripts_dev",
       "community": 7,
@@ -1227,7 +1317,7 @@
       "label": "build",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "package_scripts_build",
       "community": 7,
@@ -1237,7 +1327,7 @@
       "label": "preview",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "package_scripts_preview",
       "community": 7,
@@ -1247,7 +1337,7 @@
       "label": "dependencies",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L17",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "package_dependencies",
       "community": 7,
@@ -1257,7 +1347,7 @@
       "label": "@astryxdesign/core",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "package_dependencies_astryxdesign_core",
       "community": 7,
@@ -1267,7 +1357,7 @@
       "label": "@fontsource/dm-sans",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L19",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "package_dependencies_fontsource_dm_sans",
       "community": 7,
@@ -1277,7 +1367,7 @@
       "label": "@phosphor-icons/react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L20",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "package_dependencies_phosphor_icons_react",
       "community": 7,
@@ -1287,7 +1377,7 @@
       "label": "convex",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L21",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "package_dependencies_convex",
       "community": 7,
@@ -1297,7 +1387,7 @@
       "label": "react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "package_dependencies_react",
       "community": 7,
@@ -1307,7 +1397,7 @@
       "label": "react-dom",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "package_dependencies_react_dom",
       "community": 7,
@@ -1317,7 +1407,7 @@
       "label": "devDependencies",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L25",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "package_devdependencies",
       "community": 7,
@@ -1327,7 +1417,7 @@
       "label": "@astryxdesign/cli",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L26",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "package_devdependencies_astryxdesign_cli",
       "community": 7,
@@ -1337,7 +1427,7 @@
       "label": "@types/react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L27",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "package_devdependencies_types_react",
       "community": 7,
@@ -1347,7 +1437,7 @@
       "label": "@types/react-dom",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L28",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "package_devdependencies_types_react_dom",
       "community": 7,
@@ -1357,7 +1447,7 @@
       "label": "@vitejs/plugin-react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "package_devdependencies_vitejs_plugin_react",
       "community": 7,
@@ -1367,7 +1457,7 @@
       "label": "typescript",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L30",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "package_devdependencies_typescript",
       "community": 7,
@@ -1377,11 +1467,91 @@
       "label": "vite",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L31",
+      "source_location": "L32",
       "_origin": "ast",
       "id": "package_devdependencies_vite",
       "community": 7,
       "norm_label": "vite"
+    },
+    {
+      "label": "check-inventory.mjs",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scripts_check_inventory",
+      "community": 33,
+      "norm_label": "check-inventory.mjs"
+    },
+    {
+      "label": "projectRoot",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "scripts_check_inventory_projectroot",
+      "community": 33,
+      "norm_label": "projectroot"
+    },
+    {
+      "label": "localEnv",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "scripts_check_inventory_localenv",
+      "community": 33,
+      "norm_label": "localenv"
+    },
+    {
+      "label": "convexUrl",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "scripts_check_inventory_convexurl",
+      "community": 33,
+      "norm_label": "convexurl"
+    },
+    {
+      "label": "client",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "scripts_check_inventory_client",
+      "community": 33,
+      "norm_label": "client"
+    },
+    {
+      "label": "mutationId()",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "scripts_check_inventory_mutationid",
+      "community": 33,
+      "norm_label": "mutationid()"
+    },
+    {
+      "label": "reseed()",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "scripts_check_inventory_reseed",
+      "community": 33,
+      "norm_label": "reseed()"
+    },
+    {
+      "label": "verifyInventory()",
+      "file_type": "code",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "scripts_check_inventory_verifyinventory",
+      "community": 33,
+      "norm_label": "verifyinventory()"
     },
     {
       "label": "check-management.mjs",
@@ -1554,6 +1724,66 @@
       "norm_label": "appdataprovider()"
     },
     {
+      "label": "managementMutations.ts",
+      "file_type": "code",
+      "source_file": "src/data/managementMutations.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "data_managementmutations",
+      "community": 13,
+      "norm_label": "managementmutations.ts"
+    },
+    {
+      "label": "keyFromName()",
+      "file_type": "code",
+      "source_file": "src/data/managementMutations.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "data_managementmutations_keyfromname",
+      "community": 13,
+      "norm_label": "keyfromname()"
+    },
+    {
+      "label": "newMutationId()",
+      "file_type": "code",
+      "source_file": "src/data/managementMutations.ts",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "data_managementmutations_newmutationid",
+      "community": 13,
+      "norm_label": "newmutationid()"
+    },
+    {
+      "label": "useInventoryManagement.ts",
+      "file_type": "code",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "data_useinventorymanagement",
+      "community": 10,
+      "norm_label": "useinventorymanagement.ts"
+    },
+    {
+      "label": "currentBusinessDate()",
+      "file_type": "code",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "data_useinventorymanagement_currentbusinessdate",
+      "community": 10,
+      "norm_label": "currentbusinessdate()"
+    },
+    {
+      "label": "useInventoryManagement()",
+      "file_type": "code",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "data_useinventorymanagement_useinventorymanagement",
+      "community": 10,
+      "norm_label": "useinventorymanagement()"
+    },
+    {
       "label": "useProductManagement.ts",
       "file_type": "code",
       "source_file": "src/data/useProductManagement.ts",
@@ -1564,30 +1794,10 @@
       "norm_label": "useproductmanagement.ts"
     },
     {
-      "label": "keyFromName()",
-      "file_type": "code",
-      "source_file": "src/data/useProductManagement.ts",
-      "source_location": "L16",
-      "_origin": "ast",
-      "id": "data_useproductmanagement_keyfromname",
-      "community": 13,
-      "norm_label": "keyfromname()"
-    },
-    {
-      "label": "newMutationId()",
-      "file_type": "code",
-      "source_file": "src/data/useProductManagement.ts",
-      "source_location": "L26",
-      "_origin": "ast",
-      "id": "data_useproductmanagement_newmutationid",
-      "community": 13,
-      "norm_label": "newmutationid()"
-    },
-    {
       "label": "useProductManagement()",
       "file_type": "code",
       "source_file": "src/data/useProductManagement.ts",
-      "source_location": "L30",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "data_useproductmanagement_useproductmanagement",
       "community": 13,
@@ -2600,7 +2810,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "pos_possession_createinitialpossession",
-      "community": 0,
+      "community": 4,
       "norm_label": "createinitialpossession()"
     },
     {
@@ -3380,14 +3590,14 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "stock_stockscreen",
-      "community": 4,
+      "community": 10,
       "norm_label": "stockscreen.tsx"
     },
     {
       "label": "StockScreenProps",
       "file_type": "code",
       "source_file": "src/features/stock/StockScreen.tsx",
-      "source_location": "L7",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "stock_stockscreen_stockscreenprops",
       "community": 4,
@@ -3397,11 +3607,81 @@
       "label": "StockScreen()",
       "file_type": "code",
       "source_file": "src/features/stock/StockScreen.tsx",
-      "source_location": "L11",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "stock_stockscreen_stockscreen",
-      "community": 4,
+      "community": 10,
       "norm_label": "stockscreen()"
+    },
+    {
+      "label": "IngredientDialog.tsx",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "ingredientdialog_ingredientdialog",
+      "community": 10,
+      "norm_label": "ingredientdialog.tsx"
+    },
+    {
+      "label": "IngredientDialogProps",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "ingredientdialog_ingredientdialog_ingredientdialogprops",
+      "community": 10,
+      "norm_label": "ingredientdialogprops"
+    },
+    {
+      "label": "units",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "ingredientdialog_ingredientdialog_units",
+      "community": 10,
+      "norm_label": "units"
+    },
+    {
+      "label": "IngredientDialog()",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "ingredientdialog_ingredientdialog_ingredientdialog",
+      "community": 10,
+      "norm_label": "ingredientdialog()"
+    },
+    {
+      "label": "StockAdjustmentDialog.tsx",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "stockadjustmentdialog_stockadjustmentdialog",
+      "community": 10,
+      "norm_label": "stockadjustmentdialog.tsx"
+    },
+    {
+      "label": "StockAdjustmentDialogProps",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialogprops",
+      "community": 10,
+      "norm_label": "stockadjustmentdialogprops"
+    },
+    {
+      "label": "StockAdjustmentDialog()",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialog",
+      "community": 10,
+      "norm_label": "stockadjustmentdialog()"
     },
     {
       "label": "StockDetailPanel.tsx",
@@ -3414,20 +3694,30 @@
       "norm_label": "stockdetailpanel.tsx"
     },
     {
-      "label": "stockLevels",
+      "label": "StockDetailPanelProps",
       "file_type": "code",
       "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
-      "source_location": "L6",
+      "source_location": "L23",
       "_origin": "ast",
-      "id": "stockdetailpanel_stockdetailpanel_stocklevels",
+      "id": "stockdetailpanel_stockdetailpanel_stockdetailpanelprops",
       "community": 10,
-      "norm_label": "stocklevels"
+      "norm_label": "stockdetailpanelprops"
+    },
+    {
+      "label": "movementTime()",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "stockdetailpanel_stockdetailpanel_movementtime",
+      "community": 10,
+      "norm_label": "movementtime()"
     },
     {
       "label": "StockDetailPanel()",
       "file_type": "code",
       "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
-      "source_location": "L12",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "stockdetailpanel_stockdetailpanel_stockdetailpanel",
       "community": 10,
@@ -3442,6 +3732,16 @@
       "id": "stockicon_stockicon",
       "community": 10,
       "norm_label": "stockicon.tsx"
+    },
+    {
+      "label": "StockIconName",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/StockIcon/StockIcon.tsx",
+      "source_location": "L2",
+      "_origin": "ast",
+      "id": "stockicon_stockicon_stockiconname",
+      "community": 10,
+      "norm_label": "stockiconname"
     },
     {
       "label": "StockIconProps",
@@ -3477,17 +3777,27 @@
       "label": "summaryIcons",
       "file_type": "code",
       "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
-      "source_location": "L14",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "stockinventorypanel_stockinventorypanel_summaryicons",
       "community": 10,
       "norm_label": "summaryicons"
     },
     {
+      "label": "StockInventoryPanelProps",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "stockinventorypanel_stockinventorypanel_stockinventorypanelprops",
+      "community": 10,
+      "norm_label": "stockinventorypanelprops"
+    },
+    {
       "label": "StockInventoryPanel()",
       "file_type": "code",
       "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
-      "source_location": "L21",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "stockinventorypanel_stockinventorypanel_stockinventorypanel",
       "community": 10,
@@ -3507,91 +3817,221 @@
       "label": "columns",
       "file_type": "code",
       "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
-      "source_location": "L6",
+      "source_location": "L12",
       "_origin": "ast",
       "id": "stocktable_stocktable_columns",
       "community": 10,
       "norm_label": "columns"
     },
     {
+      "label": "StockTableProps",
+      "file_type": "code",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "stocktable_stocktable_stocktableprops",
+      "community": 10,
+      "norm_label": "stocktableprops"
+    },
+    {
       "label": "StockTable()",
       "file_type": "code",
       "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
-      "source_location": "L8",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "stocktable_stocktable_stocktable",
       "community": 10,
       "norm_label": "stocktable()"
     },
     {
-      "label": "stockData.ts",
+      "label": "stockManagementTypes.ts",
       "file_type": "code",
-      "source_file": "src/features/stock/data/stockData.ts",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "data_stockdata",
+      "id": "stock_stockmanagementtypes",
       "community": 10,
-      "norm_label": "stockdata.ts"
+      "norm_label": "stockmanagementtypes.ts"
     },
     {
-      "label": "StockIconName",
+      "label": "StockBaseUnit",
       "file_type": "code",
-      "source_file": "src/features/stock/data/stockData.ts",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "data_stockdata_stockiconname",
+      "id": "stock_stockmanagementtypes_stockbaseunit",
       "community": 10,
-      "norm_label": "stockiconname"
+      "norm_label": "stockbaseunit"
     },
     {
-      "label": "StockStatus",
+      "label": "ManagedIngredient",
       "file_type": "code",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L2",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L7",
       "_origin": "ast",
-      "id": "data_stockdata_stockstatus",
+      "id": "stock_stockmanagementtypes_managedingredient",
       "community": 10,
-      "norm_label": "stockstatus"
+      "norm_label": "managedingredient"
     },
     {
-      "label": "stockSummaries",
+      "label": "InventoryMetrics",
       "file_type": "code",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L4",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L20",
       "_origin": "ast",
-      "id": "data_stockdata_stocksummaries",
+      "id": "stock_stockmanagementtypes_inventorymetrics",
       "community": 10,
-      "norm_label": "stocksummaries"
+      "norm_label": "inventorymetrics"
     },
     {
-      "label": "stockItems",
+      "label": "ManagedStockMovement",
       "file_type": "code",
-      "source_file": "src/features/stock/data/stockData.ts",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "stock_stockmanagementtypes_managedstockmovement",
+      "community": 10,
+      "norm_label": "managedstockmovement"
+    },
+    {
+      "label": "ManagedLinkedRecipe",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "stock_stockmanagementtypes_managedlinkedrecipe",
+      "community": 10,
+      "norm_label": "managedlinkedrecipe"
+    },
+    {
+      "label": "ManagedIngredientDetail",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L49",
+      "_origin": "ast",
+      "id": "stock_stockmanagementtypes_managedingredientdetail",
+      "community": 10,
+      "norm_label": "managedingredientdetail"
+    },
+    {
+      "label": "IngredientSaveInput",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "stock_stockmanagementtypes_ingredientsaveinput",
+      "community": 10,
+      "norm_label": "ingredientsaveinput"
+    },
+    {
+      "label": "StockAdjustmentMode",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L63",
+      "_origin": "ast",
+      "id": "stock_stockmanagementtypes_stockadjustmentmode",
+      "community": 10,
+      "norm_label": "stockadjustmentmode"
+    },
+    {
+      "label": "stockPresentation.ts",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "stock_stockpresentation",
+      "community": 10,
+      "norm_label": "stockpresentation.ts"
+    },
+    {
+      "label": "StockUnitGroup",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "stock_stockpresentation_stockunitgroup",
+      "community": 10,
+      "norm_label": "stockunitgroup"
+    },
+    {
+      "label": "StockLevelFilter",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "stock_stockpresentation_stocklevelfilter",
+      "community": 10,
+      "norm_label": "stocklevelfilter"
+    },
+    {
+      "label": "unitGroup()",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "data_stockdata_stockitems",
+      "id": "stock_stockpresentation_unitgroup",
       "community": 10,
-      "norm_label": "stockitems"
+      "norm_label": "unitgroup()"
     },
     {
-      "label": "linkedRecipes",
+      "label": "unitGroupLabel()",
       "file_type": "code",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L75",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L17",
       "_origin": "ast",
-      "id": "data_stockdata_linkedrecipes",
+      "id": "stock_stockpresentation_unitgrouplabel",
       "community": 10,
-      "norm_label": "linkedrecipes"
+      "norm_label": "unitgrouplabel()"
     },
     {
-      "label": "stockMovements",
+      "label": "baseUnitLabel()",
       "file_type": "code",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L81",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L24",
       "_origin": "ast",
-      "id": "data_stockdata_stockmovements",
+      "id": "stock_stockpresentation_baseunitlabel",
       "community": 10,
-      "norm_label": "stockmovements"
+      "norm_label": "baseunitlabel()"
+    },
+    {
+      "label": "formatStockQuantity()",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "stock_stockpresentation_formatstockquantity",
+      "community": 10,
+      "norm_label": "formatstockquantity()"
+    },
+    {
+      "label": "ingredientLevel()",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L57",
+      "_origin": "ast",
+      "id": "stock_stockpresentation_ingredientlevel",
+      "community": 10,
+      "norm_label": "ingredientlevel()"
+    },
+    {
+      "label": "ingredientIcon()",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "stock_stockpresentation_ingredienticon",
+      "community": 10,
+      "norm_label": "ingredienticon()"
+    },
+    {
+      "label": "movementLabel()",
+      "file_type": "code",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L79",
+      "_origin": "ast",
+      "id": "stock_stockpresentation_movementlabel",
+      "community": 10,
+      "norm_label": "movementlabel()"
     },
     {
       "label": "main.tsx",
@@ -5240,7 +5680,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "product_users",
-      "community": 2,
+      "community": 54,
       "norm_label": "users"
     },
     {
@@ -5250,7 +5690,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "product_cashier",
-      "community": 2,
+      "community": 54,
       "norm_label": "cashier"
     },
     {
@@ -5260,7 +5700,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "product_owner_or_manager",
-      "community": 2,
+      "community": 54,
       "norm_label": "owner or manager"
     },
     {
@@ -5270,7 +5710,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "product_target_environment",
-      "community": 2,
+      "community": 56,
       "norm_label": "target environment"
     },
     {
@@ -5280,7 +5720,7 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "product_tablet",
-      "community": 2,
+      "community": 56,
       "norm_label": "tablet"
     },
     {
@@ -5290,7 +5730,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "product_printer",
-      "community": 2,
+      "community": 56,
       "norm_label": "printer"
     },
     {
@@ -5310,7 +5750,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "product_pos_workflow",
-      "community": 2,
+      "community": 29,
       "norm_label": "pos workflow"
     },
     {
@@ -5320,7 +5760,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "product_starting_an_order",
-      "community": 2,
+      "community": 29,
       "norm_label": "starting an order"
     },
     {
@@ -5330,7 +5770,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "product_adding_products",
-      "community": 2,
+      "community": 29,
       "norm_label": "adding products"
     },
     {
@@ -5340,7 +5780,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "product_completing_a_sale",
-      "community": 2,
+      "community": 29,
       "norm_label": "completing a sale"
     },
     {
@@ -5350,7 +5790,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "product_printing_and_recovery",
-      "community": 2,
+      "community": 29,
       "norm_label": "printing and recovery"
     },
     {
@@ -5360,7 +5800,7 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "product_menu_model",
-      "community": 2,
+      "community": 55,
       "norm_label": "menu model"
     },
     {
@@ -5370,7 +5810,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "product_product_availability",
-      "community": 2,
+      "community": 55,
       "norm_label": "product availability"
     },
     {
@@ -5380,7 +5820,7 @@
       "source_location": "L197",
       "_origin": "ast",
       "id": "product_sizes_options_and_extras",
-      "community": 2,
+      "community": 55,
       "norm_label": "sizes, options, and extras"
     },
     {
@@ -5400,7 +5840,7 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "product_stock_behavior",
-      "community": 2,
+      "community": 36,
       "norm_label": "stock behavior"
     },
     {
@@ -5410,7 +5850,7 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "product_exact_deduction",
-      "community": 2,
+      "community": 36,
       "norm_label": "exact deduction"
     },
     {
@@ -5420,7 +5860,7 @@
       "source_location": "L240",
       "_origin": "ast",
       "id": "product_no_theoretical_waste_model",
-      "community": 2,
+      "community": 36,
       "norm_label": "no theoretical waste model"
     },
     {
@@ -5430,7 +5870,7 @@
       "source_location": "L249",
       "_origin": "ast",
       "id": "product_stock_movement_history",
-      "community": 2,
+      "community": 36,
       "norm_label": "stock movement history"
     },
     {
@@ -5440,7 +5880,7 @@
       "source_location": "L263",
       "_origin": "ast",
       "id": "product_low_stock",
-      "community": 2,
+      "community": 36,
       "norm_label": "low stock"
     },
     {
@@ -5450,7 +5890,7 @@
       "source_location": "L268",
       "_origin": "ast",
       "id": "product_sales_and_reports",
-      "community": 2,
+      "community": 57,
       "norm_label": "sales and reports"
     },
     {
@@ -5460,7 +5900,7 @@
       "source_location": "L270",
       "_origin": "ast",
       "id": "product_sales_record",
-      "community": 2,
+      "community": 57,
       "norm_label": "sales record"
     },
     {
@@ -5470,7 +5910,7 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "product_required_reports",
-      "community": 2,
+      "community": 57,
       "norm_label": "required reports"
     },
     {
@@ -5540,7 +5980,7 @@
       "source_location": "L398",
       "_origin": "ast",
       "id": "product_matcha_hojicha_and_ube",
-      "community": 15,
+      "community": 46,
       "norm_label": "matcha, hojicha, and ube"
     },
     {
@@ -5550,7 +5990,7 @@
       "source_location": "L400",
       "_origin": "ast",
       "id": "product_hot_drinks",
-      "community": 15,
+      "community": 46,
       "norm_label": "hot drinks"
     },
     {
@@ -5560,7 +6000,7 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "product_iced_matcha",
-      "community": 15,
+      "community": 46,
       "norm_label": "iced matcha"
     },
     {
@@ -5570,7 +6010,7 @@
       "source_location": "L428",
       "_origin": "ast",
       "id": "product_iced_hojicha_and_ube",
-      "community": 15,
+      "community": 46,
       "norm_label": "iced hojicha and ube"
     },
     {
@@ -5640,7 +6080,7 @@
       "source_location": "L527",
       "_origin": "ast",
       "id": "product_delivery_phases",
-      "community": 2,
+      "community": 17,
       "norm_label": "delivery phases"
     },
     {
@@ -5650,7 +6090,7 @@
       "source_location": "L529",
       "_origin": "ast",
       "id": "product_phase_1_approved_shell",
-      "community": 2,
+      "community": 17,
       "norm_label": "phase 1 \u2014 approved shell"
     },
     {
@@ -5660,7 +6100,7 @@
       "source_location": "L535",
       "_origin": "ast",
       "id": "product_phase_2_working_pos",
-      "community": 2,
+      "community": 17,
       "norm_label": "phase 2 \u2014 working pos"
     },
     {
@@ -5670,7 +6110,7 @@
       "source_location": "L543",
       "_origin": "ast",
       "id": "product_phase_3_cloud_and_stock",
-      "community": 2,
+      "community": 17,
       "norm_label": "phase 3 \u2014 cloud and stock"
     },
     {
@@ -5680,7 +6120,7 @@
       "source_location": "L551",
       "_origin": "ast",
       "id": "product_phase_4_android_and_hardware",
-      "community": 2,
+      "community": 17,
       "norm_label": "phase 4 \u2014 android and hardware"
     },
     {
@@ -5690,7 +6130,7 @@
       "source_location": "L558",
       "_origin": "ast",
       "id": "product_phase_5_production_hardening",
-      "community": 2,
+      "community": 17,
       "norm_label": "phase 5 \u2014 production hardening"
     },
     {
@@ -6067,7 +6507,7 @@
       "label": "Decisions and Blockers",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L295",
+      "source_location": "L313",
       "_origin": "ast",
       "id": "work_ledger_decisions_and_blockers",
       "community": 6,
@@ -6077,7 +6517,7 @@
       "label": "Decisions",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L297",
+      "source_location": "L315",
       "_origin": "ast",
       "id": "work_ledger_decisions",
       "community": 6,
@@ -6087,7 +6527,7 @@
       "label": "Blockers",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L307",
+      "source_location": "L325",
       "_origin": "ast",
       "id": "work_ledger_blockers",
       "community": 6,
@@ -6097,17 +6537,37 @@
       "label": "Journal",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L314",
+      "source_location": "L332",
       "_origin": "ast",
       "id": "work_ledger_journal",
       "community": 6,
       "norm_label": "journal"
     },
     {
+      "label": "2026-07-28 \u2014 APP-04 started",
+      "file_type": "document",
+      "source_file": "WORK_LEDGER.md",
+      "source_location": "L334",
+      "_origin": "ast",
+      "id": "work_ledger_2026_07_28_app_04_started",
+      "community": 6,
+      "norm_label": "2026-07-28 \u2014 app-04 started"
+    },
+    {
+      "label": "2026-07-28 \u2014 APP-03 complete",
+      "file_type": "document",
+      "source_file": "WORK_LEDGER.md",
+      "source_location": "L381",
+      "_origin": "ast",
+      "id": "work_ledger_2026_07_28_app_03_complete",
+      "community": 6,
+      "norm_label": "2026-07-28 \u2014 app-03 complete"
+    },
+    {
       "label": "2026-07-28 \u2014 APP-03 started",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L316",
+      "source_location": "L396",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_03_started",
       "community": 6,
@@ -6117,7 +6577,7 @@
       "label": "2026-07-28 \u2014 APP-02 complete",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L372",
+      "source_location": "L468",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_02_complete",
       "community": 6,
@@ -6127,7 +6587,7 @@
       "label": "2026-07-28 \u2014 APP-02 started",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L387",
+      "source_location": "L483",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_02_started",
       "community": 6,
@@ -6137,7 +6597,7 @@
       "label": "2026-07-28 \u2014 APP-01 complete",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L431",
+      "source_location": "L527",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_01_complete",
       "community": 6,
@@ -6147,7 +6607,7 @@
       "label": "2026-07-28 \u2014 APP-01 started",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L446",
+      "source_location": "L542",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_01_started",
       "community": 6,
@@ -6157,7 +6617,7 @@
       "label": "2026-07-28 \u2014 APP-00 complete",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L481",
+      "source_location": "L577",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_00_complete",
       "community": 6,
@@ -6167,7 +6627,7 @@
       "label": "2026-07-28 \u2014 APP-00 started",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L498",
+      "source_location": "L594",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_app_00_started",
       "community": 6,
@@ -6177,7 +6637,7 @@
       "label": "2026-07-28 \u2014 Goal 02 drafted",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L523",
+      "source_location": "L619",
       "_origin": "ast",
       "id": "work_ledger_2026_07_28_goal_02_drafted",
       "community": 6,
@@ -6187,7 +6647,7 @@
       "label": "Completed Goals",
       "file_type": "document",
       "source_file": "WORK_LEDGER.md",
-      "source_location": "L536",
+      "source_location": "L632",
       "_origin": "ast",
       "id": "work_ledger_completed_goals",
       "community": 6,
@@ -6257,7 +6717,7 @@
       "label": "Child DOX Index",
       "file_type": "document",
       "source_file": "convex/AGENTS.md",
-      "source_location": "L42",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "convex_agents_child_dox_index",
       "community": 28,
@@ -7247,7 +7707,7 @@
       "label": "Ownership",
       "file_type": "document",
       "source_file": "src/features/stock/AGENTS.md",
-      "source_location": "L8",
+      "source_location": "L9",
       "_origin": "ast",
       "id": "stock_agents_ownership",
       "community": 27,
@@ -7257,7 +7717,7 @@
       "label": "Local Contracts",
       "file_type": "document",
       "source_file": "src/features/stock/AGENTS.md",
-      "source_location": "L16",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "stock_agents_local_contracts",
       "community": 27,
@@ -7267,7 +7727,7 @@
       "label": "Work Guidance",
       "file_type": "document",
       "source_file": "src/features/stock/AGENTS.md",
-      "source_location": "L24",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "stock_agents_work_guidance",
       "community": 27,
@@ -7277,7 +7737,7 @@
       "label": "Verification",
       "file_type": "document",
       "source_file": "src/features/stock/AGENTS.md",
-      "source_location": "L30",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "stock_agents_verification",
       "community": 27,
@@ -7287,7 +7747,7 @@
       "label": "Child DOX Index",
       "file_type": "document",
       "source_file": "src/features/stock/AGENTS.md",
-      "source_location": "L36",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "stock_agents_child_dox_index",
       "community": 27,
@@ -7453,6 +7913,17 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "convex/_generated/api.d.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "generated_api_d",
+      "target": "convex_inventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/_generated/api.d.ts",
       "source_location": "L13",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -7507,6 +7978,17 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "generated_api",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/data/useProductManagement.ts",
       "source_location": "L5",
       "weight": 1.0,
@@ -7523,6 +8005,17 @@
       "confidence_score": 1.0,
       "source": "generated_api",
       "target": "generated_api_components"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "generated_api",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -7646,6 +8139,17 @@
       "confidence_score": 1.0,
       "source": "convex_categories",
       "target": "generated_server"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "generated_server",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -7852,6 +8356,219 @@
       "confidence_score": 1.0,
       "source": "convex_categories",
       "target": "lib_management_requiremanagement"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "convex_inventory_baseunit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "convex_inventory_businessdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "convex_inventory_getdetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "convex_inventory_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L297",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "convex_inventory_recordadjustment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L168",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "convex_inventory_saveingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L270",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "convex_inventory_setingredientarchived",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "generated_server_mutation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "generated_server_query",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_boundedinteger",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_cleankey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_cleantext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_conflict",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_expectrevision",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_invalid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_mutationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_notfound",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "convex_inventory",
+      "target": "lib_management_requiremanagement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "convex/inventory.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "convex_inventory_businessdate",
+      "target": "lib_management_invalid",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -9255,6 +9972,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_check_inventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
       "source_location": "L12",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -9440,6 +10167,109 @@
       "confidence_score": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_vitejs_plugin_react"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "generated_api_api",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "scripts_check_inventory_client",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "scripts_check_inventory_convexurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "scripts_check_inventory_localenv",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "scripts_check_inventory_mutationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "scripts_check_inventory_projectroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "scripts_check_inventory_reseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "scripts_check_inventory",
+      "target": "scripts_check_inventory_verifyinventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "scripts_check_inventory_verifyinventory",
+      "target": "scripts_check_inventory_mutationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/check-inventory.mjs",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "scripts_check_inventory_verifyinventory",
+      "target": "scripts_check_inventory_reseed",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -9937,22 +10767,229 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/data/useProductManagement.ts",
-      "source_location": "L16",
+      "source_file": "src/data/managementMutations.ts",
+      "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "data_useproductmanagement",
-      "target": "data_useproductmanagement_keyfromname"
+      "source": "data_managementmutations",
+      "target": "data_managementmutations_keyfromname",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/data/managementMutations.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "data_managementmutations",
+      "target": "data_managementmutations_newmutationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "data_managementmutations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/data/useProductManagement.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "data_useproductmanagement",
+      "target": "data_managementmutations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "data_managementmutations_keyfromname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useProductManagement.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "data_useproductmanagement",
+      "target": "data_managementmutations_keyfromname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "data_managementmutations_newmutationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useProductManagement.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "data_useproductmanagement",
+      "target": "data_managementmutations_newmutationid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "data_useinventorymanagement_currentbusinessdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "data_useinventorymanagement_useinventorymanagement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "generated_api_api",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "stock_stockmanagementtypes_ingredientsaveinput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "stock_stockmanagementtypes_inventorymetrics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "stock_stockmanagementtypes_managedingredientdetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "data_useinventorymanagement",
+      "target": "stock_stockmanagementtypes_stockadjustmentmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "data_useinventorymanagement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/data/useInventoryManagement.ts",
       "source_location": "L26",
       "weight": 1.0,
+      "source": "data_useinventorymanagement_useinventorymanagement",
+      "target": "data_useinventorymanagement_currentbusinessdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "data_useinventorymanagement_useinventorymanagement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source": "data_useproductmanagement",
-      "target": "data_useproductmanagement_newmutationid"
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "stock_stockscreen_stockscreen",
+      "target": "data_useinventorymanagement_useinventorymanagement"
     },
     {
       "relation": "contains",
@@ -13837,6 +14874,127 @@
       "target": "data_reportsdata_topproducts"
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "ingredientdialog_ingredientdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "ingredientdialog_ingredientdialog_ingredientdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockmanagementtypes_ingredientsaveinput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockmanagementtypes_stockadjustmentmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockpresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockpresentation_ingredientlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockpresentation_stocklevelfilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockpresentation_stockunitgroup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stock_stockpresentation_unitgroup",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/StockScreen.tsx",
@@ -13855,6 +15013,28 @@
       "confidence_score": 1.0,
       "source": "stock_stockscreen",
       "target": "stock_stockscreen_stockscreenprops"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stockadjustmentdialog_stockadjustmentdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/StockScreen.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "stock_stockscreen",
+      "target": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialog",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -13901,37 +15081,383 @@
       "target": "stockinventorypanel_stockinventorypanel_stockinventorypanel"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "ingredientdialog_ingredientdialog_ingredientdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "ingredientdialog_ingredientdialog_ingredientdialogprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "ingredientdialog_ingredientdialog_units",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "stock_stockmanagementtypes_ingredientsaveinput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "stock_stockmanagementtypes_stockbaseunit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "stock_stockpresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog",
+      "target": "stock_stockpresentation_baseunitlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog_ingredientdialogprops",
+      "target": "stock_stockmanagementtypes_ingredientsaveinput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog_ingredientdialogprops",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/stock/components/IngredientDialog/IngredientDialog.tsx",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "ingredientdialog_ingredientdialog_ingredientdialog",
+      "target": "stock_stockpresentation_baseunitlabel"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockmanagementtypes_stockadjustmentmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockpresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockpresentation_baseunitlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockpresentation_formatstockquantity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialogprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialogprops",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialogprops",
+      "target": "stock_stockmanagementtypes_stockadjustmentmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L102",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockpresentation_baseunitlabel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/stock/components/StockAdjustmentDialog/StockAdjustmentDialog.tsx",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "stockadjustmentdialog_stockadjustmentdialog_stockadjustmentdialog",
+      "target": "stock_stockpresentation_formatstockquantity"
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
-      "source_location": "L2",
+      "source_location": "L8",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stockdetailpanel_stockdetailpanel",
-      "target": "data_stockdata"
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
-      "source_location": "L2",
+      "source_location": "L8",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stockdetailpanel_stockdetailpanel",
-      "target": "data_stockdata_linkedrecipes"
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
-      "source_location": "L2",
+      "source_location": "L8",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stockdetailpanel_stockdetailpanel",
-      "target": "data_stockdata_stockmovements"
+      "target": "stock_stockmanagementtypes_managedingredientdetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockmanagementtypes_stockadjustmentmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_baseunitlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_formatstockquantity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_ingredienticon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_ingredientlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_movementlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel",
+      "target": "stockdetailpanel_stockdetailpanel_movementtime",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -13947,11 +15473,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
-      "source_location": "L6",
+      "source_location": "L23",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stockdetailpanel_stockdetailpanel",
-      "target": "stockdetailpanel_stockdetailpanel_stocklevels"
+      "target": "stockdetailpanel_stockdetailpanel_stockdetailpanelprops",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -13976,26 +15502,92 @@
       "target": "stockicon_stockicon_stockicon"
     },
     {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel_stockdetailpanelprops",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel_stockdetailpanelprops",
+      "target": "stock_stockmanagementtypes_managedingredientdetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel_stockdetailpanelprops",
+      "target": "stock_stockmanagementtypes_stockadjustmentmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_baseunitlabel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_formatstockquantity"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_ingredienticon"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/features/stock/components/StockDetailPanel/StockDetailPanel.tsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "stockdetailpanel_stockdetailpanel_stockdetailpanel",
+      "target": "stock_stockpresentation_ingredientlevel"
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/components/StockIcon/StockIcon.tsx",
-      "source_location": "L2",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L6",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "stockicon_stockicon",
-      "target": "data_stockdata"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/components/StockIcon/StockIcon.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "stockicon_stockicon",
-      "target": "data_stockdata_stockiconname"
+      "source": "stock_stockpresentation",
+      "target": "stockicon_stockicon",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14006,6 +15598,16 @@
       "confidence_score": 1.0,
       "source": "stockicon_stockicon",
       "target": "stockicon_stockicon_stockicon"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockIcon/StockIcon.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "stockicon_stockicon",
+      "target": "stockicon_stockicon_stockiconname",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14029,15 +15631,15 @@
       "target": "stockicon_stockicon"
     },
     {
-      "relation": "references",
-      "context": "field",
+      "relation": "imports",
+      "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/components/StockIcon/StockIcon.tsx",
-      "source_location": "L5",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L6",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "stockicon_stockicon_stockiconprops",
-      "target": "data_stockdata_stockiconname"
+      "source": "stock_stockpresentation",
+      "target": "stockicon_stockicon_stockiconname",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -14055,22 +15657,66 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
-      "source_location": "L10",
+      "source_location": "L9",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stockinventorypanel_stockinventorypanel",
-      "target": "data_stockdata"
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
-      "source_location": "L10",
+      "source_location": "L9",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stockinventorypanel_stockinventorypanel",
-      "target": "data_stockdata_stocksummaries"
+      "target": "stock_stockmanagementtypes_inventorymetrics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel",
+      "target": "stock_stockpresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel",
+      "target": "stock_stockpresentation_stocklevelfilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel",
+      "target": "stock_stockpresentation_stockunitgroup",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14081,6 +15727,16 @@
       "confidence_score": 1.0,
       "source": "stockinventorypanel_stockinventorypanel",
       "target": "stockinventorypanel_stockinventorypanel_stockinventorypanel"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel",
+      "target": "stockinventorypanel_stockinventorypanel_stockinventorypanelprops",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14115,15 +15771,59 @@
       "target": "stocktable_stocktable_stocktable"
     },
     {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel_stockinventorypanelprops",
+      "target": "stock_stockmanagementtypes_inventorymetrics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel_stockinventorypanelprops",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel_stockinventorypanelprops",
+      "target": "stock_stockpresentation_stocklevelfilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockInventoryPanel/StockInventoryPanel.tsx",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "stockinventorypanel_stockinventorypanel_stockinventorypanelprops",
+      "target": "stock_stockpresentation_stockunitgroup",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
       "source_location": "L2",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stocktable_stocktable",
-      "target": "data_stockdata"
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -14132,9 +15832,64 @@
       "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
       "source_location": "L2",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "stocktable_stocktable",
-      "target": "data_stockdata_stockitems"
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stocktable_stocktable",
+      "target": "stock_stockpresentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stocktable_stocktable",
+      "target": "stock_stockpresentation_formatstockquantity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stocktable_stocktable",
+      "target": "stock_stockpresentation_ingredienticon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stocktable_stocktable",
+      "target": "stock_stockpresentation_ingredientlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "stocktable_stocktable",
+      "target": "stock_stockpresentation_unitgrouplabel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14159,62 +15914,248 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L75",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L21",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "data_stockdata",
-      "target": "data_stockdata_linkedrecipes"
+      "source": "stocktable_stocktable",
+      "target": "stocktable_stocktable_stocktableprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/components/StockTable/StockTable.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "stocktable_stocktable_stocktableprops",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/data/stockData.ts",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_ingredientsaveinput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_inventorymetrics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_managedingredientdetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_managedlinkedrecipe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_managedstockmovement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_stockadjustmentmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockManagementTypes.ts",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "data_stockdata",
-      "target": "data_stockdata_stockiconname"
+      "source": "stock_stockmanagementtypes",
+      "target": "stock_stockmanagementtypes_stockbaseunit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockmanagementtypes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockmanagementtypes_stockbaseunit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockmanagementtypes_managedingredient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockmanagementtypes_managedstockmovement",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/data/stockData.ts",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_baseunitlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_formatstockquantity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_ingredienticon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_ingredientlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_movementlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_stocklevelfilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_stockunitgroup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/features/stock/stockPresentation.ts",
       "source_location": "L11",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "data_stockdata",
-      "target": "data_stockdata_stockitems"
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_unitgroup",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L81",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L17",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "data_stockdata",
-      "target": "data_stockdata_stockmovements"
+      "source": "stock_stockpresentation",
+      "target": "stock_stockpresentation_unitgrouplabel",
+      "confidence_score": 1.0
     },
     {
-      "relation": "contains",
+      "relation": "calls",
+      "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L2",
+      "source_file": "src/features/stock/stockPresentation.ts",
+      "source_location": "L18",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "data_stockdata",
-      "target": "data_stockdata_stockstatus"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/features/stock/data/stockData.ts",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "data_stockdata",
-      "target": "data_stockdata_stocksummaries"
+      "source": "stock_stockpresentation_unitgrouplabel",
+      "target": "stock_stockpresentation_unitgroup",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -16670,11 +18611,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "WORK_LEDGER.md",
+      "source_location": "L381",
+      "weight": 1.0,
+      "source": "work_ledger_journal",
+      "target": "work_ledger_2026_07_28_app_03_complete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "WORK_LEDGER.md",
       "source_location": "L316",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "work_ledger_journal",
       "target": "work_ledger_2026_07_28_app_03_started"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "WORK_LEDGER.md",
+      "source_location": "L334",
+      "weight": 1.0,
+      "source": "work_ledger_journal",
+      "target": "work_ledger_2026_07_28_app_04_started",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -17678,5 +19639,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7e9f12fb629fdbf23f916fc74608b09414672f86"
+  "built_at_commit": "eeb7ff9215226d3a035d59dfb1d98263ce0f2d60"
 }

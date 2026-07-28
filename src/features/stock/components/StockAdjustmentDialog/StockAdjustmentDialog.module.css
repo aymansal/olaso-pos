@@ -1,0 +1,165 @@
+.overlay {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(28 33 27 / 38%);
+}
+
+.dialog {
+  width: 520px;
+  padding: 24px;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.dialog header,
+.dialog header > span,
+.ingredient,
+.ingredient > span:last-child,
+.fields,
+.fields label,
+.dialog footer,
+.save {
+  display: flex;
+}
+
+.dialog header,
+.dialog footer {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog header > span,
+.ingredient > span:last-child,
+.fields label {
+  flex-direction: column;
+}
+
+.dialog header small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dialog h2 {
+  margin: 3px 0 0;
+  color: var(--olaso-text);
+  font-size: 18px;
+}
+
+.dialog header > button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.ingredient {
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--olaso-stock-strip);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  color: var(--olaso-green);
+  background: var(--olaso-green-icon);
+}
+
+.ingredient > span:last-child {
+  gap: 3px;
+}
+
+.ingredient strong {
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.ingredient small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+}
+
+.fields {
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.fields label {
+  width: 50%;
+  gap: 7px;
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.fields input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font: inherit;
+}
+
+.helper,
+.error {
+  margin: 12px 0 0;
+  font-size: 9px;
+}
+
+.helper {
+  color: var(--olaso-text-meta);
+}
+
+.error {
+  color: var(--olaso-danger);
+}
+
+.dialog footer {
+  margin-top: 22px;
+}
+
+.cancel,
+.save {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 22px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.cancel {
+  border: 1px solid var(--olaso-control-border);
+  color: var(--olaso-copy);
+  background: transparent;
+}
+
+.save {
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.save:disabled {
+  opacity: 0.45;
+}

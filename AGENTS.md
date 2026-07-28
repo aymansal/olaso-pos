@@ -83,9 +83,9 @@ decision changes.
   interface icons, and the built Olaso theme for tokens.
 - React components never contain database, sync, reporting-query, secret, or
   printer-protocol logic. Follow `ARCHITECTURE.md` when those layers arrive.
-- The current repository includes a Convex development backend and live product
-  management. Do not imply that planned SQLite, Capacitor, production
-  authentication, or ESC/POS behavior already exists.
+- The current repository includes a Convex development backend plus live
+  product and inventory management. Do not imply that planned SQLite,
+  Capacitor, production authentication, or ESC/POS behavior already exists.
 
 ### Visual baseline
 
