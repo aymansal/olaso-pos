@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-04 in progress
+**Status:** in progress — APP-04 done; APP-05 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -85,7 +85,7 @@ hardware are available.
 | APP-01 | Bootstrap Convex development infrastructure, schema, DOX, and frontend boundary | done | Dev deployment `colorful-newt-937` connected; schema/codegen/checks/browser smoke pass; commit `5189a4eb6a52f363313b650be076a116864ff153` pushed to `origin/codex/goal-02-functional-app` |
 | APP-02 | Add protected deterministic Convex development seed/reset data | done | Two resets and relationship checks passed; implementation commit `7b4530aa5791204aa9b75ed00c2dc4a6a49c8385` pushed to `origin/codex/goal-02-functional-app` |
 | APP-03 | Make categories, products, modifiers, and recipe management functional | done | Management/UI/check/browser evidence passed; implementation commit `3438fae935aedbca8ec8709a508d5127f522ff19` pushed to `origin/codex/goal-02-functional-app` |
-| APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | in progress | Backend and live Stock UI implemented; closeout verification pending |
+| APP-04 | Make ingredients, stock balances, adjustments, and movement history functional | done | Inventory/backend/UI/check/browser evidence passed; implementation commit `b4fd2a8de4306bd1e353ef0cfee2da037f909733` pushed to `origin/codex/goal-02-functional-app` |
 | APP-05 | Add Capacitor, SQLite schema/migrations, operational cache, and outbox foundation | pending | Restart-safe local data checks and Android sync pass; commit pushed |
 | APP-06 | Complete local-first sale saving, recipe deduction, receipt snapshots, and idempotent Convex sync | pending | Atomic/offline/retry/duplicate tests pass; POS checkout works; commit pushed |
 | APP-07 | Connect bounded order history, detail, recovery, and permitted corrective actions | pending | Pagination/snapshots/sync states verified in Orders UI; commit pushed |
@@ -260,7 +260,7 @@ hardware are available.
   `5189a4eb6a52f363313b650be076a116864ff153` is confirmed on
   `origin/codex/goal-02-functional-app`.
 - The remote is `origin` at `https://github.com/aymansal/olaso-pos.git`.
-- APP-00 through APP-03 are done; APP-04 is the only card in progress.
+- APP-00 through APP-04 are done; APP-05 is pending and no card is in progress.
 - APP-02's protected internal reset/seed and verification functions pass local
   Convex type generation and are deployed to `colorful-newt-937`.
 - Two consecutive reset runs produced identical counts: 4 categories, 15
@@ -315,9 +315,12 @@ hardware are available.
   import, tracked environment/key material, machine-local Graphify path, or
   printer implementation. The complete applicable DOX chain is re-read and its
   indexes remain current.
+- APP-04 implementation commit
+  `b4fd2a8de4306bd1e353ef0cfee2da037f909733` is confirmed on
+  `origin/codex/goal-02-functional-app`.
 
-**Exact next action:** Stage only the reviewed APP-04 files, commit with the
-card ID, and push before recording the remote SHA.
+**Exact next action:** Start APP-05 with its DOX/ledger/Graphify reads and the
+required maintained Capacitor-compatible SQLite package compatibility check.
 
 ## Decisions and Blockers
 
@@ -339,6 +342,22 @@ card ID, and push before recording the remote SHA.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-04 complete
+
+- Pushed `APP-04: connect stock management` as
+  `b4fd2a8de4306bd1e353ef0cfee2da037f909733` and confirmed
+  `origin/codex/goal-02-functional-app` resolves to the same SHA.
+- Completion evidence: bounded authorized inventory functions, retry-safe exact
+  integer adjustments, deterministic integration/seed checks, live prop-driven
+  Stock management, exact 1340 × 800 layout, clean browser diagnostics, current
+  DOX/Graphify, TypeScript, POS checks, and production build all pass.
+- `.env.local`, credentials, deployment secrets, signing material, and printer
+  implementation were not committed.
+- APP-04 is done; APP-05 is pending and no card is in progress.
+- Exact next action: start APP-05 with its DOX/ledger/Graphify reads and perform
+  the required maintained Capacitor-compatible SQLite package compatibility
+  check before adding the local operational foundation.
 
 ### 2026-07-28 — APP-04 started
 
