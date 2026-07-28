@@ -28,7 +28,7 @@ state.
 
 ### Goal 02 — Functional Full Application Beta
 
-**Status:** in progress — APP-11 in progress
+**Status:** in progress — APP-11 done; APP-12 pending
 **Objective:** Make the complete Olaso application operate on realistic
 development data with local-first sales, synchronized management data, working
 screens, and an Android beta build while preserving the approved design.
@@ -92,7 +92,7 @@ hardware are available.
 | APP-08 | Connect dashboard summaries, recent orders, and stock warnings | done | One bounded snapshot, live/recovery states, full regression, Graphify, and visual QA passed; implementation commit `b1dd49c77b1a864cefcb10a029dc7f5513f5624c` pushed to `origin/codex/goal-02-functional-app` |
 | APP-09 | Connect sales, product, and stock-usage report tabs and period controls | done | Bounded saved-summary query, all tabs/period/recovery states, regression, Graphify, and visual QA passed; implementation commit `573a1863d1ee24889450ee90e63dc358b64e9ad5` pushed to `origin/codex/goal-02-functional-app` |
 | APP-10 | Make settings, synchronization controls, and the designed lock flow functional | done | Local settings/sync/lock, regression, Graphify, and visual QA passed; implementation commit `2284ecdb6b217dbdc816cee3a9b9040db7364e8a` pushed to `origin/codex/goal-02-functional-app` |
-| APP-11 | Produce and verify the Android beta without printer integration | in progress | Reproducible APK and permission checks pass; install-over-upgrade and device flows in progress |
+| APP-11 | Produce and verify the Android beta without printer integration | done | Build/device/migration/sync/regression evidence passed; implementation commit `c5a6ef166a54830c2fbc19b3a5c03844788d454b` pushed to `origin/codex/goal-02-functional-app` |
 | APP-12 | Run full-system regression, quota/security review, documentation closeout, and final push | pending | All checks/builds/QA pass; Graphify and docs current; final commit pushed |
 
 ## Task Contracts
@@ -570,10 +570,13 @@ hardware are available.
 - The exact-source Graphify refresh records the two Android beta scripts; the
   portable graph now has 1,969 nodes and 4,588 edges with no absolute,
   dependency, temporary, copied-asset, or Android build-output source.
+- APP-11 implementation commit
+  `c5a6ef166a54830c2fbc19b3a5c03844788d454b` is confirmed on
+  `origin/codex/goal-02-functional-app`.
 
-**Exact next action:** Re-read the APP-11 instruction chain and authority
-boundaries, inspect the staged scope, commit `APP-11: build and verify Android
-beta`, push it, then record the pushed SHA in the ledger closeout commit.
+**Exact next action:** Commit and push the APP-11 ledger closeout, then start
+APP-12 with its Graphify, instruction-chain, authority, and quota/security
+review reads.
 
 ## Decisions and Blockers
 
@@ -595,6 +598,25 @@ beta`, push it, then record the pushed SHA in the ledger closeout commit.
   decisions remain owner-dependent; Goal 02 must represent them honestly.
 
 ## Journal
+
+### 2026-07-28 — APP-11 complete
+
+- Pushed `APP-11: build and verify Android beta` as
+  `c5a6ef166a54830c2fbc19b3a5c03844788d454b`;
+  `origin/codex/goal-02-functional-app` resolves to the same SHA.
+- Completion evidence: reproducible checked debug APK, minimal merged
+  permissions, same-ID install-over-upgrade, schema 2-to-4 migration with
+  preserved terminal state, cached offline startup and checkout, restart-safe
+  pending sale, one acknowledged idempotent Convex synchronization, restored
+  deterministic seed, full regression, and portable refreshed Graphify all
+  pass.
+- No `.env.local`, credential, signing material, SDK/AVD, `local.properties`,
+  APK/AAB, copied web assets, printer transport, or printer permission was
+  committed.
+- APP-11 is done; APP-12 is pending and no card is in progress.
+- Exact next action: commit and push this APP-11 ledger closeout, then start
+  APP-12 with its Graphify, instruction-chain, authority, and quota/security
+  review reads.
 
 ### 2026-07-28 — APP-11 started
 
