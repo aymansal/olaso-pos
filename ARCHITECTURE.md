@@ -795,6 +795,11 @@ Rules:
   registered Capacitor plugin. Kotlin owns 2-second bounded connect and write
   operations, returns only byte/timing facts, and reports `paperConfirmed` as
   false; no vendor SDK or new Android permission is used.
+- Printer setup packages the reviewed 2,441-byte, 300-dot NV logo as an Android
+  raw resource. A deliberate Settings action loads that static asset natively
+  and sends it through the same bounded socket after warning that all stored
+  printer images are replaced. No runtime rasterization or generated per-sale
+  logo data enters the APK.
 - Normal receipts recall the pre-provisioned 300-dot NV logo instead of
   retransmitting or rerasterizing it for each sale.
 
@@ -813,13 +818,17 @@ emulator while compiling and targeting API 36.
 
 The physical Samsung Galaxy Tab A9 SM-X115 reports an approximately 1007 by
 601 CSS-pixel WebView on its 1340 by 800 panel. The packaged activity is
-sensor-aware landscape and immersive fullscreen. Before React mounts, the
-native Capacitor runtime scales the fixed 1340-pixel reference by the long edge
-of the CSS screen; ordinary browser previews remain unscaled. Physical testing
-confirmed the complete composition, touch targeting, and cart survival across
-POS navigation. Production signing, public distribution, printer integration,
-and the remaining hardware acceptance checks remain outside this development
-beta.
+sensor-aware landscape and immersive fullscreen. Android 16 ignores ordinary
+orientation restrictions by default on API-36 large-screen applications, so
+the activity declares the supported API-36 restricted-resizability
+compatibility property while the fixed landscape interface remains in use.
+The native Capacitor runtime scales the fixed 1340-pixel reference by the long
+edge of the CSS screen before React mounts and reapplies that scale after resize
+or orientation changes; ordinary browser previews remain unscaled. Physical
+testing confirmed the complete composition, touch targeting, and cart survival
+across POS navigation. Production signing, public distribution, post-checkout
+printing, and the remaining hardware acceptance checks remain outside this
+development beta.
 
 ```text
 GitHub tag

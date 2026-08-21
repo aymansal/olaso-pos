@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active; PRINT-05 in progress
+**Status:** active; PRINT-05 closeout
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -92,7 +92,7 @@ sale or stock deduction.
 | PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | done | Endpoint/MAC/paper and failure/recovery paths pass with shared-router reboot limitation explicit; configurable tooling and all checks pass; commit `5cb5da399900f6d2aca22bd4ecd341844884d78c` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | done | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK, in-app/recovery paper, restart, clean-log wrong-address recovery, Graphify/docs pass; commit `c41e29c75c1a340519c6d217e220ed7f84723f76` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | done | Pure saved-snapshot model/encoder and edge checks, accepted 941-byte paper, frozen SHA, build, Android beta, installed-tablet/browser preview, logs, and Graphify pass; commit `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` pushed to `origin/codex/goal-03-printing-integration`. |
-| PRINT-05 | Add and verify one-time printer-resident logo provisioning | in progress | Inspecting the accepted static payload and minimal deliberate setup boundary. |
+| PRINT-05 | Add and verify one-time printer-resident logo provisioning | in progress | Exact native asset, warning-gated Settings setup, build/APK/tablet writes, physical logo output, app/tablet/printer-module restart, accepted exact-payload power-cycle baseline, and Android-16 landscape recovery pass. Ready for commit/push. |
 | PRINT-06 | Connect post-commit first print and persisted print state | pending | — |
 | PRINT-07 | Add Orders reprint and restart/disconnect recovery | pending | — |
 | PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | pending | — |
@@ -293,6 +293,30 @@ sale or stock deduction.
 - Exact next action: inspect the accepted resident-logo payload, Settings
   ownership, and native asset/plugin contracts before adding the deliberate
   one-time PRINT-05 provisioning action.
+- The exact 2,441-byte accepted NV payload is bundled as a native raw asset and
+  matches SHA-256
+  `D5D3B835800970D7F81BD188311EC766DCF4F0867F2E9B697C227AD9F9818C76`.
+  Settings exposes warning-gated Restore saved logo without runtime
+  rasterization or false paper/storage claims.
+- The tablet wrote all setup bytes in 9 ms, then repeated the exact 16-byte
+  recall twice and after app, tablet, and printer network-module restarts. The
+  network module lost and recovered TCP in 3,909 ms; final recall succeeded.
+- Android 16 was proven to ignore the previous large-screen landscape request.
+  The supported API-36 compatibility property and resize/orientation scale
+  reapplication now force landscape even with system rotation locked portrait;
+  three cold starts retain zoom 0.751493 and the complete 1340 by 800 layout.
+- Exact next action: inspect real logo paper, perform one true printer power
+  cycle and final recall, then run closeout/Graphify/commit/push.
+- Final focused Settings/Android/printing/receipt-lab/sales/TypeScript checks
+  pass. Fresh-browser layout/log checks pass, and Graphify refreshed to 2,354
+  nodes and 5,365 edges.
+- The user confirmed that all six current bare logo recalls physically printed
+  and correctly rejected both the repetition and pause. PRINT-01 already
+  accepted this exact payload's horizontal orientation, normal recall, and
+  survival across a true power cycle; PRINT-05 proves byte identity plus the
+  installed app setup/restart path. No further logo print is required.
+- Exact next action: closeout review, commit/push PRINT-05, record its SHA, and
+  activate PRINT-06.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -346,6 +370,34 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-05 pause and repeated prints corrected
+
+- The user correctly objected that the logo had already been fully proven and
+  that six new bare recalls were excessive. Reused the accepted PRINT-01
+  exact-payload orientation/power-cycle evidence with PRINT-05 byte-identity
+  and installed-app setup/restart evidence.
+- Goal 03 is active. No more logo prints are required; PRINT-05 moves directly
+  to closeout.
+
+### 2026-08-21 — PRINT-05 blocked at physical verification
+
+- This pause was later corrected as unnecessary because it failed to reuse the
+  accepted exact-payload power-cycle/orientation evidence. No partial card was
+  committed and no later card was started during the pause.
+
+### 2026-08-21 — PRINT-05 reached physical paper/power gate
+
+- Bundled and APK-verified the unchanged 2,441-byte accepted NV logo, added the
+  deliberate replacement warning/action, and sent it successfully from the
+  real tablet.
+- Recalled the saved logo repeatedly and after app, tablet, and printer
+  network-module restarts. Socket results remain explicitly paper-unconfirmed.
+- Corrected Android 16's API-36 large-screen orientation override using the
+  supported compatibility property and resize/orientation scaling refresh.
+  Forced-portrait launch plus three physical cold starts now fit correctly.
+- Only visual paper inspection and a true printer power cycle/final recall
+  remain before PRINT-05 closeout.
 
 ### 2026-08-21 — PRINT-04 pushed; PRINT-05 started
 

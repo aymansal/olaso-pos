@@ -24,6 +24,14 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   platform integration.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;
   system bars may appear transiently after an edge swipe.
+- API-36 large screens ignore ordinary orientation restrictions by default.
+  Preserve the activity-level
+  `PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY=true` compatibility opt-out
+  while the approved interface remains fixed-landscape; verify forced-portrait
+  launch behavior on the physical tablet after manifest changes.
+- Keep the approved 2,441-byte NV logo as an exact `res/raw` asset. Native code
+  may load it only for the deliberate setup action and must not regenerate,
+  rasterize, or send it with ordinary receipts.
 
 ## Workflow
 

@@ -18,6 +18,9 @@ presentation.
 - Printer & hardware persists a validated IPv4/raw-port endpoint and exposes one
   Android-only non-sale Test printer action with honest configuration,
   unavailable, timeout, write, and unknown feedback.
+- The secondary Restore saved logo action is Android-only, requires an explicit
+  warning that all stored images are replaced, and sends only the bundled
+  reviewed native asset during deliberate setup.
 - A successful test means only that bytes were written; the operator must
   confirm paper separately.
 - Unlock is explicitly not authentication until owner-approved roles, PINs,

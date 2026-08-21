@@ -62,12 +62,14 @@ export function SettingsScreen({ onNavigate, onLock }: SettingsScreenProps) {
         isLoading={data.isLoading}
         isSyncing={data.isSyncing}
         isTestingPrinter={data.isTestingPrinter}
+        isInstallingPrinterLogo={data.isInstallingPrinterLogo}
         online={online}
         message={data.message}
         error={data.error || (section === 'sync' ? data.syncError : '')}
         onSave={data.save}
         onSync={data.syncNow}
         onTestPrinter={data.testPrinter}
+        onInstallPrinterLogo={data.installPrinterLogo}
       />
     </main>
   );

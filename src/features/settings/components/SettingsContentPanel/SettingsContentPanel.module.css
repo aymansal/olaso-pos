@@ -80,6 +80,17 @@
   transform: scale(0.98);
 }
 
+.headerActions {
+  display: flex;
+  gap: 10px;
+}
+
+.secondary {
+  border: 1px solid var(--olaso-green);
+  color: var(--olaso-green);
+  background: var(--olaso-white);
+}
+
 .primary:focus-visible,
 .formGrid input:focus-visible,
 .clock button:focus-visible {

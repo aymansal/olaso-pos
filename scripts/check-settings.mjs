@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { localMigrations } from '../src/data/schema.ts';
 import { serializeLocalTransaction } from '../src/data/localDatabase.ts';
@@ -10,6 +11,7 @@ import {
   setTerminalLockedInDatabase,
 } from '../src/data/terminalSettings.ts';
 import { createPrinterTestBytes } from '../src/printing/printerDiagnostic.ts';
+import { describePrinterFailure } from '../src/printing/testPrinter.ts';
 
 const database = new DatabaseSync(':memory:');
 for (const migration of localMigrations) {
@@ -134,6 +136,18 @@ assert.match(Buffer.from(diagnostic).toString('ascii'), /OLASO PRINTER TEST/);
 assert.match(Buffer.from(diagnostic).toString('ascii'), /NOT A SALE/);
 assert.deepEqual([...diagnostic.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
 assert.equal(diagnostic.indexOf(0x00, 5) >= 0, true);
+assert.equal(
+  describePrinterFailure(Object.assign(new Error('unavailable'), { code: 'UNAVAILABLE' })),
+  'Printer actions are available in the installed Android app.',
+);
+const printerPanel = readFileSync(
+  'src/features/settings/components/SettingsContentPanel/SettingsContentPanel.tsx',
+  'utf8',
+);
+assert.match(printerPanel, /Restore saved logo/);
+assert.match(printerPanel, /replaces every image saved in the printer/i);
+assert.match(printerPanel, /does not confirm paper or logo storage/i);
+assert.match(printerPanel, /window\.confirm/);
 
 database.close();
-console.log('Terminal settings persistence and validation checks passed.');
+console.log('Terminal and printer setup persistence, validation, and warning checks passed.');

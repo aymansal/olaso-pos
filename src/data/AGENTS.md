@@ -17,8 +17,9 @@ tablet's local SQLite operational record.
 - `useReportsData.ts` makes one saved-summary range request only while Reports
   is mounted or its period changes, and exposes explicit retry state.
 - `useSettingsData.ts` loads local device/sync state, saves validated non-secret
-  preferences, and performs one bounded synchronization attempt per deliberate
-  action.
+  preferences, performs one bounded synchronization attempt per deliberate
+  action, and coordinates explicit printer test/logo-setup actions without
+  claiming paper state.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
   safe failure copy.

@@ -11,31 +11,51 @@ import com.getcapacitor.annotation.CapacitorPlugin
 class EscPosPrinterPlugin : Plugin() {
     @PluginMethod
     fun write(call: PluginCall) {
-        val host = call.getString("host")?.trim().orEmpty()
-        val port = call.getInt("port")
-        val connectTimeoutMs = call.getInt("connectTimeoutMs", 2_000) ?: 2_000
-        val writeTimeoutMs = call.getInt("writeTimeoutMs", 2_000) ?: 2_000
+        val target = target(call) ?: return
         val dataBase64 = call.getString("dataBase64").orEmpty()
-
-        if (!isValidIpv4(host)) {
-            fail(call, "CONFIGURATION", "configuration", "Printer address must be a valid IPv4 address.")
-            return
-        }
-        if (port == null || port !in 1..65_535) {
-            fail(call, "CONFIGURATION", "configuration", "Printer port must be from 1 to 65535.")
-            return
-        }
-        if (connectTimeoutMs !in 100..30_000 || writeTimeoutMs !in 100..30_000) {
-            fail(call, "CONFIGURATION", "configuration", "Printer timeouts must be from 100 to 30000 ms.")
-            return
-        }
-
         val payload = try {
             Base64.decode(dataBase64, Base64.DEFAULT)
         } catch (_: IllegalArgumentException) {
             fail(call, "CONFIGURATION", "configuration", "Printer data must be valid base64.")
             return
         }
+        send(call, target, payload)
+    }
+
+    @PluginMethod
+    fun installLogo(call: PluginCall) {
+        val target = target(call) ?: return
+        val payload = try {
+            context.resources.openRawResource(R.raw.olaso_nv_logo).use { it.readBytes() }
+        } catch (_: Exception) {
+            fail(call, "UNKNOWN", "asset", "Saved printer logo could not be loaded.")
+            return
+        }
+        send(call, target, payload)
+    }
+
+    private fun target(call: PluginCall): WriteTarget? {
+        val host = call.getString("host")?.trim().orEmpty()
+        val port = call.getInt("port")
+        val connectTimeoutMs = call.getInt("connectTimeoutMs", 2_000) ?: 2_000
+        val writeTimeoutMs = call.getInt("writeTimeoutMs", 2_000) ?: 2_000
+
+        if (!isValidIpv4(host)) {
+            fail(call, "CONFIGURATION", "configuration", "Printer address must be a valid IPv4 address.")
+            return null
+        }
+        if (port == null || port !in 1..65_535) {
+            fail(call, "CONFIGURATION", "configuration", "Printer port must be from 1 to 65535.")
+            return null
+        }
+        if (connectTimeoutMs !in 100..30_000 || writeTimeoutMs !in 100..30_000) {
+            fail(call, "CONFIGURATION", "configuration", "Printer timeouts must be from 100 to 30000 ms.")
+            return null
+        }
+        return WriteTarget(host, port, connectTimeoutMs, writeTimeoutMs)
+    }
+
+    private fun send(call: PluginCall, target: WriteTarget, payload: ByteArray) {
         if (payload.isEmpty() || payload.size > 65_536) {
             fail(call, "CONFIGURATION", "configuration", "Printer data must contain 1 to 65536 bytes.")
             return
@@ -43,11 +63,11 @@ class EscPosPrinterPlugin : Plugin() {
 
         try {
             val result = LanSocketWriter.write(
-                host = host,
-                port = port,
+                host = target.host,
+                port = target.port,
                 payload = payload,
-                connectTimeoutMs = connectTimeoutMs,
-                writeTimeoutMs = writeTimeoutMs,
+                connectTimeoutMs = target.connectTimeoutMs,
+                writeTimeoutMs = target.writeTimeoutMs,
             )
             call.resolve(JSObject().apply {
                 put("ok", true)
@@ -77,6 +97,13 @@ class EscPosPrinterPlugin : Plugin() {
             put("message", message)
         })
     }
+
+    private data class WriteTarget(
+        val host: String,
+        val port: Int,
+        val connectTimeoutMs: Int,
+        val writeTimeoutMs: Int,
+    )
 
     companion object {
         internal fun isValidIpv4(value: String): Boolean {

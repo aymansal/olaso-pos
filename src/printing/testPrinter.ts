@@ -1,6 +1,6 @@
-import type { PrinterPreferences } from '../data/terminalSettings';
-import { createPrinterTestBytes } from './printerDiagnostic';
-import { writePrinterBytes } from './printerTransport';
+import type { PrinterPreferences } from '../data/terminalSettings.ts';
+import { createPrinterTestBytes } from './printerDiagnostic.ts';
+import { writePrinterBytes } from './printerTransport.ts';
 
 export function testPrinterConnection(printer: PrinterPreferences) {
   return writePrinterBytes({
@@ -22,7 +22,7 @@ export function describePrinterFailure(error: unknown) {
     return 'Enter a valid printer IPv4 address and port.';
   }
   if (code === 'UNAVAILABLE') {
-    return 'Printer testing is available in the installed Android app.';
+    return 'Printer actions are available in the installed Android app.';
   }
   if (code === 'TIMEOUT') {
     return 'Printer connection timed out. Check power, cable, and address.';
@@ -31,7 +31,7 @@ export function describePrinterFailure(error: unknown) {
     return 'Printer is unavailable. Check power, cable, and address.';
   }
   if (code === 'WRITE_FAILED') {
-    return 'Printer connection opened, but test data could not be written.';
+    return 'Printer connection opened, but data could not be written.';
   }
-  return 'Printer test failed. Check the settings and try again.';
+  return 'Printer action failed. Check the settings and try again.';
 }

@@ -8,10 +8,15 @@ import { AppDataProvider } from './data/AppDataProvider';
 import './globals.css';
 
 if (Capacitor.isNativePlatform()) {
-  document.documentElement.style.setProperty(
-    'zoom',
-    String(Math.max(window.screen.width, window.screen.height) / 1340),
-  );
+  const applyTabletScale = () => {
+    document.documentElement.style.setProperty(
+      'zoom',
+      String(Math.max(window.screen.width, window.screen.height) / 1340),
+    );
+  };
+  applyTabletScale();
+  window.addEventListener('resize', applyTabletScale, { passive: true });
+  window.screen.orientation.addEventListener('change', applyTabletScale);
 }
 
 createRoot(document.getElementById('root')!).render(

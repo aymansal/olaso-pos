@@ -3,6 +3,7 @@ import {
   CloudArrowUp,
   Database,
   DeviceTablet,
+  ImageSquare,
   Info,
   Printer as PrinterIcon,
   WarningCircle,
@@ -30,12 +31,14 @@ interface SettingsContentPanelProps {
   isLoading: boolean;
   isSyncing: boolean;
   isTestingPrinter: boolean;
+  isInstallingPrinterLogo: boolean;
   online: boolean;
   message: string;
   error: string;
   onSave: (input: TerminalPreferences) => Promise<void>;
   onSync: () => Promise<void>;
   onTestPrinter: (input: PrinterPreferences) => Promise<void>;
+  onInstallPrinterLogo: (input: PrinterPreferences) => Promise<void>;
 }
 
 export function SettingsContentPanel({
@@ -44,12 +47,14 @@ export function SettingsContentPanel({
   isLoading,
   isSyncing,
   isTestingPrinter,
+  isInstallingPrinterLogo,
   online,
   message,
   error,
   onSave,
   onSync,
   onTestPrinter,
+  onInstallPrinterLogo,
 }: SettingsContentPanelProps) {
   const [terminalName, setTerminalName] = useState('');
   const [clockFormat, setClockFormat] =
@@ -88,7 +93,23 @@ export function SettingsContentPanel({
     }
   }
 
+  async function installPrinterLogo() {
+    const approved = window.confirm(
+      'This replaces every image saved in the printer. Continue only during printer setup.',
+    );
+    if (!approved) return;
+    try {
+      await onInstallPrinterLogo({
+        printerHost,
+        printerPort: Number(printerPort),
+      });
+    } catch {
+      // The data hook owns the actionable error message.
+    }
+  }
+
   if (section === 'printer') {
+    const printerBusy = isTestingPrinter || isInstallingPrinterLogo;
     return (
       <section className={styles.panel} aria-labelledby="printer-heading">
         <div className={styles.header}>
@@ -96,15 +117,26 @@ export function SettingsContentPanel({
             <h2 id="printer-heading">Printer & hardware</h2>
             <p>Configure this tablet's Ethernet receipt printer</p>
           </div>
-          <button
-            className={styles.primary}
-            type="button"
-            disabled={isTestingPrinter || isLoading}
-            onClick={testPrinter}
-          >
-            <PrinterIcon size={17} aria-hidden="true" />
-            <span>{isTestingPrinter ? 'Testing…' : 'Test printer'}</span>
-          </button>
+          <div className={styles.headerActions}>
+            <button
+              className={`${styles.primary} ${styles.secondary}`}
+              type="button"
+              disabled={printerBusy || isLoading}
+              onClick={installPrinterLogo}
+            >
+              <ImageSquare size={17} aria-hidden="true" />
+              <span>{isInstallingPrinterLogo ? 'Restoring…' : 'Restore saved logo'}</span>
+            </button>
+            <button
+              className={styles.primary}
+              type="button"
+              disabled={printerBusy || isLoading}
+              onClick={testPrinter}
+            >
+              <PrinterIcon size={17} aria-hidden="true" />
+              <span>{isTestingPrinter ? 'Testing…' : 'Test printer'}</span>
+            </button>
+          </div>
         </div>
 
         <div className={styles.identity}>
@@ -130,7 +162,7 @@ export function SettingsContentPanel({
               inputMode="decimal"
               autoComplete="off"
               placeholder="192.168.1.100"
-              disabled={isLoading || isTestingPrinter}
+              disabled={isLoading || printerBusy}
               onChange={(event) => setPrinterHost(event.target.value)}
             />
             <small>Use the address reserved on the installation router.</small>
@@ -141,7 +173,7 @@ export function SettingsContentPanel({
               value={printerPort}
               inputMode="numeric"
               autoComplete="off"
-              disabled={isLoading || isTestingPrinter}
+              disabled={isLoading || printerBusy}
               onChange={(event) => setPrinterPort(event.target.value)}
             />
             <small>The verified WD8260 lab endpoint uses port 9100.</small>
@@ -151,9 +183,10 @@ export function SettingsContentPanel({
         <div className={`${styles.notice} ${styles.printerNotice}`}>
           <Info size={18} aria-hidden="true" />
           <p>
-            Test printer validates and saves this endpoint, then sends a
-            clearly marked non-sale diagnostic. A completed TCP write does not
-            confirm paper; inspect the printer separately.
+            Test printer sends a marked non-sale diagnostic. Restore saved logo
+            replaces every image stored in the printer with the approved OLASO
+            logo. A completed TCP write does not confirm paper or logo storage;
+            inspect a receipt separately.
           </p>
         </div>
 

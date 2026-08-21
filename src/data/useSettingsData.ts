@@ -21,6 +21,7 @@ import {
   describePrinterFailure,
   testPrinterConnection,
 } from '../printing/testPrinter.ts';
+import { installResidentLogo } from '../printing/printerTransport.ts';
 
 function toConvexSaleArgs(input: SaleSyncPayload) {
   return {
@@ -44,6 +45,7 @@ export function useSettingsData() {
   const [settings, setSettings] = useState<TerminalSettings>();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isTestingPrinter, setIsTestingPrinter] = useState(false);
+  const [isInstallingPrinterLogo, setIsInstallingPrinterLogo] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -157,16 +159,44 @@ export function useSettingsData() {
     [refresh],
   );
 
+  const installPrinterLogo = useCallback(
+    async (input: PrinterPreferences) => {
+      setIsInstallingPrinterLogo(true);
+      setError('');
+      setMessage('');
+      try {
+        const printer = await savePrinterPreferences(input);
+        await refresh();
+        const result = await installResidentLogo({
+          host: printer.printerHost,
+          port: printer.printerPort,
+        });
+        setMessage(
+          `Logo setup data sent (${result.bytesWritten} bytes in ${result.totalMs} ms). Print a receipt to confirm the saved logo.`,
+        );
+      } catch (caught) {
+        const printerError = describePrinterFailure(caught);
+        setError(printerError);
+        throw caught;
+      } finally {
+        setIsInstallingPrinterLogo(false);
+      }
+    },
+    [refresh],
+  );
+
   return {
     settings,
     isLoading: !settings,
     isSyncing,
     isTestingPrinter,
+    isInstallingPrinterLogo,
     message,
     error,
     syncError: settings?.lastSyncError || '',
     save,
     syncNow,
     testPrinter,
+    installPrinterLogo,
   };
 }

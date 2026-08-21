@@ -238,8 +238,73 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - Exact next action: inspect the accepted resident-logo payload, Settings
   ownership, and native asset/plugin contracts before adding the deliberate
   one-time PRINT-05 provisioning action.
+- PRINT-05 packages the exact 2,441-byte accepted NV payload, SHA-256
+  `D5D3B835800970D7F81BD188311EC766DCF4F0867F2E9B697C227AD9F9818C76`,
+  as an Android raw asset. Static checks prove it matches the preserved fixture
+  byte-for-byte and is present in the built APK.
+- Settings now exposes deliberate Restore saved logo and Test printer actions.
+  The restore action requires the native replacement warning and reports only
+  byte/timing evidence. Browser layout, warning/cancel behavior, and clean logs
+  pass without pretending the browser can print.
+- The first installed-tablet restore wrote all 2,441 bytes in 9 ms with
+  `paperConfirmed:false`. Two immediate accepted 16-byte recalls succeeded,
+  followed by successful recalls after app restart (11 ms), full tablet restart
+  (47 ms), and printer network-module restart (109 ms). The printer TCP path
+  disappeared and recovered in 3,909 ms during that restart.
+- The user caught an oversized launch while Android 16 ignored the existing
+  landscape request. Added the official API-36 large-screen compatibility
+  property plus resize/orientation scale reapplication. With the tablet system
+  rotation deliberately locked to portrait, Olaso now forced landscape in
+  500 ms and rendered the full 1340 by 800 POS. Three later cold starts each
+  report screen 1007 by 601, zoom 0.751493, and document 1007 by 602.
+- Exact next action: physically inspect the emitted logo-only slips for the
+  crisp horizontal OLASO wordmark, power-cycle the printer, send one final
+  recall, then run PRINT-05 closeout/Graphify/commit/push.
+- Final focused Settings/Android/printing/receipt-lab/sales/TypeScript checks
+  pass. A fresh browser reports exact 1340 by 800 content, no panel overflow,
+  and no warning/error; Graphify refreshed to 2,354 nodes and 5,365 edges.
+- The user corrected the unnecessary pause and confirmed that the six logo
+  recalls physically printed. PRINT-01 already accepted the exact preserved
+  logo payload, horizontal orientation, ordinary recall, and survival across a
+  true printer power cycle. PRINT-05 proves its bundled native asset is exactly
+  that same 2,441-byte payload and that the installed app can provision and
+  recall it across app, tablet, and printer-module restarts.
+- No further logo or receipt print is required for PRINT-05. Exact next action:
+  run closeout review, commit/push the card, record its SHA, and activate
+  PRINT-06.
 
 ## Planning Journal
+
+### 2026-08-21 — Incorrect PRINT-05 pause corrected
+
+- The user correctly rejected the repeated logo printing and the decision to
+  pause while they were away. Six bare recalls were excessive; one current
+  app-path confirmation was sufficient because the exact payload, orientation,
+  and power-cycle persistence were already accepted in PRINT-01.
+- Accepted existing physical baseline plus exact byte identity and current
+  installed-app setup/recall/restart evidence. No further logo print will be
+  sent. Goal 03 is active and PRINT-05 is ready for closeout.
+
+### 2026-08-21 — PRINT-05 blocked at physical printer gate
+
+- This pause was later found unnecessary: it failed to reuse the already
+  accepted exact-payload power-cycle/orientation baseline and over-weighted new
+  bare recall repetition. The user corrected it before any partial commit or
+  later-card work occurred.
+
+### 2026-08-21 — PRINT-05 software, restart, and orientation QA reached
+
+- Bundled the accepted pre-rasterized logo unchanged as one Android raw asset;
+  no image dependency or runtime rasterizer was added.
+- Added a warning-gated Settings restore action. The real tablet wrote 2,441
+  setup bytes and repeated the exact 16-byte recall after app, tablet, and
+  printer network-module restarts while remaining honest about paper/storage.
+- Diagnosed the user's repeat oversized layout as Android 16 API-36 large-screen
+  orientation override, not a receipt change. Added the official compatibility
+  opt-out and reapplied the existing scale after resize/orientation changes.
+  Forced-portrait-system launch and three cold-start measurements now pass.
+- Physical logo-slip inspection and a true printer power cycle remain before
+  PRINT-05 can close.
 
 ### 2026-08-21 — PRINT-04 complete; PRINT-05 started
 
