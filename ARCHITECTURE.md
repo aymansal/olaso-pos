@@ -1,8 +1,8 @@
 ---
-version: 0.1
+version: 0.2
 name: Olaso POS Architecture
 status: active
-updated: 2026-07-24
+updated: 2026-08-21
 authority: Technical architecture, persistence, synchronization, performance, and code ownership
 ---
 
@@ -32,6 +32,7 @@ the system.
 | Cloud data | Convex |
 | Hosting | No Vercel dependency in the production APK runtime |
 | Printing | Local Capacitor-to-Kotlin bridge using ESC/POS |
+| Costing | Perpetual weighted-average ingredient valuation with immutable sale cost snapshots |
 | Initial topology | One cafe and one POS tablet |
 | Updates | Signed APKs attached to GitHub Releases and installed manually |
 
@@ -75,6 +76,7 @@ The installed application owns:
 - Current cart and transient screen state.
 - Local active menu and recipe cache.
 - Local stock view.
+- Cached ingredient valuation required for offline sale cost snapshots.
 - Completed local sales.
 - Unsynced-operation queue.
 - Receipt rendering and printing.
@@ -89,6 +91,7 @@ It stores the minimum data needed for service:
 
 - Active categories, products, modifiers, recipes, and ingredients.
 - Current local stock quantities.
+- Current ingredient valuation state and cost-completeness metadata.
 - Sales and sale lines created on the tablet.
 - Stock movements created by those sales.
 - Outbox entries waiting for Convex.
@@ -173,12 +176,13 @@ Within one local database transaction:
 
 1. Generate a durable `localSaleId`.
 2. Validate that the cart is not empty.
-3. Read the locally active product and recipe versions.
-4. Recalculate prices and quantities from local trusted data.
-5. Insert the sale.
-6. Insert all sale lines and modifier snapshots.
-7. Insert exact stock movements.
-8. Update local current-stock values.
+3. Read the locally active product, recipe, ingredient, and valuation versions.
+4. Recalculate prices, quantities, and ingredient costs from local trusted data.
+5. Insert the sale with its ingredient-cost and completeness snapshot.
+6. Insert all sale lines with price, modifier, recipe, and ingredient-cost
+   snapshots.
+7. Insert exact stock movements with their deterministic cost effects.
+8. Update local current-stock quantities and inventory values.
 9. Insert one outbox event containing the completed sale identifier.
 10. Commit.
 
@@ -233,6 +237,9 @@ A network retry therefore produces the same result instead of another sale.
   the tablet can remove them from active views.
 - Product images are versioned APK assets for the initial release. Dynamic
   owner-uploaded images are deferred until they are required.
+- Ingredient synchronization includes the current valuation revision needed to
+  reproduce offline sale costs. Salary and general-expense data never enter
+  the cashier operational cache.
 - The application exposes a manual `Sync now` recovery action.
 
 ### Current scaling limit
@@ -279,6 +286,8 @@ must remain separate.
 - Name.
 - Base measurement unit.
 - Current cloud stock quantity.
+- Current inventory value in integer centimes, last usable weighted-average
+  cost state, and cost-completeness status.
 - Low-stock threshold.
 - Active or archived state.
 
@@ -298,6 +307,7 @@ must remain separate.
 - Service mode.
 - Customer/table snapshot.
 - Money totals in integer centimes.
+- Ingredient-cost total and cost-completeness snapshot.
 - Payment method.
 - Status.
 - Local completion and cloud acknowledgement times.
@@ -312,6 +322,7 @@ must remain separate.
 - Modifier snapshot.
 - Recipe version reference.
 - Line total.
+- Ingredient-cost snapshot and completeness state.
 
 ### `stockMovements`
 
@@ -321,8 +332,41 @@ must remain separate.
 - Sale or adjustment reference.
 - User/device reference.
 - Creation time.
+- Cost delta and resulting valuation when the movement changes inventory value.
 
 Stock movements are append-only. Corrections create another movement.
+
+### `inventoryPurchases`
+
+- Ingredient and related stock-movement references.
+- Package label, package count, and base-unit quantity per package.
+- Total quantity received in the ingredient's integer base unit.
+- Price per package and total cost in integer centimes.
+- Received date, actor, optional supplier label, and correction reference.
+
+Purchases are append-only. A correction records a reversing or replacement
+entry rather than rewriting historical valuation.
+
+### `staffProfiles` and `compensationPeriods`
+
+- Staff display identity, worker/manager/owner classification, active state,
+  and optional later authentication-subject link.
+- Optional integer-centime monthly compensation with effective start month and
+  optional end month.
+- Compensation changes create a new effective period.
+- Salary fields are returned only through owner-authorized functions and are
+  excluded from cashier snapshots and ordinary staff reads.
+
+Staff profiles do not become authentication merely because they exist. The
+production identity and session boundary remains separately required.
+
+### `operatingExpenses`
+
+- Category, description, and integer-centime amount.
+- One-time effective date or monthly recurrence with start and optional end.
+- Status, revision, actor, and retry identifier.
+- Optional compensation reference only when needed for traceability; salary
+  totals are read from compensation periods and are never duplicated manually.
 
 ### `dailyMetrics`
 
@@ -333,6 +377,7 @@ Stock movements are append-only. Corrections create another movement.
 - Totals by payment method, service mode, product, and category as required.
 - Exact ingredient usage in each ingredient's base unit and its deduction-event
   count.
+- Ingredient cost consumed and cost-completeness counts.
 
 This table is incrementally updated when a sale is accepted or corrected.
 Reports do not recalculate every historical sale on every screen load.
@@ -341,11 +386,11 @@ Reports do not recalculate every historical sale on every screen load.
 
 The following are added only when their features are implemented:
 
-- `users` and `roles`.
+- Authentication identities, sessions, and complete permission assignments.
 - `devices`.
 - `cashSessions`.
 - `discountRules`.
-- `suppliers` and `purchaseOrders`.
+- Suppliers and multi-line purchase orders.
 - `branches`.
 
 ## Money and quantity representation
@@ -359,6 +404,12 @@ The following are added only when their features are implemented:
   Convex mutation.
 - Save the confirmed totals with the sale; do not derive old totals from the
   current product price.
+- Keep purchase totals, stock-movement cost effects, sale ingredient costs,
+  compensation, and expenses in integer centimes.
+- Weighted-average calculations use integer arithmetic with deterministic
+  rounding and preserve the ingredient's total carrying value. JavaScript
+  decimal unit prices are display values only.
+- A missing cost is explicit state. Never convert unknown cost to zero.
 
 ### Stock
 
@@ -386,6 +437,8 @@ convex/
   recipes.ts
   ingredients.ts
   inventory.ts
+  costs.ts
+  staff.ts
   sales.ts
   reports.ts
 
@@ -393,6 +446,7 @@ convex/
     auth.ts
     money.ts
     stockCalculations.ts
+    costCalculations.ts
     validation.ts
 
 src/
@@ -498,6 +552,9 @@ Expected indexes include:
 - Sale items by sale.
 - Stock movements by ingredient and creation time.
 - Stock movements by related sale.
+- Inventory purchases by ingredient/time and business date/time.
+- Compensation periods by staff profile and effective month.
+- Operating expenses by effective month/status.
 - Daily metrics by business date.
 
 Redundant and unused indexes are removed because every index consumes storage
@@ -566,6 +623,9 @@ limits must be checked again before production launch:
 | Open order history | One paginated query |
 | Open report period | One summary query plus paginated detail on demand |
 | Save related recipe changes | One batched mutation |
+| Receive purchased stock | One mutation for purchase, movement, balance, and valuation |
+| Save compensation or expense | One validated retry-safe mutation |
+| Open monthly Costs report | One bounded summary query plus paginated purchase/expense detail on demand |
 
 At 500 sales per day, one sale mutation produces about 15,000 sale calls in a
 30-day month. The dangerous quota patterns are repeated polling, broad
@@ -593,10 +653,24 @@ When a sale is accepted, the same mutation updates:
 - Payment and service-mode counters required by active reports.
 - Exact recipe ingredient usage and deduction-event counters required by the
   Stock Usage report.
+- Ingredient cost consumed, cost-complete sale count, and incomplete-cost sale
+  count required by the monthly profitability report.
 
 Corrections reverse the original summary effect and apply the new effect.
 Detailed reports load paginated sales or stock movements only when the user
 opens them.
+
+The monthly Costs query combines at most 31 daily summaries with indexed,
+bounded compensation periods, operating expenses, and purchase totals for the
+selected month. It returns separate values for revenue, ingredient cost
+consumed, gross profit, compensation, other operating expenses, operating
+profit, purchase cash spent, and closing inventory value. Purchases are never
+subtracted again after ingredient cost consumed.
+
+Product cost and margin use the active recipe and current weighted-average
+ingredient costs. Historical sale profitability uses immutable saved cost
+snapshots, never today's ingredient prices. Any missing ingredient cost makes
+the affected product, sale, and report explicitly incomplete.
 
 Do not introduce a general analytics pipeline until the stored summaries no
 longer answer the owner's confirmed reports.
@@ -612,6 +686,10 @@ longer answer the owner's confirmed reports.
 - Administrative secrets never ship inside the APK.
 - Device identity is not a substitute for user authorization.
 - Management actions record the responsible user/device.
+- Salary and individual-compensation fields require owner authorization and are
+  never returned by cashier, operational-cache, or general staff queries.
+- The dedicated development authorization override may exercise these paths in
+  development but must not exist on a production deployment.
 - Public functions expose the smallest required operation.
 - Scheduled and internal composition calls use internal functions.
 
@@ -705,13 +783,15 @@ Google Play and live-update services are not used.
 | App closed after sale | Recover sale and pending print/sync state |
 | APK update | Preserve local database and settings |
 | Corrupt or unrecoverable local data | Stop unsafe checkout and expose recovery/export path |
+| Missing ingredient cost | Continue valid ordering; mark product, sale, and profitability report incomplete |
+| Stale purchase/expense edit | Reject it without changing quantity, valuation, or historical reports |
 
 ## Backup and recovery
 
 - Convex is the synchronized cloud record, not the only copy of unsynced sales.
 - SQLite persists unsynced work across restarts.
-- The owner can export sales, products, recipes, and stock movements in a
-  documented format.
+- The owner can export sales, products, recipes, stock movements, purchases,
+  compensation periods, and operating expenses in a documented format.
 - A backup/export process must be tested before production.
 - Free-plan backup limitations must be reviewed before the client depends on
   the system.
@@ -725,16 +805,23 @@ Google Play and live-update services are not used.
 The smallest runnable tests must cover:
 
 - Money totals and rounding.
+- Weighted-average receiving, inventory valuation, and deterministic cost
+  allocation rounding.
 - Modifier prices.
 - Recipe expansion.
+- Product cost, margin, and incomplete-cost propagation.
 - Stock deduction.
 - Cancellation/refund reversal.
+- Sale cost snapshots and their cancellation/refund reversal.
+- Compensation effective periods, recurring expenses, and monthly profit
+  subtotals without purchase double counting.
 - Daily-summary updates.
 
 ### Persistence tests
 
 - A complete sale commits all local records or none.
 - Duplicate Convex submissions create one sale.
+- Duplicate purchase, compensation, and expense mutations create one effect.
 - Recipe edits do not change historical sale snapshots.
 - Archived products remain visible in historical sales.
 - Outbox retries survive application restarts.
@@ -779,9 +866,17 @@ Do not build these before the trigger occurs:
 - [ ] A sale is committed locally before printing.
 - [ ] Internet failure does not block valid local checkout.
 - [ ] Money and stock use integer base units.
+- [ ] Purchase, inventory, sale-cost, compensation, and expense money uses
+  integer centimes with deterministic cost allocation.
 - [ ] Recipes are versioned after use.
-- [ ] Historical sales keep product, price, modifier, and recipe snapshots.
+- [ ] Historical sales keep product, price, modifier, recipe, and ingredient-cost
+  snapshots.
 - [ ] Stock changes leave append-only movement history.
+- [ ] Purchases and cost corrections leave append-only valuation history.
+- [ ] Cost reports separate purchase cash, inventory value, ingredient cost,
+  compensation, and other expenses without double counting.
+- [ ] Individual compensation is accessible only through owner-authorized
+  functions.
 - [ ] Queries use indexes and bounded results.
 - [ ] Reports use saved summaries and paginated detail.
 - [ ] Public functions validate input and permission.

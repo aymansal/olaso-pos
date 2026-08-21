@@ -8,6 +8,12 @@ product decisions remain in `AGENTS.md`, `PRODUCT.md`, `ARCHITECTURE.md`,
 
 No active goal.
 
+## Planned Goals
+
+- [Goal 03 — Costs and Profitability](goals/GOAL-03-COSTS-PROFITABILITY.md)
+  — approved plan; launch with the linked
+  [start prompt](goals/GOAL-03-START-PROMPT.md).
+
 ## Completed Goals
 
 - [Goal 01 — Functional POS Interactions](goals/GOAL-01-FUNCTIONAL-POS.md)

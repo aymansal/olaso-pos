@@ -1,8 +1,8 @@
 ---
-version: 0.1
+version: 0.2
 name: Olaso POS Product Specification
 status: active
-updated: 2026-07-24
+updated: 2026-08-21
 authority: Product purpose, scope, workflows, and operational behavior
 ---
 
@@ -12,8 +12,8 @@ authority: Product purpose, scope, workflows, and operational behavior
 
 Olaso POS is a touch-first Android point-of-sale application for Olaso Club in
 Tetouan. It lets staff take orders, print receipts, maintain the editable menu,
-track exact ingredient consumption, and give the owner useful sales and stock
-reports.
+track exact ingredient consumption and cost, and give the owner useful sales,
+stock, cost, and profitability reports.
 
 The application is designed first for one Samsung Galaxy Tab A9 used in
 landscape. It must remain fast during service and continue taking orders when
@@ -30,6 +30,8 @@ In plain English:
 5. The owner can see sales, product performance, and remaining stock.
 6. The owner can add or edit products, ingredients, prices, and recipes without
    changing application code.
+7. Purchased stock, recipe usage, worker compensation, and operating expenses
+   produce a trustworthy monthly cost and profitability view.
 
 ## Product principles
 
@@ -39,12 +41,13 @@ These rules are ordered by importance:
    receipt must not depend on a fast internet connection.
 2. **Prevent lost or duplicate sales.** A retry must never record the same sale
    twice or deduct its stock twice.
-3. **Keep numbers exact.** Prices and recipe quantities are stored in fixed
-   units rather than approximate floating-point values.
+3. **Keep numbers exact.** Prices, costs, valuations, and recipe quantities are
+   stored in fixed integer units rather than approximate floating-point values.
 4. **Make the menu owner-editable.** Products and recipes are data, not
    hardcoded screens.
-5. **Show trustworthy reports.** Historical sales retain the price and recipe
-   used when the sale happened.
+5. **Show trustworthy reports.** Historical sales retain the price, recipe, and
+   ingredient cost used when the sale happened. Missing cost data is reported
+   as incomplete rather than silently treated as zero.
 6. **Keep the interface faithful to Olaso.** `BRAND.md` and `DESIGN.md` remain
    the visual authorities.
 7. **Build only for current needs.** The first production version supports one
@@ -75,8 +78,13 @@ The owner or manager can:
 - Set prices, sizes, options, and extras.
 - Create ingredients and define their measurement units.
 - Define and version each product's recipe.
-- Add stock, correct stock, and review stock movements.
-- View sales, product, ingredient-consumption, and stock reports.
+- Receive purchased stock with package quantity and price, correct stock, and
+  review stock movements and valuation.
+- View sales, product, ingredient-consumption, stock, cost, and profitability
+  reports.
+- Record one-time and recurring operating expenses.
+- The owner can maintain staff profiles and effective-dated monthly
+  compensation when the profile represents a worker.
 - Manage staff access when authentication is introduced.
 
 The exact permission matrix is pending owner confirmation. Until then, the
@@ -92,8 +100,9 @@ application must keep cashier operations separate from management operations.
 - Touch targets and layout follow `DESIGN.md`.
 - The production application fills the complete tablet viewport.
 
-The final tablet model and Android WebView dimensions must be checked on the
-physical device before release.
+The physical Samsung Galaxy Tab A9 SM-X115 and its Android WebView dimensions
+have been verified against the 1340 by 800 composition. Release acceptance must
+repeat the check after material Android, WebView, or native-shell changes.
 
 ### Printer
 
@@ -118,11 +127,15 @@ The approved shell contains these top-level destinations:
 4. **Products** — categories, products, prices, options, and recipes.
 5. **Stock** — ingredients, current quantities, low-stock status, and
    adjustments.
-6. **Reports** — sales, products, ingredients, and period comparisons.
+6. **Reports** — sales, products, ingredients, costs, profitability, and period
+   comparisons.
 
 `POS` is the default destination when a cashier opens the application.
 Settings and staff management may be added under the owner profile instead of
 adding another permanent navigation item.
+
+Costs and profitability belong inside the Reports workspace rather than adding
+a seventh permanent navigation destination.
 
 The functional beta exposes confirmed device and synchronization settings from
 that profile. Its local lock prevents accidental terminal use and survives an
@@ -235,7 +248,42 @@ For each sellable product, the owner can define:
 Editing a recipe creates a new version. It does not rewrite the recipe attached
 to previous sales.
 
+### Product ingredient cost
+
+- The current ingredient cost of a product is the sum of its recipe quantities
+  multiplied by the current weighted-average cost of each ingredient.
+- Product management shows selling price, ingredient cost, gross profit, and
+  gross-margin percentage.
+- Modifier ingredient effects contribute to the same calculation.
+- Cups, lids, packaging, and other directly consumed items can be ordinary
+  piece-based ingredients in a recipe.
+- If any required ingredient lacks a usable cost, the product cost is marked
+  incomplete and no complete margin is claimed.
+- Rent, compensation, utilities, and other overhead are not arbitrarily divided
+  across individual drinks in the first release.
+
 ## Stock behavior
+
+### Receiving purchased stock
+
+The owner or manager can receive an ingredient using its real purchase package.
+A receipt records:
+
+- Ingredient.
+- Package label, such as carton, bag, bottle, or piece.
+- Number of packages.
+- Quantity in each package, converted to the ingredient's base unit.
+- Price per package and total purchase price in integer centimes.
+- Received date, actor, and optional note or supplier label.
+
+For example, ten one-litre milk cartons at 20 MAD each add 10,000 millilitres
+and 200 MAD of inventory value. New purchases update the ingredient's perpetual
+weighted-average cost. Physical-count losses reduce inventory value using that
+cost; a count increase uses the last known cost and is flagged if no cost is
+available.
+
+Purchase cash spending and ingredient cost consumed are different measures.
+The Costs report shows both but never adds both into the same profit subtotal.
 
 ### Exact deduction
 
@@ -263,6 +311,8 @@ Every stock change records:
 - Related sale or adjustment.
 - User or device.
 - Date and time.
+- For a purchase, its package quantities, purchase price, cost effect, and
+  resulting valuation.
 
 Stock is never changed without leaving this history.
 
@@ -286,6 +336,7 @@ Each completed sale keeps a permanent snapshot of:
 - Products, quantities, modifiers, and notes.
 - Product names and prices at the time of sale.
 - Recipe version used for each line.
+- Ingredient-cost snapshot and cost-completeness state for each line and sale.
 - Subtotal, discounts, tax, total, and payment method.
 - Printing and synchronization state.
 - Cancellation or refund references.
@@ -311,13 +362,79 @@ The planned reports include:
 - Best-selling and slow-selling products.
 - Sales by service mode and payment method.
 - Ingredient consumption based on recipes.
+- Ingredient cost consumed and gross profit.
+- Current product ingredient cost, gross profit, and gross-margin percentage.
 - Current stock and low-stock items.
+- Inventory purchases and current inventory value.
 - Stock additions, deductions, and manual adjustments.
+- Worker compensation and other operating expenses.
+- Monthly revenue, ingredient cost, gross profit, operating expenses, and
+  operating profit.
 - Cancelled or refunded sales.
 - Cashier activity after roles are confirmed.
 
 Reports must open from saved summaries and bounded pages. They must not scan the
 complete sales history every time.
+
+## Costs and profitability
+
+### Cost layers
+
+The application keeps these values distinct:
+
+1. **Purchase cash spent** — the full cost of stock received during a period.
+2. **Inventory value** — the cost still held in unused stock.
+3. **Ingredient cost consumed** — the valued ingredients attached to completed
+   sales during the period, also called cost of goods sold in the operational
+   report.
+4. **Worker compensation** — monthly compensation effective for the selected
+   month.
+5. **Other operating expenses** — rent, utilities, internet, maintenance,
+   cleaning, marketing, equipment, and owner-defined categories.
+
+The primary monthly profitability view is:
+
+```text
+sales revenue
+  - ingredient cost consumed
+= gross profit
+  - worker compensation
+  - other operating expenses
+= operating profit
+```
+
+Inventory purchases and closing inventory value appear alongside this view as
+cash and asset information. They are not subtracted again after ingredient cost
+consumed, which would count the same stock twice.
+
+### Staff compensation
+
+- A staff profile identifies whether the person is an owner, manager, or
+  worker independently of whether that profile can authenticate.
+- Monthly compensation is optional. An owner or unpaid profile leaves it blank.
+- Compensation is effective-dated so a later change does not rewrite previous
+  months.
+- Compensation and profitability details are owner-only. Development overrides
+  never imply production access control.
+- The Costs report reads the compensation schedule directly; it does not create
+  a second manually duplicated salary expense.
+
+### Other operating expenses
+
+- An expense has a category, integer-centime amount, description, and effective
+  date.
+- It is either one-time or monthly recurring with optional end month.
+- Editing a recurring amount creates a new effective period so historical
+  reports remain stable.
+- The first release provides an operational management report, not payroll,
+  tax filing, bookkeeping, or an accounting-system replacement.
+
+### Monthly reporting boundary
+
+Costs and profitability are monthly first because compensation, rent, and most
+overhead are monthly commitments. Existing sales reports may retain day, week,
+month, and custom periods. A profitability result is marked incomplete when any
+sale ingredient cost or required expense input is incomplete.
 
 ## Offline and synchronization behavior
 
@@ -554,14 +671,21 @@ Croissant extras shown in the menu: soft ice cream 20 and Magnum 25.
 - Owner product and stock management.
 - Reports backed by saved summaries.
 
-### Phase 4 — Android and hardware
+### Phase 4 — costs and profitability
+
+- Purchased-stock costs and weighted-average inventory valuation.
+- Recipe, product, and historical sale cost snapshots.
+- Staff compensation and one-time or recurring operating expenses.
+- Monthly cost, gross-profit, and operating-profit reports.
+
+### Phase 5 — Android and hardware
 
 - Capacitor Android packaging.
 - Signed APK release workflow.
 - Native ESC/POS bridge.
 - Real tablet and printer testing.
 
-### Phase 5 — production hardening
+### Phase 6 — production hardening
 
 - Recovery and backup checks.
 - Permission review.
@@ -577,6 +701,8 @@ Croissant extras shown in the menu: soft ice cream 20 and Magnum 25.
 - Delivery-platform integrations.
 - Online customer ordering.
 - Accounting-system integration.
+- Payroll processing, tax filing, or statutory financial statements.
+- Arbitrary allocation of rent, compensation, or overhead to individual drinks.
 - Card-terminal integration.
 - Artificially estimated waste.
 - Forecasting or AI recommendations.
@@ -585,7 +711,7 @@ Croissant extras shown in the menu: soft ice cream 20 and Magnum 25.
 ## Open owner decisions
 
 - Official legal business name and receipt header.
-- Exact tablet model and Android version.
+- Production Android version and kiosk behavior.
 - Final printer model and connection transport.
 - Official menu spelling and current prices.
 - Tax rules and whether displayed prices include tax.
@@ -597,6 +723,8 @@ Croissant extras shown in the menu: soft ice cream 20 and Magnum 25.
 - Receipt number format.
 - Required customer and table fields.
 - Final fiche technique and measurement units.
+- Whether any role besides the owner may view profitability without viewing
+  individual compensation.
 - Whether the owner needs a remote web dashboard.
 
 ## Product definition of done
@@ -606,6 +734,10 @@ The first production release is done when:
 - The cashier can complete and recover orders without internet.
 - Every valid completed sale is recorded exactly once.
 - Stock deductions match the active recipe version.
+- Received stock preserves purchase cost and inventory valuation history.
+- Product and sale costs use checked recipe and weighted-average cost samples.
+- Monthly profitability separates purchases, inventory, ingredient cost,
+  compensation, and other expenses without double counting.
 - The owner can edit menu and recipe data without code changes.
 - Reports match a checked sample of real sales and stock movements.
 - APK updates preserve application data.
