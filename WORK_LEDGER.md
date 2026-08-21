@@ -19,8 +19,8 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 | PRINT-03 — Add minimal Android LAN transport, settings, and test print | done |
 | PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | done |
 | PRINT-05 — Add and verify one-time printer-resident logo provisioning | done |
-| PRINT-06 — Connect post-commit first print and persisted print state | in progress |
-| PRINT-07 — Add Orders reprint and restart/disconnect recovery | pending |
+| PRINT-06 — Connect post-commit first print and persisted print state | done |
+| PRINT-07 — Add Orders reprint and restart/disconnect recovery | in progress |
 | PRINT-08 — Run endurance, regression, hardware, documentation, and push closeout | pending |
 
 ## Planned Goals
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-06 is the only card in progress.
+- Goal 03 is active and PRINT-07 is the only card in progress.
+- PRINT-06 implementation commit
+  `9602fed94f5d49f552527275c5c704a2e21c6906` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-05 implementation commit
   `eb00d2f92094c60adbd6cdc68e877f1a9e790959` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -296,11 +299,23 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   movements, sent 787 receipt bytes in 6 ms, persisted printed/attempt 1, and
   the user confirmed paper output. A final app restart preserved both print
   states and all counts without printing again.
-- Graphify refreshed to 2,388 nodes and 5,500 edges. Exact next action: final
-  checks/documentation review, commit/push PRINT-06, record its SHA, and activate
-  PRINT-07.
+- Graphify refreshed to 2,388 nodes and 5,500 edges. PRINT-06 was committed and
+  pushed at `9602fed94f5d49f552527275c5c704a2e21c6906`.
+- Exact next action: inspect Orders data/detail ownership and connect reprint to
+  the saved snapshot/current settings while exposing persisted print state and
+  preserving all sale/item/stock/outbox counts.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-06 complete; PRINT-07 started
+
+- Committed `PRINT-06: print committed sales once` as
+  `9602fed94f5d49f552527275c5c704a2e21c6906`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-06 done only after focused/build/APK/browser/tablet/offline/
+  restart/sync/log/database/paper evidence passed.
+- Marked PRINT-07 as the only card in progress. Reprint will reuse the saved
+  snapshot and current settings without entering checkout logic.
 
 ### 2026-08-21 — PRINT-06 checkout and recovery QA complete
 

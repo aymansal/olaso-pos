@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active; PRINT-06 in progress
+**Status:** active; PRINT-07 in progress
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -93,8 +93,8 @@ sale or stock deduction.
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | done | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK, in-app/recovery paper, restart, clean-log wrong-address recovery, Graphify/docs pass; commit `c41e29c75c1a340519c6d217e220ed7f84723f76` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | done | Pure saved-snapshot model/encoder and edge checks, accepted 941-byte paper, frozen SHA, build, Android beta, installed-tablet/browser preview, logs, and Graphify pass; commit `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | done | Exact native asset, warning-gated Settings setup, build/APK/tablet writes, physical logo output, app/tablet/printer-module restart, accepted exact-payload power-cycle baseline, Android-16 landscape recovery, and all closeout checks pass; commit `eb00d2f92094c60adbd6cdc68e877f1a9e790959` pushed. |
-| PRINT-06 | Connect post-commit first print and persisted print state | in progress | Schema v5, background post-commit attempt, exact failure/success invariants, browser unconfigured flow, tablet offline/restart/sync recovery, one online 787-byte paper receipt, API-35 landscape enforcement, build/log/Graphify checks pass. Ready for closeout. |
-| PRINT-07 | Add Orders reprint and restart/disconnect recovery | pending | — |
+| PRINT-06 | Connect post-commit first print and persisted print state | done | Schema v5, background post-commit attempt, exact failure/success invariants, browser unconfigured flow, tablet offline/restart/sync recovery, one online 787-byte paper receipt, API-35 landscape enforcement, build/log/Graphify checks pass; commit `9602fed94f5d49f552527275c5c704a2e21c6906` pushed. |
+| PRINT-07 | Add Orders reprint and restart/disconnect recovery | in progress | Inspecting Orders data/detail/recovery ownership before implementation. |
 | PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | pending | — |
 
 ## Card contracts
@@ -240,7 +240,10 @@ sale or stock deduction.
 
 ## Current checkpoint
 
-- Goal 03 is active and PRINT-06 is the only card in progress.
+- Goal 03 is active and PRINT-07 is the only card in progress.
+- PRINT-06 is complete and pushed at
+  `9602fed94f5d49f552527275c5c704a2e21c6906` on
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-05 is complete and pushed at
   `eb00d2f92094c60adbd6cdc68e877f1a9e790959` on
   `origin/codex/goal-03-printing-integration`.
@@ -332,8 +335,10 @@ sale or stock deduction.
   recovery pass. The offline sale synchronized once while its failed print
   remained recoverable. One online checkout wrote 787 bytes in 6 ms; the user
   confirmed paper, and restart caused no repeat print.
-- Graphify refreshed to 2,388 nodes and 5,500 edges. Exact next action: final
-  checks/doc review, commit/push PRINT-06, record SHA, then activate PRINT-07.
+- Graphify refreshed to 2,388 nodes and 5,500 edges. PRINT-06 was committed and
+  pushed at `9602fed94f5d49f552527275c5c704a2e21c6906`.
+- Exact next action: inspect Orders data/detail ownership and connect reprint to
+  the saved snapshot/current settings without entering checkout logic.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -387,6 +392,13 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-06 pushed; PRINT-07 started
+
+- Pushed post-commit first printing and persisted state as
+  `9602fed94f5d49f552527275c5c704a2e21c6906`.
+- Marked PRINT-06 done and PRINT-07 as the only card in progress. Reprint owns
+  only print-attempt state and never sale or stock creation.
 
 ### 2026-08-21 — PRINT-06 reached closeout
 
