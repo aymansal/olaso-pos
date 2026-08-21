@@ -18,8 +18,8 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 | PRINT-02 — Prove and document the physical LAN endpoint and failure behavior | done |
 | PRINT-03 — Add minimal Android LAN transport, settings, and test print | done |
 | PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | done |
-| PRINT-05 — Add and verify one-time printer-resident logo provisioning | in progress |
-| PRINT-06 — Connect post-commit first print and persisted print state | pending |
+| PRINT-05 — Add and verify one-time printer-resident logo provisioning | done |
+| PRINT-06 — Connect post-commit first print and persisted print state | in progress |
 | PRINT-07 — Add Orders reprint and restart/disconnect recovery | pending |
 | PRINT-08 — Run endurance, regression, hardware, documentation, and push closeout | pending |
 
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-05 is the only card in progress.
+- Goal 03 is active and PRINT-06 is the only card in progress.
+- PRINT-05 implementation commit
+  `eb00d2f92094c60adbd6cdc68e877f1a9e790959` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-04 implementation commit
   `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -269,11 +272,24 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   true printer power cycle. PRINT-05 proves its bundled native asset is exactly
   that same 2,441-byte payload and that the installed app can provision and
   recall it across app, tablet, and printer-module restarts.
-- No further logo or receipt print is required for PRINT-05. Exact next action:
-  run closeout review, commit/push the card, record its SHA, and activate
-  PRINT-06.
+- PRINT-05 was committed and pushed at
+  `eb00d2f92094c60adbd6cdc68e877f1a9e790959`. No further logo print is
+  required.
+- Exact next action: inspect checkout commit ownership, local migrations, POS
+  submission state, and recovery boundaries before connecting one post-commit
+  print attempt with persisted pending/printed/failed state.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-05 complete; PRINT-06 started
+
+- Committed `PRINT-05: add resident logo setup` as
+  `eb00d2f92094c60adbd6cdc68e877f1a9e790959`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-05 done from the accepted exact-payload physical baseline plus
+  current byte identity, APK, setup, restart, tablet, browser, and log evidence.
+- Marked PRINT-06 as the only card in progress. No more logo-only output will
+  be sent; this card owns post-commit first printing and persisted state.
 
 ### 2026-08-21 — Incorrect PRINT-05 pause corrected
 
