@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active; PRINT-03 in progress
+**Status:** active; PRINT-04 in progress
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -90,8 +90,8 @@ sale or stock deduction.
 | --- | --- | --- | --- |
 | PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | done | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify and physical tablet/paper QA pass; commit `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | done | Endpoint/MAC/paper and failure/recovery paths pass with shared-router reboot limitation explicit; configurable tooling and all checks pass; commit `5cb5da399900f6d2aca22bd4ecd341844884d78c` pushed to `origin/codex/goal-03-printing-integration`. |
-| PRINT-03 | Add minimal Android LAN transport, settings, and test print | in progress | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK pass; in-app and recovery paper confirmed; restart, clean-log wrong-address timeout/recovery, final checks and Graphify pass. Awaiting commit/push. |
-| PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | pending | — |
+| PRINT-03 | Add minimal Android LAN transport, settings, and test print | done | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK, in-app/recovery paper, restart, clean-log wrong-address recovery, Graphify/docs pass; commit `c41e29c75c1a340519c6d217e220ed7f84723f76` pushed to `origin/codex/goal-03-printing-integration`. |
+| PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | in progress | — |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | pending | — |
 | PRINT-06 | Connect post-commit first print and persisted print state | pending | — |
 | PRINT-07 | Add Orders reprint and restart/disconnect recovery | pending | — |
@@ -240,7 +240,10 @@ sale or stock deduction.
 
 ## Current checkpoint
 
-- Goal 03 is active and PRINT-03 is the only card in progress.
+- Goal 03 is active and PRINT-04 is the only card in progress.
+- PRINT-03 is complete and pushed at
+  `c41e29c75c1a340519c6d217e220ed7f84723f76` on
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-02 is complete and pushed at
   `5cb5da399900f6d2aca22bd4ecd341844884d78c` on
   `origin/codex/goal-03-printing-integration`.
@@ -264,9 +267,9 @@ sale or stock deduction.
   `innerWidth` hypothesis was also rejected because it caused oversize and
   scrolling. The installed correction uses the stable long edge of the CSS
   screen and reports no overflow across three cold starts.
-- Exact next action: inspect Graphify plus the Android, terminal-settings, and
-  Settings ownership chains, then add the minimal bounded Kotlin TCP transport
-  and validated Test printer action.
+- Exact next action: inspect Graphify plus immutable receipt snapshot writers/
+  readers and accepted golden bytes, then add the transport-independent model
+  and deterministic WD8260 encoder without connecting checkout.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -320,6 +323,14 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-03 pushed; PRINT-04 started
+
+- Pushed the fully verified native LAN settings/test path as
+  `c41e29c75c1a340519c6d217e220ed7f84723f76`.
+- Marked PRINT-03 done and PRINT-04 as the only card in progress.
+- Next work owns only immutable receipt modeling/encoding and golden/paper
+  comparison; checkout integration remains PRINT-06.
 
 ### 2026-08-21 — PRINT-03 ready to push
 

@@ -16,8 +16,8 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 | --- | --- |
 | PRINT-01 — Preserve and lock the accepted receipt laboratory baseline | done |
 | PRINT-02 — Prove and document the physical LAN endpoint and failure behavior | done |
-| PRINT-03 — Add minimal Android LAN transport, settings, and test print | in progress |
-| PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | pending |
+| PRINT-03 — Add minimal Android LAN transport, settings, and test print | done |
+| PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | in progress |
 | PRINT-05 — Add and verify one-time printer-resident logo provisioning | pending |
 | PRINT-06 — Connect post-commit first print and persisted print state | pending |
 | PRINT-07 — Add Orders reprint and restart/disconnect recovery | pending |
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-03 is the only card in progress.
+- Goal 03 is active and PRINT-04 is the only card in progress.
+- PRINT-03 implementation commit
+  `c41e29c75c1a340519c6d217e220ed7f84723f76` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-02 implementation commit
   `5cb5da399900f6d2aca22bd4ecd341844884d78c` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -194,10 +197,23 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - Final Graphify refresh contains 2,295 nodes and 5,269 edges. Settings,
   Android static, TypeScript, production build, native unit/assembly, browser,
   tablet, persistence, wrong-address, clean-log, and paper checks all pass.
-- Exact next action: re-read the closeout DOX/ledger chain, review/stage only
-  PRINT-03 files, commit/push, record the SHA, then activate PRINT-04.
+- Exact next action: query Graphify and inspect saved receipt snapshots,
+  checkout/order parsers, formatters, and accepted golden bytes before defining
+  the smallest transport-independent receipt model and deterministic encoder.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-03 complete; PRINT-04 started
+
+- Committed `PRINT-03: add LAN printer settings test` as
+  `c41e29c75c1a340519c6d217e220ed7f84723f76`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-03 done only after native unit/build, browser/tablet geometry,
+  Settings persistence, first and recovery paper, restart, wrong-address,
+  clean expected-failure/success console/logcat, Graphify, and documentation
+  evidence passed.
+- Marked PRINT-04 as the only card in progress. Checkout printing and print
+  state remain untouched until the independent model/encoder is proven.
 
 ### 2026-08-21 — PRINT-03 physical QA complete
 
