@@ -751,14 +751,18 @@ remains open, but its explicit unlock action does not authenticate a user.
 
 ## Printing boundary
 
-`printReceipt` is the only application-facing printing operation.
+When checkout printing is connected, `printReceipt` is the only
+application-facing printing operation.
 
 ```text
 src/
   printing/
+    printerTransport.ts
+    printerDiagnostic.ts
+    testPrinter.ts
     printReceipt.ts
     receiptModel.ts
-    mockPrinter.ts
+    receiptEncoder.ts
 
 android/
   app/src/main/.../
@@ -768,10 +772,17 @@ android/
 Rules:
 
 - React components never contain ESC/POS bytes or Android transport code.
-- Development uses a deterministic mock and receipt preview.
-- Native Kotlin owns the bounded raw TCP socket, timeouts, and WD8260 ESC/POS
-  byte boundary.
-- The receipt model is transport-independent.
+- Browser development keeps the deterministic receipt preview and reports the
+  native-only transport as unavailable; it does not simulate paper success.
+- TypeScript builds validated receipt models and deterministic WD8260 ESC/POS
+  bytes. Native Kotlin owns only the bounded raw TCP socket and its byte-write
+  result.
+- The receipt model and encoder are transport-independent and use only saved
+  immutable sale data. They never look up current product names, prices, or
+  recipes for a reprint.
+- Receipt money is integer centimes, the initial code page is CP858 page 19,
+  unsupported characters become `?`, and ordinary streams contain neither
+  raster-image data nor QR commands.
 - Reprinting uses the saved sale snapshot.
 - The accepted initial receipt is French/English; unsupported-script bitmap
   rendering remains deferred until another language is required.

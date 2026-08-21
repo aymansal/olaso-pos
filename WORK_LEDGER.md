@@ -200,8 +200,78 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - Exact next action: query Graphify and inspect saved receipt snapshots,
   checkout/order parsers, formatters, and accepted golden bytes before defining
   the smallest transport-independent receipt model and deterministic encoder.
+- PRINT-04 now adds a pure snapshot-to-receipt model and WD8260 encoder with
+  integer-centime reconciliation, Africa/Casablanca date/time, complete CP858,
+  unsupported-character replacement, exact 30/5/13 item columns, wrapping,
+  four 48-column separators, NV logo recall, double-width TOTAL/MERCI, feed, and
+  partial cut. It remains disconnected from checkout/transport orchestration.
+- New local snapshots preserve optional cashier name; existing snapshots remain
+  valid, and local/cloud Orders map cashier into the transport-independent
+  receipt shape without reading current product data.
+- `check:printing`, sales, Orders, TypeScript, and whitespace checks pass across
+  empty/64-character IDs, accents, unsupported scripts, long products/modifiers,
+  quantity 100, large totals, optional fields, exact payment/change, and invalid
+  reconciliation.
+- Accepted fixture text matches the existing 48-column baseline. The 941-byte
+  application encoder SHA-256 is
+  `8C8C109B9A4F884D44819A55099C7D88FA7B005927FD5BB4767734E79EF6B1AE`;
+  direct tablet LAN send exited 0. Physical paper comparison is pending.
+- The user confirmed the new application-encoder paper matches the accepted
+  laboratory receipt perfectly. This proves the independent production encoder,
+  not a repeat of the receiptline lab. SHA
+  `8C8C109B9A4F884D44819A55099C7D88FA7B005927FD5BB4767734E79EF6B1AE`
+  is now frozen as the paper-approved application golden.
+- Exact next action: run final printing/sales/orders/build/Android/tablet/log/
+  Graphify checks, commit/push PRINT-04, record its SHA, then activate PRINT-05.
+- Final receipt golden, sales, Orders, POS, local database, Settings,
+  TypeScript, production build, 140-task Android beta, whitespace, and
+  Graphify checks pass. The rebuilt APK is installed on the real SM-X115.
+- Browser and physical-tablet Orders previews show the saved cashier cleanly;
+  the tablet remains full-screen at 1340 by 800 with no clipping or internal
+  preview overflow. Browser logs contain no warning/error, and no
+  application-console or card-introduced Android log warning/error appeared.
+- Graphify refreshed to 2,335 nodes and 5,332 edges. Exact next action is commit
+  and push PRINT-04, record its full SHA, then activate PRINT-05.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-04 closeout checks complete
+
+- Re-ran receipt golden, sale, Orders, POS, local database, Settings,
+  TypeScript, production-build, Android identity/sync/native-test/assembly, and
+  whitespace checks successfully.
+- Installed and cold-launched the rebuilt APK on the connected Galaxy Tab. The
+  1340 by 800 POS still fills the screen, and the Orders receipt preview shows
+  the saved cashier without clipping or internal overflow.
+- Browser logs and application-generated tablet logs remain clean; Graphify
+  refreshed to 2,335 nodes and 5,332 edges. PRINT-04 is ready to commit/push.
+
+### 2026-08-21 — Application receipt paper accepted
+
+- The user confirmed the 941-byte TypeScript-encoder receipt matches the
+  previously accepted receipt perfectly on the WD8260.
+- Clarified that this physical test validated a new production encoder without
+  receiptline, rather than repeating the already-proven laboratory generator.
+- Frozen SHA-256
+  `8C8C109B9A4F884D44819A55099C7D88FA7B005927FD5BB4767734E79EF6B1AE`
+  as the paper-approved application golden and strengthened no-raster/no-QR
+  byte sequence checks.
+
+### 2026-08-21 — PRINT-04 model and encoder reached paper QA
+
+- Traced the immutable local/cloud snapshot and added only optional cashier
+  preservation required by the receipt; no current menu/recipe lookup or
+  checkout print call was introduced.
+- Implemented pure validation/modeling plus deterministic WD8260 encoding with
+  saved centimes, fixed café timezone, CP858, wrapping, exact columns, four
+  separators, resident-logo recall, emphasis, footer, and partial cut.
+- Added `check:printing` covering snapshot/totals/payment validation, maximum
+  identifiers, optional context, long line/modifier wrapping, quantity 100,
+  large totals, CP858 accents, unsupported replacement, absent QR/raster logo,
+  and final cut bytes. Sales/Orders/TypeScript checks remain green.
+- Matched the accepted baseline text columns and sent the 941-byte application
+  stream from the physical tablet to TCP 9100; exit 0. Awaiting paper comparison
+  before freezing its SHA as the reviewed application golden.
 
 ### 2026-08-21 — PRINT-03 complete; PRINT-04 started
 

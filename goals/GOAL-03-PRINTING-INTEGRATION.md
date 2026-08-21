@@ -91,7 +91,7 @@ sale or stock deduction.
 | PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | done | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify and physical tablet/paper QA pass; commit `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | done | Endpoint/MAC/paper and failure/recovery paths pass with shared-router reboot limitation explicit; configurable tooling and all checks pass; commit `5cb5da399900f6d2aca22bd4ecd341844884d78c` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | done | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK, in-app/recovery paper, restart, clean-log wrong-address recovery, Graphify/docs pass; commit `c41e29c75c1a340519c6d217e220ed7f84723f76` pushed to `origin/codex/goal-03-printing-integration`. |
-| PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | in progress | — |
+| PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | in progress | Pure saved-snapshot model/encoder and edge checks pass; user confirms 941-byte paper perfectly matches accepted receipt; SHA frozen as application golden; build, Android beta, installed-tablet/browser preview, logs, and Graphify pass. Awaiting commit/push. |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | pending | — |
 | PRINT-06 | Connect post-commit first print and persisted print state | pending | — |
 | PRINT-07 | Add Orders reprint and restart/disconnect recovery | pending | — |
@@ -270,6 +270,23 @@ sale or stock deduction.
 - Exact next action: inspect Graphify plus immutable receipt snapshot writers/
   readers and accepted golden bytes, then add the transport-independent model
   and deterministic WD8260 encoder without connecting checkout.
+- Implemented the pure saved-snapshot model and deterministic WD8260 encoder;
+  focused snapshot/totals/wrapping/CP858/byte checks pass without checkout or
+  transport orchestration.
+- Accepted fixture text matches; tablet sent the 941-byte application stream.
+  Paper comparison remains before freezing the reviewed SHA.
+- User confirmed perfect paper match; application SHA
+  `8C8C109B9A4F884D44819A55099C7D88FA7B005927FD5BB4767734E79EF6B1AE`
+  is now the reviewed golden.
+- Final printing/sales/Orders/POS/local/settings/TypeScript/whitespace checks
+  pass. The production build and 140-task checked Android beta build pass, and
+  the APK is installed on the connected SM-X115.
+- Browser and physical-tablet Orders previews show the saved cashier without
+  clipping or internal overflow. The tablet remains full-screen at 1340 by 800;
+  browser logs contain no warning/error, and the tablet emitted no
+  application-console or card-introduced log warning/error.
+- Graphify refreshed to 2,335 nodes and 5,332 edges. Exact next action is the
+  PRINT-04 card commit/push, followed by SHA recording and PRINT-05 activation.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -323,6 +340,33 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-04 ready to push
+
+- Re-ran receipt golden, sale, Orders, POS, local database, Settings,
+  TypeScript, production-build, Android identity/sync/native tests/assembly,
+  and whitespace checks successfully.
+- Installed the rebuilt APK on the real Galaxy Tab and verified the 1340 by
+  800 POS plus saved-cashier Orders receipt preview. Browser and tablet checks
+  show no clipping, overflow, or new application warning/error.
+- Refreshed Graphify to 2,335 nodes and 5,332 edges. The accepted paper remains
+  exactly the frozen 941-byte stream; no additional paper approval is needed
+  for this closeout.
+
+### 2026-08-21 — PRINT-04 paper and golden accepted
+
+- User confirmed the independent TypeScript encoder prints the accepted WD8260
+  receipt perfectly.
+- Froze the 941-byte SHA as the application golden and corrected byte-sequence
+  assertions to genuinely detect raster-logo or QR commands.
+
+### 2026-08-21 — PRINT-04 application receipt sent
+
+- Added the transport-independent immutable model, exact centime/time/CP858/
+  wrapping encoder, and comprehensive pure checks.
+- Sent the 941-byte application receipt from the tablet over the verified LAN
+  endpoint. Awaiting physical comparison with the accepted receipt before
+  golden lock and closeout.
 
 ### 2026-08-21 — PRINT-03 pushed; PRINT-04 started
 

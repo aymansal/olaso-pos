@@ -12,6 +12,7 @@ export type LocalServiceType = 'dine-in' | 'take-away' | 'order-online';
 export type SavedReceipt = {
   receiptNumber: string;
   completedAt: number;
+  cashierName?: string;
   serviceType: LocalServiceType;
   customerName?: string;
   tableLabel?: string;
@@ -273,6 +274,7 @@ export function prepareSale(
   const receipt: SavedReceipt = {
     receiptNumber: `DEV-${date.replaceAll('-', '')}-${localSaleId.slice(0, 8).toUpperCase()}`,
     completedAt,
+    cashierName: CASHIER_LABEL,
     serviceType: input.serviceType,
     ...(customerName ? { customerName } : {}),
     ...(tableLabel ? { tableLabel } : {}),

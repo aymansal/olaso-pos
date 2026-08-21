@@ -9,6 +9,7 @@ export type OrderSyncState = 'pending' | 'synced' | 'failed';
 export type OrderReceipt = {
   receiptNumber: string;
   completedAt: number;
+  cashierName?: string;
   serviceType: 'dine-in' | 'take-away' | 'order-online';
   customerName?: string;
   tableLabel?: string;
@@ -91,6 +92,9 @@ function parseReceipt(raw: unknown): OrderReceipt {
   return {
     receiptNumber: text(value.receiptNumber, 'number'),
     completedAt,
+    ...(typeof value.cashierName === 'string' && value.cashierName
+      ? { cashierName: value.cashierName }
+      : {}),
     serviceType,
     ...(typeof value.customerName === 'string' && value.customerName
       ? { customerName: value.customerName }

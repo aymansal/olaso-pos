@@ -46,6 +46,7 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
     receipt: {
       receiptNumber: snapshot.receiptNumber,
       completedAt: snapshot.completedAt,
+      ...(sale.cashierName ? { cashierName: sale.cashierName } : {}),
       serviceType:
         snapshot.serviceMode === 'online'
           ? 'order-online'

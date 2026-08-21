@@ -5,6 +5,7 @@ import styles from './ReceiptPreviewDialog.module.css';
 export type ReceiptPreviewValue = {
   receiptNumber: string;
   completedAt: number;
+  cashierName?: string;
   serviceType: 'dine-in' | 'take-away' | 'order-online';
   customerName?: string;
   tableLabel?: string;
@@ -59,6 +60,9 @@ export function ReceiptPreviewDialog({
             <dt>Service</dt>
             <dd>{receipt.serviceType.replaceAll('-', ' ')}</dd>
           </div>
+          {receipt.cashierName ? (
+            <div><dt>Cashier</dt><dd>{receipt.cashierName}</dd></div>
+          ) : null}
           {receipt.customerName ? (
             <div><dt>Customer</dt><dd>{receipt.customerName}</dd></div>
           ) : null}
