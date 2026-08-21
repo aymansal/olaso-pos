@@ -93,7 +93,7 @@ sale or stock deduction.
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | done | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK, in-app/recovery paper, restart, clean-log wrong-address recovery, Graphify/docs pass; commit `c41e29c75c1a340519c6d217e220ed7f84723f76` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | done | Pure saved-snapshot model/encoder and edge checks, accepted 941-byte paper, frozen SHA, build, Android beta, installed-tablet/browser preview, logs, and Graphify pass; commit `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | done | Exact native asset, warning-gated Settings setup, build/APK/tablet writes, physical logo output, app/tablet/printer-module restart, accepted exact-payload power-cycle baseline, Android-16 landscape recovery, and all closeout checks pass; commit `eb00d2f92094c60adbd6cdc68e877f1a9e790959` pushed. |
-| PRINT-06 | Connect post-commit first print and persisted print state | in progress | Inspecting checkout transaction and recovery ownership before implementation. |
+| PRINT-06 | Connect post-commit first print and persisted print state | in progress | Schema v5, background post-commit attempt, exact failure/success invariants, browser unconfigured flow, tablet offline/restart/sync recovery, one online 787-byte paper receipt, API-35 landscape enforcement, build/log/Graphify checks pass. Ready for closeout. |
 | PRINT-07 | Add Orders reprint and restart/disconnect recovery | pending | — |
 | PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | pending | — |
 
@@ -305,9 +305,9 @@ sale or stock deduction.
   recall twice and after app, tablet, and printer network-module restarts. The
   network module lost and recovered TCP in 3,909 ms; final recall succeeded.
 - Android 16 was proven to ignore the previous large-screen landscape request.
-  The supported API-36 compatibility property and resize/orientation scale
-  reapplication now force landscape even with system rotation locked portrait;
-  three cold starts retain zoom 0.751493 and the complete 1340 by 800 layout.
+  The first API-36 property/scale test appeared to pass only after the display
+  was already landscape; the later physically portrait install disproved it,
+  and the API-35 target correction below is the accepted fix.
 - Exact next action: inspect real logo paper, perform one true printer power
   cycle and final recall, then run closeout/Graphify/commit/push.
 - Final focused Settings/Android/printing/receipt-lab/sales/TypeScript checks
@@ -321,6 +321,19 @@ sale or stock deduction.
 - Exact next action: inspect checkout commit ownership, local migrations, POS
   submission state, and recovery boundaries before connecting one post-commit
   print attempt with persisted pending/printed/failed state.
+- A physically portrait cold install disproved the earlier API-36 property-only
+  landscape claim. The manual-distribution APK now compiles with API 36 and
+  targets API 35; forced-portrait system lock launches the complete 1340 by 800
+  interface and the original tablet rotation settings were restored.
+- Schema version 5 persists pending/printed/failed attempts with bounded
+  diagnostics. Printing begins only after commit and never blocks the committed
+  result or changes sale/item/stock/outbox counts.
+- Browser unconfigured checkout and physical offline checkout/restart/Wi-Fi
+  recovery pass. The offline sale synchronized once while its failed print
+  remained recoverable. One online checkout wrote 787 bytes in 6 ms; the user
+  confirmed paper, and restart caused no repeat print.
+- Graphify refreshed to 2,388 nodes and 5,500 edges. Exact next action: final
+  checks/doc review, commit/push PRINT-06, record SHA, then activate PRINT-07.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -375,6 +388,18 @@ sale or stock deduction.
 
 ## Planning journal
 
+### 2026-08-21 — PRINT-06 reached closeout
+
+- Added persisted print state and one post-commit background attempt while
+  removing the old post-commit reload path that could misreport a saved sale as
+  failed.
+- Browser and physical offline/restart/sync recovery prove printer failure
+  cannot duplicate sales, items, movements, or outbox work.
+- One online physical checkout produced the expected receipt and persisted only
+  observed bytes/timing; app restart did not print it again.
+- Corrected fixed-landscape enforcement by compiling API 36 while targeting API
+  35, which the locked-portrait Galaxy Tab verifies at 1340 by 800.
+
 ### 2026-08-21 — PRINT-05 pushed; PRINT-06 started
 
 - Pushed the fully verified static resident-logo setup and Android 16 landscape
@@ -404,9 +429,9 @@ sale or stock deduction.
   real tablet.
 - Recalled the saved logo repeatedly and after app, tablet, and printer
   network-module restarts. Socket results remain explicitly paper-unconfirmed.
-- Corrected Android 16's API-36 large-screen orientation override using the
-  supported compatibility property and resize/orientation scaling refresh.
-  Forced-portrait launch plus three physical cold starts now fit correctly.
+- The initial Android-16 compatibility-property test appeared to correct the
+  layout, but later physically portrait installation disproved that conclusion;
+  PRINT-06 records the accepted API-35 target correction.
 - Only visual paper inspection and a true printer power cycle/final recall
   remain before PRINT-05 closeout.
 

@@ -24,7 +24,7 @@ assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
 assert.match(appBuild, /versionCode 2/);
 assert.match(appBuild, /versionName "0\.1\.0-beta\.1"/);
 assert.match(variables, /compileSdkVersion = 36/);
-assert.match(variables, /targetSdkVersion = 36/);
+assert.match(variables, /targetSdkVersion = 35/);
 assert.match(manifest, /android\.permission\.INTERNET/);
 assert.match(manifest, /android:screenOrientation="sensorLandscape"/);
 assert.match(

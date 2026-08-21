@@ -9,6 +9,11 @@ import {
   commitLocalSale,
   prepareSale,
 } from '../src/data/localSales.ts';
+import {
+  recordSalePrintAttempt,
+  recordSalePrintFailure,
+  recordSalePrintSuccess,
+} from '../src/data/printState.ts';
 import { addProduct } from '../src/features/pos/posSession.ts';
 import { localMigrations } from '../src/data/schema.ts';
 
@@ -161,6 +166,53 @@ assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM outbox').get().count,
   1,
 );
+const initialPrint = database.prepare(
+  `SELECT print_state, print_attempt_count
+   FROM sales WHERE local_sale_id = 'local-sale-check'`,
+).get();
+assert.equal(initialPrint.print_state, 'pending');
+assert.equal(initialPrint.print_attempt_count, 0);
+
+await recordSalePrintAttempt('local-sale-check', now + 1, adapter);
+await recordSalePrintFailure(
+  'local-sale-check',
+  { code: 'TIMEOUT', message: ` printer unavailable ${'x'.repeat(200)} ` },
+  adapter,
+);
+const failedPrint = database.prepare(
+  `SELECT print_state, print_attempt_count, last_print_attempt_at,
+    last_print_error_code, last_print_error_message
+   FROM sales WHERE local_sale_id = 'local-sale-check'`,
+).get();
+assert.equal(failedPrint.print_state, 'failed');
+assert.equal(failedPrint.print_attempt_count, 1);
+assert.equal(failedPrint.last_print_attempt_at, now + 1);
+assert.equal(failedPrint.last_print_error_code, 'TIMEOUT');
+assert.equal(failedPrint.last_print_error_message.length, 160);
+
+await recordSalePrintAttempt('local-sale-check', now + 2, adapter);
+await recordSalePrintSuccess(
+  'local-sale-check',
+  { bytesWritten: 941, totalMs: 12 },
+  adapter,
+);
+const printedState = database.prepare(
+  `SELECT print_state, print_attempt_count, last_print_attempt_at,
+    last_print_error_code, last_print_error_message,
+    last_print_bytes_written, last_print_total_ms
+   FROM sales WHERE local_sale_id = 'local-sale-check'`,
+).get();
+assert.equal(printedState.print_state, 'printed');
+assert.equal(printedState.print_attempt_count, 2);
+assert.equal(printedState.last_print_attempt_at, now + 2);
+assert.equal(printedState.last_print_error_code, null);
+assert.equal(printedState.last_print_error_message, null);
+assert.equal(printedState.last_print_bytes_written, 941);
+assert.equal(printedState.last_print_total_ms, 12);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sales').get().count, 1);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_items').get().count, 1);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count, 3);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM outbox').get().count, 1);
 
 const cachedMenu = {
   updatedAt: now,

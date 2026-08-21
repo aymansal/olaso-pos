@@ -11,6 +11,7 @@ import {
   type CompleteSaleInput,
   type SaleSyncPayload,
 } from './localSales.ts';
+import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
 import {
   loadOperationalCache,
   replaceOperationalCache,
@@ -43,6 +44,10 @@ export function usePosData() {
   const acceptMutation = useMutation(api.sales.accept);
   const [menu, setMenu] = useState<OperationalCacheSnapshot>();
   const [localError, setLocalError] = useState('');
+  const [printFeedback, setPrintFeedback] = useState<{
+    kind: 'neutral' | 'error' | 'success';
+    message: string;
+  }>();
   const cloudSnapshot =
     snapshotQuery.status === 'success' ? snapshotQuery.data : undefined;
 
@@ -127,8 +132,22 @@ export function usePosData() {
 
   const completeOrder = useCallback(
     async (input: CompleteSaleInput) => {
+      setPrintFeedback(undefined);
       const result = await completeLocalSale(input);
-      await reloadLocal();
+      setPrintFeedback({
+        kind: 'neutral',
+        message: 'Sale saved. Sending receipt…',
+      });
+      void (async () => {
+        const outcome = await attemptSaleReceiptPrint(result);
+        setPrintFeedback({
+          kind: outcome.state === 'printed' ? 'success' : 'error',
+          message: outcome.message,
+        });
+      })();
+      void reloadLocal().catch(() =>
+        setLocalError('The order is saved locally. Menu refresh failed.'),
+      );
       syncPendingSales(acceptSale)
         .then(reloadLocal)
         .catch(() =>
@@ -142,6 +161,7 @@ export function usePosData() {
   return {
     menu,
     completeOrder,
+    printFeedback,
     isLoading: !menu,
     error:
       localError

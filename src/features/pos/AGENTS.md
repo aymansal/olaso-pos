@@ -27,8 +27,9 @@ owns the shared Header and TopNavigation currently used across the application.
 - Required modifier groups are explicit cashier choices; never silently select
   an option.
 - Clear the cart only after the local sale transaction commits.
-- Saved receipts support on-screen preview only. Do not expose printing,
-  printer permissions, or transport from this feature.
+- Saved receipts support on-screen preview and plain post-commit print feedback.
+  Do not expose printer settings, permissions, bytes, or transport from this
+  feature.
 - Checkout, persistence, stock deduction, sync, and printing do not belong in
   leaf components.
 - Changing Header or TopNavigation requires visual verification of all six

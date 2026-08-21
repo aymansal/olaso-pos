@@ -56,7 +56,13 @@ export function PosScreen({
   onNavigate,
   onOpenSettings,
 }: PosScreenProps) {
-  const { menu, completeOrder, isLoading, error: dataWarning } = usePosData();
+  const {
+    menu,
+    completeOrder,
+    printFeedback,
+    isLoading,
+    error: dataWarning,
+  } = usePosData();
   const [configuringProductId, setConfiguringProductId] = useState<string>();
   const [receiptPreview, setReceiptPreview] = useState<SavedReceipt>();
   const [checkoutError, setCheckoutError] = useState('');
@@ -179,9 +185,9 @@ export function PosScreen({
     : session.checkoutStatus === 'processing'
       ? { kind: 'neutral', message: 'Saving this order on the tablet…' }
       : session.checkoutStatus === 'success'
-        ? {
+        ? printFeedback ?? {
             kind: 'success',
-            message: 'Saved locally. Synchronization continues automatically.',
+            message: 'Sale saved. Receipt remains pending.',
           }
         : dataWarning
           ? { kind: 'neutral', message: dataWarning }

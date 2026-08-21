@@ -8,6 +8,8 @@ import {
   renderReceiptText,
 } from '../src/printing/receiptEncoder.ts';
 import { createReceiptModel } from '../src/printing/receiptModel.ts';
+import { createSavedReceiptBytes } from '../src/printing/printReceipt.ts';
+import { attemptSaleReceiptPrint } from '../src/data/receiptPrinting.ts';
 
 const snapshot = {
   receiptNumber: '000123',
@@ -69,6 +71,78 @@ assert.deepEqual(
 assert.equal(Buffer.from(raw).indexOf(Buffer.from([0x1d, 0x76, 0x30, 0x00])), -1);
 assert.equal(Buffer.from(raw).indexOf(Buffer.from([0x1d, 0x28, 0x6b])), -1);
 assert.deepEqual([...raw.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
+const savedSaleSnapshot = {
+  ...snapshot,
+  paymentMethod: 'Pending owner confirmation',
+};
+const savedSaleBytes = createSavedReceiptBytes(savedSaleSnapshot);
+assert.deepEqual(
+  savedSaleBytes,
+  encodeWd8260Receipt(createReceiptModel(savedSaleSnapshot)),
+);
+assert.match(
+  Buffer.from(savedSaleBytes).toString('latin1'),
+  /Payment\s+Pending owner confirmation/,
+);
+
+const successfulOrder = [];
+const successfulAttempt = await attemptSaleReceiptPrint(
+  { localSaleId: 'sale-print-check', receipt: savedSaleSnapshot },
+  {
+    recordAttempt: async (localSaleId) => successfulOrder.push(`attempt:${localSaleId}`),
+    loadSettings: async () => {
+      successfulOrder.push('settings');
+      return { printerHost: '192.0.2.10', printerPort: 9100 };
+    },
+    sendReceipt: async () => {
+      successfulOrder.push('send');
+      return {
+        bytesWritten: savedSaleBytes.length,
+        connectMs: 2,
+        writeMs: 1,
+        totalMs: 3,
+        paperConfirmed: false,
+      };
+    },
+    recordSuccess: async (localSaleId, result) =>
+      successfulOrder.push(`success:${localSaleId}:${result.bytesWritten}`),
+    recordFailure: async () => successfulOrder.push('unexpected-failure'),
+  },
+);
+assert.equal(successfulAttempt.state, 'printed');
+assert.deepEqual(successfulOrder, [
+  'attempt:sale-print-check',
+  'settings',
+  'send',
+  `success:sale-print-check:${savedSaleBytes.length}`,
+]);
+
+const failedOrder = [];
+const failedAttempt = await attemptSaleReceiptPrint(
+  { localSaleId: 'sale-failure-check', receipt: savedSaleSnapshot },
+  {
+    recordAttempt: async () => failedOrder.push('attempt'),
+    loadSettings: async () => {
+      failedOrder.push('settings');
+      return { printerHost: '192.0.2.11', printerPort: 9100 };
+    },
+    sendReceipt: async () => {
+      failedOrder.push('send');
+      throw Object.assign(new Error('timeout'), { code: 'TIMEOUT' });
+    },
+    recordSuccess: async () => failedOrder.push('unexpected-success'),
+    recordFailure: async (_localSaleId, failure) =>
+      failedOrder.push(`failure:${failure.code}`),
+  },
+);
+assert.equal(failedAttempt.state, 'failed');
+assert.match(failedAttempt.message, /Sale saved.*marked for reprint/);
+assert.deepEqual(failedOrder, [
+  'attempt',
+  'settings',
+  'send',
+  'failure:TIMEOUT',
+]);
 assert.equal(
   createHash('sha256').update(raw).digest('hex').toUpperCase(),
   goldenSha256,

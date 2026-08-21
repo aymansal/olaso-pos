@@ -255,11 +255,9 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   (47 ms), and printer network-module restart (109 ms). The printer TCP path
   disappeared and recovered in 3,909 ms during that restart.
 - The user caught an oversized launch while Android 16 ignored the existing
-  landscape request. Added the official API-36 large-screen compatibility
-  property plus resize/orientation scale reapplication. With the tablet system
-  rotation deliberately locked to portrait, Olaso now forced landscape in
-  500 ms and rendered the full 1340 by 800 POS. Three later cold starts each
-  report screen 1007 by 601, zoom 0.751493, and document 1007 by 602.
+  landscape request. The first property/scale test appeared to pass after the
+  display was already landscape, but a later physically portrait install
+  disproved it; the API-35 target correction below is the accepted fix.
 - Exact next action: physically inspect the emitted logo-only slips for the
   crisp horizontal OLASO wordmark, power-cycle the printer, send one final
   recall, then run PRINT-05 closeout/Graphify/commit/push.
@@ -278,8 +276,45 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - Exact next action: inspect checkout commit ownership, local migrations, POS
   submission state, and recovery boundaries before connecting one post-commit
   print attempt with persisted pending/printed/failed state.
+- The later cold install from a physically portrait screen disproved the claim
+  that the API-36 compatibility property alone forces landscape. Because this
+  product is manually distributed and Google Play is excluded, the APK now
+  compiles with SDK 36 but targets API 35. With system rotation locked portrait,
+  the rebuilt physical APK opens at the complete 1340 by 800 layout; auto-rotate
+  was restored afterward.
+- Local schema version 5 adds pending/printed/failed state, attempt count,
+  attempt time, bounded error code/message, and observed byte/total timing.
+  Focused checks prove print failure/success updates never change sale, item,
+  stock movement, or outbox counts.
+- Browser unconfigured checkout committed and cleared its cart, opened the
+  saved preview, marked print failed, and logged no warning/error.
+- Physical offline checkout added exactly one sale, one item, two stock
+  movements, and one outbox row; print state became failed/UNREACHABLE with one
+  attempt. App restart preserved every count and made no new print call. Wi-Fi
+  recovery synchronized the same sale to outbox zero while print stayed failed.
+- One online physical checkout then added exactly one more sale/item and two
+  movements, sent 787 receipt bytes in 6 ms, persisted printed/attempt 1, and
+  the user confirmed paper output. A final app restart preserved both print
+  states and all counts without printing again.
+- Graphify refreshed to 2,388 nodes and 5,500 edges. Exact next action: final
+  checks/documentation review, commit/push PRINT-06, record its SHA, and activate
+  PRINT-07.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-06 checkout and recovery QA complete
+
+- Added schema version 5 print state and one background post-commit attempt.
+  Fixed the prior post-commit menu-reload hazard so no refresh/print/sync error
+  can make a committed sale appear unsaved or leave a duplicate-retry cart.
+- Browser configuration failure and physical offline/restart/Wi-Fi recovery
+  preserve exactly-once sale, item, movement, and outbox effects.
+- One online checkout wrote a 787-byte receipt in 6 ms and produced the single
+  expected paper. Restart preserved printed/failed attempts without another
+  print.
+- Corrected the Android 16 landscape evidence by targeting API 35 while
+  compiling with API 36; a truly locked-portrait physical launch now forces the
+  approved full landscape layout.
 
 ### 2026-08-21 — PRINT-05 complete; PRINT-06 started
 

@@ -24,8 +24,9 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   platform integration.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;
   system bars may appear transiently after an edge swipe.
-- API-36 large screens ignore ordinary orientation restrictions by default.
-  Preserve the activity-level
+- Android 16 ignores ordinary orientation restrictions for API-36-targeted
+  large-screen apps. This manually distributed fixed-landscape POS therefore
+  compiles with SDK 36 but targets API 35. Preserve the activity-level
   `PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY=true` compatibility opt-out
   while the approved interface remains fixed-landscape; verify forced-portrait
   launch behavior on the physical tablet after manifest changes.
@@ -52,7 +53,8 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
 ## Verification
 
 - APP-05 requires a successful Capacitor Android sync.
-- APP-11 verified the API-36-targeted beta on an API-35 emulator: Gradle/APK,
+- APP-11 originally verified the API-36-targeted beta on an API-35 emulator:
+  Gradle/APK,
   offline startup and checkout, process-restart recovery, schema 2-to-4
   migration, install-over-upgrade, and acknowledged Convex synchronization.
 - A physical Galaxy Tab A9 SM-X115 verified the full 1340 × 800 composition,

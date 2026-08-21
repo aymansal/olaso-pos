@@ -203,6 +203,29 @@ export const localMigrations = [
         ON outbox(operation_type, local_record_id)`,
     ],
   },
+  {
+    toVersion: 5,
+    statements: [
+      `ALTER TABLE sales
+        ADD COLUMN print_state TEXT NOT NULL DEFAULT 'pending'
+        CHECK (print_state IN ('pending', 'printed', 'failed'))`,
+      `ALTER TABLE sales
+        ADD COLUMN print_attempt_count INTEGER NOT NULL DEFAULT 0
+        CHECK (print_attempt_count >= 0)`,
+      `ALTER TABLE sales
+        ADD COLUMN last_print_attempt_at INTEGER`,
+      `ALTER TABLE sales
+        ADD COLUMN last_print_error_code TEXT`,
+      `ALTER TABLE sales
+        ADD COLUMN last_print_error_message TEXT`,
+      `ALTER TABLE sales
+        ADD COLUMN last_print_bytes_written INTEGER
+        CHECK (last_print_bytes_written >= 0)`,
+      `ALTER TABLE sales
+        ADD COLUMN last_print_total_ms INTEGER
+        CHECK (last_print_total_ms >= 0)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

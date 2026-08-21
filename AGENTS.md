@@ -91,8 +91,9 @@ decision changes.
   development beta, profile-owned local Settings and Lock flows, and
   local-first SQLite/outbox checkout with idempotent Convex synchronization.
   Goal 03 also includes a verified LAN endpoint plus a native printer
-  settings/test boundary; do not imply that production authentication or
-  post-checkout receipt printing already exists.
+  settings/test boundary, deterministic receipt encoding, resident-logo setup,
+  and post-commit first-print state; do not imply that production
+  authentication or Orders reprinting already exists.
 
 ### Visual baseline
 

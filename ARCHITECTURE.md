@@ -190,11 +190,15 @@ Within one local database transaction:
 After the commit:
 
 1. Clear the active cart.
-2. Attempt receipt printing.
+2. Start one receipt attempt without delaying the committed-sale result.
 3. Let the background worker synchronize the outbox event.
 
 Printing and cloud synchronization cannot turn a committed sale into an
-uncommitted sale.
+uncommitted sale. The local schema version 5 sale row begins with `pending`
+print state in the sale transaction. A later serialized print attempt increments
+only its attempt counter and records `printed` byte/timing evidence or `failed`
+bounded error code/message; it never inserts another sale, item, stock movement,
+or outbox event.
 
 ## Synchronization
 
@@ -751,8 +755,8 @@ remains open, but its explicit unlock action does not authenticate a user.
 
 ## Printing boundary
 
-When checkout printing is connected, `printReceipt` is the only
-application-facing printing operation.
+`printReceipt` is the only application-facing byte-generation/transport
+operation for sale receipts.
 
 ```text
 src/
@@ -802,11 +806,17 @@ Rules:
   logo data enters the APK.
 - Normal receipts recall the pre-provisioned 300-dot NV logo instead of
   retransmitting or rerasterizing it for each sale.
+- Checkout returns as soon as the local sale transaction commits, clears the
+  cart, and starts one background attempt. UI copy says `sent` rather than
+  claiming paper; unavailable/timeout/write failures keep the sale and persist
+  a reprintable failed state.
 
 ## APK release and update
 
-The reproducible Goal 02 development beta is built with `npm run android:beta`
-using Java 21 and Android SDK 36. It retains application ID `com.olaso.pos`,
+The reproducible development beta is built with `npm run android:beta` using
+Java 21 and Android SDK 36. It compiles with API 36 but targets API 35 so the
+manually distributed fixed-landscape POS remains enforceable on Android 16
+large screens. It retains application ID `com.olaso.pos`,
 uses version code/name `2`/`0.1.0-beta.1`, and writes only the ignored debug
 APK at `android/app/build/outputs/apk/debug/app-debug.apk`. Its merged manifest
 contains no printer, Bluetooth, USB, biometric, or fingerprint permission.
@@ -814,14 +824,16 @@ contains no printer, Bluetooth, USB, biometric, or fingerprint permission.
 APP-11 verified install-over-upgrade from schema version 2 to 4, preserved
 terminal settings, cached offline startup and checkout, process-restart
 recovery, and acknowledged idempotent Convex synchronization on an API-35
-emulator while compiling and targeting API 36.
+emulator. The later Android-16 tablet check changed only the target API to 35;
+the compile API remains 36.
 
 The physical Samsung Galaxy Tab A9 SM-X115 reports an approximately 1007 by
 601 CSS-pixel WebView on its 1340 by 800 panel. The packaged activity is
 sensor-aware landscape and immersive fullscreen. Android 16 ignores ordinary
-orientation restrictions by default on API-36 large-screen applications, so
-the activity declares the supported API-36 restricted-resizability
-compatibility property while the fixed landscape interface remains in use.
+orientation restrictions for API-36-targeted large-screen applications, so
+this manual-distribution APK targets API 35 and also retains the API-36
+restricted-resizability compatibility property while the fixed landscape
+interface remains in use.
 The native Capacitor runtime scales the fixed 1340-pixel reference by the long
 edge of the CSS screen before React mounts and reapplies that scale after resize
 or orientation changes; ordinary browser previews remain unscaled. Physical

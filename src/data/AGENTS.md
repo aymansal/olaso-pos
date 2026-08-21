@@ -27,6 +27,9 @@ tablet's local SQLite operational record.
   sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
   immutable receipt snapshots, and outbox acknowledgement/failure state.
+- `printState.ts` owns persisted pending/printed/failed sale print attempts;
+  `receiptPrinting.ts` coordinates one post-commit attempt and never calls sale
+  or stock creation logic.
 - `operationalCache.ts` owns the bounded cloud-to-local menu, modifier, recipe,
   and stock snapshot.
 
@@ -58,6 +61,9 @@ tablet's local SQLite operational record.
 - Printer host/port remain non-secret local settings. Validate IPv4 and port at
   the persistence boundary; an empty or corrupt endpoint can never start a
   native connection.
+- A new sale starts with pending print state inside its atomic commit. Attempt,
+  success, and bounded failure diagnostics update only print columns in later
+  serialized transactions.
 - Web development uses the same SQL through `jeep-sqlite`; it is not a second
   persistence architecture.
 - Keep `sql.js` pinned to the version recorded in `ARCHITECTURE.md`.

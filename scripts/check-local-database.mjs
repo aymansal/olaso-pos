@@ -144,6 +144,19 @@ try {
     database.prepare('SELECT total_centimes FROM sales').get().total_centimes,
     1000,
   );
+  const printState = database.prepare(
+    `SELECT print_state, print_attempt_count, last_print_attempt_at,
+      last_print_error_code, last_print_error_message,
+      last_print_bytes_written, last_print_total_ms
+     FROM sales`,
+  ).get();
+  assert.equal(printState.print_state, 'pending');
+  assert.equal(printState.print_attempt_count, 0);
+  assert.equal(printState.last_print_attempt_at, null);
+  assert.equal(printState.last_print_error_code, null);
+  assert.equal(printState.last_print_error_message, null);
+  assert.equal(printState.last_print_bytes_written, null);
+  assert.equal(printState.last_print_total_ms, null);
   assert.equal(
     database.prepare('SELECT available_at FROM outbox').get().available_at,
     0,
@@ -192,7 +205,12 @@ try {
   );
   database.close();
 } finally {
-  rmSync(testDirectory, { recursive: true, force: true });
+  rmSync(testDirectory, {
+    recursive: true,
+    force: true,
+    maxRetries: 5,
+    retryDelay: 100,
+  });
 }
 
 console.log('Local SQLite migration and restart checks passed.');
