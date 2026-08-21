@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active; PRINT-04 in progress
+**Status:** active; PRINT-05 in progress
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -91,8 +91,8 @@ sale or stock deduction.
 | PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | done | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify and physical tablet/paper QA pass; commit `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | done | Endpoint/MAC/paper and failure/recovery paths pass with shared-router reboot limitation explicit; configurable tooling and all checks pass; commit `5cb5da399900f6d2aca22bd4ecd341844884d78c` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | done | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK, in-app/recovery paper, restart, clean-log wrong-address recovery, Graphify/docs pass; commit `c41e29c75c1a340519c6d217e220ed7f84723f76` pushed to `origin/codex/goal-03-printing-integration`. |
-| PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | in progress | Pure saved-snapshot model/encoder and edge checks pass; user confirms 941-byte paper perfectly matches accepted receipt; SHA frozen as application golden; build, Android beta, installed-tablet/browser preview, logs, and Graphify pass. Awaiting commit/push. |
-| PRINT-05 | Add and verify one-time printer-resident logo provisioning | pending | — |
+| PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | done | Pure saved-snapshot model/encoder and edge checks, accepted 941-byte paper, frozen SHA, build, Android beta, installed-tablet/browser preview, logs, and Graphify pass; commit `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` pushed to `origin/codex/goal-03-printing-integration`. |
+| PRINT-05 | Add and verify one-time printer-resident logo provisioning | in progress | Inspecting the accepted static payload and minimal deliberate setup boundary. |
 | PRINT-06 | Connect post-commit first print and persisted print state | pending | — |
 | PRINT-07 | Add Orders reprint and restart/disconnect recovery | pending | — |
 | PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | pending | — |
@@ -240,7 +240,10 @@ sale or stock deduction.
 
 ## Current checkpoint
 
-- Goal 03 is active and PRINT-04 is the only card in progress.
+- Goal 03 is active and PRINT-05 is the only card in progress.
+- PRINT-04 is complete and pushed at
+  `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` on
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-03 is complete and pushed at
   `c41e29c75c1a340519c6d217e220ed7f84723f76` on
   `origin/codex/goal-03-printing-integration`.
@@ -285,8 +288,11 @@ sale or stock deduction.
   clipping or internal overflow. The tablet remains full-screen at 1340 by 800;
   browser logs contain no warning/error, and the tablet emitted no
   application-console or card-introduced log warning/error.
-- Graphify refreshed to 2,335 nodes and 5,332 edges. Exact next action is the
-  PRINT-04 card commit/push, followed by SHA recording and PRINT-05 activation.
+- Graphify refreshed to 2,335 nodes and 5,332 edges. PRINT-04 was committed and
+  pushed at `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc`.
+- Exact next action: inspect the accepted resident-logo payload, Settings
+  ownership, and native asset/plugin contracts before adding the deliberate
+  one-time PRINT-05 provisioning action.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -340,6 +346,13 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-04 pushed; PRINT-05 started
+
+- Pushed the fully verified saved-snapshot receipt model and exact WD8260
+  encoder as `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc`.
+- Marked PRINT-04 done and PRINT-05 as the only card in progress. Checkout
+  printing remains untouched until PRINT-06.
 
 ### 2026-08-21 — PRINT-04 ready to push
 

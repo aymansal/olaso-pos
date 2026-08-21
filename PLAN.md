@@ -71,7 +71,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | --- | --- | --- | --- |
 | Goal 01 | Functional POS interactions | done | goals/GOAL-01-FUNCTIONAL-POS.md |
 | Goal 02 | Functional offline-capable Android beta | done | goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md |
-| Goal 03 | Production checkout and Android LAN ESC/POS printing | next; activation-ready | goals/GOAL-03-PRINTING-INTEGRATION.md |
+| Goal 03 | Production checkout and Android LAN ESC/POS printing | active; PRINT-05 in progress | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | approved; queued | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | planned; owner decisions required | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
 | Goal 06 | Startup, release hardening, and final acceptance | planned; last | goals/GOAL-06-PRODUCTION-HARDENING.md |
@@ -93,8 +93,8 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Start with goals/GOAL-03-START-PROMPT.md only after the user explicitly
-activates the goal.
+Goal 03 is active. Continue from the single in-progress card recorded in
+WORK_LEDGER.md.
 
 ## Goal 04 — Costs and profitability
 
@@ -162,7 +162,5 @@ backup/recovery is rehearsed, and the owner accepts the production workflow.
 
 ## Exact next action
 
-No goal is active. The next action is for the user to explicitly activate Goal
-03 using goals/GOAL-03-START-PROMPT.md. That prompt starts only PRINT-01; later
-cards remain pending until the preceding card is verified, committed, pushed,
-and recorded.
+Continue Goal 03 from PRINT-05. Later cards remain pending until the preceding
+card is verified, committed, pushed, and recorded.

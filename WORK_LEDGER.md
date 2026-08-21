@@ -17,8 +17,8 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 | PRINT-01 — Preserve and lock the accepted receipt laboratory baseline | done |
 | PRINT-02 — Prove and document the physical LAN endpoint and failure behavior | done |
 | PRINT-03 — Add minimal Android LAN transport, settings, and test print | done |
-| PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | in progress |
-| PRINT-05 — Add and verify one-time printer-resident logo provisioning | pending |
+| PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | done |
+| PRINT-05 — Add and verify one-time printer-resident logo provisioning | in progress |
 | PRINT-06 — Connect post-commit first print and persisted print state | pending |
 | PRINT-07 — Add Orders reprint and restart/disconnect recovery | pending |
 | PRINT-08 — Run endurance, regression, hardware, documentation, and push closeout | pending |
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-04 is the only card in progress.
+- Goal 03 is active and PRINT-05 is the only card in progress.
+- PRINT-04 implementation commit
+  `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-03 implementation commit
   `c41e29c75c1a340519c6d217e220ed7f84723f76` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -230,10 +233,23 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   the tablet remains full-screen at 1340 by 800 with no clipping or internal
   preview overflow. Browser logs contain no warning/error, and no
   application-console or card-introduced Android log warning/error appeared.
-- Graphify refreshed to 2,335 nodes and 5,332 edges. Exact next action is commit
-  and push PRINT-04, record its full SHA, then activate PRINT-05.
+- Graphify refreshed to 2,335 nodes and 5,332 edges. PRINT-04 was committed and
+  pushed at `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc`.
+- Exact next action: inspect the accepted resident-logo payload, Settings
+  ownership, and native asset/plugin contracts before adding the deliberate
+  one-time PRINT-05 provisioning action.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-04 complete; PRINT-05 started
+
+- Committed `PRINT-04: add deterministic receipt encoder` as
+  `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-04 done only after focused/build/Android/browser/tablet/log/
+  Graphify checks and the user's exact paper comparison passed.
+- Marked PRINT-05 as the only card in progress. Normal receipts remain a short
+  resident-logo recall; this card owns only deliberate setup/restoration.
 
 ### 2026-08-21 — PRINT-04 closeout checks complete
 
