@@ -799,8 +799,8 @@ emulator while compiling and targeting API 36.
 The physical Samsung Galaxy Tab A9 SM-X115 reports an approximately 1007 by
 601 CSS-pixel WebView on its 1340 by 800 panel. The packaged activity is
 sensor-aware landscape and immersive fullscreen. Before React mounts, the
-native Capacitor runtime scales the fixed 1340-pixel reference by the physical
-WebView width; ordinary browser previews remain unscaled. Physical testing
+native Capacitor runtime scales the fixed 1340-pixel reference by the long edge
+of the CSS screen; ordinary browser previews remain unscaled. Physical testing
 confirmed the complete composition, touch targeting, and cart survival across
 POS navigation. Production signing, public distribution, printer integration,
 and the remaining hardware acceptance checks remain outside this development

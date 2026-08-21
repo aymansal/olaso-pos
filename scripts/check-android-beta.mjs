@@ -28,7 +28,11 @@ assert.match(manifest, /android\.permission\.INTERNET/);
 assert.match(manifest, /android:screenOrientation="sensorLandscape"/);
 assert.match(index, /width=1340, initial-scale=1\.0/);
 assert.match(main, /Capacitor\.isNativePlatform\(\)/);
-assert.match(main, /window\.outerWidth \/ 1340/);
+assert.match(
+  main,
+  /Math\.max\(window\.screen\.width, window\.screen\.height\) \/ 1340/,
+);
+assert.doesNotMatch(main, /window\.(?:innerWidth|outerWidth)/);
 assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
 assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
 assert.match(

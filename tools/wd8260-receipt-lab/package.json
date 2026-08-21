@@ -1,0 +1,22 @@
+{
+  "name": "wd8260-escpos-lab",
+  "private": true,
+  "scripts": {
+    "build": "node generate.cjs",
+    "build:logo-test": "node generate-logo-test.cjs",
+    "build:nv-logo": "node generate-nv-logo.cjs",
+    "check": "node check.cjs",
+    "install:nv-logo": "powershell -NoProfile -ExecutionPolicy Bypass -File print-usb.ps1 -Path out/nv-logo-write.bin",
+    "print:logo-test": "powershell -NoProfile -ExecutionPolicy Bypass -File print-usb.ps1 -Path out/logo-size-test.bin",
+    "print:nv-logo": "powershell -NoProfile -ExecutionPolicy Bypass -File print-usb.ps1 -Path out/nv-logo-recall.bin",
+    "print:usb": "powershell -NoProfile -ExecutionPolicy Bypass -File print-usb.ps1",
+    "vectorize:logo": "node vectorize-logo.cjs"
+  },
+  "dependencies": {
+    "receiptline": "4.0.4"
+  },
+  "devDependencies": {
+    "imagetracerjs": "1.2.6",
+    "sharp": "0.35.3"
+  }
+}

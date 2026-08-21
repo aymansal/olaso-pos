@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** planned; next; activation-ready; not active
+**Status:** active; PRINT-01 in progress
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -88,7 +88,7 @@ sale or stock deduction.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | pending | — |
+| PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | in progress | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify pass; user confirmed the installed layout and USB paper baseline. Awaiting commit/push evidence. |
 | PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | pending | — |
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | pending | — |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | pending | — |
@@ -240,16 +240,82 @@ sale or stock deduction.
 
 ## Current checkpoint
 
-- Goal 03 is planned only; no PRINT card is active and no goal branch exists.
+- Goal 03 is active and PRINT-01 is the only card in progress.
 - The accepted standalone lab is present outside Git at D:\Olaso-escpos-lab.
 - The app has saved-sale checkout and preview feedback but no production printer
   transport.
-- Exact next action after explicit /goal activation: re-read the DOX chain,
-  ledger, authorities, PLAN.md, and this file; query Graphify; create and push
-  codex/goal-03-printing-integration; mark PRINT-01 in progress; then preserve
-  and verify only the accepted lab baseline before touching Android transport.
+- The clean synchronized baseline is
+  `deba73b1e2baf1b92d7ce6e7f030b7c23c655383` on `main` and `origin/main`.
+- The versioned lab regenerates all accepted binary/text fixtures exactly and
+  remains isolated from the root production dependencies and APK. The current
+  APK build/install, physical-tablet launch, browser console, and structural
+  Graphify refresh pass.
+- The exact 1,814-byte normal receipt was sent through USB and the external lab
+  remains unchanged. The user confirmed the printed paper matches the accepted
+  receipt and the corrected APK fills the tablet without scrolling.
+- The user rejected the initial tablet QA claim. The pre-existing one-time
+  `outerWidth` zoom was a startup-orientation race; the intermediate
+  `innerWidth` hypothesis was also rejected because it caused oversize and
+  scrolling. The installed correction uses the stable long edge of the CSS
+  screen and reports no overflow across three cold starts.
+- Exact next action: run final closeout checks, commit/push PRINT-01, and record
+  its SHA before touching PRINT-02 LAN work.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-01 physical QA accepted
+
+- The user confirmed the corrected APK fills the Galaxy Tab A9 without
+  horizontal or vertical scrolling.
+- The user confirmed the USB receipt matches the accepted resident-logo,
+  separator, MAD-heading, bilingual-footer, and partial-cut baseline.
+- Resumed Goal 03 with PRINT-01 still in progress pending final checks,
+  commit/push, and SHA recording.
+
+### 2026-08-21 — PRINT-01 blocked on paper inspection
+
+- All non-human PRINT-01 evidence is complete, including the corrected physical
+  tablet viewport, repeated cold starts, USB spooler completion, and exact
+  receipt/logo golden bytes.
+- Physical paper inspection remained unanswered across three consecutive goal
+  turns. The card was not marked done or committed, and PRINT-02 was not
+  started.
+- Resume when the user confirms the visible tablet fit and the printed resident
+  logo, separators, MAD heading, bilingual footer, and partial cut.
+
+### 2026-08-21 — Tablet viewport verification corrected
+
+- Recorded the user's valid rejection of the first physical QA claim and did
+  not mark PRINT-01 done.
+- Traced `window.outerWidth` to prior tablet-fit commit `00b04bfb`; its one-time
+  cold-start read raced landscape orientation. Live WebView inspection proved
+  the correct settled CSS screen is `1007 by 601` while `innerWidth=1340` is the
+  fixed meta viewport.
+- Replaced the fragile read with the orientation-independent long CSS-screen
+  edge, updated the focused Android check to reject both bad APIs, rebuilt and
+  installed the APK, and measured zoom `0.751493` and document `1007 by 602`
+  without overflow on three consecutive cold starts.
+- Updated ARCHITECTURE, DESIGN, source DOX, and Graphify. The screen and paper
+  still require user-visible confirmation before PRINT-01 can be committed.
+
+### 2026-08-21 — Goal 03 activated
+
+- Re-read the complete required project context and queried the existing
+  Graphify graph before repository inspection.
+- Confirmed clean synchronized Git state, inspected the standalone receipt lab
+  without modifying it, hashed its durable and generated artifacts, confirmed
+  available USB queues, and detected the connected physical Galaxy Tab A9.
+- Marked only PRINT-01 in progress. No application, Android transport,
+  checkout, or external-lab behavior changed.
+- Preserved the accepted lab under `tools/wd8260-receipt-lab/` with a dedicated
+  lockfile, exact source/assets, mandatory runtime USB queue, and reviewed
+  golden receipt and resident-logo fixtures. No production dependency changed.
+- Golden-byte checks, nested dependency audit, root build, Android sync/beta
+  assembly, physical tablet install/launch, 1340 by 800 browser regression,
+  clean WebView/browser consoles, and structural Graphify refresh pass.
+- Sent the exact accepted receipt through USB. The spooler completed and the
+  external lab hashes remain unchanged; paper inspection is the remaining
+  PRINT-01 completion gate.
 
 ### 2026-08-21 — Goal 03 made activation-ready
 

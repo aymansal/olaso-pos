@@ -1,0 +1,19 @@
+                     TÉTOUAN
+------------------------------------------------
+ORDER 000123                    21/08/2026 14:35
+Cashier: Alex                 Dine in / Table T4
+------------------------------------------------
+ITEM                          QTY            MAD
+Café crème double              2           36.00
+Croissant aux amandes          1           18.50
+Thé vert menthe                1           15.00
+------------------------------------------------
+Subtotal                                   69.50
+Tax                                         0.00
+T O T A L                             6 9 . 5 0 
+Cash                                      100.00
+Change                                     30.50
+------------------------------------------------
+                  M E R C I . 
+            À bientôt / See you soon
+ 

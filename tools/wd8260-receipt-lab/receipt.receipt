@@ -1,0 +1,27 @@
+{width:auto;align:center}
+{{OLASO_LOGO}}
+
+"TÉTOUAN"
+-
+{width:*,24;align:left}
+"ORDER 000123" | 21/08/2026 14:35
+Cashier: Alex | Dine in / Table T4
+{width:auto;align:center}
+-
+{width:*,5,13;align:left}
+"ITEM" | "QTY" | "MAD"
+Café crème double | 2 | 36.00
+Croissant aux amandes | 1 | 18.50
+Thé vert menthe | 1 | 15.00
+{width:auto;align:center}
+-
+{width:*,16;align:left}
+Subtotal | 69.50
+Tax | 0.00
+^"TOTAL" | ^"69.50"
+Cash | 100.00
+Change | 30.50
+{width:auto;align:center}
+-
+^"MERCI."
+À bientôt / See you soon

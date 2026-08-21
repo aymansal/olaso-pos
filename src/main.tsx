@@ -10,7 +10,7 @@ import './globals.css';
 if (Capacitor.isNativePlatform()) {
   document.documentElement.style.setProperty(
     'zoom',
-    String(window.outerWidth / 1340),
+    String(Math.max(window.screen.width, window.screen.height) / 1340),
   );
 }
 

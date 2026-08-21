@@ -127,3 +127,5 @@ Before finishing a meaningful change:
   functions, reporting summaries, and development seeding.
 - [`src/AGENTS.md`](src/AGENTS.md) — React application entry points, global
   styling, navigation, and source-level boundaries.
+- [`tools/AGENTS.md`](tools/AGENTS.md) — version-controlled development-only
+  laboratories and hardware fixtures excluded from the application bundle.
