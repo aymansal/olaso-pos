@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active; PRINT-02 in progress
+**Status:** active; PRINT-03 in progress
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -89,8 +89,8 @@ sale or stock deduction.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | done | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify and physical tablet/paper QA pass; commit `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` pushed to `origin/codex/goal-03-printing-integration`. |
-| PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | in progress | Endpoint/MAC and all available paper paths pass; wrong endpoint/port, printer-off, Ethernet-link loss, and tablet Wi-Fi loss fail honestly; printer/cable/tablet-network recovery succeeds. Shared-router power-off was declined due household disruption. Home-lab address is configurable; café router administrator owns reservation/exclusion. Checks/build/APK/tablet/browser/Graphify pass; awaiting commit/push. |
-| PRINT-03 | Add minimal Android LAN transport, settings, and test print | pending | — |
+| PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | done | Endpoint/MAC/paper and failure/recovery paths pass with shared-router reboot limitation explicit; configurable tooling and all checks pass; commit `5cb5da399900f6d2aca22bd4ecd341844884d78c` pushed to `origin/codex/goal-03-printing-integration`. |
+| PRINT-03 | Add minimal Android LAN transport, settings, and test print | in progress | — |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | pending | — |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | pending | — |
 | PRINT-06 | Connect post-commit first print and persisted print state | pending | — |
@@ -240,7 +240,10 @@ sale or stock deduction.
 
 ## Current checkpoint
 
-- Goal 03 is active and PRINT-02 is the only card in progress.
+- Goal 03 is active and PRINT-03 is the only card in progress.
+- PRINT-02 is complete and pushed at
+  `5cb5da399900f6d2aca22bd4ecd341844884d78c` on
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-01 is complete and pushed at
   `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` on
   `origin/codex/goal-03-printing-integration`.
@@ -261,9 +264,9 @@ sale or stock deduction.
   `innerWidth` hypothesis was also rejected because it caused oversize and
   scrolling. The installed correction uses the stable long edge of the CSS
   screen and reports no overflow across three cold starts.
-- Exact next action: physically connect the printer to the café router, measure
-  the router/tablet network, set a compatible printer address/subnet/gateway,
-  then discover and prove the raw TCP port with real paper.
+- Exact next action: inspect Graphify plus the Android, terminal-settings, and
+  Settings ownership chains, then add the minimal bounded Kotlin TCP transport
+  and validated Test printer action.
 - Measured tablet `192.168.11.225/24`, workstation `192.168.11.222/24`, and
   gateway `192.168.11.1`. The printer remains at old static
   `192.168.123.100` and is not yet on Ethernet.
@@ -308,6 +311,14 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-02 pushed; PRINT-03 started
+
+- Pushed the verified LAN endpoint/tooling/failure evidence as
+  `5cb5da399900f6d2aca22bd4ecd341844884d78c`.
+- Marked PRINT-02 done and PRINT-03 as the only card in progress.
+- Next work is the narrow Android TCP plugin, validated persisted endpoint, and
+  non-sale diagnostic action; checkout remains untouched.
 
 ### 2026-08-21 — PRINT-02 ready to push
 

@@ -15,8 +15,8 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 | Card | Status |
 | --- | --- |
 | PRINT-01 — Preserve and lock the accepted receipt laboratory baseline | done |
-| PRINT-02 — Prove and document the physical LAN endpoint and failure behavior | in progress |
-| PRINT-03 — Add minimal Android LAN transport, settings, and test print | pending |
+| PRINT-02 — Prove and document the physical LAN endpoint and failure behavior | done |
+| PRINT-03 — Add minimal Android LAN transport, settings, and test print | in progress |
 | PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | pending |
 | PRINT-05 — Add and verify one-time printer-resident logo provisioning | pending |
 | PRINT-06 — Connect post-commit first print and persisted print state | pending |
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-02 is the only card in progress.
+- Goal 03 is active and PRINT-03 is the only card in progress.
+- PRINT-02 implementation commit
+  `5cb5da399900f6d2aca22bd4ecd341844884d78c` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-01 implementation commit
   `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -159,10 +162,22 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   and cold launch, exact 1340 by 800 landscape bounds, clean WebView console,
   exact browser body/document bounds with no warning/error logs, Graphify
   2,228-node/5,128-edge structural refresh, and whitespace checks.
-- Exact next action: commit/push PRINT-02, record its full SHA and remote branch,
-  then mark only PRINT-03 in progress.
+- Exact next action: query Graphify and inspect the Android plugin, terminal
+  settings, Settings screen, and test/check ownership before implementing one
+  bounded Kotlin TCP transport and persisted Test printer flow.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-02 complete; PRINT-03 started
+
+- Committed `PRINT-02: prove LAN printer endpoint` as
+  `5cb5da399900f6d2aca22bd4ecd341844884d78c`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-02 done with the actual shared-router power-cycle limitation
+  explicit and no home-lab address hardcoded into tooling or application code.
+- Marked PRINT-03 as the only card in progress. Next action is complete
+  ownership/caller inspection before adding the minimal native transport and
+  Settings test action.
 
 ### 2026-08-21 — PRINT-02 closeout checks complete
 
