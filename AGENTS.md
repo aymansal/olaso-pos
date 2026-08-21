@@ -90,8 +90,9 @@ decision changes.
   inventory, Orders, Dashboard, and Reports data, a verified Capacitor Android
   development beta, profile-owned local Settings and Lock flows, and
   local-first SQLite/outbox checkout with idempotent Convex synchronization.
-  Do not imply that production authentication or ESC/POS behavior already
-  exists.
+  Goal 03 also includes a verified LAN endpoint plus a native printer
+  settings/test boundary; do not imply that production authentication or
+  post-checkout receipt printing already exists.
 
 ### Visual baseline
 

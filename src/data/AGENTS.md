@@ -20,7 +20,8 @@ tablet's local SQLite operational record.
   preferences, and performs one bounded synchronization attempt per deliberate
   action.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
-  format, local lock state, sync summary, and safe failure copy.
+  format, validated local printer endpoint, local lock state, sync summary, and
+  safe failure copy.
 - `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt parsing,
   sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
@@ -53,6 +54,9 @@ tablet's local SQLite operational record.
 - Device ID is immutable after first setup. Manual sync releases local retry
   backoff, processes at most 10 sales, and performs one fresh bounded snapshot
   request only after the outbox is empty.
+- Printer host/port remain non-secret local settings. Validate IPv4 and port at
+  the persistence boundary; an empty or corrupt endpoint can never start a
+  native connection.
 - Web development uses the same SQL through `jeep-sqlite`; it is not a second
   persistence architecture.
 - Keep `sql.js` pinned to the version recorded in `ARCHITECTURE.md`.

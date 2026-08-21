@@ -10,7 +10,7 @@ import {
 } from '@phosphor-icons/react';
 import styles from './SettingsNavigationPanel.module.css';
 
-export type SettingsSection = 'general' | 'sync' | 'about';
+export type SettingsSection = 'general' | 'printer' | 'sync' | 'about';
 
 const items: ReadonlyArray<{
   id?: SettingsSection;
@@ -24,11 +24,7 @@ const items: ReadonlyArray<{
     icon: UsersThree,
     unavailable: 'Pending owner role and login decisions',
   },
-  {
-    label: 'Printer & hardware',
-    icon: Printer,
-    unavailable: 'Printer integration is outside this beta',
-  },
+  { id: 'printer', label: 'Printer & hardware', icon: Printer },
   {
     label: 'Orders & receipts',
     icon: Receipt,

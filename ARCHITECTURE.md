@@ -780,6 +780,10 @@ Rules:
   not implemented.
 - The printer host and verified raw TCP port are settings, not hardcoded
   deployment constants.
+- The current Settings test path persists a validated IPv4/port and calls one
+  registered Capacitor plugin. Kotlin owns 2-second bounded connect and write
+  operations, returns only byte/timing facts, and reports `paperConfirmed` as
+  false; no vendor SDK or new Android permission is used.
 - Normal receipts recall the pre-provisioned 300-dot NV logo instead of
   retransmitting or rerasterizing it for each sale.
 

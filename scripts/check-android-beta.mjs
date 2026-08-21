@@ -32,9 +32,31 @@ assert.match(
   main,
   /Math\.max\(window\.screen\.width, window\.screen\.height\) \/ 1340/,
 );
+const printerPlugin = readFileSync(
+  'android/app/src/main/java/com/olaso/pos/EscPosPrinterPlugin.kt',
+  'utf8',
+);
+const socketWriter = readFileSync(
+  'android/app/src/main/java/com/olaso/pos/LanSocketWriter.kt',
+  'utf8',
+);
+const rootBuild = readFileSync('android/build.gradle', 'utf8');
+const appBuildScript = readFileSync('android/app/build.gradle', 'utf8');
 assert.doesNotMatch(main, /window\.(?:innerWidth|outerWidth)/);
 assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
 assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
+assert.match(activity, /registerPlugin\(EscPosPrinterPlugin\.class\)/);
+assert.match(rootBuild, /com\.android\.tools\.build:gradle:8\.13\.2/);
+assert.match(rootBuild, /kotlin-gradle-plugin:2\.3\.21/);
+assert.match(appBuildScript, /org\.jetbrains\.kotlin\.android/);
+assert.match(printerPlugin, /@CapacitorPlugin\(name = "EscPosPrinter"\)/);
+assert.match(printerPlugin, /Base64\.decode/);
+assert.match(printerPlugin, /put\("ok", false\)/);
+assert.doesNotMatch(printerPlugin, /call\.reject/);
+assert.match(socketWriter, /Socket\(\)/);
+assert.match(socketWriter, /connectTimeoutMs/);
+assert.match(socketWriter, /writeTimeoutMs/);
+assert.doesNotMatch(printerPlugin + socketWriter, /Bluetooth|Usb|USB/);
 assert.match(
   manifest,
   /android\.permission\.USE_BIOMETRIC"[\s\S]*?tools:node="remove"/,

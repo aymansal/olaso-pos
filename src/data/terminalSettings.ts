@@ -12,6 +12,8 @@ export type TerminalSettings = {
   lastSyncAt?: number;
   lastSyncError?: string;
   menuUpdatedAt?: number;
+  printerHost: string;
+  printerPort: number;
 };
 
 export type TerminalPreferences = Pick<
@@ -19,9 +21,15 @@ export type TerminalPreferences = Pick<
   'terminalName' | 'clockFormat'
 >;
 
+export type PrinterPreferences = Pick<
+  TerminalSettings,
+  'printerHost' | 'printerPort'
+>;
+
 type SettingsDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
 const DEFAULT_TERMINAL_NAME = 'Olaso POS';
+const DEFAULT_PRINTER_PORT = 9100;
 
 function cleanTerminalName(value: string) {
   const terminalName = value.trim().replace(/\s+/g, ' ');
@@ -35,6 +43,29 @@ function assertClockFormat(value: string): asserts value is ClockFormat {
   if (value !== '12-hour' && value !== '24-hour') {
     throw new Error('Clock format must be 12-hour or 24-hour.');
   }
+}
+
+function isValidIpv4(value: string) {
+  const parts = value.split('.');
+  return parts.length === 4 && parts.every((part) => {
+    const octet = Number(part);
+    return /^\d{1,3}$/.test(part) && octet >= 0 && octet <= 255;
+  });
+}
+
+export function validatePrinterPreferences(
+  input: PrinterPreferences,
+): PrinterPreferences {
+  const printerHost = input.printerHost.trim();
+  if (!isValidIpv4(printerHost)) {
+    throw new Error('Printer address must be a valid IPv4 address.');
+  }
+  if (!Number.isInteger(input.printerPort)
+      || input.printerPort < 1
+      || input.printerPort > 65535) {
+    throw new Error('Printer port must be from 1 to 65535.');
+  }
+  return { printerHost, printerPort: input.printerPort };
 }
 
 async function upsertSetting(
@@ -67,9 +98,11 @@ export async function loadTerminalSettingsFromDatabase(
        'terminal_name',
        'clock_format',
        'session_locked',
-       'operational_cache_updated_at'
+       'operational_cache_updated_at',
+       'printer_host',
+       'printer_port'
      )
-     LIMIT 5`,
+     LIMIT 7`,
   );
   const values = new Map(
     (settings.values ?? []).map((row) => [String(row.key), String(row.value)]),
@@ -101,6 +134,9 @@ export async function loadTerminalSettingsFromDatabase(
   const menuUpdatedAt = Number(
     values.get('operational_cache_updated_at') ?? 0,
   );
+  const storedPrinterPort = Number(
+    values.get('printer_port') ?? DEFAULT_PRINTER_PORT,
+  );
 
   return {
     deviceId,
@@ -108,6 +144,12 @@ export async function loadTerminalSettingsFromDatabase(
     clockFormat,
     isLocked: values.get('session_locked') === '1',
     pendingSyncCount: Number(pending.values?.[0]?.count ?? 0),
+    printerHost: values.get('printer_host') ?? '',
+    printerPort: Number.isInteger(storedPrinterPort)
+        && storedPrinterPort >= 1
+        && storedPrinterPort <= 65535
+      ? storedPrinterPort
+      : 0,
     ...(sync?.last_success_at
       ? { lastSyncAt: Number(sync.last_success_at) }
       : {}),
@@ -137,6 +179,23 @@ export async function saveTerminalPreferencesToDatabase(
 export function saveTerminalPreferences(input: TerminalPreferences) {
   return withLocalTransaction((database) =>
     saveTerminalPreferencesToDatabase(database, input),
+  );
+}
+
+export async function savePrinterPreferencesToDatabase(
+  database: SettingsDatabase,
+  input: PrinterPreferences,
+  now = Date.now(),
+) {
+  const printer = validatePrinterPreferences(input);
+  await upsertSetting(database, 'printer_host', printer.printerHost, now);
+  await upsertSetting(database, 'printer_port', String(printer.printerPort), now);
+  return printer;
+}
+
+export function savePrinterPreferences(input: PrinterPreferences) {
+  return withLocalTransaction((database) =>
+    savePrinterPreferencesToDatabase(database, input),
   );
 }
 

@@ -90,7 +90,7 @@ sale or stock deduction.
 | --- | --- | --- | --- |
 | PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | done | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify and physical tablet/paper QA pass; commit `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | done | Endpoint/MAC/paper and failure/recovery paths pass with shared-router reboot limitation explicit; configurable tooling and all checks pass; commit `5cb5da399900f6d2aca22bd4ecd341844884d78c` pushed to `origin/codex/goal-03-printing-integration`. |
-| PRINT-03 | Add minimal Android LAN transport, settings, and test print | in progress | — |
+| PRINT-03 | Add minimal Android LAN transport, settings, and test print | in progress | Kotlin plugin/writer/tests, persisted endpoint, Settings UI, build/browser/APK pass; in-app and recovery paper confirmed; restart, clean-log wrong-address timeout/recovery, final checks and Graphify pass. Awaiting commit/push. |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | pending | — |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | pending | — |
 | PRINT-06 | Connect post-commit first print and persisted print state | pending | — |
@@ -267,6 +267,15 @@ sale or stock deduction.
 - Exact next action: inspect Graphify plus the Android, terminal-settings, and
   Settings ownership chains, then add the minimal bounded Kotlin TCP transport
   and validated Test printer action.
+- Implemented the minimal standard-socket Kotlin plugin, persistence, and
+  Settings diagnostic without checkout changes or new printer SDK/permission.
+- Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
+  tablet test, paper, restart, wrong-address recovery, and logcat remain.
+- Physical APK test confirms saved endpoint, restart persistence, in-app paper,
+  bounded wrong-address timeout, corrected recovery, honest typed results, and
+  clean expected-failure/success console/logcat. Final recovery paper remains.
+- User confirmed recovery paper; final restart retains `.100:9100`. All focused,
+  build, native, browser, tablet, log, Graphify, and paper checks pass.
 - Measured tablet `192.168.11.225/24`, workstation `192.168.11.222/24`, and
   gateway `192.168.11.1`. The printer remains at old static
   `192.168.123.100` and is not yet on Ethernet.
@@ -311,6 +320,30 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-03 ready to push
+
+- User confirmed corrected-endpoint recovery paper and final restart persistence.
+- Final focused/build/native/browser/tablet/logcat/Graphify checks pass; card is
+  ready for closeout review and commit/push.
+
+### 2026-08-21 — PRINT-03 device and recovery QA reached
+
+- Installed the Kotlin-enabled APK and tested through the real Settings UI.
+- User confirmed the first marked non-sale paper; endpoint survives restart.
+- Corrected expected native failures from rejected promises to typed resolved
+  results so wrong-address timeout remains actionable without console errors.
+- Wrong address and corrected endpoint now pass clean-log recovery; awaiting
+  final recovery paper confirmation.
+
+### 2026-08-21 — PRINT-03 implementation ready for device QA
+
+- Added compatible Kotlin build support, registered bounded native LAN socket
+  plugin/writer, and pure JVM exact-byte/failure tests.
+- Added validated persisted endpoint and Android-only non-sale Test printer UI
+  with honest success/failure semantics.
+- Browser/build/focused checks pass; checkout remains untouched. Physical
+  tablet/paper/restart/wrong-address/logcat QA is next.
 
 ### 2026-08-21 — PRINT-02 pushed; PRINT-03 started
 

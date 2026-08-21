@@ -17,6 +17,9 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   one minimal native TCP socket plugin. Keep the USB receipt lab outside the
   APK and do not add Android USB/Bluetooth branches without a later confirmed
   requirement.
+- `EscPosPrinterPlugin.kt` validates the native call boundary and translates
+  observable failures; `LanSocketWriter.kt` owns bounded connect/write/flush/
+  close behavior. Neither claims paper status from a successful socket write.
 - Keep web application behavior in `src/`; native code is only for required
   platform integration.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;
@@ -29,6 +32,8 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   changes.
 - Run `npm run android:beta` for the checked development beta build. Its
   ignored output is `android/app/build/outputs/apk/debug/app-debug.apk`.
+- The beta build runs app JVM unit tests before assembly, including exact socket
+  bytes and closed-endpoint behavior for the native LAN writer.
 - Every native implementation card installs the current APK on the connected
   physical Galaxy Tab A9 and records its focused console/logcat/hardware smoke
   test before the card is done.

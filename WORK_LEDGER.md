@@ -165,8 +165,86 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - Exact next action: query Graphify and inspect the Android plugin, terminal
   settings, Settings screen, and test/check ownership before implementing one
   bounded Kotlin TCP transport and persisted Test printer flow.
+- PRINT-03 implementation now has Kotlin 2.3.21 with compatible AGP 8.13.2,
+  registered `EscPosPrinterPlugin`, bounded `LanSocketWriter`, pure native socket
+  unit tests, a generic Capacitor byte wrapper, deterministic non-sale
+  diagnostic, validated/persisted IPv4 and port, and an enabled Settings Test
+  printer panel. Checkout remains untouched.
+- Native JVM tests, Settings persistence/validation/diagnostic checks, Android
+  static checks, TypeScript, and production build pass. Browser QA verifies
+  exact 1340 by 800 bounds, 44/52-pixel controls, restart persistence, precise
+  invalid/unavailable feedback, no overflow, and clean console.
+- Exact next action: run Android sync/beta with unit tests, install on the
+  physical tablet, enter the measured lab endpoint, print the non-sale
+  diagnostic, verify restart and wrong-address recovery, and inspect logcat.
+- Full `android:beta` now runs 140 tasks including native unit tests and passes;
+  the synced APK installed successfully on the SM-X115.
+- On the physical Settings panel, `192.168.11.100:9100` saved and survived
+  process restart. The in-app diagnostic wrote 103 bytes in 6 ms, returned
+  `paperConfirmed:false`, displayed `Confirm paper`, produced no console/logcat
+  warning/error, and the user confirmed paper.
+- Changing to unused `.101` persisted the draft and produced a bounded 2-second
+  `TIMEOUT` with actionable UI copy. Expected native failure now returns typed
+  `ok:false` rather than a rejected Capacitor promise, keeping console/logcat
+  clean. Correcting back to `.100` then wrote 103 bytes in 6 ms with `ok:true`;
+  final recovery-paper confirmation is pending.
+- The user confirmed the corrected-endpoint recovery diagnostic printed. A final
+  process restart still shows `192.168.11.100:9100`; physical Settings geometry
+  fills the 1340 by 800 tablet with no clipping or overflow.
+- Final Graphify refresh contains 2,295 nodes and 5,269 edges. Settings,
+  Android static, TypeScript, production build, native unit/assembly, browser,
+  tablet, persistence, wrong-address, clean-log, and paper checks all pass.
+- Exact next action: re-read the closeout DOX/ledger chain, review/stage only
+  PRINT-03 files, commit/push, record the SHA, then activate PRINT-04.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-03 physical QA complete
+
+- The user confirmed paper after correcting the endpoint from `.101` to `.100`.
+- Force-stopped and relaunched the final synced APK; the corrected endpoint and
+  port remain persisted, and the Settings panel still fills the physical tablet
+  without clipping or overflow.
+- Final Graphify refresh reached 2,295 nodes/5,269 edges. Focused Settings,
+  Android, native JVM, TypeScript, production build, checked beta assembly,
+  browser, physical tablet, failure/recovery, clean console/logcat, and paper
+  verification pass.
+- PRINT-03 is ready for closeout review, commit, and push.
+
+### 2026-08-21 — PRINT-03 physical native QA reached
+
+- Synced, built, and installed the Kotlin-enabled APK after all 140 checked
+  Gradle tasks passed.
+- Entered the measured endpoint through the real tablet Settings UI. It
+  persisted across force-stop/relaunch, and the first non-sale diagnostic
+  returned 103 bytes/6 ms with honest paper-unconfirmed feedback; the user
+  confirmed paper output.
+- Wrong address `.101` returned a bounded connect timeout and clear operator
+  message. The first implementation used a rejected native promise, which
+  Capacitor logged as an expected console error; replaced expected failures
+  with a resolved typed `ok:false` result and retained TypeScript error mapping.
+- Rebuilt/resynced/reinstalled and re-ran the wrong-address path: UI feedback
+  remained correct with no console/logcat warning/error. Correcting `.100`
+  recovered to typed `ok:true`, 103 bytes in 6 ms, `paperConfirmed:false`.
+- Awaiting the final recovery paper confirmation before Graphify/final checks
+  and card commit/push.
+
+### 2026-08-21 — PRINT-03 native transport and Settings implemented
+
+- Added the officially compatible Kotlin 2.3.21/AGP 8.13.2 compiler pair and
+  kept the implementation on standard sockets with no printer SDK/dependency.
+- Added one registered Capacitor plugin plus bounded native writer. It validates
+  IPv4/port/base64/timeouts/payload size, times connect/write, maps observable
+  failure stages, and always returns `paperConfirmed: false`.
+- Added pure JVM tests proving exact socket bytes and closed-endpoint mapping;
+  the checked beta workflow now runs unit tests before APK assembly.
+- Persisted validated printer IPv4/port through existing generic
+  `device_settings`; no schema migration was needed. Added an Android-only
+  non-sale Test printer action and actionable error copy.
+- Browser QA at 1340 by 800 passed layout, touch-target, persistence,
+  empty/invalid and Android-only states, overflow, and console checks.
+- Checkout, saved receipts, logo provisioning, and order reprint remain outside
+  PRINT-03. Exact next action is physical APK/native test and recovery QA.
 
 ### 2026-08-21 — PRINT-02 complete; PRINT-03 started
 

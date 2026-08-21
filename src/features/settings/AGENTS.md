@@ -15,11 +15,15 @@ presentation.
   reports pending, success, offline, and error states.
 - The local lock survives restart and preserves the in-memory POS order while
   the app remains open.
+- Printer & hardware persists a validated IPv4/raw-port endpoint and exposes one
+  Android-only non-sale Test printer action with honest configuration,
+  unavailable, timeout, write, and unknown feedback.
+- A successful test means only that bytes were written; the operator must
+  confirm paper separately.
 - Unlock is explicitly not authentication until owner-approved roles, PINs,
   and login policy exist. Do not add placeholder credentials or a working
   keypad.
-- Printer/hardware controls and unconfirmed staff, receipt, and stock policies
-  remain unavailable.
+- Unconfirmed staff, receipt, and stock policies remain unavailable.
 
 ## Verification
 

@@ -61,11 +61,13 @@ export function SettingsScreen({ onNavigate, onLock }: SettingsScreenProps) {
         settings={data.settings}
         isLoading={data.isLoading}
         isSyncing={data.isSyncing}
+        isTestingPrinter={data.isTestingPrinter}
         online={online}
         message={data.message}
         error={data.error || (section === 'sync' ? data.syncError : '')}
         onSave={data.save}
         onSync={data.syncNow}
+        onTestPrinter={data.testPrinter}
       />
     </main>
   );

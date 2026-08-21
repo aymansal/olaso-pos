@@ -460,6 +460,9 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Successful submission shows a concise confirmation and starts a fresh receipt only after the local sale transaction commits.
 - After local persistence succeeds, printing is attempted once and cloud synchronization runs in the background.
 - A print failure preserves the completed sale and exposes `Reprint receipt` without resubmitting the order.
+- The profile-owned Printer settings panel uses persistent IPv4/port labels and
+  one `Test printer` action. Its diagnostic is explicitly not a sale, and
+  success copy asks the operator to confirm paper rather than claiming it.
 - A local persistence failure keeps the order intact. A cloud failure marks the saved sale as waiting to sync without blocking service.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 

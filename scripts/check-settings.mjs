@@ -5,9 +5,11 @@ import { serializeLocalTransaction } from '../src/data/localDatabase.ts';
 import {
   describeSyncFailure,
   loadTerminalSettingsFromDatabase,
+  savePrinterPreferencesToDatabase,
   saveTerminalPreferencesToDatabase,
   setTerminalLockedInDatabase,
 } from '../src/data/terminalSettings.ts';
+import { createPrinterTestBytes } from '../src/printing/printerDiagnostic.ts';
 
 const database = new DatabaseSync(':memory:');
 for (const migration of localMigrations) {
@@ -51,10 +53,17 @@ assert.equal(initial.deviceId, 'device-settings-check');
 assert.equal(initial.terminalName, 'Olaso POS');
 assert.equal(initial.clockFormat, '24-hour');
 assert.equal(initial.isLocked, false);
+assert.equal(initial.printerHost, '');
+assert.equal(initial.printerPort, 9100);
 
 await saveTerminalPreferencesToDatabase(
   adapter,
   { terminalName: '  Front   Counter  ', clockFormat: '12-hour' },
+  now + 1,
+);
+await savePrinterPreferencesToDatabase(
+  adapter,
+  { printerHost: ' 192.168.11.100 ', printerPort: 9100 },
   now + 1,
 );
 await setTerminalLockedInDatabase(adapter, true, now + 1);
@@ -84,6 +93,8 @@ assert.equal(restarted.deviceId, initial.deviceId);
 assert.equal(restarted.terminalName, 'Front Counter');
 assert.equal(restarted.clockFormat, '12-hour');
 assert.equal(restarted.isLocked, true);
+assert.equal(restarted.printerHost, '192.168.11.100');
+assert.equal(restarted.printerPort, 9100);
 assert.equal(restarted.pendingSyncCount, 1);
 assert.equal(restarted.lastSyncAt, now);
 assert.equal(restarted.lastSyncError, 'offline');
@@ -102,6 +113,27 @@ await assert.rejects(
   ),
   /1 to 40 characters/,
 );
+await assert.rejects(
+  savePrinterPreferencesToDatabase(
+    adapter,
+    { printerHost: 'printer.local', printerPort: 9100 },
+  ),
+  /valid IPv4 address/,
+);
+await assert.rejects(
+  savePrinterPreferencesToDatabase(
+    adapter,
+    { printerHost: '192.168.11.100', printerPort: 0 },
+  ),
+  /1 to 65535/,
+);
+
+const diagnostic = createPrinterTestBytes();
+assert.deepEqual([...diagnostic.subarray(0, 5)], [0x1b, 0x40, 0x1b, 0x74, 0x13]);
+assert.match(Buffer.from(diagnostic).toString('ascii'), /OLASO PRINTER TEST/);
+assert.match(Buffer.from(diagnostic).toString('ascii'), /NOT A SALE/);
+assert.deepEqual([...diagnostic.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
+assert.equal(diagnostic.indexOf(0x00, 5) >= 0, true);
 
 database.close();
 console.log('Terminal settings persistence and validation checks passed.');

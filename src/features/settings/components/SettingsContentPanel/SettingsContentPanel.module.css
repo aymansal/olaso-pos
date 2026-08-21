@@ -257,6 +257,10 @@
   line-height: 1.45;
 }
 
+.printerNotice {
+  top: 354px;
+}
+
 .feedback {
   position: absolute;
   bottom: 28px;

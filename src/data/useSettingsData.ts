@@ -11,10 +11,16 @@ import { replaceOperationalCache } from './operationalCache.ts';
 import {
   loadTerminalSettings,
   recordSyncFailure,
+  savePrinterPreferences,
   saveTerminalPreferences,
+  type PrinterPreferences,
   type TerminalPreferences,
   type TerminalSettings,
 } from './terminalSettings.ts';
+import {
+  describePrinterFailure,
+  testPrinterConnection,
+} from '../printing/testPrinter.ts';
 
 function toConvexSaleArgs(input: SaleSyncPayload) {
   return {
@@ -37,6 +43,7 @@ export function useSettingsData() {
   const acceptMutation = useMutation(api.sales.accept);
   const [settings, setSettings] = useState<TerminalSettings>();
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isTestingPrinter, setIsTestingPrinter] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -127,14 +134,39 @@ export function useSettingsData() {
     }
   }, [acceptMutation, convex, refresh]);
 
+  const testPrinter = useCallback(
+    async (input: PrinterPreferences) => {
+      setIsTestingPrinter(true);
+      setError('');
+      setMessage('');
+      try {
+        const printer = await savePrinterPreferences(input);
+        await refresh();
+        const result = await testPrinterConnection(printer);
+        setMessage(
+          `Test data sent (${result.bytesWritten} bytes in ${result.totalMs} ms). Confirm paper.`,
+        );
+      } catch (caught) {
+        const printerError = describePrinterFailure(caught);
+        setError(printerError);
+        throw caught;
+      } finally {
+        setIsTestingPrinter(false);
+      }
+    },
+    [refresh],
+  );
+
   return {
     settings,
     isLoading: !settings,
     isSyncing,
+    isTestingPrinter,
     message,
     error,
     syncError: settings?.lastSyncError || '',
     save,
     syncNow,
+    testPrinter,
   };
 }

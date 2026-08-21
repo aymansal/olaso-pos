@@ -13,6 +13,8 @@ application, global tokens, and the feature screens under `features/`.
   local terminal-lock state before exposing the application.
 - `data/` owns the application-level Convex provider, feature-facing data
   hooks, local SQLite boundary, operational cache, and outbox.
+- `printing/` owns printer diagnostics and the Capacitor transport wrapper;
+  React components receive only plain settings, actions, and feedback.
 - `components/` and `lib/` hold only proven cross-feature UI and formatting
   contracts; the shared receipt preview, money formatter, and stock-quantity
   formatter are the current examples.

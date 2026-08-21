@@ -4,11 +4,13 @@ import {
   Database,
   DeviceTablet,
   Info,
+  Printer as PrinterIcon,
   WarningCircle,
 } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import type {
   TerminalPreferences,
+  PrinterPreferences,
   TerminalSettings,
 } from '../../../../data/terminalSettings';
 import type { SettingsSection } from '../SettingsNavigationPanel/SettingsNavigationPanel';
@@ -27,11 +29,13 @@ interface SettingsContentPanelProps {
   settings?: TerminalSettings;
   isLoading: boolean;
   isSyncing: boolean;
+  isTestingPrinter: boolean;
   online: boolean;
   message: string;
   error: string;
   onSave: (input: TerminalPreferences) => Promise<void>;
   onSync: () => Promise<void>;
+  onTestPrinter: (input: PrinterPreferences) => Promise<void>;
 }
 
 export function SettingsContentPanel({
@@ -39,21 +43,27 @@ export function SettingsContentPanel({
   settings,
   isLoading,
   isSyncing,
+  isTestingPrinter,
   online,
   message,
   error,
   onSave,
   onSync,
+  onTestPrinter,
 }: SettingsContentPanelProps) {
   const [terminalName, setTerminalName] = useState('');
   const [clockFormat, setClockFormat] =
     useState<TerminalPreferences['clockFormat']>('24-hour');
   const [isSaving, setIsSaving] = useState(false);
+  const [printerHost, setPrinterHost] = useState('');
+  const [printerPort, setPrinterPort] = useState('9100');
 
   useEffect(() => {
     if (!settings) return;
     setTerminalName(settings.terminalName);
     setClockFormat(settings.clockFormat);
+    setPrinterHost(settings.printerHost);
+    setPrinterPort(String(settings.printerPort));
   }, [settings]);
 
   async function save() {
@@ -65,6 +75,91 @@ export function SettingsContentPanel({
     } finally {
       setIsSaving(false);
     }
+  }
+
+  async function testPrinter() {
+    try {
+      await onTestPrinter({
+        printerHost,
+        printerPort: Number(printerPort),
+      });
+    } catch {
+      // The data hook owns the actionable error message.
+    }
+  }
+
+  if (section === 'printer') {
+    return (
+      <section className={styles.panel} aria-labelledby="printer-heading">
+        <div className={styles.header}>
+          <div>
+            <h2 id="printer-heading">Printer & hardware</h2>
+            <p>Configure this tablet's Ethernet receipt printer</p>
+          </div>
+          <button
+            className={styles.primary}
+            type="button"
+            disabled={isTestingPrinter || isLoading}
+            onClick={testPrinter}
+          >
+            <PrinterIcon size={17} aria-hidden="true" />
+            <span>{isTestingPrinter ? 'Testing…' : 'Test printer'}</span>
+          </button>
+        </div>
+
+        <div className={styles.identity}>
+          <span className={styles.deviceIcon}>
+            <PrinterIcon size={24} aria-hidden="true" />
+          </span>
+          <div>
+            <span>LAN receipt printer</span>
+            <strong>
+              {settings?.printerHost
+                ? `${settings.printerHost}:${settings.printerPort}`
+                : 'Not configured'}
+            </strong>
+            <small>USB remains a separate desktop receipt-lab path.</small>
+          </div>
+        </div>
+
+        <div className={styles.formGrid}>
+          <label>
+            <span>Printer IPv4 address</span>
+            <input
+              value={printerHost}
+              inputMode="decimal"
+              autoComplete="off"
+              placeholder="192.168.1.100"
+              disabled={isLoading || isTestingPrinter}
+              onChange={(event) => setPrinterHost(event.target.value)}
+            />
+            <small>Use the address reserved on the installation router.</small>
+          </label>
+          <label>
+            <span>Raw TCP port</span>
+            <input
+              value={printerPort}
+              inputMode="numeric"
+              autoComplete="off"
+              disabled={isLoading || isTestingPrinter}
+              onChange={(event) => setPrinterPort(event.target.value)}
+            />
+            <small>The verified WD8260 lab endpoint uses port 9100.</small>
+          </label>
+        </div>
+
+        <div className={`${styles.notice} ${styles.printerNotice}`}>
+          <Info size={18} aria-hidden="true" />
+          <p>
+            Test printer validates and saves this endpoint, then sends a
+            clearly marked non-sale diagnostic. A completed TCP write does not
+            confirm paper; inspect the printer separately.
+          </p>
+        </div>
+
+        <Feedback message={message} error={error} />
+      </section>
+    );
   }
 
   if (section === 'sync') {
@@ -188,7 +283,7 @@ export function SettingsContentPanel({
           </div>
           <div>
             <dt>Printer integration</dt>
-            <dd>Not included in this beta</dd>
+            <dd>LAN settings test only; checkout printing is not connected yet</dd>
           </div>
         </dl>
       </section>

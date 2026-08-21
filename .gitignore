@@ -6,6 +6,7 @@ tmp/
 .env.local
 .env.*.local
 graphify-out/
+.kotlin/
 tools/wd8260-receipt-lab/out/
 Olasotheme.css
 Olasotheme.js

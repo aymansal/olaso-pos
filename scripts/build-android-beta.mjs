@@ -5,8 +5,8 @@ const androidDirectory = fileURLToPath(new URL('../android/', import.meta.url));
 const windows = process.platform === 'win32';
 const command = windows ? process.env.ComSpec ?? 'cmd.exe' : './gradlew';
 const args = windows
-  ? ['/d', '/s', '/c', 'gradlew.bat assembleDebug --no-daemon']
-  : ['assembleDebug', '--no-daemon'];
+  ? ['/d', '/s', '/c', 'gradlew.bat testDebugUnitTest assembleDebug --no-daemon']
+  : ['testDebugUnitTest', 'assembleDebug', '--no-daemon'];
 const result = spawnSync(command, args, {
   cwd: androidDirectory,
   stdio: 'inherit',

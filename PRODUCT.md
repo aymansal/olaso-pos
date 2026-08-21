@@ -131,6 +131,9 @@ repeat the check after material Android, WebView, or native-shell changes.
 - USB is the standalone desktop receipt-laboratory path. The production Android
   application prints through Ethernet/LAN via the router using a configurable
   printer address and a verified raw TCP port.
+- Printer settings validate and persist that endpoint locally. A clearly marked
+  Test printer action saves the configuration and sends a non-sale diagnostic;
+  successful socket write feedback never claims paper was observed.
 - The accepted initial receipt is French/English and uses the printer-resident
   300-dot OLASO logo. It has no QR code until a real owner-approved destination
   exists. Arabic receipt output is deferred for the initial deployment.
