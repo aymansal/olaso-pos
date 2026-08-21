@@ -5,8 +5,12 @@ public/assets/sql-wasm.wasm
 tmp/
 .env.local
 .env.*.local
-graphify-out/.graphify_*
-graphify-out/cache/
+graphify-out/
+Olasotheme.css
+Olasotheme.js
+Olasotheme.d.ts
+pencil-exports/*.png
+!pencil-exports/coded-W26Y6.png
 *.log
 *.tsbuildinfo
 vite.config.js
