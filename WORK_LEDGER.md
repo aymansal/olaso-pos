@@ -20,8 +20,8 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 | PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | done |
 | PRINT-05 — Add and verify one-time printer-resident logo provisioning | done |
 | PRINT-06 — Connect post-commit first print and persisted print state | done |
-| PRINT-07 — Add Orders reprint and restart/disconnect recovery | in progress |
-| PRINT-08 — Run endurance, regression, hardware, documentation, and push closeout | pending |
+| PRINT-07 — Add Orders reprint and restart/disconnect recovery | done |
+| PRINT-08 — Run endurance, regression, hardware, documentation, and push closeout | in progress |
 
 ## Planned Goals
 
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-07 is the only card in progress.
+- Goal 03 is active and PRINT-08 is the only card in progress.
+- PRINT-07 implementation commit
+  `5e93dd7858d693867a6ed7482131eb202e598a18` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-06 implementation commit
   `9602fed94f5d49f552527275c5c704a2e21c6906` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -321,10 +324,24 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   applies to the same transport, while current wrong-address/restart/repeated-
   tap recovery proves Orders orchestration. Graphify refreshed to 2,396 nodes
   and 5,523 edges.
-- Exact next action: final checks/documentation review, commit/push PRINT-07,
-  record its SHA, and activate PRINT-08 closeout.
+- PRINT-07 was committed and pushed at
+  `5e93dd7858d693867a6ed7482131eb202e598a18`.
+- Exact next action: derive the PRINT-08 completion matrix, run full automated
+  regression and bounded 20-sale/5-reprint endurance without unnecessary logo
+  tests, inspect browser/tablet/log/database evidence, update all authorities,
+  and finish with pushed clean synchronization.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-07 complete; PRINT-08 started
+
+- Committed `PRINT-07: add safe receipt reprinting` as
+  `5e93dd7858d693867a6ed7482131eb202e598a18`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-07 done after invariant/browser/APK/wrong-address/rapid-tap/app-
+  restart/tablet-restart/log/recovery evidence passed.
+- Marked PRINT-08 as the only card in progress. It owns final regression,
+  endurance, documentation, and clean synchronized closeout.
 
 ### 2026-08-21 — PRINT-07 recovery QA complete
 
