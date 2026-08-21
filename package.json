@@ -19,6 +19,7 @@
     "check:settings": "node scripts/check-settings.mjs",
     "check:android": "node scripts/check-android-beta.mjs",
     "check:printing": "node scripts/check-printing.mjs",
+    "check:printing-endurance": "node --disable-warning=ExperimentalWarning scripts/check-printing-endurance.mjs",
     "check:receipt-lab": "npm --prefix tools/wd8260-receipt-lab run check",
     "prepare:sqlite-web": "node scripts/prepare-sqlite-web.mjs",
     "dev": "npm run theme:build && npm run prepare:sqlite-web && vite --host 0.0.0.0",

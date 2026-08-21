@@ -95,7 +95,7 @@ sale or stock deduction.
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | done | Exact native asset, warning-gated Settings setup, build/APK/tablet writes, physical logo output, app/tablet/printer-module restart, accepted exact-payload power-cycle baseline, Android-16 landscape recovery, and all closeout checks pass; commit `eb00d2f92094c60adbd6cdc68e877f1a9e790959` pushed. |
 | PRINT-06 | Connect post-commit first print and persisted print state | done | Schema v5, background post-commit attempt, exact failure/success invariants, browser unconfigured flow, tablet offline/restart/sync recovery, one online 787-byte paper receipt, API-35 landscape enforcement, build/log/Graphify checks pass; commit `9602fed94f5d49f552527275c5c704a2e21c6906` pushed. |
 | PRINT-07 | Add Orders reprint and restart/disconnect recovery | done | Local print state, safe saved-snapshot Reprint UI, invariant checks, browser failure, wrong-address/rapid-tap/app/tablet restart recovery, corrected-endpoint 787-byte reprint, build/log/Graphify checks pass; commit `5e93dd7858d693867a6ed7482131eb202e598a18` pushed. |
-| PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | in progress | Building the explicit final completion matrix before regression/endurance. |
+| PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | in progress | 20-sale/5-reprint reconciliation, all focused/cloud/build/Android/audit checks, browser/tablet/log/database QA, accepted-lab hashes, docs, and Graphify pass. Ready for commit/push. |
 
 ## Card contracts
 
@@ -358,6 +358,19 @@ sale or stock deduction.
   regression and bounded 20-sale/5-reprint endurance without unnecessary logo
   tests, inspect browser/tablet/log/database evidence, update all authorities,
   and finish with pushed clean synchronization.
+- Endurance passes 20 mixed atomic sales plus five saved-sale reprints with one
+  restart/failure recovery: 20 unique receipts, 20 items, 47 movements, 20
+  outbox rows, 26 attempts, and all 20 printed; current product edits do not
+  change reprint snapshots.
+- Every focused local/cloud/native/TypeScript/build/seed check passes. The first
+  parallel Dashboard seed collided with concurrent Inventory mutation; the
+  complete cloud suite passed sequentially. Root and lab audits are both zero
+  after safe transitive lockfile updates.
+- Final browser and installed tablet POS/Orders/Settings checks pass at 1340 by
+  800 with no overflow or new warning/error. Target API 35, schema 5, endpoint,
+  counts, print state, and accepted external-lab hashes are preserved.
+- Graphify refreshed to 2,413 nodes and 5,559 edges. Exact next action: commit/
+  push PRINT-08, record SHA, mark Goal 03 done, and prove clean synchronization.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -411,6 +424,15 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-08 full closeout evidence passed
+
+- Reconciled the required 20 sales and five reprints through real SQLite,
+  immutable encoding, restart/failure recovery, and exact effect counts.
+- Passed full local/cloud/native/build/audit/browser/tablet/log regression; no
+  extra logo tests or unnecessary paper-volume run was introduced.
+- Verified external lab hashes and refreshed Graphify. PRINT-08 is ready to
+  commit/push before final Goal 03 completion recording.
 
 ### 2026-08-21 — PRINT-07 pushed; PRINT-08 started
 

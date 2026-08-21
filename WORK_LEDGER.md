@@ -330,8 +330,44 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   regression and bounded 20-sale/5-reprint endurance without unnecessary logo
   tests, inspect browser/tablet/log/database evidence, update all authorities,
   and finish with pushed clean synchronization.
+- Added `check:printing-endurance`: 20 mixed atomic sales, 20 unique receipts,
+  20 items, 47 exact stock movements, 20 outbox events, one printer failure/
+  restart recovery, 26 total print attempts, and five immutable saved-sale
+  reprints all reconcile; all 20 finish printed. Current product name/price
+  mutation does not alter reprint bytes.
+- Full POS/management/inventory/local/sales/Orders/Dashboard/Reports/Settings/
+  Android/printing/receipt-lab/TypeScript/Convex/seed checks pass. The one
+  Dashboard failure in the first parallel batch was an explicit Convex OCC
+  collision with the concurrent Inventory mutation; the complete cloud suite
+  passed sequentially afterward.
+- Production build and 140-task Android beta pass. Root transitive
+  brace-expansion/nanoid/postcss lockfile fixes reduce both root and receipt-lab
+  audits to zero vulnerabilities without changing public dependencies.
+- Fresh browser POS/Orders/date-picker/Reprint/Printer Settings checks report
+  exact 1340 by 800 bodies, no panel overflow, and no warning/error. The final
+  APK is installed on the physical SM-X115 at target API 35; POS, Orders, and
+  Settings fill 1340 by 800, live WebView zoom is 0.751493, and app logs are
+  clean.
+- Final physical database remains 3 sales/3 items/9 movements/0 outbox with two
+  printed states and no failed states; final install created no print. External
+  accepted lab sources still match all five preserved source hashes.
+- Graphify refreshed to 2,413 nodes and 5,559 edges. Exact next action: commit
+  and push PRINT-08, record its full SHA, mark Goal 03 done, push the final
+  ledger/plan state, and prove a clean synchronized worktree.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-08 ready to push
+
+- Completed 20-sale/5-reprint restart/failure endurance with exact receipt,
+  stock, outbox, and print-attempt reconciliation in a real temporary SQLite
+  database, avoiding unnecessary paper volume while retaining the accepted
+  physical checkout/reprint paths.
+- Passed every focused local/cloud/native/build check sequentially where shared
+  Convex mutation isolation required it. Audits report zero vulnerabilities.
+- Final browser and installed-tablet POS/Orders/Settings geometry and logs are
+  clean; accepted lab hashes, Graphify, authorities, and evidence are current.
+- PRINT-08 is ready for commit/push and final clean-worktree audit.
 
 ### 2026-08-21 — PRINT-07 complete; PRINT-08 started
 
