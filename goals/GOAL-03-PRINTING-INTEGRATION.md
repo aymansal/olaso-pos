@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active; PRINT-08 in progress
+**Status:** complete
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -95,7 +95,7 @@ sale or stock deduction.
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | done | Exact native asset, warning-gated Settings setup, build/APK/tablet writes, physical logo output, app/tablet/printer-module restart, accepted exact-payload power-cycle baseline, Android-16 landscape recovery, and all closeout checks pass; commit `eb00d2f92094c60adbd6cdc68e877f1a9e790959` pushed. |
 | PRINT-06 | Connect post-commit first print and persisted print state | done | Schema v5, background post-commit attempt, exact failure/success invariants, browser unconfigured flow, tablet offline/restart/sync recovery, one online 787-byte paper receipt, API-35 landscape enforcement, build/log/Graphify checks pass; commit `9602fed94f5d49f552527275c5c704a2e21c6906` pushed. |
 | PRINT-07 | Add Orders reprint and restart/disconnect recovery | done | Local print state, safe saved-snapshot Reprint UI, invariant checks, browser failure, wrong-address/rapid-tap/app/tablet restart recovery, corrected-endpoint 787-byte reprint, build/log/Graphify checks pass; commit `5e93dd7858d693867a6ed7482131eb202e598a18` pushed. |
-| PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | in progress | 20-sale/5-reprint reconciliation, all focused/cloud/build/Android/audit checks, browser/tablet/log/database QA, accepted-lab hashes, docs, and Graphify pass. Ready for commit/push. |
+| PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | done | 20-sale/5-reprint reconciliation, all focused/cloud/build/Android/audit checks, browser/tablet/log/database QA, accepted-lab hashes, docs, and Graphify pass; commit `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` pushed. |
 
 ## Card contracts
 
@@ -240,7 +240,10 @@ sale or stock deduction.
 
 ## Current checkpoint
 
-- Goal 03 is active and PRINT-08 is the only card in progress.
+- Goal 03 is complete; PRINT-01 through PRINT-08 are done and pushed.
+- PRINT-08 is complete and pushed at
+  `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` on
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-07 is complete and pushed at
   `5e93dd7858d693867a6ed7482131eb202e598a18` on
   `origin/codex/goal-03-printing-integration`.
@@ -369,8 +372,10 @@ sale or stock deduction.
 - Final browser and installed tablet POS/Orders/Settings checks pass at 1340 by
   800 with no overflow or new warning/error. Target API 35, schema 5, endpoint,
   counts, print state, and accepted external-lab hashes are preserved.
-- Graphify refreshed to 2,413 nodes and 5,559 edges. Exact next action: commit/
-  push PRINT-08, record SHA, mark Goal 03 done, and prove clean synchronization.
+- Graphify refreshed to 2,413 nodes and 5,559 edges. PRINT-08 was committed and
+  pushed at `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9`.
+- Exact next action: push this completion record and prove a clean synchronized
+  branch. Goal 04 remains inactive until explicit activation.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -424,6 +429,14 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — Goal 03 completed and pushed
+
+- Pushed PRINT-08 closeout as
+  `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` after every card contract and
+  goal completion criterion was evidenced.
+- PRINT-01 through PRINT-08 are done. Next goal remains inactive until explicit
+  user activation.
 
 ### 2026-08-21 — PRINT-08 full closeout evidence passed
 

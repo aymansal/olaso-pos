@@ -732,14 +732,14 @@ workflow feedback.
 
 ### Current execution order
 
-Goal 01 delivered the functional POS and Goal 02 delivered the offline-capable
-full-application beta. The remaining work is sequenced by operational risk:
+Goal 01 delivered the functional POS, Goal 02 delivered the offline-capable
+full-application beta, and Goal 03 delivered Android LAN receipt printing plus
+safe saved-sale reprinting. Remaining work is sequenced by operational risk:
 
-1. Native Android LAN receipt printing through the verified ESC/POS boundary.
-2. Purchased-stock costing and profitability.
-3. Confirmed business policy, production identity, and permissions: tax,
+1. Purchased-stock costing and profitability.
+2. Confirmed business policy, production identity, and permissions: tax,
    payment, cancellation/refund, receipt, roles, and sensitive-data access.
-4. Measured startup/launch continuity, signing, backup/recovery, endurance
+3. Measured startup/launch continuity, signing, backup/recovery, endurance
    testing, and final owner acceptance against the near-final APK.
 
 Detailed goal status and activation order live in `WORK_LEDGER.md` and the

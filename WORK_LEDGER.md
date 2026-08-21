@@ -8,7 +8,7 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ### Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active
+**Status:** complete
 
 **Goal branch:** `codex/goal-03-printing-integration`
 
@@ -21,7 +21,7 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 | PRINT-05 — Add and verify one-time printer-resident logo provisioning | done |
 | PRINT-06 — Connect post-commit first print and persisted print state | done |
 | PRINT-07 — Add Orders reprint and restart/disconnect recovery | done |
-| PRINT-08 — Run endurance, regression, hardware, documentation, and push closeout | in progress |
+| PRINT-08 — Run endurance, regression, hardware, documentation, and push closeout | done |
 
 ## Planned Goals
 
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-08 is the only card in progress.
+- Goal 03 is complete; no card is in progress.
+- PRINT-08 closeout commit
+  `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - PRINT-07 implementation commit
   `5e93dd7858d693867a6ed7482131eb202e598a18` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -351,11 +354,22 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - Final physical database remains 3 sales/3 items/9 movements/0 outbox with two
   printed states and no failed states; final install created no print. External
   accepted lab sources still match all five preserved source hashes.
-- Graphify refreshed to 2,413 nodes and 5,559 edges. Exact next action: commit
-  and push PRINT-08, record its full SHA, mark Goal 03 done, push the final
-  ledger/plan state, and prove a clean synchronized worktree.
+- Graphify refreshed to 2,413 nodes and 5,559 edges. PRINT-08 was committed and
+  pushed at `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9`.
+- Exact next action: push this final completion record, prove the branch is
+  clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-08 and Goal 03 complete
+
+- Committed `PRINT-08: complete printing closeout` as
+  `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-08 and Goal 03 done only after full automated/cloud/build/audit/
+  endurance/browser/tablet/printer/database/Graphify/documentation evidence
+  passed.
+- Next work is Goal 04, which remains inactive until explicit user activation.
 
 ### 2026-08-21 — PRINT-08 ready to push
 
@@ -866,3 +880,4 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 - [Goal 01 — Functional POS Interactions](goals/GOAL-01-FUNCTIONAL-POS.md)
 - [Goal 02 — Functional Full Application Beta](goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md)
+- [Goal 03 — Production Checkout and Android LAN ESC/POS Printing](goals/GOAL-03-PRINTING-INTEGRATION.md)

@@ -72,7 +72,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | --- | --- | --- | --- |
 | Goal 01 | Functional POS interactions | done | goals/GOAL-01-FUNCTIONAL-POS.md |
 | Goal 02 | Functional offline-capable Android beta | done | goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md |
-| Goal 03 | Production checkout and Android LAN ESC/POS printing | active; PRINT-08 ready to push | goals/GOAL-03-PRINTING-INTEGRATION.md |
+| Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | approved; queued | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | planned; owner decisions required | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
 | Goal 06 | Startup, release hardening, and final acceptance | planned; last | goals/GOAL-06-PRODUCTION-HARDENING.md |
@@ -163,5 +163,5 @@ backup/recovery is rehearsed, and the owner accepts the production workflow.
 
 ## Exact next action
 
-Commit/push and record the verified PRINT-08 closeout, then mark Goal 03 done.
-Later goals remain pending until the preceding goal is fully recorded.
+Goal 03 is complete. The next goal is Goal 04 — Costs and Profitability; start
+it only after explicit user activation with its reviewed start prompt.
