@@ -659,9 +659,17 @@ contains no printer, Bluetooth, USB, biometric, or fingerprint permission.
 APP-11 verified install-over-upgrade from schema version 2 to 4, preserved
 terminal settings, cached offline startup and checkout, process-restart
 recovery, and acknowledged idempotent Convex synchronization on an API-35
-emulator while compiling and targeting API 36. Production signing, Galaxy Tab
-A9 acceptance, public distribution, and physical hardware verification remain
-outside this development beta.
+emulator while compiling and targeting API 36.
+
+The physical Samsung Galaxy Tab A9 SM-X115 reports an approximately 1007 by
+601 CSS-pixel WebView on its 1340 by 800 panel. The packaged activity is
+sensor-aware landscape and immersive fullscreen. Before React mounts, the
+native Capacitor runtime scales the fixed 1340-pixel reference by the physical
+WebView width; ordinary browser previews remain unscaled. Physical testing
+confirmed the complete composition, touch targeting, and cart survival across
+POS navigation. Production signing, public distribution, printer integration,
+and the remaining hardware acceptance checks remain outside this development
+beta.
 
 ```text
 GitHub tag

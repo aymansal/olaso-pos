@@ -15,6 +15,8 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   in Goal 02.
 - Keep web application behavior in `src/`; native code is only for required
   platform integration.
+- Keep the POS activity in sensor-aware landscape and immersive fullscreen;
+  system bars may appear transiently after an edge swipe.
 
 ## Workflow
 
@@ -33,4 +35,6 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
 - APP-11 verified the API-36-targeted beta on an API-35 emulator: Gradle/APK,
   offline startup and checkout, process-restart recovery, schema 2-to-4
   migration, install-over-upgrade, and acknowledged Convex synchronization.
-- Real Galaxy Tab A9 and production-signature acceptance remain release checks.
+- A physical Galaxy Tab A9 SM-X115 verified the full 1340 × 800 composition,
+  touch hit testing, and cart survival across POS navigation. Production
+  signing and the remaining hardware acceptance checks are still required.

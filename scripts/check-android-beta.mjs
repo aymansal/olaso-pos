@@ -9,8 +9,15 @@ const manifest = readFileSync(
   'android/app/src/main/AndroidManifest.xml',
   'utf8',
 );
+const activity = readFileSync(
+  'android/app/src/main/java/com/olaso/pos/MainActivity.java',
+  'utf8',
+);
+const index = readFileSync('index.html', 'utf8');
+const main = readFileSync('src/main.tsx', 'utf8');
 
 assert.equal(capacitor.appId, 'com.olaso.pos');
+assert.equal(capacitor.plugins.SystemBars.insetsHandling, 'disable');
 assert.match(appBuild, /namespace = "com\.olaso\.pos"/);
 assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
 assert.match(appBuild, /versionCode 2/);
@@ -18,6 +25,12 @@ assert.match(appBuild, /versionName "0\.1\.0-beta\.1"/);
 assert.match(variables, /compileSdkVersion = 36/);
 assert.match(variables, /targetSdkVersion = 36/);
 assert.match(manifest, /android\.permission\.INTERNET/);
+assert.match(manifest, /android:screenOrientation="sensorLandscape"/);
+assert.match(index, /width=1340, initial-scale=1\.0/);
+assert.match(main, /Capacitor\.isNativePlatform\(\)/);
+assert.match(main, /window\.outerWidth \/ 1340/);
+assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
+assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
 assert.match(
   manifest,
   /android\.permission\.USE_BIOMETRIC"[\s\S]*?tools:node="remove"/,

@@ -7,7 +7,8 @@ application, global tokens, and the feature screens under `features/`.
 
 ## Ownership
 
-- `main.tsx` mounts React and applies the pre-built Astryx Olaso theme.
+- `main.tsx` mounts React, applies the pre-built Astryx Olaso theme, and scales
+  the 1340-pixel reference viewport only inside the native Capacitor shell.
 - `App.tsx` selects the active top-level screen and restores the non-secret
   local terminal-lock state before exposing the application.
 - `data/` owns the application-level Convex provider, feature-facing data
@@ -24,6 +25,8 @@ application, global tokens, and the feature screens under `features/`.
 
 - Keep `App.tsx` a thin screen selector until real routing is required.
 - Preserve the 1340 × 800 full-bleed cream application baseline.
+- Keep browser previews unscaled. The native shell derives its width scale from
+  the physical WebView width before React mounts.
 - Use direct imports; do not add barrel files.
 - Global CSS may define shared semantic tokens, but not feature or component
   selectors.
