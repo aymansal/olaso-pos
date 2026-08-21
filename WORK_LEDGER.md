@@ -14,8 +14,8 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 | Card | Status |
 | --- | --- |
-| PRINT-01 — Preserve and lock the accepted receipt laboratory baseline | in progress |
-| PRINT-02 — Prove and document the physical LAN endpoint and failure behavior | pending |
+| PRINT-01 — Preserve and lock the accepted receipt laboratory baseline | done |
+| PRINT-02 — Prove and document the physical LAN endpoint and failure behavior | in progress |
 | PRINT-03 — Add minimal Android LAN transport, settings, and test print | pending |
 | PRINT-04 — Add the saved receipt model and deterministic WD8260 encoder | pending |
 | PRINT-05 — Add and verify one-time printer-resident logo provisioning | pending |
@@ -40,7 +40,10 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is active and PRINT-01 is the only card in progress.
+- Goal 03 is active and PRINT-02 is the only card in progress.
+- PRINT-01 implementation commit
+  `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` is pushed to
+  `origin/codex/goal-03-printing-integration`.
 - `main` and `origin/main` were clean and synchronized at
   `deba73b1e2baf1b92d7ce6e7f030b7c23c655383` before activation.
 - The accepted `D:\Olaso-escpos-lab` source was inspected without modification;
@@ -67,10 +70,24 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - The user physically confirmed the corrected app fills the tablet without
   scrolling and the printed receipt preserves the accepted resident logo,
   layout, separators, MAD heading, bilingual footer, and partial cut.
-- Exact next action: run the final PRINT-01 closeout checks, commit and push the
-  card, record its SHA, then mark only PRINT-02 in progress.
+- Exact next action: connect the WD8260 Ethernet port to the café router, read
+  the router/tablet network, change the printer's static address/subnet/gateway
+  to that network without hardcoding it in the application, then prove the raw
+  TCP port with a physical diagnostic print.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-01 complete; PRINT-02 started
+
+- Final receipt-lab, Android, production-build, Graphify, golden-hash,
+  whitespace, staged-scope, forbidden-artifact, and local-queue checks passed.
+- Committed `PRINT-01: preserve receipt baseline` as
+  `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea`, pushed it, and confirmed the
+  remote branch resolves to the same SHA.
+- Marked PRINT-01 done only after the user confirmed both the corrected physical
+  tablet layout and accepted USB paper receipt.
+- Marked PRINT-02 as the only card in progress. No LAN port or permanent
+  printer address is assumed; physical Ethernet/router setup comes first.
 
 ### 2026-08-21 — PRINT-01 physical confirmation received
 

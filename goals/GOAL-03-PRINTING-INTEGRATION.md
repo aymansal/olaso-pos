@@ -8,7 +8,7 @@ owns only Goal 03 execution scope and card contracts.
 
 **Goal:** Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
-**Status:** active; PRINT-01 in progress
+**Status:** active; PRINT-02 in progress
 
 **Objective:** Connect each successfully committed local sale to the accepted
 Olaso receipt through the Galaxy Tab A9 and WDLink WD8260 over Ethernet/LAN,
@@ -88,8 +88,8 @@ sale or stock deduction.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | in progress | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify pass; user confirmed the installed layout and USB paper baseline. Awaiting commit/push evidence. |
-| PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | pending | — |
+| PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | done | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify and physical tablet/paper QA pass; commit `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` pushed to `origin/codex/goal-03-printing-integration`. |
+| PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | in progress | Ethernet/router setup and measured endpoint proof pending. |
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | pending | — |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | pending | — |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | pending | — |
@@ -240,7 +240,10 @@ sale or stock deduction.
 
 ## Current checkpoint
 
-- Goal 03 is active and PRINT-01 is the only card in progress.
+- Goal 03 is active and PRINT-02 is the only card in progress.
+- PRINT-01 is complete and pushed at
+  `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` on
+  `origin/codex/goal-03-printing-integration`.
 - The accepted standalone lab is present outside Git at D:\Olaso-escpos-lab.
 - The app has saved-sale checkout and preview feedback but no production printer
   transport.
@@ -258,10 +261,19 @@ sale or stock deduction.
   `innerWidth` hypothesis was also rejected because it caused oversize and
   scrolling. The installed correction uses the stable long edge of the CSS
   screen and reports no overflow across three cold starts.
-- Exact next action: run final closeout checks, commit/push PRINT-01, and record
-  its SHA before touching PRINT-02 LAN work.
+- Exact next action: physically connect the printer to the café router, measure
+  the router/tablet network, set a compatible printer address/subnet/gateway,
+  then discover and prove the raw TCP port with real paper.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-01 pushed; PRINT-02 started
+
+- Pushed the fully verified receipt baseline and tablet viewport correction as
+  `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` on the Goal 03 branch.
+- Marked PRINT-01 done and PRINT-02 as the only card in progress.
+- Confirmed PRINT-02 begins with physical Ethernet/router connection and
+  compatible printer addressing; no LAN endpoint or port is assumed.
 
 ### 2026-08-21 — PRINT-01 physical QA accepted
 
