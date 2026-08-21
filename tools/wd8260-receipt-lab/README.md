@@ -32,3 +32,17 @@ with the reviewed fixtures in `fixtures/`.
 The queue name is intentionally supplied at execution time and is not part of
 the versioned baseline. USB remains the standalone desktop test path; the
 production Android transport is LAN and lives outside this tool.
+
+## Development LAN proof
+
+After the printer address and raw TCP port are physically configured and
+measured, send the reviewed golden receipt without involving application
+checkout:
+
+```powershell
+npm run print:lan -- --host <printer-ipv4> --port <raw-port>
+```
+
+Optional bounds are `--connect-timeout-ms`, `--write-timeout-ms`, and `--path`.
+The command reports only the TCP connection and bytes accepted by the socket.
+It never claims the printer produced paper; inspect the receipt separately.

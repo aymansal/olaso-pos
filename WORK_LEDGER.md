@@ -74,8 +74,271 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
   the router/tablet network, change the printer's static address/subnet/gateway
   to that network without hardcoding it in the application, then prove the raw
   TCP port with a physical diagnostic print.
+- PRINT-02 measured the active network: tablet `192.168.11.225/24`, workstation
+  Wi-Fi `192.168.11.222/24`, and router/gateway `192.168.11.1`. The printer's
+  old static `192.168.123.100` is correctly unreachable while it remains off
+  the Ethernet LAN.
+- The existing WD8260 CD documentation and Printer Test V3.2 utility were
+  inspected locally. The vendor MAC-based `Auto Set IP` flow can discover
+  cross-subnet printers and writes IP, `255.255.255.0` mask, gateway, and port;
+  its expected raw TCP port is 9100, which still requires a successful measured
+  paper print before acceptance.
+- The router admin page redirects to a self-signed HTTPS interface. Its DHCP
+  pool/reservation policy remains unconfirmed; no certificate warning,
+  credential prompt, or network setting was bypassed.
+- Candidate `192.168.11.100` returned unreachable ping/ARP/service probes before
+  assignment. This is collision evidence, not a router reservation guarantee.
+- Using the existing Printer Test V3.2 utility with USB selected, the wired
+  fields were changed from `192.168.123.100 / 255.255.255.0 /
+  192.168.123.1` to `192.168.11.100 / 255.255.255.0 / 192.168.11.1` and the
+  wired-only `Set above contents` action was sent. The tool showed no error but
+  exposes no trustworthy readback; power-cycle self-test proof is pending.
+- Added a development-only Node standard-library LAN probe with explicit
+  IPv4/port/timeouts and honest byte-write-only results. Its local check proves
+  exact golden-byte delivery, validation, and connection-refused behavior.
+- The user confirmed the self-test IP is correct and moved the printer to the
+  router. The printer's own HTTP page read back MAC `00-61-8D-86-B9-4B`, IP
+  `192.168.11.100`, mask `255.255.255.0`, gateway `192.168.11.1`, and DHCP
+  disabled.
+- Workstation ping and TCP 9100/HTTP 80 succeed; the tablet has 0% ping loss and
+  direct TCP 9100/80 connections succeed. The workstation LAN probe wrote all
+  1,814 golden bytes in 6 ms after a 4 ms connect. A distinct 122-byte raw
+  diagnostic was then sent directly from the Galaxy Tab with exit 0.
+- Wrong address `192.168.11.101:9100` and wrong port
+  `192.168.11.100:9101` both fail as bounded connect timeouts without reporting
+  bytes written. Physical confirmation of the normal LAN receipt and labeled
+  tablet diagnostic remains pending.
+- The user confirmed the LAN paper printed. Raw TCP 9100 is therefore physically
+  accepted, including the direct Galaxy Tab path; it is no longer merely a
+  documented or socket-open assumption.
+- With the router left on and printer powered off, its neighbor state became
+  incomplete, the Windows TCP check failed after 21,127 ms, and the bounded LAN
+  probe returned `CONNECT_TIMEOUT` in 500 ms with exit 1 and no byte-success
+  claim.
+- Exact next action: power the printer back on, measure reconnect time, and
+  prove recovered paper output before testing router/link loss.
+- After printer power-on, ping recovered in 149 ms and TCP 9100 was open in a
+  539 ms Windows check. A tablet diagnostic using plain `nc -w 2` wrote input
+  but timed out waiting for remote close; the corrected Toybox
+  `nc -q 1 -w 2` close-after-EOF path exited 0. Physical recovery-paper
+  confirmation remains pending.
+- The user confirmed the labeled `OLASO LAN TABLET TEST` paper printed after
+  power-on. Printer-off/restart recovery is physically accepted.
+- With printer/router power retained and the Ethernet cable removed, ping
+  returned `DestinationHostUnreachable`, neighbor state became unreachable,
+  and the bounded probe returned `CONNECT_TIMEOUT` in 500 ms with exit 1 and no
+  byte-success claim.
+- Exact next action: reconnect Ethernet, prove endpoint recovery and paper, then
+  decide the router-power-off evidence and static-address ownership.
+- After Ethernet reconnection, ping succeeded in 55 ms, TCP 9100 connected in
+  11 ms, and the correct MAC returned reachable. A 122-byte labeled diagnostic
+  sent directly from the tablet exited 0 in 135 ms; physical paper confirmation
+  is pending.
+- The user confirmed the labeled paper printed after Ethernet reconnection.
+  Cable-loss/reconnect recovery is physically accepted without tablet/app or
+  printer reconfiguration.
+- Exact next action: run a timed local monitor while the router is powered off
+  for about 10 seconds and restored, then prove endpoint and paper recovery and
+  record who owns exclusion/reservation of static `192.168.11.100`.
+- The user declined an actual router power cycle because it would disconnect the
+  household. The prepared monitor was stopped without changing router state.
+  This limitation is recorded rather than hidden.
+- Non-disruptive client-side outage substituted: tablet Wi-Fi off removed the
+  WLAN route, ping failed, and TCP returned `Network is unreachable` with exit
+  1. Wi-Fi restored `192.168.11.225/24` in 2,293 ms; ping/TCP then exited 0 and
+  a labeled tablet print write exited 0. Physical paper confirmation remains.
+- The user confirmed the Wi-Fi-recovery diagnostic printed on paper.
+- Address policy: `192.168.11.100` is a home-lab endpoint only. At café
+  deployment, the client/router administrator owns reserving or excluding the
+  selected static printer address from DHCP and any future router changes. The
+  application address remains configurable and never hardcodes this lab value.
+- Exact next action: run PRINT-02 closeout checks/build/APK install/log review,
+  commit and push the card, record its SHA, then activate PRINT-03.
+- PRINT-02 closeout passes: receipt/golden/LAN probe checks, production build,
+  Android identity/sync, 126-task Gradle beta build, physical APK replacement
+  and cold launch, exact 1340 by 800 landscape bounds, clean WebView console,
+  exact browser body/document bounds with no warning/error logs, Graphify
+  2,228-node/5,128-edge structural refresh, and whitespace checks.
+- Exact next action: commit/push PRINT-02, record its full SHA and remote branch,
+  then mark only PRINT-03 in progress.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-02 closeout checks complete
+
+- Re-ran the versioned receipt and LAN probe checks; all golden bytes,
+  validation, connection-failure, and honest-result assertions pass.
+- `npm run android:beta` passed Android identity, production build, Capacitor
+  sync, and all 126 Gradle tasks using the existing Java 21/SDK 36 toolchain.
+- Reinstalled the current APK on the connected SM-X115, cold-launched it at
+  1340 by 800 landscape bounds, and found no WebView console warning/error.
+- Browser regression reports viewport/body/document exactly 1340 by 800 and no
+  warning/error logs. Graphify refreshed to 2,228 nodes and 5,128 edges;
+  whitespace checks pass.
+- PRINT-02 is ready for card commit/push. The shared-router reboot limitation
+  remains explicit and is not represented as tested.
+
+### 2026-08-21 — PRINT-02 physical path accepted
+
+- The user confirmed paper after tablet Wi-Fi restoration, accepting client
+  network-loss and recovery behavior.
+- Recorded `192.168.11.100` as home-lab evidence, not a permanent production
+  default. The client/router administrator owns reserving/excluding the chosen
+  café printer address from DHCP and later router changes.
+- Actual shared-router power-off remains explicitly untested because the user
+  could not disrupt the connected household. Accepted separate printer cable
+  loss and tablet Wi-Fi loss/recovery as the non-disruptive network-path proof.
+- PRINT-02 remains in progress only until final checks, commit/push, and SHA
+  recording complete.
+
+### 2026-08-21 — Tablet network outage and recovery measured
+
+- The user could not power-cycle the shared household router without disrupting
+  everyone. Stopped the local router monitor and did not alter router state.
+- Disabled Wi-Fi only on the physical Galaxy Tab. The local route disappeared,
+  ping failed, and Android netcat returned `Network is unreachable`, exit 1.
+- Re-enabled Wi-Fi; the tablet regained `192.168.11.225/24` in 2,293 ms, and
+  printer ping plus TCP 9100 recovered with exit 0.
+- Sent the same labeled tablet diagnostic after recovery; socket exit 0 and the
+  temporary device file was removed. Paper confirmation is pending.
+- This client-side outage plus the accepted printer Ethernet cable-loss cycle
+  covers both sides of network-path interruption. Actual router power-off is
+  explicitly untested due the user's household constraint.
+
+### 2026-08-21 — Ethernet reconnect paper confirmed
+
+- The user confirmed the post-reconnect `OLASO LAN TABLET TEST` paper printed.
+- Accepted Ethernet cable loss, bounded failure, cable restore, socket recovery,
+  and physical paper without restarting or reconfiguring the tablet/printer.
+- Prepared an ignored ten-minute local ping/TCP monitor for the remaining
+  router power-loss test so evidence survives the temporary Wi-Fi outage.
+
+### 2026-08-21 — Ethernet link recovered
+
+- The user reconnected the printer cable, resuming Goal 03.
+- Measured ping, TCP 9100, and correct-MAC neighbor recovery without restarting
+  the tablet or changing printer settings.
+- Sent the labeled 122-byte diagnostic directly from the tablet using the
+  verified close-after-EOF path; exit 0 in 135 ms. Awaiting paper confirmation.
+
+### 2026-08-21 — PRINT-02 paused for Ethernet reconnection
+
+- Ethernet link-loss behavior is measured and recorded, but the printer cable
+  remained disconnected across the user-triggered test turn and two automatic
+  continuations.
+- TCP 9100 remains unreachable. PRINT-02 cannot prove reconnect/paper or proceed
+  to router-off behavior until the physical cable is restored.
+- Goal 03 is blocked without discarding the current worktree. Exact resume
+  action: reconnect the printer Ethernet cable and report `cable in`.
+
+### 2026-08-21 — Ethernet link-loss failure measured
+
+- Detected the printer Ethernet link had been removed while both devices
+  remained powered.
+- Confirmed unreachable ping/neighbor state and a bounded 500 ms
+  `CONNECT_TIMEOUT`, exit 1, with no false bytes-written or paper claim.
+- Next action is cable reconnection, endpoint recovery timing, and one physical
+  diagnostic print.
+
+### 2026-08-21 — Printer restart paper confirmed
+
+- The user confirmed the post-restart tablet LAN diagnostic printed on paper.
+- Accepted the printer power-off, bounded failure, power-on, TCP reconnect, and
+  physical paper recovery path.
+- Next test isolates Ethernet cable loss while both devices remain powered.
+
+### 2026-08-21 — Printer power-on recovery reached
+
+- Detected the powered-on WD8260 without configuration change: ping returned
+  and TCP 9100 reopened.
+- The first Android netcat recovery write timed out only because it waited for
+  the printer to close the socket. Toybox documentation confirmed `-q` is the
+  close-after-EOF control; `-q 1 -w 2` then exited 0.
+- Sent the same 122-byte labeled diagnostic from the tablet and removed the
+  temporary device file. Awaiting user paper confirmation before router/link
+  loss testing.
+
+### 2026-08-21 — Printer-off failure measured
+
+- The user powered off only the printer while leaving the router online.
+- Confirmed ping loss, incomplete ARP neighbor state, and closed TCP path.
+  Windows' default check took 21,127 ms; the product-oriented bounded probe
+  stopped in 500 ms with `CONNECT_TIMEOUT`, exit 1, and no bytes-written claim.
+- Resumed Goal 03 after the user's physical action. Next action is printer
+  power-on, reconnect timing, and a labeled recovery print.
+
+### 2026-08-21 — TCP 9100 paper confirmed
+
+- The user confirmed physical paper output after the workstation golden receipt
+  and direct-tablet diagnostic writes.
+- Accepted `192.168.11.100:9100` as the measured WD8260 raw endpoint and the
+  tablet-to-printer LAN path as proven.
+- Printer-off/restart and router/link-off recovery remain before PRINT-02 is
+  complete.
+
+### 2026-08-21 — Router and tablet LAN path proven in software
+
+- The user confirmed the self-test address and connected the WD8260 to the
+  router. Direct device HTTP readback confirmed its MAC, static IP, mask,
+  gateway, and disabled DHCP values.
+- Measured successful workstation and tablet ping/TCP paths to
+  `192.168.11.100:9100`; HTTP 80 is also reachable.
+- Sent the exact accepted 1,814-byte receipt from the workstation LAN probe in
+  6 ms total, while retaining honest `paperConfirmed: false` output.
+- Pushed a 122-byte labeled diagnostic to the physical Galaxy Tab and sent it
+  with Android's native `nc` directly to TCP 9100; the command exited 0 and the
+  temporary tablet file was removed.
+- Verified an unused wrong address and a wrong port each produce bounded
+  connect timeouts with exit 1. Paper confirmation, printer-off/router-off
+  recovery, and router address ownership remain before PRINT-02 closeout.
+
+### 2026-08-21 — PRINT-02 paused for physical self-test
+
+- Stored wired IP `192.168.11.100`, mask `255.255.255.0`, and gateway
+  `192.168.11.1` were sent through USB without a software error, but the WD8260
+  provides no trustworthy USB readback.
+- The required power-cycle self-test values remained unanswered across the
+  user-triggered configuration turn and two automatic continuations. Without
+  that paper, the printer cannot safely be moved to the router or used to prove
+  raw TCP 9100.
+- Goal 03 is blocked without discarding the current PRINT-02 worktree. Exact
+  resume action: provide the self-test IP/netmask/gateway/port (or a photo), then
+  move the printer to the router and continue measured LAN tests.
+
+### 2026-08-21 — Printer network values sent over USB
+
+- The user corrected the physical workflow: retain USB locally, write the
+  future Ethernet configuration, then disconnect and move the printer to the
+  distant router. The vendor manual supports this stored configuration flow.
+- Probed candidate `192.168.11.100`; no current ping, ARP neighbor, HTTP, or raw
+  print service responded. Router reservation ownership remains open.
+- Opened the existing vendor utility with USB and POS-80 selected, entered wired
+  IP `192.168.11.100`, mask `255.255.255.0`, and gateway `192.168.11.1`, and
+  pressed only the wired `Set above contents` action. No Wi-Fi fields were sent.
+- The utility returned no error but provides no verified readback. Exact next
+  hardware action: power-cycle with FEED held and inspect the self-test network
+  values before moving the printer to the router.
+- Added and passed the stdlib-only LAN probe check; it preserves all 1,814
+  golden bytes, rejects invalid endpoints, records bounded timing, and never
+  claims paper output from a socket write.
+
+### 2026-08-21 — PRINT-02 network baseline measured
+
+- Measured the connected Galaxy Tab A9 at `192.168.11.225/24`, the workstation
+  at `192.168.11.222/24`, and the Orange router/gateway at `192.168.11.1`.
+- Confirmed the printer's old `192.168.123.100` address is unreachable from the
+  active network, as expected while Ethernet is not connected/configured.
+- Located and read the existing WD8260 CD IP-configuration, TCP/IP-port, and
+  Printer Test V3.2 manuals. They document self-test, MAC-based cross-subnet
+  search, IP/mask/gateway configuration, restart/self-test verification, and
+  raw TCP 9100 as the expected port.
+- Extracted the already-downloaded unsigned Printer Test V3.2.0.1 utility to
+  ignored `tmp/`, recorded SHA-256
+  `881BE70C2AF3C6CE1AA3148089D2F9DB4ADEBDE8CA44A38D805330A29DD53393`,
+  and did not run or install it before the Ethernet cable is connected.
+- Exact next action: the user connects the printer Ethernet jack to a router LAN
+  port while leaving USB available; then run MAC search, choose a collision-safe
+  router-owned address, save/restart, self-test, and prove TCP with real paper.
 
 ### 2026-08-21 — PRINT-01 complete; PRINT-02 started
 

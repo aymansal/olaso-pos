@@ -11,6 +11,10 @@ Android APK.
 - `wd8260-receipt-lab/` preserves the accepted standalone WD8260 USB receipt
   baseline, exact tool versions, printer-resident logo payload generator, and
   reviewed golden bytes.
+- Its development-only LAN probe accepts an explicit IPv4 address, port, and
+  bounded timeouts, sends reviewed bytes through Node's built-in TCP socket,
+  and reports only observable connection/write facts. Paper remains a separate
+  physical verification.
 - Keep the lab self-contained. Do not move its receiptline, image, or Windows
   USB queue dependencies into the root production dependency graph.
 - Keep `node_modules/` and regenerated `out/` files untracked. Version generated

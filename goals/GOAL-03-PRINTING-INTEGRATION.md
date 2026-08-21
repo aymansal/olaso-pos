@@ -89,7 +89,7 @@ sale or stock deduction.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | PRINT-01 | Preserve and lock the accepted receipt laboratory baseline | done | Versioned isolated lab and five golden fixtures regenerate byte-for-byte; corrected tablet viewport is stable across three cold starts; checks/build/Android/browser/Graphify and physical tablet/paper QA pass; commit `a1bca7fc2df4c0f2b718e7bf46956a2301ee75ea` pushed to `origin/codex/goal-03-printing-integration`. |
-| PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | in progress | Ethernet/router setup and measured endpoint proof pending. |
+| PRINT-02 | Prove and document the physical LAN endpoint and failure behavior | in progress | Endpoint/MAC and all available paper paths pass; wrong endpoint/port, printer-off, Ethernet-link loss, and tablet Wi-Fi loss fail honestly; printer/cable/tablet-network recovery succeeds. Shared-router power-off was declined due household disruption. Home-lab address is configurable; café router administrator owns reservation/exclusion. Checks/build/APK/tablet/browser/Graphify pass; awaiting commit/push. |
 | PRINT-03 | Add minimal Android LAN transport, settings, and test print | pending | — |
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | pending | — |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | pending | — |
@@ -264,8 +264,165 @@ sale or stock deduction.
 - Exact next action: physically connect the printer to the café router, measure
   the router/tablet network, set a compatible printer address/subnet/gateway,
   then discover and prove the raw TCP port with real paper.
+- Measured tablet `192.168.11.225/24`, workstation `192.168.11.222/24`, and
+  gateway `192.168.11.1`. The printer remains at old static
+  `192.168.123.100` and is not yet on Ethernet.
+- The existing vendor CD documents MAC-based cross-subnet `Auto Set IP`, full
+  address/mask/gateway fields, restart/self-test confirmation, and expected raw
+  TCP 9100. Port 9100 remains unaccepted until a measured print succeeds.
+- Sent stored wired values `192.168.11.100 / 255.255.255.0 /
+  192.168.11.1` through the USB vendor utility after confirming the candidate
+  did not respond on the active LAN. The tool showed no error but self-test
+  readback is still required.
+- Added a dev-only configurable raw-TCP probe whose focused local check proves
+  golden-byte identity, validation, bounded timing, and connection refusal
+  without claiming paper status.
+- After the user moved the printer to the router, its HTTP information page
+  confirmed the stored static network fields and MAC. Workstation and tablet
+  paths reach raw TCP 9100; the workstation sent the golden receipt and the
+  tablet sent a distinct labeled diagnostic.
+- Wrong address and wrong port probes time out within their configured bounds
+  without a success claim. Actual paper and power/router recovery remain.
+- The user confirmed the LAN paper output, accepting TCP 9100 and the direct
+  tablet-to-printer path. Printer and router/link failure recovery remain.
+- Printer-off produced incomplete neighbor state and a bounded 500 ms
+  `CONNECT_TIMEOUT` with no bytes-written claim. Power-on recovery remains.
+- Power-on restored ping/TCP; the tablet close-after-EOF diagnostic path exits
+  0. Paper confirmation remains before accepting recovery.
+- The user confirmed the post-restart labeled paper, accepting printer power
+  recovery. Ethernet link/router failure remains.
+- Ethernet cable loss with both devices powered produces unreachable network
+  state and bounded 500 ms timeout without false success. Reconnect remains.
+- Reconnected Ethernet restores ping, correct MAC, and TCP 9100; the tablet
+  diagnostic exits 0. Paper confirmation remains.
+- The user confirmed reconnect paper, accepting cable-loss recovery. Router
+  power loss and static-address ownership remain.
+- Actual router power-off was declined because it would disrupt the household.
+  Tablet Wi-Fi off/on instead proved client-route failure and 2.293-second
+  recovery; combined with physical cable loss, both ends of the LAN path are
+  covered without claiming a router reboot occurred.
+- The user confirmed paper after Wi-Fi recovery. `192.168.11.100` is a home-lab
+  endpoint only; the café router administrator owns the final static
+  reservation/exclusion and future changes, while the app remains configurable.
+- Final receipt/LAN, build, Android sync/Gradle, APK install/cold launch,
+  WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-02 ready to push
+
+- Passed focused receipt/LAN checks, production build, Android identity/sync,
+  126-task Gradle assembly, physical APK install/cold launch, exact tablet and
+  browser bounds, clean consoles, Graphify refresh, and whitespace review.
+- Card is ready for commit/push; actual shared-router power cycling remains
+  explicitly untested rather than hidden.
+
+### 2026-08-21 — PRINT-02 evidence accepted
+
+- User confirmed paper after tablet Wi-Fi recovery.
+- Recorded the lab-only address and assigned café reservation/exclusion
+  responsibility to the client/router administrator.
+- Shared-router power-off remains honestly untested; separate physical cable
+  loss and tablet Wi-Fi loss/recovery provide the approved non-disruptive path.
+- PRINT-02 awaits final checks, commit/push, and SHA recording.
+
+### 2026-08-21 — Non-disruptive network recovery measured
+
+- Did not power-cycle the shared router after the user explained the household
+  disruption. Recorded the limitation explicitly.
+- Disabled/re-enabled only tablet Wi-Fi. Verified immediate unreachable failure,
+  restored address/ping/TCP in 2.293 seconds, and exit-0 diagnostic write.
+- Awaiting paper and static-address ownership confirmation.
+
+### 2026-08-21 — Ethernet reconnect accepted
+
+- User confirmed labeled paper after cable reconnection.
+- Accepted link-loss/reconnect recovery and prepared a local monitor for the
+  final router power-loss test.
+
+### 2026-08-21 — Ethernet reconnect reached
+
+- User restored the cable; ping/TCP/correct-MAC reachability returned.
+- Tablet recovery diagnostic exited 0 without restart or configuration change.
+- Awaiting paper confirmation before the remaining router/address-policy gate.
+
+### 2026-08-21 — PRINT-02 blocked on cable reconnect
+
+- Link-loss failure is verified, but Ethernet remained disconnected across
+  three consecutive goal turns.
+- No later card was started. Resume by reconnecting the printer cable, then
+  measure TCP/paper recovery.
+
+### 2026-08-21 — Ethernet link loss verified
+
+- Measured unreachable ping/neighbor state and bounded 500 ms probe failure
+  after the printer Ethernet cable was removed.
+- No print success was claimed. Cable reconnect and paper proof are next.
+
+### 2026-08-21 — Printer restart recovery accepted
+
+- User confirmed the labeled tablet diagnostic printed after printer restart.
+- Accepted printer-off/restart recovery and moved to Ethernet link-loss testing.
+
+### 2026-08-21 — Printer power recovery reached
+
+- Measured ping and TCP return after printer power-on.
+- Corrected the Android diagnostic client to close after input EOF rather than
+  waiting for printer response; the recovered write exits 0.
+- Awaiting paper confirmation before router/link loss testing.
+
+### 2026-08-21 — Printer-off path verified
+
+- With the router online and printer powered off, measured ping/ARP/TCP loss.
+- The bounded probe failed in 500 ms with no success claim, versus a 21.1-second
+  Windows default check. Next step is power-on reconnect and paper proof.
+
+### 2026-08-21 — LAN paper path accepted
+
+- The user confirmed paper printed from the measured TCP 9100 writes, proving
+  the endpoint and direct Galaxy Tab path.
+- Next test isolates printer power-off/restart while leaving the router online.
+
+### 2026-08-21 — Physical LAN endpoint reached
+
+- Confirmed the stored printer network configuration through its own HTTP page
+  after router connection and measured workstation/tablet reachability.
+- Sent the accepted receipt from the workstation and a labeled raw diagnostic
+  directly from the Galaxy Tab to TCP 9100. Both socket writes completed; paper
+  is still a separate user confirmation.
+- Wrong-address and wrong-port tests produce bounded failures. Printer-off,
+  router-off, reconnect, reservation ownership, and paper evidence remain.
+
+### 2026-08-21 — PRINT-02 blocked on physical self-test
+
+- USB configuration and all local probe checks are complete, but the printer's
+  stored IP/mask/gateway/port cannot be confirmed in software.
+- The self-test request remained unanswered across three resumed goal turns.
+  PRINT-02 was not marked done and no later card was started.
+- Resume with the power-cycle self-test values or photo, then move the printer
+  to the router and prove TCP printing and failure behavior.
+
+### 2026-08-21 — Stored Ethernet values sent over USB
+
+- Used the user-confirmed USB-first workflow to enter the future router-network
+  IP, mask, and gateway in the existing vendor utility and sent only the wired
+  configuration action.
+- No router or Wi-Fi setting changed. Printer self-test must confirm storage
+  before the unit is moved to the router.
+- Added and passed the development LAN probe's byte-identity, validation, and
+  failure checks. The endpoint and port remain unaccepted until real paper
+  prints over Ethernet.
+
+### 2026-08-21 — PRINT-02 discovery started
+
+- Measured the live router/tablet/workstation subnet and confirmed the old
+  printer address is unreachable as expected before Ethernet setup.
+- Inspected the local vendor CD manuals and prepared—but did not run—the
+  existing unsigned Printer Test V3.2 utility. The documented MAC search can
+  change a cross-subnet printer's IP, mask, gateway, and port.
+- No router certificate warning was bypassed, no DHCP reservation was guessed,
+  and no printer setting changed. Physical Ethernet connection is the next
+  required step.
 
 ### 2026-08-21 — PRINT-01 pushed; PRINT-02 started
 
