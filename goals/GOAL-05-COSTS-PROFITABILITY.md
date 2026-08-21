@@ -1,13 +1,13 @@
-# Goal 03 Plan — Costs and Profitability
+# Goal 05 Plan — Costs and Profitability
 
-This is the approved execution plan for the next major application system.
+This is the approved execution plan for the costs and profitability system.
 Project rules and durable product decisions remain in `AGENTS.md`, `PRODUCT.md`,
-`ARCHITECTURE.md`, `DESIGN.md`, and `BRAND.md`. This file owns only Goal 03
+`ARCHITECTURE.md`, `DESIGN.md`, and `BRAND.md`. This file owns only Goal 05
 execution scope and card order.
 
 ## Status
 
-**Goal:** Goal 03 — Costs and Profitability
+**Goal:** Goal 05 — Costs and Profitability
 
 **Status:** planned; not active
 
@@ -16,7 +16,7 @@ and operating expenses into exact product-cost, inventory-value, and monthly
 profitability information without weakening offline checkout or exposing
 sensitive compensation data.
 
-**Start prompt:** [`GOAL-03-START-PROMPT.md`](GOAL-03-START-PROMPT.md)
+**Start prompt:** [`GOAL-05-START-PROMPT.md`](GOAL-05-START-PROMPT.md)
 
 ## Confirmed Decisions
 
@@ -72,7 +72,7 @@ sensitive compensation data.
 
 ## Git Workflow
 
-- Goal branch: `codex/goal-03-costs-profitability`.
+- Goal branch: `codex/goal-05-costs-profitability`.
 - Keep one card in progress and unrelated work out of its commit.
 - Every card commit begins with its card ID.
 - Push after every successful card commit and record its full SHA and remote
@@ -202,14 +202,21 @@ sensitive compensation data.
   purchase price, carrying value, or ingredient cost.
 - Current profiles are presentation data and not staff/authentication records.
 - `PRODUCT.md` and `ARCHITECTURE.md` define the approved cost model.
-- Goal 03 is planned only. No card is in progress and no goal branch exists.
+- Goal 05 is planned only and follows the runtime and printer goals. No card is
+  in progress and no goal branch exists.
 - Exact next action after explicit `/goal` activation: re-read the DOX chain and
-  ledger, query Graphify, create/push `codex/goal-03-costs-profitability`, mark
+  ledger, query Graphify, create/push `codex/goal-05-costs-profitability`, mark
   COST-01 in progress, and implement only COST-01.
 
 ## Planning Journal
 
-### 2026-08-21 — Goal 03 drafted
+### 2026-08-21 — Goal 05 rescheduled
+
+- Renumbered the inactive cost plan from Goal 03 to Goal 05 so physical-tablet
+  startup quality and the production-critical receipt path are handled first.
+- Scope, cost model, card order, and exclusions remain unchanged.
+
+### 2026-08-21 — Goal 05 drafted
 
 - Confirmed the existing schema contains ingredient quantities and stock
   movements but no purchase-cost or valuation fields.
@@ -219,4 +226,4 @@ sensitive compensation data.
   incomplete-cost states, and purchase/COGS separation.
 - Kept costs inside Reports and excluded accounting, payroll, tax, supplier,
   forecasting, overhead-allocation, printer, and redesign scope.
-- No application source code changed and Goal 03 remains inactive.
+- No application source code changed and Goal 05 remains inactive.

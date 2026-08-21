@@ -78,13 +78,17 @@ untitled.pen        Pencil source design
   printing, and releases are implemented.
 - [`WORK_LEDGER.md`](WORK_LEDGER.md) — active goal, task board, checkpoint, and
   implementation journal.
+- [`goals/DELIVERY-SEQUENCE.md`](goals/DELIVERY-SEQUENCE.md) — risk-ordered
+  remaining goals and the vertical-slice development method.
 
 ## Production follow-ups
 
+- Measure and harden APK startup on the physical Galaxy Tab A9
+- Integrate the accepted ESC/POS receipt through one verified Android transport
+- Add the approved purchased-stock cost and profitability model
 - Confirm roles, PIN/login, tax, and receipt policy with the owner
 - Add protected production signing and release handling
-- Run acceptance on the target tablet
-- Add printer transport only after the real workflow and hardware are supplied
+- Run recovery, endurance, upgrade, and owner acceptance on the target hardware
 
 ## Target hardware
 

@@ -1,5 +1,5 @@
 ---
-version: 0.2
+version: 0.3
 name: Olaso POS Architecture
 status: active
 updated: 2026-08-21
@@ -595,6 +595,54 @@ activation index only with the implemented query that uses it.
 
 ## Quota and performance budget
 
+### Startup and runtime performance
+
+The startup path is an operational boundary and is measured separately from
+network synchronization:
+
+```text
+Android launch surface
+  -> WebView and critical React shell
+  -> SQLite connection and terminal-lock restoration
+  -> usable local POS and cached menu
+  -> deferred cloud synchronization and non-critical screens
+```
+
+Rules:
+
+- Use Android's native splash mechanism for the unavoidable launch frame. It
+  uses the Olaso cream surface and approved artwork and transitions to a
+  visually identical web startup surface; the default Capacitor artwork and
+  blank white frames are not production states.
+- Convex, DNS, Wi-Fi, and cloud synchronization never gate the first usable POS.
+- SQLite and terminal-lock restoration may gate cashier access, but they must
+  share one visible startup flow. Do not create successive blank or visually
+  unrelated loading phases.
+- Keep the critical startup module graph small. The POS shell and the minimum
+  lock/startup path may load eagerly; screens not required for the initial
+  destination load on demand through the existing React/Vite stack.
+- Start background synchronization only after the local POS is rendered and
+  responsive. Deferral must not weaken outbox recovery or idempotency.
+- Ship product artwork at dimensions and formats appropriate to its rendered
+  size, declare dimensions to prevent layout shift, and defer below-the-fold
+  decoding. Do not decode full 1408 by 768 images for 174-pixel cards when a
+  checked smaller asset is visually equivalent.
+- Do not add a state library, service worker, custom cache framework, or native
+  rewrite for startup. Add machinery only when a trace proves the existing
+  platform cannot meet the budget.
+
+Verification records both Android time to initial display and an application
+ready mark after the local POS can accept input. Compare the median of at least
+five force-stopped cold launches and five warm launches on the physical Galaxy
+Tab A9. The working budgets are at most two seconds to usable local POS for a
+cold launch and one second for a warm launch, with no unbranded frame, startup
+error, or network dependency. Profile first, change one measured bottleneck at
+a time, and retain before/after evidence.
+
+Measurement and platform behavior follow Android's official
+[app-startup guidance](https://developer.android.com/topic/performance/vitals/launch-time)
+and [SplashScreen guidance](https://developer.android.com/develop/ui/views/launch/splash-screen).
+
 Rechecked against Convex's official limits on 2026-07-28, the Free plan totals
 remain:
 
@@ -882,6 +930,8 @@ Do not build these before the trigger occurs:
 - [ ] Public functions validate input and permission.
 - [ ] Signing secrets never enter Git.
 - [ ] APK upgrades preserve SQLite data.
+- [ ] Android launch has no default/blank frame and meets the measured startup
+  budget on the physical tablet without waiting for the network.
 - [ ] Physical hardware testing happens before production approval.
 
 ## Open technical decisions

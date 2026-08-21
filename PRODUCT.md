@@ -1,5 +1,5 @@
 ---
-version: 0.2
+version: 0.3
 name: Olaso POS Product Specification
 status: active
 updated: 2026-08-21
@@ -103,6 +103,24 @@ application must keep cashier operations separate from management operations.
 The physical Samsung Galaxy Tab A9 SM-X115 and its Android WebView dimensions
 have been verified against the 1340 by 800 composition. Release acceptance must
 repeat the check after material Android, WebView, or native-shell changes.
+
+### Launch and operational readiness
+
+- Opening the APK must never present an unbranded white or default Capacitor
+  screen. Android launch, WebView startup, and React loading states use one
+  continuous Olaso cream surface with approved brand artwork.
+- The application shows a branded first frame immediately and reaches a usable
+  local POS without waiting for Convex or any other network request.
+- Restoring the local terminal-lock state remains a safety gate. While that
+  state or SQLite is loading, the application shows an explicit branded startup
+  state rather than exposing the POS or rendering a blank frame.
+- Startup performance is measured on the physical Galaxy Tab A9 after Android
+  or WebView updates. A single developer-machine result is not release
+  evidence.
+- The working performance budget is a median usable cold start of at most two
+  seconds and a median warm start of at most one second across five controlled
+  runs on the target tablet. A missed budget is investigated and documented;
+  it is not hidden by extending the splash screen.
 
 ### Printer
 
@@ -649,6 +667,12 @@ Croissant extras shown in the menu: soft ice cream 20 and Magnum 25.
 
 ## Delivery phases
 
+Development proceeds through risk-ordered vertical slices. Each slice carries
+one business or operational capability through pure rules, persistence,
+synchronization, UI, recovery, and target-device verification. The project does
+not build every page first or build a speculative complete backend before real
+workflow feedback.
+
 ### Phase 1 — approved shell
 
 - Match approved Pencil screen.
@@ -692,6 +716,21 @@ Croissant extras shown in the menu: soft ice cream 20 and Magnum 25.
 - Performance and quota review.
 - Endurance test during realistic service volume.
 - Owner acceptance.
+
+### Current execution order
+
+Goal 01 delivered the functional POS and Goal 02 delivered the offline-capable
+full-application beta. The remaining work is sequenced by operational risk:
+
+1. Startup performance and launch continuity on the physical tablet.
+2. Native Android receipt printing through the verified ESC/POS boundary.
+3. Purchased-stock costing and profitability.
+4. Confirmed business policy, production identity, and permissions: tax,
+   payment, cancellation/refund, receipt, roles, and sensitive-data access.
+5. Signing, backup/recovery, endurance testing, and final owner acceptance.
+
+Detailed goal status and activation order live in `WORK_LEDGER.md` and the
+plans under `goals/`.
 
 ## Explicit non-goals for the first release
 

@@ -1,9 +1,9 @@
 ---
-version: 0.3
+version: 0.4
 name: Olaso POS
 description: Touch-first landscape point-of-sale system for Olaso Club on the Samsung Galaxy Tab A9.
 status: active
-updated: 2026-07-24
+updated: 2026-08-21
 platform: React, Vite, and Capacitor Android
 visualAuthority: Pencil node W26Y6
 colors:
@@ -271,6 +271,22 @@ All primary touch targets are at least 44 by 44 pixels. Maintain at least 8 pixe
 - Do not add a centered device mockup, outer presentation background, application border, or application corner radius.
 - Avoid nested scrolling. The product region may scroll only when the available height cannot hold the catalog.
 
+### Launch continuity
+
+- The Android launch surface, WebView background, and React startup state form
+  one full-bleed Cream Surface sequence. No white flash, default Capacitor blue
+  mark, device shell, or unrelated loading card may appear between them.
+- Use approved Olaso artwork at its original proportions. Never type or
+  reconstruct the wordmark for startup.
+- A short `Starting Olaso…` status may appear while SQLite and the local lock
+  state initialize. It uses the operational type system, remains calm, and does
+  not imply that internet access is required.
+- Startup artwork reserves its final size and stays visually stable while the
+  native-to-web transition completes. Do not hold the splash screen longer to
+  disguise slow initialization.
+- If startup cannot safely expose the application, show the actionable startup
+  failure state on the same cream surface rather than a blank viewport.
+
 ## Elevation & Depth
 
 Depth is quiet and structural. The application root is flat and full-bleed. Hierarchy comes from white surfaces, green hairline borders, and spacing rather than a simulated device or presentation card.
@@ -462,6 +478,8 @@ A screen is complete only when all of the following are true:
 - Astryx supplies applicable primitives, Phosphor supplies all interface icons, and the Olaso tokens control their appearance.
 - Keyboard focus, accessible names, touch targets, pressed feedback, empty state, loading state, and failure recovery are verified.
 - Product images reserve their dimensions and do not cause layout shift.
+- Native launch, WebView startup, and the first React frame use one continuous
+  branded cream surface with no default Capacitor or blank-white frame.
 - The production build succeeds without TypeScript or lint errors.
 - A screenshot comparison is performed at the reference viewport and again on the physical tablet WebView before Android packaging is considered approved.
 - The mocked printing flow is verified during development. Production approval additionally requires the supplied tablet and printer to pass text, logo, Arabic bitmap, QR, cut, reconnect, paper-out, and repeated-print tests.
