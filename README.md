@@ -78,19 +78,21 @@ untitled.pen        Pencil source design
   printing, and releases are implemented.
 - [`WORK_LEDGER.md`](WORK_LEDGER.md) — active goal, task board, checkpoint, and
   implementation journal.
-- [`goals/DELIVERY-SEQUENCE.md`](goals/DELIVERY-SEQUENCE.md) — risk-ordered
-  remaining goals and the vertical-slice development method.
+- [`PLAN.md`](PLAN.md) — canonical remaining goals, card order, dependencies,
+  and per-card automated/browser/Android/physical-device completion gates.
 
 ## Production follow-ups
 
-- Measure and harden APK startup on the physical Galaxy Tab A9
-- Integrate the accepted ESC/POS receipt through one verified Android transport
+- Integrate the accepted ESC/POS receipt over Ethernet/LAN from the physical
+  Galaxy Tab A9 to the WDLink WD8260
 - Add the approved purchased-stock cost and profitability model
 - Confirm roles, PIN/login, tax, and receipt policy with the owner
+- Measure and harden APK startup on the near-final physical-tablet build
 - Add protected production signing and release handling
 - Run recovery, endurance, upgrade, and owner acceptance on the target hardware
 
 ## Target hardware
 
 - Samsung Galaxy Tab A9
-- ESC/POS-compatible thermal printers, including WDLink-class devices
+- WDLink WD8260 80 mm ESC/POS printer over Ethernet/LAN in production; USB for
+  the standalone desktop receipt lab

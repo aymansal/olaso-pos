@@ -1,6 +1,6 @@
 # Olaso Brand Foundation
 
-> Working source of truth — v0.1, 17 July 2026  
+> Working source of truth — v0.2, 21 August 2026
 > Built from the supplied logo, supplied reference posts, and public profile information. Items marked **provisional** need owner approval before they become brand rules.
 
 ![Olaso wordmark on sage](assets/brand/olaso-logo-on-sage.png)
@@ -64,14 +64,31 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
 - Composition: custom white **OLASO** wordmark centered on a solid sage field.
 - The two “O” forms echo a coffee bean/oval with a horizontal counter. The inner letterforms use deliberate bends and cut-ins.
 
+### Derived POS launch asset
+
+- File: [`assets/brand/olaso-wordmark-operational-green-transparent.png`](assets/brand/olaso-wordmark-operational-green-transparent.png)
+- Format: 720 × 196 RGBA PNG with true transparent background.
+- Composition: the supplied OLASO silhouette extracted at its original
+  proportions and recolored to the POS Operational Green `#006A2B`.
+- Status: **provisional application derivative**, approved for the cream Android
+  launch/startup surface. It is not claimed as an official logo master or a new
+  official brand color.
+- Use it only where the white wordmark would disappear on the approved cream
+  surface. Continue using the supplied white-on-sage master for the logo lockup
+  and request the original designer's vector/transparent masters.
+
 ### Usage rules
 
 - Treat the wordmark as artwork. Never recreate it with a font or typed text.
 - Keep its original proportions; do not stretch, condense, outline, bevel, or add shadows.
-- Prefer the supplied sage lockup until official transparent, black, white, and vector masters are received.
+- Prefer the supplied sage lockup until official transparent, black, white, and
+  vector masters are received, except for the documented cream startup surface
+  that uses the derived Operational Green wordmark.
 - Keep a quiet exclusion area around the wordmark. **Provisional rule:** at least the height of the “O” counter on every side.
 - Do not place the wordmark directly over busy photography without a solid field or strong tonal control.
-- In small UI placements, use the full supplied square lockup until an official compact mark is approved.
+- In small UI placements, use the full supplied square lockup until an official
+  compact mark is approved. The wide derived wordmark is a startup asset, not a
+  compact app icon.
 
 ### Missing masters to request
 
@@ -165,6 +182,9 @@ This section defines invariants only; screen layout and components belong in the
 
 - The POS is a staff tool first: speed, legibility, mistake prevention, and touch comfort outrank decorative branding.
 - Brand presence should come from sage surfaces, the real wordmark, warm neutral space, confident typography, and small human touches—not café-themed ornament.
+- The cream Android startup surface may use the documented transparent
+  Operational Green wordmark derivative; preserve its proportions and do not
+  type, mirror, stretch, outline, or decorate it.
 - Product photography may help recognition, but must never slow down ordering or make prices hard to scan.
 - Operational messages should stay direct: “Order sent,” “Payment failed,” “Item unavailable.”
 - Use brand playfulness at low-risk moments such as the welcome screen or empty states, not during payment, refunds, or error recovery.

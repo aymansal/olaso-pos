@@ -1,5 +1,5 @@
 ---
-version: 0.4
+version: 0.5
 name: Olaso POS
 description: Touch-first landscape point-of-sale system for Olaso Club on the Samsung Galaxy Tab A9.
 status: active
@@ -278,6 +278,10 @@ All primary touch targets are at least 44 by 44 pixels. Maintain at least 8 pixe
   mark, device shell, or unrelated loading card may appear between them.
 - Use approved Olaso artwork at its original proportions. Never type or
   reconstruct the wordmark for startup.
+- On the Cream Surface, use the verified transparent Operational Green asset at
+  `assets/brand/olaso-wordmark-operational-green-transparent.png`. Keep the
+  official white-on-sage square master for sage or dark brand placements; white
+  artwork is not visible enough on the cream launch surface.
 - A short `Starting Olaso…` status may appear while SQLite and the local lock
   state initialize. It uses the operational type system, remains calm, and does
   not imply that internet access is required.
@@ -417,16 +421,25 @@ Do not split ordinary markup into meaningless components. A component earns a fi
 
 ### Printing boundary and deferred hardware test
 
-- React components never contain ESC/POS bytes, Bluetooth logic, USB logic, printer permissions, or vendor SDK calls.
+- React components never contain ESC/POS bytes, Android socket logic, printer
+  connection handling, or vendor SDK calls.
 - `src/lib/printing/printReceipt.ts` is the single application-facing printing function.
 - During software development, `printReceipt` uses a deterministic mock and receipt preview so ordering flows and failure states can be completed without hardware.
-- When the client supplies the Samsung Galaxy Tab A9 and the final thermal printer, replace the mock internals with a Capacitor plugin backed by native Kotlin and Android hardware APIs.
-- Prefer generic ESC/POS commands over a proprietary SDK when the selected printer passes the compatibility test. Use a vendor SDK only if the physical printer requires it.
-- Treat Bluetooth, USB, and LAN as transport variants behind the same `printReceipt` call; implement only the transport supported by the printer the client actually provides.
+- The supplied Samsung Galaxy Tab A9 and WDLink WD8260 are available. Replace
+  the mock internals through the Goal 03 Capacitor plugin backed by a bounded
+  native Kotlin TCP socket and verified WD8260 ESC/POS bytes.
+- Prefer the proven generic ESC/POS commands over a proprietary SDK while the
+  physical printer continues to pass the compatibility tests.
+- The production APK transport is Ethernet/LAN through the router. USB remains
+  a standalone desktop receipt-lab path; do not add Android USB or Bluetooth
+  transport without a later confirmed requirement.
 - Persist the sale before printing. A print failure must not create a duplicate order or erase the receipt; show a clear `Reprint receipt` action.
-- Arabic and any unsupported printer text are rendered as a monochrome bitmap rather than relying on undocumented internal printer fonts.
+- The accepted initial receipt is French/English with checked CP858 behavior.
+  Arabic and other unsupported-script bitmap rendering are deferred until the
+  owner requires them.
 
-The application may reach software-complete status without the physical devices. It is not production-approved until the real tablet and printer pass connection, print, cut, recovery, and endurance testing.
+The application is not production-approved until the real tablet and printer
+pass LAN connection, print, cut, recovery, and endurance testing.
 
 ### Astryx and icon rules
 
@@ -482,7 +495,11 @@ A screen is complete only when all of the following are true:
   branded cream surface with no default Capacitor or blank-white frame.
 - The production build succeeds without TypeScript or lint errors.
 - A screenshot comparison is performed at the reference viewport and again on the physical tablet WebView before Android packaging is considered approved.
-- The mocked printing flow is verified during development. Production approval additionally requires the supplied tablet and printer to pass text, logo, Arabic bitmap, QR, cut, reconnect, paper-out, and repeated-print tests.
+- The mocked printing flow is verified during development. Production approval
+  additionally requires the supplied tablet and printer to pass the accepted
+  French/English text, resident logo, long-line, cut, LAN reconnect, paper
+  replacement, reprint, and repeated-print tests. QR and Arabic are tested only
+  if their deferred scopes are later approved.
 
 ## Do's and Don'ts
 

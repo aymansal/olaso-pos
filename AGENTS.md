@@ -43,6 +43,9 @@ decision changes.
 
 ### Work ledger
 
+- `PLAN.md` is the canonical remaining goal/card order and completion gate. Read
+  it with the ledger before activating or resuming a goal; it does not override
+  the project authorities.
 - When `WORK_LEDGER.md` has an active goal, read it after the applicable
   `AGENTS.md` chain and before changing code.
 - Re-read it after context compaction, task handoff, or resuming paused work.

@@ -1,5 +1,5 @@
 ---
-version: 0.3
+version: 0.4
 name: Olaso POS Architecture
 status: active
 updated: 2026-08-21
@@ -31,7 +31,7 @@ the system.
 | Local data | SQLite on the tablet |
 | Cloud data | Convex |
 | Hosting | No Vercel dependency in the production APK runtime |
-| Printing | Local Capacitor-to-Kotlin bridge using ESC/POS |
+| Printing | Local Capacitor-to-Kotlin raw TCP/LAN bridge using WD8260 ESC/POS |
 | Costing | Perpetual weighted-average ingredient valuation with immutable sale cost snapshots |
 | Initial topology | One cafe and one POS tablet |
 | Updates | Signed APKs attached to GitHub Releases and installed manually |
@@ -59,12 +59,12 @@ Printing follows a separate local boundary:
 saved local sale
   -> printReceipt
   -> Capacitor plugin
-  -> Android Bluetooth or USB
-  -> ESC/POS printer
+  -> Android bounded TCP socket
+  -> Ethernet/LAN WD8260 ESC/POS printer
 ```
 
-Visual components never know how SQLite, Convex, Bluetooth, USB, or ESC/POS
-works.
+Visual components never know how SQLite, Convex, Android network sockets, or
+ESC/POS works.
 
 ## Responsibility of each platform
 
@@ -80,6 +80,7 @@ The installed application owns:
 - Completed local sales.
 - Unsynced-operation queue.
 - Receipt rendering and printing.
+- Validated printer host/port configuration and persisted print-attempt state.
 - Sync status and recovery controls.
 
 ### SQLite
@@ -768,11 +769,19 @@ Rules:
 
 - React components never contain ESC/POS bytes or Android transport code.
 - Development uses a deterministic mock and receipt preview.
-- Native Kotlin owns Bluetooth/USB permissions and transport.
+- Native Kotlin owns the bounded raw TCP socket, timeouts, and WD8260 ESC/POS
+  byte boundary.
 - The receipt model is transport-independent.
 - Reprinting uses the saved sale snapshot.
-- Unsupported Arabic text is rendered as a monochrome bitmap when required.
-- Only the transport supported by the client's real printer is implemented.
+- The accepted initial receipt is French/English; unsupported-script bitmap
+  rendering remains deferred until another language is required.
+- The production transport is Ethernet/LAN through the router. USB remains a
+  standalone desktop laboratory path and Android USB/Bluetooth transports are
+  not implemented.
+- The printer host and verified raw TCP port are settings, not hardcoded
+  deployment constants.
+- Normal receipts recall the pre-provisioned 300-dot NV logo instead of
+  retransmitting or rerasterizing it for each sale.
 
 ## APK release and update
 
@@ -879,12 +888,12 @@ The smallest runnable tests must cover:
 
 On the real tablet and printer:
 
-- Bluetooth or USB connection and reconnection.
+- Ethernet/LAN connection, timeout, router/printer disconnect, and reconnection.
 - Normal receipt.
 - Logo.
 - Long product names and modifiers.
-- Arabic bitmap when required.
-- QR/barcode if required.
+- French/English CP858 accents and unsupported-character behavior.
+- QR/barcode only if a real owner-approved use is added.
 - Paper-out recovery.
 - Cut command when supported.
 - Reprint without another sale.
@@ -941,5 +950,5 @@ Do not build these before the trigger occurs:
 - Receipt numbering authority while offline.
 - Conflict behavior if a second device is introduced.
 - Export destination and backup retention.
-- Bluetooth versus USB printer transport.
+- Verified WD8260 raw TCP port and production router address-reservation policy.
 - Local encryption requirements for the tablet database.

@@ -1,20 +1,25 @@
-# Goal 05 Start Prompt
+# Goal 04 Start Prompt
 
 ```text
-/goal Complete Goal 05 — Costs and Profitability as defined in
-goals/GOAL-05-COSTS-PROFITABILITY.md.
+/goal Complete Goal 04 — Costs and Profitability as defined in
+goals/GOAL-04-COSTS-PROFITABILITY.md.
 
 Before changing code:
 1. Read the complete applicable AGENTS.md/DOX chain.
-2. Read WORK_LEDGER.md, PRODUCT.md, ARCHITECTURE.md, DESIGN.md, and BRAND.md.
+2. Read WORK_LEDGER.md, PLAN.md, PRODUCT.md, ARCHITECTURE.md, DESIGN.md, and BRAND.md.
 3. Query graphify-out/graph.json before manual inspection.
-4. Mark Goal 05 active and COST-01 in progress in WORK_LEDGER.md.
-5. Create and push codex/goal-05-costs-profitability without modifying main.
+4. Mark Goal 04 active and COST-01 in progress in WORK_LEDGER.md.
+5. Create and push codex/goal-04-costs-profitability without modifying main.
 
 Execute COST-01 through COST-09 sequentially. Keep only one card in progress.
 After every completed card, update its status, completion evidence, current
 checkpoint, exact next action, and journal entry. Commit and push every card,
 then record its full SHA and remote branch before marking it done.
+
+After every implementation card, run its focused checks, npm run build when
+applicable, the appropriate Android sync/build, install the current APK on the
+connected Galaxy Tab A9, and perform a card-specific physical smoke test with
+clean console/logcat evidence. Do not postpone all device testing to COST-09.
 
 Implement package-based ingredient purchasing, exact weighted-average inventory
 valuation, product/recipe cost and margin, immutable offline sale-cost snapshots,

@@ -13,6 +13,10 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   APK/AAB files, or copied web assets.
 - Do not add ESC/POS, Bluetooth/USB printer transport, or printer permissions
   in Goal 02.
+- Goal 03 production printing uses the verified WD8260 Ethernet/LAN path through
+  one minimal native TCP socket plugin. Keep the USB receipt lab outside the
+  APK and do not add Android USB/Bluetooth branches without a later confirmed
+  requirement.
 - Keep web application behavior in `src/`; native code is only for required
   platform integration.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;
@@ -25,6 +29,9 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   changes.
 - Run `npm run android:beta` for the checked development beta build. Its
   ignored output is `android/app/build/outputs/apk/debug/app-debug.apk`.
+- Every native implementation card installs the current APK on the connected
+  physical Galaxy Tab A9 and records its focused console/logcat/hardware smoke
+  test before the card is done.
 - The generated project requires Java 21 and Android SDK 36 for Gradle builds.
 - The Goal 02 beta uses Android's local debug identity. Production signing and
   distribution remain later release work.

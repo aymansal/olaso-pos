@@ -1,5 +1,5 @@
 ---
-version: 0.3
+version: 0.4
 name: Olaso POS Product Specification
 status: active
 updated: 2026-08-21
@@ -124,16 +124,22 @@ repeat the check after material Android, WebView, or native-shell changes.
 
 ### Printer
 
-- ESC/POS-compatible thermal receipt printer.
-- WDLink WD8260 or a similar Epson-compatible Chinese printer is the expected
-  class of hardware.
-- Bluetooth or USB will be selected after testing the physical printer.
-- Generic ESC/POS is preferred over a proprietary driver when the real device
-  passes the compatibility test.
+- WDLink WD8260 80 mm ESC/POS thermal receipt printer.
+- Its self-test confirms USB plus 10/100 Ethernet/TCP-IP, a 72 mm / 576-dot
+  printing width, Font A at 48 columns, CP858 page 19, stored images, and a
+  cutter.
+- USB is the standalone desktop receipt-laboratory path. The production Android
+  application prints through Ethernet/LAN via the router using a configurable
+  printer address and a verified raw TCP port.
+- The accepted initial receipt is French/English and uses the printer-resident
+  300-dot OLASO logo. It has no QR code until a real owner-approved destination
+  exists. Arabic receipt output is deferred for the initial deployment.
+- Generic ESC/POS is used instead of a proprietary driver while the verified
+  device continues to pass the compatibility tests.
 
-The application can be software-complete before the hardware arrives, but it
-is not production-approved until the supplied tablet and printer pass the
-tests listed in `ARCHITECTURE.md`.
+The supplied tablet and printer are available. The application is not
+production-approved until their LAN printing, recovery, endurance, upgrade,
+and release tests in `ARCHITECTURE.md` pass.
 
 ## Primary navigation
 
@@ -706,7 +712,7 @@ workflow feedback.
 
 - Capacitor Android packaging.
 - Signed APK release workflow.
-- Native ESC/POS bridge.
+- Native Ethernet/LAN ESC/POS bridge.
 - Real tablet and printer testing.
 
 ### Phase 6 — production hardening
@@ -722,15 +728,15 @@ workflow feedback.
 Goal 01 delivered the functional POS and Goal 02 delivered the offline-capable
 full-application beta. The remaining work is sequenced by operational risk:
 
-1. Startup performance and launch continuity on the physical tablet.
-2. Native Android receipt printing through the verified ESC/POS boundary.
-3. Purchased-stock costing and profitability.
-4. Confirmed business policy, production identity, and permissions: tax,
+1. Native Android LAN receipt printing through the verified ESC/POS boundary.
+2. Purchased-stock costing and profitability.
+3. Confirmed business policy, production identity, and permissions: tax,
    payment, cancellation/refund, receipt, roles, and sensitive-data access.
-5. Signing, backup/recovery, endurance testing, and final owner acceptance.
+4. Measured startup/launch continuity, signing, backup/recovery, endurance
+   testing, and final owner acceptance against the near-final APK.
 
 Detailed goal status and activation order live in `WORK_LEDGER.md` and the
-plans under `goals/`.
+canonical `PLAN.md`.
 
 ## Explicit non-goals for the first release
 
@@ -751,14 +757,15 @@ plans under `goals/`.
 
 - Official legal business name and receipt header.
 - Production Android version and kiosk behavior.
-- Final printer model and connection transport.
+- Production printer address reservation and raw TCP port confirmation.
 - Official menu spelling and current prices.
 - Tax rules and whether displayed prices include tax.
 - Supported payment methods.
 - Discount, cancellation, and refund permissions.
 - Strict or warning-only behavior when stock is insufficient.
 - Staff roles and PIN/login behavior.
-- Languages for the staff interface and printed receipt.
+- Final staff-interface languages; the initial printed receipt is French and
+  English, with Arabic deferred unless the owner changes that scope.
 - Receipt number format.
 - Required customer and table fields.
 - Final fiche technique and measurement units.
