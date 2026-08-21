@@ -1,4 +1,4 @@
-import type { SavedReceipt } from './localSales.ts';
+import type { ReceiptSnapshotForPrint } from '../printing/receiptModel.ts';
 import {
   recordSalePrintAttempt,
   recordSalePrintFailure,
@@ -25,7 +25,7 @@ const dependencies: Dependencies = {
 };
 
 export async function attemptSaleReceiptPrint(
-  sale: { localSaleId: string; receipt: SavedReceipt },
+  sale: { localSaleId: string; receipt: ReceiptSnapshotForPrint },
   operations: Dependencies = dependencies,
 ) {
   try {
@@ -35,7 +35,7 @@ export async function attemptSaleReceiptPrint(
     await operations.recordSuccess(sale.localSaleId, result);
     return {
       state: 'printed' as const,
-      message: 'Sale saved. Receipt sent; confirm paper.',
+      message: 'Receipt sent; confirm paper.',
     };
   } catch (caught) {
     const code = typeof caught === 'object' && caught && 'code' in caught
@@ -46,7 +46,7 @@ export async function attemptSaleReceiptPrint(
       .catch(() => undefined);
     return {
       state: 'failed' as const,
-      message: `Sale saved. ${message} Receipt marked for reprint.`,
+      message: `${message} Reprint remains available.`,
     };
   }
 }

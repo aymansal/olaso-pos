@@ -22,14 +22,16 @@ Provides bounded order history and a selected order's receipt-style detail.
   action rather than polling or a hidden-screen subscription.
 - Show immutable receipt snapshots and the local/cloud sync state without
   reconstructing current product data.
-- Receipt preview and deliberate sync retry are functional. Printing,
-  cancellation, and refund actions remain unavailable until later hardware work
-  or confirmed owner policy authorizes them.
+- Receipt preview, deliberate sync retry, and local saved-snapshot reprint are
+  functional. Reprint updates only print-attempt state. Cancellation and refund
+  remain unavailable until confirmed owner policy authorizes them.
 
 ## Work Guidance
 
 - Keep filters and table behavior in the list panel rather than the screen.
 - Keep receipt detail presentation independent from printer transport.
+- Disable reprint for cloud-only history that has no local immutable snapshot
+  row on this tablet.
 - Do not implement cancellation as deletion.
 - Keep the shared receipt preview prop-driven and transport-free.
 

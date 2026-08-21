@@ -54,7 +54,9 @@ export function OrdersScreen({
       <OrderDetailPanel
         order={selectedOrder}
         retrying={data.retryingId === selectedOrder?.localSaleId}
+        reprinting={data.reprintingId === selectedOrder?.localSaleId}
         onRetry={data.retrySync}
+        onReprint={data.reprintReceipt}
       />
     </main>
   );

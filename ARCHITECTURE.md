@@ -788,6 +788,10 @@ Rules:
   unsupported characters become `?`, and ordinary streams contain neither
   raster-image data nor QR commands.
 - Reprinting uses the saved sale snapshot.
+- Orders merges cloud acknowledgement without overwriting tablet-local print
+  state. Reprint is enabled only when the immutable local sale row exists, calls
+  the same `printReceipt` boundary with current settings, and updates only
+  attempt state/diagnostics.
 - The accepted initial receipt is French/English; unsupported-script bitmap
   rendering remains deferred until another language is required.
 - The production transport is Ethernet/LAN through the router. USB remains a

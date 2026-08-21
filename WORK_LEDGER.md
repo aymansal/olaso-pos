@@ -304,8 +304,38 @@ and BRAND.md. PLAN.md owns the remaining goal and card sequence.
 - Exact next action: inspect Orders data/detail ownership and connect reprint to
   the saved snapshot/current settings while exposing persisted print state and
   preserving all sale/item/stock/outbox counts.
+- Orders now reads tablet-local print state alongside the immutable snapshot,
+  preserves it when the matching cloud row arrives, disables cloud-only
+  reprints, and exposes Reprint/View receipt/sync as three 50-pixel actions.
+- Focused tests prove successful and failed reprints change only print state;
+  sales/items/stock movements/outbox are invariant. Browser unconfigured
+  reprint keeps recovery available with no console warning/error or overflow.
+- Physical wrong-address reprint plus two rapid taps produced one TIMEOUT and
+  advanced only attempt 1 to 2. App process restart and full tablet restart
+  preserved failed state and counts 3/3/9/0 without any print call.
+- Restoring `.100` and pressing Reprint once wrote the same 787 saved-snapshot
+  bytes in 62 ms, moved only attempt 2 to 3 and failed to printed, and left
+  sales/items/movements/outbox at 3/3/9/0. The exact receipt encoder and paper
+  path were already physically accepted; no repeated paper gate was added.
+- Existing accepted printer/router disconnect/power recovery from PRINT-02
+  applies to the same transport, while current wrong-address/restart/repeated-
+  tap recovery proves Orders orchestration. Graphify refreshed to 2,396 nodes
+  and 5,523 edges.
+- Exact next action: final checks/documentation review, commit/push PRINT-07,
+  record its SHA, and activate PRINT-08 closeout.
 
 ## Planning Journal
+
+### 2026-08-21 — PRINT-07 recovery QA complete
+
+- Added local print state to Orders without allowing cloud history to overwrite
+  it, plus one saved-snapshot Reprint action that never enters checkout logic.
+- Wrong address, rapid repeated taps, app restart, tablet restart, endpoint
+  correction, and successful recovery all preserve sale/item/stock/outbox
+  counts exactly. Only print attempt state changed.
+- Browser and physical 1340 by 800 Orders layouts fit three actions cleanly;
+  logs remain free of new warning/error. One recovery write reused the accepted
+  787-byte receipt stream without additional logo testing.
 
 ### 2026-08-21 — PRINT-06 complete; PRINT-07 started
 

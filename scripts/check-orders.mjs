@@ -9,6 +9,12 @@ import {
   loadLocalOrderPage,
   makeLocalSaleRetryAvailable,
 } from '../src/data/orderHistory.ts';
+import {
+  recordSalePrintAttempt,
+  recordSalePrintFailure,
+  recordSalePrintSuccess,
+} from '../src/data/printState.ts';
+import { attemptSaleReceiptPrint } from '../src/data/receiptPrinting.ts';
 import { localMigrations } from '../src/data/schema.ts';
 
 const database = new DatabaseSync(':memory:');
@@ -87,6 +93,8 @@ assert.equal(firstPage.page[0].localSaleId, 'sale-2');
 assert.equal(firstPage.page[0].receipt.lines[0].productName, 'Butter Croissant');
 assert.equal(firstPage.page[0].syncState, 'failed');
 assert.equal(firstPage.page[0].syncAttemptCount, 2);
+assert.equal(firstPage.page[0].printState, 'pending');
+assert.equal(firstPage.page[0].printAttemptCount, 0);
 assert.equal(firstPage.isDone, false);
 assert(firstPage.continueCursor);
 
@@ -117,6 +125,80 @@ assert.equal(
   ).get().sync_state,
   'pending',
 );
+
+const invariantCounts = () => database.prepare(
+  `SELECT
+    (SELECT COUNT(*) FROM sales) AS sales,
+    (SELECT COUNT(*) FROM sale_items) AS items,
+    (SELECT COUNT(*) FROM stock_movements) AS movements,
+    (SELECT COUNT(*) FROM outbox) AS outbox`,
+).get();
+const beforeReprint = invariantCounts();
+const successfulReprint = await attemptSaleReceiptPrint(
+  {
+    localSaleId: firstPage.page[0].localSaleId,
+    receipt: firstPage.page[0].receipt,
+  },
+  {
+    recordAttempt: (localSaleId) =>
+      recordSalePrintAttempt(localSaleId, secondAt + 1, adapter),
+    loadSettings: async () => ({
+      printerHost: '192.0.2.10',
+      printerPort: 9100,
+    }),
+    sendReceipt: async () => ({
+      bytesWritten: 700,
+      connectMs: 2,
+      writeMs: 1,
+      totalMs: 3,
+      paperConfirmed: false,
+    }),
+    recordSuccess: (localSaleId, result) =>
+      recordSalePrintSuccess(localSaleId, result, adapter),
+    recordFailure: (localSaleId, failure) =>
+      recordSalePrintFailure(localSaleId, failure, adapter),
+  },
+);
+assert.equal(successfulReprint.state, 'printed');
+let savedPrint = database.prepare(
+  `SELECT print_state, print_attempt_count, last_print_bytes_written
+   FROM sales WHERE local_sale_id = 'sale-2'`,
+).get();
+assert.equal(savedPrint.print_state, 'printed');
+assert.equal(savedPrint.print_attempt_count, 1);
+assert.equal(savedPrint.last_print_bytes_written, 700);
+assert.deepEqual({ ...invariantCounts() }, { ...beforeReprint });
+
+const failedReprint = await attemptSaleReceiptPrint(
+  {
+    localSaleId: firstPage.page[0].localSaleId,
+    receipt: firstPage.page[0].receipt,
+  },
+  {
+    recordAttempt: (localSaleId) =>
+      recordSalePrintAttempt(localSaleId, secondAt + 2, adapter),
+    loadSettings: async () => ({
+      printerHost: '192.0.2.11',
+      printerPort: 9100,
+    }),
+    sendReceipt: async () => {
+      throw Object.assign(new Error('timeout'), { code: 'TIMEOUT' });
+    },
+    recordSuccess: (localSaleId, result) =>
+      recordSalePrintSuccess(localSaleId, result, adapter),
+    recordFailure: (localSaleId, failure) =>
+      recordSalePrintFailure(localSaleId, failure, adapter),
+  },
+);
+assert.equal(failedReprint.state, 'failed');
+savedPrint = database.prepare(
+  `SELECT print_state, print_attempt_count, last_print_error_code
+   FROM sales WHERE local_sale_id = 'sale-2'`,
+).get();
+assert.equal(savedPrint.print_state, 'failed');
+assert.equal(savedPrint.print_attempt_count, 2);
+assert.equal(savedPrint.last_print_error_code, 'TIMEOUT');
+assert.deepEqual({ ...invariantCounts() }, { ...beforeReprint });
 database.close();
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
@@ -162,5 +244,15 @@ assert(
     ),
   'Local order history must render before cloud work settles.',
 );
+assert.match(ordersHook, /attemptSaleReceiptPrint/);
+const orderDetail = readFileSync(
+  new URL(
+    '../src/features/orders/components/OrderDetailPanel/OrderDetailPanel.tsx',
+    import.meta.url,
+  ),
+  'utf8',
+);
+assert.match(orderDetail, /Reprint/);
+assert.doesNotMatch(orderDetail, /commitLocalSale|completeLocalSale|stock_movements|outbox/);
 
 console.log('Bounded local/cloud order history and recovery checks passed.');

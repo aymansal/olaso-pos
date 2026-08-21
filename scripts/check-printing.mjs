@@ -136,7 +136,7 @@ const failedAttempt = await attemptSaleReceiptPrint(
   },
 );
 assert.equal(failedAttempt.state, 'failed');
-assert.match(failedAttempt.message, /Sale saved.*marked for reprint/);
+assert.match(failedAttempt.message, /Reprint remains available/);
 assert.deepEqual(failedOrder, [
   'attempt',
   'settings',

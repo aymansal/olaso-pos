@@ -12,6 +12,7 @@ import {
   type OrderHistoryRecord,
 } from './orderHistory.ts';
 import { toConvexSaleArgs } from './usePosData';
+import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
 
 const PAGE_SIZE = 6;
 
@@ -20,7 +21,15 @@ function mergeOrders(
   incoming: OrderHistoryRecord[],
 ) {
   const records = new Map(existing.map((order) => [order.key, order]));
-  for (const order of incoming) records.set(order.key, order);
+  for (const order of incoming) {
+    const current = records.get(order.key);
+    records.set(order.key, current?.printState ? {
+      ...order,
+      printState: current.printState,
+      printAttemptCount: current.printAttemptCount,
+      ...(current.printError ? { printError: current.printError } : {}),
+    } : order);
+  }
   return [...records.values()].sort(
     (left, right) =>
       right.receipt.completedAt - left.receipt.completedAt
@@ -43,6 +52,7 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
     status: sale.status,
     syncState: 'synced',
     syncAttemptCount: 0,
+    printAttemptCount: 0,
     receipt: {
       receiptNumber: snapshot.receiptNumber,
       completedAt: snapshot.completedAt,
@@ -73,6 +83,7 @@ export function useOrdersData() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [retryingId, setRetryingId] = useState<string>();
+  const [reprintingId, setReprintingId] = useState<string>();
   const [message, setMessage] = useState('');
   const [lastSuccessAt, setLastSuccessAt] = useState<number>();
   const mounted = useRef(true);
@@ -246,15 +257,39 @@ export function useOrdersData() {
     [acceptSale, refresh],
   );
 
+  const reprintReceipt = useCallback(
+    async (order: OrderHistoryRecord) => {
+      if (!order.printState) {
+        setMessage('Reprint is unavailable because this sale is not saved on this tablet.');
+        return;
+      }
+      setReprintingId(order.localSaleId);
+      setMessage('Sending the saved receipt…');
+      try {
+        const outcome = await attemptSaleReceiptPrint({
+          localSaleId: order.localSaleId,
+          receipt: order.receipt,
+        });
+        await refresh();
+        setMessage(outcome.message);
+      } finally {
+        if (mounted.current) setReprintingId(undefined);
+      }
+    },
+    [refresh],
+  );
+
   return {
     orders,
     isLoading,
     isLoadingMore,
     retryingId,
+    reprintingId,
     message,
     lastSuccessAt,
     hasMore: !localDone.current || !cloudDone.current,
     loadMore,
     retrySync,
+    reprintReceipt,
   };
 }

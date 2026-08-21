@@ -1,5 +1,6 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
+import type { SalePrintState } from './printState.ts';
 
 type OrderDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
@@ -43,6 +44,9 @@ export type OrderHistoryRecord = {
   syncState: OrderSyncState;
   syncAttemptCount: number;
   syncError?: string;
+  printState?: SalePrintState;
+  printAttemptCount: number;
+  printError?: string;
   receipt: OrderReceipt;
 };
 
@@ -167,6 +171,7 @@ export async function loadLocalOrderPage(
   const result = await database.query(
     `SELECT s.local_sale_id, s.device_id, s.cloud_sale_id, s.status,
       s.business_date, s.receipt_snapshot_json, s.sync_state, s.created_at,
+      s.print_state, s.print_attempt_count, s.last_print_error_message,
       o.attempt_count, o.last_error
      FROM sales AS s
      LEFT JOIN outbox AS o
@@ -186,9 +191,11 @@ export async function loadLocalOrderPage(
   const page: OrderHistoryRecord[] = pageRows.map((row) => {
     const status = String(row.status);
     const syncState = String(row.sync_state);
+    const printState = String(row.print_state);
     if (
       !['completed', 'cancelled', 'refunded'].includes(status)
       || !['pending', 'synced', 'failed'].includes(syncState)
+      || !['pending', 'printed', 'failed'].includes(printState)
     ) {
       throw new Error('A saved order state is invalid.');
     }
@@ -205,6 +212,11 @@ export async function loadLocalOrderPage(
       syncState: syncState as OrderSyncState,
       syncAttemptCount: Number(row.attempt_count ?? 0),
       ...(row.last_error ? { syncError: String(row.last_error) } : {}),
+      printState: printState as SalePrintState,
+      printAttemptCount: Number(row.print_attempt_count ?? 0),
+      ...(row.last_print_error_message
+        ? { printError: String(row.last_print_error_message) }
+        : {}),
       receipt: parseReceipt(row.receipt_snapshot_json),
     };
   });

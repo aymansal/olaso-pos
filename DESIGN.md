@@ -424,7 +424,7 @@ Do not split ordinary markup into meaningless components. A component earns a fi
 - React components never contain ESC/POS bytes, Android socket logic, printer
   connection handling, or vendor SDK calls.
 - `src/lib/printing/printReceipt.ts` is the single application-facing printing function.
-- During software development, `printReceipt` uses a deterministic mock and receipt preview so ordering flows and failure states can be completed without hardware.
+- Browser development keeps the deterministic receipt preview and reports the native printer as unavailable; it never simulates paper success.
 - The supplied Samsung Galaxy Tab A9 and WDLink WD8260 are available. Replace
   the mock internals through the Goal 03 Capacitor plugin backed by a bounded
   native Kotlin TCP socket and verified WD8260 ESC/POS bytes.
@@ -460,6 +460,7 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Successful submission shows a concise confirmation and starts a fresh receipt only after the local sale transaction commits.
 - After local persistence succeeds, printing is attempted once and cloud synchronization runs in the background.
 - A print failure preserves the completed sale and exposes `Reprint receipt` without resubmitting the order.
+- Orders detail presents Reprint, View receipt, and sync state as three 50-pixel actions without changing the approved panel geometry.
 - The profile-owned Printer settings panel uses persistent IPv4/port labels,
   `Test printer`, and a secondary `Restore saved logo` setup action. The logo
   action requires an explicit replacement warning. Both keep 44-pixel targets

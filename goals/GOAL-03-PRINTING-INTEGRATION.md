@@ -94,7 +94,7 @@ sale or stock deduction.
 | PRINT-04 | Add the saved receipt model and deterministic WD8260 encoder | done | Pure saved-snapshot model/encoder and edge checks, accepted 941-byte paper, frozen SHA, build, Android beta, installed-tablet/browser preview, logs, and Graphify pass; commit `9c87c625a1f379e7307ec0c167b5002c0ec5e8dc` pushed to `origin/codex/goal-03-printing-integration`. |
 | PRINT-05 | Add and verify one-time printer-resident logo provisioning | done | Exact native asset, warning-gated Settings setup, build/APK/tablet writes, physical logo output, app/tablet/printer-module restart, accepted exact-payload power-cycle baseline, Android-16 landscape recovery, and all closeout checks pass; commit `eb00d2f92094c60adbd6cdc68e877f1a9e790959` pushed. |
 | PRINT-06 | Connect post-commit first print and persisted print state | done | Schema v5, background post-commit attempt, exact failure/success invariants, browser unconfigured flow, tablet offline/restart/sync recovery, one online 787-byte paper receipt, API-35 landscape enforcement, build/log/Graphify checks pass; commit `9602fed94f5d49f552527275c5c704a2e21c6906` pushed. |
-| PRINT-07 | Add Orders reprint and restart/disconnect recovery | in progress | Inspecting Orders data/detail/recovery ownership before implementation. |
+| PRINT-07 | Add Orders reprint and restart/disconnect recovery | in progress | Local print state, safe saved-snapshot Reprint UI, invariant checks, browser failure, wrong-address/rapid-tap/app/tablet restart recovery, corrected-endpoint 787-byte reprint, build/log/Graphify checks pass. Ready for closeout. |
 | PRINT-08 | Run endurance, regression, hardware, documentation, and push closeout | pending | — |
 
 ## Card contracts
@@ -339,6 +339,18 @@ sale or stock deduction.
   pushed at `9602fed94f5d49f552527275c5c704a2e21c6906`.
 - Exact next action: inspect Orders data/detail ownership and connect reprint to
   the saved snapshot/current settings without entering checkout logic.
+- Orders now preserves tablet-local print state through cloud merges and enables
+  Reprint only for a locally saved immutable snapshot. Focused success/failure
+  checks prove no sale/item/stock/outbox effects.
+- Browser unavailable reprint and physical wrong-address rapid double-tap each
+  keep recovery available; the physical attempt count advances only once. App
+  and full tablet restarts preserve state/counts without printing.
+- Correcting the endpoint and pressing Reprint once wrote the same 787 bytes in
+  62 ms, changed only attempt 2 to 3 and failed to printed, and kept counts at
+  3 sales/3 items/9 movements/0 outbox. Accepted receipt/power/router evidence
+  is reused instead of generating redundant paper tests.
+- Graphify refreshed to 2,396 nodes and 5,523 edges. Exact next action: final
+  checks/doc review, commit/push PRINT-07, record SHA, then activate PRINT-08.
 - Implemented the minimal standard-socket Kotlin plugin, persistence, and
   Settings diagnostic without checkout changes or new printer SDK/permission.
 - Focused native/settings/Android/TypeScript/build/browser checks pass. Physical
@@ -392,6 +404,16 @@ sale or stock deduction.
   WebView/browser console, exact viewport, Graphify, and whitespace checks pass.
 
 ## Planning journal
+
+### 2026-08-21 — PRINT-07 reached closeout
+
+- Added persisted Orders print status and one guarded Reprint action using only
+  the saved receipt/current endpoint.
+- Tests and physical wrong-address/repeated-tap/app/tablet restart/recovery prove
+  reprint never creates a sale, item, stock movement, outbox event, or receipt
+  number.
+- One corrected-endpoint recovery reused the accepted receipt stream; UI/log/
+  Graphify checks pass without repeated logo or unnecessary paper testing.
 
 ### 2026-08-21 — PRINT-06 pushed; PRINT-07 started
 

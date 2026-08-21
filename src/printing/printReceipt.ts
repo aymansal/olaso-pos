@@ -1,16 +1,18 @@
 import type { PrinterPreferences } from '../data/terminalSettings.ts';
 import { validatePrinterPreferences } from '../data/terminalSettings.ts';
-import type { SavedReceipt } from '../data/localSales.ts';
 import { encodeWd8260Receipt } from './receiptEncoder.ts';
-import { createReceiptModel } from './receiptModel.ts';
+import {
+  createReceiptModel,
+  type ReceiptSnapshotForPrint,
+} from './receiptModel.ts';
 import { writePrinterBytes } from './printerTransport.ts';
 
-export function createSavedReceiptBytes(receipt: SavedReceipt) {
+export function createSavedReceiptBytes(receipt: ReceiptSnapshotForPrint) {
   return encodeWd8260Receipt(createReceiptModel(receipt));
 }
 
 export function printReceipt(
-  receipt: SavedReceipt,
+  receipt: ReceiptSnapshotForPrint,
   preferences: PrinterPreferences,
 ) {
   const printer = validatePrinterPreferences(preferences);

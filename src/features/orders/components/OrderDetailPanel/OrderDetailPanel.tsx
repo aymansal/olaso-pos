@@ -5,6 +5,7 @@ import {
   Info,
   MapPin,
   Package,
+  Printer,
   Receipt,
   ArrowsClockwise,
   Storefront,
@@ -33,11 +34,15 @@ function stateLabel(order: OrderHistoryRecord) {
 export function OrderDetailPanel({
   order,
   retrying,
+  reprinting,
   onRetry,
+  onReprint,
 }: {
   order?: OrderHistoryRecord;
   retrying: boolean;
+  reprinting: boolean;
   onRetry: (localSaleId: string) => Promise<void>;
+  onReprint: (order: OrderHistoryRecord) => Promise<void>;
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -68,6 +73,7 @@ export function OrderDetailPanel({
     },
   ] as const;
   const canRetry = order.syncState !== 'synced';
+  const canReprint = order.status === 'completed' && Boolean(order.printState);
   const statusTone = canRetry || order.status !== 'completed'
     ? styles.statusAttention
     : styles.statusComplete;
@@ -76,6 +82,18 @@ export function OrderDetailPanel({
     : order.syncState === 'pending'
       ? 'Saved locally · waiting for cloud acknowledgement'
       : 'Cancellation and refund permissions await owner confirmation';
+  const printNote = order.printState === 'failed'
+    ? 'Printer unavailable · reprint available'
+    : order.printState === 'pending'
+      ? 'Receipt pending · reprint available'
+      : order.printState === 'printed'
+        ? `Receipt sent · ${order.printAttemptCount} attempt${order.printAttemptCount === 1 ? '' : 's'}`
+        : 'Reprint unavailable on this tablet';
+  const syncStateNote = order.syncState === 'synced'
+    ? 'Cloud synced'
+    : order.syncState === 'failed'
+      ? 'Needs sync'
+      : 'Waiting to sync';
 
   return (
     <aside className={styles.panel} aria-labelledby="selected-order-title">
@@ -187,6 +205,16 @@ export function OrderDetailPanel({
       <div className={styles.actions}>
         <button
           type="button"
+          className={styles.reprint}
+          disabled={!canReprint || reprinting}
+          title={canReprint ? 'Print the immutable saved receipt' : printNote}
+          onClick={() => void onReprint(order)}
+        >
+          <Printer size={17} weight="regular" aria-hidden="true" />
+          <span>{reprinting ? 'Printing…' : 'Reprint'}</span>
+        </button>
+        <button
+          type="button"
           className={styles.preview}
           onClick={() => setPreviewOpen(true)}
         >
@@ -208,9 +236,9 @@ export function OrderDetailPanel({
         </button>
       </div>
 
-      <div className={styles.stockNote}>
+      <div className={styles.stockNote} title={order.printError ?? printNote}>
         <Info size={13} weight="regular" aria-hidden="true" />
-        <span>{syncNote}</span>
+        <span>{printNote} · {syncStateNote}</span>
       </div>
       {previewOpen ? (
         <ReceiptPreviewDialog

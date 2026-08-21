@@ -11,7 +11,8 @@ tablet's local SQLite operational record.
   coordinates bounded cloud refresh plus sale retries.
 - `useOrdersData.ts` renders the bounded local history page before remote work
   settles, requests cloud pages only while Orders is mounted, merges rows by
-  the sale idempotency key, and coordinates deliberate retry.
+  the sale idempotency key while preserving tablet-local print state, and
+  coordinates deliberate sync/reprint recovery.
 - `useDashboardData.ts` makes one saved-summary snapshot request only while
   Dashboard is mounted and exposes explicit retry state.
 - `useReportsData.ts` makes one saved-summary range request only while Reports
@@ -23,8 +24,8 @@ tablet's local SQLite operational record.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
   safe failure copy.
-- `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt parsing,
-  sync summary, and retry reset.
+- `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt/print-state
+  parsing, sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
   immutable receipt snapshots, and outbox acknowledgement/failure state.
 - `printState.ts` owns persisted pending/printed/failed sale print attempts;

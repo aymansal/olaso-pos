@@ -142,7 +142,7 @@ export function usePosData() {
         const outcome = await attemptSaleReceiptPrint(result);
         setPrintFeedback({
           kind: outcome.state === 'printed' ? 'success' : 'error',
-          message: outcome.message,
+          message: `Sale saved. ${outcome.message}`,
         });
       })();
       void reloadLocal().catch(() =>

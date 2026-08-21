@@ -376,15 +376,32 @@
   font-weight: 700;
 }
 
+.preview,
+.reprint,
+.sync {
+  flex: 1;
+  min-width: 0;
+}
+
 .preview {
-  width: 166px;
   border: 1px solid var(--olaso-green);
   color: var(--olaso-green);
   background: transparent;
 }
 
+.reprint {
+  border: 0;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.reprint:disabled {
+  color: var(--olaso-disabled);
+  background: var(--olaso-readonly);
+  cursor: not-allowed;
+}
+
 .sync {
-  flex: 1;
   border: 0;
   color: var(--olaso-white);
   background: var(--olaso-green);
