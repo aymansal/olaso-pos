@@ -16,8 +16,8 @@ remaining goal and card sequence.
 | Card | Status |
 | --- | --- |
 | POLICY-01 — Confirm and record the owner decision matrix | done — `eafe2d3e6603cbf5957c548b5e83473da05465df` on `origin/codex/goal-05-policy-identity-permissions` |
-| ID-01 — Define the production identity, offline session, lock, recovery, and threat model | in progress |
-| ID-02 — Add production identity/session persistence and remove production authorization override | pending |
+| ID-01 — Define the production identity, offline session, lock, recovery, and threat model | done — `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9` on `origin/codex/goal-05-policy-identity-permissions` |
+| ID-02 — Add production identity/session persistence and remove production authorization override | in progress |
 | PERM-01 — Enforce role permissions and sensitive-data return boundaries | pending |
 | POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | pending |
 | ORDER-01 — Implement authorized cancellation/refund corrections and reversals | pending |
@@ -92,7 +92,8 @@ remaining goal and card sequence.
   POLICY-01. It was committed and pushed as
   `eafe2d3e6603cbf5957c548b5e83473da05465df`; ID-01 is the only card in
   progress. The opaque protected-session identity boundary is documented; exact
-  next action: validate, commit, and push ID-01 before implementation.
+  next action: implement protected credentials/session persistence and remove
+  production authorization overrides in ID-02.
 - Exact next action: obtain the owner's explicit POLICY-01 answers. No
   policy-dependent behavior, identity design, or authorization implementation
   will be selected before those decisions are recorded.
@@ -713,6 +714,17 @@ remaining goal and card sequence.
   and explicit shared-PIN/clock/database/physical-custody tradeoffs in
   ARCHITECTURE.md. ID-01 remains in progress pending documentation checks,
   commit, and push.
+
+### 2026-08-22 — ID-01 complete; ID-02 started
+
+- Committed `ID-01: define offline staff sessions` as
+  `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9`, pushed it to
+  `origin/codex/goal-05-policy-identity-permissions`, and verified the remote
+  resolves to the same SHA. `git diff --check` and all 32 local Markdown links
+  passed.
+- ID-01 is done. ID-02 is now the only card in progress. Next: inspect
+  migrations, native protected-storage options, Convex function call sites, and
+  existing focused checks before implementing the approved session boundary.
 
 ### 2026-08-22 — Deferred owner polish recorded
 

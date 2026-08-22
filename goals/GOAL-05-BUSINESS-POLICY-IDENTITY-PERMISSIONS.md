@@ -96,8 +96,8 @@ append-only cancellation/refund correction workflows.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | POLICY-01 | Confirm and record the owner decision matrix | done | `eafe2d3e6603cbf5957c548b5e83473da05465df` pushed to `origin/codex/goal-05-policy-identity-permissions` |
-| ID-01 | Define the production identity, offline session, lock, recovery, and threat model | in progress | Design authority update pending |
-| ID-02 | Add production identity/session persistence and remove production authorization bypass | pending | — |
+| ID-01 | Define the production identity, offline session, lock, recovery, and threat model | done | `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9` pushed to `origin/codex/goal-05-policy-identity-permissions` |
+| ID-02 | Add production identity/session persistence and remove production authorization bypass | in progress | Implementation inspection pending |
 | PERM-01 | Enforce role permissions and sensitive-data return boundaries | pending | — |
 | POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | pending | — |
 | ORDER-01 | Implement authorized cancellation/refund corrections and reversals | pending | — |
@@ -212,9 +212,9 @@ append-only cancellation/refund correction workflows.
   the only card in progress after POLICY-01 commit
   `eafe2d3e6603cbf5957c548b5e83473da05465df` was pushed and recorded.
 - The confirmed matrix above replaces former temporary tax, service, payment,
-  correction, role, and lock assumptions. ID-01 has selected the documented
-  protected-session boundary. Exact next action: validate and commit the
-  identity/session design before implementation.
+  correction, role, and lock assumptions. ID-01 is pushed and recorded. ID-02
+  is the only active card; exact next action is implementing the documented
+  protected-session boundary.
 
 ## Planning journal
 
