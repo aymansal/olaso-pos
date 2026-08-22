@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active; POLICY-02 in progress
+**Status:** active; ORDER-01 in progress
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -102,8 +102,8 @@ append-only cancellation/refund correction workflows.
 | ID-01 | Define the production identity, offline session, lock, recovery, and threat model | done | `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | ID-02 | Add production identity/session persistence and remove production authorization bypass | done | `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | PERM-01 | Enforce role permissions and sensitive-data return boundaries | done | `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` pushed to `origin/codex/goal-05-policy-identity-permissions` |
-| POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | in progress | Confirmed matrix implementation pending |
-| ORDER-01 | Implement authorized cancellation/refund corrections and reversals | pending | — |
+| POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | done | `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` pushed to `origin/codex/goal-05-policy-identity-permissions` |
+| ORDER-01 | Implement authorized cancellation/refund corrections and reversals | in progress | — |
 | ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | pending | — |
 | POLICY-03 | Run policy, security, regression, tablet, documentation, and push closeout | pending | — |
 
@@ -212,8 +212,8 @@ append-only cancellation/refund correction workflows.
 ## Current checkpoint
 
 - Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01,
-  ID-01, ID-02, and PERM-01 are pushed and recorded; POLICY-02 is the only
-  active card.
+  ID-01, ID-02, PERM-01, and POLICY-02 are pushed and recorded; ORDER-01 is
+  the only active card.
 - The confirmed matrix above replaces former temporary tax, service, payment,
   correction, role, and lock assumptions. Exact next action is implementing
   the documented protected-session boundary without starting loyalty work.
@@ -245,7 +245,7 @@ append-only cancellation/refund correction workflows.
   `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` is pushed to the canonical
   branch. Exact next action: implement POLICY-02 alone.
 
-- POLICY-02 implementation is verified and awaiting its card commit/push. New
+- POLICY-02 is complete. New
   sales accept only Dine-in/Take-away and Cash/Card, never online, customer, or
   table fields. SQLite migration 11 allocates offline-safe `MMYY-0001`
   monthly receipt numbers without changing historical snapshots. New saved and
@@ -255,8 +255,8 @@ append-only cancellation/refund correction workflows.
   Convex/uncaught console message. Focused sales/permissions/identity/POS/
   printing/local/Android checks, TypeScript, production/Android builds, and
   SM-X115 1340 × 800 lock/POS evidence pass. Graphify refreshed to 2,711 nodes
-  and 17,918 edges. Exact next action: commit and push POLICY-02, record its
-  SHA, then activate ORDER-01 alone.
+  and 17,918 edges. Commit `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is
+  pushed to the canonical branch. Exact next action: implement ORDER-01 alone.
 
 ## Planning journal
 
@@ -289,6 +289,15 @@ append-only cancellation/refund correction workflows.
   access, protected staff/compensation/profitability boundaries, and a cashier
   cache without compensation fields. The SM-X115 installed beta retains the
   approved full 1340 × 800 POS geometry without filtered crash/console errors.
+
+### 2026-08-22 — POLICY-02 checkout policy completed
+
+- Replaced temporary checkout choices with the confirmed Dine-in/Take-away,
+  Cash/Card, no-tax, anonymous-sale, English/French, and monthly receipt-number
+  behavior. Historical local and cloud snapshots remain readable unchanged.
+- Tested the protected sale boundary and printing snapshots, plus both failed
+  and successful tablet PIN entry. Expected bad credentials are structured and
+  rendered as a friendly wrong-PIN message rather than a Convex exception.
 
 ### 2026-08-22 — ID-01 identity/session design selected
 

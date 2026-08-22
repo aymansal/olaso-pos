@@ -19,8 +19,8 @@ remaining goal and card sequence.
 | ID-01 — Define the production identity, offline session, lock, recovery, and threat model | done — `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9` on `origin/codex/goal-05-policy-identity-permissions` |
 | ID-02 — Add production identity/session persistence and remove production authorization override | done — `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` on `origin/codex/goal-05-policy-identity-permissions` |
 | PERM-01 — Enforce role permissions and sensitive-data return boundaries | done — `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` on `origin/codex/goal-05-policy-identity-permissions` |
-| POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | in progress |
-| ORDER-01 — Implement authorized cancellation/refund corrections and reversals | pending |
+| POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | done — `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` on `origin/codex/goal-05-policy-identity-permissions` |
+| ORDER-01 — Implement authorized cancellation/refund corrections and reversals | in progress |
 | ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | pending |
 | POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | pending |
 
@@ -78,9 +78,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; POLICY-02
-  is the only card in progress. PERM-01 commit
-  `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` is pushed and recorded on the
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ORDER-01
+  is the only card in progress. POLICY-02 commit
+  `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is pushed and recorded on the
   canonical remote branch.
 - ID-02 audit repair is uncommitted: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
@@ -112,7 +112,7 @@ remaining goal and card sequence.
   manager protected requests. Graphify refreshed to 2,691 nodes and 15,179
   edges. Exact next action: implement the confirmed POLICY-02 operational
   behavior without expanding into loyalty or refunds.
-- POLICY-02 implementation is verified and awaiting its card commit/push. New
+- POLICY-02 is complete. New
   sales are limited to Dine-in/Take-away and Cash/Card, with no customer/table
   inputs; each local transaction allocates an offline-safe `MMYY-0001`
   counter in migration 11 and preserves all prior snapshots unchanged. Saved
@@ -125,8 +125,18 @@ remaining goal and card sequence.
   build, and `git diff --check` pass. SM-X115 APK evidence covers failed and
   successful owner PIN entry and an unclipped 1340 × 800 POS rail with only
   Dine-in/Take-away, Cash/Card, and No tax. Graphify refreshed to 2,711 nodes
-  and 17,918 edges. Exact next action: commit and push POLICY-02, record its
-  SHA, then activate ORDER-01 alone.
+  and 17,918 edges. Commit `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is
+  pushed to the canonical branch. Exact next action: implement ORDER-01 alone.
+
+### 2026-08-22 — POLICY-02 checkout policy completed
+
+- Completed the confirmed Dine-in/Take-away, Cash/Card, no-tax, anonymous-sale,
+  bilingual receipt, and monthly receipt-number policy without changing prior
+  immutable snapshots. Structured wrong-PIN responses prevent raw Convex errors
+  from appearing in the app.
+- Verified focused sales, permissions, identity, POS, printing, local migration,
+  Android, TypeScript, Convex, production-build, and SM-X115 tablet evidence;
+  pushed `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8`. ORDER-01 is now sole active.
 - Graphify was queried before resuming work. It confirms the existing saved
   receipt, Orders, and print-state paths that Goal 05 must preserve.
 - POLICY-01 is fully confirmed. Its authority updates document logo-only
