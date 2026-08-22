@@ -779,15 +779,30 @@ async function acknowledgeSaleCancellation(
   });
 }
 
+export function describeSaleSyncFailure(caught: unknown, fallback: string) {
+  const message = caught instanceof Error ? caught.message : '';
+  if (/original sale has not synchronized|original order must synchronize/i.test(message)) {
+    return 'The original order must synchronize before its correction.';
+  }
+  if (/receipt number/i.test(message)) {
+    return 'This saved order needs receipt-number support before it can synchronize.';
+  }
+  if (/unauthenticated|sign-in is required|session/i.test(message)) {
+    return 'Synchronization access is unavailable. Restore terminal access and try again.';
+  }
+  if (/network|failed to fetch|offline/i.test(message)) {
+    return 'Cloud connection failed. Check the connection and try again.';
+  }
+  return fallback;
+}
+
 async function failSale(
   operationId: string,
   localSaleId: string,
   attemptCount: number,
   caught: unknown,
 ) {
-  const error = (
-    caught instanceof Error ? caught.message : 'Sale synchronization failed.'
-  ).trim().slice(0, 500);
+  const error = describeSaleSyncFailure(caught, 'Sale synchronization failed.');
   const retryAt =
     Date.now() + Math.min(60_000, 1_000 * 2 ** Math.min(attemptCount, 6));
   return withLocalTransaction(async (database) => {
@@ -829,8 +844,7 @@ async function failSaleCancellation(
   attemptCount: number,
   caught: unknown,
 ) {
-  const error = (caught instanceof Error ? caught.message : 'Correction synchronization failed.')
-    .trim().slice(0, 500);
+  const error = describeSaleSyncFailure(caught, 'Correction synchronization failed.');
   const retryAt = Date.now() + Math.min(60_000, 1_000 * 2 ** Math.min(attemptCount, 6));
   return withLocalTransaction(async (database) => {
     await database.run(

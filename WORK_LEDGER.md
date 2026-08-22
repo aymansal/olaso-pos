@@ -79,9 +79,8 @@ remaining goal and card sequence.
 ## Current Checkpoint
 
 - Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ID-03
-  is the only card in progress. ORDER-01 commit
-  `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` is pushed and recorded on the
-  canonical remote branch.
+  is the only card in progress. ID-03 verification is complete and its commit
+  is the exact next action before it can be marked done.
 - ID-02 audit repair is uncommitted: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
@@ -143,6 +142,17 @@ remaining goal and card sequence.
   pending-sync copy; filtered crash logs are empty. Graphify refreshed to
   2,731 nodes and 20,715 edges. Commit `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59`
   is pushed to the canonical branch. Exact next action: verify ID-03 alone.
+
+- ID-03 verification: sync retry failures now persist allowlisted operator copy
+  instead of raw Convex/server messages. Focused identity, permission, local,
+  sales, orders, Android, TypeScript, Convex typecheck, build, and diff checks
+  pass; Graphify is refreshed to 2,731 nodes and 30,626 edges. On SM-X115, a
+  wrong PIN renders `Wrong PIN. Try again.`, online and cached-offline unlocks
+  recover the unclipped 1340 × 800 POS, reconnect is clean, support recovery
+  revokes the old token and requires a fresh PIN, and a full tablet reboot
+  starts locked. Recent filtered logcat has no raw Convex/server text or crash.
+  Exact next action: commit and push this ID-03 evidence, record its SHA, then
+  activate POLICY-03 alone.
 
 ### 2026-08-22 — POLICY-02 checkout policy completed
 

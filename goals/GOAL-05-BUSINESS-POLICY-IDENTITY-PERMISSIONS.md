@@ -270,6 +270,17 @@ append-only cancellation/refund correction workflows.
   commit `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` is pushed to the canonical
   branch. Exact next action: verify ID-03 alone.
 
+- ID-03 verification is complete pending its card commit and push. Raw retry
+  details are now reduced to safe operator copy before SQLite persistence. The
+  focused identity/permission/local/sales/orders/Android checks, TypeScript,
+  Convex typecheck, production build, and diff check pass. SM-X115 verified
+  friendly wrong-PIN copy, online/cached-offline/reconnected unlock, support
+  credential recovery and token revocation, a cold app restart, and a full
+  tablet restart, all behind the lock screen before POS. Lock and POS remain
+  unclipped at 1340 × 800; recent filtered logcat is clean. Graphify refreshed
+  to 2,731 nodes and 30,626 edges. Exact next action: push the ID-03 commit,
+  record its SHA, and activate POLICY-03 alone.
+
 ## Planning journal
 
 ### 2026-08-21 — Goal 05 sequenced

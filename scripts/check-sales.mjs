@@ -8,6 +8,7 @@ import { api } from '../convex/_generated/api.js';
 import {
   cancelLocalSale,
   commitLocalSale,
+  describeSaleSyncFailure,
   prepareSale,
 } from '../src/data/localSales.ts';
 import { loadOperationalCache } from '../src/data/operationalCache.ts';
@@ -34,6 +35,17 @@ for (const migration of localMigrations) {
 }
 
 const now = Date.parse('2026-07-28T10:00:00.000Z');
+assert.equal(
+  describeSaleSyncFailure(
+    new Error('Uncaught ConvexError: {"code":"INVALID_ARGUMENT","message":"Receipt number must use MMYY-0001."}'),
+    'Sale synchronization failed.',
+  ),
+  'This saved order needs receipt-number support before it can synchronize.',
+);
+assert.equal(
+  describeSaleSyncFailure(new Error('Uncaught ConvexError: secret server detail'), 'Sale synchronization failed.'),
+  'Sale synchronization failed.',
+);
 database.exec(`
   INSERT INTO categories
     (id, key, name, sort_order, status, revision, updated_at)

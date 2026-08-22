@@ -62,6 +62,8 @@ tablet's local SQLite operational record.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry; tab switches remain local and never start another query.
 - Never refresh cloud cache data over pending local outbox work.
+- Persist only safe operator sync-failure descriptions; never store raw server
+  responses in SQLite or surface them to the application.
 - Device ID is immutable after first setup. Manual sync releases local retry
   backoff, processes at most 10 sales, and performs one fresh bounded snapshot
   request only after the outbox is empty.
