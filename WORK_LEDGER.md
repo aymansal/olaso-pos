@@ -68,10 +68,10 @@ remaining goal and card sequence.
 - [Production delivery plan](PLAN.md) — canonical remaining goal order, all
   card IDs, dependencies, and universal automated/browser/Android/physical
   tablet/printer completion gates.
-- [Goal 05 — Business Policy, Identity, and Permissions](goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md)
-  — next after completed costs; POLICY-01 requires explicit owner decisions before
-  implementation behavior is changed.
-- [Goal 06 — Production Hardening, Release, and Acceptance](goals/GOAL-06-PRODUCTION-HARDENING.md)
+- [Goal 06 — Customer Loyalty and Instant Identification](goals/GOAL-06-CUSTOMER-LOYALTY.md)
+  — planned after Goal 05; reward, consent/data, card delivery, and hardware
+  decisions remain for LOYALTY-01.
+- [Goal 07 — Production Hardening, Release, and Acceptance](goals/GOAL-07-PRODUCTION-HARDENING.md)
   — final goal containing owner-led simplification, category artwork, app icon,
   measured startup, recovery, signing, upgrade, security/quota, endurance, and
   owner acceptance.
@@ -126,6 +126,11 @@ remaining goal and card sequence.
   control. Owner recovery is support-mediated against the existing identity;
   the exact one-time reset procedure remains to be defined without a temporary
   privileged profile.
+- Customer loyalty is planned as Goal 06 after identity/permissions. The
+  first-release direction is QR-first instant lookup through an opaque revocable
+  token and keyboard-style 2D scanner; optional NFC+QR reuses the same token only
+  after reader proof. Wallet platforms are deferred. Exact reward, customer-data,
+  delivery, redemption, and hardware rules remain for LOYALTY-01.
 - Goal 04 is complete; COST-01 through COST-09 are pushed and its completion
   record is `8e7a981e2813cd768ebe70063fefc5c52d880d3d`.
 - The owner requested that all current UI remain unchanged until the complete
@@ -591,6 +596,13 @@ remaining goal and card sequence.
 
 ## Planning Journal
 
+### 2026-08-22 — Customer loyalty added as Goal 06
+
+- Added the client-requested customer base, digital stamp card, instant QR scan,
+  optional NFC+QR hardware proof, opaque tokens, and append-only reward history.
+- Kept Apple/Google Wallet and Smart Tap deferred, renumbered hardening to Goal
+  07, and changed no application behavior.
+
 ### 2026-08-22 — Goal 05 activated; POLICY-01 started
 
 - Confirmed the completed Goal 04 branch and remote at
@@ -725,6 +737,22 @@ remaining goal and card sequence.
 - ID-01 is done. ID-02 is now the only card in progress. Next: inspect
   migrations, native protected-storage options, Convex function call sites, and
   existing focused checks before implementing the approved session boundary.
+
+### 2026-08-22 — ID-02 protected-storage boundary started
+
+- Added a minimal Android `SecureSession` Capacitor plugin backed by Android
+  Keystore AES-GCM storage plus a TypeScript Android-only wrapper. It accepts
+  bounded safe keys, stores encrypted values only, and is not yet wired to PIN
+  or session flows; SQLite settings remain credential-free.
+- Registered the plugin, added a native key-validation check, and updated the
+  Android/data DOX contracts. Android static checks, TypeScript, production
+  build, and Capacitor sync pass. The standalone Gradle beta build has started
+  with the documented project-local Java 21/SDK paths but needs final completion
+  evidence. Unrelated uncommitted Goal 06/07 file changes were found in the
+  shared workspace and are preserved outside this card.
+- Exact next action: finish native beta evidence, then implement the approved
+  credential/session schema and fail-closed Convex boundary without staging the
+  unrelated goal files.
 
 ### 2026-08-22 — Deferred owner polish recorded
 

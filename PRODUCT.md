@@ -64,8 +64,8 @@ The cashier can:
 - Select a service mode: Dine-in / Sur place or Take-away.
 - Add products and modifiers to an order.
 - Change quantities and remove order lines.
-- Complete a sale without customer or table entry; customer details remain
-  deferred until a separately approved loyalty/customer feature.
+- Complete a sale without customer or table entry; customer attachment remains
+  optional and unavailable until planned Goal 06 loyalty is implemented.
 - Complete a sale and print or reprint its receipt.
 - View recent orders needed for operational recovery.
 
@@ -385,8 +385,8 @@ Each completed sale keeps a permanent snapshot of:
 - Date and time.
 - Cashier.
 - Service mode.
-- No customer or table details in the first production policy; these remain
-  unavailable until a separately approved loyalty/customer feature.
+- No customer or table details during Goal 05; anonymous checkout remains the
+  default until Goal 06 loyalty is implemented and explicitly selected.
 - Products, quantities, modifiers, and notes.
 - Product names and prices at the time of sale.
 - Recipe version used for each line.
@@ -410,6 +410,35 @@ A completed sale is never deleted. A cashier may make an offline, whole-sale,
 same-calendar-day correction with a required reason, then enter a replacement
 sale. The correction reverses the original saved effects exactly once. Card
 corrections are recorded only; the app never calls a bank or terminal reversal.
+
+## Customer loyalty and instant recognition
+
+The client has approved a separate customer/loyalty goal before final
+hardening. It replaces the physical stamp-card workflow without making routine
+service depend on Apple Wallet, Google Wallet, or a slow customer-name search.
+
+- A customer may remain anonymous. Staff attach a customer only after an
+  explicit scan or bounded manual fallback.
+- The primary first-release credential is a generated QR loyalty card saved on
+  the customer's phone or printed. A small 2D scanner supplies the token as
+  ordinary keyboard input for immediate lookup.
+- An optional physical NFC+QR card may use the same token only after a selected
+  reader passes physical Android testing. QR remains the production fallback.
+- The QR/NFC value is a high-entropy, revocable, opaque identifier. It contains
+  no name, phone, progress, reward, authentication, or payment data.
+- Qualifying completed sales earn append-only progress; cancellations reverse
+  only the linked original progress; reward redemption is exactly once and
+  requires the confirmed staff permission.
+- Customer records, token status, earning, reversal, adjustment, and redemption
+  work local-first on the single tablet and synchronize idempotently.
+- Lost tokens can be revoked and replaced. Name/phone lookup is available for
+  recovery but is not the normal cashier flow.
+
+The exact earning event, threshold, one-per-sale/day rule, eligible free reward,
+price cap, expiry, customer fields/consent, deletion/export behavior, redemption
+role, card delivery method, and scanner/NFC models remain owner decisions for
+LOYALTY-01. The reported threshold of roughly seven to nine is not treated as a
+confirmed production rule.
 
 ### Required reports
 
@@ -757,7 +786,16 @@ workflow feedback.
 - Native Ethernet/LAN ESC/POS bridge.
 - Real tablet and printer testing.
 
-### Phase 6 — production hardening
+### Phase 6 — customer loyalty
+
+- Minimal consented customer records and revocable opaque scan tokens.
+- QR-first instant identification with bounded manual fallback.
+- Append-only earning, cancellation reversal, and exactly-once reward
+  redemption.
+- Optional NFC+QR hardware proof using the same platform-independent token.
+- Offline, restart, privacy, recovery, scanner, and physical-tablet testing.
+
+### Phase 7 — production hardening
 
 - Owner-led full-application critique and approved operator-UI simplification.
 - Curated category artwork selection plus a neutral custom-category fallback.
@@ -777,7 +815,9 @@ monthly profitability. Remaining work is sequenced by operational risk:
 
 1. Confirmed business policy, production identity, and permissions: tax,
    payment, cancellation/refund, receipt, roles, and sensitive-data access.
-2. Owner-led simplification, category artwork, measured startup/launch
+2. Customer loyalty and instant QR-first identification, with optional NFC
+   hardware proof.
+3. Owner-led simplification, category artwork, measured startup/launch
    continuity, signing, backup/recovery, endurance testing, and final owner
    acceptance against the near-final APK.
 
@@ -795,6 +835,8 @@ canonical `PLAN.md`.
 - Payroll processing, tax filing, or statutory financial statements.
 - Arbitrary allocation of rent, compensation, or overhead to individual drinks.
 - Card-terminal integration.
+- Apple Wallet, Google Wallet, Google Smart Tap, a customer mobile app, and NFC
+  payment/stored-value behavior in the first loyalty release.
 - Artificially estimated waste.
 - Forecasting or AI recommendations.
 - A custom generic database abstraction that has only one implementation.
@@ -807,8 +849,8 @@ canonical `PLAN.md`.
 - Production printer address reservation and raw TCP port confirmation.
 - Official menu spelling and current prices.
 - Future discount policy.
-- Future loyalty/customer-record policy; customer details remain unavailable
-  until that feature is explicitly approved.
+- Exact loyalty earning/reward, customer-consent/data, card-delivery, scanner,
+  and optional NFC-reader policy for LOYALTY-01.
 - Final fiche technique and measurement units.
 - Whether the owner needs a remote web dashboard.
 

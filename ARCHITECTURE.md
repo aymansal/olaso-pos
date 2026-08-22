@@ -312,7 +312,8 @@ must remain separate.
 - Receipt number.
 - Cashier reference.
 - Service mode.
-- No customer/table fields until a separately approved loyalty/customer feature.
+- No customer/table fields during Goal 05; optional customer linkage arrives
+  only through the planned Goal 06 loyalty boundary.
 - Tax-free money totals in integer centimes.
 - Ingredient-cost total and cost-completeness snapshot.
 - Payment method.
@@ -330,6 +331,37 @@ must remain separate.
 - Recipe version reference.
 - Line total.
 - Ingredient-cost snapshot and completeness state.
+
+### Planned Goal 06 customer and loyalty boundary
+
+Goal 06 adds three responsibilities without coupling checkout to a wallet
+platform:
+
+- `customers` stores only owner-approved customer fields, consent/status,
+  audit metadata, and bounded lookup indexes.
+- `loyaltyTokens` maps a high-entropy opaque identifier to one customer and
+  records active, revoked, and replacement state. QR/NFC data contains only the
+  identifier; never PII, progress, rewards, credentials, or payment authority.
+- `loyaltyEvents` is append-only and links a trusted completed sale,
+  cancellation reversal, authorized adjustment, reward eligibility, or
+  redemption. Retry IDs and source references make earning/redeeming exactly
+  once.
+
+The single tablet caches only the bounded active customer/token data required
+for offline scan and writes loyalty events through the same local-first/outbox
+pattern as other operational work. Cloud synchronization validates event
+relationships and idempotency; it never recomputes historical progress from
+current products or rewrites old events.
+
+Scanner input is an application boundary, not business logic. The first-release
+path accepts one bounded token from a USB/Bluetooth 2D scanner acting as keyboard
+input. An optional NFC+QR card uses the same token only after one specific reader
+proves a standard HID/keyboard or minimal supported Android path. No generic
+scanner/NFC framework is added.
+
+Apple/Google Wallet and Google Smart Tap remain deferred adapters. Customer and
+loyalty persistence cannot require their issuer accounts, signing credentials,
+server keys, certified terminals, or network availability.
 
 ### `stockMovements`
 
@@ -1018,6 +1050,8 @@ Do not build these before the trigger occurs:
 | Second branch | Branch IDs, tenant boundaries, branch permissions |
 | Remote owner dashboard confirmed | Compliant web hosting and remote session design |
 | Catalog images edited by owner | Cloud image storage and image processing |
+| Wallet loyalty explicitly approved later | Add a narrow adapter over existing customer/token/event records |
+| NFC reader fails HID/minimal Android proof | Ship QR scanner path and defer NFC instead of adding a hardware framework |
 | Reports outgrow daily summaries | Dedicated aggregate strategy or analytics export |
 | Convex Free usage approaches a cap | Optimize measured hot paths, then consider Starter |
 | Printer fails generic ESC/POS test | Minimal vendor-specific transport/SDK integration |

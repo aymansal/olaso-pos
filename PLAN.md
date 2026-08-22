@@ -74,8 +74,9 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 02 | Functional offline-capable Android beta | done | goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md |
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
-| Goal 05 | Business policy, identity, and permissions | active; POLICY-01 documentation in progress | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Owner-led simplification, startup, release hardening, and final acceptance | planned; last | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 05 | Business policy, identity, and permissions | active; ID-02 in progress | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
+| Goal 06 | Customer loyalty and instant identification | planned; owner decisions required | goals/GOAL-06-CUSTOMER-LOYALTY.md |
+| Goal 07 | Owner-led simplification, startup, release hardening, and final acceptance | planned; last | goals/GOAL-07-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -132,12 +133,30 @@ owner's confirmed operating rules and a production identity boundary.
 | ID-03 | Verify offline login/lock/restart/recovery, session expiry, failed access, salary isolation, and management protection on the tablet. |
 | POLICY-03 | Run policy, identity, permission, security, browser, Android, tablet, documentation, and push closeout. |
 
-POLICY-01 has confirmed the current operating matrix. Its documentation commit
-and push complete before ID-01 becomes the sole in-progress card.
+POLICY-01 and ID-01 are complete. ID-02 is the only in-progress card.
 
-## Goal 06 — Production hardening and acceptance
+## Goal 06 — Customer loyalty and instant identification
 
-Goal 06 measures and removes remaining release risk after the workflows are
+Goal 06 adds the client-requested customer base and digital stamp card after
+production identity and permissions are stable. Routine service identifies a
+customer by an opaque scan token instead of a slow name search.
+
+| Card | Outcome |
+| --- | --- |
+| LOYALTY-01 | Confirm the exact earning, reward, consent, customer-data, correction, redemption, and hardware rules. |
+| LOYALTY-02 | Add minimal customer records, opaque token issue/revoke/reissue, local cache, migrations, indexes, and fixtures. |
+| LOYALTY-03 | Add append-only retry-safe earn, redemption, cancellation-reversal, and reconciliation events. |
+| LOYALTY-04 | Add instant QR scan-and-confirm POS flow, card issuance, and bounded manual lookup fallback. |
+| LOYALTY-05 | Prove optional NFC input, offline/restart/recovery, privacy, endurance, physical hardware, documentation, and push closeout. |
+
+The first-release architecture is QR-first and platform-independent. A physical
+NFC+QR card may use the same token only after a selected reader passes physical
+testing. Apple/Google Wallet and Google Smart Tap are deferred platform
+integrations, not dependencies of customer or loyalty data.
+
+## Goal 07 — Production hardening and acceptance
+
+Goal 07 measures and removes remaining release risk after the workflows are
 stable. Startup performance is here intentionally: it will be optimized once
 against the near-final application rather than repeatedly before every feature.
 It also contains the deferred owner-led simplification pass; no speculative UI
@@ -164,11 +183,12 @@ the PRODUCT.md definition of done is satisfied: offline sales are exact and
 recoverable, stock and costs reconcile, permissions protect sensitive data,
 the accepted receipt prints and reprints on the real WD8260, launch meets its
 physical-tablet budget without an unbranded frame, upgrades preserve data,
-backup/recovery is rehearsed, the owner-approved simplification list is resolved,
-custom categories always have suitable artwork or a neutral fallback, and the
-owner accepts the production workflow.
+backup/recovery is rehearsed, customer loyalty reconciles across scans, rewards,
+cancellations, offline work, and token replacement, the owner-approved
+simplification list is resolved, custom categories always have suitable artwork
+or a neutral fallback, and the owner accepts the production workflow.
 
 ## Exact next action
 
-Goal 05 is active. The immediate next action is to commit and push its confirmed
-POLICY-01 matrix, then start ID-01.
+Goal 05 is active with ID-02 as its only in-progress card. Goal 06 remains
+planned until Goal 05 completes and the owner answers LOYALTY-01.

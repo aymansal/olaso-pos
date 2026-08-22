@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active; POLICY-01 in progress
+**Status:** active; ID-02 in progress
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -46,8 +46,10 @@ append-only cancellation/refund correction workflows.
   operational-cache, logs, or broad export paths.
 - Rewriting or deleting completed sales and stock movements.
 - Visual redesign, a new state library, or a generic authorization framework.
-- Customer records, loyalty rewards, Wallet passes, payment-terminal reversal,
-  and remote owner portals; each requires separately approved scope.
+- Customer records and loyalty rewards; these are deliberately sequenced as
+  Goal 06 after production staff identity and permissions are complete.
+- Apple/Google Wallet, Google Smart Tap, payment-terminal reversal, and remote
+  owner portals; each remains a separate later integration decision.
 
 ## Confirmed POLICY-01 matrix
 
@@ -76,9 +78,10 @@ append-only cancellation/refund correction workflows.
   tablet's next synchronization. Verified support resets an existing owner
   identity without temporary profiles or plaintext PINs.
 - **Explicit temporary policy:** physical tablet custody is the first-release
-  lost-device control. Legal receipt details, discounts, customer/loyalty,
-  dedicated refunds, and remote owner access remain unavailable rather than
-  implied production behavior.
+  lost-device control. Legal receipt details, discounts, dedicated refunds, and
+  remote owner access remain unavailable rather than implied production
+  behavior. Customer/loyalty remains unavailable during Goal 05 and is planned
+  explicitly in Goal 06.
 
 ## Git workflow and card gate
 
@@ -208,13 +211,11 @@ append-only cancellation/refund correction workflows.
 
 ## Current checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ID-01 is
-  the only card in progress after POLICY-01 commit
-  `eafe2d3e6603cbf5957c548b5e83473da05465df` was pushed and recorded.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01
+  and ID-01 are pushed and recorded; ID-02 is the only active card.
 - The confirmed matrix above replaces former temporary tax, service, payment,
-  correction, role, and lock assumptions. ID-01 is pushed and recorded. ID-02
-  is the only active card; exact next action is implementing the documented
-  protected-session boundary.
+  correction, role, and lock assumptions. Exact next action is implementing
+  the documented protected-session boundary without starting loyalty work.
 
 ## Planning journal
 
@@ -247,3 +248,13 @@ append-only cancellation/refund correction workflows.
   session enforcement, audit identity, support-mediated owner recovery, shared
   PIN, clock-change, local-database, lost-device, and revoked-worker limits in
   ARCHITECTURE.md. No schema, PIN, session, UI, or authorization code changed.
+
+### 2026-08-22 — Loyalty separated into Goal 06
+
+- Preserved the confirmed anonymous Goal 05 checkout policy and added no
+  customer fields or loyalty behavior to active identity work.
+- Recorded the client's customer-base and stamp-card request as a dedicated
+  post-identity goal with QR-first instant lookup, opaque tokens, append-only
+  progress/reward events, and optional NFC hardware proof.
+- Apple/Google Wallet and Smart Tap remain deferred adapters rather than
+  dependencies of the customer or loyalty data model.
