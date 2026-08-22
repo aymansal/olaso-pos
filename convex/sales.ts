@@ -715,6 +715,15 @@ export const accept = mutation({
       categoryTotals,
       ingredientTotals,
       ingredientUsageEventCount,
+      ingredientCostCentimes:
+        (metric?.ingredientCostCentimes ?? 0)
+        + (saleIngredientCostCentimes ?? 0),
+      completeCostSaleCount:
+        (metric?.completeCostSaleCount ?? 0)
+        + (args.costStatus === 'complete' ? 1 : 0),
+      incompleteCostSaleCount:
+        (metric?.incompleteCostSaleCount ?? 0)
+        + (args.costStatus === 'incomplete' ? 1 : 0),
       updatedAt: acknowledgedAt,
     };
     if (metric) {

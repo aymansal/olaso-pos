@@ -381,6 +381,9 @@ export default defineSchema({
       ),
     ),
     ingredientUsageEventCount: v.optional(v.number()),
+    ingredientCostCentimes: v.optional(v.number()),
+    completeCostSaleCount: v.optional(v.number()),
+    incompleteCostSaleCount: v.optional(v.number()),
     updatedAt: v.number(),
   }).index('by_business_date', ['businessDate']),
 });

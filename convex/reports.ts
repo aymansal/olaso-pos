@@ -5,6 +5,7 @@ import {
   businessDate,
   invalid,
   requireManagement,
+  requireOwner,
 } from './lib/management';
 
 const MAX_RANGE_DAYS = 31;
@@ -209,6 +210,46 @@ export const getSummary = query({
             row?.ingredientUsageEventCount ?? 0,
         };
       }),
+    };
+  },
+});
+
+export const getMonthlyCosts = query({
+  args: { month: v.string() },
+  handler: async (ctx, args) => {
+    await requireOwner(ctx);
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(args.month)) {
+      return invalid('Month must use YYYY-MM.');
+    }
+    const from = `${args.month}-01`;
+    const [year, calendarMonth] = args.month.split('-').map(Number);
+    const to = new Date(Date.UTC(year, calendarMonth, 0))
+      .toISOString()
+      .slice(0, 10);
+    const [daily, staff, expenses] = await Promise.all([
+      ctx.db.query('dailyMetrics').withIndex('by_business_date', (i) => i.gte('businessDate', from).lte('businessDate', to)).take(32),
+      ctx.db.query('compensationPeriods').take(101),
+      ctx.db.query('operatingExpenses').withIndex('by_status_created_at', (i) => i.eq('status', 'active')).take(101),
+    ]);
+    if (daily.length > 31 || staff.length > 100 || expenses.length > 100) throw new Error('Monthly cost result exceeds its bounded limit.');
+    const revenueCentimes = daily.reduce((sum, row) => sum + row.netCentimes, 0);
+    const ingredientCostCentimes = daily.reduce((sum, row) => sum + (row.ingredientCostCentimes ?? 0), 0);
+    const incompleteSaleCount = daily.reduce((sum, row) => sum + (row.incompleteCostSaleCount ?? 0), 0);
+    const compensationCentimes = staff.reduce((sum, row) =>
+      args.month >= row.effectiveStartMonth && (!row.effectiveEndMonth || args.month <= row.effectiveEndMonth)
+        ? sum + row.monthlyAmountCentimes : sum, 0);
+    const expenseCentimes = expenses.reduce((sum, row) => {
+      const applies = row.recurrence === 'one-time'
+        ? row.effectiveDate?.slice(0, 7) === args.month
+        : row.effectiveStartMonth && args.month >= row.effectiveStartMonth && (!row.effectiveEndMonth || args.month <= row.effectiveEndMonth);
+      return applies ? sum + (row.transactionType === 'reversal' ? -row.amountCentimes : row.amountCentimes) : sum;
+    }, 0);
+    return {
+      month: args.month, revenueCentimes, ingredientCostCentimes, incompleteSaleCount,
+      grossProfitCentimes: revenueCentimes - ingredientCostCentimes,
+      compensationCentimes, otherExpenseCentimes: expenseCentimes,
+      operatingProfitCentimes: revenueCentimes - ingredientCostCentimes - compensationCentimes - expenseCentimes,
+      complete: incompleteSaleCount === 0,
     };
   },
 });
