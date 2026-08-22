@@ -245,6 +245,19 @@ append-only cancellation/refund correction workflows.
   `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` is pushed to the canonical
   branch. Exact next action: implement POLICY-02 alone.
 
+- POLICY-02 implementation is verified and awaiting its card commit/push. New
+  sales accept only Dine-in/Take-away and Cash/Card, never online, customer, or
+  table fields. SQLite migration 11 allocates offline-safe `MMYY-0001`
+  monthly receipt numbers without changing historical snapshots. New saved and
+  printed receipts carry the selected English/French language, Cash/Card
+  tender, logo-only header, and no-tax representation. Wrong online PIN is a
+  structured response, rendered as `Wrong PIN. Try again.` without a
+  Convex/uncaught console message. Focused sales/permissions/identity/POS/
+  printing/local/Android checks, TypeScript, production/Android builds, and
+  SM-X115 1340 × 800 lock/POS evidence pass. Graphify refreshed to 2,711 nodes
+  and 17,918 edges. Exact next action: commit and push POLICY-02, record its
+  SHA, then activate ORDER-01 alone.
+
 ## Planning journal
 
 ### 2026-08-21 — Goal 05 sequenced

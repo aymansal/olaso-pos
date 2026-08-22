@@ -20,6 +20,18 @@ interface LockScreenProps {
   onUnlock: (session: StaffSession) => Promise<void>;
 }
 
+function unlockErrorMessage(caught: unknown) {
+  const message = caught instanceof Error ? caught.message : '';
+  if (/PIN is incorrect|Wrong PIN/i.test(message)) return 'Wrong PIN. Try again.';
+  if (/too many failed PIN attempts/i.test(message)) {
+    return 'Too many failed PIN attempts. Try again later.';
+  }
+  if (/identity is unavailable offline/i.test(message)) return message;
+  if (/staff access is unavailable/i.test(message)) return message;
+  if (/protected offline credentials are unavailable/i.test(message)) return message;
+  return 'Unable to unlock. Check the connection and try again.';
+}
+
 type CachedStaff = {
   id: string;
   name: string;
@@ -109,6 +121,12 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       } else {
         try {
         const session = await signIn({ staffProfileId: staffProfileId as never, pin, deviceId: settings.deviceId });
+        if (session.kind !== 'authenticated') {
+          if (session.kind === 'locked') {
+            throw new Error('Too many failed PIN attempts. Try again later.');
+          }
+          throw new Error('Wrong PIN. Try again.');
+        }
         await saveStaffSession(session, pin);
         unlockedSession = session;
         } catch (onlineError) {
@@ -121,11 +139,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       if (!unlockedSession) throw new Error('Staff session is unavailable. Sign in again.');
       await onUnlock(unlockedSession);
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : 'This terminal could not be unlocked.',
-      );
+      setError(unlockErrorMessage(caught));
       setUnlocking(false);
     }
   }

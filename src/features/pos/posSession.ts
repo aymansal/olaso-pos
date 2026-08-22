@@ -1,6 +1,7 @@
 import type { CategoryId } from './data/categories';
 
-export type ServiceMode = 'Dine In' | 'Take Away' | 'Order Online';
+export type ServiceMode = 'Dine In' | 'Take Away';
+export type PaymentMethod = 'Cash' | 'Card';
 
 export type CartLine = {
   id: string;
@@ -14,8 +15,7 @@ export type PosSession = {
   selectedCategoryId: CategoryId;
   cart: CartLine[];
   serviceMode: ServiceMode;
-  customerName: string;
-  table: string;
+  paymentMethod: PaymentMethod;
   checkoutStatus: 'idle' | 'processing' | 'success';
 };
 
@@ -34,16 +34,13 @@ type FilterableProduct = {
   name: string;
 };
 
-export const TEMPORARY_TAX_RATE_BASIS_POINTS = 0;
-
 export function createInitialPosSession(): PosSession {
   return {
     query: '',
     selectedCategoryId: 'coffee',
     cart: [],
     serviceMode: 'Dine In',
-    customerName: '',
-    table: '',
+    paymentMethod: 'Cash',
     checkoutStatus: 'idle',
   };
 }
@@ -147,18 +144,14 @@ export function validatePosSession(
     return { kind: 'error', message: 'The order contains an invalid product or quantity.' };
   }
 
-  if (session.serviceMode === 'Dine In' && session.table.trim() === '') {
-    return { kind: 'error', message: 'Table is required for dine in.' };
-  }
-
   return { kind: 'valid', message: 'Ready to place the order.' };
 }
 
-export function taxCentimes(
-  subtotal: number,
-  rateBasisPoints = TEMPORARY_TAX_RATE_BASIS_POINTS,
-): number {
-  return Math.round(subtotal * rateBasisPoints / 10_000);
+export function taxCentimes(subtotal: number): number {
+  if (!Number.isSafeInteger(subtotal) || subtotal < 0) {
+    throw new Error('Subtotal must be a non-negative integer centimes value.');
+  }
+  return 0;
 }
 
 export function totalCentimes(subtotal: number, tax: number): number {

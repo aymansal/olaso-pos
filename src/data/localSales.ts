@@ -9,6 +9,8 @@ import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import { allocateCentimes } from '../lib/costs.ts';
 
 export type LocalServiceType = 'dine-in' | 'take-away' | 'order-online';
+export type PaymentMethod = 'Cash' | 'Card';
+export type ReceiptLanguage = 'en' | 'fr';
 
 export type SavedReceipt = {
   receiptNumber: string;
@@ -52,6 +54,7 @@ export type SavedReceipt = {
   totalCentimes: number;
   taxPolicyLabel: string;
   paymentMethod: string;
+  receiptLanguage?: ReceiptLanguage;
   ingredientCostCentimes?: number;
   costStatus: 'complete' | 'incomplete';
 };
@@ -60,9 +63,9 @@ export type SaleSyncPayload = {
   deviceId: string;
   localSaleId: string;
   receiptNumber: string;
-  serviceMode: 'dine-in' | 'take-away' | 'online';
-  customerName?: string;
-  tableLabel?: string;
+  serviceMode: 'dine-in' | 'take-away';
+  paymentMethod: PaymentMethod;
+  receiptLanguage: ReceiptLanguage;
   businessDate: string;
   completedAt: number;
   ingredientCostCentimes?: number;
@@ -83,14 +86,13 @@ type SaleDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
 export type CompleteSaleInput = {
   cart: CartLine[];
-  serviceType: LocalServiceType;
-  customerName: string;
-  tableLabel: string;
+  serviceType: Exclude<LocalServiceType, 'order-online'>;
+  paymentMethod: PaymentMethod;
+  receiptLanguage?: ReceiptLanguage;
   completedAt?: number;
 };
 
-const TAX_POLICY_LABEL = 'Temporary 0% — owner confirmation pending';
-const PAYMENT_METHOD = 'Pending owner confirmation';
+const TAX_POLICY_LABEL = 'No tax';
 const CASHIER_LABEL = 'Development cashier';
 
 function businessDate(timestamp: number) {
@@ -102,12 +104,40 @@ function businessDate(timestamp: number) {
   ].join('-');
 }
 
-function cleanOptional(value: string, label: string, maximum: number) {
-  const cleaned = value.trim();
-  if (cleaned.length > maximum) {
-    throw new Error(`${label} must contain at most ${maximum} characters.`);
+function receiptPeriod(timestamp: number) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Africa/Casablanca', month: '2-digit', year: '2-digit',
+  }).formatToParts(timestamp);
+  const value = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? '';
+  return `${value('month')}${value('year')}`;
+}
+
+function fallbackReceiptNumber(timestamp: number) {
+  return `${receiptPeriod(timestamp)}-0001`;
+}
+
+async function allocateReceiptNumber(
+  database: SaleDatabase,
+  completedAt: number,
+) {
+  const period = receiptPeriod(completedAt);
+  const current = await database.query(
+    'SELECT next_number FROM receipt_counters WHERE period = ? LIMIT 1',
+    [period],
+  );
+  const next = Number(current.values?.[0]?.next_number ?? 1);
+  if (!Number.isInteger(next) || next < 1 || next > 9_999) {
+    throw new Error('Receipt sequence is invalid.');
   }
-  return cleaned || undefined;
+  await database.run(
+    `INSERT INTO receipt_counters (period, next_number)
+     VALUES (?, ?)
+     ON CONFLICT(period) DO UPDATE SET next_number = excluded.next_number`,
+    [period, next + 1],
+    false,
+  );
+  return `${period}-${String(next).padStart(4, '0')}`;
 }
 
 type SaleValuation = {
@@ -142,6 +172,7 @@ export function prepareSale(
   menu: OperationalCacheSnapshot,
   input: CompleteSaleInput,
   localSaleId: string,
+  receiptNumber?: string,
 ) {
   if (input.cart.length < 1 || input.cart.length > 50) {
     throw new Error('An order must contain 1 to 50 lines.');
@@ -150,11 +181,8 @@ export function prepareSale(
   if (!Number.isSafeInteger(completedAt) || completedAt < 0) {
     throw new Error('The completion time is invalid.');
   }
-  const customerName = cleanOptional(input.customerName, 'Customer name', 80);
-  const tableLabel = cleanOptional(input.tableLabel, 'Table', 40);
-  if (input.serviceType === 'dine-in' && !tableLabel) {
-    throw new Error('Table is required for dine in.');
-  }
+  const language = input.receiptLanguage ?? 'en';
+  if (language !== 'en' && language !== 'fr') throw new Error('Receipt language is invalid.');
 
   const products = new Map(menu.products.map((product) => [product.id, product]));
   const groups = new Map(menu.modifierGroups.map((group) => [group.id, group]));
@@ -352,19 +380,18 @@ export function prepareSale(
     ? lines.reduce((sum, line) => sum + (line.ingredientCostCentimes ?? 0), 0)
     : undefined;
   const receipt: SavedReceipt = {
-    receiptNumber: `DEV-${date.replaceAll('-', '')}-${localSaleId.slice(0, 8).toUpperCase()}`,
+    receiptNumber: receiptNumber ?? fallbackReceiptNumber(completedAt),
     completedAt,
     cashierName: CASHIER_LABEL,
     serviceType: input.serviceType,
-    ...(customerName ? { customerName } : {}),
-    ...(tableLabel ? { tableLabel } : {}),
     lines,
     subtotalCentimes,
     discountCentimes: 0,
     taxCentimes: 0,
     totalCentimes: subtotalCentimes,
     taxPolicyLabel: TAX_POLICY_LABEL,
-    paymentMethod: PAYMENT_METHOD,
+    paymentMethod: input.paymentMethod,
+    receiptLanguage: language,
     ...(ingredientCostCentimes === undefined ? {} : { ingredientCostCentimes }),
     costStatus: completeCost ? 'complete' : 'incomplete',
   };
@@ -394,7 +421,9 @@ export async function commitLocalSale(
   const localSaleId = idFactory();
   const operationId = idFactory();
   const menu = await loadOperationalCache(database as SQLiteDBConnection);
-  const prepared = prepareSale(menu, input, localSaleId);
+  const completedAt = input.completedAt ?? Date.now();
+  const receiptNumber = await allocateReceiptNumber(database, completedAt);
+  const prepared = prepareSale(menu, { ...input, completedAt }, localSaleId, receiptNumber);
   const { receipt } = prepared;
 
   await database.run(
@@ -409,8 +438,8 @@ export async function commitLocalSale(
       deviceId,
       receipt.receiptNumber,
       input.serviceType,
-      receipt.customerName ?? null,
-      receipt.tableLabel ?? null,
+      null,
+      null,
       receipt.subtotalCentimes,
       receipt.taxCentimes,
       receipt.totalCentimes,
@@ -519,10 +548,9 @@ async function loadSaleSyncPayload(
     deviceId: String(row.device_id),
     localSaleId,
     receiptNumber: String(row.receipt_number),
-    serviceMode:
-      row.service_type === 'order-online' ? 'online' : row.service_type,
-    ...(receipt.customerName ? { customerName: receipt.customerName } : {}),
-    ...(receipt.tableLabel ? { tableLabel: receipt.tableLabel } : {}),
+    serviceMode: row.service_type === 'dine-in' ? 'dine-in' : 'take-away',
+    paymentMethod: receipt.paymentMethod === 'Card' ? 'Card' : 'Cash',
+    receiptLanguage: receipt.receiptLanguage === 'fr' ? 'fr' : 'en',
     businessDate: String(row.business_date),
     completedAt: receipt.completedAt,
     ...(receipt.ingredientCostCentimes === undefined

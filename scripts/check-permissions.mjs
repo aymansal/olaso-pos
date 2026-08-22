@@ -70,6 +70,12 @@ try {
     client.action(api.identity.supportSetPin, { staffProfileId: manager.id, pin: managerPin, recoveryCode: secret() }),
     client.action(api.identity.supportSetPin, { staffProfileId: cashier.id, pin: cashierPin, recoveryCode: secret() }),
   ]);
+  const wrongPin = await client.action(api.identity.signIn, {
+    staffProfileId: manager.id,
+    pin: cashierPin,
+    deviceId,
+  });
+  assert.deepEqual(wrongPin, { kind: 'invalid-pin' });
   const [managerSession, cashierSession] = await Promise.all([
     client.action(api.identity.signIn, { staffProfileId: manager.id, pin: managerPin, deviceId }),
     client.action(api.identity.signIn, { staffProfileId: cashier.id, pin: cashierPin, deviceId }),

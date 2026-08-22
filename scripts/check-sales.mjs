@@ -109,8 +109,8 @@ const input = {
     ['option-standard', 'option-oat'],
   ),
   serviceType: 'take-away',
-  customerName: '  Amal  ',
-  tableLabel: '',
+  paymentMethod: 'Card',
+  receiptLanguage: 'fr',
   completedAt: now,
 };
 const ids = ['local-sale-check', 'operation-check', 'sale-item-check'];
@@ -149,7 +149,9 @@ const incomplete = prepareSale(
 );
 assert.equal(incomplete.receipt.costStatus, 'incomplete');
 assert.equal(incomplete.receipt.ingredientCostCentimes, undefined);
-assert.equal(completed.receipt.customerName, 'Amal');
+assert.match(completed.receipt.receiptNumber, /^\d{4}-0001$/);
+assert.equal(completed.receipt.paymentMethod, 'Card');
+assert.equal(completed.receipt.receiptLanguage, 'fr');
 assert.equal(completed.receipt.lines[0].productRevision, 3);
 assert.equal(completed.receipt.lines[0].recipeVersionId, 'recipe-cappuccino-1');
 assert(
@@ -337,17 +339,25 @@ const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8')
 const convexUrl = localEnv.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
 assert(convexUrl, 'VITE_CONVEX_URL is missing from .env.local');
 const client = new ConvexHttpClient(convexUrl);
-const reseed = () =>
-  execSync('npm run seed:dev', {
-    cwd: projectRoot,
-    stdio: 'pipe',
-    encoding: 'utf8',
-  });
-
-reseed();
-try {
-  const before = await client.query(api.sync.getOperationalSnapshot, {});
+const ownerPin = process.env.OLASO_OWNER_PIN;
+assert(/^\d{6}$/.test(ownerPin ?? ''), 'OLASO_OWNER_PIN must be a six-digit test restore PIN');
+const seeded = JSON.parse(execSync('npx convex run seed:verify', {
+  cwd: projectRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
+}));
+const owner = await client.action(api.identity.signIn, {
+  staffProfileId: seeded.ownerProfileId,
+  pin: ownerPin,
+  deviceId: 'device-app06-check',
+});
+const sessionArgs = { sessionToken: owner.token, deviceId: 'device-app06-check' };
+await client.action(api.identity.validateSession, {
+  token: owner.token,
+  deviceId: sessionArgs.deviceId,
+});
+{
+  const before = await client.query(api.sync.getOperationalSnapshot, sessionArgs);
   const beforeReport = await client.query(api.reports.getSummary, {
+    ...sessionArgs,
     fromDate: '2026-07-28',
     toDate: '2026-07-28',
   });
@@ -399,10 +409,11 @@ try {
   );
   const cloudInput = {
     deviceId: 'device-app06-check',
-    localSaleId: 'app06-cloud-idempotency-check',
-    receiptNumber: 'DEV-20260728-APP06',
+    localSaleId: `policy-check-${Date.now()}`,
+    receiptNumber: '0726-0001',
     serviceMode: 'take-away',
-    customerName: 'Amal',
+    paymentMethod: 'Cash',
+    receiptLanguage: 'en',
     businessDate: '2026-07-28',
     completedAt: Date.parse('2026-07-28T12:00:00.000Z'),
     ingredientCostCentimes,
@@ -422,6 +433,7 @@ try {
   };
   await assert.rejects(
     client.mutation(api.sales.accept, {
+      ...sessionArgs,
       ...cloudInput,
       localSaleId: 'app06-invalid-modifier-check',
       lines: [{ ...cloudInput.lines[0], modifierOptionIds: [] }],
@@ -430,6 +442,7 @@ try {
   );
   await assert.rejects(
     client.mutation(api.sales.accept, {
+      ...sessionArgs,
       ...cloudInput,
       localSaleId: 'app06-invalid-date-check',
       businessDate: '2026-02-30',
@@ -438,6 +451,7 @@ try {
   );
   await assert.rejects(
     client.mutation(api.sales.accept, {
+      ...sessionArgs,
       ...cloudInput,
       localSaleId: 'app06-invalid-cost-check',
       ingredientCostCentimes: ingredientCostCentimes + 1,
@@ -445,8 +459,8 @@ try {
     }),
     /saved ingredient cost no longer matches/,
   );
-  const first = await client.mutation(api.sales.accept, cloudInput);
-  const retry = await client.mutation(api.sales.accept, cloudInput);
+  const first = await client.mutation(api.sales.accept, { ...sessionArgs, ...cloudInput });
+  const retry = await client.mutation(api.sales.accept, { ...sessionArgs, ...cloudInput });
   assert.equal(first.duplicate, false);
   assert.equal(retry.duplicate, true);
   assert.equal(retry.saleId, first.saleId);
@@ -477,9 +491,20 @@ try {
   assert.equal(verification.lineCount, 1);
   assert.equal(verification.movementCount, 3);
   assert.deepEqual(verification.movementDeltas, [-200, -18, -1]);
+  const orders = await client.query(api.sales.listOrders, {
+    ...sessionArgs,
+    limit: 20,
+  });
+  const stored = orders.page.find((sale) => sale.localSaleId === cloudInput.localSaleId);
+  assert(stored, 'Policy sale is missing from the protected Orders result');
+  assert.equal(stored.receiptSnapshot.paymentMethod, 'Cash');
+  assert.equal(stored.receiptSnapshot.receiptLanguage, 'en');
+  assert.equal('customerName' in stored.receiptSnapshot, false);
+  assert.equal('tableLabel' in stored.receiptSnapshot, false);
 
-  const after = await client.query(api.sync.getOperationalSnapshot, {});
+  const after = await client.query(api.sync.getOperationalSnapshot, sessionArgs);
   const afterReport = await client.query(api.reports.getSummary, {
+    ...sessionArgs,
     fromDate: '2026-07-28',
     toDate: '2026-07-28',
   });
@@ -526,8 +551,6 @@ try {
     reportQuantity(afterReport, 'Whole milk'),
     reportQuantity(beforeReport, 'Whole milk'),
   );
-} finally {
-  reseed();
 }
 
 console.log(

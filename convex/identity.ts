@@ -17,12 +17,13 @@ type SignInRecord = {
   failedCount: number;
   lockedUntil?: number;
 };
-type SignInResult = {
-  token: string;
+type StaffIdentity = {
   staffProfileId: Id<'staffProfiles'>;
   name: string;
   role: StaffRole;
 };
+type SignInResult = StaffIdentity & { kind: 'authenticated'; token: string };
+type SignInFailure = { kind: 'invalid-pin' | 'locked' };
 
 function toBase64(bytes: Uint8Array) {
   return btoa(String.fromCharCode(...bytes));
@@ -80,7 +81,7 @@ function assertSupportCode(value: string) {
 
 export const signIn = action({
   args: { staffProfileId: v.id('staffProfiles'), pin: v.string(), deviceId: v.string() },
-  handler: async (ctx, args): Promise<SignInResult> => {
+  handler: async (ctx, args): Promise<SignInResult | SignInFailure> => {
     if (!PIN_PATTERN.test(args.pin) || !DEVICE_PATTERN.test(args.deviceId)) {
       throw new Error('Sign-in details are invalid.');
     }
@@ -89,9 +90,10 @@ export const signIn = action({
       staffProfileId: args.staffProfileId,
       deviceId: args.deviceId,
     }) as SignInRecord | null;
-    if (!record || (record.lockedUntil && record.lockedUntil > now)) {
+    if (!record) {
       throw new Error('Sign-in is temporarily unavailable.');
     }
+    if (record.lockedUntil && record.lockedUntil > now) return { kind: 'locked' };
     if (!isStaffRole(record.role)) {
       throw new Error('Staff access requires an owner role update.');
     }
@@ -102,8 +104,7 @@ export const signIn = action({
         deviceId: args.deviceId,
         now,
       });
-      if (failure.lockedUntil) throw new Error('Too many failed PIN attempts. Try again later.');
-      throw new Error('PIN is incorrect.');
+      return { kind: failure.lockedUntil ? 'locked' : 'invalid-pin' };
     }
     const token = createToken();
     const staff = await ctx.runMutation(internal.identityInternal.createSession, {
@@ -112,8 +113,8 @@ export const signIn = action({
       credentialVersion: record.credentialVersion,
       tokenHash: await tokenHash(token),
       now,
-    }) as Omit<SignInResult, 'token'>;
-    return { token, ...staff };
+    }) as StaffIdentity;
+    return { kind: 'authenticated', token, ...staff };
   },
 });
 
@@ -123,7 +124,7 @@ export const supportSetPin = action({
     pin: v.string(),
     recoveryCode: v.string(),
   },
-  handler: async (ctx, args): Promise<Omit<SignInResult, 'token'>> => {
+  handler: async (ctx, args): Promise<StaffIdentity> => {
     if (!PIN_PATTERN.test(args.pin)) throw new Error('PIN must contain six digits.');
     assertSupportCode(args.recoveryCode);
     const pinSalt = createSalt();
@@ -132,20 +133,20 @@ export const supportSetPin = action({
       pinSalt,
       pinHash: await pinHash(args.pin, pinSalt),
       now: Date.now(),
-    }) as Omit<SignInResult, 'token'>;
+    }) as StaffIdentity;
   },
 });
 
 export const validateSession = action({
   args: { token: v.string(), deviceId: v.string() },
-  handler: async (ctx, args): Promise<Omit<SignInResult, 'token'>> => {
+  handler: async (ctx, args): Promise<StaffIdentity> => {
     if (!/^[A-Za-z0-9_-]{40,100}$/.test(args.token) || !DEVICE_PATTERN.test(args.deviceId)) {
       throw new Error('Session details are invalid.');
     }
     const session = await ctx.runQuery(internal.identityInternal.validateSession, {
       tokenHash: await tokenHash(args.token),
       deviceId: args.deviceId,
-    }) as Omit<SignInResult, 'token'> | null;
+    }) as StaffIdentity | null;
     if (!session) throw new Error('Staff session is unavailable. Sign in again.');
     return session;
   },

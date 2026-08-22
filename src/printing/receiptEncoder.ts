@@ -87,8 +87,11 @@ function wrap(value: string, width: number) {
 }
 
 function itemRows(model: ReceiptModel): ReceiptRow[] {
+  const labels = model.receiptLanguage === 'fr'
+    ? { item: 'ARTICLE', quantity: 'QTÉ', payment: 'Paiement', subtotal: 'Sous-total', discount: 'Remise', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
+    : { item: 'ITEM', quantity: 'QTY', payment: 'Payment', subtotal: 'Subtotal', discount: 'Discount', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
   const rows: ReceiptRow[] = [{
-    text: `${'ITEM'.padEnd(ITEM_WIDTH)}${'QTY'.padEnd(QUANTITY_WIDTH)}${'MAD'.padStart(MONEY_WIDTH)}`,
+    text: `${labels.item.padEnd(ITEM_WIDTH)}${labels.quantity.padEnd(QUANTITY_WIDTH)}${'MAD'.padStart(MONEY_WIDTH)}`,
     bold: true,
   }];
   for (const line of model.lines) {
@@ -114,8 +117,11 @@ function detailRows(label: string, value: string): ReceiptRow[] {
 }
 
 function receiptRows(model: ReceiptModel): ReceiptRow[] {
+  const labels = model.receiptLanguage === 'fr'
+    ? { payment: 'Paiement', subtotal: 'Sous-total', discount: 'Remise', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
+    : { payment: 'Payment', subtotal: 'Subtotal', discount: 'Discount', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
   const date = formatReceiptDate(model.completedAt);
-  const order = `ORDER ${model.receiptNumber}`;
+  const order = `${labels.order} ${model.receiptNumber}`;
   const orderRow = columns(order, date);
   const meta: ReceiptRow[] = orderRow
     ? [{ text: orderRow, bold: true }]
@@ -123,7 +129,7 @@ function receiptRows(model: ReceiptModel): ReceiptRow[] {
         ...wrap(order, WIDTH).map((text) => ({ text, bold: true })),
         { text: date, align: 'right' },
       ];
-  const cashier = model.cashierName ? `Cashier: ${model.cashierName}` : '';
+  const cashier = model.cashierName ? `${labels.cashier}: ${model.cashierName}` : '';
   const contextRow = cashier ? columns(cashier, model.serviceLabel) : undefined;
   if (contextRow) meta.push({ text: contextRow });
   else {
@@ -131,37 +137,36 @@ function receiptRows(model: ReceiptModel): ReceiptRow[] {
     meta.push(...wrap(model.serviceLabel, WIDTH).map((text) => ({ text })));
   }
   if (model.customerName) {
-    meta.push(...wrap(`Customer: ${model.customerName}`, WIDTH).map((text) => ({ text })));
+    meta.push(...wrap(`${labels.customer}: ${model.customerName}`, WIDTH).map((text) => ({ text })));
   }
 
   const payment = model.paymentAmountCentimes === undefined
-    ? detailRows('Payment', model.paymentMethod)
+    ? detailRows(labels.payment, model.paymentMethod)
     : detailRows(model.paymentMethod, formatReceiptMoney(model.paymentAmountCentimes));
 
   return [
-    { text: 'TÉTOUAN', align: 'center', bold: true },
     { text: '-'.repeat(WIDTH) },
     ...meta,
     { text: '-'.repeat(WIDTH) },
     ...itemRows(model),
     { text: '-'.repeat(WIDTH) },
-    ...detailRows('Subtotal', formatReceiptMoney(model.subtotalCentimes)),
+    ...detailRows(labels.subtotal, formatReceiptMoney(model.subtotalCentimes)),
     ...(model.discountCentimes
-      ? detailRows('Discount', `-${formatReceiptMoney(model.discountCentimes)}`)
+      ? detailRows(labels.discount, `-${formatReceiptMoney(model.discountCentimes)}`)
       : []),
-    ...detailRows('Tax', formatReceiptMoney(model.taxCentimes)),
+    ...detailRows(labels.tax, formatReceiptMoney(model.taxCentimes)),
     {
-      text: columns('TOTAL', formatReceiptMoney(model.totalCentimes), WIDTH / 2) ?? 'TOTAL',
+      text: columns(labels.total, formatReceiptMoney(model.totalCentimes), WIDTH / 2) ?? labels.total,
       bold: true,
       doubleWidth: true,
     },
     ...payment,
     ...(model.changeCentimes === undefined
       ? []
-      : detailRows('Change', formatReceiptMoney(model.changeCentimes))),
+      : detailRows(labels.change, formatReceiptMoney(model.changeCentimes))),
     { text: '-'.repeat(WIDTH) },
-    { text: 'MERCI.', align: 'center', bold: true, doubleWidth: true },
-    { text: 'À bientôt / See you soon', align: 'center' },
+    { text: labels.thanks, align: 'center', bold: true, doubleWidth: true },
+    { text: model.receiptLanguage === 'fr' ? 'À bientôt' : 'See you soon', align: 'center' },
   ];
 }
 

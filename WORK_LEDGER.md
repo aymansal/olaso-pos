@@ -112,6 +112,21 @@ remaining goal and card sequence.
   manager protected requests. Graphify refreshed to 2,691 nodes and 15,179
   edges. Exact next action: implement the confirmed POLICY-02 operational
   behavior without expanding into loyalty or refunds.
+- POLICY-02 implementation is verified and awaiting its card commit/push. New
+  sales are limited to Dine-in/Take-away and Cash/Card, with no customer/table
+  inputs; each local transaction allocates an offline-safe `MMYY-0001`
+  counter in migration 11 and preserves all prior snapshots unchanged. Saved
+  receipts carry their selected English/French language, logo-only printer
+  header, Cash/Card tender, and no-tax representation. Online wrong-PIN
+  responses are structured rather than thrown, so the app shows `Wrong PIN.
+  Try again.` with no Convex/uncaught console entry. `npm run check:sales`,
+  `check:permissions`, `check:identity`, `check:pos`, `check:printing`,
+  `check:local`, `check:android`, TypeScript, production build, Android debug
+  build, and `git diff --check` pass. SM-X115 APK evidence covers failed and
+  successful owner PIN entry and an unclipped 1340 × 800 POS rail with only
+  Dine-in/Take-away, Cash/Card, and No tax. Graphify refreshed to 2,711 nodes
+  and 17,918 edges. Exact next action: commit and push POLICY-02, record its
+  SHA, then activate ORDER-01 alone.
 - Graphify was queried before resuming work. It confirms the existing saved
   receipt, Orders, and print-state paths that Goal 05 must preserve.
 - POLICY-01 is fully confirmed. Its authority updates document logo-only

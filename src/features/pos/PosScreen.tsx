@@ -44,10 +44,9 @@ interface PosScreenProps {
 
 function localServiceType(
   serviceMode: ServiceMode,
-): 'dine-in' | 'take-away' | 'order-online' {
+): 'dine-in' | 'take-away' {
   if (serviceMode === 'Dine In') return 'dine-in';
-  if (serviceMode === 'Take Away') return 'take-away';
-  return 'order-online';
+  return 'take-away';
 }
 
 export function PosScreen({
@@ -60,6 +59,7 @@ export function PosScreen({
     menu,
     completeOrder,
     printFeedback,
+    receiptLanguage,
     isLoading,
     error: dataWarning,
   } = usePosData();
@@ -248,15 +248,13 @@ export function PosScreen({
       const result = await completeOrder({
         cart: session.cart,
         serviceType: localServiceType(session.serviceMode),
-        customerName: session.customerName,
-        tableLabel: session.table,
+        paymentMethod: session.paymentMethod,
+        receiptLanguage,
       });
       setReceiptPreview(result.receipt);
       onSessionChange((current) => ({
         ...current,
         cart: [],
-        customerName: '',
-        table: '',
         checkoutStatus: 'success',
       }));
     } catch (caught) {
@@ -306,8 +304,7 @@ export function PosScreen({
         taxCentimes={tax}
         totalCentimes={total}
         serviceMode={session.serviceMode}
-        customerName={session.customerName}
-        table={session.table}
+        paymentMethod={session.paymentMethod}
         checkoutFeedback={checkoutFeedback}
         checkoutDisabled={
           validation.kind !== 'valid' || session.checkoutStatus === 'processing'
@@ -330,10 +327,8 @@ export function PosScreen({
           }))}
         onServiceModeChange={(serviceMode) =>
           editSession((current) => ({ ...current, serviceMode }))}
-        onCustomerNameChange={(customerName) =>
-          editSession((current) => ({ ...current, customerName }))}
-        onTableChange={(table) =>
-          editSession((current) => ({ ...current, table }))}
+        onPaymentMethodChange={(paymentMethod) =>
+          editSession((current) => ({ ...current, paymentMethod }))}
         onPlaceOrder={placeOrder}
       />
       {configuringProduct ? (

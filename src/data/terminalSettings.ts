@@ -2,11 +2,13 @@ import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { withLocalTransaction } from './localDatabase.ts';
 
 export type ClockFormat = '12-hour' | '24-hour';
+export type ReceiptLanguage = 'en' | 'fr';
 
 export type TerminalSettings = {
   deviceId: string;
   terminalName: string;
   clockFormat: ClockFormat;
+  receiptLanguage: ReceiptLanguage;
   isLocked: boolean;
   pendingSyncCount: number;
   lastSyncAt?: number;
@@ -18,7 +20,7 @@ export type TerminalSettings = {
 
 export type TerminalPreferences = Pick<
   TerminalSettings,
-  'terminalName' | 'clockFormat'
+  'terminalName' | 'clockFormat' | 'receiptLanguage'
 >;
 
 export type PrinterPreferences = Pick<
@@ -42,6 +44,12 @@ function cleanTerminalName(value: string) {
 function assertClockFormat(value: string): asserts value is ClockFormat {
   if (value !== '12-hour' && value !== '24-hour') {
     throw new Error('Clock format must be 12-hour or 24-hour.');
+  }
+}
+
+function assertReceiptLanguage(value: string): asserts value is ReceiptLanguage {
+  if (value !== 'en' && value !== 'fr') {
+    throw new Error('Receipt language must be English or French.');
   }
 }
 
@@ -97,12 +105,13 @@ export async function loadTerminalSettingsFromDatabase(
        'device_id',
        'terminal_name',
        'clock_format',
+       'receipt_language',
        'session_locked',
        'operational_cache_updated_at',
        'printer_host',
        'printer_port'
      )
-     LIMIT 7`,
+     LIMIT 8`,
   );
   const values = new Map(
     (settings.values ?? []).map((row) => [String(row.key), String(row.value)]),
@@ -110,12 +119,15 @@ export async function loadTerminalSettingsFromDatabase(
   const deviceId = values.get('device_id') ?? `device-${idFactory()}`;
   const terminalName = values.get('terminal_name') ?? DEFAULT_TERMINAL_NAME;
   const clockFormat = values.get('clock_format') ?? '24-hour';
+  const receiptLanguage = values.get('receipt_language') ?? 'en';
   assertClockFormat(clockFormat);
+  assertReceiptLanguage(receiptLanguage);
 
   for (const [key, value] of [
     ['device_id', deviceId],
     ['terminal_name', terminalName],
     ['clock_format', clockFormat],
+    ['receipt_language', receiptLanguage],
     ['session_locked', values.get('session_locked') ?? '0'],
   ]) {
     if (!values.has(key)) await upsertSetting(database, key, value, now);
@@ -142,6 +154,7 @@ export async function loadTerminalSettingsFromDatabase(
     deviceId,
     terminalName: cleanTerminalName(terminalName),
     clockFormat,
+    receiptLanguage,
     isLocked: values.get('session_locked') === '1',
     pendingSyncCount: Number(pending.values?.[0]?.count ?? 0),
     printerHost: values.get('printer_host') ?? '',
@@ -171,9 +184,11 @@ export async function saveTerminalPreferencesToDatabase(
 ) {
   const terminalName = cleanTerminalName(input.terminalName);
   assertClockFormat(input.clockFormat);
+  assertReceiptLanguage(input.receiptLanguage);
   await upsertSetting(database, 'terminal_name', terminalName, now);
   await upsertSetting(database, 'clock_format', input.clockFormat, now);
-  return { terminalName, clockFormat: input.clockFormat };
+  await upsertSetting(database, 'receipt_language', input.receiptLanguage, now);
+  return { terminalName, clockFormat: input.clockFormat, receiptLanguage: input.receiptLanguage };
 }
 
 export function saveTerminalPreferences(input: TerminalPreferences) {

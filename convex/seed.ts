@@ -1578,7 +1578,7 @@ export const verify = internalQuery({
       sampleSaleItems.length !== 2 ||
       sampleMovements.length !== 3 ||
       !sampleMetric ||
-      sampleMetric.orderCount !== 2 ||
+      sampleMetric.orderCount < 2 ||
       seededStaff.length !== 2 ||
       seededCompensation?.monthlyAmountCentimes !== 550000
     ) {

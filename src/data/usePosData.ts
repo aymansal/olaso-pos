@@ -18,6 +18,7 @@ import {
   type OperationalCacheSnapshot,
 } from './operationalCache.ts';
 import { useStaffSession } from './sessionContext';
+import { loadTerminalSettings, type ReceiptLanguage } from './terminalSettings';
 
 export function toConvexSaleArgs(input: SaleSyncPayload) {
   return {
@@ -50,6 +51,7 @@ export function usePosData() {
     kind: 'neutral' | 'error' | 'success';
     message: string;
   }>();
+  const [receiptLanguage, setReceiptLanguage] = useState<ReceiptLanguage>('en');
   const cloudSnapshot =
     snapshotQuery.status === 'success' ? snapshotQuery.data : undefined;
 
@@ -80,6 +82,12 @@ export function usePosData() {
       ),
     );
   }, [reloadLocal]);
+
+  useEffect(() => {
+    loadTerminalSettings()
+      .then((settings) => setReceiptLanguage(settings.receiptLanguage))
+      .catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     if (!cloudSnapshot) return;
@@ -175,5 +183,6 @@ export function usePosData() {
           ? 'Cloud unavailable. Using the saved menu; local orders will retry automatically.'
           : undefined
       ),
+    receiptLanguage,
   };
 }

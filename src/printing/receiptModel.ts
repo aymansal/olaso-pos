@@ -22,6 +22,7 @@ export type ReceiptSnapshotForPrint = {
   totalCentimes: number;
   taxPolicyLabel: string;
   paymentMethod: string;
+  receiptLanguage?: 'en' | 'fr';
 };
 
 export type ReceiptModel = {
@@ -44,6 +45,7 @@ export type ReceiptModel = {
   totalCentimes: number;
   taxPolicyLabel: string;
   paymentMethod: string;
+  receiptLanguage: 'en' | 'fr';
   paymentAmountCentimes?: number;
   changeCentimes?: number;
 };
@@ -149,6 +151,10 @@ export function createReceiptModel(
   const tableLabel = optionalText(snapshot.tableLabel, 'table', 40);
   const cashierName = optionalText(snapshot.cashierName, 'cashier', 80);
   const customerName = optionalText(snapshot.customerName, 'customer', 80);
+  const receiptLanguage = snapshot.receiptLanguage ?? 'en';
+  if (receiptLanguage !== 'en' && receiptLanguage !== 'fr') {
+    throw new Error('Receipt language is invalid.');
+  }
   const serviceLabel = snapshot.serviceType === 'dine-in'
     ? `Dine in${tableLabel ? ` / Table ${tableLabel}` : ''}`
     : snapshot.serviceType === 'take-away'
@@ -171,6 +177,7 @@ export function createReceiptModel(
     totalCentimes,
     taxPolicyLabel: text(snapshot.taxPolicyLabel, 'tax policy', 120),
     paymentMethod: text(snapshot.paymentMethod, 'payment method', 80),
+    receiptLanguage,
     ...(paymentAmountCentimes === undefined ? {} : { paymentAmountCentimes }),
     ...(changeCentimes === undefined ? {} : { changeCentimes }),
   };

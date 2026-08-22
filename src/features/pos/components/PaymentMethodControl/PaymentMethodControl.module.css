@@ -1,0 +1,35 @@
+.control {
+  position: absolute;
+  top: 134px;
+  left: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 296px;
+  height: 42px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-border);
+  border-radius: 21px;
+  background: var(--olaso-white);
+}
+
+.control button {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 21px;
+  color: #626b63;
+  background: white;
+  font: inherit;
+  font-size: 11px;
+}
+
+.control .active {
+  color: white;
+  background: var(--olaso-green);
+  font-weight: 600;
+}
+
+.control button:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: -3px;
+}

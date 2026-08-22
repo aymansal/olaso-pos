@@ -47,7 +47,7 @@ const model = createReceiptModel(snapshot, {
 });
 const text = renderReceiptText(model);
 const raw = encodeWd8260Receipt(model);
-const goldenSha256 = '8C8C109B9A4F884D44819A55099C7D88FA7B005927FD5BB4767734E79EF6B1AE';
+const goldenSha256 = 'BBE616450ECFDC5DDDE6CA7FDC3BA6EFB0E84754DA468593D1DC411572C511CE';
 
 const outputIndex = process.argv.indexOf('--output');
 if (outputIndex >= 0) {
@@ -62,7 +62,7 @@ assert.equal((text.match(/\bMAD\b/g) || []).length, 1);
 assert.match(text, /ORDER 000123\s+21\/08\/2026 14:35/);
 assert.match(text, /Cashier: Alex\s+Dine in \/ Table T4/);
 assert.match(text, /Café crème double\s+2\s+36\.00/);
-assert.match(text, /À bientôt \/ See you soon/);
+assert.match(text, /THANK YOU\.\nSee you soon/);
 assert.doesNotMatch(text, /example\.com|QR/i);
 assert.deepEqual(
   [...raw.subarray(0, 10)],
@@ -73,7 +73,8 @@ assert.equal(Buffer.from(raw).indexOf(Buffer.from([0x1d, 0x28, 0x6b])), -1);
 assert.deepEqual([...raw.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
 const savedSaleSnapshot = {
   ...snapshot,
-  paymentMethod: 'Pending owner confirmation',
+  paymentMethod: 'Card',
+  receiptLanguage: 'fr',
 };
 const savedSaleBytes = createSavedReceiptBytes(savedSaleSnapshot);
 assert.deepEqual(
@@ -82,7 +83,7 @@ assert.deepEqual(
 );
 assert.match(
   Buffer.from(savedSaleBytes).toString('latin1'),
-  /Payment\s+Pending owner confirmation/,
+  /Paiement\s+Card/,
 );
 
 const successfulOrder = [];
@@ -146,7 +147,7 @@ assert.deepEqual(failedOrder, [
 assert.equal(
   createHash('sha256').update(raw).digest('hex').toUpperCase(),
   goldenSha256,
-  'Application receipt bytes differ from the paper-approved golden stream',
+  'Application receipt bytes differ from the approved policy receipt stream',
 );
 assert.deepEqual(
   [...encodeCp858('TÉTOUAN Café Thé À bientôt')],
@@ -184,7 +185,7 @@ const edge = createReceiptModel({
   ],
   subtotalCentimes: 99999900,
   totalCentimes: 99999900,
-  paymentMethod: 'Pending owner confirmation',
+  paymentMethod: 'Cash',
 });
 const edgeText = renderReceiptText(edge);
 assert(edgeText.split('\n').every((row) => row.length <= 48));

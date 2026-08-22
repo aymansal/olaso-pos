@@ -10,18 +10,9 @@
   background: var(--olaso-white) !important;
 }
 
-.fields {
-  position: absolute;
-  top: 134px;
-  left: 12px;
-  display: grid;
-  grid-template-columns: repeat(2, 144px);
-  gap: 8px;
-}
-
 .orderSection {
   position: absolute;
-  top: 214px;
+  top: 188px;
   left: 12px;
   width: 296px;
   height: 268px;

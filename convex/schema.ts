@@ -197,6 +197,7 @@ export default defineSchema({
     costStatus: v.optional(costStatus),
     taxPolicyLabel: v.string(),
     paymentMethod: v.string(),
+    receiptLanguage: v.optional(v.union(v.literal('en'), v.literal('fr'))),
     status: saleStatus,
     businessDate: v.string(),
     completedAt: v.number(),
@@ -215,6 +216,7 @@ export default defineSchema({
       totalCentimes: v.number(),
       taxPolicyLabel: v.string(),
       paymentMethod: v.string(),
+      receiptLanguage: v.optional(v.union(v.literal('en'), v.literal('fr'))),
     }),
   })
     .index('by_device_local_sale', ['deviceId', 'localSaleId'])

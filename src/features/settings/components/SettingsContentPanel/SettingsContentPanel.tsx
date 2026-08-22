@@ -59,6 +59,8 @@ export function SettingsContentPanel({
   const [terminalName, setTerminalName] = useState('');
   const [clockFormat, setClockFormat] =
     useState<TerminalPreferences['clockFormat']>('24-hour');
+  const [receiptLanguage, setReceiptLanguage] =
+    useState<TerminalPreferences['receiptLanguage']>('en');
   const [isSaving, setIsSaving] = useState(false);
   const [printerHost, setPrinterHost] = useState('');
   const [printerPort, setPrinterPort] = useState('9100');
@@ -67,6 +69,7 @@ export function SettingsContentPanel({
     if (!settings) return;
     setTerminalName(settings.terminalName);
     setClockFormat(settings.clockFormat);
+    setReceiptLanguage(settings.receiptLanguage);
     setPrinterHost(settings.printerHost);
     setPrinterPort(String(settings.printerPort));
   }, [settings]);
@@ -74,7 +77,7 @@ export function SettingsContentPanel({
   async function save() {
     setIsSaving(true);
     try {
-      await onSave({ terminalName, clockFormat });
+      await onSave({ terminalName, clockFormat, receiptLanguage });
     } catch {
       // The data hook owns the actionable error message.
     } finally {
@@ -383,6 +386,24 @@ export function SettingsContentPanel({
               key={value}
             >
               {value === '12-hour' ? '12 hour' : '24 hour'}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset className={styles.language}>
+        <legend>Receipt language</legend>
+        <p>Each new saved receipt and print follows this staff-app language.</p>
+        <div>
+          {(['en', 'fr'] as const).map((value) => (
+            <button
+              className={receiptLanguage === value ? styles.selected : ''}
+              type="button"
+              aria-pressed={receiptLanguage === value}
+              onClick={() => setReceiptLanguage(value)}
+              key={value}
+            >
+              {value === 'en' ? 'English' : 'Français'}
             </button>
           ))}
         </div>

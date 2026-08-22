@@ -1,7 +1,7 @@
 import type { ServiceMode } from '../../posSession';
 import styles from './SegmentedControl.module.css';
 
-const options: ServiceMode[] = ['Dine In', 'Take Away', 'Order Online'];
+const options: ServiceMode[] = ['Dine In', 'Take Away'];
 
 type SegmentedControlProps = {
   value: ServiceMode;

@@ -378,6 +378,15 @@ export const localMigrations = [
         ON compensation_periods(staff_profile_id, effective_start_month)`,
     ],
   },
+  {
+    toVersion: 11,
+    statements: [
+      `CREATE TABLE receipt_counters (
+        period TEXT PRIMARY KEY NOT NULL,
+        next_number INTEGER NOT NULL CHECK (next_number BETWEEN 1 AND 10000)
+      )`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

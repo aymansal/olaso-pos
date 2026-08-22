@@ -1,8 +1,8 @@
 import { Card } from '@astryxdesign/core/Card';
 import type { Product } from '../../data/products';
-import type { ServiceMode } from '../../posSession';
-import { LabeledField } from '../LabeledField/LabeledField';
+import type { PaymentMethod, ServiceMode } from '../../posSession';
 import { OrderItemCard } from '../OrderItemCard/OrderItemCard';
+import { PaymentMethodControl } from '../PaymentMethodControl/PaymentMethodControl';
 import { PaymentSummary } from '../PaymentSummary/PaymentSummary';
 import { PrimaryAction } from '../PrimaryAction/PrimaryAction';
 import { ReceiptHeader } from '../ReceiptHeader/ReceiptHeader';
@@ -22,8 +22,7 @@ type ReceiptRailProps = {
   taxCentimes: number;
   totalCentimes: number;
   serviceMode: ServiceMode;
-  customerName: string;
-  table: string;
+  paymentMethod: PaymentMethod;
   checkoutFeedback: {
     kind: 'neutral' | 'error' | 'success';
     message: string;
@@ -34,8 +33,7 @@ type ReceiptRailProps = {
   onIncrement: (lineId: string) => void;
   onRemove: (lineId: string) => void;
   onServiceModeChange: (serviceMode: ServiceMode) => void;
-  onCustomerNameChange: (customerName: string) => void;
-  onTableChange: (table: string) => void;
+  onPaymentMethodChange: (paymentMethod: PaymentMethod) => void;
   onPlaceOrder: () => Promise<void>;
 };
 
@@ -45,8 +43,7 @@ export function ReceiptRail({
   taxCentimes,
   totalCentimes,
   serviceMode,
-  customerName,
-  table,
+  paymentMethod,
   checkoutFeedback,
   checkoutDisabled,
   checkoutProcessing,
@@ -54,28 +51,14 @@ export function ReceiptRail({
   onIncrement,
   onRemove,
   onServiceModeChange,
-  onCustomerNameChange,
-  onTableChange,
+  onPaymentMethodChange,
   onPlaceOrder,
 }: ReceiptRailProps) {
   return (
     <Card className={styles.rail} width={320} height={688} padding={0}>
       <ReceiptHeader />
       <SegmentedControl value={serviceMode} onChange={onServiceModeChange} />
-      <div className={styles.fields}>
-        <LabeledField
-          label="Customer name"
-          placeholder="Optional"
-          value={customerName}
-          onChange={onCustomerNameChange}
-        />
-        <LabeledField
-          label="Table"
-          placeholder="Required for dine in"
-          value={table}
-          onChange={onTableChange}
-        />
-      </div>
+      <PaymentMethodControl value={paymentMethod} onChange={onPaymentMethodChange} />
       <div className={styles.orderSection}>
         <span className={styles.sectionLabel}>Order list</span>
         <div className={styles.orderList}>

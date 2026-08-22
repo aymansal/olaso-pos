@@ -28,20 +28,14 @@ const baseSession = {
   selectedCategoryId: 'coffee',
   cart: [],
   serviceMode: 'Dine In',
-  customerName: '',
-  table: '',
+  paymentMethod: 'Cash',
   checkoutStatus: 'idle',
 };
 assert.equal(validatePosSession(baseSession, products).kind, 'empty');
 assert.equal(
-  validatePosSession({ ...baseSession, cart: addProduct([], 'latte') }, products).kind,
-  'error',
-);
-assert.equal(
   validatePosSession({
     ...baseSession,
     cart: addProduct([], 'latte'),
-    table: 'T4',
   }, products).kind,
   'valid',
 );
@@ -71,7 +65,7 @@ cart = addProduct(cart, 'latte');
 cart = incrementCartLine(cart, '["latte",[]]');
 assert.equal(subtotalCentimes(cart, products), 6200);
 assert.equal(taxCentimes(6200), 0);
-assert.equal(taxCentimes(105, 1000), 11);
+assert.equal(taxCentimes(105), 0);
 assert.equal(totalCentimes(6200, 0), 6200);
 
 cart = decrementCartLine(cart, '["americano",[]]');

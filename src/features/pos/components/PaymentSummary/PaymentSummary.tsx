@@ -17,7 +17,7 @@ export function PaymentSummary({
       <h2 id="payment-details">Payment Details</h2>
       <dl>
         <div><dt>Subtotal</dt><dd>{formatMoney(subtotalCentimes)}</dd></div>
-        <div><dt>Tax (temporary 0%)</dt><dd>{formatMoney(taxCentimes)}</dd></div>
+        <div><dt>No tax</dt><dd>{formatMoney(taxCentimes)}</dd></div>
         <div className={styles.total}><dt>Total</dt><dd>{formatMoney(totalCentimes)}</dd></div>
       </dl>
     </section>

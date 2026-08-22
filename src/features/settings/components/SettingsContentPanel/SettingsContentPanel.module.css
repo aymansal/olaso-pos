@@ -93,7 +93,8 @@
 
 .primary:focus-visible,
 .formGrid input:focus-visible,
-.clock button:focus-visible {
+.clock button:focus-visible,
+.language button:focus-visible {
   outline: 2px solid var(--olaso-green);
   outline-offset: 2px;
 }
@@ -243,9 +244,57 @@
   background: var(--olaso-green);
 }
 
+.language {
+  position: absolute;
+  top: 438px;
+  left: 26px;
+  width: 400px;
+  height: 45px;
+  padding: 0;
+  border: 0;
+}
+
+.language legend {
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.language p {
+  margin: 3px 0 0;
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+}
+
+.language div {
+  position: absolute;
+  top: 22px;
+  left: 214px;
+  display: flex;
+  width: 186px;
+  height: 30px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-order-divider);
+  border-radius: 15px;
+}
+
+.language button {
+  flex: 1;
+  border: 0;
+  background: var(--olaso-white);
+  color: var(--olaso-text-meta);
+  font: inherit;
+  font-size: 9px;
+}
+
+.language .selected {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
 .notice {
   position: absolute;
-  top: 490px;
+  top: 510px;
   left: 26px;
   display: flex;
   align-items: flex-start;

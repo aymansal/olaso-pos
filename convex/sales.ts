@@ -3,7 +3,6 @@ import type { Doc, Id } from './_generated/dataModel';
 import { internalQuery, mutation, query } from './_generated/server';
 import {
   boundedInteger,
-  cleanOptionalText,
   cleanText,
   conflict,
   invalid,
@@ -17,8 +16,9 @@ declare const process: { env: Record<string, string | undefined> };
 const serviceMode = v.union(
   v.literal('dine-in'),
   v.literal('take-away'),
-  v.literal('online'),
 );
+const paymentMethod = v.union(v.literal('Cash'), v.literal('Card'));
+const receiptLanguage = v.union(v.literal('en'), v.literal('fr'));
 const saleLine = v.object({
   productId: v.id('products'),
   productRevision: v.number(),
@@ -29,8 +29,7 @@ const saleLine = v.object({
   costStatus: v.union(v.literal('complete'), v.literal('incomplete')),
   valuationRevisions: v.array(v.object({ ingredientId: v.string(), revision: v.number() })),
 });
-const TAX_POLICY_LABEL = 'Temporary 0% — owner confirmation pending';
-const PAYMENT_METHOD = 'Pending owner confirmation';
+const TAX_POLICY_LABEL = 'No tax';
 
 type PreparedLine = {
   product: Doc<'products'>;
@@ -122,8 +121,8 @@ export const accept = mutation({
     localSaleId: v.string(),
     receiptNumber: v.string(),
     serviceMode,
-    customerName: v.optional(v.string()),
-    tableLabel: v.optional(v.string()),
+    paymentMethod,
+    receiptLanguage,
     businessDate: v.string(),
     completedAt: v.number(),
     ingredientCostCentimes: v.optional(v.number()),
@@ -150,14 +149,8 @@ export const accept = mutation({
     }
 
     const receiptNumber = cleanText(args.receiptNumber, 'Receipt number', 64);
-    const customerName = cleanOptionalText(
-      args.customerName,
-      'Customer name',
-      80,
-    );
-    const tableLabel = cleanOptionalText(args.tableLabel, 'Table', 40);
-    if (args.serviceMode === 'dine-in' && !tableLabel) {
-      return invalid('Table is required for dine in.');
+    if (!/^\d{4}-\d{4}$/.test(receiptNumber)) {
+      return invalid('Receipt number must use MMYY-0001.');
     }
     const parsedBusinessDate = Date.parse(
       `${args.businessDate}T00:00:00.000Z`,
@@ -471,8 +464,6 @@ export const accept = mutation({
       receiptNumber,
       cashierName: actor,
       serviceMode: args.serviceMode,
-      ...(customerName ? { customerName } : {}),
-      ...(tableLabel ? { tableLabel } : {}),
       subtotalCentimes,
       discountCentimes: 0,
       taxCentimes: 0,
@@ -482,7 +473,7 @@ export const accept = mutation({
         : { ingredientCostCentimes: saleIngredientCostCentimes }),
       costStatus: args.costStatus,
       taxPolicyLabel: TAX_POLICY_LABEL,
-      paymentMethod: PAYMENT_METHOD,
+      paymentMethod: args.paymentMethod,
       status: 'completed',
       businessDate: args.businessDate,
       completedAt,
@@ -491,8 +482,6 @@ export const accept = mutation({
         receiptNumber,
         completedAt,
         serviceMode: args.serviceMode,
-        ...(customerName ? { customerName } : {}),
-        ...(tableLabel ? { tableLabel } : {}),
         lines: preparedLines.map((line) => ({
           productName: line.product.receiptName,
           quantity: line.quantity,
@@ -505,7 +494,8 @@ export const accept = mutation({
         taxCentimes: 0,
         totalCentimes: subtotalCentimes,
         taxPolicyLabel: TAX_POLICY_LABEL,
-        paymentMethod: PAYMENT_METHOD,
+        paymentMethod: args.paymentMethod,
+        receiptLanguage: args.receiptLanguage,
       },
     });
     for (const line of preparedLines) {
@@ -615,14 +605,14 @@ export const accept = mutation({
       ? metric.totalsByPaymentMethod.map((row) => ({ ...row }))
       : [];
     const payment = totalsByPaymentMethod.find(
-      (row) => row.paymentMethod === PAYMENT_METHOD,
+      (row) => row.paymentMethod === args.paymentMethod,
     );
     if (payment) {
       payment.totalCentimes += subtotalCentimes;
       payment.orderCount += 1;
     } else {
       totalsByPaymentMethod.push({
-        paymentMethod: PAYMENT_METHOD,
+        paymentMethod: args.paymentMethod,
         totalCentimes: subtotalCentimes,
         orderCount: 1,
       });
