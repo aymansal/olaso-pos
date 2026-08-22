@@ -93,8 +93,8 @@ sensitive compensation data.
 | COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | done | `551856a3c3e35c057ca70d91e23667831a33c2a5` pushed to `origin/codex/goal-04-costs-profitability`. |
 | COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | done | `1e7b225ad57b4a69b8776b7f39f08c549115b73e` pushed to `origin/codex/goal-04-costs-profitability`. |
 | COST-06 | Add staff profiles and owner-only effective compensation periods | done | `1c6e5e465e427ec8f3728dec73f257533ba00388` pushed to `origin/codex/goal-04-costs-profitability`. |
-| COST-07 | Add validated one-time and recurring operating expenses | in progress | — |
-| COST-08 | Add the bounded monthly Costs and Profitability report | pending | — |
+| COST-07 | Add validated one-time and recurring operating expenses | done | `850070d87a42e39a40ebc2e1b5b76ab61058c9df` pushed to `origin/codex/goal-04-costs-profitability`. |
+| COST-08 | Add the bounded monthly Costs and Profitability report | in progress | — |
 | COST-09 | Run full regression, security/quota review, tablet QA, documentation closeout, and final push | pending | — |
 
 ## Card Contracts
