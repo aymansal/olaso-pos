@@ -5,6 +5,25 @@ goal between activations. Project rules and durable product decisions remain in
 AGENTS.md, PRODUCT.md, ARCHITECTURE.md, DESIGN.md, and BRAND.md. PLAN.md owns the
 remaining goal and card sequence.
 
+## Active Goal
+
+### Goal 05 — Business Policy, Identity, and Permissions
+
+**Status:** active
+
+**Goal branch:** `codex/goal-05-policy-identity-permissions`
+
+| Card | Status |
+| --- | --- |
+| POLICY-01 — Confirm and record the owner decision matrix | in progress |
+| ID-01 — Define the production identity, offline session, lock, recovery, and threat model | pending |
+| ID-02 — Add production identity/session persistence and remove production authorization override | pending |
+| PERM-01 — Enforce role permissions and sensitive-data return boundaries | pending |
+| POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | pending |
+| ORDER-01 — Implement authorized cancellation/refund corrections and reversals | pending |
+| ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | pending |
+| POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | pending |
+
 ## Most Recently Completed Goal
 
 ### Goal 04 — Costs and Profitability
@@ -59,11 +78,52 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; POLICY-01
+  is the only card in progress. The branch was created and pushed from completed
+  Goal 04 commit `92cc41f882743fcab9a447ef98e865fc5d1f4a5b`; `main` and
+  `origin/main` now resolve to that same commit.
+- Graphify was queried before resuming work. It confirms the existing saved
+  receipt, Orders, and print-state paths that Goal 05 must preserve.
+- POLICY-01 is fully confirmed. Its authority updates document logo-only
+  temporary receipt headers, no tax, cash/card product-split payments,
+  French/English selection, `MMYY-0001`, dine-in/take-away only, warning-only
+  stock, same-day offline whole-sale corrections, cumulative roles, and the
+  confirmed PIN/session policy. Exact next action: validate, commit, and push
+  POLICY-01; then make ID-01 the sole in-progress card.
+- Exact next action: obtain the owner's explicit POLICY-01 answers. No
+  policy-dependent behavior, identity design, or authorization implementation
+  will be selected before those decisions are recorded.
+- Confirmed so far: receipts retain the approved Olaso logo; tax is not shown
+  on receipts; supported tenders are cash and card with split payments allowed;
+  the staff app is French/English; and receipt numbers should be compact. Legal
+  header details, tax treatment, receipt language, the exact receipt-number
+  format/reset rule, and all remaining POLICY-01 decisions are still open.
+- Further confirmed: the temporary receipt header is logo-only; the application
+  performs no tax calculation anywhere; a split is product-based sequential
+  checkout, not a split-tender amount; and the receipt language follows the
+  currently selected staff-app language. Receipt numbers use `MMYY-0001`, with
+  the numeric sequence resetting monthly. All later POLICY-01 decisions remain
+  open.
+- Further confirmed: the only service modes are take-away and dine-in; online
+  ordering is not part of the application. Ingredient-specific low-stock
+  thresholds create a warning and daily staff review, never a checkout block.
+  A completed sale may be cancelled only as an append-only correction with a
+  required reason; card corrections are recorded only and never trigger a bank
+  reversal. Dine-in has no table selection; customer details are deferred until
+  the separate loyalty feature; any cashier may authorize a cancellation.
+  Cashiers may make a whole-sale correction while offline, only on the same
+  local business day, then re-enter a replacement sale. All identity/role
+  decisions remain open except the confirmed cumulative cashier/manager/owner
+  access hierarchy and owner-only sensitive information. Every owner, manager,
+  and cashier has a separate six-digit PIN; the app locks for handoff/restart,
+  auto-locks after an owner-configurable five-minute default, permits local PIN
+  use throughout an outage, and locks out after five failed attempts for five
+  minutes. The owner accepts physical custody as the first-release lost-tablet
+  control. Owner recovery is support-mediated against the existing identity;
+  the exact one-time reset procedure remains to be defined without a temporary
+  privileged profile.
 - Goal 04 is complete; COST-01 through COST-09 are pushed and its completion
-  record is `8e7a981e2813cd768ebe70063fefc5c52d880d3d`. No goal or card is
-  currently in progress.
-- Goal 05 is next and remains inactive until the owner explicitly starts its
-  policy-decision card.
+  record is `8e7a981e2813cd768ebe70063fefc5c52d880d3d`.
 - The owner requested that all current UI remain unchanged until the complete
   application can be reviewed in final hardening. Goal 06 now records an
   owner-led dislike/simplification list, concise Settings/operator cleanup,
@@ -526,6 +586,104 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-22 — Goal 05 activated; POLICY-01 started
+
+- Confirmed the completed Goal 04 branch and remote at
+  `92cc41f882743fcab9a447ef98e865fc5d1f4a5b`, created and pushed
+  `codex/goal-05-policy-identity-permissions` from that state, then
+  fast-forwarded and pushed `main` to the same completed baseline.
+- Queried the current Graphify map before resuming. It identifies the existing
+  saved-receipt, Orders, and print-state boundaries that Goal 05 must retain.
+- Marked POLICY-01 as the sole in-progress card. Awaiting the owner's explicit
+  legal-receipt, tax, payment, language, receipt-numbering, service, stock,
+  correction, role, login, and sensitive-data policy decisions; no behavior is
+  being inferred or changed before those answers.
+
+### 2026-08-22 — POLICY-01 receipt and payment inputs received
+
+- Confirmed the existing approved Olaso logo remains on receipts. The owner
+  does not want a tax line printed on receipts.
+- Confirmed cash and card as the only supported payment methods, with split
+  payments allowed. The staff application is French/English.
+- The receipt number should be small and date-scoped; its exact visible format,
+  reset rule, offline behavior, legal header, tax treatment, and receipt
+  language remain explicitly undecided. POLICY-01 stays in progress.
+
+### 2026-08-22 — POLICY-01 receipt, tax, and product-split clarification
+
+- The temporary receipt header is the approved Olaso logo only. Address and
+  phone details are deliberately deferred until the owner/client requests them.
+- Tax is not calculated anywhere in the app. The selected staff-app language
+  determines the receipt language.
+- A split means sequential product-based checkout: the cashier selects a
+  customer's products from one order, records that payment, and leaves all
+  unpaid products visible for subsequent customers. It is not a split-tender
+  flow.
+- Confirmed receipt number format: `MMYY-0001`, for example `0826-0001`.
+  Its number increments without duplication during the month and resets to
+  `0001` in the following month.
+
+### 2026-08-22 — POLICY-01 service, stock, and correction inputs received
+
+- Removed online from scope. The café uses only take-away and dine-in service;
+  the small number of tables does not change that service distinction.
+- Each ingredient has an operator-selected low-stock threshold. Low stock is a
+  daily staff warning/review workflow, not a sale-blocking rule.
+- A completed sale is never deleted. A cancellation records its reason as an
+  append-only correction. Card corrections record the business correction only;
+  no card-terminal or bank reversal is attempted.
+- Dine-in is a service label only: the café's two-table setup does not use a
+  table selector. Customer details remain unavailable until a separately scoped
+  loyalty feature exists. Any cashier may cancel a completed sale with a reason.
+- Cashiers can cancel while offline. A cancellation is whole-sale only and must
+  occur on the same local business day; the cashier re-enters any replacement
+  order. The correction remains append-only and reverses only the original
+  saved effects, including its stock and cost snapshots.
+
+### 2026-08-22 — POLICY-01 role hierarchy approved
+
+- Roles are cumulative: manager includes all cashier abilities, and owner
+  includes all manager and cashier abilities.
+- Cashier: POS, product-based split checkout, reprint, same-day whole-sale
+  correction, and low-stock warnings. Manager: cashier access plus products,
+  stock, expenses, and operational sales reports. Owner: all manager/cashier
+  access plus staff, identity recovery, profitability, and individual
+  compensation. Sensitive owner-only data is never returned to lower roles.
+
+### 2026-08-22 — POLICY-01 PIN and offline-session inputs received
+
+- Every owner, manager, and cashier receives a separate six-digit PIN. A lock
+  screen supports handoff to another staff member, and application/tablet
+  restart always returns locked.
+- Auto-lock defaults to five idle minutes and is owner-configurable in Settings.
+  Five failed PIN attempts impose a five-minute local lockout.
+- A registered staff PIN remains usable offline without a 24-hour reconnect
+  deadline, including a multi-day outage. A remotely revoked worker therefore
+  becomes blocked on the tablet's next successful synchronization; it cannot be
+  revoked instantly while the tablet has no network.
+- The owner accepts physical custody of the tablet as the first-release
+  lost-device control and does not want a remote lost-device workflow. If an
+  owner forgets a PIN, verified support resets the existing owner identity
+  through the protected backend administration boundary; no temporary profile,
+  plaintext PIN, or development authorization bypass is created.
+- The owner requested a fast loyalty/customer-recognition experience. Apple and
+  Google Wallet NFC passes are not assumed: their contactless protocols require
+  platform entitlement/certification and compatible terminal setup. A dedicated
+  loyalty scope is needed before selecting an NFC-card or QR-card design,
+  customer-data policy, reward rule, or hardware integration.
+
+### 2026-08-22 — POLICY-01 final approval
+
+- The owner approved the remaining recommendations: visible `Dine-in` / `Sur
+  place` labels, no customer/table fields before a separately approved loyalty
+  feature, same-calendar-day corrections through 23:59 Africa/Casablanca, and
+  the logo-only receipt header as an explicit temporary rule.
+- Separate discounts and refunds remain unavailable rather than guessed. The
+  confirmed supported correction is the cashier-authorized, offline,
+  whole-sale cancellation with a required reason and no card/bank reversal.
+- Updated PRODUCT, ARCHITECTURE, DESIGN, BRAND, PLAN, and Goal 05 ownership
+  documents. POLICY-01 is ready for documentation validation and commit.
 
 ### 2026-08-22 — Deferred owner polish recorded
 

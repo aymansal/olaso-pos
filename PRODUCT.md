@@ -61,18 +61,17 @@ These rules are ordered by importance:
 The cashier can:
 
 - Search and browse the menu.
-- Select a service mode: dine in, take away, or order online.
+- Select a service mode: Dine-in / Sur place or Take-away.
 - Add products and modifiers to an order.
 - Change quantities and remove order lines.
-- Add customer or table details when needed.
+- Complete a sale without customer or table entry; customer details remain
+  deferred until a separately approved loyalty/customer feature.
 - Complete a sale and print or reprint its receipt.
 - View recent orders needed for operational recovery.
 
-### Owner or manager
+### Manager
 
-The owner or manager can:
-
-- Do everything a cashier can do.
+The manager can do everything a cashier can do, plus:
 - Add, edit, archive, and restore products.
 - Organize products into categories.
 - Set prices, sizes, options, and extras.
@@ -80,15 +79,18 @@ The owner or manager can:
 - Define and version each product's recipe.
 - Receive purchased stock with package quantity and price, correct stock, and
   review stock movements and valuation.
-- View sales, product, ingredient-consumption, stock, cost, and profitability
-  reports.
+- View operational sales reports.
 - Record one-time and recurring operating expenses.
-- The owner can maintain staff profiles and effective-dated monthly
-  compensation when the profile represents a worker.
-- Manage staff access when authentication is introduced.
 
-The exact permission matrix is pending owner confirmation. Until then, the
-application must keep cashier operations separate from management operations.
+### Owner
+
+The owner can do everything a manager and cashier can do, plus maintain staff
+profiles and effective-dated compensation, recover staff access through the
+approved support procedure, and view profitability and individual compensation.
+
+Cashiers do not receive management, reports, profitability, compensation, or
+Settings access. Managers do not receive profitability, individual compensation,
+staff, or owner-recovery access.
 
 ## Target environment
 
@@ -184,11 +186,14 @@ a seventh permanent navigation destination.
   available, but technical explanation may move behind progressive disclosure
   instead of occupying the normal coffee-shop operator flow.
 
-The functional beta exposes confirmed device and synchronization settings from
-that profile. Its local lock prevents accidental terminal use and survives an
-application restart, but it is not staff authentication. PIN entry, role
-selection, and login enforcement remain unavailable until the owner confirms
-their policy.
+The current beta exposes confirmed device and synchronization settings from that
+profile. Goal 05 replaces its convenience lock with individual staff identity:
+owner, manager, and cashier each receive a private six-digit PIN; a locked
+screen supports staff switching and appears after application/tablet restart.
+It auto-locks after an owner-configurable five-minute default and imposes a
+five-minute lockout after five failed attempts. Registered staff continue to
+authenticate locally throughout an outage; a revocation reaches the tablet on
+its next successful synchronization.
 
 ## POS workflow
 
@@ -365,8 +370,9 @@ Stock is never changed without leaving this history.
 
 ### Low stock
 
-Each ingredient can have a low-stock threshold. The application shows warnings
-without preventing a sale unless the owner later enables strict stock blocking.
+Each ingredient has an owner-configured low-stock threshold. The application
+warns staff to complete the required daily low-stock review and contact the
+owner outside the app; it never blocks a valid sale.
 
 ## Sales and reports
 
@@ -379,25 +385,31 @@ Each completed sale keeps a permanent snapshot of:
 - Date and time.
 - Cashier.
 - Service mode.
-- Customer or table details when supplied.
+- No customer or table details in the first production policy; these remain
+  unavailable until a separately approved loyalty/customer feature.
 - Products, quantities, modifiers, and notes.
 - Product names and prices at the time of sale.
 - Recipe version used for each line.
 - Ingredient-cost snapshot and cost-completeness state for each line and sale.
-- Subtotal, discounts, tax, total, and payment method.
+- Subtotal, total, and payment method.
 - Printing and synchronization state.
 - Cancellation or refund references.
 
-Tax, discount, and supported payment rules remain pending owner confirmation.
+The first production policy has no tax calculation anywhere in the application,
+and receipts show no tax line. Cash and card are the only payment methods.
+Product-based split checkout completes one customer's selected products and
+keeps unpaid products available for the next customer; it is not split tender.
+Discounts remain unavailable until the owner separately approves a policy.
 
-Until the owner confirms the tax rule, the functional POS shell applies a
-temporary 0% tax rate and labels that policy in the receipt feedback. This
-keeps cart totals honest without treating the former decorative 10% value as a
-business rule. No permanent sale is recorded at this checkout boundary.
+Receipts use the approved Olaso logo-only header until legal details are
+requested, render in the currently selected French or English staff language,
+and use `MMYY-0001` numbers (for example `0826-0001`). The sequence resets to
+`0001` each month and is generated safely on the one local-first tablet.
 
-Until the owner confirms required customer and table fields, the functional
-shell treats customer name as optional and requires a table only for dine-in
-orders. This is temporary interaction validation, not a final operating rule.
+A completed sale is never deleted. A cashier may make an offline, whole-sale,
+same-calendar-day correction with a required reason, then enter a replacement
+sale. The correction reverses the original saved effects exactly once. Card
+corrections are recorded only; the app never calls a bank or terminal reversal.
 
 ### Required reports
 
@@ -789,22 +801,15 @@ canonical `PLAN.md`.
 
 ## Open owner decisions
 
-- Official legal business name and receipt header.
+- Official legal business name, address, and phone for the currently temporary
+  logo-only receipt header.
 - Production Android version and kiosk behavior.
 - Production printer address reservation and raw TCP port confirmation.
 - Official menu spelling and current prices.
-- Tax rules and whether displayed prices include tax.
-- Supported payment methods.
-- Discount, cancellation, and refund permissions.
-- Strict or warning-only behavior when stock is insufficient.
-- Staff roles and PIN/login behavior.
-- Final staff-interface languages; the initial printed receipt is French and
-  English, with Arabic deferred unless the owner changes that scope.
-- Receipt number format.
-- Required customer and table fields.
+- Future discount policy.
+- Future loyalty/customer-record policy; customer details remain unavailable
+  until that feature is explicitly approved.
 - Final fiche technique and measurement units.
-- Whether any role besides the owner may view profitability without viewing
-  individual compensation.
 - Whether the owner needs a remote web dashboard.
 
 ## Product definition of done

@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** planned; not active; owner decisions required
+**Status:** active; POLICY-01 in progress
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -46,6 +46,39 @@ append-only cancellation/refund correction workflows.
   operational-cache, logs, or broad export paths.
 - Rewriting or deleting completed sales and stock movements.
 - Visual redesign, a new state library, or a generic authorization framework.
+- Customer records, loyalty rewards, Wallet passes, payment-terminal reversal,
+  and remote owner portals; each requires separately approved scope.
+
+## Confirmed POLICY-01 matrix
+
+- **Receipt and tax:** use the approved Olaso logo-only header until legal
+  details are requested; no tax calculation or tax line exists anywhere in the
+  first production policy. Receipts follow the selected French or English staff
+  language and use `MMYY-0001` monthly numbers.
+- **Payments:** cash and card only. Splits are sequential product-based
+  checkouts: after a customer's selected products are paid, unpaid products
+  remain for the next customer. No card-terminal/bank integration exists.
+- **Service and stock:** only Dine-in / Sur place and Take-away exist; online,
+  table selection, and customer fields are absent. Each ingredient has a
+  configurable low-stock warning and required daily staff review; valid sales
+  never block for stock.
+- **Corrections:** a cashier may make an offline, same-calendar-day
+  (Africa/Casablanca) whole-sale cancellation with a required reason, then
+  enter a replacement sale. The original record stays immutable and card
+  corrections are internal records only. Separate refund/discount behavior is
+  unavailable until explicitly approved.
+- **Roles and sessions:** permissions are cumulative cashier < manager < owner.
+  Profitability, individual compensation, staff, Settings, and owner recovery
+  are owner-only. Every staff member has an individual six-digit PIN; staff can
+  switch on lock, restart returns locked, idle lock defaults to five owner-
+  configurable minutes, and five failures lock locally for five minutes.
+  Registered staff may work through a multi-day outage; revocations apply on the
+  tablet's next synchronization. Verified support resets an existing owner
+  identity without temporary profiles or plaintext PINs.
+- **Explicit temporary policy:** physical tablet custody is the first-release
+  lost-device control. Legal receipt details, discounts, customer/loyalty,
+  dedicated refunds, and remote owner access remain unavailable rather than
+  implied production behavior.
 
 ## Git workflow and card gate
 
@@ -62,7 +95,7 @@ append-only cancellation/refund correction workflows.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| POLICY-01 | Confirm and record the owner decision matrix | pending | — |
+| POLICY-01 | Confirm and record the owner decision matrix | in progress | Authorities and focused documentation checks pending |
 | ID-01 | Define the production identity, offline session, lock, recovery, and threat model | pending | — |
 | ID-02 | Add production identity/session persistence and remove production authorization bypass | pending | — |
 | PERM-01 | Enforce role permissions and sensitive-data return boundaries | pending | — |
@@ -170,12 +203,12 @@ append-only cancellation/refund correction workflows.
 
 ## Current checkpoint
 
-- Goal 05 is planned only; no card is active and no goal branch exists.
-- PRODUCT.md lists the owner decisions that remain open.
-- The current local terminal lock is a safety convenience, not authentication.
-- Exact next action when Goal 04 is complete: obtain POLICY-01 answers or
-  explicitly activate POLICY-01 as a decision-only card. Generate the /goal
-  prompt from this current file only after that choice.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; POLICY-01
+  is the only card in progress while its authority updates are checked and
+  committed.
+- The confirmed matrix above replaces former temporary tax, service, payment,
+  correction, role, and lock assumptions. ID-01 starts only after POLICY-01 is
+  pushed and recorded.
 
 ## Planning journal
 
@@ -188,3 +221,12 @@ append-only cancellation/refund correction workflows.
   payment, receipt, or login behavior.
 - Added per-card physical-tablet and negative-authorization testing.
 - No application source code changed and Goal 05 remains inactive.
+
+### 2026-08-22 — POLICY-01 decisions confirmed
+
+- The owner confirmed the receipt, tax, cash/card product-split, French/English,
+  monthly receipt-number, service, warning-only stock, whole-sale correction,
+  role, PIN, offline-session, and support-recovery matrix.
+- Loyalty/customer records, discounts, dedicated refunds, legal receipt fields,
+  and remote owner access remain deliberately unavailable until separately
+  approved. No application behavior changed in this decision card.

@@ -346,9 +346,9 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `LabeledField` | visible label, current value | Text and select variants. Control is 129 by 48. |
 | `OrderLine` | product, unit price, quantity, size, note, total | Keep the total right-aligned. A note is optional. |
 | `QuantityStepper` | decrement, quantity, increment | 116 by 44 so both actions retain independent 44-pixel targets. Disable decrement at the minimum and expose an accessible value. |
-| `PaymentSummary` | subtotal, tax, total | Right-align values and emphasize only the total. Use tabular figures. |
+| `PaymentSummary` | subtotal, total | Right-align values and emphasize only the total. Use tabular figures; the confirmed policy has no tax row. |
 | `PrimaryAction` | action label, order total | 266 by 50. One primary action per screen. Disable it while submitting. |
-| `ReceiptRail` | navigation, service mode, customer, table, order, totals, primary action | 320 by 688 at the target viewport. The rail owns the final action and all order-editing controls. |
+| `ReceiptRail` | navigation, service mode, order, totals, primary action | 320 by 688 at the target viewport. The rail owns the final action and all order-editing controls; customer and table fields remain absent until a separately approved loyalty feature. |
 
 Use existing components before adding a new one. A visual difference that can be expressed as content or a documented variant is not a new component.
 
@@ -471,10 +471,12 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 ## Interaction and State
 
 - Tapping a product adds one unit to the active order and provides visible pressed feedback within 100 milliseconds.
-- Quantity controls update the line total, subtotal, tax, and total immediately. Decrement is disabled at the minimum allowed value.
+- Quantity controls update the line total, subtotal, and total immediately.
+  Decrement is disabled at the minimum allowed value.
 - Category selection changes the visible catalog without changing card dimensions.
 - Search filters product names and categories without clearing the current order.
-- Service mode has exactly one selected option.
+- Service mode has exactly one selected option: `Dine-in` / `Sur place` or
+  `Take-away`. The small café uses no table selector and has no online mode.
 - `Place order` is disabled for an empty order and while submission is in progress.
 - Successful submission shows a concise confirmation and starts a fresh receipt only after the local sale transaction commits.
 - After local persistence succeeds, printing is attempted once and cloud synchronization runs in the background.

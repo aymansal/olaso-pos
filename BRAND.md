@@ -197,7 +197,10 @@ Friendly, direct, lightly witty, and socially aware. Olaso speaks like a confide
 
 ### Language status
 
-The public profile uses English, while the local context suggests French and/or Arabic may also matter. The customer-facing and staff-facing language set is **not confirmed**. The future product must not assume a single language until the owner decides.
+The staff application supports French and English. Each receipt follows the
+currently selected staff-app language. Customer-facing loyalty language remains
+deferred until that separate feature is approved; Arabic receipt rendering is
+not in the first production policy.
 
 ## 8. Brand behavior in the POS product
 
@@ -236,7 +239,8 @@ Ask the owner or creative team to confirm:
 - [ ] Obtain the approved RGB/HEX equivalent; until then, keep the supplied digital value `#909F78`.
 - [ ] Exact official palette beyond the primary green and white.
 - [ ] Official typefaces and licenses.
-- [ ] Approved languages for staff UI, receipts, and customer-facing screens.
+- [x] Staff UI and receipts: French and English; receipt follows staff language.
+- [ ] Customer-facing loyalty language, if that separately deferred feature is approved.
 - [ ] Exact store address, legal business name, tax/receipt details, and currency formatting.
 - [ ] Galaxy Tab A9 model, orientation, and whether the app runs in kiosk mode.
 - [ ] Required POS peripherals and integrations.

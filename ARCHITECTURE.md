@@ -312,8 +312,8 @@ must remain separate.
 - Receipt number.
 - Cashier reference.
 - Service mode.
-- Customer/table snapshot.
-- Money totals in integer centimes.
+- No customer/table fields until a separately approved loyalty/customer feature.
+- Tax-free money totals in integer centimes.
 - Ingredient-cost total and cost-completeness snapshot.
 - Payment method.
 - Status.
@@ -356,16 +356,16 @@ entry rather than rewriting historical valuation.
 
 ### `staffProfiles` and `compensationPeriods`
 
-- Staff display identity, worker/manager/owner classification, active state,
-  and optional later authentication-subject link.
+- Staff display identity, cashier/manager/owner classification, active state,
+  and the required authentication-subject link.
 - Optional integer-centime monthly compensation with effective start month and
   optional end month.
 - Compensation changes create a new effective period.
 - Salary fields are returned only through owner-authorized functions and are
   excluded from cashier snapshots and ordinary staff reads.
 
-Staff profiles do not become authentication merely because they exist. The
-production identity and session boundary remains separately required.
+Staff profiles and authentication identities remain distinct. ID-01 defines the
+production session boundary before ID-02 persists it.
 
 ### `operatingExpenses`
 
@@ -393,7 +393,6 @@ Reports do not recalculate every historical sale on every screen load.
 
 The following are added only when their features are implemented:
 
-- Authentication identities, sessions, and complete permission assignments.
 - `devices`.
 - `cashSessions`.
 - `discountRules`.
@@ -407,6 +406,7 @@ The following are added only when their features are implemented:
 - Store MAD values as integer centimes.
 - `18 MAD` is stored as `1800`.
 - Never store operational money as a JavaScript floating-point decimal.
+- The confirmed first production policy has no tax calculation or tax line.
 - Recalculate totals in the local application operation and again in the
   Convex mutation.
 - Save the confirmed totals with the sale; do not derive old totals from the
@@ -753,12 +753,21 @@ longer answer the owner's confirmed reports.
 - Public functions expose the smallest required operation.
 - Scheduled and internal composition calls use internal functions.
 
-Authentication and PIN/session design will be selected after the owner
-confirms roles and operational login expectations.
+The confirmed policy is cumulative cashier < manager < owner authorization.
+Cashiers use POS, reprint, same-day whole-sale correction, and low-stock
+warnings; managers additionally use products, stock, expenses, and operational
+sales reports; only owners access staff, identity recovery, profitability, and
+individual compensation. Each staff member has a separate six-digit PIN.
 
-The current beta therefore stores only a non-secret local terminal-lock flag.
-It survives restart and preserves the in-memory order while the application
-remains open, but its explicit unlock action does not authenticate a user.
+ID-01/ID-02 must replace the current non-secret terminal lock with protected
+credential verifiers and local sessions. Lock/user-switch and app/tablet restart
+return to a locked identity boundary; the owner-configurable default idle lock
+is five minutes, and five failed attempts impose a five-minute local lockout.
+Registered staff remain usable through a multi-day outage, so a remote
+revocation takes effect on the tablet's next synchronization. Physical tablet
+custody is the accepted first-release lost-device control. Verified support may
+reset an existing owner identity through a protected backend boundary; it must
+not create a temporary privileged profile or expose a plaintext PIN.
 
 ## Printing boundary
 
@@ -799,8 +808,9 @@ Rules:
   state. Reprint is enabled only when the immutable local sale row exists, calls
   the same `printReceipt` boundary with current settings, and updates only
   attempt state/diagnostics.
-- The accepted initial receipt is French/English; unsupported-script bitmap
-  rendering remains deferred until another language is required.
+- The receipt language follows the selected French or English staff language;
+  unsupported-script bitmap rendering remains deferred until another language
+  is required.
 - The production transport is Ethernet/LAN through the router. USB remains a
   standalone desktop laboratory path and Android USB/Bluetooth transports are
   not implemented.
@@ -992,9 +1002,7 @@ Do not build these before the trigger occurs:
 
 ## Open technical decisions
 
-- Exact Convex authentication approach after role confirmation.
-- Business-day cutoff and cafe timezone behavior.
-- Receipt numbering authority while offline.
+- Exact Convex authentication/session implementation for the confirmed policy.
 - Conflict behavior if a second device is introduced.
 - Export destination and backup retention.
 - Verified WD8260 raw TCP port and production router address-reservation policy.

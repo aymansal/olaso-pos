@@ -74,7 +74,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 02 | Functional offline-capable Android beta | done | goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md |
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
-| Goal 05 | Business policy, identity, and permissions | next; owner decisions required | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
+| Goal 05 | Business policy, identity, and permissions | active; POLICY-01 documentation in progress | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
 | Goal 06 | Owner-led simplification, startup, release hardening, and final acceptance | planned; last | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
@@ -94,8 +94,8 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 and 04 are complete. Goal 05 remains inactive until explicit user
-activation of its owner-policy decision card.
+Goals 03 and 04 are complete. Goal 05 is active with POLICY-01 as its only
+in-progress card.
 
 ## Goal 04 — Costs and profitability
 
@@ -132,8 +132,8 @@ owner's confirmed operating rules and a production identity boundary.
 | ID-03 | Verify offline login/lock/restart/recovery, session expiry, failed access, salary isolation, and management protection on the tablet. |
 | POLICY-03 | Run policy, identity, permission, security, browser, Android, tablet, documentation, and push closeout. |
 
-Do not generate or run this goal's activation prompt until POLICY-01 inputs are
-available or the user explicitly activates POLICY-01 as a decision-only card.
+POLICY-01 has confirmed the current operating matrix. Its documentation commit
+and push complete before ID-01 becomes the sole in-progress card.
 
 ## Goal 06 — Production hardening and acceptance
 
@@ -170,5 +170,5 @@ owner accepts the production workflow.
 
 ## Exact next action
 
-Goal 04 is complete. The next goal is Goal 05 — Business Policy, Identity, and
-Permissions; start with its owner-decision card only after explicit activation.
+Goal 05 is active. The immediate next action is to commit and push its confirmed
+POLICY-01 matrix, then start ID-01.
