@@ -89,8 +89,8 @@ sensitive compensation data.
 | --- | --- | --- | --- |
 | COST-01 | Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | done | `9750fbc299f9b9b1770fd021352a3708b29dd7ba` pushed to `origin/codex/goal-04-costs-profitability`; focused/domain/cloud/build/Android/physical/Graphify evidence passed. |
 | COST-02 | Add retry-safe ingredient purchases and weighted-average inventory valuation | done | `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018` pushed to `origin/codex/goal-04-costs-profitability`; receipt/correction/valuation/count-effect, build, Android, physical, and Graphify evidence passed. |
-| COST-03 | Connect package-based receiving, valuation, and purchase history to Stock | in progress | — |
-| COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | pending | — |
+| COST-03 | Connect package-based receiving, valuation, and purchase history to Stock | done | `bfe73a67062e95de0127fe0ea42b0a981bb15314` pushed to `origin/codex/goal-04-costs-profitability`; browser/tablet package workflow, build, Android, and Graphify evidence passed. |
+| COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | in progress | — |
 | COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | pending | — |
 | COST-06 | Add staff profiles and owner-only effective compensation periods | pending | — |
 | COST-07 | Add validated one-time and recurring operating expenses | pending | — |
@@ -209,9 +209,10 @@ sensitive compensation data.
   card in progress.
 - COST-01 is complete and pushed as `9750fbc299f9b9b1770fd021352a3708b29dd7ba`.
 - COST-02 is complete and pushed as `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018`.
-- COST-03 is the only card in progress.
-- Exact next action: re-query Graphify and extend the existing Stock receive
-  interaction with package purchasing and valuation history.
+- COST-03 is complete and pushed as `bfe73a67062e95de0127fe0ea42b0a981bb15314`.
+- COST-04 is the only card in progress.
+- Exact next action: re-query Graphify and calculate/present current recipe and
+  product costs with explicit incompleteness and margin.
 
 ## Planning Journal
 

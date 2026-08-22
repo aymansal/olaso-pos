@@ -17,8 +17,8 @@ remaining goal and card sequence.
 | --- | --- |
 | COST-01 — Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | done — `9750fbc299f9b9b1770fd021352a3708b29dd7ba` on `origin/codex/goal-04-costs-profitability` |
 | COST-02 — Add retry-safe ingredient purchases and weighted-average inventory valuation | done — `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018` on `origin/codex/goal-04-costs-profitability` |
-| COST-03 — Connect package-based receiving, valuation, and purchase history to Stock | in progress |
-| COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | pending |
+| COST-03 — Connect package-based receiving, valuation, and purchase history to Stock | done — `bfe73a67062e95de0127fe0ea42b0a981bb15314` on `origin/codex/goal-04-costs-profitability` |
+| COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | in progress |
 | COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | pending |
 | COST-06 — Add staff profiles and owner-only effective compensation periods | pending |
 | COST-07 — Add validated one-time and recurring operating expenses | pending |
@@ -71,6 +71,9 @@ remaining goal and card sequence.
 - COST-02 is complete and pushed as `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018`
   on `origin/codex/goal-04-costs-profitability`.
 - COST-03 is the only card in progress.
+- COST-03 is complete and pushed as `bfe73a67062e95de0127fe0ea42b0a981bb15314`
+  on `origin/codex/goal-04-costs-profitability`.
+- COST-04 is the only card in progress.
 - Verified: exact-cost check, SQLite migration/restart check, inventory seed
   fixture check, Convex typecheck/deploy, TypeScript, production build, and
   Capacitor Android sync. Graphify is refreshed to 2,441 nodes and 5,603 edges.
@@ -101,6 +104,8 @@ remaining goal and card sequence.
   unlocked physical Stock screen opens the complete package-receipt dialog with
   visible fields, package math, and no console/logcat errors. COST-03 is ready
   for final focused checks and commit/push.
+- Exact next action: re-query Graphify and inspect the recipe/product management
+  and cost helper paths before implementing current product costs and margin.
 - PRINT-08 closeout commit
   `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -519,6 +524,18 @@ remaining goal and card sequence.
   inventory, production build, and structural Graphify checks pass.
 - Next: inspect the interaction at 1340 × 800 and on SM-X115, then complete the
   card verification/commit/push sequence.
+
+### 2026-08-22 — COST-03 complete; COST-04 started
+
+- Committed `COST-03: add stock purchase workflow` as
+  `bfe73a67062e95de0127fe0ea42b0a981bb15314`, pushed it to
+  `origin/codex/goal-04-costs-profitability`, and verified the remote resolves
+  to the same full SHA.
+- Browser 1340 × 800 and unlocked SM-X115 package-receipt tests confirmed
+  package math, inventory value, average cost, distinct purchase history, and
+  clean relevant console/logcat output.
+- COST-04 is now the only card in progress. Next: calculate and present current
+  active-recipe/product cost, gross profit, margin, and missing-cost ingredients.
 
 ### 2026-08-22 — Goal 03 handoff audited
 
