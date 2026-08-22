@@ -5,11 +5,11 @@ goal between activations. Project rules and durable product decisions remain in
 AGENTS.md, PRODUCT.md, ARCHITECTURE.md, DESIGN.md, and BRAND.md. PLAN.md owns the
 remaining goal and card sequence.
 
-## Active Goal
+## Most Recently Completed Goal
 
 ### Goal 04 — Costs and Profitability
 
-**Status:** active
+**Status:** complete
 
 **Goal branch:** `codex/goal-04-costs-profitability`
 
@@ -25,7 +25,7 @@ remaining goal and card sequence.
 | COST-08 — Add the bounded monthly Costs and Profitability report | done — `84307050515d65bc9d710f771dafdd734003d4ff` on `origin/codex/goal-04-costs-profitability` |
 | COST-09 — Run full regression, security/quota review, tablet QA, documentation closeout, and final push | done — `0095c37a3916759388189897bdca132654198604` on `origin/codex/goal-04-costs-profitability` |
 
-## Most Recently Completed Goal
+## Earlier Completed Goal
 
 ### Goal 03 — Production Checkout and Android LAN ESC/POS Printing
 
@@ -49,17 +49,27 @@ remaining goal and card sequence.
 - [Production delivery plan](PLAN.md) — canonical remaining goal order, all
   card IDs, dependencies, and universal automated/browser/Android/physical
   tablet/printer completion gates.
-- [Goal 04 — Costs and Profitability](goals/GOAL-04-COSTS-PROFITABILITY.md)
-  — approved and queued after printing; launch later with the reviewed
-  [start prompt](goals/GOAL-04-START-PROMPT.md).
 - [Goal 05 — Business Policy, Identity, and Permissions](goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md)
-  — planned after costs; POLICY-01 requires explicit owner decisions before
+  — next after completed costs; POLICY-01 requires explicit owner decisions before
   implementation behavior is changed.
 - [Goal 06 — Production Hardening, Release, and Acceptance](goals/GOAL-06-PRODUCTION-HARDENING.md)
-  — final goal containing measured startup, branded launch, recovery, signing,
-  upgrade, security/quota, endurance, and owner acceptance.
+  — final goal containing owner-led simplification, category artwork, app icon,
+  measured startup, recovery, signing, upgrade, security/quota, endurance, and
+  owner acceptance.
 
 ## Current Checkpoint
+
+- Goal 04 is complete; COST-01 through COST-09 are pushed and its completion
+  record is `8e7a981e2813cd768ebe70063fefc5c52d880d3d`. No goal or card is
+  currently in progress.
+- Goal 05 is next and remains inactive until the owner explicitly starts its
+  policy-decision card.
+- The owner requested that all current UI remain unchanged until the complete
+  application can be reviewed in final hardening. Goal 06 now records an
+  owner-led dislike/simplification list, concise Settings/operator cleanup,
+  curated category artwork with a neutral fallback, a compact app icon, and an
+  optional measured logo/light startup reveal. No application behavior or asset
+  format was selected by this planning update.
 
 - 2026-08-22: reconstructed Goal 04 from the repository after the unreliable
   continuation loop. `codex/goal-04-costs-profitability` and its remote are
@@ -516,6 +526,18 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-22 — Deferred owner polish recorded
+
+- Added final-hardening cards for the owner's complete app-wide critique and
+  the exact simplification pass that follows it; no screen was changed early.
+- Recorded current Settings copy/icons/technical detail as review candidates
+  while preserving required printer setup, validation, and recovery behavior.
+- Added a bundled category-art gallery plus neutral fallback, compact app-icon
+  approval, and optional measured startup motion. GIF, video, vector/CSS, and
+  animated-image delivery remain candidates until physical startup evidence.
+- Updated PLAN, Goal 06, PRODUCT, ARCHITECTURE, DESIGN, and BRAND only. Goal 05
+  remains the exact next implementation goal.
 
 ### 2026-08-22 — Goal 04 activated; COST-01 started
 

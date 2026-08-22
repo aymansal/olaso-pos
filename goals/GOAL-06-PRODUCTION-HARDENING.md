@@ -10,10 +10,10 @@ owns only the final production-hardening scope and card order.
 
 **Status:** planned; not active; runs after Goals 03 through 05
 
-**Objective:** Measure and remove the remaining startup, recovery, security,
-performance, packaging, upgrade, and operational risks in the near-final
-application, then produce and accept a reproducible signed release for the real
-tablet and printer.
+**Objective:** Let the owner simplify the complete working product, then measure
+and remove the remaining startup, recovery, security, performance, packaging,
+upgrade, and operational risks before accepting a reproducible signed release
+for the real tablet and printer.
 
 ## Sequencing decision
 
@@ -21,7 +21,9 @@ Startup quality remains required, but it is implemented here rather than before
 printing and costs. This avoids optimizing and re-measuring the bundle before
 major features are added. The branded transparent wordmark is prepared now;
 actual launch integration and measured optimization happen against the
-near-final APK.
+near-final APK. The owner walkthrough also happens here, after workflows are
+stable, so current screens remain unchanged until the owner provides one
+complete, explicit critique list.
 
 ## Verified starting leads
 
@@ -40,6 +42,14 @@ near-final APK.
 - Goal 02 proved debug install-over-upgrade and local migration. Production
   signing, protected key custody, release automation, backup restore, rollback,
   endurance, and owner acceptance remain incomplete.
+- Current Settings and hardware copy is technically explicit but may be too
+  verbose for a small coffee-shop team. The owner will decide what to remove,
+  shorten, hide, or retain after reviewing the complete application.
+- New POS categories scroll correctly, but no management-owned artwork selector
+  or neutral fallback exists for a category outside the initial four.
+- The wide launch wordmark is not an app icon. A compact icon and the owner's
+  proposed minimal wordmark/light-reveal startup concept remain unapproved; no
+  GIF, video, vector, or other motion format is selected yet.
 
 ## Included
 
@@ -54,6 +64,12 @@ near-final APK.
   support readiness review.
 - Realistic service endurance and final owner acceptance on the actual tablet
   and printer.
+- One owner-led full-app critique before visual cleanup, followed by only the
+  approved reductions in copy, icons, and visible technical information.
+- A versioned category-artwork gallery with explicit category selection and a
+  neutral fallback that never blocks an unfamiliar custom category.
+- A final compact Android app icon plus an optional minimal branded startup
+  motion that cannot delay the immediate static first frame.
 
 ## Excluded
 
@@ -62,6 +78,12 @@ near-final APK.
   splash dependency, artificial splash delay, or optimization without a trace.
 - New product features, reports, printer transports, speculative scaling,
   Google Play distribution, multi-branch, or multi-tablet conflict machinery.
+- Runtime AI image generation, attempting to predict every possible category,
+  or requiring a perfect artwork match before a category can be created.
+- Preselecting GIF, MP4, or another startup format without bundle/decode/startup
+  measurements; decorative motion never extends the splash duration.
+- Removing required validation, failure recovery, printer setup, or safety
+  actions merely to make a screen look simpler.
 - Committing signing keys, credentials, production exports, device identifiers,
   or private owner recovery information.
 
@@ -79,7 +101,10 @@ near-final APK.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
-| HARD-02 | Add continuous branded Android/WebView/React launch styling | pending | — |
+| POLISH-01 | Capture the owner's complete app-wide simplification and dislike list | pending | — |
+| POLISH-02 | Apply the approved operator-facing simplifications without weakening recovery | pending | — |
+| CATALOG-01 | Add curated category artwork selection and a neutral custom-category fallback | pending | — |
+| HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
 | HARD-03 | Consolidate safe SQLite and terminal-lock startup gating | pending | — |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
@@ -100,13 +125,56 @@ near-final APK.
 - Measure initial JavaScript/CSS, APK assets, image dimensions/decoding, and
   synchronization start without adding a permanent telemetry framework.
 
+### POLISH-01 — Owner walkthrough
+
+- Review every completed screen and important state on the physical tablet with
+  the owner after Goals 04 and 05 are stable.
+- Record exact keep, remove, shorten, rename, regroup, and hide decisions before
+  making visual changes. Treat unnecessary icons, corporate-sounding guidance,
+  duplicated status, and permanently visible technical detail as review targets.
+- Separate operator-facing essentials from installation, support, recovery, and
+  destructive actions that must remain reachable.
+- Produce an owner-approved checklist; do not let an agent invent a redesign or
+  silently interpret “cleaner” without concrete decisions.
+
+### POLISH-02 — Approved simplification
+
+- Apply only the POLISH-01 checklist using the existing geometry, components,
+  Phosphor family, and Olaso tokens.
+- Prefer short natural labels and progressive disclosure. Hide support detail
+  until it is useful instead of removing the underlying recovery path.
+- Simplify Settings and printer setup for a coffee-shop operator while retaining
+  validation, test, logo restoration, failure recovery, and accessibility.
+- Recheck every affected workflow and 1340 by 800 screen; visual cleanup cannot
+  change persistence, authorization, printing, stock, or reporting behavior.
+
+### CATALOG-01 — Category artwork
+
+- Ship a small curated gallery for common café categories and let category
+  management select an artwork key; do not bind artwork permanently to names.
+- Provide one approved neutral Olaso illustration for any unfamiliar custom
+  category so creation never depends on finding an exact match.
+- Keep the gallery versioned in the APK, right-sized for the 234 by 120 cards,
+  decorative to assistive technology, and expandable through later releases.
+- Do not generate artwork at runtime, require network access, or use generic
+  stock coffee imagery.
+
 ### HARD-02 — Launch continuity
 
 - Use Android's existing platform splash mechanism, Cream Surface, and the
   verified green transparent wordmark; add no splash dependency or activity.
+- Finalize a compact Android icon from owner-approved artwork; never crop the
+  wide wordmark into an unreadable square or imply a provisional icon is an
+  official brand master.
 - Match system bars, WebView background, and the first React startup state so no
   white/default frame, jump, stretch, or incorrect logo orientation appears.
 - Preserve original wordmark proportions and stable reserved dimensions.
+- The first visible frame is always a static local cream/wordmark frame. A brief
+  light or line reveal may run only afterward when initialization is still in
+  progress, respect reduced motion, and use transform/opacity rather than layout.
+- Compare the smallest viable static/vector/CSS/animated-image/video candidates
+  on the real APK. Choose from measured bundle size, decode cost, frame quality,
+  and startup time; GIF has no automatic preference.
 - Do not hold the splash longer to disguise slow initialization.
 
 ### HARD-03 — Safe startup orchestration
@@ -179,9 +247,12 @@ near-final APK.
 
 ## Goal completion criteria
 
-- HARD-01 through HARD-08 are done, verified, committed, pushed, and recorded.
+- HARD-01 through HARD-08 plus POLISH-01, POLISH-02, and CATALOG-01 are done,
+  verified, committed, pushed, and recorded.
 - Android, WebView, and React present one immediate Olaso cream launch sequence
   and meet the physical-tablet startup budget without waiting for the network.
+- The owner-approved critique list is resolved, the app icon is accepted, and
+  every custom category renders selected gallery art or the neutral fallback.
 - Backup/export, corrupt-data stop, recovery, signed build, upgrade, rollback,
   and key custody are documented and rehearsed.
 - Security, privacy, permissions, quotas, dependencies, logs, browser console,
@@ -200,6 +271,16 @@ near-final APK.
   codex/goal-06-production-hardening; and start only HARD-01.
 
 ## Planning journal
+
+### 2026-08-22 — Owner-led polish deferred to final hardening
+
+- Preserved all current screens until the owner can critique the complete app
+  instead of encouraging piecemeal AI-driven redesign during feature work.
+- Added explicit owner-review and simplification cards, category-art gallery and
+  fallback work, compact app-icon approval, and a measured optional launch-motion
+  decision with an immediate static/reduced-motion path.
+- Recorded GIF/video/vector/CSS as candidates rather than choosing a format
+  without physical startup evidence. No application behavior changed.
 
 ### 2026-08-21 — Startup moved into final hardening
 

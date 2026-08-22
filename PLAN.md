@@ -73,9 +73,9 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 01 | Functional POS interactions | done | goals/GOAL-01-FUNCTIONAL-POS.md |
 | Goal 02 | Functional offline-capable Android beta | done | goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md |
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
-| Goal 04 | Costs and profitability | approved; queued | goals/GOAL-04-COSTS-PROFITABILITY.md |
-| Goal 05 | Business policy, identity, and permissions | planned; owner decisions required | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Startup, release hardening, and final acceptance | planned; last | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
+| Goal 05 | Business policy, identity, and permissions | next; owner decisions required | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
+| Goal 06 | Owner-led simplification, startup, release hardening, and final acceptance | planned; last | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -94,7 +94,8 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goal 03 is complete. Goal 04 remains inactive until explicit user activation.
+Goals 03 and 04 are complete. Goal 05 remains inactive until explicit user
+activation of its owner-policy decision card.
 
 ## Goal 04 — Costs and profitability
 
@@ -139,11 +140,16 @@ available or the user explicitly activates POLICY-01 as a decision-only card.
 Goal 06 measures and removes remaining release risk after the workflows are
 stable. Startup performance is here intentionally: it will be optimized once
 against the near-final application rather than repeatedly before every feature.
+It also contains the deferred owner-led simplification pass; no speculative UI
+cleanup happens before the owner reviews the complete working application.
 
 | Card | Outcome |
 | --- | --- |
 | HARD-01 | Establish repeatable five-run cold/warm startup, APK, WebView, bundle, and readiness baselines on the physical tablet. |
-| HARD-02 | Connect the approved green transparent wordmark to one continuous cream Android/WebView/React launch surface with no default or white frame. |
+| POLISH-01 | Walk through the complete app with the owner and record every disliked, verbose, redundant, or “AI-ish” element before changing the interface. |
+| POLISH-02 | Apply only the approved simplifications to operator copy, icons, information hierarchy, and Settings while preserving required recovery and safety behavior. |
+| CATALOG-01 | Add a curated category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
+| HARD-02 | Finalize the app icon and continuous branded launch, with optional measured logo motion after an immediate static first frame. |
 | HARD-03 | Consolidate safe SQLite/lock startup gating and remove empty intermediate rendering without exposing an unlocked POS. |
 | HARD-04 | Optimize only measured eager modules, assets, decoding, and sync scheduling while preserving behavior and recording before/after evidence. |
 | HARD-05 | Implement and rehearse documented export, backup, corrupt-data stop, restore, and support recovery paths. |
@@ -158,9 +164,11 @@ the PRODUCT.md definition of done is satisfied: offline sales are exact and
 recoverable, stock and costs reconcile, permissions protect sensitive data,
 the accepted receipt prints and reprints on the real WD8260, launch meets its
 physical-tablet budget without an unbranded frame, upgrades preserve data,
-backup/recovery is rehearsed, and the owner accepts the production workflow.
+backup/recovery is rehearsed, the owner-approved simplification list is resolved,
+custom categories always have suitable artwork or a neutral fallback, and the
+owner accepts the production workflow.
 
 ## Exact next action
 
-Goal 03 is complete. The next goal is Goal 04 — Costs and Profitability; start
-it only after explicit user activation with its reviewed start prompt.
+Goal 04 is complete. The next goal is Goal 05 — Business Policy, Identity, and
+Permissions; start with its owner-decision card only after explicit activation.

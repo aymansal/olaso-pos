@@ -201,6 +201,17 @@ Principles, in priority order:
 4. **Quietly playful.** One expressive visual moment is enough. Operational controls stay calm.
 5. **Reusable by construction.** A component is coded once, receives content through props, and owns its own styles.
 
+### Deferred owner-led simplification
+
+- Do not redesign or “clean up” the working application piecemeal while feature
+  goals are still moving. During final hardening, the owner reviews every screen
+  and state on the real tablet and records exact keep/remove/shorten/hide choices.
+- Treat redundant icons, corporate-sounding guidance, duplicate status, and
+  permanently visible support detail as review candidates, not automatic bugs.
+- Implement only the approved list. Preserve essential validation, destructive
+  warnings, error recovery, and accessibility, using progressive disclosure to
+  keep technical details out of the everyday operator path.
+
 ## Authority and Change Rules
 
 Use the authority that owns the decision:
@@ -288,6 +299,14 @@ All primary touch targets are at least 44 by 44 pixels. Maintain at least 8 pixe
 - Startup artwork reserves its final size and stays visually stable while the
   native-to-web transition completes. Do not hold the splash screen longer to
   disguise slow initialization.
+- The immediate native frame is static. A single brief owner-approved light or
+  line reveal may continue in the web startup state only if measurements show
+  no startup regression; it animates transform/opacity, remains interruptible,
+  and is removed under `prefers-reduced-motion`.
+- Do not lock the animation to GIF, video, or another format before checking
+  APK size, decode cost, frame quality, and timing on the physical tablet.
+- The Android app icon requires a separately approved compact asset. Never crop
+  or squeeze the wide launch wordmark into the launcher-icon mask.
 - If startup cannot safely expose the application, show the actionable startup
   failure state on the same cream surface rather than a blank viewport.
 
@@ -465,10 +484,25 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   `Test printer`, and a secondary `Restore saved logo` setup action. The logo
   action requires an explicit replacement warning. Both keep 44-pixel targets
   and ask the operator to inspect paper rather than claiming it.
+- The current diagnostic explanations are a functional baseline, not final
+  coffee-shop copy. POLISH-01 decides what the owner wants shortened or hidden;
+  POLISH-02 keeps everyday labels concise and moves retained support detail
+  behind deliberate disclosure.
 - A local persistence failure keeps the order intact. A cloud failure marks the saved sale as waiting to sync without blocking service.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
 Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate layout dimensions. Respect `prefers-reduced-motion`.
+
+### Category artwork
+
+- Category names and artwork are separate data. Management chooses one key from
+  a curated bundled gallery instead of depending on name matching.
+- Include common café directions, but do not attempt an exhaustive category
+  list. Every unknown or custom category uses one neutral Olaso illustration
+  until the owner selects another gallery asset.
+- Artwork stays decorative, right-aligned behind the text layer, right-sized for
+  the 234 by 120 card, and available offline. Do not generate it at runtime or
+  use generic stock coffee imagery.
 
 ## Accessibility and Operational Safety
 
@@ -518,6 +552,7 @@ A screen is complete only when all of the following are true:
 - Do keep each named component and its CSS Module in separate colocated files.
 - Do keep persistence and database code outside React component files.
 - Do keep operational language short: "Order sent", "Payment failed", "Item unavailable".
+- Do keep uncommon technical and support detail behind progressive disclosure.
 - Do keep presentation canvases and device mockups outside the production screen node.
 - Do place the operational layout within the 18-pixel tablet gutters from left to right.
 - Do not stretch the menu across the full 1340-pixel canvas.

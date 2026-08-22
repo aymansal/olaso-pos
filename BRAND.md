@@ -97,6 +97,29 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
 - Official square app icon/favicon.
 - Minimum-size and clear-space rules from the original designer.
 
+### Provisional launch motion and app icon direction
+
+- The owner wants to explore one cool, minimal wordmark reveal, potentially a
+  brief light or line accent. This is a prototype direction, not approval to
+  redraw, mirror, stretch, outline, or permanently decorate the OLASO artwork.
+- The first launch frame remains the static cream surface and verified green
+  wordmark. Motion is optional, reduced-motion remains static, and the delivery
+  format is chosen only after real APK/decode/startup measurement; GIF is not a
+  default merely because it loops.
+- The launcher icon needs an approved compact composition derived from real
+  brand artwork. The wide startup wordmark must not be cropped into a square.
+
+### Provisional category artwork direction
+
+- Build a small coherent gallery for common café categories using warm,
+  recognizable ingredient/botanical forms consistent with the approved cards.
+- Category artwork is selectable content, not an identity inferred permanently
+  from the category name. One neutral Olaso illustration covers every custom or
+  unexpected category.
+- Avoid generic stock photography and runtime AI generation inside the POS.
+  New approved gallery assets can be generated or commissioned outside the app,
+  reviewed, optimized, and shipped in a later release.
+
 ## 4. Color
 
 ### Core references
@@ -206,6 +229,9 @@ Ask the owner or creative team to confirm:
 
 - [ ] Public brand name: Olaso, Olaso Coffee, or Olaso Club.
 - [ ] Official vector logo pack and compact app icon.
+- [ ] Approve or reject the minimal launch-motion prototype and its static
+      reduced-motion frame.
+- [ ] Approve the initial category-art gallery and neutral fallback.
 - [ ] Confirm whether the official physical green is RAL 6011 / Vert réséda.
 - [ ] Obtain the approved RGB/HEX equivalent; until then, keep the supplied digital value `#909F78`.
 - [ ] Exact official palette beyond the primary green and white.

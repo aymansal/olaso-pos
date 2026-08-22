@@ -240,8 +240,10 @@ A network retry therefore produces the same result instead of another sale.
 - Later syncs request records changed after the saved cursor.
 - Deleted operational records are represented by archived/tombstone state so
   the tablet can remove them from active views.
-- Product images are versioned APK assets for the initial release. Dynamic
-  owner-uploaded images are deferred until they are required.
+- Product images and the curated category-art gallery are versioned APK assets
+  for the initial release. Categories persist an artwork key and resolve an
+  unknown/missing key to one neutral bundled fallback. Dynamic owner-uploaded
+  images and runtime AI generation are deferred until they are required.
 - Ingredient synchronization includes the current valuation revision needed to
   reproduce offline sale costs. Salary and general-expense data never enter
   the cashier operational cache.
@@ -619,6 +621,11 @@ Rules:
   uses the Olaso cream surface and approved artwork and transitions to a
   visually identical web startup surface; the default Capacitor artwork and
   blank white frames are not production states.
+- The native first frame is static and locally bundled. Optional brand motion
+  begins only on the visually identical web startup surface, never extends the
+  time before usable POS, and has a static reduced-motion path. Select its asset
+  format only after measuring APK weight, WebView decode, memory, and startup on
+  the physical tablet; GIF, video, and vector/CSS are candidates, not policy.
 - Convex, DNS, Wi-Fi, and cloud synchronization never gate the first usable POS.
 - SQLite and terminal-lock restoration may gate cashier access, but they must
   share one visible startup flow. Do not create successive blank or visually

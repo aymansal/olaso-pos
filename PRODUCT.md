@@ -121,6 +121,11 @@ repeat the check after material Android, WebView, or native-shell changes.
   seconds and a median warm start of at most one second across five controlled
   runs on the target tablet. A missed budget is investigated and documented;
   it is not hidden by extending the splash screen.
+- The first branded frame is always a local static asset. An optional short
+  owner-approved wordmark/light reveal may continue on the identical cream
+  startup surface only while real initialization is still pending. Its format
+  is selected from measured APK size, decode cost, quality, and startup timing;
+  GIF or video is not assumed, and reduced-motion uses the static frame.
 
 ### Printer
 
@@ -167,6 +172,17 @@ adding another permanent navigation item.
 
 Costs and profitability belong inside the Reports workspace rather than adding
 a seventh permanent navigation destination.
+
+### Deferred owner-led simplification
+
+- After the functional and policy goals are stable, the owner reviews the whole
+  application on the physical tablet and supplies one explicit list of disliked,
+  verbose, redundant, or “AI-ish” interface elements.
+- No speculative cleanup happens before that review. The final pass removes or
+  shortens only owner-approved copy, icons, groupings, and visible information.
+- Installation, validation, failure recovery, and destructive actions remain
+  available, but technical explanation may move behind progressive disclosure
+  instead of occupying the normal coffee-shop operator flow.
 
 The functional beta exposes confirmed device and synchronization settings from
 that profile. Its local lock prevents accidental terminal use and survives an
@@ -470,6 +486,13 @@ sale ingredient cost or required expense input is incomplete.
 ## Offline and synchronization behavior
 
 - The installed APK contains its interface and product images.
+- The installed APK also contains a curated gallery of right-sized category
+  illustrations. Category management stores an artwork key chosen from that
+  gallery; an approved neutral Olaso fallback covers every custom category that
+  has no exact match.
+- Creating a category never requires network access, runtime AI generation, or
+  predicting every category name in advance. Gallery additions ship through a
+  later application release; owner-uploaded artwork remains deferred.
 - The tablet keeps the active menu, recipes, current stock, and unsynced sales
   locally.
 - The application takes orders while offline.
@@ -724,6 +747,9 @@ workflow feedback.
 
 ### Phase 6 — production hardening
 
+- Owner-led full-application critique and approved operator-UI simplification.
+- Curated category artwork selection plus a neutral custom-category fallback.
+- Final app icon and measured optional branded startup motion.
 - Recovery and backup checks.
 - Permission review.
 - Performance and quota review.
@@ -734,13 +760,14 @@ workflow feedback.
 
 Goal 01 delivered the functional POS, Goal 02 delivered the offline-capable
 full-application beta, and Goal 03 delivered Android LAN receipt printing plus
-safe saved-sale reprinting. Remaining work is sequenced by operational risk:
+safe saved-sale reprinting. Goal 04 delivered purchased-stock costing and
+monthly profitability. Remaining work is sequenced by operational risk:
 
-1. Purchased-stock costing and profitability.
-2. Confirmed business policy, production identity, and permissions: tax,
+1. Confirmed business policy, production identity, and permissions: tax,
    payment, cancellation/refund, receipt, roles, and sensitive-data access.
-3. Measured startup/launch continuity, signing, backup/recovery, endurance
-   testing, and final owner acceptance against the near-final APK.
+2. Owner-led simplification, category artwork, measured startup/launch
+   continuity, signing, backup/recovery, endurance testing, and final owner
+   acceptance against the near-final APK.
 
 Detailed goal status and activation order live in `WORK_LEDGER.md` and the
 canonical `PLAN.md`.

@@ -9,7 +9,7 @@ file owns only Goal 04 execution scope and card order.
 
 **Goal:** Goal 04 — Costs and Profitability
 
-**Status:** active; COST-05 in progress
+**Status:** complete
 
 **Objective:** Turn stock purchasing, recipe consumption, staff compensation,
 and operating expenses into exact product-cost, inventory-value, and monthly
@@ -199,33 +199,26 @@ sensitive compensation data.
 
 ## Current Checkpoint
 
-- Goal 01 and Goal 02 are complete and archived.
-- The physical Galaxy Tab A9 viewport fix is verified and present on `main`.
-- Current inventory tracks exact quantities and append-only movements but no
-  purchase price, carrying value, or ingredient cost.
-- Current profiles are presentation data and not staff/authentication records.
-- `PRODUCT.md` and `ARCHITECTURE.md` define the approved cost model.
-- Goal 04 is active on `codex/goal-04-costs-profitability`; COST-05 is the only
-  card in progress.
-- COST-01 is complete and pushed as `9750fbc299f9b9b1770fd021352a3708b29dd7ba`.
-- COST-02 is complete and pushed as `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018`.
-- COST-03 is complete and pushed as `bfe73a67062e95de0127fe0ea42b0a981bb15314`.
-- COST-04 is complete and pushed as `551856a3c3e35c057ca70d91e23667831a33c2a5`.
-- COST-05 persists local immutable sale and line ingredient-cost snapshots,
-  including the cached valuation revision, alongside stock and outbox effects;
-  its cloud mutation validates snapshot completeness/totals and records the
-  immutable values without looking up a current product price.
-- COST-05 is complete and pushed as `1e7b225ad57b4a69b8776b7f39f08c549115b73e`.
-- COST-06 is the only card in progress. Exact next action: re-query Graphify
-  and inspect existing staff/owner-authorization paths before implementation.
-- Resumed with the project-local Java 21/Android SDK toolchain, installed the
-  rebuilt beta on SM-X115, and completed the awake foreground POS sale smoke:
-  an Espresso take-away sale committed locally, showed its saved receipt, and
-  left no Capacitor console error or crash. The structural Graphify update now
-  includes the COST-05 code paths. Exact next action: final focused checks,
-  commit/push COST-05, record its SHA, and activate COST-06.
+- Goal 04 is complete. COST-01 through COST-09 are verified, committed, pushed,
+  and recorded on `origin/codex/goal-04-costs-profitability`.
+- The pushed goal-completion record is
+  `8e7a981e2813cd768ebe70063fefc5c52d880d3d`.
+- Package purchasing, weighted-average valuation, Stock receiving, product
+  margins, immutable sale costs, owner-only compensation, expenses, and bounded
+  monthly profitability are implemented with the documented checks and tablet
+  evidence.
+- Exact next action: leave Goal 04 closed and start only Goal 05's owner-policy
+  decision card after explicit user activation.
 
 ## Planning Journal
+
+### 2026-08-22 — Goal 04 completed
+
+- COST-01 through COST-09 are done and pushed; the final completion record is
+  synchronized at `8e7a981e2813cd768ebe70063fefc5c52d880d3d`.
+- Full cost, persistence, sync, authorization, report, build, Android, tablet,
+  security/quota, documentation, and Graphify closeout evidence passed.
+- Goal 05 is next and remains inactive until explicit user activation.
 
 ### 2026-08-21 — Goal 04 restored after printing
 
