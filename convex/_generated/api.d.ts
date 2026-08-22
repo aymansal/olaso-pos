@@ -10,6 +10,7 @@
 
 import type * as categories from "../categories.js";
 import type * as dashboard from "../dashboard.js";
+import type * as expenses from "../expenses.js";
 import type * as inventory from "../inventory.js";
 import type * as lib_management from "../lib/management.js";
 import type * as lib_operational from "../lib/operational.js";
@@ -31,6 +32,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   categories: typeof categories;
   dashboard: typeof dashboard;
+  expenses: typeof expenses;
   inventory: typeof inventory;
   "lib/management": typeof lib_management;
   "lib/operational": typeof lib_operational;

@@ -45,6 +45,7 @@ const staffRole = v.union(
   v.literal('worker'),
 );
 const expenseRecurrence = v.union(v.literal('one-time'), v.literal('monthly'));
+const expenseTransactionType = v.union(v.literal('recorded'), v.literal('reversal'));
 const purchaseTransactionType = v.union(
   v.literal('received'),
   v.literal('reversal'),
@@ -318,6 +319,8 @@ export default defineSchema({
     effectiveStartMonth: v.optional(v.string()),
     effectiveEndMonth: v.optional(v.string()),
     status: activeStatus,
+    transactionType: expenseTransactionType,
+    correctionOfExpenseId: v.optional(v.id('operatingExpenses')),
     revision: v.number(),
     createdAt: v.number(),
     updatedBy: v.optional(v.string()),
@@ -325,6 +328,8 @@ export default defineSchema({
   })
     .index('by_effective_date_status', ['effectiveDate', 'status'])
     .index('by_start_month_status', ['effectiveStartMonth', 'status'])
+    .index('by_status_created_at', ['status', 'createdAt'])
+    .index('by_correction_of_created_at', ['correctionOfExpenseId', 'createdAt'])
     .index('by_client_mutation', ['clientMutationId']),
 
   dailyMetrics: defineTable({
