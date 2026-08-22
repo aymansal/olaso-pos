@@ -19,8 +19,8 @@ remaining goal and card sequence.
 | COST-02 — Add retry-safe ingredient purchases and weighted-average inventory valuation | done — `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018` on `origin/codex/goal-04-costs-profitability` |
 | COST-03 — Connect package-based receiving, valuation, and purchase history to Stock | done — `bfe73a67062e95de0127fe0ea42b0a981bb15314` on `origin/codex/goal-04-costs-profitability` |
 | COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | done — `551856a3c3e35c057ca70d91e23667831a33c2a5` on `origin/codex/goal-04-costs-profitability` |
-| COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | in progress |
-| COST-06 — Add staff profiles and owner-only effective compensation periods | pending |
+| COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | done — `1e7b225ad57b4a69b8776b7f39f08c549115b73e` on `origin/codex/goal-04-costs-profitability` |
+| COST-06 — Add staff profiles and owner-only effective compensation periods | in progress |
 | COST-07 — Add validated one-time and recurring operating expenses | pending |
 | COST-08 — Add the bounded monthly Costs and Profitability report | pending |
 | COST-09 — Run full regression, security/quota review, tablet QA, documentation closeout, and final push | pending |
@@ -110,6 +110,12 @@ remaining goal and card sequence.
   `sales.accept` paths. Exact next action: run final focused checks, commit and
   push COST-05, record the pushed SHA, then make COST-06 the only in-progress
   card.
+- COST-05 implementation commit
+  `1e7b225ad57b4a69b8776b7f39f08c549115b73e` is pushed and matches
+  `origin/codex/goal-04-costs-profitability`. COST-06 is now the only card in
+  progress. Exact next action: re-query Graphify, inspect the existing staff
+  and authorization boundaries, then implement owner-only staff profiles and
+  effective compensation periods.
 
 - Goal 04 is active and COST-01 is the only card in progress on
   `codex/goal-04-costs-profitability`, pushed from clean `main` before any

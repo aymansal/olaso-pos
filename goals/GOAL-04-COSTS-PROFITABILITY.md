@@ -91,8 +91,8 @@ sensitive compensation data.
 | COST-02 | Add retry-safe ingredient purchases and weighted-average inventory valuation | done | `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018` pushed to `origin/codex/goal-04-costs-profitability`; receipt/correction/valuation/count-effect, build, Android, physical, and Graphify evidence passed. |
 | COST-03 | Connect package-based receiving, valuation, and purchase history to Stock | done | `bfe73a67062e95de0127fe0ea42b0a981bb15314` pushed to `origin/codex/goal-04-costs-profitability`; browser/tablet package workflow, build, Android, and Graphify evidence passed. |
 | COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | done | `551856a3c3e35c057ca70d91e23667831a33c2a5` pushed to `origin/codex/goal-04-costs-profitability`. |
-| COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | in progress | — |
-| COST-06 | Add staff profiles and owner-only effective compensation periods | pending | — |
+| COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | done | `1e7b225ad57b4a69b8776b7f39f08c549115b73e` pushed to `origin/codex/goal-04-costs-profitability`. |
+| COST-06 | Add staff profiles and owner-only effective compensation periods | in progress | — |
 | COST-07 | Add validated one-time and recurring operating expenses | pending | — |
 | COST-08 | Add the bounded monthly Costs and Profitability report | pending | — |
 | COST-09 | Run full regression, security/quota review, tablet QA, documentation closeout, and final push | pending | — |
@@ -215,8 +215,9 @@ sensitive compensation data.
   including the cached valuation revision, alongside stock and outbox effects;
   its cloud mutation validates snapshot completeness/totals and records the
   immutable values without looking up a current product price.
-- Exact next action: run final focused checks, commit/push COST-05, record its
-  SHA, and activate COST-06 as the only in-progress card.
+- COST-05 is complete and pushed as `1e7b225ad57b4a69b8776b7f39f08c549115b73e`.
+- COST-06 is the only card in progress. Exact next action: re-query Graphify
+  and inspect existing staff/owner-authorization paths before implementation.
 - Resumed with the project-local Java 21/Android SDK toolchain, installed the
   rebuilt beta on SM-X115, and completed the awake foreground POS sale smoke:
   an Espresso take-away sale committed locally, showed its saved receipt, and
