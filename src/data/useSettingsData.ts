@@ -4,6 +4,7 @@ import { api } from '../../convex/_generated/api';
 import type { Id } from '../../convex/_generated/dataModel';
 import {
   syncPendingSales,
+  type SaleCancellationPayload,
   type SaleSyncPayload,
 } from './localSales.ts';
 import { makePendingOutboxAvailable } from './outbox.ts';
@@ -44,6 +45,7 @@ export function useSettingsData() {
   const session = useStaffSession();
   const convex = useConvex();
   const acceptMutation = useMutation(api.sales.accept);
+  const cancelMutation = useMutation(api.sales.cancel);
   const [settings, setSettings] = useState<TerminalSettings>();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isTestingPrinter, setIsTestingPrinter] = useState(false);
@@ -100,6 +102,11 @@ export function useSettingsData() {
           saleId: String(accepted.saleId),
           acknowledgedAt: accepted.acknowledgedAt,
         };
+      }, async (input: SaleCancellationPayload) => {
+        const cancelled = await cancelMutation({ ...input, sessionToken: session.token });
+        return cancelled.kind === 'original-pending'
+          ? cancelled
+          : { kind: 'cancelled' as const, correctionId: String(cancelled.correctionId), acknowledgedAt: cancelled.acknowledgedAt };
       });
       const afterSales = await refresh();
       if (result.failed > 0) {
@@ -141,7 +148,7 @@ export function useSettingsData() {
     } finally {
       setIsSyncing(false);
     }
-  }, [acceptMutation, convex, refresh, session.deviceId, session.token]);
+  }, [acceptMutation, cancelMutation, convex, refresh, session.deviceId, session.token]);
 
   const testPrinter = useCallback(
     async (input: PrinterPreferences) => {

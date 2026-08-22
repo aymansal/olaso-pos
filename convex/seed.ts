@@ -14,6 +14,7 @@ const TAX_POLICY_LABEL = 'Temporary 0% — pending owner confirmation';
 
 const resetOrder = [
   'inventoryPurchases',
+  'saleCorrections',
   'saleItems',
   'stockMovements',
   'dailyMetrics',

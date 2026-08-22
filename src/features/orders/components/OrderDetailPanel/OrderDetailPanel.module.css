@@ -378,7 +378,8 @@
 
 .preview,
 .reprint,
-.sync {
+.sync,
+.cancelOrder {
   flex: 1;
   min-width: 0;
 }
@@ -411,6 +412,18 @@
   color: var(--olaso-copy-green);
   background: var(--olaso-green-soft);
   cursor: default;
+}
+
+.cancelOrder {
+  border: 1px solid var(--olaso-danger);
+  color: var(--olaso-danger);
+  background: transparent;
+}
+
+.cancelOrder:disabled {
+  color: var(--olaso-disabled);
+  border-color: var(--olaso-divider);
+  cursor: not-allowed;
 }
 
 .stockNote {

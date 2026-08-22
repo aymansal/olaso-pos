@@ -1,5 +1,5 @@
 import { CheckCircle, LockKey, WifiHigh, WifiSlash } from '@phosphor-icons/react';
-import { useAction } from 'convex/react';
+import { useAction, useConvex } from 'convex/react';
 import { useEffect, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
 import {
@@ -47,6 +47,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   const [staffProfileId, setStaffProfileId] = useState('');
   const [pin, setPin] = useState('');
   const signIn = useAction(api.identity.signIn);
+  const convex = useConvex();
 
   useEffect(() => {
     const clock = window.setInterval(() => setNow(new Date()), 30_000);
@@ -84,11 +85,26 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         && member.role === session.role,
       );
       setStaffProfileId(savedStaff?.id ?? activeStaff[0]?.id ?? '');
+      if (online) {
+        void convex.query(api.identity.listActiveProfiles, { deviceId: settings.deviceId })
+          .then((profiles) => {
+            if (!active) return;
+            const remoteStaff = profiles.flatMap(({ id, name, role }) =>
+              isStaffRole(role) ? [{ id: String(id), name, role }] : [],
+            );
+            if (!remoteStaff.length) return;
+            setStaff(remoteStaff);
+            setStaffProfileId((current) =>
+              remoteStaff.some((member) => member.id === current) ? current : remoteStaff[0].id,
+            );
+          })
+          .catch(() => undefined);
+      }
     }).catch(() => {
       if (active) setError('Staff access is unavailable. Connect and sync this terminal.');
     });
     return () => { active = false; };
-  }, []);
+  }, [convex, online, settings.deviceId]);
 
   async function unlock() {
     if (!staffProfileId || !/^\d{6}$/.test(pin)) {

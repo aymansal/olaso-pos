@@ -2,8 +2,8 @@ import { useConvex, useMutation } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../convex/_generated/api';
-import type { SaleSyncPayload } from './localSales.ts';
-import { syncPendingSales } from './localSales.ts';
+import type { SaleCancellationPayload, SaleSyncPayload } from './localSales.ts';
+import { completeLocalSaleCancellation, syncPendingSales } from './localSales.ts';
 import {
   loadLocalOrderPage,
   loadLocalSyncSummary,
@@ -81,11 +81,13 @@ export function useOrdersData() {
   const session = useStaffSession();
   const convex = useConvex();
   const acceptMutation = useMutation(api.sales.accept);
+  const cancelMutation = useMutation(api.sales.cancel);
   const [orders, setOrders] = useState<OrderHistoryRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [retryingId, setRetryingId] = useState<string>();
   const [reprintingId, setReprintingId] = useState<string>();
+  const [cancellingId, setCancellingId] = useState<string>();
   const [message, setMessage] = useState('');
   const [lastSuccessAt, setLastSuccessAt] = useState<number>();
   const mounted = useRef(true);
@@ -109,6 +111,16 @@ export function useOrdersData() {
     [acceptMutation, session.token],
   );
 
+  const cancelSale = useCallback(
+    async (input: SaleCancellationPayload) => {
+      const result = await cancelMutation({ ...input, sessionToken: session.token });
+      return result.kind === 'original-pending'
+        ? result
+        : { kind: 'cancelled' as const, correctionId: String(result.correctionId), acknowledgedAt: result.acknowledgedAt };
+    },
+    [cancelMutation, session.token],
+  );
+
   const refresh = useCallback(async () => {
     setIsLoading(true);
     setMessage('');
@@ -116,7 +128,7 @@ export function useOrdersData() {
     cloudCursor.current = undefined;
     localDone.current = false;
     cloudDone.current = false;
-    const synchronization = syncPendingSales(acceptSale).catch(() => ({
+    const synchronization = syncPendingSales(acceptSale, cancelSale).catch(() => ({
       synced: 0,
       failed: 1,
     }));
@@ -182,7 +194,7 @@ export function useOrdersData() {
         }
       },
     );
-  }, [acceptSale, convex, session.deviceId, session.token]);
+  }, [acceptSale, cancelSale, convex, session.deviceId, session.token]);
 
   useEffect(() => {
     mounted.current = true;
@@ -248,7 +260,7 @@ export function useOrdersData() {
       setMessage('');
       try {
         await makeLocalSaleRetryAvailable(localSaleId);
-        const result = await syncPendingSales(acceptSale);
+        const result = await syncPendingSales(acceptSale, cancelSale);
         if (result.failed > 0) {
           setMessage('The order is still saved locally and waiting to sync.');
         }
@@ -263,7 +275,7 @@ export function useOrdersData() {
         if (mounted.current) setRetryingId(undefined);
       }
     },
-    [acceptSale, refresh],
+    [acceptSale, cancelSale, refresh],
   );
 
   const reprintReceipt = useCallback(
@@ -288,17 +300,44 @@ export function useOrdersData() {
     [refresh],
   );
 
+  const cancelOrder = useCallback(
+    async (order: OrderHistoryRecord, reason: string) => {
+      setCancellingId(order.localSaleId);
+      setMessage('');
+      try {
+        await completeLocalSaleCancellation({
+          originalLocalSaleId: order.localSaleId,
+          reason,
+          actorName: session.name,
+        });
+        const result = await syncPendingSales(acceptSale, cancelSale);
+        await refresh();
+        setMessage(result.failed > 0
+          ? 'Correction saved locally and waiting to synchronize.'
+          : 'Order cancelled. Record a replacement sale if needed.');
+      } catch (error) {
+        setMessage(error instanceof Error ? error.message : 'Order correction could not be saved.');
+        throw error;
+      } finally {
+        if (mounted.current) setCancellingId(undefined);
+      }
+    },
+    [acceptSale, cancelSale, refresh, session.name],
+  );
+
   return {
     orders,
     isLoading,
     isLoadingMore,
     retryingId,
     reprintingId,
+    cancellingId,
     message,
     lastSuccessAt,
     hasMore: !localDone.current || !cloudDone.current,
     loadMore,
     retrySync,
     reprintReceipt,
+    cancelOrder,
   };
 }

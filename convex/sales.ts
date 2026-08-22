@@ -502,6 +502,7 @@ export const accept = mutation({
       await ctx.db.insert('saleItems', {
         saleId,
         productId: line.product._id,
+        categoryId: line.category._id,
         productName: line.product.name,
         receiptName: line.product.receiptName,
         unitPriceCentimes: line.unitPriceCentimes,
@@ -731,6 +732,191 @@ export const accept = mutation({
       acknowledgedAt,
       duplicate: false,
     };
+  },
+});
+
+function subtractMetric(value: number, amount: number, label: string) {
+  if (!Number.isSafeInteger(value) || !Number.isSafeInteger(amount) || amount < 0 || value < amount) {
+    return conflict(`Saved ${label} cannot be reversed safely.`);
+  }
+  return value - amount;
+}
+
+export const cancel = mutation({
+  args: {
+    ...sessionArgs,
+    localCorrectionId: v.string(),
+    originalLocalSaleId: v.string(),
+    reason: v.string(),
+    businessDate: v.string(),
+    correctedAt: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const actor = await requireOperationalAccess(ctx, args);
+    const deviceId = identifier(args.deviceId, 'Device ID');
+    const localCorrectionId = identifier(args.localCorrectionId, 'Correction ID');
+    const originalLocalSaleId = identifier(args.originalLocalSaleId, 'Original sale ID');
+    const reason = cleanText(args.reason, 'Correction reason', 240);
+    if (reason.length < 3) return invalid('Correction reason must contain at least 3 characters.');
+    const correctionDate = args.businessDate;
+    const parsedDate = Date.parse(`${correctionDate}T00:00:00.000Z`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(correctionDate) || !Number.isFinite(parsedDate)
+      || new Date(parsedDate).toISOString().slice(0, 10) !== correctionDate) {
+      return invalid('Business date must use YYYY-MM-DD.');
+    }
+    const correctedAt = boundedInteger(args.correctedAt, 'Correction time', 0, Number.MAX_SAFE_INTEGER);
+    const previous = await ctx.db
+      .query('saleCorrections')
+      .withIndex('by_device_local_correction', (q) =>
+        q.eq('deviceId', deviceId).eq('localCorrectionId', localCorrectionId),
+      )
+      .unique();
+    if (previous) {
+      return {
+        kind: 'cancelled' as const,
+        correctionId: previous._id,
+        originalSaleId: previous.originalSaleId,
+        acknowledgedAt: previous.acknowledgedAt,
+        duplicate: true,
+      };
+    }
+
+    const original = await ctx.db
+      .query('sales')
+      .withIndex('by_device_local_sale', (q) =>
+        q.eq('deviceId', deviceId).eq('localSaleId', originalLocalSaleId),
+      )
+      .unique();
+    if (!original) return { kind: 'original-pending' as const };
+    if (original.status !== 'completed') return conflict('Only a completed sale can be corrected.');
+    if (original.businessDate !== correctionDate) {
+      return conflict('Only a same-calendar-day sale can be corrected.');
+    }
+    const prior = await ctx.db
+      .query('saleCorrections')
+      .withIndex('by_original_sale', (q) => q.eq('originalSaleId', original._id))
+      .take(2);
+    if (prior.length > 1) return conflict('Correction history is duplicated.');
+    if (prior.length) return conflict('This sale already has a correction.');
+
+    const [items, movements, metricRows] = await Promise.all([
+      ctx.db.query('saleItems').withIndex('by_sale', (q) => q.eq('saleId', original._id)).take(51),
+      ctx.db.query('stockMovements').withIndex('by_related_sale', (q) => q.eq('relatedSaleId', original._id)).take(101),
+      ctx.db.query('dailyMetrics').withIndex('by_business_date', (q) => q.eq('businessDate', original.businessDate)).take(2),
+    ]);
+    if (items.length > 50 || movements.length > 100 || metricRows.length !== 1) {
+      return conflict('Saved correction history is incomplete.');
+    }
+    const metric = metricRows[0];
+    const acknowledgedAt = Date.now();
+    const ingredients = new Map<Id<'ingredients'>, Doc<'ingredients'>>();
+    for (const movement of movements) {
+      if (movement.movementType !== 'sale' || movement.quantityDelta >= 0) {
+        return conflict('Saved stock history is invalid.');
+      }
+      const ingredient = await ctx.db.get(movement.ingredientId);
+      if (!ingredient) return conflict('A saved correction ingredient is missing.');
+      ingredients.set(ingredient._id, ingredient);
+    }
+    for (const movement of movements) {
+      const ingredient = ingredients.get(movement.ingredientId);
+      if (!ingredient) return conflict('A saved correction ingredient is missing.');
+      const restoredQuantity = -movement.quantityDelta;
+      const restoredCost = movement.costDeltaCentimes === undefined ? undefined : -movement.costDeltaCentimes;
+      const complete = ingredient.costStatus === 'complete'
+        && ingredient.inventoryValueCentimes !== undefined
+        && restoredCost !== undefined;
+      const inventoryValue = complete
+        ? ingredient.inventoryValueCentimes! + restoredCost
+        : undefined;
+      const valuationRevision = (ingredient.valuationRevision ?? 0) + 1;
+      await ctx.db.patch(ingredient._id, {
+        currentStockQuantity: ingredient.currentStockQuantity + restoredQuantity,
+        ...(inventoryValue === undefined
+          ? { inventoryValueCentimes: undefined, costStatus: 'incomplete' as const }
+          : { inventoryValueCentimes: inventoryValue, costStatus: 'complete' as const }),
+        valuationRevision,
+        revision: ingredient.revision + 1,
+        updatedAt: acknowledgedAt,
+        updatedBy: actor,
+      });
+      await ctx.db.insert('stockMovements', {
+        ingredientId: ingredient._id,
+        quantityDelta: restoredQuantity,
+        movementType: 'cancellation',
+        relatedSaleId: original._id,
+        reason: `Cancellation of ${original.receiptNumber}: ${reason}`,
+        deviceId,
+        actorLabel: actor,
+        businessDate: original.businessDate,
+        createdAt: correctedAt,
+        clientMutationId: `${deviceId}:${localCorrectionId}:${ingredient._id}`,
+        ...(restoredCost === undefined ? {} : { costDeltaCentimes: restoredCost }),
+        ...(inventoryValue === undefined ? {} : { inventoryValueAfterCentimes: inventoryValue }),
+        valuationRevision,
+      });
+    }
+
+    const totalsByPaymentMethod = metric.totalsByPaymentMethod.map((row) => ({ ...row }));
+    const payment = totalsByPaymentMethod.find((row) => row.paymentMethod === original.paymentMethod);
+    if (!payment) return conflict('Saved payment summary is incomplete.');
+    payment.totalCentimes = subtractMetric(payment.totalCentimes, original.totalCentimes, 'payment total');
+    payment.orderCount = subtractMetric(payment.orderCount, 1, 'payment count');
+    const totalsByServiceMode = metric.totalsByServiceMode.map((row) => ({ ...row }));
+    const service = totalsByServiceMode.find((row) => row.serviceMode === original.serviceMode);
+    if (!service) return conflict('Saved service summary is incomplete.');
+    service.totalCentimes = subtractMetric(service.totalCentimes, original.totalCentimes, 'service total');
+    service.orderCount = subtractMetric(service.orderCount, 1, 'service count');
+    const productTotals = metric.productTotals.map((row) => ({ ...row }));
+    const categoryTotals = metric.categoryTotals.map((row) => ({ ...row }));
+    for (const item of items) {
+      if (!item.productId) return conflict('Saved product history is incomplete.');
+      const product = productTotals.find((row) => row.productId === item.productId);
+      if (!product) return conflict('Saved product summary is incomplete.');
+      product.quantity = subtractMetric(product.quantity, item.quantity, 'product quantity');
+      product.totalCentimes = subtractMetric(product.totalCentimes, item.lineTotalCentimes, 'product total');
+      const categoryMatches = item.categoryId
+        ? categoryTotals.filter((row) => row.categoryId === item.categoryId)
+        : categoryTotals.filter((row) => row.categoryName === product.categoryName);
+      const category = categoryMatches.length === 1 ? categoryMatches[0] : undefined;
+      if (!category) return conflict('Saved category summary is incomplete.');
+      category.quantity = subtractMetric(category.quantity, item.quantity, 'category quantity');
+      category.totalCentimes = subtractMetric(category.totalCentimes, item.lineTotalCentimes, 'category total');
+    }
+    const ingredientTotals = (metric.ingredientTotals ?? []).map((row) => ({ ...row }));
+    for (const movement of movements) {
+      const total = ingredientTotals.find((row) => row.ingredientId === movement.ingredientId);
+      if (!total) return conflict('Saved ingredient summary is incomplete.');
+      total.quantity = subtractMetric(total.quantity, -movement.quantityDelta, 'ingredient quantity');
+    }
+    await ctx.db.patch(metric._id, {
+      grossCentimes: subtractMetric(metric.grossCentimes, original.totalCentimes, 'gross total'),
+      netCentimes: subtractMetric(metric.netCentimes, original.totalCentimes, 'net total'),
+      orderCount: subtractMetric(metric.orderCount, 1, 'order count'),
+      cancelledCentimes: metric.cancelledCentimes + original.totalCentimes,
+      totalsByPaymentMethod: totalsByPaymentMethod.filter((row) => row.orderCount > 0),
+      totalsByServiceMode: totalsByServiceMode.filter((row) => row.orderCount > 0),
+      productTotals: productTotals.filter((row) => row.quantity > 0),
+      categoryTotals: categoryTotals.filter((row) => row.quantity > 0),
+      ingredientTotals: ingredientTotals.filter((row) => row.quantity > 0),
+      ingredientUsageEventCount: subtractMetric(metric.ingredientUsageEventCount ?? 0, movements.length, 'ingredient usage count'),
+      ingredientCostCentimes: subtractMetric(metric.ingredientCostCentimes ?? 0, original.ingredientCostCentimes ?? 0, 'ingredient cost'),
+      completeCostSaleCount: subtractMetric(metric.completeCostSaleCount ?? 0, original.costStatus === 'complete' ? 1 : 0, 'complete-cost sale count'),
+      incompleteCostSaleCount: subtractMetric(metric.incompleteCostSaleCount ?? 0, original.costStatus === 'incomplete' ? 1 : 0, 'incomplete-cost sale count'),
+      updatedAt: acknowledgedAt,
+    });
+    await ctx.db.patch(original._id, { status: 'cancelled' });
+    const correctionId = await ctx.db.insert('saleCorrections', {
+      deviceId,
+      localCorrectionId,
+      originalSaleId: original._id,
+      reason,
+      actorName: actor,
+      businessDate: original.businessDate,
+      correctedAt,
+      acknowledgedAt,
+    });
+    return { kind: 'cancelled' as const, correctionId, originalSaleId: original._id, acknowledgedAt, duplicate: false };
   },
 });
 

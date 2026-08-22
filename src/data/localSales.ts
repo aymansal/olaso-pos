@@ -92,6 +92,15 @@ export type CompleteSaleInput = {
   completedAt?: number;
 };
 
+export type SaleCancellationPayload = {
+  deviceId: string;
+  localCorrectionId: string;
+  originalLocalSaleId: string;
+  reason: string;
+  businessDate: string;
+  correctedAt: number;
+};
+
 const TAX_POLICY_LABEL = 'No tax';
 const CASHIER_LABEL = 'Development cashier';
 
@@ -526,6 +535,123 @@ export function completeLocalSale(input: CompleteSaleInput) {
   return withLocalTransaction((database) => commitLocalSale(database, input));
 }
 
+export async function cancelLocalSale(
+  database: SaleDatabase,
+  {
+    originalLocalSaleId,
+    reason,
+    actorName,
+    correctedAt = Date.now(),
+  }: {
+    originalLocalSaleId: string;
+    reason: string;
+    actorName: string;
+    correctedAt?: number;
+  },
+  idFactory = () => crypto.randomUUID(),
+) {
+  if (!/^[A-Za-z0-9._:-]+$/.test(originalLocalSaleId) || originalLocalSaleId.length > 128) {
+    throw new Error('The original sale ID is invalid.');
+  }
+  const cleanedReason = reason.trim();
+  if (cleanedReason.length < 3 || cleanedReason.length > 240) {
+    throw new Error('Correction reason must contain 3 to 240 characters.');
+  }
+  if (!actorName.trim() || actorName.length > 120) throw new Error('Correction actor is invalid.');
+  if (!Number.isSafeInteger(correctedAt) || correctedAt < 0) throw new Error('Correction time is invalid.');
+  const originalResult = await database.query(
+    `SELECT local_sale_id, device_id, status, business_date
+     FROM sales WHERE local_sale_id = ? LIMIT 1`,
+    [originalLocalSaleId],
+  );
+  const original = originalResult.values?.[0];
+  if (!original) throw new Error('The saved order is unavailable on this tablet.');
+  if (original.status !== 'completed') throw new Error('Only a completed order can be corrected.');
+  const date = String(original.business_date);
+  if (date !== businessDate(correctedAt)) {
+    throw new Error('Only a same-calendar-day order can be corrected.');
+  }
+  const previous = await database.query(
+    `SELECT local_correction_id FROM sale_corrections
+     WHERE original_local_sale_id = ? LIMIT 1`,
+    [originalLocalSaleId],
+  );
+  if (previous.values?.[0]) throw new Error('This order already has a correction.');
+  const movements = await database.query(
+    `SELECT ingredient_id, quantity_delta, cost_delta_centimes
+     FROM stock_movements
+     WHERE local_sale_id = ? AND movement_type = 'sale'
+     ORDER BY id LIMIT 101`,
+    [originalLocalSaleId],
+  );
+  if ((movements.values?.length ?? 0) > 100) throw new Error('Saved stock history is invalid.');
+  const localCorrectionId = idFactory();
+  const operationId = idFactory();
+  await database.run(
+    `UPDATE sales SET status = 'cancelled' WHERE local_sale_id = ?`,
+    [originalLocalSaleId],
+    false,
+  );
+  for (const movement of movements.values ?? []) {
+    const quantityDelta = Number(movement.quantity_delta);
+    const costDelta = movement.cost_delta_centimes === null || movement.cost_delta_centimes === undefined
+      ? undefined
+      : Number(movement.cost_delta_centimes);
+    if (!Number.isSafeInteger(quantityDelta) || quantityDelta >= 0 || (costDelta !== undefined && !Number.isSafeInteger(costDelta))) {
+      throw new Error('Saved stock history is invalid.');
+    }
+    await database.run(
+      `UPDATE ingredients
+       SET local_stock_delta = local_stock_delta - ?,
+           local_inventory_value_delta = local_inventory_value_delta - COALESCE(?, 0),
+           updated_at = ?
+       WHERE id = ?`,
+      [quantityDelta, costDelta ?? null, correctedAt, String(movement.ingredient_id)],
+      false,
+    );
+    await database.run(
+      `INSERT INTO stock_movements
+       (id, ingredient_id, local_sale_id, quantity_delta, movement_type,
+        reason, actor_label, business_date, created_at, cost_delta_centimes)
+       VALUES (?, ?, ?, ?, 'cancellation', ?, ?, ?, ?, ?)`,
+      [
+        idFactory(),
+        String(movement.ingredient_id),
+        originalLocalSaleId,
+        -quantityDelta,
+        `Cancellation: ${cleanedReason}`,
+        actorName.trim(),
+        date,
+        correctedAt,
+        costDelta === undefined ? null : -costDelta,
+      ],
+      false,
+    );
+  }
+  await database.run(
+    `INSERT INTO sale_corrections
+     (local_correction_id, original_local_sale_id, device_id, reason, actor_name,
+      business_date, corrected_at, sync_state)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')`,
+    [localCorrectionId, originalLocalSaleId, String(original.device_id), cleanedReason, actorName.trim(), date, correctedAt],
+    false,
+  );
+  await database.run(
+    `INSERT INTO outbox
+     (operation_id, device_id, operation_type, local_record_id, state, created_at, available_at)
+     VALUES (?, ?, 'sale-cancelled', ?, 'pending', ?, ?)`,
+    [operationId, String(original.device_id), localCorrectionId, correctedAt, correctedAt],
+    false,
+  );
+  return { localCorrectionId, operationId, originalLocalSaleId, correctedAt };
+}
+
+export function completeLocalSaleCancellation(
+  input: Parameters<typeof cancelLocalSale>[1],
+) {
+  return withLocalTransaction((database) => cancelLocalSale(database, input));
+}
+
 async function loadSaleSyncPayload(
   localSaleId: string,
 ): Promise<SaleSyncPayload> {
@@ -574,6 +700,28 @@ async function loadSaleSyncPayload(
   };
 }
 
+async function loadSaleCancellationPayload(
+  localCorrectionId: string,
+): Promise<SaleCancellationPayload> {
+  const database = await openLocalDatabase();
+  const result = await database.query(
+    `SELECT device_id, local_correction_id, original_local_sale_id, reason,
+      business_date, corrected_at
+     FROM sale_corrections WHERE local_correction_id = ? LIMIT 1`,
+    [localCorrectionId],
+  );
+  const row = result.values?.[0];
+  if (!row) throw new Error('The pending correction is missing.');
+  return {
+    deviceId: String(row.device_id),
+    localCorrectionId: String(row.local_correction_id),
+    originalLocalSaleId: String(row.original_local_sale_id),
+    reason: String(row.reason),
+    businessDate: String(row.business_date),
+    correctedAt: Number(row.corrected_at),
+  };
+}
+
 async function acknowledgeSale(
   operationId: string,
   localSaleId: string,
@@ -598,6 +746,33 @@ async function acknowledgeSale(
       `UPDATE sync_state
        SET last_success_at = ?, last_error = NULL
        WHERE id = 1`,
+      [acknowledgedAt],
+      false,
+    );
+  });
+}
+
+async function acknowledgeSaleCancellation(
+  operationId: string,
+  localCorrectionId: string,
+  cloudCorrectionId: string,
+  acknowledgedAt: number,
+) {
+  return withLocalTransaction(async (database) => {
+    await database.run(
+      `UPDATE sale_corrections
+       SET cloud_correction_id = ?, sync_state = 'synced'
+       WHERE local_correction_id = ?`,
+      [cloudCorrectionId, localCorrectionId],
+      false,
+    );
+    await database.run(
+      'DELETE FROM outbox WHERE operation_id = ? AND local_record_id = ?',
+      [operationId, localCorrectionId],
+      false,
+    );
+    await database.run(
+      `UPDATE sync_state SET last_success_at = ?, last_error = NULL WHERE id = 1`,
       [acknowledgedAt],
       false,
     );
@@ -648,35 +823,74 @@ async function failSale(
   });
 }
 
+async function failSaleCancellation(
+  operationId: string,
+  localCorrectionId: string,
+  attemptCount: number,
+  caught: unknown,
+) {
+  const error = (caught instanceof Error ? caught.message : 'Correction synchronization failed.')
+    .trim().slice(0, 500);
+  const retryAt = Date.now() + Math.min(60_000, 1_000 * 2 ** Math.min(attemptCount, 6));
+  return withLocalTransaction(async (database) => {
+    await database.run(
+      `UPDATE sale_corrections SET sync_state = 'failed' WHERE local_correction_id = ?`,
+      [localCorrectionId],
+      false,
+    );
+    await database.run(
+      `UPDATE outbox SET state = 'failed', attempt_count = attempt_count + 1,
+       last_error = ?, available_at = ? WHERE operation_id = ?`,
+      [error, retryAt, operationId],
+      false,
+    );
+    await database.run(
+      `UPDATE sync_state SET last_error = ? WHERE id = 1`,
+      [error],
+      false,
+    );
+  });
+}
+
 export async function syncPendingSales(
   acceptSale: (
     input: SaleSyncPayload,
   ) => Promise<{ saleId: string; acknowledgedAt: number }>,
+  cancelSale?: (
+    input: SaleCancellationPayload,
+  ) => Promise<
+    | { kind: 'cancelled'; correctionId: string; acknowledgedAt: number }
+    | { kind: 'original-pending' }
+  >,
 ) {
   const entries = await listPendingOutbox(Date.now(), 10);
   let synced = 0;
   let failed = 0;
   for (const entry of entries) {
-    if (entry.operationType !== 'sale-completed') continue;
-    try {
-      const result = await acceptSale(
-        await loadSaleSyncPayload(entry.localRecordId),
-      );
-      await acknowledgeSale(
-        entry.operationId,
-        entry.localRecordId,
-        result.saleId,
-        result.acknowledgedAt,
-      );
-      synced += 1;
-    } catch (error) {
-      await failSale(
-        entry.operationId,
-        entry.localRecordId,
-        entry.attemptCount,
-        error,
-      );
-      failed += 1;
+    if (entry.operationType === 'sale-completed') {
+      try {
+        const result = await acceptSale(await loadSaleSyncPayload(entry.localRecordId));
+        await acknowledgeSale(entry.operationId, entry.localRecordId, result.saleId, result.acknowledgedAt);
+        synced += 1;
+      } catch (error) {
+        await failSale(entry.operationId, entry.localRecordId, entry.attemptCount, error);
+        failed += 1;
+      }
+      continue;
+    }
+    if (entry.operationType === 'sale-cancelled') {
+      try {
+        if (!cancelSale) throw new Error('Correction synchronization is unavailable.');
+        const result = await cancelSale(await loadSaleCancellationPayload(entry.localRecordId));
+        if (result.kind === 'original-pending') {
+          throw new Error('The original order must synchronize before its correction.');
+        }
+        await acknowledgeSaleCancellation(entry.operationId, entry.localRecordId, result.correctionId, result.acknowledgedAt);
+        synced += 1;
+      } catch (error) {
+        await failSaleCancellation(entry.operationId, entry.localRecordId, entry.attemptCount, error);
+        failed += 1;
+      }
     }
   }
   return { synced, failed };

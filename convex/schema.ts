@@ -222,9 +222,23 @@ export default defineSchema({
     .index('by_device_local_sale', ['deviceId', 'localSaleId'])
     .index('by_completed_at', ['completedAt']),
 
+  saleCorrections: defineTable({
+    deviceId: v.string(),
+    localCorrectionId: v.string(),
+    originalSaleId: v.id('sales'),
+    reason: v.string(),
+    actorName: v.string(),
+    businessDate: v.string(),
+    correctedAt: v.number(),
+    acknowledgedAt: v.number(),
+  })
+    .index('by_device_local_correction', ['deviceId', 'localCorrectionId'])
+    .index('by_original_sale', ['originalSaleId']),
+
   saleItems: defineTable({
     saleId: v.id('sales'),
     productId: v.optional(v.id('products')),
+    categoryId: v.optional(v.id('categories')),
     productName: v.string(),
     receiptName: v.string(),
     unitPriceCentimes: v.number(),

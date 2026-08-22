@@ -55,8 +55,10 @@ export function OrdersScreen({
         order={selectedOrder}
         retrying={data.retryingId === selectedOrder?.localSaleId}
         reprinting={data.reprintingId === selectedOrder?.localSaleId}
+        cancelling={data.cancellingId === selectedOrder?.localSaleId}
         onRetry={data.retrySync}
         onReprint={data.reprintReceipt}
+        onCancel={data.cancelOrder}
       />
     </main>
   );

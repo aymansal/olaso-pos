@@ -128,6 +128,22 @@ remaining goal and card sequence.
   and 17,918 edges. Commit `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is
   pushed to the canonical branch. Exact next action: implement ORDER-01 alone.
 
+- ORDER-01 implementation is verified and awaiting its card commit/push. A
+  same-day cashier correction keeps the original sale immutable, changes its
+  status to cancelled, records the actor, required reason, time, original
+  reference, and retry ID, and reverses only the original saved stock/cost and
+  daily-summary effects. SQLite migration 12 stores correction audit/outbox
+  state; Convex has indexed correction records and rejects duplicate or
+  non-completed originals. A missing original returns a structured pending
+  result, never a raw Convex message. `check:sales`, `check:orders`,
+  `check:permissions`, `check:identity`, `check:local`, `check:pos`,
+  `check:android`, TypeScript, Convex typecheck, production build, and
+  `git diff --check` pass. SM-X115 evidence covers active-profile refresh,
+  owner unlock, unclipped POS/Orders, correction reason dialog, and friendly
+  pending-sync copy; filtered crash logs are empty. Graphify refreshed to
+  2,731 nodes and 20,715 edges. Exact next action: commit and push ORDER-01,
+  record its SHA, then activate ID-03 alone.
+
 ### 2026-08-22 — POLICY-02 checkout policy completed
 
 - Completed the confirmed Dine-in/Take-away, Cash/Card, no-tax, anonymous-sale,

@@ -258,6 +258,17 @@ append-only cancellation/refund correction workflows.
   and 17,918 edges. Commit `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is
   pushed to the canonical branch. Exact next action: implement ORDER-01 alone.
 
+- ORDER-01 implementation is verified and awaiting its card commit/push. The
+  whole-sale same-day cashier correction leaves the original immutable, records
+  actor/reason/time/reference/retry audit data, and reverses only saved stock,
+  cost, money, and summary effects. SQLite migration 12 and indexed Convex
+  correction records make retries exactly once. Missing original cloud history
+  is structured as pending rather than rendered as a Convex exception. Focused
+  sales/orders/permission/identity/local/POS/Android checks, TypeScript,
+  Convex typecheck, production build, and SM-X115 owner-unlock/Orders-dialog
+  evidence pass. Graphify refreshed to 2,731 nodes and 20,715 edges. Exact
+  next action: commit and push ORDER-01, record its SHA, then activate ID-03.
+
 ## Planning journal
 
 ### 2026-08-21 — Goal 05 sequenced

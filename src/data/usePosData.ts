@@ -9,6 +9,7 @@ import {
   completeLocalSale,
   syncPendingSales,
   type CompleteSaleInput,
+  type SaleCancellationPayload,
   type SaleSyncPayload,
 } from './localSales.ts';
 import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
@@ -45,6 +46,7 @@ export function usePosData() {
     args: { sessionToken: session.token, deviceId: session.deviceId },
   });
   const acceptMutation = useMutation(api.sales.accept);
+  const cancelMutation = useMutation(api.sales.cancel);
   const [menu, setMenu] = useState<OperationalCacheSnapshot>();
   const [localError, setLocalError] = useState('');
   const [printFeedback, setPrintFeedback] = useState<{
@@ -67,6 +69,16 @@ export function usePosData() {
       };
     },
     [acceptMutation, session.token],
+  );
+
+  const cancelSale = useCallback(
+    async (input: SaleCancellationPayload) => {
+      const result = await cancelMutation({ ...input, sessionToken: session.token });
+      return result.kind === 'original-pending'
+        ? result
+        : { kind: 'cancelled' as const, correctionId: String(result.correctionId), acknowledgedAt: result.acknowledgedAt };
+    },
+    [cancelMutation, session.token],
   );
 
   const reloadLocal = useCallback(async () => {
@@ -101,7 +113,7 @@ export function usePosData() {
     };
     (async () => {
       try {
-        const sync = await syncPendingSales(acceptSale);
+        const sync = await syncPendingSales(acceptSale, cancelSale);
         if (sync.failed === 0) await replaceOperationalCache(snapshot);
         if (active) {
           await reloadLocal();
@@ -125,11 +137,11 @@ export function usePosData() {
     return () => {
       active = false;
     };
-  }, [acceptSale, cloudSnapshot, reloadLocal]);
+  }, [acceptSale, cancelSale, cloudSnapshot, reloadLocal]);
 
   useEffect(() => {
     const retry = () => {
-      syncPendingSales(acceptSale)
+      syncPendingSales(acceptSale, cancelSale)
         .then(reloadLocal)
         .catch((error: unknown) =>
           setLocalError(
@@ -141,7 +153,7 @@ export function usePosData() {
     };
     window.addEventListener('online', retry);
     return () => window.removeEventListener('online', retry);
-  }, [acceptSale, reloadLocal]);
+  }, [acceptSale, cancelSale, reloadLocal]);
 
   const completeOrder = useCallback(
     async (input: CompleteSaleInput) => {
@@ -161,14 +173,14 @@ export function usePosData() {
       void reloadLocal().catch(() =>
         setLocalError('The order is saved locally. Menu refresh failed.'),
       );
-      syncPendingSales(acceptSale)
+      syncPendingSales(acceptSale, cancelSale)
         .then(reloadLocal)
         .catch(() =>
           setLocalError('The order is saved locally and waiting to synchronize.'),
         );
       return result;
     },
-    [acceptSale, reloadLocal],
+    [acceptSale, cancelSale, reloadLocal],
   );
 
   return {

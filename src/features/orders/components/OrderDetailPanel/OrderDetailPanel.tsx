@@ -8,6 +8,7 @@ import {
   Printer,
   Receipt,
   ArrowsClockwise,
+  ArrowCounterClockwise,
   Storefront,
   User,
 } from '@phosphor-icons/react';
@@ -16,6 +17,7 @@ import { ReceiptPreviewDialog } from '../../../../components/ReceiptPreviewDialo
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrderDetailPanel.module.css';
+import { CancellationDialog } from '../CancellationDialog/CancellationDialog';
 
 function serviceLabel(order: OrderHistoryRecord) {
   if (order.receipt.serviceType === 'dine-in') return 'Dine in';
@@ -35,16 +37,21 @@ export function OrderDetailPanel({
   order,
   retrying,
   reprinting,
+  cancelling,
   onRetry,
   onReprint,
+  onCancel,
 }: {
   order?: OrderHistoryRecord;
   retrying: boolean;
   reprinting: boolean;
+  cancelling: boolean;
   onRetry: (localSaleId: string) => Promise<void>;
   onReprint: (order: OrderHistoryRecord) => Promise<void>;
+  onCancel: (order: OrderHistoryRecord, reason: string) => Promise<void>;
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [cancellationOpen, setCancellationOpen] = useState(false);
 
   if (!order) {
     return (
@@ -74,6 +81,7 @@ export function OrderDetailPanel({
   ] as const;
   const canRetry = order.syncState !== 'synced';
   const canReprint = order.status === 'completed' && Boolean(order.printState);
+  const canCancel = order.status === 'completed' && Boolean(order.printState);
   const statusTone = canRetry || order.status !== 'completed'
     ? styles.statusAttention
     : styles.statusComplete;
@@ -107,13 +115,8 @@ export function OrderDetailPanel({
             <span />
             <strong>{stateLabel(order)}</strong>
           </span>
-          <button
-            type="button"
-            aria-label="Corrective actions unavailable"
-            title="Cancellation and refund permissions await owner confirmation"
-            disabled
-          >
-            <DotsThree size={16} weight="regular" aria-hidden="true" />
+          <button type="button" aria-label="Cancel order" title={canCancel ? 'Cancel this whole sale' : 'This order cannot be corrected'} disabled={!canCancel || cancelling} onClick={() => setCancellationOpen(true)}>
+            {canCancel ? <ArrowCounterClockwise size={16} weight="regular" aria-hidden="true" /> : <DotsThree size={16} weight="regular" aria-hidden="true" />}
           </button>
         </span>
       </header>
@@ -234,6 +237,10 @@ export function OrderDetailPanel({
           )}
           <span>{retrying ? 'Retrying…' : canRetry ? 'Retry sync' : 'Synced'}</span>
         </button>
+        <button type="button" className={styles.cancelOrder} disabled={!canCancel || cancelling} onClick={() => setCancellationOpen(true)}>
+          <ArrowCounterClockwise size={17} weight="regular" aria-hidden="true" />
+          <span>{cancelling ? 'Cancelling…' : 'Cancel'}</span>
+        </button>
       </div>
 
       <div className={styles.stockNote} title={order.printError ?? printNote}>
@@ -249,6 +256,13 @@ export function OrderDetailPanel({
               : syncNote
           }
           onClose={() => setPreviewOpen(false)}
+        />
+      ) : null}
+      {cancellationOpen ? (
+        <CancellationDialog
+          receiptNumber={order.receipt.receiptNumber}
+          onClose={() => setCancellationOpen(false)}
+          onConfirm={(reason) => onCancel(order, reason)}
         />
       ) : null}
     </aside>

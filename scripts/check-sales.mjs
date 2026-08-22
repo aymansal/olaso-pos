@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
 import {
+  cancelLocalSale,
   commitLocalSale,
   prepareSale,
 } from '../src/data/localSales.ts';
@@ -171,6 +172,34 @@ assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count,
   3,
 );
+
+const correctionIds = ['local-correction-check', 'cancellation-operation-check', 'cancellation-movement-1', 'cancellation-movement-2', 'cancellation-movement-3'];
+let correctionId = 0;
+database.exec('BEGIN IMMEDIATE');
+const localCorrection = await cancelLocalSale(
+  adapter,
+  {
+    originalLocalSaleId: 'local-sale-check',
+    reason: 'Customer changed order',
+    actorName: 'Test cashier',
+    correctedAt: now + 60_000,
+  },
+  () => correctionIds[correctionId++],
+);
+database.exec('COMMIT');
+assert.equal(localCorrection.localCorrectionId, 'local-correction-check');
+assert.equal(database.prepare("SELECT status FROM sales WHERE local_sale_id = 'local-sale-check'").get().status, 'cancelled');
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sales').get().count, 1);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_items').get().count, 1);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_corrections').get().count, 1);
+assert.equal(database.prepare("SELECT COUNT(*) AS count FROM stock_movements WHERE movement_type = 'cancellation'").get().count, 3);
+assert.equal(database.prepare("SELECT local_stock_delta FROM ingredients WHERE id = 'ingredient-oat'").get().local_stock_delta, 0);
+await assert.rejects(
+  cancelLocalSale(adapter, {
+    originalLocalSaleId: 'local-sale-check', reason: 'Again', actorName: 'Test cashier', correctedAt: now + 60_000,
+  }),
+  /Only a completed order|already has a correction/,
+);
 assert.equal(
   database
     .prepare(
@@ -187,11 +216,11 @@ assert.equal(
        FROM ingredients WHERE id = 'ingredient-oat'`,
     )
     .get().balance,
-  300,
+  500,
 );
 assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM outbox').get().count,
-  1,
+  2,
 );
 const initialPrint = database.prepare(
   `SELECT print_state, print_attempt_count
@@ -238,8 +267,8 @@ assert.equal(printedState.last_print_bytes_written, 941);
 assert.equal(printedState.last_print_total_ms, 12);
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sales').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_items').get().count, 1);
-assert.equal(database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count, 3);
-assert.equal(database.prepare('SELECT COUNT(*) AS count FROM outbox').get().count, 1);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count, 6);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM outbox').get().count, 2);
 
 const cachedMenu = {
   updatedAt: now,
@@ -317,7 +346,7 @@ assert.equal(
 );
 assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count,
-  3,
+  6,
 );
 assert.equal(
   database
@@ -326,7 +355,7 @@ assert.equal(
        FROM ingredients WHERE id = 'ingredient-oat'`,
     )
     .get().balance,
-  300,
+  500,
 );
 
 database.close();
@@ -551,6 +580,56 @@ await client.action(api.identity.validateSession, {
     reportQuantity(afterReport, 'Whole milk'),
     reportQuantity(beforeReport, 'Whole milk'),
   );
+
+  await assert.rejects(
+    client.mutation(api.sales.cancel, {
+      ...sessionArgs,
+      localCorrectionId: 'policy-correction-invalid',
+      originalLocalSaleId: cloudInput.localSaleId,
+      reason: 'No',
+      businessDate: cloudInput.businessDate,
+      correctedAt: cloudInput.completedAt + 1,
+    }),
+    /at least 3 characters/,
+  );
+  const pendingOriginal = await client.mutation(api.sales.cancel, {
+    ...sessionArgs,
+    localCorrectionId: `policy-correction-pending-${Date.now()}`,
+    originalLocalSaleId: 'missing-original-sale',
+    reason: 'Customer changed order',
+    businessDate: cloudInput.businessDate,
+    correctedAt: cloudInput.completedAt + 1,
+  });
+  assert.deepEqual(pendingOriginal, { kind: 'original-pending' });
+  const cancellationInput = {
+    ...sessionArgs,
+    localCorrectionId: `policy-correction-${Date.now()}`,
+    originalLocalSaleId: cloudInput.localSaleId,
+    reason: 'Customer changed order',
+    businessDate: cloudInput.businessDate,
+    correctedAt: cloudInput.completedAt + 1,
+  };
+  const cancellation = await client.mutation(api.sales.cancel, cancellationInput);
+  const cancellationRetry = await client.mutation(api.sales.cancel, cancellationInput);
+  assert.equal(cancellation.kind, 'cancelled');
+  assert.equal(cancellationRetry.kind, 'cancelled');
+  assert.equal(cancellation.duplicate, false);
+  assert.equal(cancellationRetry.duplicate, true);
+  assert.equal(cancellationRetry.correctionId, cancellation.correctionId);
+  const restored = await client.query(api.sync.getOperationalSnapshot, sessionArgs);
+  const restoredReport = await client.query(api.reports.getSummary, {
+    ...sessionArgs, fromDate: '2026-07-28', toDate: '2026-07-28',
+  });
+  assert.equal(balance(restored, 'Coffee beans'), balance(before, 'Coffee beans'));
+  assert.equal(balance(restored, 'Whole milk'), balance(before, 'Whole milk'));
+  assert.equal(balance(restored, 'Oat milk'), balance(before, 'Oat milk'));
+  assert.equal(balance(restored, 'Paper cups'), balance(before, 'Paper cups'));
+  assert.equal(restoredReport.current.netCentimes, beforeReport.current.netCentimes);
+  assert.equal(restoredReport.current.orderCount, beforeReport.current.orderCount);
+  assert.equal(restoredReport.current.itemCount, beforeReport.current.itemCount);
+  assert.equal(restoredReport.current.ingredientUsageEventCount, beforeReport.current.ingredientUsageEventCount);
+  const cancelledOrders = await client.query(api.sales.listOrders, { ...sessionArgs, limit: 20 });
+  assert.equal(cancelledOrders.page.find((sale) => sale.localSaleId === cloudInput.localSaleId)?.status, 'cancelled');
 }
 
 console.log(

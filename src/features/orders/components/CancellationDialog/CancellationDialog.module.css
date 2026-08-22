@@ -1,0 +1,17 @@
+.overlay { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; background: rgb(28 33 27 / 38%); }
+.dialog { width: 460px; padding: 24px; border: 1px solid var(--olaso-panel-border); border-radius: 28px; background: var(--olaso-white); }
+.dialog header, .dialog header > span, .dialog label, .dialog footer { display: flex; }
+.dialog header, .dialog footer { align-items: center; justify-content: space-between; }
+.dialog header > span, .dialog label { flex-direction: column; }
+.dialog header small, .dialog label span { color: var(--olaso-copy); font-size: 8px; font-weight: 700; letter-spacing: 1px; }
+.dialog h2 { margin: 3px 0 0; color: var(--olaso-text); font-size: 18px; }
+.dialog header button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--olaso-divider); border-radius: 50%; color: var(--olaso-muted); background: transparent; }
+.dialog p { margin: 18px 0 0; color: var(--olaso-copy); font-size: 10px; line-height: 1.5; }
+.dialog label { gap: 7px; margin-top: 18px; }
+.dialog textarea { min-height: 84px; padding: 12px 14px; border: 1px solid var(--olaso-control-border); border-radius: 16px; color: var(--olaso-text); font: inherit; resize: vertical; }
+.dialog > strong { display: block; margin-top: 10px; color: var(--olaso-danger); font-size: 9px; }
+.dialog footer { margin-top: 20px; }
+.dialog footer button { height: 44px; padding: 0 18px; border-radius: 22px; font-size: 9px; font-weight: 700; }
+.dialog footer button:first-child { border: 1px solid var(--olaso-control-border); color: var(--olaso-copy); background: transparent; }
+.dialog footer button:last-child { border: 0; color: var(--olaso-white); background: var(--olaso-danger); }
+.dialog footer button:disabled { opacity: .45; }

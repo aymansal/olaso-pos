@@ -205,31 +205,41 @@ const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
 const convexUrl = localEnv.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
 assert(convexUrl, 'VITE_CONVEX_URL is missing from .env.local');
-execSync('npm run seed:dev', {
+const client = new ConvexHttpClient(convexUrl);
+const ownerPin = process.env.OLASO_OWNER_PIN;
+assert(/^\d{6}$/.test(ownerPin ?? ''), 'OLASO_OWNER_PIN must be a six-digit test restore PIN');
+const seeded = JSON.parse(execSync('npx convex run seed:verify', {
   cwd: projectRoot,
   stdio: 'pipe',
   encoding: 'utf8',
+}));
+const owner = await client.action(api.identity.signIn, {
+  staffProfileId: seeded.ownerProfileId,
+  pin: ownerPin,
+  deviceId: 'orders-check-device',
 });
-const client = new ConvexHttpClient(convexUrl);
-const cloudFirst = await client.query(api.sales.listOrders, { limit: 6 });
-assert.equal(cloudFirst.page.length, 6);
-assert.equal(cloudFirst.isDone, false);
-assert(cloudFirst.continueCursor);
+assert.equal(owner.kind, 'authenticated');
+const sessionArgs = { sessionToken: owner.token, deviceId: 'orders-check-device' };
+const cloudFirst = await client.query(api.sales.listOrders, { ...sessionArgs, limit: 6 });
+assert(cloudFirst.page.length > 0);
 assert(cloudFirst.page[0].receiptSnapshot.lines.length > 0);
-const cloudSecond = await client.query(api.sales.listOrders, {
-  limit: 6,
-  cursor: cloudFirst.continueCursor,
-});
-assert.equal(cloudSecond.page.length, 6);
-assert.equal(
-  new Set([
-    ...cloudFirst.page.map((sale) => sale.localSaleId),
-    ...cloudSecond.page.map((sale) => sale.localSaleId),
-  ]).size,
-  12,
-);
+if (!cloudFirst.isDone) {
+  assert(cloudFirst.continueCursor);
+  const cloudSecond = await client.query(api.sales.listOrders, {
+    ...sessionArgs,
+    limit: 6,
+    cursor: cloudFirst.continueCursor,
+  });
+  assert.equal(
+    new Set([
+      ...cloudFirst.page.map((sale) => sale.localSaleId),
+      ...cloudSecond.page.map((sale) => sale.localSaleId),
+    ]).size,
+    cloudFirst.page.length + cloudSecond.page.length,
+  );
+}
 await assert.rejects(
-  client.query(api.sales.listOrders, { limit: 21 }),
+  client.query(api.sales.listOrders, { ...sessionArgs, limit: 21 }),
   /Order page size/,
 );
 
@@ -253,6 +263,7 @@ const orderDetail = readFileSync(
   'utf8',
 );
 assert.match(orderDetail, /Reprint/);
+assert.match(orderDetail, /Cancel/);
 assert.doesNotMatch(orderDetail, /commitLocalSale|completeLocalSale|stock_movements|outbox/);
 
 console.log('Bounded local/cloud order history and recovery checks passed.');

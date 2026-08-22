@@ -1,5 +1,5 @@
 import { v } from 'convex/values';
-import { action } from './_generated/server';
+import { action, query } from './_generated/server';
 import { internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
 import { isStaffRole, type StaffRole } from './lib/permissions';
@@ -134,6 +134,23 @@ export const supportSetPin = action({
       pinHash: await pinHash(args.pin, pinSalt),
       now: Date.now(),
     }) as StaffIdentity;
+  },
+});
+
+export const listActiveProfiles = query({
+  args: { deviceId: v.string() },
+  handler: async (ctx, args) => {
+    if (!DEVICE_PATTERN.test(args.deviceId)) throw new Error('Sign-in details are invalid.');
+    const profiles = await ctx.db
+      .query('staffProfiles')
+      .withIndex('by_status_name', (q) => q.eq('status', 'active'))
+      .take(51);
+    if (profiles.length > 50) throw new Error('Too many active staff profiles.');
+    return profiles.map((profile) => ({
+      id: profile._id,
+      name: profile.name,
+      role: profile.role,
+    }));
   },
 });
 

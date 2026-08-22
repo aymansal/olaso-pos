@@ -387,6 +387,25 @@ export const localMigrations = [
       )`,
     ],
   },
+  {
+    toVersion: 12,
+    statements: [
+      `CREATE TABLE sale_corrections (
+        local_correction_id TEXT PRIMARY KEY NOT NULL,
+        original_local_sale_id TEXT NOT NULL UNIQUE
+          REFERENCES sales(local_sale_id),
+        cloud_correction_id TEXT,
+        device_id TEXT NOT NULL,
+        reason TEXT NOT NULL,
+        actor_name TEXT NOT NULL,
+        business_date TEXT NOT NULL,
+        corrected_at INTEGER NOT NULL,
+        sync_state TEXT NOT NULL CHECK (sync_state IN ('pending', 'synced', 'failed'))
+      )`,
+      `CREATE INDEX sale_corrections_by_sync
+        ON sale_corrections(sync_state, corrected_at)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

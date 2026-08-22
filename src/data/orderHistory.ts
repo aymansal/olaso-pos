@@ -170,13 +170,20 @@ export async function loadLocalOrderPage(
   const cursorId = cursor?.localSaleId ?? null;
   const result = await database.query(
     `SELECT s.local_sale_id, s.device_id, s.cloud_sale_id, s.status,
-      s.business_date, s.receipt_snapshot_json, s.sync_state, s.created_at,
+      s.business_date, s.receipt_snapshot_json,
+      COALESCE(c.sync_state, s.sync_state) AS effective_sync_state, s.created_at,
       s.print_state, s.print_attempt_count, s.last_print_error_message,
-      o.attempt_count, o.last_error
+      COALESCE(co.attempt_count, o.attempt_count) AS attempt_count,
+      COALESCE(co.last_error, o.last_error) AS last_error
      FROM sales AS s
      LEFT JOIN outbox AS o
        ON o.operation_type = 'sale-completed'
       AND o.local_record_id = s.local_sale_id
+     LEFT JOIN sale_corrections AS c
+       ON c.original_local_sale_id = s.local_sale_id
+     LEFT JOIN outbox AS co
+       ON co.operation_type = 'sale-cancelled'
+      AND co.local_record_id = c.local_correction_id
      WHERE (
        ? IS NULL
        OR s.created_at < ?
@@ -190,7 +197,7 @@ export async function loadLocalOrderPage(
   const pageRows = rows.slice(0, limit);
   const page: OrderHistoryRecord[] = pageRows.map((row) => {
     const status = String(row.status);
-    const syncState = String(row.sync_state);
+    const syncState = String(row.effective_sync_state);
     const printState = String(row.print_state);
     if (
       !['completed', 'cancelled', 'refunded'].includes(status)
@@ -267,9 +274,13 @@ export async function makeLocalSaleRetryAvailable(
     const existing = await database.query(
       `SELECT operation_id
        FROM outbox
-       WHERE operation_type = 'sale-completed' AND local_record_id = ?
+       WHERE (operation_type = 'sale-completed' AND local_record_id = ?)
+          OR (operation_type = 'sale-cancelled' AND local_record_id IN (
+            SELECT local_correction_id FROM sale_corrections
+            WHERE original_local_sale_id = ?
+          ))
        LIMIT 1`,
-      [localSaleId],
+      [localSaleId, localSaleId],
     );
     if (!existing.values?.[0]) {
       throw new Error('This order has no pending synchronization work.');
@@ -277,8 +288,12 @@ export async function makeLocalSaleRetryAvailable(
     await database.run(
       `UPDATE outbox
        SET state = 'pending', available_at = 0, last_error = NULL
-       WHERE operation_type = 'sale-completed' AND local_record_id = ?`,
-      [localSaleId],
+       WHERE (operation_type = 'sale-completed' AND local_record_id = ?)
+          OR (operation_type = 'sale-cancelled' AND local_record_id IN (
+            SELECT local_correction_id FROM sale_corrections
+            WHERE original_local_sale_id = ?
+          ))`,
+      [localSaleId, localSaleId],
       false,
     );
     await database.run(
