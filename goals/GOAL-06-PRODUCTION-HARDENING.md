@@ -8,22 +8,26 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** planned; not active; runs after Goals 03 through 05
+**Status:** planned; not active; begins with a normal owner-led conversation
 
-**Objective:** Let the owner simplify the complete working product, then measure
-and remove the remaining startup, recovery, security, performance, packaging,
-upgrade, and operational risks before accepting a reproducible signed release
-for the real tablet and printer.
+**Objective:** Review the complete working product with the owner one screen at
+a time, implement only explicitly approved changes, then measure and remove the
+remaining startup, recovery, security, performance, packaging, upgrade, and
+operational risks before accepting a reproducible signed release for the real
+tablet and printer.
 
 ## Sequencing decision
 
-Startup quality remains required, but it is implemented here rather than before
-printing, costs, and identity. This avoids optimizing and re-measuring the
-bundle before major features are added. The branded transparent wordmark is
+Goal 06 is not an autonomous `/goal`. It starts in a normal new conversation
+that reconstructs the project and then collaborates with the owner screen by
+screen. The agent must not jump ahead, invent a redesign, batch every question,
+or change application code before the owner explicitly approves the current
+screen's decisions.
+
+Startup quality remains required, but measurement and optimization happen after
+the approved screen work is stable. The branded transparent wordmark is
 prepared now; actual launch integration and measured optimization happen
-against the near-final APK. The owner walkthrough also happens here, after
-workflows are stable, so current screens remain unchanged until the owner
-provides one complete, explicit critique list.
+against the near-final APK.
 
 ## Verified starting leads
 
@@ -64,8 +68,8 @@ provides one complete, explicit critique list.
   support readiness review.
 - Realistic service endurance and final owner acceptance on the actual tablet
   and printer.
-- One owner-led full-app critique before visual cleanup, followed by only the
-  approved reductions in copy, icons, and visible technical information.
+- A normal owner-led screen-by-screen review, followed by only the changes
+  explicitly approved for each screen.
 - A versioned category-artwork gallery with explicit category selection and a
   neutral fallback that never blocks an unfamiliar custom category.
 - A final compact Android app icon plus an optional minimal branded startup
@@ -90,7 +94,12 @@ provides one complete, explicit critique list.
 ## Git workflow and card gate
 
 - Goal branch: codex/goal-06-production-hardening.
-- Keep one HARD card in progress and unrelated work out of its commit.
+- The initial read-only review starts in a normal conversation, not `/goal`.
+  Do not create the implementation branch or mark a card active merely to load
+  context and discuss the first screen.
+- When the owner authorizes implementation, activate only the current card and
+  keep later cards pending.
+- Keep one Goal 06 card in progress and unrelated work out of its commit.
 - Every commit begins with its card ID and is pushed before the card is done.
 - Every implementation card follows PLAN.md, including focused checks, APK
   installation, physical Galaxy Tab A9 testing, and clean console/logcat
@@ -100,10 +109,10 @@ provides one complete, explicit critique list.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | POLISH-01 | Capture the owner's complete app-wide simplification and dislike list | pending | — |
-| POLISH-02 | Apply the approved operator-facing simplifications without weakening recovery | pending | — |
+| POLISH-02 | Apply and verify approved changes one screen at a time | pending | — |
 | CATALOG-01 | Add curated category artwork selection and a neutral custom-category fallback | pending | — |
+| HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
 | HARD-03 | Consolidate safe SQLite and terminal-lock startup gating | pending | — |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
@@ -114,39 +123,48 @@ provides one complete, explicit critique list.
 
 ## Card contracts
 
+### POLISH-01 — Owner walkthrough
+
+- First read the complete DOX chain, ledger, plan, authorities, and this file;
+  query Graphify; inspect the current application state; and explain the
+  understood product back to the owner in plain English.
+- Review one real screen and its important states at a time, beginning with POS
+  unless the owner chooses another screen. Do not flood the owner with a
+  whole-application questionnaire.
+- Let the owner identify what feels wrong before proposing solutions. Discuss
+  each point and record exact keep, remove, shorten, rename, regroup, behavior,
+  and visual decisions only after the owner confirms them.
+- Treat unnecessary icons, corporate-sounding guidance, duplicated status, and
+  permanently visible technical detail as review targets.
+- Separate operator-facing essentials from installation, support, recovery, and
+  destructive actions that must remain reachable.
+- Keep a concise approved checklist for the current screen. Do not change code
+  or move to another screen until the owner explicitly says to proceed.
+
+### POLISH-02 — Approved simplification
+
+- Apply only the owner-approved checklist for the current screen using the
+  existing geometry, components, Phosphor family, and Olaso tokens.
+- Prefer short natural labels and progressive disclosure. Hide support detail
+  until it is useful instead of removing the underlying recovery path.
+- Simplify Settings and printer setup for a coffee-shop operator while retaining
+  validation, test, logo restoration, failure recovery, and accessibility.
+- Recheck the affected workflow in browser and on the physical 1340 by 800
+  tablet before asking the owner to accept it and move to the next screen.
+  Visual cleanup cannot change persistence, authorization, printing, stock, or
+  reporting behavior.
+
 ### HARD-01 — Baseline and instrumentation
 
-- Rebuild/install the unchanged near-final baseline and record at least five
-  force-stopped cold launches and five warm launches on the physical tablet.
+- After the approved screen work is stable, rebuild/install the near-final
+  baseline and record at least five force-stopped cold launches and five warm
+  launches on the physical tablet.
 - Record Android initial display and application ready marks for SQLite, lock,
   POS shell, and cached menu, plus exact APK, Android, and WebView identity.
 - Record median, minimum, and maximum rather than optimizing from one subjective
   launch.
 - Measure initial JavaScript/CSS, APK assets, image dimensions/decoding, and
   synchronization start without adding a permanent telemetry framework.
-
-### POLISH-01 — Owner walkthrough
-
-- Review every completed screen and important state on the physical tablet with
-  the owner after Goals 04 and 05 are stable.
-- Record exact keep, remove, shorten, rename, regroup, and hide decisions before
-  making visual changes. Treat unnecessary icons, corporate-sounding guidance,
-  duplicated status, and permanently visible technical detail as review targets.
-- Separate operator-facing essentials from installation, support, recovery, and
-  destructive actions that must remain reachable.
-- Produce an owner-approved checklist; do not let an agent invent a redesign or
-  silently interpret “cleaner” without concrete decisions.
-
-### POLISH-02 — Approved simplification
-
-- Apply only the POLISH-01 checklist using the existing geometry, components,
-  Phosphor family, and Olaso tokens.
-- Prefer short natural labels and progressive disclosure. Hide support detail
-  until it is useful instead of removing the underlying recovery path.
-- Simplify Settings and printer setup for a coffee-shop operator while retaining
-  validation, test, logo restoration, failure recovery, and accessibility.
-- Recheck every affected workflow and 1340 by 800 screen; visual cleanup cannot
-  change persistence, authorization, printing, stock, or reporting behavior.
 
 ### CATALOG-01 — Category artwork
 
@@ -247,7 +265,7 @@ provides one complete, explicit critique list.
 
 ## Goal completion criteria
 
-- HARD-01 through HARD-08 plus POLISH-01, POLISH-02, and CATALOG-01 are done,
+- POLISH-01, POLISH-02, CATALOG-01, and HARD-01 through HARD-08 are done,
   verified, committed, pushed, and recorded.
 - Android, WebView, and React present one immediate Olaso cream launch sequence
   and meet the physical-tablet startup budget without waiting for the network.
@@ -262,15 +280,24 @@ provides one complete, explicit critique list.
 
 ## Current checkpoint
 
-- Goal 06 is planned only; no HARD card is active and no goal branch exists.
+- Goal 06 is planned only; no card is active and no implementation branch
+  exists.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
-- Exact next action: re-read the DOX chain, ledger, PLAN.md, and authorities;
-  query Graphify; confirm the near-final APK and physical hardware are
-  available; generate the current /goal prompt; create
-  codex/goal-06-production-hardening; and start only HARD-01.
+- Exact next action: open a normal new conversation with the reviewed handoff
+  prompt. It reads the project, confirms its understanding, and begins the
+  owner-led POS review without invoking `/goal`, activating a card, creating an
+  implementation branch, or changing code.
 
 ## Planning journal
+
+### 2026-08-22 — Normal screen-by-screen collaboration selected
+
+- Replaced the autonomous `/goal` start with a normal new conversation.
+- Moved POLISH-01 ahead of technical hardening so the owner and agent establish
+  the application screen by screen before implementation and measurement.
+- Application code remains unchanged until the owner explicitly approves the
+  current screen's decisions.
 
 ### 2026-08-22 — Owner-led polish deferred to final hardening
 

@@ -73,16 +73,17 @@ No goal is active.
   card IDs, dependencies, and universal automated/browser/Android/physical
   tablet/printer completion gates.
 - [Goal 06 — Production Hardening, Release, and Acceptance](goals/GOAL-06-PRODUCTION-HARDENING.md)
-  — final goal containing owner-led simplification, category artwork, app icon,
-  measured startup, recovery, signing, upgrade, security/quota, endurance, and
-  owner acceptance.
+  — final normal-conversation phase containing owner-led screen review,
+  approved simplification, category artwork, app icon, measured startup,
+  recovery, signing, upgrade, security/quota, endurance, and owner acceptance.
 
 ## Current Checkpoint
 
 - No goal is active. Goal 05 is complete on `origin/main` at
   `aa6d26b651e644db47a521f467b16d01cecab426`.
-- Goal 06 production hardening is planned next. Exact next action: activate
-  Goal 06 only when requested and start HARD-01 alone.
+- Goal 06 is planned next as a normal collaborative conversation, not `/goal`.
+  Exact next action: load the project context and begin POLISH-01 with the POS
+  screen without activating implementation or changing code.
 - ID-02 audit repair is complete: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
@@ -687,11 +688,19 @@ No goal is active.
 
 ## Planning Journal
 
+### 2026-08-22 — Goal 06 changed to normal owner-led collaboration
+
+- Goal 06 will start from a normal handoff prompt rather than `/goal`.
+- The owner and agent will review one screen at a time, beginning with POS
+  unless the owner chooses otherwise.
+- No card, implementation branch, or code change starts until the owner approves
+  the current screen's decisions.
+
 ### 2026-08-22 — Production hardening confirmed as next goal
 
 - Goal 05 remains the most recently completed goal.
-- Production hardening is Goal 06 and remains inactive until explicit
-  activation. HARD-01 is the exact next card.
+- Production hardening is Goal 06 and remains inactive. The exact next step is
+  the normal POLISH-01 owner review, not an implementation-card activation.
 
 ### 2026-08-22 — Goal 05 activated; POLICY-01 started
 

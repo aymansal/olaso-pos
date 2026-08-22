@@ -14,9 +14,9 @@ card order, dependencies, and completion gates.
 - The next step is always the first pending card in the first incomplete goal,
   unless WORK_LEDGER.md records an explicit dependency or blocker.
 - When the user asks what comes next, answer from this plan and the relevant
-  goal file. When the user asks for a /goal prompt, use the reviewed start
-  prompt for that goal or generate it from the current goal file; do not
-  improvise a different scope.
+  goal file. Goal 06 starts in a normal collaborative conversation, never with
+  `/goal`; use its reviewed handoff contract and do not let an agent run the
+  remaining plan autonomously.
 - Detailed card contracts live in the linked goal files. This file stays the
   single overview rather than duplicating every implementation detail.
 
@@ -75,7 +75,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Owner-led simplification, startup, release hardening, and final acceptance | planned; next and last | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Owner-led screen review, approved simplification, startup, release hardening, and final acceptance | planned; begins with owner review | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -94,8 +94,7 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 through 05 are complete. Goal 06 is planned next; no HARD card is
-active yet.
+Goals 03 through 05 are complete. Goal 06 is planned next; no card is active.
 
 ## Goal 04 — Costs and profitability
 
@@ -136,18 +135,18 @@ POLICY-01 through POLICY-03 are complete.
 
 ## Goal 06 — Production hardening and acceptance
 
-Goal 06 measures and removes remaining release risk after the workflows are
-stable. Startup performance is here intentionally: it will be optimized once
-against the near-final application rather than repeatedly before every feature.
-It also contains the deferred owner-led simplification pass; no speculative UI
-cleanup happens before the owner reviews the complete working application.
+Goal 06 begins as a normal owner-led conversation, not an autonomous `/goal`.
+The owner and agent review the real application one screen at a time, agree on
+what should stay or change, and implement only after the owner explicitly
+approves the current screen. Technical hardening follows the approved
+screen-by-screen work.
 
 | Card | Outcome |
 | --- | --- |
-| HARD-01 | Establish repeatable five-run cold/warm startup, APK, WebView, bundle, and readiness baselines on the physical tablet. |
 | POLISH-01 | Walk through the complete app with the owner and record every disliked, verbose, redundant, or “AI-ish” element before changing the interface. |
-| POLISH-02 | Apply only the approved simplifications to operator copy, icons, information hierarchy, and Settings while preserving required recovery and safety behavior. |
+| POLISH-02 | Apply and verify the approved changes one screen at a time before moving to the next screen. |
 | CATALOG-01 | Add a curated category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
+| HARD-01 | Establish repeatable five-run cold/warm startup, APK, WebView, bundle, and readiness baselines on the physical tablet after the approved screen work is stable. |
 | HARD-02 | Finalize the app icon and continuous branded launch, with optional measured logo motion after an immediate static first frame. |
 | HARD-03 | Consolidate safe SQLite/lock startup gating and remove empty intermediate rendering without exposing an unlocked POS. |
 | HARD-04 | Optimize only measured eager modules, assets, decoding, and sync scheduling while preserving behavior and recording before/after evidence. |
@@ -169,5 +168,8 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Goal 05 is complete. Activate Goal 06 only when requested, then start HARD-01
-alone by recording the unchanged tablet startup and readiness baseline.
+Open a normal new conversation with the Goal 06 handoff prompt. It must read the
+project, confirm its understanding, and begin POLISH-01 with the POS screen
+unless the owner chooses another screen. Do not invoke `/goal`, activate an
+implementation card, or change code before the owner approves the current
+screen's decisions.
