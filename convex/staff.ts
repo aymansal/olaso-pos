@@ -7,7 +7,6 @@ import {
   expectRevision,
   mutationId,
   notFound,
-  requireManagement,
   requireOwner,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
@@ -15,7 +14,7 @@ import { sessionArgs } from './lib/session';
 const staffRole = v.union(
   v.literal('owner'),
   v.literal('manager'),
-  v.literal('worker'),
+  v.literal('cashier'),
 );
 
 function month(value: string, label: string) {
@@ -28,7 +27,7 @@ function month(value: string, label: string) {
 export const list = query({
   args: { ...sessionArgs },
   handler: async (ctx, args) => {
-    await requireManagement(ctx, args);
+    await requireOwner(ctx, args);
     const rows = await ctx.db
       .query('staffProfiles')
       .withIndex('by_status_name', (index) => index.eq('status', 'active'))
@@ -53,7 +52,7 @@ export const save = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireManagement(ctx, args);
+    const actor = await requireOwner(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const name = cleanText(args.name, 'Staff name', 100);
     const updatedAt = Date.now();
@@ -101,7 +100,7 @@ export const setArchived = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireManagement(ctx, args);
+    const actor = await requireOwner(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const profile = await ctx.db.get(args.id);
     if (!profile) return notFound('Staff profile');

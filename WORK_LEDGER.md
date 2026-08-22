@@ -90,14 +90,28 @@ remaining goal and card sequence.
   mismatched device, and wrong PIN without an offline bypass.
 - SM-X115 installed-APK evidence: cold restart locks before POS; 1340 × 800
   lock and POS screenshots show no clipping or scrollbars; airplane-mode
-  restart reports native validated-network absence and unlocks cached `111111`
-  locally. `ACCESS_NETWORK_STATE` fixed the native connectivity crash. Focused
+  restart reports native validated-network absence and unlocks the cached
+  owner session locally. `ACCESS_NETWORK_STATE` fixed the native connectivity crash. Focused
   identity/Android checks, production build, 140-task Android beta, and
   `git diff --check` pass. Reconnected-tablet PIN entry returned to the full
   POS screen with no filtered crash/console errors. Graphify refreshed to
   2,671 nodes and 12,431 edges. ID-02 is done. Exact next action: inspect the
   owner/manager/cashier matrix and current Convex/local/UI data paths for
   PERM-01 without changing policy behavior.
+- PERM-01 implementation is verified and awaiting its card commit/push: one
+  owner/manager/cashier matrix now protects Convex functions, navigation,
+  routes, and cached operational data. Managers retain operating data and
+  expenses but not staff, compensation, or profitability; cashiers retain only
+  POS/Orders data and cannot call management functions. SQLite migration 10
+  converts legacy cached `worker` roles to `cashier`, and the Convex schema no
+  longer accepts the retired role. `npm run check:permissions`,
+  `npm run check:local`, `npm run check:identity`, `npm run check:android`,
+  `npx tsc -b`, `npx convex dev --once --typecheck enable`, and `npm run build`
+  pass. The installed SM-X115 APK has a full 1340 × 800 owner POS screen with
+  no filtered crash/console errors; direct permission checks reject cashier and
+  manager protected requests. Graphify refreshed to 2,691 nodes and 15,179
+  edges. Exact next action: commit and push PERM-01, record its SHA, then make
+  POLICY-02 the sole active card.
 - Graphify was queried before resuming work. It confirms the existing saved
   receipt, Orders, and print-state paths that Goal 05 must preserve.
 - POLICY-01 is fully confirmed. Its authority updates document logo-only

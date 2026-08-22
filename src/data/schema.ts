@@ -342,6 +342,42 @@ export const localMigrations = [
         ON staff_profiles(status, updated_at DESC)`,
     ],
   },
+  {
+    toVersion: 10,
+    statements: [
+      `ALTER TABLE compensation_periods RENAME TO compensation_periods_legacy`,
+      `ALTER TABLE staff_profiles RENAME TO staff_profiles_legacy`,
+      `CREATE TABLE staff_profiles (
+        id TEXT PRIMARY KEY NOT NULL,
+        name TEXT NOT NULL,
+        role TEXT NOT NULL CHECK (role IN ('owner', 'manager', 'cashier')),
+        status TEXT NOT NULL CHECK (status IN ('active', 'archived')),
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        updated_at INTEGER NOT NULL,
+        identity_revision INTEGER NOT NULL DEFAULT 0
+      )`,
+      `INSERT INTO staff_profiles
+        SELECT id, name, CASE role WHEN 'worker' THEN 'cashier' ELSE role END,
+          status, revision, updated_at, identity_revision
+        FROM staff_profiles_legacy`,
+      `CREATE TABLE compensation_periods (
+        id TEXT PRIMARY KEY NOT NULL,
+        staff_profile_id TEXT NOT NULL REFERENCES staff_profiles(id),
+        monthly_amount_centimes INTEGER NOT NULL CHECK (monthly_amount_centimes >= 0),
+        effective_start_month TEXT NOT NULL,
+        effective_end_month TEXT,
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        created_at INTEGER NOT NULL
+      )`,
+      `INSERT INTO compensation_periods SELECT * FROM compensation_periods_legacy`,
+      `DROP TABLE compensation_periods_legacy`,
+      `DROP TABLE staff_profiles_legacy`,
+      `CREATE INDEX staff_profiles_by_status
+        ON staff_profiles(status, updated_at DESC)`,
+      `CREATE INDEX compensation_periods_by_staff_month
+        ON compensation_periods(staff_profile_id, effective_start_month)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

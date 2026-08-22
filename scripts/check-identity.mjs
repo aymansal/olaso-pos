@@ -36,6 +36,7 @@ const operational = readFileSync('convex/lib/operational.ts', 'utf8');
 const posData = readFileSync('src/data/usePosData.ts', 'utf8');
 assert.match(lockScreen, /if \(!isServiceUnavailable\(onlineError\)\)/);
 assert.match(lockScreen, /saved\.name !== cached\.name \|\| saved\.role !== cached\.role/);
+assert.match(lockScreen, /member\.id === session\?\.staffProfileId/);
 assert.match(app, /startupError \|\| !terminal/);
 assert.match(app, /POS remains locked/);
 assert.match(app, /await setTerminalLocked\(true\)/);

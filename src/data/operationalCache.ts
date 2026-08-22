@@ -73,7 +73,7 @@ export type OperationalCacheSnapshot = {
   staffProfiles: Array<{
     id: string;
     name: string;
-    role: 'owner' | 'manager' | 'cashier' | 'worker';
+    role: 'owner' | 'manager' | 'cashier';
     revision: number;
     identityRevision: number;
   }>;

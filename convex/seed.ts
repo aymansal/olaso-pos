@@ -95,7 +95,7 @@ type SaleSeed = {
 
 const staffSeeds = [
   { key: 'owner', name: 'Olaso Owner', role: 'owner' as const },
-  { key: 'barista', name: 'Samira Barista', role: 'worker' as const },
+  { key: 'barista', name: 'Samira Barista', role: 'cashier' as const },
 ] as const;
 
 type DailyAccumulator = {
@@ -1481,6 +1481,7 @@ export const resetAndSeed = internalMutation({
     return {
       deployment: 'development',
       deviceId: DEVICE_ID,
+      staffProfileIds: Object.fromEntries(staffIds),
       counts,
       businessDates: [...daily.keys()].sort(),
     };
@@ -1611,6 +1612,7 @@ export const verify = internalQuery({
         )
         .map((ingredient) => ingredient.key)
         .sort(),
+      ownerProfileId: seededStaff.find((staff) => staff.role === 'owner')?._id,
     };
   },
 });

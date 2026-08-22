@@ -16,8 +16,19 @@ import { SettingsScreen } from './features/settings/SettingsScreen';
 import { StockScreen } from './features/stock/StockScreen';
 import { StaffSessionProvider } from './data/sessionContext';
 import type { StaffSession } from './data/identitySession';
+import { hasPermission, type Permission } from './data/permissions';
 
 type AppScreen = NavigationPage | 'Settings';
+
+const screenPermission: Record<AppScreen, Permission> = {
+  POS: 'pos',
+  Orders: 'orders',
+  Dashboard: 'dashboard',
+  Products: 'products',
+  Stock: 'stock',
+  Reports: 'reports',
+  Settings: 'settings',
+};
 
 export function App() {
   const [screen, setScreen] = useState<AppScreen>('POS');
@@ -28,7 +39,9 @@ export function App() {
   const [staffSession, setStaffSession] = useState<StaffSession>();
 
   function navigate(page: NavigationPage) {
-    setScreen(page);
+    if (staffSession && hasPermission(staffSession.role, screenPermission[page])) {
+      setScreen(page);
+    }
   }
 
   async function restoreTerminal() {
@@ -94,6 +107,12 @@ export function App() {
     );
   }
 
+  function openSettings() {
+    if (staffSession && hasPermission(staffSession.role, 'settings')) {
+      setScreen('Settings');
+    }
+  }
+
   if (terminal.isLocked) {
     return <LockScreen settings={terminal} onUnlock={unlock} />;
   }
@@ -104,7 +123,14 @@ export function App() {
 
   return (
     <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
-      {screen === 'Settings' ? (
+      {!hasPermission(staffSession.role, screenPermission[screen]) ? (
+      <PosScreen
+        session={posSession}
+        onSessionChange={setPosSession}
+        onNavigate={navigate}
+        onOpenSettings={openSettings}
+      />
+      ) : screen === 'Settings' ? (
       <SettingsScreen
         onNavigate={navigate}
         onLock={lock}
@@ -112,34 +138,34 @@ export function App() {
       ) : screen === 'Dashboard' ? (
       <DashboardScreen
         onNavigate={navigate}
-        onOpenSettings={() => setScreen('Settings')}
+        onOpenSettings={openSettings}
       />
       ) : screen === 'Orders' ? (
       <OrdersScreen
         onNavigate={navigate}
-        onOpenSettings={() => setScreen('Settings')}
+        onOpenSettings={openSettings}
       />
       ) : screen === 'Products' ? (
       <ProductsScreen
         onNavigate={navigate}
-        onOpenSettings={() => setScreen('Settings')}
+        onOpenSettings={openSettings}
       />
       ) : screen === 'Stock' ? (
       <StockScreen
         onNavigate={navigate}
-        onOpenSettings={() => setScreen('Settings')}
+        onOpenSettings={openSettings}
       />
       ) : screen === 'Reports' ? (
       <ReportsScreen
         onNavigate={navigate}
-        onOpenSettings={() => setScreen('Settings')}
+        onOpenSettings={openSettings}
       />
       ) : (
       <PosScreen
       session={posSession}
       onSessionChange={setPosSession}
       onNavigate={navigate}
-      onOpenSettings={() => setScreen('Settings')}
+      onOpenSettings={openSettings}
       />
       )}
     </StaffSessionProvider>

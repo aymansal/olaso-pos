@@ -1,6 +1,7 @@
 import { ConvexError } from 'convex/values';
 import type { QueryCtx } from '../_generated/server';
 import { requireStaffSession } from './session';
+import { hasPermission, type Permission } from './permissions';
 
 type ManagementContext = Pick<QueryCtx, 'db'>;
 type SessionArgs = { sessionToken: string; deviceId: string };
@@ -17,20 +18,24 @@ function fail(
   throw new ConvexError({ code, message });
 }
 
-export async function requireManagement(ctx: ManagementContext, args: SessionArgs) {
+export async function requirePermission(
+  ctx: ManagementContext,
+  args: SessionArgs,
+  permission: Permission,
+) {
   const session = await requireStaffSession(ctx, args);
-  if (session.role !== 'owner' && session.role !== 'manager') {
-    return fail('FORBIDDEN', 'Owner or manager access is required.');
+  if (!hasPermission(session.role, permission)) {
+    return fail('FORBIDDEN', 'Your staff role cannot perform this operation.');
   }
-  return session.name;
+  return session;
+}
+
+export async function requireManagement(ctx: ManagementContext, args: SessionArgs) {
+  return (await requirePermission(ctx, args, 'products')).name;
 }
 
 export async function requireOwner(ctx: ManagementContext, args: SessionArgs) {
-  const session = await requireStaffSession(ctx, args);
-  if (session.role !== 'owner') {
-    return fail('FORBIDDEN', 'Owner access is required.');
-  }
-  return session.name;
+  return (await requirePermission(ctx, args, 'settings')).name;
 }
 
 export function cleanText(value: string, label: string, maxLength: number) {

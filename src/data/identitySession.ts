@@ -10,6 +10,7 @@ import {
   type OfflineAttempt,
   type OfflinePinResult,
 } from './identityPolicy';
+import type { StaffRole } from '../../convex/lib/permissions';
 
 export { isServiceUnavailable, nextOfflinePinResult } from './identityPolicy';
 
@@ -23,7 +24,7 @@ export type StaffSession = {
   token: string;
   staffProfileId: string;
   name: string;
-  role: 'owner' | 'manager' | 'cashier' | 'worker';
+  role: StaffRole;
 };
 
 
@@ -66,7 +67,7 @@ function isStaffSession(value: unknown): value is StaffSession {
   return typeof session.token === 'string'
     && typeof session.staffProfileId === 'string'
     && typeof session.name === 'string'
-    && ['owner', 'manager', 'cashier', 'worker'].includes(String(session.role));
+    && ['owner', 'manager', 'cashier'].includes(String(session.role));
 }
 
 export async function saveStaffSession(session: StaffSession, pin: string) {

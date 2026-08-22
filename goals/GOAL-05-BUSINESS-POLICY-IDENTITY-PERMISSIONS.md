@@ -230,6 +230,19 @@ append-only cancellation/refund correction workflows.
   and confirmed on the canonical branch. Exact next action: inspect and apply
   the confirmed permission matrix for PERM-01.
 
+- PERM-01 implementation is verified and awaiting its card commit/push. One
+  owner/manager/cashier matrix now gates Convex operations, local cache shapes,
+  UI navigation, and direct routes. Cashiers retain only POS/Orders data;
+  managers retain operational data and expenses but never staff, compensation,
+  or profitability; owners retain all confirmed capabilities. SQLite migration
+  10 converts legacy cached `worker` roles to `cashier`, and the Convex schema
+  rejects the retired role. Focused permission/local/identity/Android checks,
+  TypeScript, Convex typecheck, and production build pass. SM-X115 installed
+  APK evidence shows a full 1340 × 800 owner POS without filtered crash/console
+  errors; direct calls verify the negative authorization boundaries. Graphify
+  refreshed to 2,691 nodes and 15,179 edges. Exact next action: commit and push
+  PERM-01, record its SHA, then activate POLICY-02 alone.
+
 ## Planning journal
 
 ### 2026-08-21 — Goal 05 sequenced

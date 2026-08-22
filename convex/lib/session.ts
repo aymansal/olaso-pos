@@ -1,5 +1,6 @@
 import { ConvexError, v } from 'convex/values';
 import type { QueryCtx } from '../_generated/server';
+import { isStaffRole, type StaffRole } from './permissions';
 
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{40,100}$/;
 const DEVICE_PATTERN = /^[A-Za-z0-9._-]{1,120}$/;
@@ -14,7 +15,7 @@ type SessionContext = Pick<QueryCtx, 'db'>;
 export type ActiveStaffSession = {
   staffProfileId: string;
   name: string;
-  role: 'owner' | 'manager' | 'cashier' | 'worker';
+  role: StaffRole;
 };
 
 function unavailable(): never {
@@ -58,7 +59,7 @@ export async function requireStaffSession(
       )
       .unique(),
   ]);
-  if (!staff || staff.status !== 'active' || !identity
+  if (!staff || staff.status !== 'active' || !isStaffRole(staff.role) || !identity
       || identity.credentialVersion !== session.credentialVersion) {
     return unavailable();
   }

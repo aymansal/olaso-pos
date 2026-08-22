@@ -43,7 +43,6 @@ const staffRole = v.union(
   v.literal('owner'),
   v.literal('manager'),
   v.literal('cashier'),
-  v.literal('worker'),
 );
 const expenseRecurrence = v.union(v.literal('one-time'), v.literal('monthly'));
 const expenseTransactionType = v.union(v.literal('recorded'), v.literal('reversal'));

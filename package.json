@@ -22,6 +22,7 @@
     "check:reports": "node scripts/check-reports.mjs",
     "check:settings": "node scripts/check-settings.mjs",
     "check:identity": "node scripts/check-identity.mjs",
+    "check:permissions": "node scripts/check-permissions.mjs",
     "check:android": "node scripts/check-android-beta.mjs",
     "check:printing": "node scripts/check-printing.mjs",
     "check:printing-endurance": "node --disable-warning=ExperimentalWarning scripts/check-printing-endurance.mjs",

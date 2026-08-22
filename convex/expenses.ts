@@ -8,7 +8,7 @@ import {
   expectRevision,
   mutationId,
   notFound,
-  requireOwner,
+  requirePermission,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
 
@@ -62,7 +62,7 @@ function expenseInput(args: {
 export const list = query({
   args: { ...sessionArgs, limit: v.number() },
   handler: async (ctx, args) => {
-    await requireOwner(ctx, args);
+    await requirePermission(ctx, args, 'expenses');
     const limit = boundedInteger(args.limit, 'Expense list limit', 1, 100);
     const rows = await ctx.db
       .query('operatingExpenses')
@@ -97,7 +97,7 @@ export const add = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireOwner(ctx, args);
+    const actor = (await requirePermission(ctx, args, 'expenses')).name;
     const clientMutationId = mutationId(args.clientMutationId);
     const existing = await ctx.db
       .query('operatingExpenses')
@@ -133,7 +133,7 @@ export const correct = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireOwner(ctx, args);
+    const actor = (await requirePermission(ctx, args, 'expenses')).name;
     const clientMutationId = mutationId(args.clientMutationId);
     const original = await ctx.db.get(args.expenseId);
     if (!original) return notFound('Operating expense');

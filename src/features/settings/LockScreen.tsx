@@ -12,6 +12,7 @@ import {
 import { readSecureSessionNetworkStatus } from '../../data/secureSession';
 import { loadOperationalCache } from '../../data/operationalCache';
 import type { TerminalSettings } from '../../data/terminalSettings';
+import { isStaffRole, type StaffRole } from '../../data/permissions';
 import styles from './LockScreen.module.css';
 
 interface LockScreenProps {
@@ -22,7 +23,7 @@ interface LockScreenProps {
 type CachedStaff = {
   id: string;
   name: string;
-  role: 'owner' | 'manager' | 'cashier' | 'worker';
+  role: StaffRole;
 };
 
 export function LockScreen({ settings, onUnlock }: LockScreenProps) {
@@ -61,8 +62,16 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       loadStaffSession(),
     ]).then(([cache, session]) => {
       if (!active) return;
-      setStaff(cache.staffProfiles);
-      setStaffProfileId(session?.staffProfileId ?? cache.staffProfiles[0]?.id ?? '');
+      const activeStaff = cache.staffProfiles.flatMap(({ id, name, role }) =>
+        isStaffRole(role) ? [{ id, name, role }] : [],
+      );
+      setStaff(activeStaff);
+      const savedStaff = activeStaff.find((member) =>
+        member.id === session?.staffProfileId
+        && member.name === session.name
+        && member.role === session.role,
+      );
+      setStaffProfileId(savedStaff?.id ?? activeStaff[0]?.id ?? '');
     }).catch(() => {
       if (active) setError('Staff access is unavailable. Connect and sync this terminal.');
     });

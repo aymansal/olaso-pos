@@ -5,6 +5,8 @@ import {
   type NavigationPage,
 } from '../TopNavigation/TopNavigation';
 import styles from './Header.module.css';
+import { useStaffSession } from '../../../../data/sessionContext';
+import { hasPermission } from '../../../../data/permissions';
 
 interface HeaderProps {
   activePage?: NavigationPage;
@@ -23,6 +25,9 @@ export function Header({
   onNavigate,
   onOpenSettings,
 }: HeaderProps) {
+  const staff = useStaffSession();
+  const canOpenSettings = hasPermission(staff.role, 'settings');
+  const canViewReports = hasPermission(staff.role, 'reports');
   return (
     <header className={styles.header}>
       <div className={styles.brandSide}>
@@ -38,18 +43,18 @@ export function Header({
         <time className={styles.date} dateTime={dateTime}>{dateLabel}</time>
       </div>
 
-      <TopNavigation activePage={activePage} onNavigate={onNavigate} />
+      <TopNavigation activePage={activePage} onNavigate={onNavigate} role={staff.role} />
 
       <div className={styles.actions}>
-        <button className={styles.report} type="button">
+        {canViewReports ? <button className={styles.report} type="button" onClick={() => onNavigate?.('Reports')}>
           <span>Report</span>
           <FileText size={18} weight="regular" />
-        </button>
+        </button> : null}
         <div className={styles.notificationWrap}>
           <IconButton label="Notifications" icon={<Bell size={18} />} />
           <span className={styles.badge}>1</span>
         </div>
-        <button
+        {canOpenSettings ? <button
           className={styles.profile}
           type="button"
           aria-label="Open settings"
@@ -57,10 +62,16 @@ export function Header({
         >
           <span className={styles.avatar}><User size={22} /></span>
           <span className={styles.profileCopy}>
-            <strong>Samantha W</strong>
-            <small>Cashier</small>
+            <strong>{staff.name}</strong>
+            <small>{staff.role}</small>
           </span>
-        </button>
+        </button> : <div className={styles.profile}>
+          <span className={styles.avatar}><User size={22} /></span>
+          <span className={styles.profileCopy}>
+            <strong>{staff.name}</strong>
+            <small>{staff.role}</small>
+          </span>
+        </div>}
       </div>
     </header>
   );

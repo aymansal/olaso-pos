@@ -2,12 +2,12 @@ import { v } from 'convex/values';
 import { action } from './_generated/server';
 import { internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
+import { isStaffRole, type StaffRole } from './lib/permissions';
 
 const PIN_PATTERN = /^\d{6}$/;
 const DEVICE_PATTERN = /^[A-Za-z0-9._-]{1,120}$/;
 const PIN_ITERATIONS = 600_000;
 declare const process: { env: Record<string, string | undefined> };
-type StaffRole = 'owner' | 'manager' | 'cashier' | 'worker';
 type SignInRecord = {
   staffProfileId: Id<'staffProfiles'>;
   role: StaffRole;
@@ -91,6 +91,9 @@ export const signIn = action({
     }) as SignInRecord | null;
     if (!record || (record.lockedUntil && record.lockedUntil > now)) {
       throw new Error('Sign-in is temporarily unavailable.');
+    }
+    if (!isStaffRole(record.role)) {
+      throw new Error('Staff access requires an owner role update.');
     }
     const candidate = await pinHash(args.pin, record.pinSalt);
     if (!equal(candidate, record.pinHash)) {
