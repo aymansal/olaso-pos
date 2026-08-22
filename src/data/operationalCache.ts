@@ -64,6 +64,9 @@ export type OperationalCacheSnapshot = {
     name: string;
     baseUnit: 'millilitre' | 'gram' | 'milligram' | 'piece';
     currentStockQuantity: number;
+    inventoryValueCentimes?: number;
+    costStatus: 'complete' | 'incomplete';
+    valuationRevision: number;
     lowStockThreshold: number;
     revision: number;
   }>;
@@ -234,8 +237,10 @@ export async function replaceOperationalCache(
       await database.run(
         `INSERT INTO ingredients
           (id, name, base_unit, current_stock_quantity, low_stock_threshold,
-           status, revision, updated_at, local_stock_delta)
-         VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?)
+           status, revision, updated_at, local_stock_delta,
+           inventory_value_centimes, cost_status, valuation_revision,
+           local_inventory_value_delta)
+         VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, 0)
          ON CONFLICT(id) DO UPDATE SET
            name = excluded.name,
            base_unit = excluded.base_unit,
@@ -244,7 +249,11 @@ export async function replaceOperationalCache(
            status = 'active',
            revision = excluded.revision,
            updated_at = excluded.updated_at,
-           local_stock_delta = excluded.local_stock_delta`,
+           local_stock_delta = excluded.local_stock_delta,
+           inventory_value_centimes = excluded.inventory_value_centimes,
+           cost_status = excluded.cost_status,
+           valuation_revision = excluded.valuation_revision,
+           local_inventory_value_delta = excluded.local_inventory_value_delta`,
         [
           ingredient.id,
           ingredient.name,
@@ -254,6 +263,9 @@ export async function replaceOperationalCache(
           ingredient.revision,
           snapshot.updatedAt,
           localStockDelta,
+          ingredient.inventoryValueCentimes ?? null,
+          ingredient.costStatus,
+          ingredient.valuationRevision,
         ],
         false,
       );
@@ -389,7 +401,8 @@ export async function loadOperationalCache(
       database.query(
         `SELECT id, name, base_unit,
           current_stock_quantity + local_stock_delta AS current_stock_quantity,
-          low_stock_threshold, revision
+          inventory_value_centimes + local_inventory_value_delta AS inventory_value_centimes,
+          cost_status, valuation_revision, low_stock_threshold, revision
          FROM ingredients
          WHERE status = 'active'
          LIMIT ${LIMITS.ingredients}`,
@@ -463,6 +476,11 @@ export async function loadOperationalCache(
       name: String(row.name),
       baseUnit: row.base_unit,
       currentStockQuantity: Number(row.current_stock_quantity),
+      ...(row.inventory_value_centimes === null
+        ? {}
+        : { inventoryValueCentimes: Number(row.inventory_value_centimes) }),
+      costStatus: row.cost_status === 'complete' ? 'complete' : 'incomplete',
+      valuationRevision: Number(row.valuation_revision),
       lowStockThreshold: Number(row.low_stock_threshold),
       revision: Number(row.revision),
     })),

@@ -172,6 +172,11 @@ export const getOperationalSnapshot = query({
         name: ingredient.name,
         baseUnit: ingredient.baseUnit,
         currentStockQuantity: ingredient.currentStockQuantity,
+        ...(ingredient.inventoryValueCentimes === undefined
+          ? {}
+          : { inventoryValueCentimes: ingredient.inventoryValueCentimes }),
+        costStatus: ingredient.costStatus ?? 'incomplete',
+        valuationRevision: ingredient.valuationRevision ?? 0,
         lowStockThreshold: ingredient.lowStockThreshold,
         revision: ingredient.revision,
       })),

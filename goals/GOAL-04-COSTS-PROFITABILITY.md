@@ -9,7 +9,7 @@ file owns only Goal 04 execution scope and card order.
 
 **Goal:** Goal 04 — Costs and Profitability
 
-**Status:** active; COST-01 in progress
+**Status:** active; COST-05 in progress
 
 **Objective:** Turn stock purchasing, recipe consumption, staff compensation,
 and operating expenses into exact product-cost, inventory-value, and monthly
@@ -90,8 +90,8 @@ sensitive compensation data.
 | COST-01 | Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | done | `9750fbc299f9b9b1770fd021352a3708b29dd7ba` pushed to `origin/codex/goal-04-costs-profitability`; focused/domain/cloud/build/Android/physical/Graphify evidence passed. |
 | COST-02 | Add retry-safe ingredient purchases and weighted-average inventory valuation | done | `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018` pushed to `origin/codex/goal-04-costs-profitability`; receipt/correction/valuation/count-effect, build, Android, physical, and Graphify evidence passed. |
 | COST-03 | Connect package-based receiving, valuation, and purchase history to Stock | done | `bfe73a67062e95de0127fe0ea42b0a981bb15314` pushed to `origin/codex/goal-04-costs-profitability`; browser/tablet package workflow, build, Android, and Graphify evidence passed. |
-| COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | in progress | — |
-| COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | pending | — |
+| COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | done | `551856a3c3e35c057ca70d91e23667831a33c2a5` pushed to `origin/codex/goal-04-costs-profitability`. |
+| COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | in progress | — |
 | COST-06 | Add staff profiles and owner-only effective compensation periods | pending | — |
 | COST-07 | Add validated one-time and recurring operating expenses | pending | — |
 | COST-08 | Add the bounded monthly Costs and Profitability report | pending | — |
@@ -205,14 +205,24 @@ sensitive compensation data.
   purchase price, carrying value, or ingredient cost.
 - Current profiles are presentation data and not staff/authentication records.
 - `PRODUCT.md` and `ARCHITECTURE.md` define the approved cost model.
-- Goal 04 is active on `codex/goal-04-costs-profitability`; COST-01 is the only
+- Goal 04 is active on `codex/goal-04-costs-profitability`; COST-05 is the only
   card in progress.
 - COST-01 is complete and pushed as `9750fbc299f9b9b1770fd021352a3708b29dd7ba`.
 - COST-02 is complete and pushed as `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018`.
 - COST-03 is complete and pushed as `bfe73a67062e95de0127fe0ea42b0a981bb15314`.
-- COST-04 is the only card in progress.
-- Exact next action: re-query Graphify and calculate/present current recipe and
-  product costs with explicit incompleteness and margin.
+- COST-04 is complete and pushed as `551856a3c3e35c057ca70d91e23667831a33c2a5`.
+- COST-05 persists local immutable sale and line ingredient-cost snapshots,
+  including the cached valuation revision, alongside stock and outbox effects;
+  its cloud mutation validates snapshot completeness/totals and records the
+  immutable values without looking up a current product price.
+- Exact next action: run final focused checks, commit/push COST-05, record its
+  SHA, and activate COST-06 as the only in-progress card.
+- Resumed with the project-local Java 21/Android SDK toolchain, installed the
+  rebuilt beta on SM-X115, and completed the awake foreground POS sale smoke:
+  an Espresso take-away sale committed locally, showed its saved receipt, and
+  left no Capacitor console error or crash. The structural Graphify update now
+  includes the COST-05 code paths. Exact next action: final focused checks,
+  commit/push COST-05, record its SHA, and activate COST-06.
 
 ## Planning Journal
 

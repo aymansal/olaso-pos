@@ -123,9 +123,10 @@ function seedRepresentativeRecords(database) {
 
 const testDirectory = mkdtempSync(join(tmpdir(), 'olaso-local-db-'));
 const databasePath = join(testDirectory, 'restart.sqlite');
+let database;
 
 try {
-  let database = new DatabaseSync(databasePath);
+  database = new DatabaseSync(databasePath);
   database.exec('PRAGMA foreign_keys = ON');
   assert.equal(migrate(database, 1), 1);
   seedRepresentativeRecords(database);
@@ -224,11 +225,12 @@ try {
   );
   database.close();
 } finally {
+  try { database?.close(); } catch { /* already closed */ }
   rmSync(testDirectory, {
     recursive: true,
     force: true,
-    maxRetries: 5,
-    retryDelay: 100,
+    maxRetries: 20,
+    retryDelay: 250,
   });
 }
 

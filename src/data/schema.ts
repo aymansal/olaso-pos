@@ -326,6 +326,13 @@ export const localMigrations = [
         ON inventory_purchases(correction_of_purchase_id, received_at DESC)`,
     ],
   },
+  {
+    toVersion: 8,
+    statements: [
+      `ALTER TABLE ingredients
+        ADD COLUMN local_inventory_value_delta INTEGER NOT NULL DEFAULT 0`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

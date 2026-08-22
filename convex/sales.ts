@@ -9,6 +9,7 @@ import {
   invalid,
 } from './lib/management';
 import { requireOperationalAccess } from './lib/operational';
+import { consumeValuation } from '../src/lib/costs';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -23,6 +24,9 @@ const saleLine = v.object({
   recipeVersionId: v.optional(v.id('recipeVersions')),
   quantity: v.number(),
   modifierOptionIds: v.array(v.id('modifierOptions')),
+  ingredientCostCentimes: v.optional(v.number()),
+  costStatus: v.union(v.literal('complete'), v.literal('incomplete')),
+  valuationRevisions: v.array(v.object({ ingredientId: v.string(), revision: v.number() })),
 });
 const TAX_POLICY_LABEL = 'Temporary 0% — owner confirmation pending';
 const PAYMENT_METHOD = 'Pending owner confirmation';
@@ -40,6 +44,9 @@ type PreparedLine = {
     priceDeltaCentimes: number;
   }>;
   ingredientUsage: Map<Id<'ingredients'>, number>;
+  ingredientCostCentimes?: number;
+  costStatus: 'complete' | 'incomplete';
+  valuationRevisions: Array<{ ingredientId: Id<'ingredients'>; revision: number }>;
 };
 
 function identifier(value: string, label: string) {
@@ -55,6 +62,18 @@ function checkedTotal(value: number, label: string) {
     return invalid(`${label} is outside the supported integer range.`);
   }
   return value;
+}
+
+function snapshotCost(
+  status: 'complete' | 'incomplete',
+  costCentimes: number | undefined,
+  label: string,
+) {
+  if (status === 'complete') {
+    return checkedTotal(costCentimes ?? -1, `${label} ingredient cost`);
+  }
+  if (costCentimes !== undefined) return invalid(`${label} cannot include an incomplete cost.`);
+  return undefined;
 }
 
 export const listOrders = query({
@@ -104,6 +123,8 @@ export const accept = mutation({
     tableLabel: v.optional(v.string()),
     businessDate: v.string(),
     completedAt: v.number(),
+    ingredientCostCentimes: v.optional(v.number()),
+    costStatus: v.union(v.literal('complete'), v.literal('incomplete')),
     lines: v.array(saleLine),
   },
   handler: async (ctx, args) => {
@@ -156,10 +177,20 @@ export const accept = mutation({
     if (args.lines.length < 1 || args.lines.length > 50) {
       return invalid('A sale must contain 1 to 50 lines.');
     }
+    const saleIngredientCostCentimes = snapshotCost(
+      args.costStatus,
+      args.ingredientCostCentimes,
+      'Sale',
+    );
 
     const preparedLines: PreparedLine[] = [];
     for (const line of args.lines) {
       const quantity = boundedInteger(line.quantity, 'Quantity', 1, 100);
+      const ingredientCostCentimes = snapshotCost(
+        line.costStatus,
+        line.ingredientCostCentimes,
+        'Sale line',
+      );
       const product = await ctx.db.get(line.productId);
       if (!product || product.status !== 'active') {
         return conflict('A sale product is no longer available.');
@@ -294,6 +325,21 @@ export const accept = mutation({
           checkedTotal(amount * quantity, 'Ingredient usage'),
         );
       }
+      const valuationRevisions = new Map(
+        line.valuationRevisions.map((revision) => [revision.ingredientId, revision.revision]),
+      );
+      if (
+        valuationRevisions.size !== line.valuationRevisions.length
+        || valuationRevisions.size !== ingredientUsage.size
+        || [...valuationRevisions.entries()].some(
+          ([ingredientId, revision]) =>
+            !ingredientUsage.has(ingredientId as Id<'ingredients'>)
+            || !Number.isSafeInteger(revision)
+            || revision < 0,
+        )
+      ) {
+        return invalid(`${product.name} has an invalid valuation snapshot.`);
+      }
       preparedLines.push({
         product,
         category,
@@ -309,6 +355,12 @@ export const accept = mutation({
           priceDeltaCentimes: option.priceDeltaCentimes,
         })),
         ingredientUsage,
+        ...(ingredientCostCentimes === undefined ? {} : { ingredientCostCentimes }),
+        costStatus: line.costStatus,
+        valuationRevisions: [...ingredientUsage.keys()].map((ingredientId) => ({
+          ingredientId,
+          revision: valuationRevisions.get(ingredientId)!,
+        })),
       });
     }
 
@@ -316,6 +368,21 @@ export const accept = mutation({
       preparedLines.reduce((sum, line) => sum + line.lineTotalCentimes, 0),
       'Sale subtotal',
     );
+    const completeLineCosts = preparedLines.every(
+      (line) => line.costStatus === 'complete',
+    );
+    if (args.costStatus !== (completeLineCosts ? 'complete' : 'incomplete')) {
+      return invalid('Sale cost completeness does not match its saved lines.');
+    }
+    if (
+      completeLineCosts
+      && saleIngredientCostCentimes !== preparedLines.reduce(
+        (sum, line) => sum + (line.ingredientCostCentimes ?? 0),
+        0,
+      )
+    ) {
+      return invalid('Sale ingredient cost does not match its saved lines.');
+    }
     const saleIngredientUsage = new Map<Id<'ingredients'>, number>();
     for (const line of preparedLines) {
       for (const [ingredientId, amount] of line.ingredientUsage) {
@@ -336,6 +403,63 @@ export const accept = mutation({
       }
       ingredientRecords.set(ingredientId, ingredient);
     }
+    const revisionsMatch = preparedLines.every((line) =>
+      line.valuationRevisions.every(
+        ({ ingredientId, revision }) =>
+          ingredientRecords.get(ingredientId)?.valuationRevision === revision,
+      ),
+    );
+    if (revisionsMatch) {
+      const valuations = new Map(
+        [...ingredientRecords.entries()].map(([ingredientId, ingredient]) => [
+          ingredientId,
+          {
+            quantity: ingredient.currentStockQuantity,
+            ...(ingredient.inventoryValueCentimes === undefined
+              ? {}
+              : { inventoryValueCentimes: ingredient.inventoryValueCentimes }),
+            complete:
+              ingredient.costStatus === 'complete'
+              && ingredient.inventoryValueCentimes !== undefined,
+          },
+        ]),
+      );
+      for (const line of preparedLines) {
+        let ingredientCostCentimes = 0;
+        let complete = true;
+        for (const [ingredientId, amount] of line.ingredientUsage) {
+          if (amount === 0) continue;
+          const valuation = valuations.get(ingredientId);
+          if (
+            !valuation
+            || !valuation.complete
+            || valuation.inventoryValueCentimes === undefined
+            || amount > valuation.quantity
+          ) {
+            complete = false;
+            if (valuation) {
+              valuation.quantity -= amount;
+              valuation.complete = false;
+              valuation.inventoryValueCentimes = undefined;
+            }
+            continue;
+          }
+          const consumed = consumeValuation(valuation, amount);
+          valuation.quantity = consumed.next.quantity;
+          valuation.complete = consumed.next.complete;
+          valuation.inventoryValueCentimes = consumed.next.inventoryValueCentimes;
+          ingredientCostCentimes += consumed.cost.complete
+            ? consumed.cost.costCentimes
+            : 0;
+        }
+        if (
+          line.costStatus !== (complete ? 'complete' : 'incomplete')
+          || (complete && line.ingredientCostCentimes !== ingredientCostCentimes)
+        ) {
+          return conflict('The saved ingredient cost no longer matches its valuation revision.');
+        }
+      }
+    }
 
     const acknowledgedAt = Date.now();
     const saleId = await ctx.db.insert('sales', {
@@ -350,6 +474,10 @@ export const accept = mutation({
       discountCentimes: 0,
       taxCentimes: 0,
       totalCentimes: subtotalCentimes,
+      ...(saleIngredientCostCentimes === undefined
+        ? {}
+        : { ingredientCostCentimes: saleIngredientCostCentimes }),
+      costStatus: args.costStatus,
       taxPolicyLabel: TAX_POLICY_LABEL,
       paymentMethod: PAYMENT_METHOD,
       status: 'completed',
@@ -388,14 +516,38 @@ export const accept = mutation({
         modifiers: line.modifiers,
         ...(line.recipe ? { recipeVersionId: line.recipe._id } : {}),
         lineTotalCentimes: line.lineTotalCentimes,
+        ...(line.ingredientCostCentimes === undefined
+          ? {}
+          : { ingredientCostCentimes: line.ingredientCostCentimes }),
+        costStatus: line.costStatus,
       });
     }
     for (const [ingredientId, amount] of saleIngredientUsage) {
       if (amount === 0) continue;
       const ingredient = ingredientRecords.get(ingredientId);
       if (!ingredient) return conflict('A recipe ingredient is missing.');
+      const valuation = {
+        quantity: ingredient.currentStockQuantity,
+        ...(ingredient.inventoryValueCentimes === undefined
+          ? {}
+          : { inventoryValueCentimes: ingredient.inventoryValueCentimes }),
+        complete:
+          ingredient.costStatus === 'complete'
+          && ingredient.inventoryValueCentimes !== undefined,
+      };
+      const consumed = valuation.complete && amount <= valuation.quantity
+        ? consumeValuation(valuation, amount)
+        : undefined;
+      const valuationRevision = (ingredient.valuationRevision ?? 0) + 1;
       await ctx.db.patch(ingredientId, {
         currentStockQuantity: ingredient.currentStockQuantity - amount,
+        ...(consumed?.next.complete && consumed.next.inventoryValueCentimes !== undefined
+          ? {
+              inventoryValueCentimes: consumed.next.inventoryValueCentimes,
+              costStatus: 'complete' as const,
+            }
+          : { inventoryValueCentimes: undefined, costStatus: 'incomplete' as const }),
+        valuationRevision,
         revision: ingredient.revision + 1,
         updatedAt: acknowledgedAt,
         updatedBy: actor,
@@ -411,6 +563,13 @@ export const accept = mutation({
         businessDate: args.businessDate,
         createdAt: completedAt,
         clientMutationId: `${deviceId}:${localSaleId}:${ingredientId}`,
+        ...(consumed?.cost.complete
+          ? { costDeltaCentimes: -consumed.cost.costCentimes }
+          : {}),
+        ...(consumed?.next.inventoryValueCentimes === undefined
+          ? {}
+          : { inventoryValueAfterCentimes: consumed.next.inventoryValueCentimes }),
+        valuationRevision,
       });
     }
     for (const recipe of new Map(
@@ -605,6 +764,10 @@ export const verifyDevelopmentSale = internalQuery({
     return {
       saleId: sale._id,
       totalCentimes: sale.totalCentimes,
+      ...(sale.ingredientCostCentimes === undefined
+        ? {}
+        : { ingredientCostCentimes: sale.ingredientCostCentimes }),
+      costStatus: sale.costStatus ?? 'incomplete',
       lineCount: lines.length,
       movementCount: movements.length,
       movementDeltas: movements

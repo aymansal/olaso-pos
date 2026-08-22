@@ -6,6 +6,7 @@ import {
 } from './operationalCache.ts';
 import { listPendingOutbox } from './outbox.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
+import { allocateCentimes } from '../lib/costs.ts';
 
 export type LocalServiceType = 'dine-in' | 'take-away' | 'order-online';
 
@@ -25,6 +26,9 @@ export type SavedReceipt = {
     quantity: number;
     unitPriceCentimes: number;
     lineTotalCentimes: number;
+    ingredientCostCentimes?: number;
+    costStatus: 'complete' | 'incomplete';
+    valuationRevisions: Array<{ ingredientId: string; revision: number }>;
     modifierOptionIds: string[];
     modifiers: Array<{
       groupName: string;
@@ -48,6 +52,8 @@ export type SavedReceipt = {
   totalCentimes: number;
   taxPolicyLabel: string;
   paymentMethod: string;
+  ingredientCostCentimes?: number;
+  costStatus: 'complete' | 'incomplete';
 };
 
 export type SaleSyncPayload = {
@@ -59,12 +65,17 @@ export type SaleSyncPayload = {
   tableLabel?: string;
   businessDate: string;
   completedAt: number;
+  ingredientCostCentimes?: number;
+  costStatus: 'complete' | 'incomplete';
   lines: Array<{
     productId: string;
     productRevision: number;
     recipeVersionId?: string;
     quantity: number;
     modifierOptionIds: string[];
+    ingredientCostCentimes?: number;
+    costStatus: 'complete' | 'incomplete';
+    valuationRevisions: Array<{ ingredientId: string; revision: number }>;
   }>;
 };
 
@@ -97,6 +108,34 @@ function cleanOptional(value: string, label: string, maximum: number) {
     throw new Error(`${label} must contain at most ${maximum} characters.`);
   }
   return cleaned || undefined;
+}
+
+type SaleValuation = {
+  quantity: number;
+  inventoryValueCentimes?: number;
+  complete: boolean;
+};
+
+function consumeSnapshotCost(valuation: SaleValuation, quantity: number) {
+  if (quantity === 0) return 0;
+  if (
+    !valuation.complete
+    || valuation.inventoryValueCentimes === undefined
+    || quantity > valuation.quantity
+  ) {
+    valuation.quantity -= quantity;
+    valuation.complete = false;
+    valuation.inventoryValueCentimes = undefined;
+    return undefined;
+  }
+  const costCentimes = allocateCentimes(
+    valuation.inventoryValueCentimes,
+    valuation.quantity,
+    quantity,
+  );
+  valuation.quantity -= quantity;
+  valuation.inventoryValueCentimes -= costCentimes;
+  return costCentimes;
 }
 
 export function prepareSale(
@@ -140,6 +179,19 @@ export function prepareSale(
   }
 
   const stockUsage = new Map<string, number>();
+  const valuations = new Map<string, SaleValuation>(
+    menu.ingredients.map((ingredient) => [
+      ingredient.id,
+      {
+        quantity: ingredient.currentStockQuantity,
+        ...(ingredient.inventoryValueCentimes === undefined
+          ? {}
+          : { inventoryValueCentimes: ingredient.inventoryValueCentimes }),
+        complete: ingredient.costStatus === 'complete',
+      },
+    ]),
+  );
+  const ingredientCosts = new Map<string, number | undefined>();
   const lines = input.cart.map((cartLine) => {
     if (
       !Number.isSafeInteger(cartLine.quantity)
@@ -220,13 +272,34 @@ export function prepareSale(
         );
       }
     }
+    const valuationRevisions = [...lineUsage.keys()].sort().map((ingredientId) => ({
+      ingredientId,
+      revision: ingredients.get(ingredientId)?.valuationRevision ?? 0,
+    }));
+    let ingredientCostCentimes = 0;
+    let completeCost = true;
     for (const [ingredientId, quantity] of lineUsage) {
       if (!Number.isSafeInteger(quantity) || quantity < 0) {
         throw new Error(`The saved recipe for ${product.name} is invalid.`);
       }
+      const usage = quantity * cartLine.quantity;
+      const cost = consumeSnapshotCost(
+        valuations.get(ingredientId) ?? { quantity: 0, complete: false },
+        usage,
+      );
+      if (cost === undefined) {
+        completeCost = false;
+        ingredientCosts.set(ingredientId, undefined);
+      } else if (ingredientCosts.has(ingredientId)) {
+        ingredientCosts.set(ingredientId, (ingredientCosts.get(ingredientId) ?? 0) + cost);
+        ingredientCostCentimes += cost;
+      } else {
+        ingredientCosts.set(ingredientId, cost);
+        ingredientCostCentimes += cost;
+      }
       stockUsage.set(
         ingredientId,
-        (stockUsage.get(ingredientId) ?? 0) + quantity * cartLine.quantity,
+        (stockUsage.get(ingredientId) ?? 0) + usage,
       );
     }
 
@@ -239,6 +312,9 @@ export function prepareSale(
       quantity: cartLine.quantity,
       unitPriceCentimes,
       lineTotalCentimes: unitPriceCentimes * cartLine.quantity,
+      ...(completeCost ? { ingredientCostCentimes } : {}),
+      costStatus: completeCost ? 'complete' as const : 'incomplete' as const,
+      valuationRevisions,
       modifierOptionIds: selectedIds,
       modifiers: selectedOptions.map((option) => {
         const group = groups.get(option.modifierGroupId);
@@ -271,6 +347,10 @@ export function prepareSale(
     throw new Error('The saved order total is invalid.');
   }
   const date = businessDate(completedAt);
+  const completeCost = lines.every((line) => line.costStatus === 'complete');
+  const ingredientCostCentimes = completeCost
+    ? lines.reduce((sum, line) => sum + (line.ingredientCostCentimes ?? 0), 0)
+    : undefined;
   const receipt: SavedReceipt = {
     receiptNumber: `DEV-${date.replaceAll('-', '')}-${localSaleId.slice(0, 8).toUpperCase()}`,
     completedAt,
@@ -285,8 +365,10 @@ export function prepareSale(
     totalCentimes: subtotalCentimes,
     taxPolicyLabel: TAX_POLICY_LABEL,
     paymentMethod: PAYMENT_METHOD,
+    ...(ingredientCostCentimes === undefined ? {} : { ingredientCostCentimes }),
+    costStatus: completeCost ? 'complete' : 'incomplete',
   };
-  return { receipt, businessDate: date, stockUsage };
+  return { receipt, businessDate: date, stockUsage, ingredientCosts };
 }
 
 export async function commitLocalSale(
@@ -320,8 +402,8 @@ export async function commitLocalSale(
       (local_sale_id, device_id, receipt_number, status, service_type,
        customer_name, table_label, subtotal_centimes, tax_centimes,
        total_centimes, currency, business_date, receipt_snapshot_json,
-       sync_state, created_at)
-     VALUES (?, ?, ?, 'completed', ?, ?, ?, ?, ?, ?, 'MAD', ?, ?, 'pending', ?)`,
+       ingredient_cost_centimes, cost_status, sync_state, created_at)
+     VALUES (?, ?, ?, 'completed', ?, ?, ?, ?, ?, ?, 'MAD', ?, ?, ?, ?, 'pending', ?)`,
     [
       localSaleId,
       deviceId,
@@ -334,6 +416,8 @@ export async function commitLocalSale(
       receipt.totalCentimes,
       prepared.businessDate,
       JSON.stringify(receipt),
+      receipt.ingredientCostCentimes ?? null,
+      receipt.costStatus,
       receipt.completedAt,
     ],
     false,
@@ -341,10 +425,10 @@ export async function commitLocalSale(
   for (const line of receipt.lines) {
     await database.run(
       `INSERT INTO sale_items
-        (id, local_sale_id, product_id, quantity, product_name_snapshot,
+         (id, local_sale_id, product_id, quantity, product_name_snapshot,
          unit_price_centimes, modifier_snapshot_json, recipe_snapshot_json,
-         line_total_centimes)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         line_total_centimes, ingredient_cost_centimes, cost_status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         idFactory(),
         localSaleId,
@@ -355,25 +439,29 @@ export async function commitLocalSale(
         JSON.stringify(line.modifiers),
         JSON.stringify(line.recipe),
         line.lineTotalCentimes,
+        line.ingredientCostCentimes ?? null,
+        line.costStatus,
       ],
       false,
     );
   }
   for (const [ingredientId, quantity] of prepared.stockUsage) {
     if (quantity === 0) continue;
+    const ingredientCostCentimes = prepared.ingredientCosts.get(ingredientId);
     await database.run(
       `UPDATE ingredients
        SET local_stock_delta = local_stock_delta - ?,
+           local_inventory_value_delta = local_inventory_value_delta - COALESCE(?, 0),
            updated_at = ?
        WHERE id = ?`,
-      [quantity, receipt.completedAt, ingredientId],
+      [quantity, ingredientCostCentimes ?? null, receipt.completedAt, ingredientId],
       false,
     );
     await database.run(
-      `INSERT INTO stock_movements
+        `INSERT INTO stock_movements
         (id, ingredient_id, local_sale_id, quantity_delta, movement_type,
-         reason, actor_label, business_date, created_at)
-       VALUES (?, ?, ?, ?, 'sale', ?, ?, ?, ?)`,
+         reason, actor_label, business_date, created_at, cost_delta_centimes)
+       VALUES (?, ?, ?, ?, 'sale', ?, ?, ?, ?, ?)`,
       [
         idFactory(),
         ingredientId,
@@ -383,6 +471,7 @@ export async function commitLocalSale(
         CASHIER_LABEL,
         prepared.businessDate,
         receipt.completedAt,
+        ingredientCostCentimes === undefined ? null : -ingredientCostCentimes,
       ],
       false,
     );
@@ -436,6 +525,10 @@ async function loadSaleSyncPayload(
     ...(receipt.tableLabel ? { tableLabel: receipt.tableLabel } : {}),
     businessDate: String(row.business_date),
     completedAt: receipt.completedAt,
+    ...(receipt.ingredientCostCentimes === undefined
+      ? {}
+      : { ingredientCostCentimes: receipt.ingredientCostCentimes }),
+    costStatus: receipt.costStatus,
     lines: receipt.lines.map((line) => ({
       productId: line.productId,
       productRevision: line.productRevision,
@@ -444,6 +537,11 @@ async function loadSaleSyncPayload(
         : {}),
       quantity: line.quantity,
       modifierOptionIds: line.modifierOptionIds,
+      ...(line.ingredientCostCentimes === undefined
+        ? {}
+        : { ingredientCostCentimes: line.ingredientCostCentimes }),
+      costStatus: line.costStatus,
+      valuationRevisions: line.valuationRevisions,
     })),
   };
 }

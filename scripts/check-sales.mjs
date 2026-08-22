@@ -9,6 +9,7 @@ import {
   commitLocalSale,
   prepareSale,
 } from '../src/data/localSales.ts';
+import { loadOperationalCache } from '../src/data/operationalCache.ts';
 import {
   recordSalePrintAttempt,
   recordSalePrintFailure,
@@ -53,12 +54,12 @@ database.exec(`
 
   INSERT INTO ingredients
     (id, name, base_unit, current_stock_quantity, low_stock_threshold, status,
-     revision, updated_at)
+     revision, updated_at, inventory_value_centimes, cost_status, valuation_revision)
   VALUES
-    ('ingredient-coffee', 'Coffee beans', 'gram', 1000, 100, 'active', 1, ${now}),
-    ('ingredient-whole', 'Whole milk', 'millilitre', 100, 100, 'active', 1, ${now}),
-    ('ingredient-oat', 'Oat milk', 'millilitre', 500, 100, 'active', 1, ${now}),
-    ('ingredient-cup', 'Paper cup', 'piece', 10, 2, 'active', 1, ${now});
+    ('ingredient-coffee', 'Coffee beans', 'gram', 1000, 100, 'active', 1, ${now}, 1000, 'complete', 1),
+    ('ingredient-whole', 'Whole milk', 'millilitre', 100, 100, 'active', 1, ${now}, 100, 'complete', 1),
+    ('ingredient-oat', 'Oat milk', 'millilitre', 500, 100, 'active', 1, ${now}, 500, 'complete', 1),
+    ('ingredient-cup', 'Paper cup', 'piece', 10, 2, 'active', 1, ${now}, 10, 'complete', 1);
 
   INSERT INTO modifier_options
     (id, modifier_group_id, name, price_delta_centimes, status,
@@ -124,6 +125,30 @@ const completed = await commitLocalSale(
 database.exec('COMMIT');
 
 assert.equal(completed.receipt.totalCentimes, 2100);
+assert.equal(completed.receipt.costStatus, 'complete');
+assert.equal(completed.receipt.ingredientCostCentimes, 219);
+assert.equal(completed.receipt.lines[0].ingredientCostCentimes, 219);
+const persistedCost = database.prepare(
+  `SELECT ingredient_cost_centimes, cost_status FROM sales
+   WHERE local_sale_id = 'local-sale-check'`,
+).get();
+assert.equal(persistedCost.ingredient_cost_centimes, 219);
+assert.equal(persistedCost.cost_status, 'complete');
+const incompleteMenu = await loadOperationalCache(adapter);
+const incomplete = prepareSale(
+  {
+    ...incompleteMenu,
+    ingredients: incompleteMenu.ingredients.map((ingredient) =>
+      ingredient.id === 'ingredient-coffee'
+        ? { ...ingredient, costStatus: 'incomplete' }
+        : ingredient,
+    ),
+  },
+  input,
+  'local-incomplete-cost-check',
+);
+assert.equal(incomplete.receipt.costStatus, 'incomplete');
+assert.equal(incomplete.receipt.ingredientCostCentimes, undefined);
 assert.equal(completed.receipt.customerName, 'Amal');
 assert.equal(completed.receipt.lines[0].productRevision, 3);
 assert.equal(completed.receipt.lines[0].recipeVersionId, 'recipe-cappuccino-1');
@@ -338,6 +363,40 @@ try {
     (row) => row.modifierGroupId === milkGroup?.id && row.name === 'Oat milk',
   );
   assert(standard && oat, 'Seeded modifier options are unavailable');
+  const valuationIngredientIds = new Set([
+    ...before.recipeItems
+      .filter((item) => item.recipeVersionId === product.currentRecipeVersionId)
+      .map((item) => item.ingredientId),
+    ...oat.ingredientEffects.map((effect) => effect.ingredientId),
+  ]);
+  const valuationRevisions = before.ingredients
+    .filter((ingredient) => valuationIngredientIds.has(ingredient.id))
+    .map((ingredient) => ({
+      ingredientId: ingredient.id,
+      revision: ingredient.valuationRevision,
+    }));
+  const ingredientById = new Map(before.ingredients.map((ingredient) => [ingredient.id, ingredient]));
+  const lineUsage = new Map();
+  for (const item of before.recipeItems.filter(
+    (item) => item.recipeVersionId === product.currentRecipeVersionId,
+  )) {
+    lineUsage.set(item.ingredientId, (lineUsage.get(item.ingredientId) ?? 0) + item.quantity);
+  }
+  for (const effect of oat.ingredientEffects) {
+    lineUsage.set(effect.ingredientId, (lineUsage.get(effect.ingredientId) ?? 0) + effect.quantityDelta);
+  }
+  const ingredientCostCentimes = [...lineUsage.entries()].reduce(
+    (total, [ingredientId, quantity]) => {
+      if (quantity === 0) return total;
+      const ingredient = ingredientById.get(ingredientId);
+      assert(ingredient?.inventoryValueCentimes !== undefined, 'Seeded valuation is unavailable');
+      return total + Math.floor(
+        (ingredient.inventoryValueCentimes * quantity + ingredient.currentStockQuantity / 2)
+        / ingredient.currentStockQuantity,
+      );
+    },
+    0,
+  );
   const cloudInput = {
     deviceId: 'device-app06-check',
     localSaleId: 'app06-cloud-idempotency-check',
@@ -346,6 +405,8 @@ try {
     customerName: 'Amal',
     businessDate: '2026-07-28',
     completedAt: Date.parse('2026-07-28T12:00:00.000Z'),
+    ingredientCostCentimes,
+    costStatus: 'complete',
     lines: [
       {
         productId: product.id,
@@ -353,6 +414,9 @@ try {
         recipeVersionId: product.currentRecipeVersionId,
         quantity: 1,
         modifierOptionIds: [standard.id, oat.id],
+        ingredientCostCentimes,
+        costStatus: 'complete',
+        valuationRevisions,
       },
     ],
   };
@@ -371,6 +435,15 @@ try {
       businessDate: '2026-02-30',
     }),
     /Business date must use YYYY-MM-DD/,
+  );
+  await assert.rejects(
+    client.mutation(api.sales.accept, {
+      ...cloudInput,
+      localSaleId: 'app06-invalid-cost-check',
+      ingredientCostCentimes: ingredientCostCentimes + 1,
+      lines: [{ ...cloudInput.lines[0], ingredientCostCentimes: ingredientCostCentimes + 1 }],
+    }),
+    /saved ingredient cost no longer matches/,
   );
   const first = await client.mutation(api.sales.accept, cloudInput);
   const retry = await client.mutation(api.sales.accept, cloudInput);
@@ -399,6 +472,8 @@ try {
   );
   assert.equal(verification.saleId, first.saleId);
   assert.equal(verification.totalCentimes, 2100);
+  assert.equal(verification.costStatus, 'complete');
+  assert.equal(verification.ingredientCostCentimes, ingredientCostCentimes);
   assert.equal(verification.lineCount, 1);
   assert.equal(verification.movementCount, 3);
   assert.deepEqual(verification.movementDeltas, [-200, -18, -1]);

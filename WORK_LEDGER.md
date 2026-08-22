@@ -61,6 +61,56 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- 2026-08-22: reconstructed Goal 04 from the repository after the unreliable
+  continuation loop. `codex/goal-04-costs-profitability` and its remote are
+  synchronized at `9504b833413b8fae75590cc211b930467a039bd7`; COST-01 through
+  COST-04 are pushed and COST-05 is the sole active card.
+- COST-05 now caches ingredient inventory value, cost status, and valuation
+  revision for offline checkout; one local transaction saves immutable sale and
+  line costs, stock cost effects, receipt snapshot, and outbox event. Cloud
+  sync validates complete/incomplete cost consistency, recalculates and rejects
+  tampered snapshots when cached valuation revisions still match, preserves
+  stale/incomplete snapshots idempotently, and advances weighted-average
+  inventory valuation. Cache refresh preserves negative cloud stock as a signed
+  local delta so SQLite's non-negative base quantity constraint remains valid.
+- Focused checks pass: `npm run check:sales`, `npm run check:local` (including
+  10 repeated restart/migration runs), `npm run check:inventory`, `npx tsc -b`,
+  `npm run check:convex`, `npm run build`, and `npm run android:sync`. The
+  sales check proves complete local persistence, permitted incomplete offline
+  checkout, server-side matching-revision recalculation, tamper rejection, and
+  idempotent cloud preservation. The pre-existing
+  `scripts/check-local-database.mjs` cleanup change was verified: it closes a
+  retained SQLite handle defensively and makes Windows temporary-file cleanup
+  retry-safe; it has not yet been committed.
+- Blocker: this workstation has no Java runtime, Android SDK, or `adb` on PATH.
+  `npm run android:beta` reaches Gradle then reports `JAVA_HOME is not set and
+  no 'java' command could be found`; APK build/install, physical SM-X115 smoke,
+  and logcat review are therefore unavailable. Graphify incremental refresh is
+  also blocked because the installed graph has no usable manifest and requests
+  an external semantic-extraction API key for the mixed corpus. Exact next
+  action: provide/configure the existing Java 21 and Android SDK platform-tools
+  paths (and Graphify semantic backend/key or a valid manifest), then finish
+  COST-05 verification, refresh Graphify, commit, push, and continue COST-06.
+- Resumed 2026-08-22 with the already-installed project-local toolchain:
+  `D:\Olaso\tmp\android-toolchain\jdk\jdk-21.0.11+10` and
+  `D:\Olaso\tmp\android-toolchain\android-sdk`. Java 21, `adb`, and the
+  connected Galaxy Tab A9 SM-X115 are verified. The beta rebuilt and installed;
+  its awake foreground POS is the approved 1340 × 800 composition, an Espresso
+  take-away sale completed locally with its saved receipt preview, and the
+  foreground/post-sale log has no Capacitor console error, exception, or crash.
+  The earlier `triggerEvent` error occurs only when Android pauses the app while
+  the tablet is asleep before the Capacitor bridge is injected; it does not
+  recur for the real foreground launch/sale path.
+- Graphify's full incremental command still requires an unavailable semantic API
+  key because its stale manifest marks the mixed corpus changed. The structural
+  code graph was instead refreshed from the seven changed COST-05 code/check
+  files without pruning unrelated semantic nodes: `graphify-out/graph.json`
+  now contains 2,467 nodes and 5,592 edges, and a follow-up graph query returns
+  the new `prepareSale`, `commitLocalSale`, `loadSaleSyncPayload`, and
+  `sales.accept` paths. Exact next action: run final focused checks, commit and
+  push COST-05, record the pushed SHA, then make COST-06 the only in-progress
+  card.
+
 - Goal 04 is active and COST-01 is the only card in progress on
   `codex/goal-04-costs-profitability`, pushed from clean `main` before any
   branch changes.
