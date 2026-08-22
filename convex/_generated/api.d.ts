@@ -16,6 +16,7 @@ import type * as identityInternal from "../identityInternal.js";
 import type * as inventory from "../inventory.js";
 import type * as lib_management from "../lib/management.js";
 import type * as lib_operational from "../lib/operational.js";
+import type * as lib_session from "../lib/session.js";
 import type * as modifiers from "../modifiers.js";
 import type * as products from "../products.js";
 import type * as recipes from "../recipes.js";
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   inventory: typeof inventory;
   "lib/management": typeof lib_management;
   "lib/operational": typeof lib_operational;
+  "lib/session": typeof lib_session;
   modifiers: typeof modifiers;
   products: typeof products;
   recipes: typeof recipes;

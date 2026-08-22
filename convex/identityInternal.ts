@@ -106,6 +106,26 @@ export const createSession = internalMutation({
   },
 });
 
+export const validateSession = internalQuery({
+  args: { tokenHash: v.string(), deviceId: v.string() },
+  handler: async (ctx, args) => {
+    const session = await ctx.db
+      .query('staffSessions')
+      .withIndex('by_token_hash', (index) => index.eq('tokenHash', args.tokenHash))
+      .unique();
+    if (!session || session.deviceId !== args.deviceId || session.revokedAt) return null;
+    const [staff, identity] = await Promise.all([
+      ctx.db.get(session.staffProfileId),
+      ctx.db.query('staffIdentities')
+        .withIndex('by_staff_profile', (index) => index.eq('staffProfileId', session.staffProfileId))
+        .unique(),
+    ]);
+    if (!staff || staff.status !== ACTIVE || !identity
+        || identity.credentialVersion !== session.credentialVersion) return null;
+    return { staffProfileId: staff._id, name: staff.name, role: staff.role };
+  },
+});
+
 export const replaceCredential = internalMutation({
   args: {
     staffProfileId: v.id('staffProfiles'),

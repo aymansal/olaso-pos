@@ -132,3 +132,18 @@ export const supportSetPin = action({
     }) as Omit<SignInResult, 'token'>;
   },
 });
+
+export const validateSession = action({
+  args: { token: v.string(), deviceId: v.string() },
+  handler: async (ctx, args): Promise<Omit<SignInResult, 'token'>> => {
+    if (!/^[A-Za-z0-9_-]{40,100}$/.test(args.token) || !DEVICE_PATTERN.test(args.deviceId)) {
+      throw new Error('Session details are invalid.');
+    }
+    const session = await ctx.runQuery(internal.identityInternal.validateSession, {
+      tokenHash: await tokenHash(args.token),
+      deviceId: args.deviceId,
+    }) as Omit<SignInResult, 'token'> | null;
+    if (!session) throw new Error('Staff session is unavailable. Sign in again.');
+    return session;
+  },
+});

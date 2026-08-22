@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 import { query } from './_generated/server';
 import { requireOperationalAccess } from './lib/operational';
+import { sessionArgs } from './lib/session';
 
 function withinLimit<T>(rows: T[], limit: number, label: string) {
   if (rows.length > limit) {
@@ -10,12 +11,13 @@ function withinLimit<T>(rows: T[], limit: number, label: string) {
 }
 
 export const getOperationalSnapshot = query({
-  args: { requestId: v.optional(v.string()) },
-  handler: async (ctx, { requestId }) => {
+  args: { ...sessionArgs, requestId: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    const { requestId } = args;
     if (requestId && (!requestId.trim() || requestId.length > 64)) {
       throw new Error('Synchronization request ID must contain 1 to 64 characters.');
     }
-    await requireOperationalAccess(ctx);
+    await requireOperationalAccess(ctx, args);
     const [categories, allProducts, modifierGroups, allOptions, ingredients, staffProfiles] =
       await Promise.all([
         ctx.db

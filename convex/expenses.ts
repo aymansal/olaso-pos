@@ -10,6 +10,7 @@ import {
   notFound,
   requireOwner,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const recurrence = v.union(v.literal('one-time'), v.literal('monthly'));
 
@@ -59,9 +60,9 @@ function expenseInput(args: {
 }
 
 export const list = query({
-  args: { limit: v.number() },
+  args: { ...sessionArgs, limit: v.number() },
   handler: async (ctx, args) => {
-    await requireOwner(ctx);
+    await requireOwner(ctx, args);
     const limit = boundedInteger(args.limit, 'Expense list limit', 1, 100);
     const rows = await ctx.db
       .query('operatingExpenses')
@@ -85,6 +86,7 @@ export const list = query({
 
 export const add = mutation({
   args: {
+    ...sessionArgs,
     category: v.string(),
     description: v.string(),
     amountCentimes: v.number(),
@@ -95,7 +97,7 @@ export const add = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireOwner(ctx);
+    const actor = await requireOwner(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const existing = await ctx.db
       .query('operatingExpenses')
@@ -118,6 +120,7 @@ export const add = mutation({
 
 export const correct = mutation({
   args: {
+    ...sessionArgs,
     expenseId: v.id('operatingExpenses'),
     expectedRevision: v.number(),
     category: v.string(),
@@ -130,7 +133,7 @@ export const correct = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireOwner(ctx);
+    const actor = await requireOwner(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const original = await ctx.db.get(args.expenseId);
     if (!original) return notFound('Operating expense');

@@ -1,6 +1,10 @@
 package com.olaso.pos
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.SystemClock
+import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
@@ -42,6 +46,24 @@ class SecureSessionPlugin : Plugin() {
         val key = key(call) ?: return
         preferences().edit().remove(key).apply()
         call.resolve()
+    }
+
+    @PluginMethod
+    fun monotonicClock(call: PluginCall) {
+        call.resolve(JSObject().apply {
+            put("elapsedRealtime", SystemClock.elapsedRealtime())
+            put("bootCount", Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT, 0))
+        })
+    }
+
+    @PluginMethod
+    fun networkStatus(call: PluginCall) {
+        val connectivity = context.getSystemService(Context.CONNECTIVITY_SERVICE)
+            as ConnectivityManager
+        val capabilities = connectivity.activeNetwork?.let(connectivity::getNetworkCapabilities)
+        val available = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+            && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        call.resolve(JSObject().apply { put("available", available) })
     }
 
     private fun key(call: PluginCall): String? {

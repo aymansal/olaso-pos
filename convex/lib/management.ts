@@ -1,9 +1,9 @@
 import { ConvexError } from 'convex/values';
 import type { QueryCtx } from '../_generated/server';
+import { requireStaffSession } from './session';
 
-declare const process: { env: Record<string, string | undefined> };
-
-type ManagementContext = { auth: QueryCtx['auth'] };
+type ManagementContext = Pick<QueryCtx, 'db'>;
+type SessionArgs = { sessionToken: string; deviceId: string };
 
 function fail(
   code:
@@ -17,36 +17,20 @@ function fail(
   throw new ConvexError({ code, message });
 }
 
-export async function requireManagement(ctx: ManagementContext) {
-  const identity = await ctx.auth.getUserIdentity();
-
-  if (!identity) {
-    if (process.env.OLASO_ALLOW_DEV_MANAGEMENT === 'true') {
-      return 'Development manager';
-    }
-    return fail('UNAUTHENTICATED', 'Management sign-in is required.');
-  }
-
-  const role = typeof identity.role === 'string' ? identity.role : null;
-  if (role !== 'owner' && role !== 'manager') {
+export async function requireManagement(ctx: ManagementContext, args: SessionArgs) {
+  const session = await requireStaffSession(ctx, args);
+  if (session.role !== 'owner' && session.role !== 'manager') {
     return fail('FORBIDDEN', 'Owner or manager access is required.');
   }
-
-  return identity.name ?? identity.email ?? identity.subject;
+  return session.name;
 }
 
-export async function requireOwner(ctx: ManagementContext) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) {
-    if (process.env.OLASO_ALLOW_DEV_MANAGEMENT === 'true') {
-      return 'Development owner';
-    }
-    return fail('UNAUTHENTICATED', 'Owner sign-in is required.');
-  }
-  if (identity.role !== 'owner') {
+export async function requireOwner(ctx: ManagementContext, args: SessionArgs) {
+  const session = await requireStaffSession(ctx, args);
+  if (session.role !== 'owner') {
     return fail('FORBIDDEN', 'Owner access is required.');
   }
-  return identity.name ?? identity.email ?? identity.subject;
+  return session.name;
 }
 
 export function cleanText(value: string, label: string, maxLength: number) {

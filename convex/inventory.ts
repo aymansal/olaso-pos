@@ -18,6 +18,7 @@ import {
   notFound,
   requireManagement,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const MAX_INGREDIENTS = 100;
 const MAX_DAILY_MOVEMENTS = 500;
@@ -118,9 +119,9 @@ function packageInput(args: {
 }
 
 export const list = query({
-  args: { businessDate: v.string() },
+  args: { ...sessionArgs, businessDate: v.string() },
   handler: async (ctx, args) => {
-    await requireManagement(ctx);
+    await requireManagement(ctx, args);
     const date = businessDate(args.businessDate);
     const [ingredients, movements] = await Promise.all([
       ctx.db
@@ -180,9 +181,9 @@ export const list = query({
 });
 
 export const getDetail = query({
-  args: { ingredientId: v.id('ingredients') },
+  args: { ...sessionArgs, ingredientId: v.id('ingredients') },
   handler: async (ctx, args) => {
-    await requireManagement(ctx);
+    await requireManagement(ctx, args);
     const ingredient = await ctx.db.get(args.ingredientId);
     if (!ingredient) return notFound('Ingredient');
 
@@ -258,6 +259,7 @@ export const getDetail = query({
 
 export const saveIngredient = mutation({
   args: {
+    ...sessionArgs,
     id: v.optional(v.id('ingredients')),
     key: v.optional(v.string()),
     name: v.string(),
@@ -269,7 +271,7 @@ export const saveIngredient = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const name = cleanText(args.name, 'Ingredient name', 100);
     const lowStockThreshold = boundedInteger(
@@ -360,13 +362,14 @@ export const saveIngredient = mutation({
 
 export const setIngredientArchived = mutation({
   args: {
+    ...sessionArgs,
     id: v.id('ingredients'),
     archived: v.boolean(),
     expectedRevision: v.number(),
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const ingredient = await ctx.db.get(args.id);
     if (!ingredient) return notFound('Ingredient');
@@ -387,6 +390,7 @@ export const setIngredientArchived = mutation({
 
 export const receivePurchase = mutation({
   args: {
+    ...sessionArgs,
     ingredientId: v.id('ingredients'),
     packageLabel: v.string(),
     packageCount: v.number(),
@@ -400,7 +404,7 @@ export const receivePurchase = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actorLabel = await requireManagement(ctx);
+    const actorLabel = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const previous = await ctx.db
       .query('inventoryPurchases')
@@ -498,6 +502,7 @@ export const receivePurchase = mutation({
 
 export const correctPurchase = mutation({
   args: {
+    ...sessionArgs,
     purchaseId: v.id('inventoryPurchases'),
     packageLabel: v.string(),
     packageCount: v.number(),
@@ -511,7 +516,7 @@ export const correctPurchase = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actorLabel = await requireManagement(ctx);
+    const actorLabel = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const reversalMutationId = `${clientMutationId}:reversal`;
     const replacementMutationId = `${clientMutationId}:replacement`;
@@ -673,6 +678,7 @@ export const correctPurchase = mutation({
 
 export const recordAdjustment = mutation({
   args: {
+    ...sessionArgs,
     ingredientId: v.id('ingredients'),
     mode: v.union(v.literal('receive'), v.literal('set-count')),
     quantity: v.number(),
@@ -682,7 +688,7 @@ export const recordAdjustment = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const date = businessDate(args.businessDate);
     const previousAttempt = await ctx.db

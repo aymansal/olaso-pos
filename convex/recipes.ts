@@ -11,6 +11,7 @@ import {
   notFound,
   requireManagement,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const MAX_RECIPE_ITEMS = 50;
 const MAX_INGREDIENTS = 100;
@@ -35,9 +36,9 @@ function ingredientCost(ingredient: {
 }
 
 export const getCost = query({
-  args: { productId: v.id('products') },
+  args: { ...sessionArgs, productId: v.id('products') },
   handler: async (ctx, args) => {
-    await requireManagement(ctx);
+    await requireManagement(ctx, args);
     const product = await ctx.db.get(args.productId);
     if (!product) return notFound('Product');
     if (!product.currentRecipeVersionId) {
@@ -80,9 +81,9 @@ export const getCost = query({
 });
 
 export const getEditorData = query({
-  args: { productId: v.id('products') },
+  args: { ...sessionArgs, productId: v.id('products') },
   handler: async (ctx, args) => {
-    await requireManagement(ctx);
+    await requireManagement(ctx, args);
     const product = await ctx.db.get(args.productId);
     if (!product) return notFound('Product');
 
@@ -126,6 +127,7 @@ export const getEditorData = query({
 
 export const saveVersion = mutation({
   args: {
+    ...sessionArgs,
     productId: v.id('products'),
     expectedProductRevision: v.number(),
     clientMutationId: v.string(),
@@ -139,7 +141,7 @@ export const saveVersion = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const previousAttempt = await ctx.db
       .query('recipeVersions')

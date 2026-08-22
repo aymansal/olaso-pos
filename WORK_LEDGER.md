@@ -78,10 +78,23 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; POLICY-01
-  is the only card in progress. The branch was created and pushed from completed
-  Goal 04 commit `92cc41f882743fcab9a447ef98e865fc5d1f4a5b`; `main` and
-  `origin/main` now resolve to that same commit.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ID-02 is
+  the only card in progress at `9a4560902172ef3fbafb1a49796eef2402481859`.
+- ID-02 audit repair is uncommitted: strict transport-only offline fallback,
+  protected monotonic PIN lockout, fail-closed terminal startup, and
+  device-bound token enforcement now cover protected Convex operations; no
+  `OLASO_ALLOW_DEV_*` authorization bypass remains. The dedicated dev
+  deployment typechecked, accepted a valid token, and rejected a revoked token,
+  mismatched device, and wrong PIN without an offline bypass.
+- SM-X115 installed-APK evidence: cold restart locks before POS; 1340 × 800
+  lock and POS screenshots show no clipping or scrollbars; airplane-mode
+  restart reports native validated-network absence and unlocks cached `111111`
+  locally. `ACCESS_NETWORK_STATE` fixed the native connectivity crash. Focused
+  identity/Android checks, production build, 140-task Android beta, and
+  `git diff --check` pass. Reconnected-tablet PIN entry returned to the full
+  POS screen with no filtered crash/console errors. Graphify refreshed to
+  2,671 nodes and 12,431 edges. Exact next action: commit/push ID-02 and
+  record its SHA before PERM-01 starts.
 - Graphify was queried before resuming work. It confirms the existing saved
   receipt, Orders, and print-state paths that Goal 05 must preserve.
 - POLICY-01 is fully confirmed. Its authority updates document logo-only

@@ -5,37 +5,49 @@ import { api } from '../../../convex/_generated/api';
 import {
   loadStaffSession,
   saveStaffSession,
+  isServiceUnavailable,
   verifyOfflinePin,
+  type StaffSession,
 } from '../../data/identitySession';
+import { readSecureSessionNetworkStatus } from '../../data/secureSession';
 import { loadOperationalCache } from '../../data/operationalCache';
 import type { TerminalSettings } from '../../data/terminalSettings';
 import styles from './LockScreen.module.css';
 
 interface LockScreenProps {
   settings: TerminalSettings;
-  onUnlock: () => Promise<void>;
+  onUnlock: (session: StaffSession) => Promise<void>;
 }
+
+type CachedStaff = {
+  id: string;
+  name: string;
+  role: 'owner' | 'manager' | 'cashier' | 'worker';
+};
 
 export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   const [now, setNow] = useState(new Date());
   const [online, setOnline] = useState(navigator.onLine);
   const [unlocking, setUnlocking] = useState(false);
   const [error, setError] = useState('');
-  const [staff, setStaff] = useState<Array<{
-    id: string;
-    name: string;
-    role: 'owner' | 'manager' | 'cashier' | 'worker';
-  }>>([]);
+  const [staff, setStaff] = useState<CachedStaff[]>([]);
   const [staffProfileId, setStaffProfileId] = useState('');
   const [pin, setPin] = useState('');
   const signIn = useAction(api.identity.signIn);
 
   useEffect(() => {
     const clock = window.setInterval(() => setNow(new Date()), 30_000);
-    const updateOnline = () => setOnline(navigator.onLine);
+    let active = true;
+    const updateOnline = () => {
+      readSecureSessionNetworkStatus()
+        .then((available) => { if (active) setOnline(available); })
+        .catch(() => { if (active) setOnline(navigator.onLine); });
+    };
+    updateOnline();
     window.addEventListener('online', updateOnline);
     window.addEventListener('offline', updateOnline);
     return () => {
+      active = false;
       window.clearInterval(clock);
       window.removeEventListener('online', updateOnline);
       window.removeEventListener('offline', updateOnline);
@@ -46,7 +58,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     let active = true;
     Promise.all([
       loadOperationalCache(),
-      loadStaffSession().catch(() => undefined),
+      loadStaffSession(),
     ]).then(([cache, session]) => {
       if (!active) return;
       setStaff(cache.staffProfiles);
@@ -65,16 +77,40 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     setUnlocking(true);
     setError('');
     try {
-      try {
+      let unlockedSession: StaffSession | undefined;
+      const unlockOffline = async () => {
+        const saved = await loadStaffSession();
+        const cached = staff.find((member) => member.id === staffProfileId);
+        if (!saved || !cached || saved.staffProfileId !== cached.id
+            || saved.name !== cached.name || saved.role !== cached.role) {
+          throw new Error('This staff identity is unavailable offline. Connect and sync this terminal.');
+        }
+        const result = await verifyOfflinePin(pin);
+        if (result.kind === 'locked') {
+          throw new Error('Too many failed PIN attempts. Try again later.');
+        }
+        if (result.kind === 'incorrect') {
+          throw new Error(`PIN is incorrect. ${result.attemptsRemaining} attempts remaining.`);
+        }
+        unlockedSession = saved;
+      };
+      const networkAvailable = await readSecureSessionNetworkStatus();
+      if (!networkAvailable) {
+        await unlockOffline();
+      } else {
+        try {
         const session = await signIn({ staffProfileId: staffProfileId as never, pin, deviceId: settings.deviceId });
         await saveStaffSession(session, pin);
-      } catch (onlineError) {
-        const saved = await loadStaffSession().catch(() => undefined);
-        if (!saved || saved.staffProfileId !== staffProfileId || !await verifyOfflinePin(pin)) {
-          throw onlineError;
+        unlockedSession = session;
+        } catch (onlineError) {
+          if (!isServiceUnavailable(onlineError)) {
+            throw onlineError;
+          }
+          await unlockOffline();
         }
       }
-      await onUnlock();
+      if (!unlockedSession) throw new Error('Staff session is unavailable. Sign in again.');
+      await onUnlock(unlockedSession);
     } catch (caught) {
       setError(
         caught instanceof Error

@@ -13,6 +13,7 @@ import type {
   StockAdjustmentMode,
 } from '../features/stock/stockManagementTypes';
 import { keyFromName, newMutationId } from './managementMutations';
+import { useStaffSession } from './sessionContext';
 
 function currentBusinessDate() {
   const now = new Date();
@@ -24,15 +25,17 @@ function currentBusinessDate() {
 }
 
 export function useInventoryManagement(selectedIngredientId?: string) {
+  const session = useStaffSession();
+  const sessionArgs = { sessionToken: session.token, deviceId: session.deviceId };
   const businessDate = currentBusinessDate();
   const inventoryQuery = useQuery({
     query: api.inventory.list,
-    args: { businessDate },
+    args: { ...sessionArgs, businessDate },
   });
   const detailQuery = useQuery({
     query: api.inventory.getDetail,
     args: selectedIngredientId
-      ? { ingredientId: selectedIngredientId as Id<'ingredients'> }
+      ? { ...sessionArgs, ingredientId: selectedIngredientId as Id<'ingredients'> }
       : 'skip',
   });
   const saveIngredientMutation = useMutation(api.inventory.saveIngredient);
@@ -119,6 +122,7 @@ export function useInventoryManagement(selectedIngredientId?: string) {
     error: queryError?.message,
     saveIngredient: (input: IngredientSaveInput) =>
       saveIngredientMutation({
+        ...sessionArgs,
         ...(input.id
           ? {
               id: input.id as Id<'ingredients'>,
@@ -142,6 +146,7 @@ export function useInventoryManagement(selectedIngredientId?: string) {
       archived: boolean,
     ) =>
       setIngredientArchivedMutation({
+        ...sessionArgs,
         id: ingredient.id as Id<'ingredients'>,
         archived,
         expectedRevision: ingredient.revision,
@@ -154,6 +159,7 @@ export function useInventoryManagement(selectedIngredientId?: string) {
       reason: string,
     ) =>
       recordAdjustmentMutation({
+        ...sessionArgs,
         ingredientId: ingredient.id as Id<'ingredients'>,
         mode,
         quantity,
@@ -174,6 +180,7 @@ export function useInventoryManagement(selectedIngredientId?: string) {
       },
     ) =>
       receivePurchaseMutation({
+        ...sessionArgs,
         ingredientId: ingredient.id as Id<'ingredients'>,
         ...input,
         receivedAt: Date.now(),

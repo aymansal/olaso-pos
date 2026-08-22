@@ -12,6 +12,7 @@ import {
   notFound,
   requireManagement,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const MAX_GROUPS = 50;
 const MAX_OPTIONS = 200;
@@ -32,9 +33,9 @@ const optionInput = v.object({
 });
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
-    await requireManagement(ctx);
+  args: { ...sessionArgs },
+  handler: async (ctx, args) => {
+    await requireManagement(ctx, args);
     const [groups, options, ingredients] = await Promise.all([
       ctx.db
         .query('modifierGroups')
@@ -88,6 +89,7 @@ function sameEffects(
 
 export const saveGroup = mutation({
   args: {
+    ...sessionArgs,
     id: v.optional(v.id('modifierGroups')),
     key: v.optional(v.string()),
     name: v.string(),
@@ -100,7 +102,7 @@ export const saveGroup = mutation({
     options: v.array(optionInput),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const name = cleanText(args.name, 'Modifier group name', 80);
     const minSelections = boundedInteger(
@@ -315,13 +317,14 @@ export const saveGroup = mutation({
 
 export const setGroupArchived = mutation({
   args: {
+    ...sessionArgs,
     id: v.id('modifierGroups'),
     archived: v.boolean(),
     expectedRevision: v.number(),
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const group = await ctx.db.get(args.id);
     if (!group) return notFound('Modifier group');

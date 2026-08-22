@@ -9,6 +9,7 @@ import {
   invalid,
 } from './lib/management';
 import { requireOperationalAccess } from './lib/operational';
+import { sessionArgs } from './lib/session';
 import { consumeValuation } from '../src/lib/costs';
 
 declare const process: { env: Record<string, string | undefined> };
@@ -78,11 +79,12 @@ function snapshotCost(
 
 export const listOrders = query({
   args: {
+    ...sessionArgs,
     cursor: v.optional(v.string()),
     limit: v.number(),
   },
   handler: async (ctx, args) => {
-    await requireOperationalAccess(ctx);
+    await requireOperationalAccess(ctx, args);
     const limit = boundedInteger(args.limit, 'Order page size', 1, 20);
     if (args.cursor && args.cursor.length > 2_048) {
       return invalid('The order cursor is invalid.');
@@ -115,6 +117,7 @@ export const listOrders = query({
 
 export const accept = mutation({
   args: {
+    sessionToken: v.string(),
     deviceId: v.string(),
     localSaleId: v.string(),
     receiptNumber: v.string(),
@@ -128,7 +131,7 @@ export const accept = mutation({
     lines: v.array(saleLine),
   },
   handler: async (ctx, args) => {
-    const actor = await requireOperationalAccess(ctx);
+    const actor = await requireOperationalAccess(ctx, args);
     const deviceId = identifier(args.deviceId, 'Device ID');
     const localSaleId = identifier(args.localSaleId, 'Local sale ID');
     const existing = await ctx.db

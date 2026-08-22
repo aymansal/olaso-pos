@@ -4,6 +4,8 @@ type SecureSessionPlugin = {
   get(options: { key: string }): Promise<{ value: string | null }>;
   set(options: { key: string; value: string }): Promise<void>;
   remove(options: { key: string }): Promise<void>;
+  monotonicClock(): Promise<{ elapsedRealtime: number; bootCount: number }>;
+  networkStatus(): Promise<{ available: boolean }>;
 };
 
 const nativeSecureSession = registerPlugin<SecureSessionPlugin>('SecureSession');
@@ -38,4 +40,23 @@ export async function removeSecureSessionValue(key: string) {
   assertKey(key);
   if (!Capacitor.isNativePlatform()) throw unavailable();
   await nativeSecureSession.remove({ key });
+}
+
+export async function readSecureSessionClock() {
+  if (!Capacitor.isNativePlatform()) throw unavailable();
+  const clock = await nativeSecureSession.monotonicClock();
+  if (!Number.isSafeInteger(clock.elapsedRealtime) || clock.elapsedRealtime < 0
+      || !Number.isSafeInteger(clock.bootCount) || clock.bootCount < 0) {
+    throw new Error('Protected session clock is unavailable.');
+  }
+  return clock;
+}
+
+export async function readSecureSessionNetworkStatus() {
+  if (!Capacitor.isNativePlatform()) throw unavailable();
+  const status = await nativeSecureSession.networkStatus();
+  if (typeof status.available !== 'boolean') {
+    throw new Error('Protected network status is unavailable.');
+  }
+  return status.available;
 }

@@ -10,6 +10,7 @@ import {
   requireManagement,
   requireOwner,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const staffRole = v.union(
   v.literal('owner'),
@@ -25,9 +26,9 @@ function month(value: string, label: string) {
 }
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
-    await requireManagement(ctx);
+  args: { ...sessionArgs },
+  handler: async (ctx, args) => {
+    await requireManagement(ctx, args);
     const rows = await ctx.db
       .query('staffProfiles')
       .withIndex('by_status_name', (index) => index.eq('status', 'active'))
@@ -44,6 +45,7 @@ export const list = query({
 
 export const save = mutation({
   args: {
+    ...sessionArgs,
     id: v.optional(v.id('staffProfiles')),
     name: v.string(),
     role: staffRole,
@@ -51,7 +53,7 @@ export const save = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireManagement(ctx);
+    const actor = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const name = cleanText(args.name, 'Staff name', 100);
     const updatedAt = Date.now();
@@ -92,13 +94,14 @@ export const save = mutation({
 
 export const setArchived = mutation({
   args: {
+    ...sessionArgs,
     id: v.id('staffProfiles'),
     archived: v.boolean(),
     expectedRevision: v.number(),
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireManagement(ctx);
+    const actor = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const profile = await ctx.db.get(args.id);
     if (!profile) return notFound('Staff profile');
@@ -118,9 +121,9 @@ export const setArchived = mutation({
 });
 
 export const listCompensation = query({
-  args: { staffProfileId: v.id('staffProfiles') },
+  args: { ...sessionArgs, staffProfileId: v.id('staffProfiles') },
   handler: async (ctx, args) => {
-    await requireOwner(ctx);
+    await requireOwner(ctx, args);
     const rows = await ctx.db
       .query('compensationPeriods')
       .withIndex('by_staff_start_month', (index) => index.eq('staffProfileId', args.staffProfileId))
@@ -138,6 +141,7 @@ export const listCompensation = query({
 
 export const addCompensationPeriod = mutation({
   args: {
+    ...sessionArgs,
     staffProfileId: v.id('staffProfiles'),
     monthlyAmountCentimes: v.number(),
     effectiveStartMonth: v.string(),
@@ -145,7 +149,7 @@ export const addCompensationPeriod = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const actor = await requireOwner(ctx);
+    const actor = await requireOwner(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const existing = await ctx.db
       .query('compensationPeriods')

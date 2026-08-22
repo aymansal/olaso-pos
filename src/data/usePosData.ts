@@ -17,6 +17,7 @@ import {
   replaceOperationalCache,
   type OperationalCacheSnapshot,
 } from './operationalCache.ts';
+import { useStaffSession } from './sessionContext';
 
 export function toConvexSaleArgs(input: SaleSyncPayload) {
   return {
@@ -37,9 +38,10 @@ export function toConvexSaleArgs(input: SaleSyncPayload) {
 }
 
 export function usePosData() {
+  const session = useStaffSession();
   const snapshotQuery = useQuery({
     query: api.sync.getOperationalSnapshot,
-    args: {},
+    args: { sessionToken: session.token, deviceId: session.deviceId },
   });
   const acceptMutation = useMutation(api.sales.accept);
   const [menu, setMenu] = useState<OperationalCacheSnapshot>();
@@ -53,13 +55,16 @@ export function usePosData() {
 
   const acceptSale = useCallback(
     async (input: SaleSyncPayload) => {
-      const result = await acceptMutation(toConvexSaleArgs(input));
+      const result = await acceptMutation({
+        ...toConvexSaleArgs(input),
+        sessionToken: session.token,
+      });
       return {
         saleId: String(result.saleId),
         acknowledgedAt: result.acknowledgedAt,
       };
     },
-    [acceptMutation],
+    [acceptMutation, session.token],
   );
 
   const reloadLocal = useCallback(async () => {

@@ -26,6 +26,7 @@ assert.match(appBuild, /versionName "0\.1\.0-beta\.1"/);
 assert.match(variables, /compileSdkVersion = 36/);
 assert.match(variables, /targetSdkVersion = 35/);
 assert.match(manifest, /android\.permission\.INTERNET/);
+assert.match(manifest, /android\.permission\.ACCESS_NETWORK_STATE/);
 assert.match(manifest, /android:screenOrientation="sensorLandscape"/);
 assert.match(
   manifest,
@@ -35,10 +36,12 @@ assert.match(index, /width=1340, initial-scale=1\.0/);
 assert.match(main, /Capacitor\.isNativePlatform\(\)/);
 assert.match(
   main,
-  /Math\.max\(window\.screen\.width, window\.screen\.height\) \/ 1340/,
+  /Math\.max\(window\.outerWidth, window\.outerHeight\) \/ 1340/,
 );
 assert.match(main, /addEventListener\('resize', applyTabletScale/);
 assert.match(main, /screen\.orientation\.addEventListener\('change', applyTabletScale/);
+assert.match(main, /requestAnimationFrame\(applyTabletScale\)/);
+assert.match(main, /setTimeout\(applyTabletScale, 250\)/);
 const printerPlugin = readFileSync(
   'android/app/src/main/java/com/olaso/pos/EscPosPrinterPlugin.kt',
   'utf8',
@@ -59,7 +62,7 @@ const acceptedLogo = readFileSync(
 const nativeLogo = readFileSync(
   'android/app/src/main/res/raw/olaso_nv_logo.bin',
 );
-assert.doesNotMatch(main, /window\.(?:innerWidth|outerWidth)/);
+assert.doesNotMatch(main, /window\.innerWidth/);
 assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
 assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
 assert.match(activity, /registerPlugin\(EscPosPrinterPlugin\.class\)/);
@@ -80,6 +83,9 @@ assert.doesNotMatch(printerPlugin + socketWriter, /Bluetooth|Usb|USB/);
 assert.match(secureSessionPlugin, /@CapacitorPlugin\(name = "SecureSession"\)/);
 assert.match(secureSessionPlugin, /AndroidKeyStore/);
 assert.match(secureSessionPlugin, /AES\/GCM\/NoPadding/);
+assert.match(secureSessionPlugin, /SystemClock\.elapsedRealtime\(\)/);
+assert.match(secureSessionPlugin, /BOOT_COUNT/);
+assert.match(secureSessionPlugin, /fun networkStatus\(call: PluginCall\)/);
 assert.doesNotMatch(secureSessionPlugin, /Log\.|println|printStackTrace/);
 assert.deepEqual(nativeLogo, acceptedLogo);
 assert.equal(nativeLogo.length, 2441);

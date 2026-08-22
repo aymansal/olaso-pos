@@ -10,13 +10,14 @@ import {
   notFound,
   requireManagement,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const MAX_CATEGORIES = 50;
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
-    await requireManagement(ctx);
+  args: { ...sessionArgs },
+  handler: async (ctx, args) => {
+    await requireManagement(ctx, args);
     const categories = await ctx.db
       .query('categories')
       .withIndex('by_updated_at')
@@ -33,6 +34,7 @@ export const list = query({
 
 export const save = mutation({
   args: {
+    ...sessionArgs,
     id: v.optional(v.id('categories')),
     key: v.optional(v.string()),
     name: v.string(),
@@ -41,7 +43,7 @@ export const save = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const name = cleanText(args.name, 'Category name', 80);
     const sortOrder = boundedInteger(args.sortOrder, 'Sort order', 0, 10_000);
@@ -96,13 +98,14 @@ export const save = mutation({
 
 export const setArchived = mutation({
   args: {
+    ...sessionArgs,
     id: v.id('categories'),
     archived: v.boolean(),
     expectedRevision: v.number(),
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const category = await ctx.db.get(args.id);
     if (!category) return notFound('Category');

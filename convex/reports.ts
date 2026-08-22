@@ -7,6 +7,7 @@ import {
   requireManagement,
   requireOwner,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const MAX_RANGE_DAYS = 31;
 const MAX_DETAIL_ROWS = 20;
@@ -150,11 +151,12 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
 
 export const getSummary = query({
   args: {
+    ...sessionArgs,
     fromDate: v.string(),
     toDate: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireManagement(ctx);
+    await requireManagement(ctx, args);
     const range = checkedRange(args.fromDate, args.toDate);
     const previousTo = shiftBusinessDate(range.from, -1);
     const previousFrom = shiftBusinessDate(previousTo, 1 - range.days);
@@ -215,9 +217,9 @@ export const getSummary = query({
 });
 
 export const getMonthlyCosts = query({
-  args: { month: v.string() },
+  args: { ...sessionArgs, month: v.string() },
   handler: async (ctx, args) => {
-    await requireOwner(ctx);
+    await requireOwner(ctx, args);
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(args.month)) {
       return invalid('Month must use YYYY-MM.');
     }

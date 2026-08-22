@@ -11,10 +11,14 @@ if (Capacitor.isNativePlatform()) {
   const applyTabletScale = () => {
     document.documentElement.style.setProperty(
       'zoom',
-      String(Math.max(window.screen.width, window.screen.height) / 1340),
+      String(Math.max(window.outerWidth, window.outerHeight) / 1340),
     );
   };
   applyTabletScale();
+  window.requestAnimationFrame(() =>
+    window.requestAnimationFrame(applyTabletScale),
+  );
+  window.setTimeout(applyTabletScale, 250);
   window.addEventListener('resize', applyTabletScale, { passive: true });
   window.screen.orientation.addEventListener('change', applyTabletScale);
 }

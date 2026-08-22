@@ -14,6 +14,8 @@ import { ReportsScreen } from './features/reports/ReportsScreen';
 import { LockScreen } from './features/settings/LockScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { StockScreen } from './features/stock/StockScreen';
+import { StaffSessionProvider } from './data/sessionContext';
+import type { StaffSession } from './data/identitySession';
 
 type AppScreen = NavigationPage | 'Settings';
 
@@ -22,17 +24,29 @@ export function App() {
   const [posSession, setPosSession] = useState(createInitialPosSession);
   const [terminal, setTerminal] = useState<TerminalSettings>();
   const [sessionReady, setSessionReady] = useState(false);
+  const [startupError, setStartupError] = useState<string>();
+  const [staffSession, setStaffSession] = useState<StaffSession>();
 
   function navigate(page: NavigationPage) {
     setScreen(page);
   }
 
-  useEffect(() => {
-    loadTerminalSettings()
-      .then(setTerminal)
-      .catch(() => undefined)
-      .finally(() => setSessionReady(true));
-  }, []);
+  async function restoreTerminal() {
+    setSessionReady(false);
+    setStartupError(undefined);
+    setTerminal(undefined);
+    try {
+      const restored = await loadTerminalSettings();
+      await setTerminalLocked(true);
+      setTerminal({ ...restored, isLocked: true });
+    } catch {
+      setStartupError('Terminal settings could not be verified. POS remains locked. Retry or restore this terminal before serving orders.');
+    } finally {
+      setSessionReady(true);
+    }
+  }
+
+  useEffect(() => { void restoreTerminal(); }, []);
 
   useEffect(() => {
     if (!terminal || terminal.isLocked) return;
@@ -55,11 +69,13 @@ export function App() {
     setTerminal((current) =>
       current ? { ...current, isLocked: true } : current,
     );
+    setStaffSession(undefined);
     loadTerminalSettings().then(setTerminal).catch(() => undefined);
   }
 
-  async function unlock() {
+  async function unlock(session: StaffSession) {
     await setTerminalLocked(false);
+    setStaffSession(session);
     setTerminal((current) =>
       current ? { ...current, isLocked: false } : current,
     );
@@ -68,70 +84,64 @@ export function App() {
 
   if (!sessionReady) return <main aria-label="Loading Olaso" aria-busy="true" />;
 
-  if (terminal?.isLocked) {
+  if (startupError || !terminal) {
+    return (
+      <main aria-label="Terminal recovery" role="alert">
+        <h1>Terminal locked</h1>
+        <p>{startupError ?? 'Terminal settings are unavailable. POS remains locked.'}</p>
+        <button type="button" onClick={() => void restoreTerminal()}>Retry terminal check</button>
+      </main>
+    );
+  }
+
+  if (terminal.isLocked) {
     return <LockScreen settings={terminal} onUnlock={unlock} />;
   }
 
-  if (screen === 'Settings') {
-    return (
+  if (!staffSession) {
+    return <main aria-label="Terminal locked" role="alert">Staff session is unavailable. Lock and sign in again.</main>;
+  }
+
+  return (
+    <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
+      {screen === 'Settings' ? (
       <SettingsScreen
         onNavigate={navigate}
         onLock={lock}
       />
-    );
-  }
-
-  if (screen === 'Dashboard') {
-    return (
+      ) : screen === 'Dashboard' ? (
       <DashboardScreen
         onNavigate={navigate}
         onOpenSettings={() => setScreen('Settings')}
       />
-    );
-  }
-
-  if (screen === 'Orders') {
-    return (
+      ) : screen === 'Orders' ? (
       <OrdersScreen
         onNavigate={navigate}
         onOpenSettings={() => setScreen('Settings')}
       />
-    );
-  }
-
-  if (screen === 'Products') {
-    return (
+      ) : screen === 'Products' ? (
       <ProductsScreen
         onNavigate={navigate}
         onOpenSettings={() => setScreen('Settings')}
       />
-    );
-  }
-
-  if (screen === 'Stock') {
-    return (
+      ) : screen === 'Stock' ? (
       <StockScreen
         onNavigate={navigate}
         onOpenSettings={() => setScreen('Settings')}
       />
-    );
-  }
-
-  if (screen === 'Reports') {
-    return (
+      ) : screen === 'Reports' ? (
       <ReportsScreen
         onNavigate={navigate}
         onOpenSettings={() => setScreen('Settings')}
       />
-    );
-  }
-
-  return (
-    <PosScreen
+      ) : (
+      <PosScreen
       session={posSession}
       onSessionChange={setPosSession}
       onNavigate={navigate}
       onOpenSettings={() => setScreen('Settings')}
-    />
+      />
+      )}
+    </StaffSessionProvider>
   );
 }

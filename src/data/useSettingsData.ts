@@ -22,6 +22,7 @@ import {
   testPrinterConnection,
 } from '../printing/testPrinter.ts';
 import { installResidentLogo } from '../printing/printerTransport.ts';
+import { useStaffSession } from './sessionContext';
 
 function toConvexSaleArgs(input: SaleSyncPayload) {
   return {
@@ -40,6 +41,7 @@ function toConvexSaleArgs(input: SaleSyncPayload) {
 }
 
 export function useSettingsData() {
+  const session = useStaffSession();
   const convex = useConvex();
   const acceptMutation = useMutation(api.sales.accept);
   const [settings, setSettings] = useState<TerminalSettings>();
@@ -90,7 +92,10 @@ export function useSettingsData() {
     try {
       await makePendingOutboxAvailable();
       const result = await syncPendingSales(async (input) => {
-        const accepted = await acceptMutation(toConvexSaleArgs(input));
+        const accepted = await acceptMutation({
+          ...toConvexSaleArgs(input),
+          sessionToken: session.token,
+        });
         return {
           saleId: String(accepted.saleId),
           acknowledgedAt: accepted.acknowledgedAt,
@@ -112,6 +117,8 @@ export function useSettingsData() {
       }
 
       const cloud = await convex.query(api.sync.getOperationalSnapshot, {
+        sessionToken: session.token,
+        deviceId: session.deviceId,
         requestId: crypto.randomUUID(),
       });
       await replaceOperationalCache({
@@ -134,7 +141,7 @@ export function useSettingsData() {
     } finally {
       setIsSyncing(false);
     }
-  }, [acceptMutation, convex, refresh]);
+  }, [acceptMutation, convex, refresh, session.deviceId, session.token]);
 
   const testPrinter = useCallback(
     async (input: PrinterPreferences) => {

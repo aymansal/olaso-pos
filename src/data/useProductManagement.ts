@@ -13,20 +13,23 @@ import type {
   ProductSaveInput,
 } from '../features/products/productManagementTypes';
 import { keyFromName, newMutationId } from './managementMutations';
+import { useStaffSession } from './sessionContext';
 
 export function useProductManagement(selectedProductId?: string) {
-  const categoryQuery = useQuery({ query: api.categories.list, args: {} });
-  const productQuery = useQuery({ query: api.products.list, args: {} });
-  const modifierQuery = useQuery({ query: api.modifiers.list, args: {} });
+  const session = useStaffSession();
+  const sessionArgs = { sessionToken: session.token, deviceId: session.deviceId };
+  const categoryQuery = useQuery({ query: api.categories.list, args: sessionArgs });
+  const productQuery = useQuery({ query: api.products.list, args: sessionArgs });
+  const modifierQuery = useQuery({ query: api.modifiers.list, args: sessionArgs });
   const recipeQuery = useQuery({
     query: api.recipes.getEditorData,
     args: selectedProductId
-      ? { productId: selectedProductId as Id<'products'> }
+      ? { ...sessionArgs, productId: selectedProductId as Id<'products'> }
       : 'skip',
   });
   const costQuery = useQuery({
     query: api.recipes.getCost,
-    args: selectedProductId ? { productId: selectedProductId as Id<'products'> } : 'skip',
+    args: selectedProductId ? { ...sessionArgs, productId: selectedProductId as Id<'products'> } : 'skip',
   });
 
   const saveCategoryMutation = useMutation(api.categories.save);
@@ -166,6 +169,7 @@ export function useProductManagement(selectedProductId?: string) {
       expectedRevision?: number;
     }) =>
       saveCategoryMutation({
+        ...sessionArgs,
         ...(input.id
           ? {
               id: input.id as Id<'categories'>,
@@ -182,6 +186,7 @@ export function useProductManagement(selectedProductId?: string) {
       expectedRevision: number,
     ) =>
       setCategoryArchivedMutation({
+        ...sessionArgs,
         id: id as Id<'categories'>,
         archived,
         expectedRevision,
@@ -189,6 +194,7 @@ export function useProductManagement(selectedProductId?: string) {
       }),
     saveProduct: (input: ProductSaveInput) =>
       saveProductMutation({
+        ...sessionArgs,
         ...(input.id
           ? {
               id: input.id as Id<'products'>,
@@ -212,6 +218,7 @@ export function useProductManagement(selectedProductId?: string) {
       expectedRevision: number,
     ) =>
       setProductStatusMutation({
+        ...sessionArgs,
         id: id as Id<'products'>,
         status,
         expectedRevision,
@@ -219,6 +226,7 @@ export function useProductManagement(selectedProductId?: string) {
       }),
     saveModifierGroup: (group: ManagedModifierGroup) =>
       saveModifierGroupMutation({
+        ...sessionArgs,
         ...(group.id
           ? {
               id: group.id as Id<'modifierGroups'>,
@@ -256,6 +264,7 @@ export function useProductManagement(selectedProductId?: string) {
       expectedRevision: number,
     ) =>
       setModifierGroupArchivedMutation({
+        ...sessionArgs,
         id: id as Id<'modifierGroups'>,
         archived,
         expectedRevision,
@@ -266,6 +275,7 @@ export function useProductManagement(selectedProductId?: string) {
       items: { ingredientId: string; quantity: number }[],
     ) =>
       saveRecipeVersionMutation({
+        ...sessionArgs,
         productId: product.id as Id<'products'>,
         expectedProductRevision: product.revision,
         clientMutationId: newMutationId(),

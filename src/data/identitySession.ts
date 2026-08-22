@@ -1,12 +1,23 @@
 import {
   readSecureSessionValue,
+  readSecureSessionClock,
   removeSecureSessionValue,
   writeSecureSessionValue,
 } from './secureSession';
+import {
+  isServiceUnavailable,
+  nextOfflinePinResult,
+  type OfflineAttempt,
+  type OfflinePinResult,
+} from './identityPolicy';
+
+export { isServiceUnavailable, nextOfflinePinResult } from './identityPolicy';
 
 const PIN_ITERATIONS = 600_000;
 const SESSION_KEY = 'identity.session';
 const OFFLINE_PIN_KEY = 'identity.offline_pin';
+const OFFLINE_ATTEMPTS_KEY = 'identity.offline_attempts';
+const MAX_OFFLINE_FAILURES = 5;
 
 export type StaffSession = {
   token: string;
@@ -14,6 +25,7 @@ export type StaffSession = {
   name: string;
   role: 'owner' | 'manager' | 'cashier' | 'worker';
 };
+
 
 function toBase64(bytes: Uint8Array) {
   return btoa(String.fromCharCode(...bytes));
@@ -63,6 +75,7 @@ export async function saveStaffSession(session: StaffSession, pin: string) {
   await Promise.all([
     writeSecureSessionValue(SESSION_KEY, JSON.stringify(session)),
     writeSecureSessionValue(OFFLINE_PIN_KEY, `${salt}:${await derivePinHash(pin, salt)}`),
+    removeSecureSessionValue(OFFLINE_ATTEMPTS_KEY),
   ]);
 }
 
@@ -74,16 +87,54 @@ export async function loadStaffSession() {
   return session;
 }
 
-export async function verifyOfflinePin(pin: string) {
-  if (!/^\d{6}$/.test(pin)) return false;
+function parseOfflineAttempt(value: string | null) {
+  if (!value) return undefined;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error('Protected offline lockout state is invalid.');
+  }
+  if (!parsed || typeof parsed !== 'object') {
+    throw new Error('Protected offline lockout state is invalid.');
+  }
+  const attempt = parsed as Record<string, unknown>;
+  if (!Number.isInteger(attempt.failedCount) || Number(attempt.failedCount) < 0
+      || !Number.isInteger(attempt.bootCount) || Number(attempt.bootCount) < 0
+      || (attempt.lockedUntilElapsedRealtime !== undefined
+        && (!Number.isInteger(attempt.lockedUntilElapsedRealtime)
+          || Number(attempt.lockedUntilElapsedRealtime) < 0))) {
+    throw new Error('Protected offline lockout state is invalid.');
+  }
+  return attempt as OfflineAttempt;
+}
+
+export async function verifyOfflinePin(pin: string): Promise<OfflinePinResult> {
+  if (!/^\d{6}$/.test(pin)) return { kind: 'incorrect', attemptsRemaining: MAX_OFFLINE_FAILURES };
   const stored = await readSecureSessionValue(OFFLINE_PIN_KEY);
   const [salt, expected] = stored?.split(':', 2) ?? [];
-  return Boolean(salt && expected && equal(await derivePinHash(pin, salt), expected));
+  if (!salt || !expected) throw new Error('Protected offline credentials are unavailable. Connect and sign in.');
+  const [rawAttempt, clock] = await Promise.all([
+    readSecureSessionValue(OFFLINE_ATTEMPTS_KEY),
+    readSecureSessionClock(),
+  ]);
+  const next = nextOfflinePinResult(
+    parseOfflineAttempt(rawAttempt),
+    equal(await derivePinHash(pin, salt), expected),
+    clock,
+  );
+  if (next.attempt) {
+    await writeSecureSessionValue(OFFLINE_ATTEMPTS_KEY, JSON.stringify(next.attempt));
+  } else {
+    await removeSecureSessionValue(OFFLINE_ATTEMPTS_KEY);
+  }
+  return next.result;
 }
 
 export async function clearStaffSession() {
   await Promise.all([
     removeSecureSessionValue(SESSION_KEY),
     removeSecureSessionValue(OFFLINE_PIN_KEY),
+    removeSecureSessionValue(OFFLINE_ATTEMPTS_KEY),
   ]);
 }

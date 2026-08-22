@@ -13,6 +13,7 @@ import {
 } from './orderHistory.ts';
 import { toConvexSaleArgs } from './usePosData';
 import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
+import { useStaffSession } from './sessionContext';
 
 const PAGE_SIZE = 6;
 
@@ -77,6 +78,7 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
 }
 
 export function useOrdersData() {
+  const session = useStaffSession();
   const convex = useConvex();
   const acceptMutation = useMutation(api.sales.accept);
   const [orders, setOrders] = useState<OrderHistoryRecord[]>([]);
@@ -95,13 +97,16 @@ export function useOrdersData() {
 
   const acceptSale = useCallback(
     async (input: SaleSyncPayload) => {
-      const result = await acceptMutation(toConvexSaleArgs(input));
+      const result = await acceptMutation({
+        ...toConvexSaleArgs(input),
+        sessionToken: session.token,
+      });
       return {
         saleId: String(result.saleId),
         acknowledgedAt: result.acknowledgedAt,
       };
     },
-    [acceptMutation],
+    [acceptMutation, session.token],
   );
 
   const refresh = useCallback(async () => {
@@ -116,6 +121,8 @@ export function useOrdersData() {
       failed: 1,
     }));
     const cloudHistory = convex.query(api.sales.listOrders, {
+      sessionToken: session.token,
+      deviceId: session.deviceId,
       limit: PAGE_SIZE,
     });
     const [localResult, summaryResult] = await Promise.allSettled([
@@ -175,7 +182,7 @@ export function useOrdersData() {
         }
       },
     );
-  }, [acceptSale, convex]);
+  }, [acceptSale, convex, session.deviceId, session.token]);
 
   useEffect(() => {
     mounted.current = true;
@@ -209,6 +216,8 @@ export function useOrdersData() {
       requests.push(
         convex
           .query(api.sales.listOrders, {
+            sessionToken: session.token,
+            deviceId: session.deviceId,
             limit: PAGE_SIZE,
             ...(cloudCursor.current ? { cursor: cloudCursor.current } : {}),
           })
@@ -231,7 +240,7 @@ export function useOrdersData() {
       setIsLoadingMore(false);
     }
     loadingMore.current = false;
-  }, [convex]);
+  }, [convex, session.deviceId, session.token]);
 
   const retrySync = useCallback(
     async (localSaleId: string) => {

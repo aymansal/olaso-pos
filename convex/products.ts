@@ -14,6 +14,7 @@ import {
   notFound,
   requireManagement,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const MAX_PRODUCTS = 200;
 const productStatus = v.union(
@@ -22,9 +23,9 @@ const productStatus = v.union(
 );
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
-    await requireManagement(ctx);
+  args: { ...sessionArgs },
+  handler: async (ctx, args) => {
+    await requireManagement(ctx, args);
     const products = await ctx.db
       .query('products')
       .withIndex('by_updated_at')
@@ -64,6 +65,7 @@ async function validateRelations(
 
 export const save = mutation({
   args: {
+    ...sessionArgs,
     id: v.optional(v.id('products')),
     key: v.optional(v.string()),
     categoryId: v.id('categories'),
@@ -78,7 +80,7 @@ export const save = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const name = cleanText(args.name, 'Product name', 100);
     const receiptName = cleanText(args.receiptName, 'Receipt name', 60);
@@ -160,6 +162,7 @@ export const save = mutation({
 
 export const setStatus = mutation({
   args: {
+    ...sessionArgs,
     id: v.id('products'),
     status: v.union(
       v.literal('active'),
@@ -170,7 +173,7 @@ export const setStatus = mutation({
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const updatedBy = await requireManagement(ctx);
+    const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const product = await ctx.db.get(args.id);
     if (!product) return notFound('Product');

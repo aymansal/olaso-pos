@@ -4,6 +4,7 @@ import {
   businessDate,
   requireManagement,
 } from './lib/management';
+import { sessionArgs } from './lib/session';
 
 const MAX_SUMMARY_DAYS = 12;
 const MAX_INGREDIENTS = 100;
@@ -18,9 +19,9 @@ function shiftBusinessDate(value: string, days: number) {
 }
 
 export const getSnapshot = query({
-  args: { businessDate: v.string() },
+  args: { ...sessionArgs, businessDate: v.string() },
   handler: async (ctx, args) => {
-    await requireManagement(ctx);
+    await requireManagement(ctx, args);
     const date = businessDate(args.businessDate);
     const [summaries, ingredients, sales] = await Promise.all([
       ctx.db

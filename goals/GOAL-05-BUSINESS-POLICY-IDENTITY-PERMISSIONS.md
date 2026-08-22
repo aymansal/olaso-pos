@@ -217,6 +217,17 @@ append-only cancellation/refund correction workflows.
   correction, role, and lock assumptions. Exact next action is implementing
   the documented protected-session boundary without starting loyalty work.
 
+- ID-02 audit repair is in progress: strict fallback, monotonic local lockout,
+  fail-closed startup, protected-operation device-bound token enforcement, and
+  focused checks are implemented. The dedicated development deployment accepts
+  a valid token and rejects wrong-PIN, mismatched-device, and revoked-token
+  requests. SM-X115 APK evidence covers cold locked restart, 1340 × 800
+  unclipped lock/POS geometry, and airplane-mode native-offline cached unlock;
+  secure preferences/SQLite/source scans contain no plaintext PIN/session.
+  Reconnected tablet PIN entry returns to the full POS screen without filtered
+  crash/console errors; Graphify is refreshed to 2,671 nodes and 12,431 edges.
+  Exact next action: commit/push ID-02 and record its SHA before PERM-01.
+
 ## Planning journal
 
 ### 2026-08-21 — Goal 05 sequenced
