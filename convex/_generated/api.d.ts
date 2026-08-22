@@ -19,6 +19,7 @@ import type * as recipes from "../recipes.js";
 import type * as reports from "../reports.js";
 import type * as sales from "../sales.js";
 import type * as seed from "../seed.js";
+import type * as staff from "../staff.js";
 import type * as sync from "../sync.js";
 
 import type {
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   reports: typeof reports;
   sales: typeof sales;
   seed: typeof seed;
+  staff: typeof staff;
   sync: typeof sync;
 }>;
 

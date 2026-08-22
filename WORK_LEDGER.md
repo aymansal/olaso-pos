@@ -116,6 +116,21 @@ remaining goal and card sequence.
   progress. Exact next action: re-query Graphify, inspect the existing staff
   and authorization boundaries, then implement owner-only staff profiles and
   effective compensation periods.
+- COST-06 now has bounded management staff-profile reads/writes with no salary
+  fields, plus owner-only compensation history/creation. Compensation periods
+  are integer centimes, append-only, retry-safe, and reject overlap. The new
+  `staffProfiles.by_client_mutation` index protects create retries; focused
+  staff, Convex, and TypeScript checks pass. The Settings DOX keeps Staff &
+  access unavailable until the owner confirms role/login policy, so COST-06
+  deliberately exposes no compensation UI or operational cache data. Exact next
+  action: add deterministic staff/compensation seed coverage, then run the
+  card's closeout checks before commit/push.
+- COST-06 seed coverage and closeout pass: the deterministic reset now has two
+  staff profiles and one July-2026 worker compensation period; staff, seed,
+  Convex, TypeScript, production-build, Android beta, physical SM-X115 install,
+  awake foreground Settings launch, and clean foreground logcat pass. Graphify
+  structural refresh is 2,483 nodes and 5,545 edges. Exact next action: commit
+  and push COST-06, record its SHA, then activate COST-07.
 
 - Goal 04 is active and COST-01 is the only card in progress on
   `codex/goal-04-costs-profitability`, pushed from clean `main` before any

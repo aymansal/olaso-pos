@@ -93,6 +93,11 @@ type SaleSeed = {
   lines: readonly SaleLineSeed[];
 };
 
+const staffSeeds = [
+  { key: 'owner', name: 'Olaso Owner', role: 'owner' as const },
+  { key: 'barista', name: 'Samira Barista', role: 'worker' as const },
+] as const;
+
 type DailyAccumulator = {
   grossCentimes: number;
   netCentimes: number;
@@ -1450,6 +1455,29 @@ export const resetAndSeed = internalMutation({
       );
     }
 
+    const staffIds = new Map<string, Id<'staffProfiles'>>();
+    for (const profile of staffSeeds) {
+      const id = await ctx.db.insert('staffProfiles', {
+        name: profile.name,
+        role: profile.role,
+        status: 'active',
+        revision: 1,
+        updatedAt: SEED_AT,
+      });
+      staffIds.set(profile.key, id);
+      counts.staffProfiles += 1;
+    }
+    await ctx.db.insert('compensationPeriods', {
+      staffProfileId: mustGet(staffIds, 'barista', 'staff profile'),
+      monthlyAmountCentimes: 550000,
+      effectiveStartMonth: '2026-07',
+      revision: 1,
+      createdAt: SEED_AT,
+      updatedBy: 'Development owner',
+      clientMutationId: 'seed-compensation-barista-2026-07',
+    });
+    counts.compensationPeriods += 1;
+
     return {
       deployment: 'development',
       deviceId: DEVICE_ID,
@@ -1532,6 +1560,16 @@ export const verify = internalQuery({
       .query('ingredients')
       .withIndex('by_status_name', (query) => query.eq('status', 'active'))
       .take(RESET_LIMIT + 1);
+    const seededStaff = await ctx.db
+      .query('staffProfiles')
+      .withIndex('by_status_name', (query) => query.eq('status', 'active'))
+      .take(10);
+    const seededCompensation = await ctx.db
+      .query('compensationPeriods')
+      .withIndex('by_client_mutation', (query) =>
+        query.eq('clientMutationId', 'seed-compensation-barista-2026-07'),
+      )
+      .unique();
 
     if (
       !cappuccinoRecipe ||
@@ -1539,7 +1577,9 @@ export const verify = internalQuery({
       sampleSaleItems.length !== 2 ||
       sampleMovements.length !== 3 ||
       !sampleMetric ||
-      sampleMetric.orderCount !== 2
+      sampleMetric.orderCount !== 2 ||
+      seededStaff.length !== 2 ||
+      seededCompensation?.monthlyAmountCentimes !== 550000
     ) {
       throw new Error('Development seed relationship verification failed.');
     }

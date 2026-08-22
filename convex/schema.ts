@@ -293,7 +293,8 @@ export default defineSchema({
     lastMutationId: v.optional(v.string()),
   })
     .index('by_status_name', ['status', 'name'])
-    .index('by_updated_at', ['updatedAt']),
+    .index('by_updated_at', ['updatedAt'])
+    .index('by_client_mutation', ['lastMutationId']),
 
   compensationPeriods: defineTable({
     staffProfileId: v.id('staffProfiles'),
