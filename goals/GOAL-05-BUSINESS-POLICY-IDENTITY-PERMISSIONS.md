@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active; PERM-01 in progress
+**Status:** active; POLICY-02 in progress
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -101,8 +101,8 @@ append-only cancellation/refund correction workflows.
 | POLICY-01 | Confirm and record the owner decision matrix | done | `eafe2d3e6603cbf5957c548b5e83473da05465df` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | ID-01 | Define the production identity, offline session, lock, recovery, and threat model | done | `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | ID-02 | Add production identity/session persistence and remove production authorization bypass | done | `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` pushed to `origin/codex/goal-05-policy-identity-permissions` |
-| PERM-01 | Enforce role permissions and sensitive-data return boundaries | in progress | Matrix inspection pending |
-| POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | pending | — |
+| PERM-01 | Enforce role permissions and sensitive-data return boundaries | done | `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` pushed to `origin/codex/goal-05-policy-identity-permissions` |
+| POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | in progress | Confirmed matrix implementation pending |
 | ORDER-01 | Implement authorized cancellation/refund corrections and reversals | pending | — |
 | ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | pending | — |
 | POLICY-03 | Run policy, security, regression, tablet, documentation, and push closeout | pending | — |
@@ -212,7 +212,8 @@ append-only cancellation/refund correction workflows.
 ## Current checkpoint
 
 - Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01,
-  ID-01, and ID-02 are pushed and recorded; PERM-01 is the only active card.
+  ID-01, ID-02, and PERM-01 are pushed and recorded; POLICY-02 is the only
+  active card.
 - The confirmed matrix above replaces former temporary tax, service, payment,
   correction, role, and lock assumptions. Exact next action is implementing
   the documented protected-session boundary without starting loyalty work.
@@ -230,7 +231,7 @@ append-only cancellation/refund correction workflows.
   and confirmed on the canonical branch. Exact next action: inspect and apply
   the confirmed permission matrix for PERM-01.
 
-- PERM-01 implementation is verified and awaiting its card commit/push. One
+- PERM-01 is complete. One
   owner/manager/cashier matrix now gates Convex operations, local cache shapes,
   UI navigation, and direct routes. Cashiers retain only POS/Orders data;
   managers retain operational data and expenses but never staff, compensation,
@@ -240,8 +241,9 @@ append-only cancellation/refund correction workflows.
   TypeScript, Convex typecheck, and production build pass. SM-X115 installed
   APK evidence shows a full 1340 × 800 owner POS without filtered crash/console
   errors; direct calls verify the negative authorization boundaries. Graphify
-  refreshed to 2,691 nodes and 15,179 edges. Exact next action: commit and push
-  PERM-01, record its SHA, then activate POLICY-02 alone.
+  refreshed to 2,691 nodes and 15,179 edges. Commit
+  `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` is pushed to the canonical
+  branch. Exact next action: implement POLICY-02 alone.
 
 ## Planning journal
 
@@ -263,6 +265,17 @@ append-only cancellation/refund correction workflows.
 - Loyalty/customer records, discounts, dedicated refunds, legal receipt fields,
   and remote owner access remain deliberately unavailable until separately
   approved. No application behavior changed in this decision card.
+
+### 2026-08-22 — PERM-01 permission boundary completed
+
+- Added a single cumulative owner/manager/cashier matrix across protected
+  Convex operations, local operational caches, navigation, and direct routes.
+  Legacy cached worker records migrate to cashier and the cloud schema no
+  longer accepts the retired role.
+- Direct owner, manager, and cashier checks prove the permitted operational
+  access, protected staff/compensation/profitability boundaries, and a cashier
+  cache without compensation fields. The SM-X115 installed beta retains the
+  approved full 1340 × 800 POS geometry without filtered crash/console errors.
 
 ### 2026-08-22 — ID-01 identity/session design selected
 

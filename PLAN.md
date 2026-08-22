@@ -74,7 +74,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 02 | Functional offline-capable Android beta | done | goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md |
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
-| Goal 05 | Business policy, identity, and permissions | active; PERM-01 in progress | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
+| Goal 05 | Business policy, identity, and permissions | active; POLICY-02 in progress | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
 | Goal 06 | Customer loyalty and instant identification | planned; owner decisions required | goals/GOAL-06-CUSTOMER-LOYALTY.md |
 | Goal 07 | Owner-led simplification, startup, release hardening, and final acceptance | planned; last | goals/GOAL-07-PRODUCTION-HARDENING.md |
 
