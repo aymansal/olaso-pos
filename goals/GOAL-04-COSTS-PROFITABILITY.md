@@ -95,7 +95,7 @@ sensitive compensation data.
 | COST-06 | Add staff profiles and owner-only effective compensation periods | done | `1c6e5e465e427ec8f3728dec73f257533ba00388` pushed to `origin/codex/goal-04-costs-profitability`. |
 | COST-07 | Add validated one-time and recurring operating expenses | done | `850070d87a42e39a40ebc2e1b5b76ab61058c9df` pushed to `origin/codex/goal-04-costs-profitability`. |
 | COST-08 | Add the bounded monthly Costs and Profitability report | done | `84307050515d65bc9d710f771dafdd734003d4ff` pushed to `origin/codex/goal-04-costs-profitability`. |
-| COST-09 | Run full regression, security/quota review, tablet QA, documentation closeout, and final push | done | final record pending push |
+| COST-09 | Run full regression, security/quota review, tablet QA, documentation closeout, and final push | done | `0095c37a3916759388189897bdca132654198604` pushed to `origin/codex/goal-04-costs-profitability`. |
 
 ## Card Contracts
 
