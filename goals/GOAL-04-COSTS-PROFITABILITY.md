@@ -92,8 +92,8 @@ sensitive compensation data.
 | COST-03 | Connect package-based receiving, valuation, and purchase history to Stock | done | `bfe73a67062e95de0127fe0ea42b0a981bb15314` pushed to `origin/codex/goal-04-costs-profitability`; browser/tablet package workflow, build, Android, and Graphify evidence passed. |
 | COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | done | `551856a3c3e35c057ca70d91e23667831a33c2a5` pushed to `origin/codex/goal-04-costs-profitability`. |
 | COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | done | `1e7b225ad57b4a69b8776b7f39f08c549115b73e` pushed to `origin/codex/goal-04-costs-profitability`. |
-| COST-06 | Add staff profiles and owner-only effective compensation periods | in progress | — |
-| COST-07 | Add validated one-time and recurring operating expenses | pending | — |
+| COST-06 | Add staff profiles and owner-only effective compensation periods | done | `1c6e5e465e427ec8f3728dec73f257533ba00388` pushed to `origin/codex/goal-04-costs-profitability`. |
+| COST-07 | Add validated one-time and recurring operating expenses | in progress | — |
 | COST-08 | Add the bounded monthly Costs and Profitability report | pending | — |
 | COST-09 | Run full regression, security/quota review, tablet QA, documentation closeout, and final push | pending | — |
 

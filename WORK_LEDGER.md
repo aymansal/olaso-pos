@@ -20,8 +20,8 @@ remaining goal and card sequence.
 | COST-03 — Connect package-based receiving, valuation, and purchase history to Stock | done — `bfe73a67062e95de0127fe0ea42b0a981bb15314` on `origin/codex/goal-04-costs-profitability` |
 | COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | done — `551856a3c3e35c057ca70d91e23667831a33c2a5` on `origin/codex/goal-04-costs-profitability` |
 | COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | done — `1e7b225ad57b4a69b8776b7f39f08c549115b73e` on `origin/codex/goal-04-costs-profitability` |
-| COST-06 — Add staff profiles and owner-only effective compensation periods | in progress |
-| COST-07 — Add validated one-time and recurring operating expenses | pending |
+| COST-06 — Add staff profiles and owner-only effective compensation periods | done — `1c6e5e465e427ec8f3728dec73f257533ba00388` on `origin/codex/goal-04-costs-profitability` |
+| COST-07 — Add validated one-time and recurring operating expenses | in progress |
 | COST-08 — Add the bounded monthly Costs and Profitability report | pending |
 | COST-09 — Run full regression, security/quota review, tablet QA, documentation closeout, and final push | pending |
 
@@ -131,6 +131,11 @@ remaining goal and card sequence.
   awake foreground Settings launch, and clean foreground logcat pass. Graphify
   structural refresh is 2,483 nodes and 5,545 edges. Exact next action: commit
   and push COST-06, record its SHA, then activate COST-07.
+- COST-06 implementation commit
+  `1c6e5e465e427ec8f3728dec73f257533ba00388` is pushed and matches
+  `origin/codex/goal-04-costs-profitability`. COST-07 is the only in-progress
+  card. Exact next action: re-query Graphify and inspect expense schema,
+  validation, and report-boundary paths before implementation.
 
 - Goal 04 is active and COST-01 is the only card in progress on
   `codex/goal-04-costs-profitability`, pushed from clean `main` before any
