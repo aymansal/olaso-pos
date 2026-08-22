@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
+import { ownerSession } from './owner-session.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
@@ -13,22 +14,25 @@ assert(convexUrl, 'VITE_CONVEX_URL is missing from .env.local');
 const client = new ConvexHttpClient(convexUrl);
 const mutationId = (label) => `app03-check-${label}`;
 
-function reseed() {
+async function reseed() {
   execSync('npm run seed:dev', {
     cwd: projectRoot,
     stdio: 'pipe',
     encoding: 'utf8',
   });
+  return ownerSession(client, projectRoot, 'management-check-device');
 }
 
 async function verifyManagement() {
-  reseed();
+  const sessionArgs = await reseed();
+  const query = (reference, args) => client.query(reference, { ...sessionArgs, ...args });
+  const mutation = (reference, args) => client.mutation(reference, { ...sessionArgs, ...args });
   try {
     const [initialCategories, initialProducts, initialModifiers] =
       await Promise.all([
-        client.query(api.categories.list, {}),
-        client.query(api.products.list, {}),
-        client.query(api.modifiers.list, {}),
+        query(api.categories.list, {}),
+        query(api.products.list, {}),
+        query(api.modifiers.list, {}),
       ]);
     assert.equal(initialCategories.length, 4);
     assert.equal(initialProducts.length, 15);
@@ -40,25 +44,25 @@ async function verifyManagement() {
       sortOrder: 90,
       clientMutationId: mutationId('category-create'),
     };
-    const categoryCreated = await client.mutation(
+    const categoryCreated = await mutation(
       api.categories.save,
       categoryCreateArgs,
     );
-    const categoryRetry = await client.mutation(
+    const categoryRetry = await mutation(
       api.categories.save,
       categoryCreateArgs,
     );
     assert.equal(categoryRetry.id, categoryCreated.id);
     assert.equal(categoryRetry.revision, categoryCreated.revision);
 
-    const categoryUpdated = await client.mutation(api.categories.save, {
+    const categoryUpdated = await mutation(api.categories.save, {
       id: categoryCreated.id,
       name: 'APP-03 Renamed Category',
       sortOrder: 91,
       expectedRevision: categoryCreated.revision,
       clientMutationId: mutationId('category-update'),
     });
-    const categoryArchived = await client.mutation(
+    const categoryArchived = await mutation(
       api.categories.setArchived,
       {
         id: categoryCreated.id,
@@ -67,7 +71,7 @@ async function verifyManagement() {
         clientMutationId: mutationId('category-archive'),
       },
     );
-    const categoryRestored = await client.mutation(
+    const categoryRestored = await mutation(
       api.categories.setArchived,
       {
         id: categoryCreated.id,
@@ -97,22 +101,22 @@ async function verifyManagement() {
         },
       ],
     };
-    const modifierCreated = await client.mutation(
+    const modifierCreated = await mutation(
       api.modifiers.saveGroup,
       modifierCreateArgs,
     );
-    const modifierRetry = await client.mutation(
+    const modifierRetry = await mutation(
       api.modifiers.saveGroup,
       modifierCreateArgs,
     );
     assert.equal(modifierRetry.id, modifierCreated.id);
-    const modifiersAfterCreate = await client.query(api.modifiers.list, {});
+    const modifiersAfterCreate = await query(api.modifiers.list, {});
     const createdOption = modifiersAfterCreate.options.find(
       (option) => option.groupId === modifierCreated.id,
     );
     assert(createdOption);
 
-    const modifierUpdated = await client.mutation(api.modifiers.saveGroup, {
+    const modifierUpdated = await mutation(api.modifiers.saveGroup, {
       id: modifierCreated.id,
       name: 'APP-03 Updated Group',
       required: true,
@@ -133,7 +137,7 @@ async function verifyManagement() {
         },
       ],
     });
-    const modifierArchived = await client.mutation(
+    const modifierArchived = await mutation(
       api.modifiers.setGroupArchived,
       {
         id: modifierCreated.id,
@@ -142,7 +146,7 @@ async function verifyManagement() {
         clientMutationId: mutationId('modifier-archive'),
       },
     );
-    const modifierRestored = await client.mutation(
+    const modifierRestored = await mutation(
       api.modifiers.setGroupArchived,
       {
         id: modifierCreated.id,
@@ -164,17 +168,17 @@ async function verifyManagement() {
       modifierGroupIds: [modifierCreated.id],
       clientMutationId: mutationId('product-create'),
     };
-    const productCreated = await client.mutation(
+    const productCreated = await mutation(
       api.products.save,
       productCreateArgs,
     );
-    const productRetry = await client.mutation(
+    const productRetry = await mutation(
       api.products.save,
       productCreateArgs,
     );
     assert.equal(productRetry.id, productCreated.id);
 
-    const productUpdated = await client.mutation(api.products.save, {
+    const productUpdated = await mutation(api.products.save, {
       id: productCreated.id,
       categoryId: categoryCreated.id,
       name: 'APP-03 Updated Product',
@@ -186,13 +190,13 @@ async function verifyManagement() {
       expectedRevision: productCreated.revision,
       clientMutationId: mutationId('product-update'),
     });
-    const productArchived = await client.mutation(api.products.setStatus, {
+    const productArchived = await mutation(api.products.setStatus, {
       id: productCreated.id,
       status: 'archived',
       expectedRevision: productUpdated.revision,
       clientMutationId: mutationId('product-archive'),
     });
-    const productRestored = await client.mutation(api.products.setStatus, {
+    const productRestored = await mutation(api.products.setStatus, {
       id: productCreated.id,
       status: 'active',
       expectedRevision: productArchived.revision,
@@ -215,18 +219,18 @@ async function verifyManagement() {
         },
       ],
     };
-    const recipeV1 = await client.mutation(
+    const recipeV1 = await mutation(
       api.recipes.saveVersion,
       recipeV1Args,
     );
-    const recipeV1Retry = await client.mutation(
+    const recipeV1Retry = await mutation(
       api.recipes.saveVersion,
       recipeV1Args,
     );
     assert.equal(recipeV1Retry.id, recipeV1.id);
     assert.equal(recipeV1Retry.productRevision, recipeV1.productRevision);
 
-    const recipeV2 = await client.mutation(api.recipes.saveVersion, {
+    const recipeV2 = await mutation(api.recipes.saveVersion, {
       productId: productCreated.id,
       expectedProductRevision: recipeV1.productRevision,
       clientMutationId: mutationId('recipe-v2'),
@@ -243,7 +247,7 @@ async function verifyManagement() {
     });
     assert.equal(recipeV2.versionNumber, 2);
 
-    const recipeEditor = await client.query(api.recipes.getEditorData, {
+    const recipeEditor = await query(api.recipes.getEditorData, {
       productId: productCreated.id,
     });
     assert.equal(recipeEditor.recipe?.versionNumber, 2);
@@ -255,7 +259,7 @@ async function verifyManagement() {
     );
     assert.equal(recipeEditor.items[0]?.quantity, 20);
   } finally {
-    reseed();
+    await reseed();
   }
 }
 

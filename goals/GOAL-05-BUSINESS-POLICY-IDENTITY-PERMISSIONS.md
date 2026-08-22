@@ -281,6 +281,17 @@ append-only cancellation/refund correction workflows.
   `fa132a8c4a5b82f2114f430b25718bcada5593de` is pushed to the canonical branch.
   Exact next action: run POLICY-03 closeout alone.
 
+- POLICY-03 closeout is complete pending its card commit and push. The
+  deterministic management/reporting checks now authenticate through the real
+  owner session boundary after a reset; no development bypass remains. A new
+  sign-in invalidates the preceding same-device token and bounded session
+  cleanup removes revoked records. All focused rule/persistence/sync/report/
+  authorization/Android checks, Convex codegen/typecheck, TypeScript, build,
+  Android beta, and diff check pass. The SM-X115 final APK unlocks with the
+  owner PIN into an unclipped 1340 × 800 POS; filtered logcat remains clean.
+  Graphify refreshed to 2,740 nodes and 44,944 edges. Exact next action:
+  commit and push POLICY-03, record its SHA, and mark Goal 05 complete.
+
 ## Planning journal
 
 ### 2026-08-21 — Goal 05 sequenced

@@ -54,13 +54,14 @@ const initial = await loadTerminalSettingsFromDatabase(
 assert.equal(initial.deviceId, 'device-settings-check');
 assert.equal(initial.terminalName, 'Olaso POS');
 assert.equal(initial.clockFormat, '24-hour');
+assert.equal(initial.receiptLanguage, 'en');
 assert.equal(initial.isLocked, false);
 assert.equal(initial.printerHost, '');
 assert.equal(initial.printerPort, 9100);
 
 await saveTerminalPreferencesToDatabase(
   adapter,
-  { terminalName: '  Front   Counter  ', clockFormat: '12-hour' },
+  { terminalName: '  Front   Counter  ', clockFormat: '12-hour', receiptLanguage: 'fr' },
   now + 1,
 );
 await savePrinterPreferencesToDatabase(
@@ -94,6 +95,7 @@ const restarted = await loadTerminalSettingsFromDatabase(
 assert.equal(restarted.deviceId, initial.deviceId);
 assert.equal(restarted.terminalName, 'Front Counter');
 assert.equal(restarted.clockFormat, '12-hour');
+assert.equal(restarted.receiptLanguage, 'fr');
 assert.equal(restarted.isLocked, true);
 assert.equal(restarted.printerHost, '192.168.11.100');
 assert.equal(restarted.printerPort, 9100);
@@ -111,7 +113,7 @@ assert.equal(
 await assert.rejects(
   saveTerminalPreferencesToDatabase(
     adapter,
-    { terminalName: ' ', clockFormat: '24-hour' },
+    { terminalName: ' ', clockFormat: '24-hour', receiptLanguage: 'en' },
   ),
   /1 to 40 characters/,
 );

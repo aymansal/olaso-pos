@@ -24,7 +24,7 @@ function secret() {
 }
 
 async function expectForbidden(operation) {
-  await assert.rejects(operation, /FORBIDDEN|cannot perform/i);
+  await assert.rejects(operation, /FORBIDDEN|UNAUTHENTICATED|cannot perform/i);
 }
 
 const client = new ConvexHttpClient(url);
@@ -44,12 +44,23 @@ try {
   const seeded = await ownerProfileId();
   const ownerId = seeded.ownerProfileId;
   assert(ownerId, 'Development seed did not return an owner profile ID');
+  const firstOwner = await client.action(api.identity.signIn, {
+    staffProfileId: ownerId,
+    pin: ownerPin,
+    deviceId,
+  });
+  assert.equal(firstOwner.kind, 'authenticated');
   const owner = await client.action(api.identity.signIn, {
     staffProfileId: ownerId,
     pin: ownerPin,
     deviceId,
   });
+  assert.equal(owner.kind, 'authenticated');
   ownerArgs = { sessionToken: owner.token, deviceId };
+  await expectForbidden(() => client.query(api.sync.getOperationalSnapshot, {
+    sessionToken: firstOwner.token,
+    deviceId,
+  }));
   const manager = await client.mutation(api.staff.save, {
     ...ownerArgs,
     name: 'Permission check manager',

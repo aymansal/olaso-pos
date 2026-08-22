@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
+import { ownerSession } from './owner-session.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
@@ -14,18 +15,21 @@ const client = new ConvexHttpClient(convexUrl);
 const businessDate = '2026-07-28';
 const mutationId = (label) => `app04-check-${label}`;
 
-function reseed() {
+async function reseed() {
   execSync('npm run seed:dev', {
     cwd: projectRoot,
     stdio: 'pipe',
     encoding: 'utf8',
   });
+  return ownerSession(client, projectRoot, 'inventory-check-device');
 }
 
 async function verifyInventory() {
-  reseed();
+  const sessionArgs = await reseed();
+  const query = (reference, args) => client.query(reference, { ...sessionArgs, ...args });
+  const mutation = (reference, args) => client.mutation(reference, { ...sessionArgs, ...args });
   try {
-    const initial = await client.query(api.inventory.list, { businessDate });
+    const initial = await query(api.inventory.list, { businessDate });
     assert.equal(initial.ingredients.length, 14);
     assert.equal(initial.metrics.ingredientCount, 14);
     assert.equal(initial.metrics.lowStockCount, 2);
@@ -52,11 +56,11 @@ async function verifyInventory() {
       expectedRevision: wholeMilk.revision,
       clientMutationId: mutationId('milk-purchase'),
     };
-    const milkPurchase = await client.mutation(
+    const milkPurchase = await mutation(
       api.inventory.receivePurchase,
       milkPurchaseArgs,
     );
-    const milkPurchaseRetry = await client.mutation(
+    const milkPurchaseRetry = await mutation(
       api.inventory.receivePurchase,
       milkPurchaseArgs,
     );
@@ -64,7 +68,7 @@ async function verifyInventory() {
     assert.equal(milkPurchase.currentStockQuantity, 43_480);
     assert.equal(milkPurchase.inventoryValueCentimes, 86_960);
     assert.equal(milkPurchase.costStatus, 'complete');
-    const milkDetail = await client.query(api.inventory.getDetail, {
+    const milkDetail = await query(api.inventory.getDetail, {
       ingredientId: wholeMilk._id,
     });
     assert.equal(milkDetail.movements[0].movementType, 'purchase');
@@ -83,11 +87,11 @@ async function verifyInventory() {
       expectedRevision: milkPurchase.ingredientRevision,
       clientMutationId: mutationId('milk-correction'),
     };
-    const correction = await client.mutation(
+    const correction = await mutation(
       api.inventory.correctPurchase,
       correctionArgs,
     );
-    const correctionRetry = await client.mutation(
+    const correctionRetry = await mutation(
       api.inventory.correctPurchase,
       correctionArgs,
     );
@@ -97,7 +101,7 @@ async function verifyInventory() {
     );
     assert.equal(correction.currentStockQuantity, 41_480);
     assert.equal(correction.inventoryValueCentimes, 86_960);
-    const loss = await client.mutation(api.inventory.recordAdjustment, {
+    const loss = await mutation(api.inventory.recordAdjustment, {
       ingredientId: wholeMilk._id,
       mode: 'set-count',
       quantity: 40_000,
@@ -107,7 +111,7 @@ async function verifyInventory() {
       clientMutationId: mutationId('milk-count-loss'),
     });
     assert.equal(loss.currentStockQuantity, 40_000);
-    const increase = await client.mutation(api.inventory.recordAdjustment, {
+    const increase = await mutation(api.inventory.recordAdjustment, {
       ingredientId: wholeMilk._id,
       mode: 'set-count',
       quantity: 40_100,
@@ -117,7 +121,7 @@ async function verifyInventory() {
       clientMutationId: mutationId('milk-count-increase'),
     });
     assert.equal(increase.currentStockQuantity, 40_100);
-    const valuedDetail = await client.query(api.inventory.getDetail, {
+    const valuedDetail = await query(api.inventory.getDetail, {
       ingredientId: wholeMilk._id,
     });
     assert.deepEqual(
@@ -147,18 +151,18 @@ async function verifyInventory() {
       businessDate,
       clientMutationId: mutationId('ingredient-create'),
     };
-    const created = await client.mutation(
+    const created = await mutation(
       api.inventory.saveIngredient,
       createArgs,
     );
-    const createRetry = await client.mutation(
+    const createRetry = await mutation(
       api.inventory.saveIngredient,
       createArgs,
     );
     assert.equal(createRetry.id, created.id);
     assert.equal(createRetry.revision, created.revision);
 
-    const updated = await client.mutation(api.inventory.saveIngredient, {
+    const updated = await mutation(api.inventory.saveIngredient, {
       id: created.id,
       name: 'APP-04 Updated Ingredient',
       baseUnit: 'gram',
@@ -178,18 +182,18 @@ async function verifyInventory() {
       businessDate,
       clientMutationId: mutationId('receive'),
     };
-    const received = await client.mutation(
+    const received = await mutation(
       api.inventory.recordAdjustment,
       receiveArgs,
     );
-    const receiveRetry = await client.mutation(
+    const receiveRetry = await mutation(
       api.inventory.recordAdjustment,
       receiveArgs,
     );
     assert.equal(receiveRetry.movementId, received.movementId);
     assert.equal(receiveRetry.currentStockQuantity, 25);
 
-    const counted = await client.mutation(api.inventory.recordAdjustment, {
+    const counted = await mutation(api.inventory.recordAdjustment, {
       ingredientId: created.id,
       mode: 'set-count',
       quantity: 17,
@@ -201,7 +205,7 @@ async function verifyInventory() {
     assert.equal(counted.currentStockQuantity, 17);
 
     await assert.rejects(
-      client.mutation(api.inventory.recordAdjustment, {
+      mutation(api.inventory.recordAdjustment, {
         ingredientId: created.id,
         mode: 'receive',
         quantity: 1,
@@ -213,7 +217,7 @@ async function verifyInventory() {
       /changed after it was loaded/,
     );
 
-    const detail = await client.query(api.inventory.getDetail, {
+    const detail = await query(api.inventory.getDetail, {
       ingredientId: created.id,
     });
     assert.equal(detail.ingredient.currentStockQuantity, 17);
@@ -230,7 +234,7 @@ async function verifyInventory() {
       ['manual-adjustment', 'stock-addition', 'stock-addition'],
     );
 
-    const archived = await client.mutation(
+    const archived = await mutation(
       api.inventory.setIngredientArchived,
       {
         id: created.id,
@@ -239,7 +243,7 @@ async function verifyInventory() {
         clientMutationId: mutationId('archive'),
       },
     );
-    const restored = await client.mutation(
+    const restored = await mutation(
       api.inventory.setIngredientArchived,
       {
         id: created.id,
@@ -250,7 +254,7 @@ async function verifyInventory() {
     );
     assert.equal(restored.revision, 6);
 
-    const finalInventory = await client.query(api.inventory.list, {
+    const finalInventory = await query(api.inventory.list, {
       businessDate,
     });
     assert.equal(finalInventory.ingredients.length, 15);
@@ -261,7 +265,7 @@ async function verifyInventory() {
       17,
     );
   } finally {
-    reseed();
+    await reseed();
   }
 }
 

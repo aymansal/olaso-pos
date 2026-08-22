@@ -26,12 +26,12 @@ data, reporting summaries, and development seeding.
 ## Local Contracts
 
 - Public functions validate every argument and authorization boundary.
-- Public management functions require an `owner` or `manager` identity claim;
-  the unauthenticated override is allowed only as an explicit deployment
-  setting on the dedicated development deployment.
-- Public POS functions require an authenticated operational identity; the
-  separate unauthenticated POS override is allowed only on the dedicated
-  development deployment.
+- Public management functions require an authenticated `owner` or `manager`
+  session; no deployment bypass is permitted.
+- Public POS functions require an authenticated operational session; no
+  deployment bypass is permitted.
+- A new session revokes prior same-device tokens and removes already-revoked
+  session rows; session reads remain bounded by the staff-profile index.
 - Use indexed, bounded reads; sales, sale items, stock movements, and reports
   are never read with an unbounded `.collect()`.
 - Dashboard snapshots read at most 12 daily summaries, 100 ingredients, four

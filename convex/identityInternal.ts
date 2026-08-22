@@ -81,6 +81,20 @@ export const createSession = internalMutation({
         || identity.credentialVersion !== args.credentialVersion) {
       throw new Error('Staff access is unavailable.');
     }
+    const sessions = await ctx.db
+      .query('staffSessions')
+      .withIndex('by_staff_profile', (index) =>
+        index.eq('staffProfileId', args.staffProfileId),
+      )
+      .take(101);
+    if (sessions.length > 100) throw new Error('Staff session limit exceeded.');
+    await Promise.all(sessions.map((session) =>
+      session.revokedAt
+        ? ctx.db.delete(session._id)
+        : session.deviceId === args.deviceId
+          ? ctx.db.patch(session._id, { revokedAt: args.now })
+          : undefined,
+    ));
     const previous = await ctx.db
       .query('staffPinAttempts')
       .withIndex('by_staff_device', (index) =>

@@ -82,7 +82,7 @@ remaining goal and card sequence.
   is the only card in progress. ID-03 commit
   `fa132a8c4a5b82f2114f430b25718bcada5593de` is pushed and recorded on the
   canonical remote branch.
-- ID-02 audit repair is uncommitted: strict transport-only offline fallback,
+- ID-02 audit repair is complete: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
   `OLASO_ALLOW_DEV_*` authorization bypass remains. The dedicated dev
@@ -154,6 +154,19 @@ remaining goal and card sequence.
   starts locked. Recent filtered logcat has no raw Convex/server text or crash.
   Commit `fa132a8c4a5b82f2114f430b25718bcada5593de` is pushed to the canonical
   branch. Exact next action: run POLICY-03 closeout alone.
+
+- POLICY-03 closeout is complete pending its card commit and push. Protected
+  test harnesses now establish an owner token after each deterministic reset;
+  no check uses the removed development bypass. New same-device sign-in revokes
+  the prior opaque token and deletes already-revoked session rows through a
+  bounded index. `check:convex`, every focused policy/management/inventory/
+  cost/staff/expense/dashboard/report/settings/local/sales/orders/identity/
+  permission/printing/Android check, TypeScript, build, Android beta, Convex
+  deployment typecheck, and diff check pass. SM-X115 has the final APK
+  installed, unlocked with the owner PIN, fitted at 1340 × 800, and recent
+  filtered logcat is clean. Graphify refreshed to 2,740 nodes and 44,944 edges.
+  Exact next action: commit and push POLICY-03, record its SHA, and mark Goal 05
+  complete.
 
 ### 2026-08-22 — POLICY-02 checkout policy completed
 

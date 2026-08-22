@@ -824,7 +824,9 @@ staff PIN
   are never written to React state beyond immediate entry, SQLite,
   `device_settings`, logs, source control, or normal exports. The Android
   Keystore-backed bridge stores the current token and the local offline PIN
-  verifier; browser development has no production credential fallback.
+  verifier; browser development has no production credential fallback. A new
+  sign-in revokes the prior token for that staff/device pair and removes already
+  revoked rows through the bounded staff-profile session index.
 - **Offline:** after an online provisioning/login, the tablet can verify a
   registered staff PIN and continue a local session indefinitely while offline.
   The next successful synchronization applies archived/revoked identities and

@@ -4,20 +4,18 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
+import { ownerSession } from './owner-session.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
 const convexUrl = localEnv.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
 assert(convexUrl, 'VITE_CONVEX_URL is missing from .env.local');
 
-execSync('npm run seed:dev', {
-  cwd: projectRoot,
-  stdio: 'pipe',
-  encoding: 'utf8',
-});
-
 const client = new ConvexHttpClient(convexUrl);
-const report = await client.query(api.reports.getSummary, {
+execSync('npm run seed:dev', { cwd: projectRoot, stdio: 'pipe', encoding: 'utf8' });
+const sessionArgs = await ownerSession(client, projectRoot, 'reports-check-device');
+const query = (reference, args) => client.query(reference, { ...sessionArgs, ...args });
+const report = await query(api.reports.getSummary, {
   fromDate: '2026-07-22',
   toDate: '2026-07-28',
 });
@@ -68,7 +66,7 @@ assert(
 );
 assert.equal(report.previous.netCentimes, 0);
 
-const empty = await client.query(api.reports.getSummary, {
+const empty = await query(api.reports.getSummary, {
   fromDate: '2026-08-01',
   toDate: '2026-08-07',
 });
@@ -77,7 +75,7 @@ assert.equal(empty.current.productTotals.length, 0);
 assert(empty.daily.every((day) => day.netCentimes === 0));
 
 await assert.rejects(
-  client.query(api.reports.getSummary, {
+  query(api.reports.getSummary, {
     fromDate: '2026-07-01',
     toDate: '2026-08-01',
   }),

@@ -4,20 +4,18 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
+import { ownerSession } from './owner-session.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
 const convexUrl = localEnv.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
 assert(convexUrl, 'VITE_CONVEX_URL is missing from .env.local');
 
-execSync('npm run seed:dev', {
-  cwd: projectRoot,
-  stdio: 'pipe',
-  encoding: 'utf8',
-});
-
 const client = new ConvexHttpClient(convexUrl);
-const snapshot = await client.query(api.dashboard.getSnapshot, {
+execSync('npm run seed:dev', { cwd: projectRoot, stdio: 'pipe', encoding: 'utf8' });
+const sessionArgs = await ownerSession(client, projectRoot, 'dashboard-check-device');
+const query = (reference, args) => client.query(reference, { ...sessionArgs, ...args });
+const snapshot = await query(api.dashboard.getSnapshot, {
   businessDate: '2026-07-28',
 });
 
@@ -54,7 +52,7 @@ assert(
 );
 
 await assert.rejects(
-  client.query(api.dashboard.getSnapshot, {
+  query(api.dashboard.getSnapshot, {
     businessDate: '2026-02-30',
   }),
   /Business date must use YYYY-MM-DD/,
