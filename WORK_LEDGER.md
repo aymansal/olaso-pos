@@ -21,8 +21,8 @@ remaining goal and card sequence.
 | PERM-01 — Enforce role permissions and sensitive-data return boundaries | done — `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` on `origin/codex/goal-05-policy-identity-permissions` |
 | POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | done — `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` on `origin/codex/goal-05-policy-identity-permissions` |
 | ORDER-01 — Implement authorized cancellation/refund corrections and reversals | done — `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` on `origin/codex/goal-05-policy-identity-permissions` |
-| ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | in progress |
-| POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | pending |
+| ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | done — `fa132a8c4a5b82f2114f430b25718bcada5593de` on `origin/codex/goal-05-policy-identity-permissions` |
+| POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | in progress |
 
 ## Most Recently Completed Goal
 
@@ -78,9 +78,10 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ID-03
-  is the only card in progress. ID-03 verification is complete and its commit
-  is the exact next action before it can be marked done.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; POLICY-03
+  is the only card in progress. ID-03 commit
+  `fa132a8c4a5b82f2114f430b25718bcada5593de` is pushed and recorded on the
+  canonical remote branch.
 - ID-02 audit repair is uncommitted: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
@@ -151,8 +152,8 @@ remaining goal and card sequence.
   recover the unclipped 1340 × 800 POS, reconnect is clean, support recovery
   revokes the old token and requires a fresh PIN, and a full tablet reboot
   starts locked. Recent filtered logcat has no raw Convex/server text or crash.
-  Exact next action: commit and push this ID-03 evidence, record its SHA, then
-  activate POLICY-03 alone.
+  Commit `fa132a8c4a5b82f2114f430b25718bcada5593de` is pushed to the canonical
+  branch. Exact next action: run POLICY-03 closeout alone.
 
 ### 2026-08-22 — POLICY-02 checkout policy completed
 

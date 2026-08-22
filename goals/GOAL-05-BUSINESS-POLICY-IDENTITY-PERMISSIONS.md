@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active; ID-03 in progress
+**Status:** active; POLICY-03 in progress
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -104,8 +104,8 @@ append-only cancellation/refund correction workflows.
 | PERM-01 | Enforce role permissions and sensitive-data return boundaries | done | `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | done | `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | ORDER-01 | Implement authorized cancellation/refund corrections and reversals | done | `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` pushed to `origin/codex/goal-05-policy-identity-permissions` |
-| ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | in progress | — |
-| POLICY-03 | Run policy, security, regression, tablet, documentation, and push closeout | pending | — |
+| ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | done | `fa132a8c4a5b82f2114f430b25718bcada5593de` pushed to `origin/codex/goal-05-policy-identity-permissions` |
+| POLICY-03 | Run policy, security, regression, tablet, documentation, and push closeout | in progress | — |
 
 ## Card contracts
 
@@ -211,9 +211,8 @@ append-only cancellation/refund correction workflows.
 
 ## Current checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01,
-  ID-01, ID-02, PERM-01, POLICY-02, and ORDER-01 are pushed and recorded; ID-03 is
-  the only active card.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01
+  through ID-03 are pushed and recorded; POLICY-03 is the only active card.
 - The confirmed matrix above replaces former temporary tax, service, payment,
   correction, role, and lock assumptions. Exact next action is implementing
   the documented protected-session boundary without starting loyalty work.
@@ -270,7 +269,7 @@ append-only cancellation/refund correction workflows.
   commit `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` is pushed to the canonical
   branch. Exact next action: verify ID-03 alone.
 
-- ID-03 verification is complete pending its card commit and push. Raw retry
+- ID-03 is complete. Raw retry
   details are now reduced to safe operator copy before SQLite persistence. The
   focused identity/permission/local/sales/orders/Android checks, TypeScript,
   Convex typecheck, production build, and diff check pass. SM-X115 verified
@@ -278,8 +277,9 @@ append-only cancellation/refund correction workflows.
   credential recovery and token revocation, a cold app restart, and a full
   tablet restart, all behind the lock screen before POS. Lock and POS remain
   unclipped at 1340 × 800; recent filtered logcat is clean. Graphify refreshed
-  to 2,731 nodes and 30,626 edges. Exact next action: push the ID-03 commit,
-  record its SHA, and activate POLICY-03 alone.
+  to 2,731 nodes and 30,626 edges. Commit
+  `fa132a8c4a5b82f2114f430b25718bcada5593de` is pushed to the canonical branch.
+  Exact next action: run POLICY-03 closeout alone.
 
 ## Planning journal
 
