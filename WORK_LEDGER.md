@@ -20,8 +20,8 @@ remaining goal and card sequence.
 | ID-02 — Add production identity/session persistence and remove production authorization override | done — `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` on `origin/codex/goal-05-policy-identity-permissions` |
 | PERM-01 — Enforce role permissions and sensitive-data return boundaries | done — `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` on `origin/codex/goal-05-policy-identity-permissions` |
 | POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | done — `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` on `origin/codex/goal-05-policy-identity-permissions` |
-| ORDER-01 — Implement authorized cancellation/refund corrections and reversals | in progress |
-| ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | pending |
+| ORDER-01 — Implement authorized cancellation/refund corrections and reversals | done — `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` on `origin/codex/goal-05-policy-identity-permissions` |
+| ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | in progress |
 | POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | pending |
 
 ## Most Recently Completed Goal
@@ -78,9 +78,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ORDER-01
-  is the only card in progress. POLICY-02 commit
-  `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is pushed and recorded on the
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ID-03
+  is the only card in progress. ORDER-01 commit
+  `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` is pushed and recorded on the
   canonical remote branch.
 - ID-02 audit repair is uncommitted: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
@@ -128,7 +128,7 @@ remaining goal and card sequence.
   and 17,918 edges. Commit `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is
   pushed to the canonical branch. Exact next action: implement ORDER-01 alone.
 
-- ORDER-01 implementation is verified and awaiting its card commit/push. A
+- ORDER-01 is complete. A
   same-day cashier correction keeps the original sale immutable, changes its
   status to cancelled, records the actor, required reason, time, original
   reference, and retry ID, and reverses only the original saved stock/cost and
@@ -141,8 +141,8 @@ remaining goal and card sequence.
   `git diff --check` pass. SM-X115 evidence covers active-profile refresh,
   owner unlock, unclipped POS/Orders, correction reason dialog, and friendly
   pending-sync copy; filtered crash logs are empty. Graphify refreshed to
-  2,731 nodes and 20,715 edges. Exact next action: commit and push ORDER-01,
-  record its SHA, then activate ID-03 alone.
+  2,731 nodes and 20,715 edges. Commit `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59`
+  is pushed to the canonical branch. Exact next action: verify ID-03 alone.
 
 ### 2026-08-22 — POLICY-02 checkout policy completed
 

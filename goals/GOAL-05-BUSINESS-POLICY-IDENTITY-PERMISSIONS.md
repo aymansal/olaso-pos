@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active; ORDER-01 in progress
+**Status:** active; ID-03 in progress
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -103,8 +103,8 @@ append-only cancellation/refund correction workflows.
 | ID-02 | Add production identity/session persistence and remove production authorization bypass | done | `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | PERM-01 | Enforce role permissions and sensitive-data return boundaries | done | `2ec1a0a4cbb5c6f0632347355e2c6bcb6a07aa7a` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | done | `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` pushed to `origin/codex/goal-05-policy-identity-permissions` |
-| ORDER-01 | Implement authorized cancellation/refund corrections and reversals | in progress | — |
-| ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | pending | — |
+| ORDER-01 | Implement authorized cancellation/refund corrections and reversals | done | `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` pushed to `origin/codex/goal-05-policy-identity-permissions` |
+| ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | in progress | — |
 | POLICY-03 | Run policy, security, regression, tablet, documentation, and push closeout | pending | — |
 
 ## Card contracts
@@ -212,7 +212,7 @@ append-only cancellation/refund correction workflows.
 ## Current checkpoint
 
 - Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01,
-  ID-01, ID-02, PERM-01, and POLICY-02 are pushed and recorded; ORDER-01 is
+  ID-01, ID-02, PERM-01, POLICY-02, and ORDER-01 are pushed and recorded; ID-03 is
   the only active card.
 - The confirmed matrix above replaces former temporary tax, service, payment,
   correction, role, and lock assumptions. Exact next action is implementing
@@ -258,7 +258,7 @@ append-only cancellation/refund correction workflows.
   and 17,918 edges. Commit `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` is
   pushed to the canonical branch. Exact next action: implement ORDER-01 alone.
 
-- ORDER-01 implementation is verified and awaiting its card commit/push. The
+- ORDER-01 is complete. The
   whole-sale same-day cashier correction leaves the original immutable, records
   actor/reason/time/reference/retry audit data, and reverses only saved stock,
   cost, money, and summary effects. SQLite migration 12 and indexed Convex
@@ -267,7 +267,8 @@ append-only cancellation/refund correction workflows.
   sales/orders/permission/identity/local/POS/Android checks, TypeScript,
   Convex typecheck, production build, and SM-X115 owner-unlock/Orders-dialog
   evidence pass. Graphify refreshed to 2,731 nodes and 20,715 edges. Exact
-  next action: commit and push ORDER-01, record its SHA, then activate ID-03.
+  commit `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` is pushed to the canonical
+  branch. Exact next action: verify ID-03 alone.
 
 ## Planning journal
 
