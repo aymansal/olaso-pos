@@ -316,6 +316,16 @@ export const localMigrations = [
         ON operating_expenses(effective_start_month, status)`,
     ],
   },
+  {
+    toVersion: 7,
+    statements: [
+      `ALTER TABLE inventory_purchases
+        ADD COLUMN transaction_type TEXT NOT NULL DEFAULT 'received'
+        CHECK (transaction_type IN ('received', 'reversal'))`,
+      `CREATE INDEX IF NOT EXISTS inventory_purchases_by_correction
+        ON inventory_purchases(correction_of_purchase_id, received_at DESC)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

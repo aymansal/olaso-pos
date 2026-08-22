@@ -56,6 +56,8 @@ export function movementLabel(
 ) {
   if (type === 'sale') return 'Sale deduction';
   if (type === 'stock-addition') return 'Stock received';
+  if (type === 'purchase') return 'Purchase received';
+  if (type === 'purchase-reversal') return 'Purchase correction reversal';
   if (type === 'manual-adjustment') return 'Count adjustment';
   if (type === 'cancellation') return 'Cancellation reversal';
   if (type === 'refund') return 'Refund reversal';

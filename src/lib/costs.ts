@@ -55,6 +55,13 @@ export function receiveValuation(
   integer(receivedCostCentimes, 'Received cost');
   const quantity = current.quantity + receivedQuantity;
   integer(quantity, 'Resulting quantity');
+  if (current.quantity === 0) {
+    return {
+      quantity,
+      inventoryValueCentimes: receivedCostCentimes,
+      complete: true,
+    };
+  }
   if (!current.complete || current.inventoryValueCentimes === undefined) {
     return { quantity, complete: false };
   }

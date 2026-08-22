@@ -1,9 +1,15 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 import {
+  allocateCentimes,
+  consumeValuation,
+  receiveValuation,
+} from '../src/lib/costs';
+import {
   boundedInteger,
   businessDate,
   cleanKey,
+  cleanOptionalText,
   cleanText,
   conflict,
   expectRevision,
@@ -17,12 +23,99 @@ const MAX_INGREDIENTS = 100;
 const MAX_DAILY_MOVEMENTS = 500;
 const MAX_RECENT_MOVEMENTS = 50;
 const MAX_RECIPE_LINKS = 100;
+const MAX_TIMESTAMP = 8_640_000_000_000_000;
+const MAX_PACKAGE_QUANTITY = 100_000_000;
 const baseUnit = v.union(
   v.literal('millilitre'),
   v.literal('gram'),
   v.literal('milligram'),
   v.literal('piece'),
 );
+
+function multiplied(left: number, right: number, label: string) {
+  const result = BigInt(left) * BigInt(right);
+  if (result > BigInt(Number.MAX_SAFE_INTEGER)) {
+    return invalid(`${label} exceeds the supported integer range.`);
+  }
+  return Number(result);
+}
+
+function valuationOf(ingredient: {
+  currentStockQuantity: number;
+  inventoryValueCentimes?: number;
+  costStatus?: 'complete' | 'incomplete';
+}) {
+  return {
+    quantity: ingredient.currentStockQuantity,
+    ...(ingredient.inventoryValueCentimes === undefined
+      ? {}
+      : { inventoryValueCentimes: ingredient.inventoryValueCentimes }),
+    complete:
+      ingredient.costStatus === 'complete' &&
+      ingredient.inventoryValueCentimes !== undefined,
+  };
+}
+
+function valuationFields(
+  valuation: ReturnType<typeof valuationOf>,
+  revision: number,
+) {
+  return valuation.complete && valuation.inventoryValueCentimes !== undefined
+    ? {
+        inventoryValueCentimes: valuation.inventoryValueCentimes,
+        costStatus: 'complete' as const,
+        valuationRevision: revision,
+      }
+    : {
+        inventoryValueCentimes: undefined,
+        costStatus: 'incomplete' as const,
+        valuationRevision: revision,
+      };
+}
+
+function packageInput(args: {
+  packageLabel: string;
+  packageCount: number;
+  quantityPerPackage: number;
+  packagePriceCentimes: number;
+  receivedAt: number;
+  supplierLabel?: string;
+  note?: string;
+}) {
+  const packageCount = boundedInteger(
+    args.packageCount,
+    'Package count',
+    1,
+    MAX_PACKAGE_QUANTITY,
+  );
+  const quantityPerPackage = boundedInteger(
+    args.quantityPerPackage,
+    'Quantity per package',
+    1,
+    MAX_PACKAGE_QUANTITY,
+  );
+  const packagePriceCentimes = boundedInteger(
+    args.packagePriceCentimes,
+    'Package price',
+    1,
+    MAX_TIMESTAMP,
+  );
+  return {
+    packageLabel: cleanText(args.packageLabel, 'Package label', 40),
+    packageCount,
+    quantityPerPackage,
+    packagePriceCentimes,
+    totalQuantity: multiplied(packageCount, quantityPerPackage, 'Total quantity'),
+    totalCostCentimes: multiplied(
+      packageCount,
+      packagePriceCentimes,
+      'Total purchase cost',
+    ),
+    receivedAt: boundedInteger(args.receivedAt, 'Received time', 0, MAX_TIMESTAMP),
+    supplierLabel: cleanOptionalText(args.supplierLabel, 'Supplier label', 100),
+    note: cleanOptionalText(args.note, 'Purchase note', 240),
+  };
+}
 
 export const list = query({
   args: { businessDate: v.string() },
@@ -283,6 +376,292 @@ export const setIngredientArchived = mutation({
   },
 });
 
+export const receivePurchase = mutation({
+  args: {
+    ingredientId: v.id('ingredients'),
+    packageLabel: v.string(),
+    packageCount: v.number(),
+    quantityPerPackage: v.number(),
+    packagePriceCentimes: v.number(),
+    receivedAt: v.number(),
+    businessDate: v.string(),
+    supplierLabel: v.optional(v.string()),
+    note: v.optional(v.string()),
+    expectedRevision: v.number(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const actorLabel = await requireManagement(ctx);
+    const clientMutationId = mutationId(args.clientMutationId);
+    const previous = await ctx.db
+      .query('inventoryPurchases')
+      .withIndex('by_client_mutation', (index) =>
+        index.eq('clientMutationId', clientMutationId),
+      )
+      .unique();
+    if (previous) {
+      const ingredient = await ctx.db.get(previous.ingredientId);
+      return {
+        purchaseId: previous._id,
+        stockMovementId: previous.stockMovementId,
+        ingredientRevision: ingredient?.revision ?? args.expectedRevision + 1,
+        currentStockQuantity: ingredient?.currentStockQuantity ?? 0,
+        ...(ingredient?.inventoryValueCentimes === undefined
+          ? {}
+          : { inventoryValueCentimes: ingredient.inventoryValueCentimes }),
+        costStatus: ingredient?.costStatus ?? 'incomplete',
+      };
+    }
+
+    const ingredient = await ctx.db.get(args.ingredientId);
+    if (!ingredient) return notFound('Ingredient');
+    if (ingredient.status !== 'active') {
+      return conflict('Restore this ingredient before receiving a purchase.');
+    }
+    expectRevision(args.expectedRevision, ingredient.revision);
+    const input = packageInput(args);
+    const date = businessDate(args.businessDate);
+    const currentStockQuantity = boundedInteger(
+      ingredient.currentStockQuantity + input.totalQuantity,
+      'Resulting stock quantity',
+      0,
+      MAX_PACKAGE_QUANTITY,
+    );
+    const valuation = receiveValuation(
+      valuationOf(ingredient),
+      input.totalQuantity,
+      input.totalCostCentimes,
+    );
+    const valuationRevision = (ingredient.valuationRevision ?? 0) + 1;
+    const stockMovementId = await ctx.db.insert('stockMovements', {
+      ingredientId: ingredient._id,
+      quantityDelta: input.totalQuantity,
+      movementType: 'purchase',
+      reason: `Purchase receipt: ${input.packageCount} ${input.packageLabel}`,
+      actorLabel,
+      businessDate: date,
+      createdAt: input.receivedAt,
+      clientMutationId,
+      costDeltaCentimes: input.totalCostCentimes,
+      ...(valuation.inventoryValueCentimes === undefined
+        ? {}
+        : { inventoryValueAfterCentimes: valuation.inventoryValueCentimes }),
+      valuationRevision,
+    });
+    const purchaseId = await ctx.db.insert('inventoryPurchases', {
+      ingredientId: ingredient._id,
+      stockMovementId,
+      packageLabel: input.packageLabel,
+      packageCount: input.packageCount,
+      quantityPerPackage: input.quantityPerPackage,
+      totalQuantity: input.totalQuantity,
+      packagePriceCentimes: input.packagePriceCentimes,
+      totalCostCentimes: input.totalCostCentimes,
+      receivedAt: input.receivedAt,
+      businessDate: date,
+      actorLabel,
+      ...(input.supplierLabel ? { supplierLabel: input.supplierLabel } : {}),
+      ...(input.note ? { note: input.note } : {}),
+      transactionType: 'received',
+      revision: 1,
+      clientMutationId,
+    });
+    await ctx.db.patch(ingredient._id, {
+      currentStockQuantity,
+      ...valuationFields(valuation, valuationRevision),
+      revision: ingredient.revision + 1,
+      updatedAt: input.receivedAt,
+      updatedBy: actorLabel,
+      lastMutationId: clientMutationId,
+    });
+    return {
+      purchaseId,
+      stockMovementId,
+      ingredientRevision: ingredient.revision + 1,
+      currentStockQuantity,
+      ...(valuation.inventoryValueCentimes === undefined
+        ? {}
+        : { inventoryValueCentimes: valuation.inventoryValueCentimes }),
+      costStatus: valuation.complete ? 'complete' : 'incomplete',
+    };
+  },
+});
+
+export const correctPurchase = mutation({
+  args: {
+    purchaseId: v.id('inventoryPurchases'),
+    packageLabel: v.string(),
+    packageCount: v.number(),
+    quantityPerPackage: v.number(),
+    packagePriceCentimes: v.number(),
+    receivedAt: v.number(),
+    businessDate: v.string(),
+    supplierLabel: v.optional(v.string()),
+    note: v.optional(v.string()),
+    expectedRevision: v.number(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const actorLabel = await requireManagement(ctx);
+    const clientMutationId = mutationId(args.clientMutationId);
+    const reversalMutationId = `${clientMutationId}:reversal`;
+    const replacementMutationId = `${clientMutationId}:replacement`;
+    const previousReversal = await ctx.db
+      .query('inventoryPurchases')
+      .withIndex('by_client_mutation', (index) =>
+        index.eq('clientMutationId', reversalMutationId),
+      )
+      .unique();
+    if (previousReversal) {
+      const replacement = await ctx.db
+        .query('inventoryPurchases')
+        .withIndex('by_client_mutation', (index) =>
+          index.eq('clientMutationId', replacementMutationId),
+        )
+        .unique();
+      const ingredient = await ctx.db.get(previousReversal.ingredientId);
+      if (!replacement || !ingredient) {
+        throw new Error('Purchase correction retry found incomplete history.');
+      }
+      return {
+        reversalPurchaseId: previousReversal._id,
+        replacementPurchaseId: replacement._id,
+        ingredientRevision: ingredient.revision,
+        currentStockQuantity: ingredient.currentStockQuantity,
+        ...(ingredient.inventoryValueCentimes === undefined
+          ? {}
+          : { inventoryValueCentimes: ingredient.inventoryValueCentimes }),
+        costStatus: ingredient.costStatus ?? 'incomplete',
+      };
+    }
+
+    const original = await ctx.db.get(args.purchaseId);
+    if (!original) return notFound('Purchase');
+    if (original.transactionType !== 'received') {
+      return conflict('Only an original received purchase can be corrected.');
+    }
+    const priorCorrections = await ctx.db
+      .query('inventoryPurchases')
+      .withIndex('by_correction_of_received_at', (index) =>
+        index.eq('correctionOfPurchaseId', original._id),
+      )
+      .take(1);
+    if (priorCorrections.length) {
+      return conflict('This purchase already has append-only correction history.');
+    }
+    const ingredient = await ctx.db.get(original.ingredientId);
+    if (!ingredient) return notFound('Ingredient');
+    if (ingredient.status !== 'active') {
+      return conflict('Restore this ingredient before correcting a purchase.');
+    }
+    expectRevision(args.expectedRevision, ingredient.revision);
+    if (ingredient.currentStockQuantity < original.totalQuantity) {
+      return conflict(
+        'Cannot reverse this purchase because its quantity is no longer on hand.',
+      );
+    }
+
+    const input = packageInput(args);
+    const date = businessDate(args.businessDate);
+    const reversed = consumeValuation(valuationOf(ingredient), original.totalQuantity);
+    const replaced = receiveValuation(
+      reversed.next,
+      input.totalQuantity,
+      input.totalCostCentimes,
+    );
+    const reversalRevision = (ingredient.valuationRevision ?? 0) + 1;
+    const replacementRevision = reversalRevision + 1;
+    const reversalMovementId = await ctx.db.insert('stockMovements', {
+      ingredientId: ingredient._id,
+      quantityDelta: -original.totalQuantity,
+      movementType: 'purchase-reversal',
+      reason: `Purchase correction reversal: ${original.packageCount} ${original.packageLabel}`,
+      actorLabel,
+      businessDate: date,
+      createdAt: input.receivedAt,
+      clientMutationId: reversalMutationId,
+      ...(reversed.cost.complete
+        ? { costDeltaCentimes: -reversed.cost.costCentimes }
+        : {}),
+      ...(reversed.next.inventoryValueCentimes === undefined
+        ? {}
+        : { inventoryValueAfterCentimes: reversed.next.inventoryValueCentimes }),
+      valuationRevision: reversalRevision,
+    });
+    const reversalPurchaseId = await ctx.db.insert('inventoryPurchases', {
+      ingredientId: ingredient._id,
+      stockMovementId: reversalMovementId,
+      packageLabel: original.packageLabel,
+      packageCount: original.packageCount,
+      quantityPerPackage: original.quantityPerPackage,
+      totalQuantity: original.totalQuantity,
+      packagePriceCentimes: original.packagePriceCentimes,
+      totalCostCentimes: original.totalCostCentimes,
+      receivedAt: input.receivedAt,
+      businessDate: date,
+      actorLabel,
+      correctionOfPurchaseId: original._id,
+      transactionType: 'reversal',
+      revision: 1,
+      clientMutationId: reversalMutationId,
+    });
+    const replacementMovementId = await ctx.db.insert('stockMovements', {
+      ingredientId: ingredient._id,
+      quantityDelta: input.totalQuantity,
+      movementType: 'purchase',
+      reason: `Purchase correction replacement: ${input.packageCount} ${input.packageLabel}`,
+      actorLabel,
+      businessDate: date,
+      createdAt: input.receivedAt,
+      clientMutationId: replacementMutationId,
+      costDeltaCentimes: input.totalCostCentimes,
+      ...(replaced.inventoryValueCentimes === undefined
+        ? {}
+        : { inventoryValueAfterCentimes: replaced.inventoryValueCentimes }),
+      valuationRevision: replacementRevision,
+    });
+    const replacementPurchaseId = await ctx.db.insert('inventoryPurchases', {
+      ingredientId: ingredient._id,
+      stockMovementId: replacementMovementId,
+      packageLabel: input.packageLabel,
+      packageCount: input.packageCount,
+      quantityPerPackage: input.quantityPerPackage,
+      totalQuantity: input.totalQuantity,
+      packagePriceCentimes: input.packagePriceCentimes,
+      totalCostCentimes: input.totalCostCentimes,
+      receivedAt: input.receivedAt,
+      businessDate: date,
+      actorLabel,
+      ...(input.supplierLabel ? { supplierLabel: input.supplierLabel } : {}),
+      ...(input.note ? { note: input.note } : {}),
+      correctionOfPurchaseId: original._id,
+      transactionType: 'received',
+      revision: 1,
+      clientMutationId: replacementMutationId,
+    });
+    const currentStockQuantity =
+      ingredient.currentStockQuantity - original.totalQuantity + input.totalQuantity;
+    await ctx.db.patch(ingredient._id, {
+      currentStockQuantity,
+      ...valuationFields(replaced, replacementRevision),
+      revision: ingredient.revision + 1,
+      updatedAt: input.receivedAt,
+      updatedBy: actorLabel,
+      lastMutationId: clientMutationId,
+    });
+    return {
+      reversalPurchaseId,
+      replacementPurchaseId,
+      ingredientRevision: ingredient.revision + 1,
+      currentStockQuantity,
+      ...(replaced.inventoryValueCentimes === undefined
+        ? {}
+        : { inventoryValueCentimes: replaced.inventoryValueCentimes }),
+      costStatus: replaced.complete ? 'complete' : 'incomplete',
+    };
+  },
+});
+
 export const recordAdjustment = mutation({
   args: {
     ingredientId: v.id('ingredients'),
@@ -339,8 +718,33 @@ export const recordAdjustment = mutation({
       0,
       100_000_000,
     );
+    const currentValuation = valuationOf(ingredient);
+    let valuation = currentValuation;
+    let costDeltaCentimes: number | undefined;
+    if (args.mode === 'receive') {
+      valuation = { quantity: currentStockQuantity, complete: false };
+    } else if (quantityDelta < 0) {
+      const consumed = consumeValuation(currentValuation, -quantityDelta);
+      valuation = consumed.next;
+      if (consumed.cost.complete) costDeltaCentimes = -consumed.cost.costCentimes;
+    } else if (currentValuation.complete && currentValuation.quantity > 0) {
+      const increaseCostCentimes = allocateCentimes(
+        currentValuation.inventoryValueCentimes!,
+        currentValuation.quantity,
+        quantityDelta,
+      );
+      valuation = receiveValuation(
+        currentValuation,
+        quantityDelta,
+        increaseCostCentimes,
+      );
+      costDeltaCentimes = increaseCostCentimes;
+    } else {
+      valuation = { quantity: currentStockQuantity, complete: false };
+    }
     const reason = cleanText(args.reason, 'Adjustment reason', 160);
     const createdAt = Date.now();
+    const valuationRevision = (ingredient.valuationRevision ?? 0) + 1;
     const movementId = await ctx.db.insert('stockMovements', {
       ingredientId: ingredient._id,
       quantityDelta,
@@ -351,9 +755,15 @@ export const recordAdjustment = mutation({
       businessDate: date,
       createdAt,
       clientMutationId,
+      ...(costDeltaCentimes === undefined ? {} : { costDeltaCentimes }),
+      ...(valuation.inventoryValueCentimes === undefined
+        ? {}
+        : { inventoryValueAfterCentimes: valuation.inventoryValueCentimes }),
+      valuationRevision,
     });
     await ctx.db.patch(ingredient._id, {
       currentStockQuantity,
+      ...valuationFields(valuation, valuationRevision),
       revision: ingredient.revision + 1,
       updatedAt: createdAt,
       updatedBy,

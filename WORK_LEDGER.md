@@ -79,6 +79,15 @@ remaining goal and card sequence.
 - Exact next action: re-query Graphify and inspect the existing inventory
   mutation/history paths before implementing retry-safe package receiving and
   weighted-average valuation for COST-02.
+- COST-02 is verified and awaiting its implementation commit/push. It adds
+  retry-safe package receipts, weighted-average carrying value, append-only
+  correction reversal/replacement history, valued physical-count effects, and
+  explicit incomplete valuation when an ordinary unpriced adjustment occurs.
+- Focused cost, local migration, inventory, Convex, TypeScript, production-build,
+  Android beta, and physical SM-X115 POS/Stock smoke checks pass. Graphify is
+  refreshed to 2,451 nodes and 5,623 edges.
+- Exact next action: commit and push COST-02, record its SHA, then activate
+  COST-03 for Stock receiving and valuation presentation.
 - PRINT-08 closeout commit
   `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -454,6 +463,25 @@ remaining goal and card sequence.
 - COST-02 is now the only card in progress. Next: inspect the established
   inventory mutation/history ownership and implement package receiving with
   append-only weighted-average valuation.
+
+### 2026-08-22 — COST-02 implementation and verification complete
+
+- Added an owner/manager package-receipt mutation that records package count,
+  base-unit quantity per package, integer-centime package price, date, optional
+  supplier/note, purchase history, stock movement, and valuation as one
+  idempotent mutation.
+- Added append-only correction reversal/replacement history and deterministic
+  current-carrying-value effects. A correction cannot reverse stock no longer on
+  hand; a repeated request returns its original result without duplicate effects.
+- Physical-count losses consume current carrying value; known count increases use
+  the current average, while ordinary unpriced receives and unvalued increases
+  remain explicitly incomplete instead of claiming zero cost.
+- Focused verification proves ten one-litre cartons at 20 MAD add 10,000 ml and
+  20,000 centimes, retries remain single-effect, correction history is appended,
+  and count effects reconcile. Convex/type/build/Android beta pass; the current
+  APK installed on SM-X115 and POS/Stock cold-launch smoke at 1340 × 800 is clean.
+- Graphify refreshed to 2,451 nodes and 5,623 edges. COST-02 remains in progress
+  only until its commit is pushed and the SHA is recorded.
 
 ### 2026-08-22 — Goal 03 handoff audited
 

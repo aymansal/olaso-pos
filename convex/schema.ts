@@ -31,6 +31,8 @@ const saleStatus = v.union(
 const stockMovementType = v.union(
   v.literal('sale'),
   v.literal('stock-addition'),
+  v.literal('purchase'),
+  v.literal('purchase-reversal'),
   v.literal('manual-adjustment'),
   v.literal('cancellation'),
   v.literal('refund'),
@@ -43,6 +45,10 @@ const staffRole = v.union(
   v.literal('worker'),
 );
 const expenseRecurrence = v.union(v.literal('one-time'), v.literal('monthly'));
+const purchaseTransactionType = v.union(
+  v.literal('received'),
+  v.literal('reversal'),
+);
 const modifierSnapshot = v.object({
   groupName: v.string(),
   optionName: v.string(),
@@ -265,11 +271,16 @@ export default defineSchema({
     supplierLabel: v.optional(v.string()),
     note: v.optional(v.string()),
     correctionOfPurchaseId: v.optional(v.id('inventoryPurchases')),
+    transactionType: purchaseTransactionType,
     revision: v.number(),
     clientMutationId: v.string(),
   })
     .index('by_ingredient_received_at', ['ingredientId', 'receivedAt'])
     .index('by_business_date_received_at', ['businessDate', 'receivedAt'])
+    .index('by_correction_of_received_at', [
+      'correctionOfPurchaseId',
+      'receivedAt',
+    ])
     .index('by_client_mutation', ['clientMutationId']),
 
   staffProfiles: defineTable({

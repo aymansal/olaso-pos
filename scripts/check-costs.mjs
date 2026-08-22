@@ -28,6 +28,10 @@ assert.deepEqual(
   { quantity: 400, complete: false },
 );
 assert.deepEqual(
+  receiveValuation({ quantity: 0, complete: false }, 1_000, 2_000),
+  { quantity: 1_000, inventoryValueCentimes: 2_000, complete: true },
+);
+assert.deepEqual(
   combineCosts([
     { complete: true, costCentimes: 125 },
     { complete: false, missingIngredientIds: ['milk', 'coffee'] },

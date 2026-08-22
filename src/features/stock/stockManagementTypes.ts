@@ -30,6 +30,8 @@ export type ManagedStockMovement = {
   movementType:
     | 'sale'
     | 'stock-addition'
+    | 'purchase'
+    | 'purchase-reversal'
     | 'manual-adjustment'
     | 'cancellation'
     | 'refund'

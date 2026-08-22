@@ -39,6 +39,104 @@ async function verifyInventory() {
     assert.equal(wholeMilk?.inventoryValueCentimes, 66_960);
     assert.equal(brioche?.costStatus, 'incomplete');
     assert.equal(brioche?.inventoryValueCentimes, undefined);
+    const milkPurchaseArgs = {
+      ingredientId: wholeMilk._id,
+      packageLabel: '1 L carton',
+      packageCount: 10,
+      quantityPerPackage: 1_000,
+      packagePriceCentimes: 2_000,
+      receivedAt: Date.parse('2026-07-28T10:00:00.000Z'),
+      businessDate,
+      supplierLabel: 'APP-04 fixture supplier',
+      note: 'Ten cartons for weighted-average verification',
+      expectedRevision: wholeMilk.revision,
+      clientMutationId: mutationId('milk-purchase'),
+    };
+    const milkPurchase = await client.mutation(
+      api.inventory.receivePurchase,
+      milkPurchaseArgs,
+    );
+    const milkPurchaseRetry = await client.mutation(
+      api.inventory.receivePurchase,
+      milkPurchaseArgs,
+    );
+    assert.equal(milkPurchaseRetry.purchaseId, milkPurchase.purchaseId);
+    assert.equal(milkPurchase.currentStockQuantity, 43_480);
+    assert.equal(milkPurchase.inventoryValueCentimes, 86_960);
+    assert.equal(milkPurchase.costStatus, 'complete');
+    const milkDetail = await client.query(api.inventory.getDetail, {
+      ingredientId: wholeMilk._id,
+    });
+    assert.equal(milkDetail.movements[0].movementType, 'purchase');
+    assert.equal(milkDetail.movements[0].quantityDelta, 10_000);
+    assert.equal(milkDetail.movements[0].costDeltaCentimes, 20_000);
+    assert.equal(milkDetail.movements[0].inventoryValueAfterCentimes, 86_960);
+    const correctionArgs = {
+      purchaseId: milkPurchase.purchaseId,
+      packageLabel: '1 L carton',
+      packageCount: 8,
+      quantityPerPackage: 1_000,
+      packagePriceCentimes: 2_500,
+      receivedAt: Date.parse('2026-07-28T10:05:00.000Z'),
+      businessDate,
+      note: 'Corrected delivery count and package price',
+      expectedRevision: milkPurchase.ingredientRevision,
+      clientMutationId: mutationId('milk-correction'),
+    };
+    const correction = await client.mutation(
+      api.inventory.correctPurchase,
+      correctionArgs,
+    );
+    const correctionRetry = await client.mutation(
+      api.inventory.correctPurchase,
+      correctionArgs,
+    );
+    assert.equal(
+      correctionRetry.replacementPurchaseId,
+      correction.replacementPurchaseId,
+    );
+    assert.equal(correction.currentStockQuantity, 41_480);
+    assert.equal(correction.inventoryValueCentimes, 86_960);
+    const loss = await client.mutation(api.inventory.recordAdjustment, {
+      ingredientId: wholeMilk._id,
+      mode: 'set-count',
+      quantity: 40_000,
+      reason: 'APP-04 valued count loss',
+      expectedRevision: correction.ingredientRevision,
+      businessDate,
+      clientMutationId: mutationId('milk-count-loss'),
+    });
+    assert.equal(loss.currentStockQuantity, 40_000);
+    const increase = await client.mutation(api.inventory.recordAdjustment, {
+      ingredientId: wholeMilk._id,
+      mode: 'set-count',
+      quantity: 40_100,
+      reason: 'APP-04 valued count increase',
+      expectedRevision: loss.ingredientRevision,
+      businessDate,
+      clientMutationId: mutationId('milk-count-increase'),
+    });
+    assert.equal(increase.currentStockQuantity, 40_100);
+    const valuedDetail = await client.query(api.inventory.getDetail, {
+      ingredientId: wholeMilk._id,
+    });
+    assert.deepEqual(
+      valuedDetail.movements.slice(0, 4).map((movement) => [
+        movement.movementType,
+        movement.quantityDelta,
+        movement.costDeltaCentimes,
+      ]),
+      [
+        ['manual-adjustment', 100, 210],
+        ['manual-adjustment', -1_480, -3_103],
+        ['purchase', 8_000, 20_000],
+        ['purchase-reversal', -10_000, -20_000],
+      ],
+    );
+    assert.equal(
+      valuedDetail.ingredient.inventoryValueCentimes,
+      84_067,
+    );
 
     const createArgs = {
       key: 'app04-test-ingredient',
