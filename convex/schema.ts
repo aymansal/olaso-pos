@@ -36,6 +36,13 @@ const stockMovementType = v.union(
   v.literal('refund'),
   v.literal('seed'),
 );
+const costStatus = v.union(v.literal('complete'), v.literal('incomplete'));
+const staffRole = v.union(
+  v.literal('owner'),
+  v.literal('manager'),
+  v.literal('worker'),
+);
+const expenseRecurrence = v.union(v.literal('one-time'), v.literal('monthly'));
 const modifierSnapshot = v.object({
   groupName: v.string(),
   optionName: v.string(),
@@ -126,6 +133,9 @@ export default defineSchema({
     name: v.string(),
     baseUnit,
     currentStockQuantity: v.number(),
+    inventoryValueCentimes: v.optional(v.number()),
+    costStatus: v.optional(costStatus),
+    valuationRevision: v.optional(v.number()),
     lowStockThreshold: v.number(),
     status: activeStatus,
     revision: v.number(),
@@ -176,6 +186,8 @@ export default defineSchema({
     discountCentimes: v.number(),
     taxCentimes: v.number(),
     totalCentimes: v.number(),
+    ingredientCostCentimes: v.optional(v.number()),
+    costStatus: v.optional(costStatus),
     taxPolicyLabel: v.string(),
     paymentMethod: v.string(),
     status: saleStatus,
@@ -211,6 +223,8 @@ export default defineSchema({
     modifiers: v.array(modifierSnapshot),
     recipeVersionId: v.optional(v.id('recipeVersions')),
     lineTotalCentimes: v.number(),
+    ingredientCostCentimes: v.optional(v.number()),
+    costStatus: v.optional(costStatus),
   }).index('by_sale', ['saleId']),
 
   stockMovements: defineTable({
@@ -224,6 +238,9 @@ export default defineSchema({
     businessDate: v.string(),
     createdAt: v.number(),
     clientMutationId: v.optional(v.string()),
+    costDeltaCentimes: v.optional(v.number()),
+    inventoryValueAfterCentimes: v.optional(v.number()),
+    valuationRevision: v.optional(v.number()),
   })
     .index('by_ingredient_created_at', ['ingredientId', 'createdAt'])
     .index('by_ingredient_client_mutation', [
@@ -232,6 +249,71 @@ export default defineSchema({
     ])
     .index('by_related_sale', ['relatedSaleId'])
     .index('by_business_date_created_at', ['businessDate', 'createdAt']),
+
+  inventoryPurchases: defineTable({
+    ingredientId: v.id('ingredients'),
+    stockMovementId: v.id('stockMovements'),
+    packageLabel: v.string(),
+    packageCount: v.number(),
+    quantityPerPackage: v.number(),
+    totalQuantity: v.number(),
+    packagePriceCentimes: v.number(),
+    totalCostCentimes: v.number(),
+    receivedAt: v.number(),
+    businessDate: v.string(),
+    actorLabel: v.string(),
+    supplierLabel: v.optional(v.string()),
+    note: v.optional(v.string()),
+    correctionOfPurchaseId: v.optional(v.id('inventoryPurchases')),
+    revision: v.number(),
+    clientMutationId: v.string(),
+  })
+    .index('by_ingredient_received_at', ['ingredientId', 'receivedAt'])
+    .index('by_business_date_received_at', ['businessDate', 'receivedAt'])
+    .index('by_client_mutation', ['clientMutationId']),
+
+  staffProfiles: defineTable({
+    name: v.string(),
+    role: staffRole,
+    status: activeStatus,
+    revision: v.number(),
+    updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
+  })
+    .index('by_status_name', ['status', 'name'])
+    .index('by_updated_at', ['updatedAt']),
+
+  compensationPeriods: defineTable({
+    staffProfileId: v.id('staffProfiles'),
+    monthlyAmountCentimes: v.number(),
+    effectiveStartMonth: v.string(),
+    effectiveEndMonth: v.optional(v.string()),
+    revision: v.number(),
+    createdAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    clientMutationId: v.string(),
+  })
+    .index('by_staff_start_month', ['staffProfileId', 'effectiveStartMonth'])
+    .index('by_client_mutation', ['clientMutationId']),
+
+  operatingExpenses: defineTable({
+    category: v.string(),
+    description: v.string(),
+    amountCentimes: v.number(),
+    recurrence: expenseRecurrence,
+    effectiveDate: v.optional(v.string()),
+    effectiveStartMonth: v.optional(v.string()),
+    effectiveEndMonth: v.optional(v.string()),
+    status: activeStatus,
+    revision: v.number(),
+    createdAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    clientMutationId: v.string(),
+  })
+    .index('by_effective_date_status', ['effectiveDate', 'status'])
+    .index('by_start_month_status', ['effectiveStartMonth', 'status'])
+    .index('by_client_mutation', ['clientMutationId']),
 
   dailyMetrics: defineTable({
     businessDate: v.string(),

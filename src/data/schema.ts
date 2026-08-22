@@ -226,6 +226,96 @@ export const localMigrations = [
         CHECK (last_print_total_ms >= 0)`,
     ],
   },
+  {
+    toVersion: 6,
+    statements: [
+      `ALTER TABLE ingredients
+        ADD COLUMN inventory_value_centimes INTEGER
+        CHECK (inventory_value_centimes >= 0)`,
+      `ALTER TABLE ingredients
+        ADD COLUMN cost_status TEXT NOT NULL DEFAULT 'incomplete'
+        CHECK (cost_status IN ('complete', 'incomplete'))`,
+      `ALTER TABLE ingredients
+        ADD COLUMN valuation_revision INTEGER NOT NULL DEFAULT 0
+        CHECK (valuation_revision >= 0)`,
+      `ALTER TABLE sales
+        ADD COLUMN ingredient_cost_centimes INTEGER
+        CHECK (ingredient_cost_centimes >= 0)`,
+      `ALTER TABLE sales
+        ADD COLUMN cost_status TEXT NOT NULL DEFAULT 'incomplete'
+        CHECK (cost_status IN ('complete', 'incomplete'))`,
+      `ALTER TABLE sale_items
+        ADD COLUMN ingredient_cost_centimes INTEGER
+        CHECK (ingredient_cost_centimes >= 0)`,
+      `ALTER TABLE sale_items
+        ADD COLUMN cost_status TEXT NOT NULL DEFAULT 'incomplete'
+        CHECK (cost_status IN ('complete', 'incomplete'))`,
+      `ALTER TABLE stock_movements
+        ADD COLUMN cost_delta_centimes INTEGER`,
+      `ALTER TABLE stock_movements
+        ADD COLUMN inventory_value_after_centimes INTEGER
+        CHECK (inventory_value_after_centimes >= 0)`,
+      `ALTER TABLE stock_movements
+        ADD COLUMN valuation_revision INTEGER
+        CHECK (valuation_revision >= 0)`,
+      `CREATE TABLE IF NOT EXISTS inventory_purchases (
+        id TEXT PRIMARY KEY NOT NULL,
+        ingredient_id TEXT NOT NULL REFERENCES ingredients(id),
+        stock_movement_id TEXT NOT NULL REFERENCES stock_movements(id),
+        package_label TEXT NOT NULL,
+        package_count INTEGER NOT NULL CHECK (package_count > 0),
+        quantity_per_package INTEGER NOT NULL CHECK (quantity_per_package > 0),
+        total_quantity INTEGER NOT NULL CHECK (total_quantity > 0),
+        package_price_centimes INTEGER NOT NULL CHECK (package_price_centimes >= 0),
+        total_cost_centimes INTEGER NOT NULL CHECK (total_cost_centimes >= 0),
+        received_at INTEGER NOT NULL,
+        business_date TEXT NOT NULL,
+        supplier_label TEXT,
+        note TEXT,
+        correction_of_purchase_id TEXT REFERENCES inventory_purchases(id),
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        client_mutation_id TEXT NOT NULL UNIQUE
+      )`,
+      `CREATE TABLE IF NOT EXISTS staff_profiles (
+        id TEXT PRIMARY KEY NOT NULL,
+        name TEXT NOT NULL,
+        role TEXT NOT NULL CHECK (role IN ('owner', 'manager', 'worker')),
+        status TEXT NOT NULL CHECK (status IN ('active', 'archived')),
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        updated_at INTEGER NOT NULL
+      )`,
+      `CREATE TABLE IF NOT EXISTS compensation_periods (
+        id TEXT PRIMARY KEY NOT NULL,
+        staff_profile_id TEXT NOT NULL REFERENCES staff_profiles(id),
+        monthly_amount_centimes INTEGER NOT NULL CHECK (monthly_amount_centimes >= 0),
+        effective_start_month TEXT NOT NULL,
+        effective_end_month TEXT,
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        created_at INTEGER NOT NULL
+      )`,
+      `CREATE TABLE IF NOT EXISTS operating_expenses (
+        id TEXT PRIMARY KEY NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT NOT NULL,
+        amount_centimes INTEGER NOT NULL CHECK (amount_centimes >= 0),
+        recurrence TEXT NOT NULL CHECK (recurrence IN ('one-time', 'monthly')),
+        effective_date TEXT,
+        effective_start_month TEXT,
+        effective_end_month TEXT,
+        status TEXT NOT NULL CHECK (status IN ('active', 'archived')),
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        created_at INTEGER NOT NULL
+      )`,
+      `CREATE INDEX IF NOT EXISTS inventory_purchases_by_ingredient_date
+        ON inventory_purchases(ingredient_id, received_at DESC)`,
+      `CREATE INDEX IF NOT EXISTS inventory_purchases_by_business_date
+        ON inventory_purchases(business_date, received_at DESC)`,
+      `CREATE INDEX IF NOT EXISTS compensation_periods_by_staff_month
+        ON compensation_periods(staff_profile_id, effective_start_month)`,
+      `CREATE INDEX IF NOT EXISTS operating_expenses_by_start_month
+        ON operating_expenses(effective_start_month, status)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

@@ -29,6 +29,16 @@ async function verifyInventory() {
     assert.equal(initial.ingredients.length, 14);
     assert.equal(initial.metrics.ingredientCount, 14);
     assert.equal(initial.metrics.lowStockCount, 2);
+    const wholeMilk = initial.ingredients.find(
+      (ingredient) => ingredient.key === 'whole-milk',
+    );
+    const brioche = initial.ingredients.find(
+      (ingredient) => ingredient.key === 'brioche',
+    );
+    assert.equal(wholeMilk?.costStatus, 'complete');
+    assert.equal(wholeMilk?.inventoryValueCentimes, 66_960);
+    assert.equal(brioche?.costStatus, 'incomplete');
+    assert.equal(brioche?.inventoryValueCentimes, undefined);
 
     const createArgs = {
       key: 'app04-test-ingredient',

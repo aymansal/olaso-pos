@@ -9,7 +9,7 @@ file owns only Goal 04 execution scope and card order.
 
 **Goal:** Goal 04 — Costs and Profitability
 
-**Status:** planned; not active
+**Status:** active; COST-01 in progress
 
 **Objective:** Turn stock purchasing, recipe consumption, staff compensation,
 and operating expenses into exact product-cost, inventory-value, and monthly
@@ -87,7 +87,7 @@ sensitive compensation data.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| COST-01 | Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | pending | — |
+| COST-01 | Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | in progress | Focused cost, SQLite migration, inventory fixture, Convex typecheck/deploy, TypeScript, production build, Android beta, physical Stock smoke, and Graphify pass; commit/push SHA recording remains. |
 | COST-02 | Add retry-safe ingredient purchases and weighted-average inventory valuation | pending | — |
 | COST-03 | Connect package-based receiving, valuation, and purchase history to Stock | pending | — |
 | COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | pending | — |
@@ -205,12 +205,14 @@ sensitive compensation data.
   purchase price, carrying value, or ingredient cost.
 - Current profiles are presentation data and not staff/authentication records.
 - `PRODUCT.md` and `ARCHITECTURE.md` define the approved cost model.
-- Goal 04 is planned only and follows the production printer goal. No card is
-  in progress and no goal branch exists.
-- Exact next action after explicit `/goal` activation: re-read the DOX chain,
-  ledger, and `PLAN.md`, query Graphify, create/push
-  `codex/goal-04-costs-profitability`, mark
-  COST-01 in progress, and implement only COST-01.
+- Goal 04 is active on `codex/goal-04-costs-profitability`; COST-01 is the only
+  card in progress.
+- COST-01 has the exact-cost primitives, cost shapes/indexes, ordered local
+  migration, deterministic complete/incomplete fixtures, Android beta, and
+  physical SM-X115 Stock smoke evidence. The implementation commit/push and
+  SHA recording are the only remaining completion gate.
+- Exact next action: commit and push COST-01, record its full SHA in the ledger,
+  then activate COST-02.
 
 ## Planning Journal
 

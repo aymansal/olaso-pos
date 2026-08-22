@@ -191,6 +191,25 @@ try {
     database.prepare('SELECT COUNT(*) AS count FROM sync_state').get().count,
     1,
   );
+  const valuation = database
+    .prepare(
+      `SELECT inventory_value_centimes, cost_status, valuation_revision
+       FROM ingredients WHERE id = 'ingredient-coffee'`,
+    )
+    .get();
+  assert.equal(valuation.inventory_value_centimes, null);
+  assert.equal(valuation.cost_status, 'incomplete');
+  assert.equal(valuation.valuation_revision, 0);
+  assert.equal(
+    database
+      .prepare(
+        `SELECT COUNT(*) AS count FROM sqlite_master
+         WHERE type = 'table' AND name IN
+           ('inventory_purchases', 'staff_profiles', 'compensation_periods', 'operating_expenses')`,
+      )
+      .get().count,
+    4,
+  );
   database.close();
 
   database = new DatabaseSync(databasePath);

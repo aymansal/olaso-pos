@@ -13,10 +13,14 @@ const SEED_AT = Date.parse('2026-07-28T08:00:00.000Z');
 const TAX_POLICY_LABEL = 'Temporary 0% — pending owner confirmation';
 
 const resetOrder = [
+  'inventoryPurchases',
   'saleItems',
   'stockMovements',
   'dailyMetrics',
   'sales',
+  'compensationPeriods',
+  'operatingExpenses',
+  'staffProfiles',
   'recipeItems',
   'recipeVersions',
   'products',
@@ -34,6 +38,15 @@ type IngredientBaseUnit =
   | 'gram'
   | 'milligram'
   | 'piece';
+
+type IngredientSeed = {
+  key: string;
+  name: string;
+  baseUnit: IngredientBaseUnit;
+  openingQuantity: number;
+  inventoryValueCentimes?: number;
+  lowStockThreshold: number;
+};
 
 type IngredientEffectSeed = {
   ingredientKey: string;
@@ -136,12 +149,13 @@ const categorySeeds = [
   },
 ] as const;
 
-const ingredientSeeds = [
+const ingredientSeeds: readonly IngredientSeed[] = [
   {
     key: 'coffee-beans',
     name: 'Coffee beans',
     baseUnit: 'gram',
     openingQuantity: 9000,
+    inventoryValueCentimes: 27000,
     lowStockThreshold: 1000,
   },
   {
@@ -149,6 +163,7 @@ const ingredientSeeds = [
     name: 'Whole milk',
     baseUnit: 'millilitre',
     openingQuantity: 30000,
+    inventoryValueCentimes: 60000,
     lowStockThreshold: 5000,
   },
   {
@@ -156,6 +171,7 @@ const ingredientSeeds = [
     name: 'Oat milk',
     baseUnit: 'millilitre',
     openingQuantity: 9000,
+    inventoryValueCentimes: 27000,
     lowStockThreshold: 1500,
   },
   {
@@ -163,6 +179,7 @@ const ingredientSeeds = [
     name: 'Ceremonial matcha',
     baseUnit: 'gram',
     openingQuantity: 1200,
+    inventoryValueCentimes: 96000,
     lowStockThreshold: 200,
   },
   {
@@ -170,6 +187,7 @@ const ingredientSeeds = [
     name: 'Hojicha powder',
     baseUnit: 'gram',
     openingQuantity: 900,
+    inventoryValueCentimes: 27000,
     lowStockThreshold: 150,
   },
   {
@@ -177,6 +195,7 @@ const ingredientSeeds = [
     name: 'Cocoa powder',
     baseUnit: 'gram',
     openingQuantity: 1000,
+    inventoryValueCentimes: 18000,
     lowStockThreshold: 150,
   },
   {
@@ -184,6 +203,7 @@ const ingredientSeeds = [
     name: 'Vanilla syrup',
     baseUnit: 'millilitre',
     openingQuantity: 5000,
+    inventoryValueCentimes: 15000,
     lowStockThreshold: 800,
   },
   {
@@ -191,6 +211,7 @@ const ingredientSeeds = [
     name: 'Caramel syrup',
     baseUnit: 'millilitre',
     openingQuantity: 5000,
+    inventoryValueCentimes: 15000,
     lowStockThreshold: 800,
   },
   {
@@ -198,6 +219,7 @@ const ingredientSeeds = [
     name: 'Lemon juice',
     baseUnit: 'millilitre',
     openingQuantity: 8000,
+    inventoryValueCentimes: 12000,
     lowStockThreshold: 1200,
   },
   {
@@ -205,6 +227,7 @@ const ingredientSeeds = [
     name: 'Sparkling water',
     baseUnit: 'millilitre',
     openingQuantity: 20000,
+    inventoryValueCentimes: 10000,
     lowStockThreshold: 3000,
   },
   {
@@ -212,6 +235,7 @@ const ingredientSeeds = [
     name: 'Soft ice cream portions',
     baseUnit: 'piece',
     openingQuantity: 12,
+    inventoryValueCentimes: 7200,
     lowStockThreshold: 10,
   },
   {
@@ -219,6 +243,7 @@ const ingredientSeeds = [
     name: 'Butter croissants',
     baseUnit: 'piece',
     openingQuantity: 12,
+    inventoryValueCentimes: 4800,
     lowStockThreshold: 10,
   },
   {
@@ -233,6 +258,7 @@ const ingredientSeeds = [
     name: 'Paper cups',
     baseUnit: 'piece',
     openingQuantity: 240,
+    inventoryValueCentimes: 12000,
     lowStockThreshold: 50,
   },
 ] as const;
@@ -843,6 +869,18 @@ function createCounts() {
   ) as Record<SeedTable, number>;
 }
 
+function remainingInventoryValue(
+  openingValueCentimes: number,
+  openingQuantity: number,
+  currentQuantity: number,
+) {
+  return Number(
+    (BigInt(openingValueCentimes) * BigInt(currentQuantity) +
+      BigInt(openingQuantity) / 2n) /
+      BigInt(openingQuantity),
+  );
+}
+
 function createDailyAccumulator(): DailyAccumulator {
   return {
     grossCentimes: 0,
@@ -900,6 +938,13 @@ export const resetAndSeed = internalMutation({
         name: ingredient.name,
         baseUnit: ingredient.baseUnit,
         currentStockQuantity: ingredient.openingQuantity,
+        ...(ingredient.inventoryValueCentimes === undefined
+          ? { costStatus: 'incomplete' as const }
+          : {
+              inventoryValueCentimes: ingredient.inventoryValueCentimes,
+              costStatus: 'complete' as const,
+              valuationRevision: 1,
+            }),
         lowStockThreshold: ingredient.lowStockThreshold,
         status: 'active',
         revision: 1,
@@ -1389,6 +1434,17 @@ export const resetAndSeed = internalMutation({
         {
           currentStockQuantity:
             ingredient.openingQuantity + (stockDeltas.get(ingredient.key) ?? 0),
+          ...(ingredient.inventoryValueCentimes === undefined
+            ? {}
+            : {
+                inventoryValueCentimes: remainingInventoryValue(
+                  ingredient.inventoryValueCentimes,
+                  ingredient.openingQuantity,
+                  ingredient.openingQuantity +
+                    (stockDeltas.get(ingredient.key) ?? 0),
+                ),
+                valuationRevision: 2,
+              }),
           updatedAt: SEED_AT,
         },
       );

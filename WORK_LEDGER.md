@@ -5,6 +5,26 @@ goal between activations. Project rules and durable product decisions remain in
 AGENTS.md, PRODUCT.md, ARCHITECTURE.md, DESIGN.md, and BRAND.md. PLAN.md owns the
 remaining goal and card sequence.
 
+## Active Goal
+
+### Goal 04 — Costs and Profitability
+
+**Status:** active
+
+**Goal branch:** `codex/goal-04-costs-profitability`
+
+| Card | Status |
+| --- | --- |
+| COST-01 — Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | in progress |
+| COST-02 — Add retry-safe ingredient purchases and weighted-average inventory valuation | pending |
+| COST-03 — Connect package-based receiving, valuation, and purchase history to Stock | pending |
+| COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | pending |
+| COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | pending |
+| COST-06 — Add staff profiles and owner-only effective compensation periods | pending |
+| COST-07 — Add validated one-time and recurring operating expenses | pending |
+| COST-08 — Add the bounded monthly Costs and Profitability report | pending |
+| COST-09 — Run full regression, security/quota review, tablet QA, documentation closeout, and final push | pending |
+
 ## Most Recently Completed Goal
 
 ### Goal 03 — Production Checkout and Android LAN ESC/POS Printing
@@ -41,7 +61,22 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 03 is complete; no card is in progress.
+- Goal 04 is active and COST-01 is the only card in progress on
+  `codex/goal-04-costs-profitability`, pushed from clean `main` before any
+  branch changes.
+- Graphify was queried before code inspection; it identifies the established
+  inventory, recipes, local sales, sync, Stock, and Reports ownership paths.
+- COST-01 foundation and its Android/tablet gate are verified; the card remains
+  in progress only until its implementation commit is pushed and recorded.
+- Verified: exact-cost check, SQLite migration/restart check, inventory seed
+  fixture check, Convex typecheck/deploy, TypeScript, production build, and
+  Capacitor Android sync. Graphify is refreshed to 2,441 nodes and 5,603 edges.
+- Used the project-local OpenJDK 21 and Android platform tools to build the
+  140-task debug beta, install it on SM-X115, and run a cold-launch/Stock smoke
+  test. The real 1340 × 800 POS and Stock screens are unclipped; post-unlock
+  logcat has no Capacitor-console errors, uncaught exceptions, or crashes.
+- Exact next action: commit and push the verified COST-01 implementation, then
+  record its full SHA and remote branch before advancing to COST-02.
 - PRINT-08 closeout commit
   `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -361,6 +396,49 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-22 — Goal 04 activated; COST-01 started
+
+- Created and pushed `codex/goal-04-costs-profitability` from clean synchronized
+  `main` before making branch changes.
+- Read the governing authorities and Goal 04 plan, queried the existing
+  Graphify map, and marked COST-01 as the only card in progress.
+- Next: read the applicable source and Convex DOX chain, then implement the
+  cost foundation only.
+
+### 2026-08-22 — COST-01 foundation implemented; Android gate blocked
+
+- Added integer-centime BigInt allocation, valuation receive/consume,
+  incomplete-cost propagation, margin, and monthly-recurrence primitives with
+  the ten-carton milk fixture (`10,000 ml`, `20,000` centimes).
+- Added ordered SQLite version-6 migration fields/tables/indexes and matching
+  Convex cost, purchase, staff, compensation, and expense shapes/indexes.
+  Existing local/unknown ingredient values migrate as explicitly incomplete.
+- Extended deterministic development fixtures with complete valuation cases and
+  an intentionally incomplete brioche case; focused cost/local/inventory/
+  Convex/TypeScript/production-build checks pass and the Convex development
+  deployment was updated.
+- `npm run android:sync` passed, but `npm run android:beta` cannot invoke Gradle:
+  no Java 21/JAVA_HOME is available. `adb` is also absent, preventing APK
+  installation and required physical smoke/logcat evidence. COST-01 remains the
+  only card in progress and is intentionally uncommitted/unpushed.
+- Graphify refreshed after the structural change (2,441 nodes, 5,603 edges).
+- Next: restore Java 21 and Android platform tools, complete the Android/Tablet
+  gate, then record SHA/remote branch and advance to COST-02.
+
+### 2026-08-22 — COST-01 Android/tablet gate passed
+
+- Located the existing project-local toolchain at
+  `tmp/android-toolchain`: Temurin OpenJDK `21.0.11+10`, Android SDK platform
+  tools, and a connected Samsung SM-X115 (`R8YX91AKWXJ`).
+- `npm run android:beta` passed all 140 Gradle tasks after Android sync; the
+  debug APK installed successfully over the existing app.
+- On the unlocked physical tablet, a cold app launch filled the exact 1340 ×
+  800 activity and the Stock workspace rendered its inventory/detail panels
+  without clipping or overflow. Focused post-launch and Stock logcat filtering
+  found no Capacitor-console errors, uncaught exceptions, or crash records.
+- COST-01 is ready for the required implementation commit and push; it remains
+  the only card in progress until that SHA is recorded.
 
 ### 2026-08-22 — Goal 03 handoff audited
 

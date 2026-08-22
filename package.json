@@ -11,6 +11,7 @@
     "check:seed": "convex run seed:verify",
     "check:management": "node scripts/check-management.mjs",
     "check:inventory": "node scripts/check-inventory.mjs",
+    "check:costs": "node scripts/check-costs.mjs",
     "check:local": "node --disable-warning=ExperimentalWarning scripts/check-local-database.mjs",
     "check:sales": "node --disable-warning=ExperimentalWarning scripts/check-sales.mjs",
     "check:orders": "node --disable-warning=ExperimentalWarning scripts/check-orders.mjs",
