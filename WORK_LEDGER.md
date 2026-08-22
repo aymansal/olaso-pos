@@ -782,6 +782,16 @@ remaining goal and card sequence.
   session path with provisioned credentials, and remove the remaining production
   authorization overrides.
 
+### 2026-08-22 — ID-02 Convex provisioning/sign-in verified
+
+- Configured a rotated server-only recovery code on the active development
+  Convex deployment. Provisioned the existing owner identity and verified an
+  opaque-session sign-in through the CLI without printing a PIN, recovery code,
+  or session token. The support reset invalidates prior owner sessions.
+- Exact next action: install the current build, exercise the native PIN flow,
+  then remove production authorization overrides and complete the negative
+  authorization checks before closing ID-02.
+
 ### 2026-08-22 — Deferred owner polish recorded
 
 - Added final-hardening cards for the owner's complete app-wide critique and
