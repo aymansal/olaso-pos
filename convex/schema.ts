@@ -42,6 +42,7 @@ const costStatus = v.union(v.literal('complete'), v.literal('incomplete'));
 const staffRole = v.union(
   v.literal('owner'),
   v.literal('manager'),
+  v.literal('cashier'),
   v.literal('worker'),
 );
 const expenseRecurrence = v.union(v.literal('one-time'), v.literal('monthly'));
@@ -296,6 +297,35 @@ export default defineSchema({
     .index('by_status_name', ['status', 'name'])
     .index('by_updated_at', ['updatedAt'])
     .index('by_client_mutation', ['lastMutationId']),
+
+  staffIdentities: defineTable({
+    staffProfileId: v.id('staffProfiles'),
+    pinSalt: v.string(),
+    pinHash: v.string(),
+    credentialVersion: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_staff_profile', ['staffProfileId']),
+
+  staffSessions: defineTable({
+    tokenHash: v.string(),
+    staffProfileId: v.id('staffProfiles'),
+    deviceId: v.string(),
+    credentialVersion: v.number(),
+    createdAt: v.number(),
+    lastSeenAt: v.number(),
+    revokedAt: v.optional(v.number()),
+  })
+    .index('by_token_hash', ['tokenHash'])
+    .index('by_staff_profile', ['staffProfileId']),
+
+  staffPinAttempts: defineTable({
+    staffProfileId: v.id('staffProfiles'),
+    deviceId: v.string(),
+    failedCount: v.number(),
+    lockedUntil: v.optional(v.number()),
+    updatedAt: v.number(),
+  }).index('by_staff_device', ['staffProfileId', 'deviceId']),
 
   compensationPeriods: defineTable({
     staffProfileId: v.id('staffProfiles'),

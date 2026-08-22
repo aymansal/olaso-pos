@@ -20,6 +20,10 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
 - `EscPosPrinterPlugin.kt` validates the native call boundary and translates
   observable failures; `LanSocketWriter.kt` owns bounded connect/write/flush/
   close behavior. Neither claims paper status from a successful socket write.
+- `SecureSessionPlugin.kt` is the Android Keystore-backed boundary for opaque
+  identity-session tokens and offline PIN verifiers. It stores encrypted values
+  only; plaintext credentials never enter SharedPreferences, logs, or plugin
+  return values beyond an explicit read to the authenticated web runtime.
 - Keep web application behavior in `src/`; native code is only for required
   platform integration.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;

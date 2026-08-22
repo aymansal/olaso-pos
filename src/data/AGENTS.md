@@ -24,6 +24,12 @@ tablet's local SQLite operational record.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
   safe failure copy.
+- `secureSession.ts` owns the Android-only protected-storage wrapper for opaque
+  session tokens and offline PIN verifiers; ordinary SQLite settings never hold
+  credentials.
+- `identitySession.ts` derives and persists the protected local session/PIN
+  verifier pair after successful sign-in; it never exposes those values through
+  ordinary local data contracts.
 - `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt/print-state
   parsing, sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,

@@ -6,10 +6,18 @@ import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
 class LanSocketWriterTest {
+    @Test
+    fun acceptsOnlySafeSecureSessionKeys() {
+        assertTrue(SecureSessionPlugin.isValidKey("session.token_1"))
+        assertFalse(SecureSessionPlugin.isValidKey(""))
+        assertFalse(SecureSessionPlugin.isValidKey("session token"))
+    }
+
     @Test
     fun validatesIpv4Addresses() {
         assertEquals(true, EscPosPrinterPlugin.isValidIpv4("192.168.11.100"))

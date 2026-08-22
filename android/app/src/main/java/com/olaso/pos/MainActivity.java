@@ -12,6 +12,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         registerPlugin(EscPosPrinterPlugin.class);
+        registerPlugin(SecureSessionPlugin.class);
         super.onCreate(savedInstanceState);
         hideSystemBars();
     }

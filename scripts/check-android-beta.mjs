@@ -43,6 +43,10 @@ const printerPlugin = readFileSync(
   'android/app/src/main/java/com/olaso/pos/EscPosPrinterPlugin.kt',
   'utf8',
 );
+const secureSessionPlugin = readFileSync(
+  'android/app/src/main/java/com/olaso/pos/SecureSessionPlugin.kt',
+  'utf8',
+);
 const socketWriter = readFileSync(
   'android/app/src/main/java/com/olaso/pos/LanSocketWriter.kt',
   'utf8',
@@ -59,6 +63,7 @@ assert.doesNotMatch(main, /window\.(?:innerWidth|outerWidth)/);
 assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
 assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
 assert.match(activity, /registerPlugin\(EscPosPrinterPlugin\.class\)/);
+assert.match(activity, /registerPlugin\(SecureSessionPlugin\.class\)/);
 assert.match(rootBuild, /com\.android\.tools\.build:gradle:8\.13\.2/);
 assert.match(rootBuild, /kotlin-gradle-plugin:2\.3\.21/);
 assert.match(appBuildScript, /org\.jetbrains\.kotlin\.android/);
@@ -72,6 +77,10 @@ assert.match(socketWriter, /Socket\(\)/);
 assert.match(socketWriter, /connectTimeoutMs/);
 assert.match(socketWriter, /writeTimeoutMs/);
 assert.doesNotMatch(printerPlugin + socketWriter, /Bluetooth|Usb|USB/);
+assert.match(secureSessionPlugin, /@CapacitorPlugin\(name = "SecureSession"\)/);
+assert.match(secureSessionPlugin, /AndroidKeyStore/);
+assert.match(secureSessionPlugin, /AES\/GCM\/NoPadding/);
+assert.doesNotMatch(secureSessionPlugin, /Log\.|println|printStackTrace/);
 assert.deepEqual(nativeLogo, acceptedLogo);
 assert.equal(nativeLogo.length, 2441);
 assert.deepEqual(

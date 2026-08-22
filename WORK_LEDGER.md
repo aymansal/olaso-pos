@@ -754,6 +754,21 @@ remaining goal and card sequence.
   credential/session schema and fail-closed Convex boundary without staging the
   unrelated goal files.
 
+### 2026-08-22 — ID-02 credential/session foundation implemented
+
+- Added Convex staff-identity, opaque hashed-session, and per-device failed-PIN
+  tables, plus an ordered SQLite migration that keeps only non-secret identity
+  revision state locally. The staff role vocabulary now accepts `cashier` while
+  retaining `worker` only for legacy migration.
+- Added a Web Crypto PBKDF2 sign-in action, five-failure server lockout, opaque
+  256-bit session issuance, and a server-secret-gated support PIN reset that
+  revokes existing sessions instead of creating a temporary privileged profile.
+  The matching client helper stores its session and offline PIN verifier only
+  through the Android Keystore bridge.
+- Convex typecheck/deploy, TypeScript, local migration checks, and production
+  build pass. Exact next action: wire sign-in/lock flow and session use into the
+  application, then replace the remaining development authorization overrides.
+
 ### 2026-08-22 — Deferred owner polish recorded
 
 - Added final-hardening cards for the owner's complete app-wide critique and

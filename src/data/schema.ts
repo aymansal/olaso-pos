@@ -333,6 +333,15 @@ export const localMigrations = [
         ADD COLUMN local_inventory_value_delta INTEGER NOT NULL DEFAULT 0`,
     ],
   },
+  {
+    toVersion: 9,
+    statements: [
+      `ALTER TABLE staff_profiles
+        ADD COLUMN identity_revision INTEGER NOT NULL DEFAULT 0`,
+      `CREATE INDEX IF NOT EXISTS staff_profiles_by_status
+        ON staff_profiles(status, updated_at DESC)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =
