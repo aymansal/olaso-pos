@@ -46,10 +46,8 @@ append-only cancellation/refund correction workflows.
   operational-cache, logs, or broad export paths.
 - Rewriting or deleting completed sales and stock movements.
 - Visual redesign, a new state library, or a generic authorization framework.
-- Customer records and loyalty rewards; these are deliberately sequenced as
-  Goal 06 after production staff identity and permissions are complete.
-- Apple/Google Wallet, Google Smart Tap, payment-terminal reversal, and remote
-  owner portals; each remains a separate later integration decision.
+- Payment-terminal reversal and remote owner portals; each remains a separate
+  later integration decision.
 
 ## Confirmed POLICY-01 matrix
 
@@ -78,10 +76,9 @@ append-only cancellation/refund correction workflows.
   tablet's next synchronization. Verified support resets an existing owner
   identity without temporary profiles or plaintext PINs.
 - **Explicit temporary policy:** physical tablet custody is the first-release
-  lost-device control. Legal receipt details, discounts, dedicated refunds, and
-  remote owner access remain unavailable rather than implied production
-  behavior. Customer/loyalty remains unavailable during Goal 05 and is planned
-  explicitly in Goal 06.
+  lost-device control. Legal receipt details, discounts, dedicated refunds,
+  customer/table fields, and remote owner access remain unavailable rather than
+  implied production behavior.
 
 ## Git workflow and card gate
 
@@ -92,7 +89,7 @@ append-only cancellation/refund correction workflows.
   packaging when affected, APK installation, and a card-specific physical
   Galaxy Tab A9 smoke test with clean console/logcat evidence.
 - Never commit passwords, PINs, production tokens, salary exports, private
-  customer data, signing material, or development bypass credentials.
+  operational data, signing material, or development bypass credentials.
 
 ## Task board
 
@@ -212,11 +209,11 @@ append-only cancellation/refund correction workflows.
 ## Current checkpoint
 
 - Goal 05 is complete on `codex/goal-05-policy-identity-permissions`.
-  POLICY-01 through POLICY-03 are pushed and recorded. Goal 06 remains planned
-  pending LOYALTY-01 owner decisions.
+  POLICY-01 through POLICY-03 are pushed and recorded. Production hardening is
+  planned next as Goal 06.
 - The confirmed matrix above replaces former temporary tax, service, payment,
   correction, role, and lock assumptions. Exact next action is implementing
-  the documented protected-session boundary without starting loyalty work.
+  the documented protected-session boundary without expanding the goal.
 
 - ID-02 audit repair is in progress: strict fallback, monotonic local lockout,
   fail-closed startup, protected-operation device-bound token enforcement, and
@@ -311,7 +308,7 @@ append-only cancellation/refund correction workflows.
 - The owner confirmed the receipt, tax, cash/card product-split, French/English,
   monthly receipt-number, service, warning-only stock, whole-sale correction,
   role, PIN, offline-session, and support-recovery matrix.
-- Loyalty/customer records, discounts, dedicated refunds, legal receipt fields,
+- Discounts, dedicated refunds, legal receipt fields, customer/table fields,
   and remote owner access remain deliberately unavailable until separately
   approved. No application behavior changed in this decision card.
 
@@ -345,13 +342,3 @@ append-only cancellation/refund correction workflows.
   session enforcement, audit identity, support-mediated owner recovery, shared
   PIN, clock-change, local-database, lost-device, and revoked-worker limits in
   ARCHITECTURE.md. No schema, PIN, session, UI, or authorization code changed.
-
-### 2026-08-22 — Loyalty separated into Goal 06
-
-- Preserved the confirmed anonymous Goal 05 checkout policy and added no
-  customer fields or loyalty behavior to active identity work.
-- Recorded the client's customer-base and stamp-card request as a dedicated
-  post-identity goal with QR-first instant lookup, opaque tokens, append-only
-  progress/reward events, and optional NFC hardware proof.
-- Apple/Google Wallet and Smart Tap remain deferred adapters rather than
-  dependencies of the customer or loyalty data model.

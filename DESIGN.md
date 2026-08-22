@@ -348,7 +348,7 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `QuantityStepper` | decrement, quantity, increment | 116 by 44 so both actions retain independent 44-pixel targets. Disable decrement at the minimum and expose an accessible value. |
 | `PaymentSummary` | subtotal, total | Right-align values and emphasize only the total. Use tabular figures; the confirmed policy has no tax row. |
 | `PrimaryAction` | action label, order total | 266 by 50. One primary action per screen. Disable it while submitting. |
-| `ReceiptRail` | navigation, service mode, order, totals, primary action | 320 by 688 at the target viewport. The rail owns the final action and all order-editing controls; anonymous checkout stays uncluttered when Goal 06 later adds deliberate loyalty scan/confirmation. |
+| `ReceiptRail` | navigation, service mode, order, totals, primary action | 320 by 688 at the target viewport. The rail owns the final action and all order-editing controls; checkout stays uncluttered. |
 
 Use existing components before adding a new one. A visual difference that can be expressed as content or a documented variant is not a new component.
 
@@ -494,23 +494,6 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
 Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate layout dimensions. Respect `prefers-reduced-motion`.
-
-### Planned loyalty scan interaction
-
-- Scanning is the primary customer lookup; name/phone search is a bounded lost-
-  card fallback, not a step every cashier performs for every order.
-- Accept one opaque QR/NFC token through a deliberate scan state, then show a
-  concise customer confirmation before attaching it to the order. Never expose
-  PII, progress, or reward value in the scanned token or raw input feedback.
-- Keep anonymous checkout as the default and preserve search, category, product,
-  cart, totals, and place-order geometry. Loyalty must not permanently add a
-  customer form to the 320-pixel receipt rail.
-- Progress and reward eligibility use short operational copy and appear only
-  after a customer is confirmed. Redemption requires an explicit authorized
-  action and cannot occur from a scan alone.
-- Design the QR card for phone screenshots and print, with sufficient quiet zone
-  and contrast. An optional physical NFC+QR card uses the same visible identity
-  and never looks like a payment card.
 
 ### Category artwork
 

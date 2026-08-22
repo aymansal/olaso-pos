@@ -7,6 +7,10 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+No goal is active.
+
+## Most Recently Completed Goal
+
 ### Goal 05 — Business Policy, Identity, and Permissions
 
 **Status:** complete
@@ -24,7 +28,7 @@ remaining goal and card sequence.
 | ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | done — `fa132a8c4a5b82f2114f430b25718bcada5593de` on `origin/codex/goal-05-policy-identity-permissions` |
 | POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | done — `6f4c6a28d4015f43f22f4f9691147ecfa761ea95` on `origin/codex/goal-05-policy-identity-permissions` |
 
-## Most Recently Completed Goal
+## Earlier Completed Goal
 
 ### Goal 04 — Costs and Profitability
 
@@ -68,20 +72,17 @@ remaining goal and card sequence.
 - [Production delivery plan](PLAN.md) — canonical remaining goal order, all
   card IDs, dependencies, and universal automated/browser/Android/physical
   tablet/printer completion gates.
-- [Goal 06 — Customer Loyalty and Instant Identification](goals/GOAL-06-CUSTOMER-LOYALTY.md)
-  — planned after Goal 05; reward, consent/data, card delivery, and hardware
-  decisions remain for LOYALTY-01.
-- [Goal 07 — Production Hardening, Release, and Acceptance](goals/GOAL-07-PRODUCTION-HARDENING.md)
+- [Goal 06 — Production Hardening, Release, and Acceptance](goals/GOAL-06-PRODUCTION-HARDENING.md)
   — final goal containing owner-led simplification, category artwork, app icon,
   measured startup, recovery, signing, upgrade, security/quota, endurance, and
   owner acceptance.
 
 ## Current Checkpoint
 
-- Goal 05 is complete on `codex/goal-05-policy-identity-permissions`. POLICY-03
-  commit `6f4c6a28d4015f43f22f4f9691147ecfa761ea95` is pushed and recorded on the
-  canonical remote branch. Goal 06 remains planned pending LOYALTY-01 owner
-  decisions.
+- No goal is active. Goal 05 is complete on `origin/main` at
+  `aa6d26b651e644db47a521f467b16d01cecab426`.
+- Goal 06 production hardening is planned next. Exact next action: activate
+  Goal 06 only when requested and start HARD-01 alone.
 - ID-02 audit repair is complete: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
@@ -111,7 +112,7 @@ remaining goal and card sequence.
   no filtered crash/console errors; direct permission checks reject cashier and
   manager protected requests. Graphify refreshed to 2,691 nodes and 15,179
   edges. Exact next action: implement the confirmed POLICY-02 operational
-  behavior without expanding into loyalty or refunds.
+  behavior without expanding into refunds.
 - POLICY-02 is complete. New
   sales are limited to Dine-in/Take-away and Cash/Card, with no customer/table
   inputs; each local transaction allocates an offline-safe `MMYY-0001`
@@ -208,8 +209,8 @@ remaining goal and card sequence.
   thresholds create a warning and daily staff review, never a checkout block.
   A completed sale may be cancelled only as an append-only correction with a
   required reason; card corrections are recorded only and never trigger a bank
-  reversal. Dine-in has no table selection; customer details are deferred until
-  the separate loyalty feature; any cashier may authorize a cancellation.
+  reversal. Dine-in has no table selection, customer details are not collected,
+  and any cashier may authorize a cancellation.
   Cashiers may make a whole-sale correction while offline, only on the same
   local business day, then re-enter a replacement sale. All identity/role
   decisions remain open except the confirmed cumulative cashier/manager/owner
@@ -221,11 +222,6 @@ remaining goal and card sequence.
   control. Owner recovery is support-mediated against the existing identity;
   the exact one-time reset procedure remains to be defined without a temporary
   privileged profile.
-- Customer loyalty is planned as Goal 06 after identity/permissions. The
-  first-release direction is QR-first instant lookup through an opaque revocable
-  token and keyboard-style 2D scanner; optional NFC+QR reuses the same token only
-  after reader proof. Wallet platforms are deferred. Exact reward, customer-data,
-  delivery, redemption, and hardware rules remain for LOYALTY-01.
 - Goal 04 is complete; COST-01 through COST-09 are pushed and its completion
   record is `8e7a981e2813cd768ebe70063fefc5c52d880d3d`.
 - The owner requested that all current UI remain unchanged until the complete
@@ -691,12 +687,11 @@ remaining goal and card sequence.
 
 ## Planning Journal
 
-### 2026-08-22 — Customer loyalty added as Goal 06
+### 2026-08-22 — Production hardening confirmed as next goal
 
-- Added the client-requested customer base, digital stamp card, instant QR scan,
-  optional NFC+QR hardware proof, opaque tokens, and append-only reward history.
-- Kept Apple/Google Wallet and Smart Tap deferred, renumbered hardening to Goal
-  07, and changed no application behavior.
+- Goal 05 remains the most recently completed goal.
+- Production hardening is Goal 06 and remains inactive until explicit
+  activation. HARD-01 is the exact next card.
 
 ### 2026-08-22 — Goal 05 activated; POLICY-01 started
 
@@ -745,8 +740,8 @@ remaining goal and card sequence.
   append-only correction. Card corrections record the business correction only;
   no card-terminal or bank reversal is attempted.
 - Dine-in is a service label only: the café's two-table setup does not use a
-  table selector. Customer details remain unavailable until a separately scoped
-  loyalty feature exists. Any cashier may cancel a completed sale with a reason.
+  table selector. Customer details are not collected. Any cashier may cancel a
+  completed sale with a reason.
 - Cashiers can cancel while offline. A cancellation is whole-sale only and must
   occur on the same local business day; the cashier re-enters any replacement
   order. The correction remains append-only and reverses only the original
@@ -778,18 +773,12 @@ remaining goal and card sequence.
   owner forgets a PIN, verified support resets the existing owner identity
   through the protected backend administration boundary; no temporary profile,
   plaintext PIN, or development authorization bypass is created.
-- The owner requested a fast loyalty/customer-recognition experience. Apple and
-  Google Wallet NFC passes are not assumed: their contactless protocols require
-  platform entitlement/certification and compatible terminal setup. A dedicated
-  loyalty scope is needed before selecting an NFC-card or QR-card design,
-  customer-data policy, reward rule, or hardware integration.
-
 ### 2026-08-22 — POLICY-01 final approval
 
 - The owner approved the remaining recommendations: visible `Dine-in` / `Sur
-  place` labels, no customer/table fields before a separately approved loyalty
-  feature, same-calendar-day corrections through 23:59 Africa/Casablanca, and
-  the logo-only receipt header as an explicit temporary rule.
+  place` labels, no customer/table fields, same-calendar-day corrections
+  through 23:59 Africa/Casablanca, and the logo-only receipt header as an
+  explicit temporary rule.
 - Separate discounts and refunds remain unavailable rather than guessed. The
   confirmed supported correction is the cashier-authorized, offline,
   whole-sale cancellation with a required reason and no card/bank reversal.
@@ -843,11 +832,11 @@ remaining goal and card sequence.
   Android/data DOX contracts. Android static checks, TypeScript, production
   build, and Capacitor sync pass. The standalone Gradle beta build has started
   with the documented project-local Java 21/SDK paths but needs final completion
-  evidence. Unrelated uncommitted Goal 06/07 file changes were found in the
+  evidence. Unrelated uncommitted planning-file changes were found in the
   shared workspace and are preserved outside this card.
 - Exact next action: finish native beta evidence, then implement the approved
   credential/session schema and fail-closed Convex boundary without staging the
-  unrelated goal files.
+  unrelated planning files.
 
 ### 2026-08-22 — ID-02 credential/session foundation implemented
 

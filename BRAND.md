@@ -198,9 +198,8 @@ Friendly, direct, lightly witty, and socially aware. Olaso speaks like a confide
 ### Language status
 
 The staff application supports French and English. Each receipt follows the
-currently selected staff-app language. Customer-facing loyalty language remains
-deferred until that separate feature is approved; Arabic receipt rendering is
-not in the first production policy.
+currently selected staff-app language. Arabic receipt rendering is not in the
+first production policy.
 
 ## 8. Brand behavior in the POS product
 
@@ -214,19 +213,6 @@ This section defines invariants only; screen layout and components belong in the
 - Product photography may help recognition, but must never slow down ordering or make prices hard to scan.
 - Operational messages should stay direct: “Order sent,” “Payment failed,” “Item unavailable.”
 - Use brand playfulness at low-risk moments such as the welcome screen or empty states, not during payment, refunds, or error recovery.
-
-### Provisional loyalty-card direction
-
-- A future loyalty card uses the real Olaso artwork, warm cream/green surfaces,
-  and one high-contrast QR area with a proper quiet zone. It must feel like a
-  simple café club card, not a bank or payment card.
-- QR and optional NFC identify the same opaque record. Do not print a customer
-  name, phone number, progress, reward balance, or other private data inside or
-  immediately beside the machine-readable token unless later owner/privacy
-  policy explicitly approves visible card text.
-- Apple Wallet and Google Wallet branding are not part of the first loyalty
-  release. A later approved wallet adapter must preserve Olaso's own identity
-  and reuse the platform-independent customer/loyalty record.
 
 ## 9. Initial product context — pending confirmation
 
@@ -253,9 +239,6 @@ Ask the owner or creative team to confirm:
 - [ ] Exact official palette beyond the primary green and white.
 - [ ] Official typefaces and licenses.
 - [x] Staff UI and receipts: French and English; receipt follows staff language.
-- [ ] Customer-facing loyalty language for planned Goal 06.
-- [ ] Initial QR card, optional NFC+QR physical card, and neutral lost-card
-      replacement presentation.
 - [ ] Exact store address, legal business name, tax/receipt details, and currency formatting.
 - [ ] Galaxy Tab A9 model, orientation, and whether the app runs in kiosk mode.
 - [ ] Required POS peripherals and integrations.

@@ -1,4 +1,4 @@
-# Goal 07 Plan — Production Hardening, Release, and Acceptance
+# Goal 06 Plan — Production Hardening, Release, and Acceptance
 
 Project rules and durable decisions remain in AGENTS.md, PRODUCT.md,
 ARCHITECTURE.md, DESIGN.md, and BRAND.md. PLAN.md owns goal order. This file
@@ -6,9 +6,9 @@ owns only the final production-hardening scope and card order.
 
 ## Status
 
-**Goal:** Goal 07 — Production Hardening, Release, and Acceptance
+**Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** planned; not active; runs after Goals 03 through 06
+**Status:** planned; not active; runs after Goals 03 through 05
 
 **Objective:** Let the owner simplify the complete working product, then measure
 and remove the remaining startup, recovery, security, performance, packaging,
@@ -18,12 +18,12 @@ for the real tablet and printer.
 ## Sequencing decision
 
 Startup quality remains required, but it is implemented here rather than before
-printing, costs, identity, and loyalty. This avoids optimizing and re-measuring
-the bundle before major features are added. The branded transparent wordmark is prepared now;
-actual launch integration and measured optimization happen against the
-near-final APK. The owner walkthrough also happens here, after workflows are
-stable, so current screens remain unchanged until the owner provides one
-complete, explicit critique list.
+printing, costs, and identity. This avoids optimizing and re-measuring the
+bundle before major features are added. The branded transparent wordmark is
+prepared now; actual launch integration and measured optimization happen
+against the near-final APK. The owner walkthrough also happens here, after
+workflows are stable, so current screens remain unchanged until the owner
+provides one complete, explicit critique list.
 
 ## Verified starting leads
 
@@ -89,7 +89,7 @@ complete, explicit critique list.
 
 ## Git workflow and card gate
 
-- Goal branch: codex/goal-07-production-hardening.
+- Goal branch: codex/goal-06-production-hardening.
 - Keep one HARD card in progress and unrelated work out of its commit.
 - Every commit begins with its card ID and is pushed before the card is done.
 - Every implementation card follows PLAN.md, including focused checks, APK
@@ -128,7 +128,7 @@ complete, explicit critique list.
 ### POLISH-01 — Owner walkthrough
 
 - Review every completed screen and important state on the physical tablet with
-  the owner after Goals 04 through 06 are stable.
+  the owner after Goals 04 and 05 are stable.
 - Record exact keep, remove, shorten, rename, regroup, and hide decisions before
   making visual changes. Treat unnecessary icons, corporate-sounding guidance,
   duplicated status, and permanently visible technical detail as review targets.
@@ -201,9 +201,8 @@ complete, explicit critique list.
 ### HARD-05 — Backup and recovery
 
 - Add the smallest documented export covering sales, products, recipes, stock
-  movements, purchases, compensation periods, expenses, customers, and loyalty
-  events as required by ARCHITECTURE.md, with explicit inclusion, token, and
-  privacy rules.
+  movements, purchases, compensation periods, and expenses as required by
+  ARCHITECTURE.md, with explicit inclusion and privacy rules.
 - Rehearse export, restore, unsynced-sale preservation, corrupt/unrecoverable
   local-data stop, and owner/support recovery without unsafe checkout.
 - Record Convex backup limitations and owner retention responsibility.
@@ -238,8 +237,8 @@ complete, explicit critique list.
   at most two seconds and warm start at most one second, with no network gate or
   unbranded frame.
 - Run realistic service volume across ordering, printing/reprinting, stock,
-  management, costs, identity, loyalty scans/rewards, offline/reconnect,
-  app/tablet/printer restart, sync recovery, and an install-over-upgrade.
+  management, costs, identity, offline/reconnect, app/tablet/printer restart,
+  sync recovery, and an install-over-upgrade.
 - Reconcile sales, stock, costs, summaries, print states, and outbox state after
   the run; investigate every mismatch rather than normalizing it.
 - Complete final browser and physical 1340 by 800 visual/touch/accessibility QA,
@@ -263,13 +262,13 @@ complete, explicit critique list.
 
 ## Current checkpoint
 
-- Goal 07 is planned only; no HARD card is active and no goal branch exists.
+- Goal 06 is planned only; no HARD card is active and no goal branch exists.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
-- Exact next action after Goal 06 completes: re-read the DOX chain, ledger,
-  PLAN.md, and authorities; query Graphify; confirm the near-final APK and
-  physical hardware are available; generate the current /goal prompt; create
-  codex/goal-07-production-hardening; and start only HARD-01.
+- Exact next action: re-read the DOX chain, ledger, PLAN.md, and authorities;
+  query Graphify; confirm the near-final APK and physical hardware are
+  available; generate the current /goal prompt; create
+  codex/goal-06-production-hardening; and start only HARD-01.
 
 ## Planning journal
 
@@ -292,5 +291,5 @@ complete, explicit critique list.
 - Recorded the verified green transparent wordmark as the future launch asset
   without connecting it to the current application.
 - Added physical-tablet evidence after every implementation card.
-- No application source or Android launch code changed and Goal 07 remains
+- No application source or Android launch code changed and Goal 06 remains
   inactive.
