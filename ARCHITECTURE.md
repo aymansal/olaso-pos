@@ -769,6 +769,57 @@ custody is the accepted first-release lost-device control. Verified support may
 reset an existing owner identity through a protected backend boundary; it must
 not create a temporary privileged profile or expose a plaintext PIN.
 
+### Confirmed production identity and session boundary
+
+ID-02 implements this design without changing the local-first checkout
+boundary:
+
+```text
+staff PIN
+  -> Convex credential verification (online) / protected local verifier (offline)
+  -> opaque per-device session token
+  -> Android Keystore-backed protected storage
+  -> session-token argument on every protected Convex operation
+  -> Convex role/session helper and audit actor
+```
+
+- **Identity:** a staff profile and a user identity are distinct records linked
+  one-to-one. Owner, manager, and cashier are the only production roles;
+  `worker` is migrated to `cashier` before enforcement. The immutable device ID
+  scopes sessions but never authorizes a person.
+- **Credentials and sessions:** Convex stores only a salted, slow PIN verifier
+  and session-token verifier. The raw six-digit PIN and raw opaque session token
+  are never written to React state beyond immediate entry, SQLite,
+  `device_settings`, logs, source control, or normal exports. The Android
+  Keystore-backed bridge stores the current token and the local offline PIN
+  verifier; browser development has no production credential fallback.
+- **Offline:** after an online provisioning/login, the tablet can verify a
+  registered staff PIN and continue a local session indefinitely while offline.
+  The next successful synchronization applies archived/revoked identities and
+  invalidates their protected local material. This is an explicit availability
+  choice: an offline tablet cannot learn a new revocation.
+- **Lock and switch:** lock clears active in-memory identity but not the
+  protected credentials. Unlock requires PIN verification; a different staff
+  member can then become the current actor. Restart begins locked. The native
+  monotonic clock, not editable wall time, measures the five-minute idle and
+  failed-attempt lockouts.
+- **Convex enforcement:** public protected functions receive an opaque session
+  token and use one shared session helper to verify active staff identity,
+  role, device binding, and revocation state. Existing `ctx.auth` development
+  overrides are removed from production paths in ID-02; UI concealment never
+  replaces this check. Returned fields and local operational caches are scoped
+  by the same role.
+- **Audit and recovery:** every protected write records the resolved staff
+  identity and device. Verified support recovers an owner by invalidating the
+  existing credential/sessions and issuing a one-time reset path for that same
+  identity; it never creates a temporary owner or bypasses authorization.
+- **Threat limits:** PIN sharing remains detectable only through its shared
+  audit identity and is prohibited operationally. Direct SQLite edits cannot
+  obtain token/PIN material but may corrupt an unencrypted operational database;
+  unsafe database state stops checkout. Wall-clock changes cannot shorten PIN
+  lockouts; same-day offline corrections retain device time and are reconciled
+  against the café business date when synchronized.
+
 ## Printing boundary
 
 `printReceipt` is the only application-facing byte-generation/transport

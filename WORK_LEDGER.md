@@ -91,8 +91,8 @@ remaining goal and card sequence.
   confirmed PIN/session policy. Exact next action: validate, commit, and push
   POLICY-01. It was committed and pushed as
   `eafe2d3e6603cbf5957c548b5e83473da05465df`; ID-01 is the only card in
-  progress. Exact next action: define the identity/session boundary from the
-  confirmed policy before implementation.
+  progress. The opaque protected-session identity boundary is documented; exact
+  next action: validate, commit, and push ID-01 before implementation.
 - Exact next action: obtain the owner's explicit POLICY-01 answers. No
   policy-dependent behavior, identity design, or authorization implementation
   will be selected before those decisions are recorded.
@@ -698,6 +698,21 @@ remaining goal and card sequence.
 - POLICY-01 is done. ID-01 is now the only card in progress; next, inspect the
   current staff/auth/terminal-lock boundaries and write the confirmed identity,
   offline-session, revocation, and recovery design before implementation.
+
+### 2026-08-22 — ID-01 identity/session boundary designed
+
+- Current inspection confirms the beta terminal lock is only a SQLite flag and
+  existing Convex management/POS authorization has development overrides.
+- Chose an opaque per-device server-session boundary with Android Keystore
+  storage and protected local offline PIN verification. No raw PIN/token enters
+  SQLite, React, logs, source control, or ordinary exports. Offline workers can
+  continue through multi-day outages; revoked identity state arrives on next
+  successful sync.
+- Documented role/session enforcement, lock/switch/restart, five-minute
+  monotonic idle and failed-attempt limits, audit identity, support recovery,
+  and explicit shared-PIN/clock/database/physical-custody tradeoffs in
+  ARCHITECTURE.md. ID-01 remains in progress pending documentation checks,
+  commit, and push.
 
 ### 2026-08-22 — Deferred owner polish recorded
 

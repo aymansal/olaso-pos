@@ -127,6 +127,11 @@ append-only cancellation/refund correction workflows.
   database access, revoked worker, and owner recovery.
 - Update ARCHITECTURE.md before implementation if the selected boundary changes
   a locked technical decision.
+- The selected boundary is an opaque per-device Convex session token held in
+  Android Keystore-backed storage, paired with a protected local PIN verifier
+  for offline authentication. See ARCHITECTURE.md for the complete model;
+  ID-01 remains in progress until its documentation checks and commit are
+  complete.
 
 ### ID-02 — Identity/session implementation
 
@@ -207,8 +212,9 @@ append-only cancellation/refund correction workflows.
   the only card in progress after POLICY-01 commit
   `eafe2d3e6603cbf5957c548b5e83473da05465df` was pushed and recorded.
 - The confirmed matrix above replaces former temporary tax, service, payment,
-  correction, role, and lock assumptions. Exact next action: define the
-  supported identity/session boundary before implementation.
+  correction, role, and lock assumptions. ID-01 has selected the documented
+  protected-session boundary. Exact next action: validate and commit the
+  identity/session design before implementation.
 
 ## Planning journal
 
@@ -230,3 +236,14 @@ append-only cancellation/refund correction workflows.
 - Loyalty/customer records, discounts, dedicated refunds, legal receipt fields,
   and remote owner access remain deliberately unavailable until separately
   approved. No application behavior changed in this decision card.
+
+### 2026-08-22 — ID-01 identity/session design selected
+
+- Selected opaque per-device Convex session tokens and Android Keystore-backed
+  protected local credential material. This preserves multi-day offline PIN
+  authentication while applying revocations at next sync, rather than treating
+  the device or terminal lock as a user identity.
+- Documented lock/switch/restart behavior, monotonic local lockouts, role and
+  session enforcement, audit identity, support-mediated owner recovery, shared
+  PIN, clock-change, local-database, lost-device, and revoked-worker limits in
+  ARCHITECTURE.md. No schema, PIN, session, UI, or authorization code changed.
