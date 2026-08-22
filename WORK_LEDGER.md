@@ -15,8 +15,8 @@ remaining goal and card sequence.
 
 | Card | Status |
 | --- | --- |
-| POLICY-01 — Confirm and record the owner decision matrix | in progress |
-| ID-01 — Define the production identity, offline session, lock, recovery, and threat model | pending |
+| POLICY-01 — Confirm and record the owner decision matrix | done — `eafe2d3e6603cbf5957c548b5e83473da05465df` on `origin/codex/goal-05-policy-identity-permissions` |
+| ID-01 — Define the production identity, offline session, lock, recovery, and threat model | in progress |
 | ID-02 — Add production identity/session persistence and remove production authorization override | pending |
 | PERM-01 — Enforce role permissions and sensitive-data return boundaries | pending |
 | POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | pending |
@@ -89,7 +89,10 @@ remaining goal and card sequence.
   French/English selection, `MMYY-0001`, dine-in/take-away only, warning-only
   stock, same-day offline whole-sale corrections, cumulative roles, and the
   confirmed PIN/session policy. Exact next action: validate, commit, and push
-  POLICY-01; then make ID-01 the sole in-progress card.
+  POLICY-01. It was committed and pushed as
+  `eafe2d3e6603cbf5957c548b5e83473da05465df`; ID-01 is the only card in
+  progress. Exact next action: define the identity/session boundary from the
+  confirmed policy before implementation.
 - Exact next action: obtain the owner's explicit POLICY-01 answers. No
   policy-dependent behavior, identity design, or authorization implementation
   will be selected before those decisions are recorded.
@@ -684,6 +687,17 @@ remaining goal and card sequence.
   whole-sale cancellation with a required reason and no card/bank reversal.
 - Updated PRODUCT, ARCHITECTURE, DESIGN, BRAND, PLAN, and Goal 05 ownership
   documents. POLICY-01 is ready for documentation validation and commit.
+
+### 2026-08-22 — POLICY-01 complete; ID-01 started
+
+- Committed `POLICY-01: record operating policy` as
+  `eafe2d3e6603cbf5957c548b5e83473da05465df`, pushed it to
+  `origin/codex/goal-05-policy-identity-permissions`, and verified the remote
+  resolves to the same SHA. Documentation-only checks passed: `git diff --check`
+  and all 32 local Markdown links.
+- POLICY-01 is done. ID-01 is now the only card in progress; next, inspect the
+  current staff/auth/terminal-lock boundaries and write the confirmed identity,
+  offline-session, revocation, and recovery design before implementation.
 
 ### 2026-08-22 — Deferred owner polish recorded
 

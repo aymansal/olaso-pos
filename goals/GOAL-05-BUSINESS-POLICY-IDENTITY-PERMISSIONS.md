@@ -95,8 +95,8 @@ append-only cancellation/refund correction workflows.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| POLICY-01 | Confirm and record the owner decision matrix | in progress | Authorities and focused documentation checks pending |
-| ID-01 | Define the production identity, offline session, lock, recovery, and threat model | pending | — |
+| POLICY-01 | Confirm and record the owner decision matrix | done | `eafe2d3e6603cbf5957c548b5e83473da05465df` pushed to `origin/codex/goal-05-policy-identity-permissions` |
+| ID-01 | Define the production identity, offline session, lock, recovery, and threat model | in progress | Design authority update pending |
 | ID-02 | Add production identity/session persistence and remove production authorization bypass | pending | — |
 | PERM-01 | Enforce role permissions and sensitive-data return boundaries | pending | — |
 | POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | pending | — |
@@ -203,12 +203,12 @@ append-only cancellation/refund correction workflows.
 
 ## Current checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; POLICY-01
-  is the only card in progress while its authority updates are checked and
-  committed.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ID-01 is
+  the only card in progress after POLICY-01 commit
+  `eafe2d3e6603cbf5957c548b5e83473da05465df` was pushed and recorded.
 - The confirmed matrix above replaces former temporary tax, service, payment,
-  correction, role, and lock assumptions. ID-01 starts only after POLICY-01 is
-  pushed and recorded.
+  correction, role, and lock assumptions. Exact next action: define the
+  supported identity/session boundary before implementation.
 
 ## Planning journal
 
