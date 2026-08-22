@@ -70,6 +70,13 @@ export type OperationalCacheSnapshot = {
     lowStockThreshold: number;
     revision: number;
   }>;
+  staffProfiles: Array<{
+    id: string;
+    name: string;
+    role: 'owner' | 'manager' | 'cashier' | 'worker';
+    revision: number;
+    identityRevision: number;
+  }>;
 };
 
 const LIMITS = {
@@ -81,6 +88,7 @@ const LIMITS = {
   recipeVersions: 500,
   recipeItems: 5_000,
   ingredients: 1_000,
+  staffProfiles: 100,
 } as const;
 
 function assertBounded(snapshot: OperationalCacheSnapshot) {
@@ -108,6 +116,7 @@ export async function replaceOperationalCache(
        UPDATE modifier_groups SET status = 'archived';
        UPDATE modifier_options SET status = 'archived';
        UPDATE ingredients SET status = 'archived';
+       UPDATE staff_profiles SET status = 'archived';
        UPDATE recipe_versions SET is_active = 0;
        DELETE FROM product_modifier_groups;`,
       false,
@@ -270,6 +279,29 @@ export async function replaceOperationalCache(
         false,
       );
     }
+    for (const staff of snapshot.staffProfiles) {
+      await database.run(
+        `INSERT INTO staff_profiles
+          (id, name, role, status, revision, updated_at, identity_revision)
+         VALUES (?, ?, ?, 'active', ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           name = excluded.name,
+           role = excluded.role,
+           status = 'active',
+           revision = excluded.revision,
+           updated_at = excluded.updated_at,
+           identity_revision = excluded.identity_revision`,
+        [
+          staff.id,
+          staff.name,
+          staff.role,
+          staff.revision,
+          snapshot.updatedAt,
+          staff.identityRevision,
+        ],
+        false,
+      );
+    }
     for (const version of snapshot.recipeVersions) {
       await database.run(
         `INSERT INTO recipe_versions
@@ -350,6 +382,7 @@ export async function loadOperationalCache(
     recipeVersions,
     recipeItems,
     ingredients,
+    staffProfiles,
     cacheState,
   ] = await Promise.all([
       database.query(
@@ -406,6 +439,13 @@ export async function loadOperationalCache(
          FROM ingredients
          WHERE status = 'active'
          LIMIT ${LIMITS.ingredients}`,
+      ),
+      database.query(
+        `SELECT id, name, role, revision, identity_revision
+         FROM staff_profiles
+         WHERE status = 'active'
+         ORDER BY updated_at DESC
+         LIMIT ${LIMITS.staffProfiles}`,
       ),
       database.query(
         `SELECT value
@@ -483,6 +523,13 @@ export async function loadOperationalCache(
       valuationRevision: Number(row.valuation_revision),
       lowStockThreshold: Number(row.low_stock_threshold),
       revision: Number(row.revision),
+    })),
+    staffProfiles: (staffProfiles.values ?? []).map((row) => ({
+      id: String(row.id),
+      name: String(row.name),
+      role: row.role,
+      revision: Number(row.revision),
+      identityRevision: Number(row.identity_revision),
     })),
   };
 }

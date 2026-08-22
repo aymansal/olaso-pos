@@ -16,7 +16,7 @@ export const getOperationalSnapshot = query({
       throw new Error('Synchronization request ID must contain 1 to 64 characters.');
     }
     await requireOperationalAccess(ctx);
-    const [categories, allProducts, modifierGroups, allOptions, ingredients] =
+    const [categories, allProducts, modifierGroups, allOptions, ingredients, staffProfiles] =
       await Promise.all([
         ctx.db
           .query('categories')
@@ -32,12 +32,17 @@ export const getOperationalSnapshot = query({
           .query('ingredients')
           .withIndex('by_status_name', (q) => q.eq('status', 'active'))
           .take(1001),
+        ctx.db
+          .query('staffProfiles')
+          .withIndex('by_status_name', (q) => q.eq('status', 'active'))
+          .take(101),
       ]);
     withinLimit(categories, 100, 'Categories');
     withinLimit(allProducts, 500, 'Products');
     withinLimit(modifierGroups, 100, 'Modifier groups');
     withinLimit(allOptions, 1000, 'Modifier options');
     withinLimit(ingredients, 1000, 'Ingredients');
+    withinLimit(staffProfiles, 100, 'Staff profiles');
 
     const products = allProducts
       .filter((product) => product.status !== 'archived')
@@ -98,6 +103,7 @@ export const getOperationalSnapshot = query({
       ...modifierGroups.map((row) => row.updatedAt),
       ...modifierOptions.map((row) => row.updatedAt),
       ...ingredients.map((row) => row.updatedAt),
+      ...staffProfiles.map((row) => row.updatedAt),
       ...recipeVersions.flatMap((row) => row ? [row.updatedAt] : []),
     );
 
@@ -179,6 +185,13 @@ export const getOperationalSnapshot = query({
         valuationRevision: ingredient.valuationRevision ?? 0,
         lowStockThreshold: ingredient.lowStockThreshold,
         revision: ingredient.revision,
+      })),
+      staffProfiles: staffProfiles.map((staff) => ({
+        id: staff._id,
+        name: staff.name,
+        role: staff.role,
+        revision: staff.revision,
+        identityRevision: 0,
       })),
     };
   },

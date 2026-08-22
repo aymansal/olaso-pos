@@ -1,5 +1,13 @@
 import { CheckCircle, LockKey, WifiHigh, WifiSlash } from '@phosphor-icons/react';
+import { useAction } from 'convex/react';
 import { useEffect, useState } from 'react';
+import { api } from '../../../convex/_generated/api';
+import {
+  loadStaffSession,
+  saveStaffSession,
+  verifyOfflinePin,
+} from '../../data/identitySession';
+import { loadOperationalCache } from '../../data/operationalCache';
 import type { TerminalSettings } from '../../data/terminalSettings';
 import styles from './LockScreen.module.css';
 
@@ -13,6 +21,14 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   const [online, setOnline] = useState(navigator.onLine);
   const [unlocking, setUnlocking] = useState(false);
   const [error, setError] = useState('');
+  const [staff, setStaff] = useState<Array<{
+    id: string;
+    name: string;
+    role: 'owner' | 'manager' | 'cashier' | 'worker';
+  }>>([]);
+  const [staffProfileId, setStaffProfileId] = useState('');
+  const [pin, setPin] = useState('');
+  const signIn = useAction(api.identity.signIn);
 
   useEffect(() => {
     const clock = window.setInterval(() => setNow(new Date()), 30_000);
@@ -26,10 +42,38 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    Promise.all([
+      loadOperationalCache(),
+      loadStaffSession().catch(() => undefined),
+    ]).then(([cache, session]) => {
+      if (!active) return;
+      setStaff(cache.staffProfiles);
+      setStaffProfileId(session?.staffProfileId ?? cache.staffProfiles[0]?.id ?? '');
+    }).catch(() => {
+      if (active) setError('Staff access is unavailable. Connect and sync this terminal.');
+    });
+    return () => { active = false; };
+  }, []);
+
   async function unlock() {
+    if (!staffProfileId || !/^\d{6}$/.test(pin)) {
+      setError('Choose a staff member and enter a six-digit PIN.');
+      return;
+    }
     setUnlocking(true);
     setError('');
     try {
+      try {
+        const session = await signIn({ staffProfileId: staffProfileId as never, pin, deviceId: settings.deviceId });
+        await saveStaffSession(session, pin);
+      } catch (onlineError) {
+        const saved = await loadStaffSession().catch(() => undefined);
+        if (!saved || saved.staffProfileId !== staffProfileId || !await verifyOfflinePin(pin)) {
+          throw onlineError;
+        }
+      }
       await onUnlock();
     } catch (caught) {
       setError(
@@ -86,7 +130,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         </span>
         <h2 id="unlock-title">Unlock Olaso</h2>
         <p className={styles.subtitle}>
-          Continue this local terminal session.
+          Choose your profile and enter your six-digit PIN.
         </p>
 
         <div className={styles.identity}>
@@ -99,12 +143,22 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         </div>
 
         <div className={styles.policy}>
-          <span>LOCAL BETA LOCK</span>
+          <span>STAFF SIGN-IN</span>
           <p>
-            PIN sign-in and staff roles are pending owner confirmation. This
-            screen prevents accidental use; it does not authenticate a person.
+            Your staff identity is recorded with protected terminal access.
           </p>
         </div>
+
+        <label className={styles.field}>
+          <span>Staff member</span>
+          <select value={staffProfileId} onChange={(event) => setStaffProfileId(event.target.value)} disabled={unlocking}>
+            {staff.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}
+          </select>
+        </label>
+        <label className={styles.field}>
+          <span>PIN</span>
+          <input value={pin} onChange={(event) => setPin(event.target.value.replace(/\D/g, '').slice(0, 6))} inputMode="numeric" type="password" autoComplete="current-password" disabled={unlocking} />
+        </label>
 
         <button
           className={styles.unlock}
@@ -112,7 +166,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
           disabled={unlocking}
           onClick={unlock}
         >
-          {unlocking ? 'Unlocking…' : 'Continue to POS'}
+          {unlocking ? 'Unlocking…' : 'Unlock POS'}
         </button>
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
       </section>

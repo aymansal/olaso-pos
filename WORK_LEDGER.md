@@ -769,6 +769,19 @@ remaining goal and card sequence.
   build pass. Exact next action: wire sign-in/lock flow and session use into the
   application, then replace the remaining development authorization overrides.
 
+### 2026-08-22 — ID-02 staff cache and lock flow added
+
+- Extended the bounded operational snapshot/local cache with active staff IDs,
+  display names, roles, revisions, and non-secret identity revisions only.
+- The lock screen now selects a cached staff profile, accepts a six-digit PIN,
+  creates/saves an opaque online session through Android Keystore, and verifies
+  the previously provisioned staff PIN locally during an outage. It fails closed
+  when no provisioned identity exists.
+- Convex typecheck/deploy, local migration checks, TypeScript, and production
+  build pass. Exact next action: add startup/idle locking, test the Android
+  session path with provisioned credentials, and remove the remaining production
+  authorization overrides.
+
 ### 2026-08-22 — Deferred owner polish recorded
 
 - Added final-hardening cards for the owner's complete app-wide critique and

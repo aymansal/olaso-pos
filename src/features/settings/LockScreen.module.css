@@ -271,7 +271,7 @@
 
 .unlock {
   position: absolute;
-  top: 476px;
+  top: 566px;
   left: 110px;
   width: 400px;
   height: 54px;
@@ -300,10 +300,47 @@
 
 .error {
   position: absolute;
-  top: 548px;
+  top: 638px;
   left: 110px;
   width: 400px;
   color: var(--olaso-danger-ink);
   font-size: 10px;
   text-align: center;
+}
+
+.field {
+  position: absolute;
+  left: 110px;
+  display: flex;
+  width: 400px;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.field:first-of-type {
+  top: 414px;
+}
+
+.field:nth-of-type(2) {
+  top: 486px;
+}
+
+.field select,
+.field input {
+  width: 100%;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px solid var(--olaso-lock-identity);
+  border-radius: 12px;
+  padding: 0 12px;
+  color: var(--olaso-copy);
+  background: var(--olaso-white);
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
 }
