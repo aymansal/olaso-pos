@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active; POLICY-03 in progress
+**Status:** complete
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -105,7 +105,7 @@ append-only cancellation/refund correction workflows.
 | POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | done | `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | ORDER-01 | Implement authorized cancellation/refund corrections and reversals | done | `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | done | `fa132a8c4a5b82f2114f430b25718bcada5593de` pushed to `origin/codex/goal-05-policy-identity-permissions` |
-| POLICY-03 | Run policy, security, regression, tablet, documentation, and push closeout | in progress | — |
+| POLICY-03 | Run policy, security, regression, tablet, documentation, and push closeout | done | `6f4c6a28d4015f43f22f4f9691147ecfa761ea95` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 
 ## Card contracts
 
@@ -211,8 +211,9 @@ append-only cancellation/refund correction workflows.
 
 ## Current checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01
-  through ID-03 are pushed and recorded; POLICY-03 is the only active card.
+- Goal 05 is complete on `codex/goal-05-policy-identity-permissions`.
+  POLICY-01 through POLICY-03 are pushed and recorded. Goal 06 remains planned
+  pending LOYALTY-01 owner decisions.
 - The confirmed matrix above replaces former temporary tax, service, payment,
   correction, role, and lock assumptions. Exact next action is implementing
   the documented protected-session boundary without starting loyalty work.
@@ -289,8 +290,9 @@ append-only cancellation/refund correction workflows.
   authorization/Android checks, Convex codegen/typecheck, TypeScript, build,
   Android beta, and diff check pass. The SM-X115 final APK unlocks with the
   owner PIN into an unclipped 1340 × 800 POS; filtered logcat remains clean.
-  Graphify refreshed to 2,740 nodes and 44,944 edges. Exact next action:
-  commit and push POLICY-03, record its SHA, and mark Goal 05 complete.
+  Graphify refreshed to 2,740 nodes and 44,944 edges. Commit
+  `6f4c6a28d4015f43f22f4f9691147ecfa761ea95` is pushed to the canonical branch.
+  Goal 05 is complete; exact next action is await Goal 06 activation.
 
 ## Planning journal
 

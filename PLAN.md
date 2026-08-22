@@ -74,7 +74,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 02 | Functional offline-capable Android beta | done | goals/GOAL-02-FUNCTIONAL-APPLICATION-BETA.md |
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
-| Goal 05 | Business policy, identity, and permissions | active; POLICY-03 in progress | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
+| Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
 | Goal 06 | Customer loyalty and instant identification | planned; owner decisions required | goals/GOAL-06-CUSTOMER-LOYALTY.md |
 | Goal 07 | Owner-led simplification, startup, release hardening, and final acceptance | planned; last | goals/GOAL-07-PRODUCTION-HARDENING.md |
 
@@ -95,8 +95,8 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 and 04 are complete. Goal 05 is active with POLICY-03 as its only
-in-progress card.
+Goals 03 through 05 are complete. Goal 06 remains planned pending LOYALTY-01
+owner decisions.
 
 ## Goal 04 — Costs and profitability
 
@@ -133,7 +133,7 @@ owner's confirmed operating rules and a production identity boundary.
 | ID-03 | Verify offline login/lock/restart/recovery, session expiry, failed access, salary isolation, and management protection on the tablet. |
 | POLICY-03 | Run policy, identity, permission, security, browser, Android, tablet, documentation, and push closeout. |
 
-POLICY-01 through ID-03 are complete. POLICY-03 is the only in-progress card.
+POLICY-01 through POLICY-03 are complete.
 
 ## Goal 06 — Customer loyalty and instant identification
 
@@ -190,5 +190,4 @@ or a neutral fallback, and the owner accepts the production workflow.
 
 ## Exact next action
 
-Goal 05 is active with POLICY-03 as its only in-progress card. Goal 06 remains
-planned until Goal 05 completes and the owner answers LOYALTY-01.
+Goal 05 is complete. Goal 06 remains planned until the owner answers LOYALTY-01.

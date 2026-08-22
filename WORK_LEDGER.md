@@ -9,7 +9,7 @@ remaining goal and card sequence.
 
 ### Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active
+**Status:** complete
 
 **Goal branch:** `codex/goal-05-policy-identity-permissions`
 
@@ -22,7 +22,7 @@ remaining goal and card sequence.
 | POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | done — `2bab5512e5d7e9ccb6cfb54a13f79a0ed58654f8` on `origin/codex/goal-05-policy-identity-permissions` |
 | ORDER-01 — Implement authorized cancellation/refund corrections and reversals | done — `eedbcc04d5e8cad91e3bac92e0acc7419a1d0f59` on `origin/codex/goal-05-policy-identity-permissions` |
 | ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | done — `fa132a8c4a5b82f2114f430b25718bcada5593de` on `origin/codex/goal-05-policy-identity-permissions` |
-| POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | in progress |
+| POLICY-03 — Run policy, security, regression, tablet, documentation, and push closeout | done — `6f4c6a28d4015f43f22f4f9691147ecfa761ea95` on `origin/codex/goal-05-policy-identity-permissions` |
 
 ## Most Recently Completed Goal
 
@@ -78,10 +78,10 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; POLICY-03
-  is the only card in progress. ID-03 commit
-  `fa132a8c4a5b82f2114f430b25718bcada5593de` is pushed and recorded on the
-  canonical remote branch.
+- Goal 05 is complete on `codex/goal-05-policy-identity-permissions`. POLICY-03
+  commit `6f4c6a28d4015f43f22f4f9691147ecfa761ea95` is pushed and recorded on the
+  canonical remote branch. Goal 06 remains planned pending LOYALTY-01 owner
+  decisions.
 - ID-02 audit repair is complete: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
@@ -165,8 +165,8 @@ remaining goal and card sequence.
   deployment typecheck, and diff check pass. SM-X115 has the final APK
   installed, unlocked with the owner PIN, fitted at 1340 × 800, and recent
   filtered logcat is clean. Graphify refreshed to 2,740 nodes and 44,944 edges.
-  Exact next action: commit and push POLICY-03, record its SHA, and mark Goal 05
-  complete.
+  Commit `6f4c6a28d4015f43f22f4f9691147ecfa761ea95` is pushed to the canonical
+  branch. Goal 05 is complete; exact next action is await Goal 06 activation.
 
 ### 2026-08-22 — POLICY-02 checkout policy completed
 
