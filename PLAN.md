@@ -94,8 +94,7 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goal 03 is active. Continue from the single in-progress card recorded in
-WORK_LEDGER.md.
+Goal 03 is complete. Goal 04 remains inactive until explicit user activation.
 
 ## Goal 04 — Costs and profitability
 
