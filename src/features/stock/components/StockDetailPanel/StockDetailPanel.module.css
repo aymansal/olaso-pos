@@ -256,6 +256,16 @@
   color: var(--olaso-stock-warning-copy);
 }
 
+.costSummary {
+  position: absolute;
+  top: 332px;
+  left: 22px;
+  width: 396px;
+  margin: 0;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+}
+
 .warningHealthy {
   color: var(--olaso-green);
   background: var(--olaso-green-icon);
@@ -275,12 +285,12 @@
 }
 
 .levelSectionDivider {
-  top: 346px;
+  top: 360px;
 }
 
 .recipes {
   position: absolute;
-  top: 364px;
+  top: 378px;
   left: 22px;
   width: 396px;
   height: 140px;
@@ -329,7 +339,7 @@
 
 .movements {
   position: absolute;
-  top: 516px;
+  top: 526px;
   left: 22px;
   width: 396px;
   height: 92px;

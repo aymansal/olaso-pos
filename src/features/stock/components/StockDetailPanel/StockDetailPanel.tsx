@@ -17,6 +17,7 @@ import {
   ingredientLevel,
   movementLabel,
 } from '../../stockPresentation';
+import { formatMoney } from '../../../../lib/money';
 import { StockIcon } from '../StockIcon/StockIcon';
 import styles from './StockDetailPanel.module.css';
 
@@ -29,6 +30,7 @@ interface StockDetailPanelProps {
     ingredient: ManagedIngredient,
     mode: StockAdjustmentMode,
   ) => void;
+  onReceivePurchase: (ingredient: ManagedIngredient) => void;
 }
 
 function movementTime(timestamp: number) {
@@ -46,6 +48,7 @@ export function StockDetailPanel({
   isLoading,
   onEdit,
   onAdjust,
+  onReceivePurchase,
 }: StockDetailPanelProps) {
   const [showHistory, setShowHistory] = useState(false);
 
@@ -71,6 +74,9 @@ export function StockDetailPanel({
   const recentMovements = detail?.movements.slice(0, 2) ?? [];
   const linkedRecipes = detail?.linkedRecipes.slice(0, 3) ?? [];
   const archived = ingredient.status === 'archived';
+  const inventoryValue = ingredient.inventoryValueCentimes;
+  const averageCost = inventoryValue === undefined || ingredient.currentStockQuantity === 0
+    ? undefined : Math.round(inventoryValue / ingredient.currentStockQuantity);
 
   return (
     <aside className={styles.panel} aria-labelledby="stock-item-title">
@@ -147,6 +153,7 @@ export function StockDetailPanel({
             </span>
           ))}
         </div>
+        <p className={styles.costSummary}>{ingredient.costStatus === 'complete' && inventoryValue !== undefined ? <>Inventory value {formatMoney(inventoryValue)} · average {formatMoney(averageCost ?? 0)} / {formatStockQuantity(1, ingredient.baseUnit)}</> : 'Cost incomplete — receive a priced package before claiming inventory value.'}</p>
         <div
           className={`${styles.warning} ${level === 'Healthy' ? styles.warningHealthy : ''} ${archived ? styles.warningArchived : ''}`}
         >
@@ -242,10 +249,10 @@ export function StockDetailPanel({
           className={styles.receive}
           type="button"
           disabled={archived}
-          onClick={() => onAdjust(ingredient, 'receive')}
+          onClick={() => onReceivePurchase(ingredient)}
         >
           <ArrowDown size={15} aria-hidden="true" />
-          <span>Receive stock</span>
+          <span>Receive purchase</span>
         </button>
       </footer>
 

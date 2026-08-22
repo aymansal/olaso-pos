@@ -186,7 +186,7 @@ export const getDetail = query({
     const ingredient = await ctx.db.get(args.ingredientId);
     if (!ingredient) return notFound('Ingredient');
 
-    const [movements, recipeItems] = await Promise.all([
+    const [movements, recipeItems, purchases] = await Promise.all([
       ctx.db
         .query('stockMovements')
         .withIndex('by_ingredient_created_at', (index) =>
@@ -201,10 +201,18 @@ export const getDetail = query({
         )
         .order('desc')
         .take(MAX_RECIPE_LINKS + 1),
+      ctx.db
+        .query('inventoryPurchases')
+        .withIndex('by_ingredient_received_at', (index) =>
+          index.eq('ingredientId', ingredient._id),
+        )
+        .order('desc')
+        .take(MAX_RECENT_MOVEMENTS + 1),
     ]);
     if (
       movements.length > MAX_RECENT_MOVEMENTS ||
-      recipeItems.length > MAX_RECIPE_LINKS
+      recipeItems.length > MAX_RECIPE_LINKS ||
+      purchases.length > MAX_RECENT_MOVEMENTS
     ) {
       throw new Error('Ingredient detail exceeded its bounded limit.');
     }
@@ -242,6 +250,7 @@ export const getDetail = query({
     return {
       ingredient,
       movements,
+      purchases,
       linkedRecipes: linkedRecipes.slice(0, 20),
     };
   },

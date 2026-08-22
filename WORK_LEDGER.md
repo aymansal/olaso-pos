@@ -84,8 +84,23 @@ remaining goal and card sequence.
 - COST-03 will extend the existing Stock receive interaction with package math,
   purchase cost, carrying value, average cost, and append-only purchase/
   valuation history while retaining visibly distinct ordinary adjustments.
-- Exact next action: re-query Graphify and read the Stock component/data chain
-  before implementing COST-03.
+- COST-03 now returns bounded purchase history with each selected ingredient,
+  maps valuation state through the Stock data boundary, presents carrying value
+  and average cost/incomplete state in the existing detail panel, and opens a
+  package-receipt dialog from the existing receive action.
+- Graphify is refreshed to 2,457 nodes and 5,643 edges; focused TypeScript,
+  inventory, and production-build checks pass.
+- Exact next action: run browser interaction QA for the package dialog, then
+  Android beta/install and a physical Stock package-receipt smoke test before
+  committing COST-03.
+- Browser QA at 1340 × 800 verified a 12-piece, 48 MAD package receipt changes
+  stock 9→21, carrying value 36→84 MAD, average cost, status, and append-only
+  purchase history. After deploying the updated query, no new browser errors
+  occurred.
+- Android beta built successfully; the current APK is installed on SM-X115. The
+  unlocked physical Stock screen opens the complete package-receipt dialog with
+  visible fields, package math, and no console/logcat errors. COST-03 is ready
+  for final focused checks and commit/push.
 - PRINT-08 closeout commit
   `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -490,6 +505,20 @@ remaining goal and card sequence.
 - COST-03 is now the only card in progress. Next: inspect the Stock component and
   application-data chain, then connect package receiving and valuation history
   without adding a second inventory screen.
+
+### 2026-08-22 — COST-03 Stock workflow implementation started
+
+- Extended the bounded ingredient detail query with indexed recent purchases;
+  the Stock data hook maps valuation fields and purchase records into plain
+  feature contracts.
+- Added one `PurchaseDialog` under the existing Stock feature and routed the
+  existing receive action to its retry-safe package-receipt mutation. The
+  existing adjustment action remains separate.
+- The selected-item panel now states complete/incomplete cost status and shows
+  inventory carrying value plus average cost when known. TypeScript,
+  inventory, production build, and structural Graphify checks pass.
+- Next: inspect the interaction at 1340 × 800 and on SM-X115, then complete the
+  card verification/commit/push sequence.
 
 ### 2026-08-22 — Goal 03 handoff audited
 

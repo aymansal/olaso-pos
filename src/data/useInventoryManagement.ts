@@ -9,6 +9,7 @@ import type {
   InventoryMetrics,
   ManagedIngredient,
   ManagedIngredientDetail,
+  ManagedPurchase,
   StockAdjustmentMode,
 } from '../features/stock/stockManagementTypes';
 import { keyFromName, newMutationId } from './managementMutations';
@@ -41,6 +42,7 @@ export function useInventoryManagement(selectedIngredientId?: string) {
   const recordAdjustmentMutation = useMutation(
     api.inventory.recordAdjustment,
   );
+  const receivePurchaseMutation = useMutation(api.inventory.receivePurchase);
 
   const ingredients: ManagedIngredient[] =
     inventoryQuery.status === 'success'
@@ -50,6 +52,9 @@ export function useInventoryManagement(selectedIngredientId?: string) {
           name: ingredient.name,
           baseUnit: ingredient.baseUnit,
           currentStockQuantity: ingredient.currentStockQuantity,
+          inventoryValueCentimes: ingredient.inventoryValueCentimes,
+          costStatus: ingredient.costStatus ?? 'incomplete',
+          valuationRevision: ingredient.valuationRevision ?? 0,
           lowStockThreshold: ingredient.lowStockThreshold,
           usedToday: ingredient.usedToday,
           status: ingredient.status,
@@ -77,6 +82,17 @@ export function useInventoryManagement(selectedIngredientId?: string) {
             actorLabel: movement.actorLabel,
             businessDate: movement.businessDate,
             createdAt: movement.createdAt,
+          })),
+          purchases: detailQuery.data.purchases.map((purchase): ManagedPurchase => ({
+            id: purchase._id,
+            packageLabel: purchase.packageLabel,
+            packageCount: purchase.packageCount,
+            quantityPerPackage: purchase.quantityPerPackage,
+            totalQuantity: purchase.totalQuantity,
+            packagePriceCentimes: purchase.packagePriceCentimes,
+            totalCostCentimes: purchase.totalCostCentimes,
+            transactionType: purchase.transactionType,
+            receivedAt: purchase.receivedAt,
           })),
           linkedRecipes: detailQuery.data.linkedRecipes.map((recipe) => ({
             productId: recipe.productId,
@@ -144,6 +160,25 @@ export function useInventoryManagement(selectedIngredientId?: string) {
         reason,
         expectedRevision: ingredient.revision,
         businessDate,
+        clientMutationId: newMutationId(),
+      }),
+    receivePurchase: (
+      ingredient: ManagedIngredient,
+      input: {
+        packageLabel: string;
+        packageCount: number;
+        quantityPerPackage: number;
+        packagePriceCentimes: number;
+        supplierLabel?: string;
+        note?: string;
+      },
+    ) =>
+      receivePurchaseMutation({
+        ingredientId: ingredient.id as Id<'ingredients'>,
+        ...input,
+        receivedAt: Date.now(),
+        businessDate,
+        expectedRevision: ingredient.revision,
         clientMutationId: newMutationId(),
       }),
   };

@@ -6,6 +6,7 @@ import { IngredientDialog } from './components/IngredientDialog/IngredientDialog
 import { StockAdjustmentDialog } from './components/StockAdjustmentDialog/StockAdjustmentDialog';
 import { StockDetailPanel } from './components/StockDetailPanel/StockDetailPanel';
 import { StockInventoryPanel } from './components/StockInventoryPanel/StockInventoryPanel';
+import { PurchaseDialog } from './components/PurchaseDialog/PurchaseDialog';
 import type {
   IngredientSaveInput,
   ManagedIngredient,
@@ -42,6 +43,7 @@ export function StockScreen({
     ingredient: ManagedIngredient;
     mode: StockAdjustmentMode;
   }>();
+  const [purchaseIngredient, setPurchaseIngredient] = useState<ManagedIngredient>();
   const initialized = useRef(false);
   const inventory = useInventoryManagement(selectedIngredientId);
 
@@ -129,6 +131,7 @@ export function StockScreen({
         isLoading={inventory.isDetailLoading}
         onEdit={setIngredientEditor}
         onAdjust={(ingredient, mode) => setAdjustment({ ingredient, mode })}
+        onReceivePurchase={setPurchaseIngredient}
       />
       {ingredientEditor ? (
         <IngredientDialog
@@ -157,6 +160,7 @@ export function StockScreen({
           }}
         />
       ) : null}
+      {purchaseIngredient ? <PurchaseDialog ingredient={purchaseIngredient} onClose={() => setPurchaseIngredient(undefined)} onSave={async (input) => { await inventory.receivePurchase(purchaseIngredient, input); }} /> : null}
     </main>
   );
 }

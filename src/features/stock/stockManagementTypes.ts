@@ -10,6 +10,9 @@ export type ManagedIngredient = {
   name: string;
   baseUnit: StockBaseUnit;
   currentStockQuantity: number;
+  inventoryValueCentimes?: number;
+  costStatus: 'complete' | 'incomplete';
+  valuationRevision: number;
   lowStockThreshold: number;
   usedToday: number;
   status: 'active' | 'archived';
@@ -48,8 +51,21 @@ export type ManagedLinkedRecipe = {
   quantity: number;
 };
 
+export type ManagedPurchase = {
+  id: string;
+  packageLabel: string;
+  packageCount: number;
+  quantityPerPackage: number;
+  totalQuantity: number;
+  packagePriceCentimes: number;
+  totalCostCentimes: number;
+  transactionType: 'received' | 'reversal';
+  receivedAt: number;
+};
+
 export type ManagedIngredientDetail = {
   movements: ManagedStockMovement[];
+  purchases: ManagedPurchase[];
   linkedRecipes: ManagedLinkedRecipe[];
 };
 
