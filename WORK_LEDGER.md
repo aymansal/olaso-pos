@@ -18,8 +18,8 @@ remaining goal and card sequence.
 | COST-01 — Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | done — `9750fbc299f9b9b1770fd021352a3708b29dd7ba` on `origin/codex/goal-04-costs-profitability` |
 | COST-02 — Add retry-safe ingredient purchases and weighted-average inventory valuation | done — `6b2a0208254f03327cbb84aa6f5f9e36b4cdf018` on `origin/codex/goal-04-costs-profitability` |
 | COST-03 — Connect package-based receiving, valuation, and purchase history to Stock | done — `bfe73a67062e95de0127fe0ea42b0a981bb15314` on `origin/codex/goal-04-costs-profitability` |
-| COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | in progress |
-| COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | pending |
+| COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | done — `551856a3c3e35c057ca70d91e23667831a33c2a5` on `origin/codex/goal-04-costs-profitability` |
+| COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | in progress |
 | COST-06 — Add staff profiles and owner-only effective compensation periods | pending |
 | COST-07 — Add validated one-time and recurring operating expenses | pending |
 | COST-08 — Add the bounded monthly Costs and Profitability report | pending |
@@ -74,6 +74,8 @@ remaining goal and card sequence.
 - COST-03 is complete and pushed as `bfe73a67062e95de0127fe0ea42b0a981bb15314`
   on `origin/codex/goal-04-costs-profitability`.
 - COST-04 is the only card in progress.
+- COST-04 is complete and pushed as `551856a3c3e35c057ca70d91e23667831a33c2a5`.
+- COST-05 is the only card in progress.
 - Verified: exact-cost check, SQLite migration/restart check, inventory seed
   fixture check, Convex typecheck/deploy, TypeScript, production build, and
   Capacitor Android sync. Graphify is refreshed to 2,441 nodes and 5,603 edges.
@@ -570,6 +572,16 @@ remaining goal and card sequence.
   to 2,462 nodes and 5,639 edges.
 - Next: browser/tablet verification of complete and incomplete product-cost
   states, then COST-04 commit/push closeout.
+
+### 2026-08-22 — COST-04 complete; COST-05 started
+
+- Committed `COST-04: add product cost margins` as
+  `551856a3c3e35c057ca70d91e23667831a33c2a5`, pushed it to
+  `origin/codex/goal-04-costs-profitability`, and verified the remote SHA.
+- Browser and unlocked SM-X115 Products evidence confirms complete direct cost,
+  gross profit, margin, and no layout/logcat regression.
+- COST-05 is now the only card in progress. Next: inspect local sale transaction,
+  sync payload, and cloud acceptance boundaries for immutable cost snapshots.
 
 ### 2026-08-22 — Goal 03 handoff audited
 
