@@ -87,8 +87,8 @@ sensitive compensation data.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| COST-01 | Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | in progress | Focused cost, SQLite migration, inventory fixture, Convex typecheck/deploy, TypeScript, production build, Android beta, physical Stock smoke, and Graphify pass; commit/push SHA recording remains. |
-| COST-02 | Add retry-safe ingredient purchases and weighted-average inventory valuation | pending | — |
+| COST-01 | Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | done | `9750fbc299f9b9b1770fd021352a3708b29dd7ba` pushed to `origin/codex/goal-04-costs-profitability`; focused/domain/cloud/build/Android/physical/Graphify evidence passed. |
+| COST-02 | Add retry-safe ingredient purchases and weighted-average inventory valuation | in progress | — |
 | COST-03 | Connect package-based receiving, valuation, and purchase history to Stock | pending | — |
 | COST-04 | Show complete/incomplete recipe and product costs, gross profit, and margin | pending | — |
 | COST-05 | Save and synchronize immutable offline sale-cost snapshots and correction reversals | pending | — |
@@ -207,12 +207,10 @@ sensitive compensation data.
 - `PRODUCT.md` and `ARCHITECTURE.md` define the approved cost model.
 - Goal 04 is active on `codex/goal-04-costs-profitability`; COST-01 is the only
   card in progress.
-- COST-01 has the exact-cost primitives, cost shapes/indexes, ordered local
-  migration, deterministic complete/incomplete fixtures, Android beta, and
-  physical SM-X115 Stock smoke evidence. The implementation commit/push and
-  SHA recording are the only remaining completion gate.
-- Exact next action: commit and push COST-01, record its full SHA in the ledger,
-  then activate COST-02.
+- COST-01 is complete and pushed as `9750fbc299f9b9b1770fd021352a3708b29dd7ba`.
+- COST-02 is the only card in progress.
+- Exact next action: re-query Graphify and implement retry-safe package receiving
+  with append-only weighted-average valuation history.
 
 ## Planning Journal
 

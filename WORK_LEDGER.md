@@ -15,8 +15,8 @@ remaining goal and card sequence.
 
 | Card | Status |
 | --- | --- |
-| COST-01 — Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | in progress |
-| COST-02 — Add retry-safe ingredient purchases and weighted-average inventory valuation | pending |
+| COST-01 — Add exact cost primitives, schema/migration plan, indexes, and deterministic cost fixtures | done — `9750fbc299f9b9b1770fd021352a3708b29dd7ba` on `origin/codex/goal-04-costs-profitability` |
+| COST-02 — Add retry-safe ingredient purchases and weighted-average inventory valuation | in progress |
 | COST-03 — Connect package-based receiving, valuation, and purchase history to Stock | pending |
 | COST-04 — Show complete/incomplete recipe and product costs, gross profit, and margin | pending |
 | COST-05 — Save and synchronize immutable offline sale-cost snapshots and correction reversals | pending |
@@ -66,8 +66,9 @@ remaining goal and card sequence.
   branch changes.
 - Graphify was queried before code inspection; it identifies the established
   inventory, recipes, local sales, sync, Stock, and Reports ownership paths.
-- COST-01 foundation and its Android/tablet gate are verified; the card remains
-  in progress only until its implementation commit is pushed and recorded.
+- COST-01 is complete and pushed as `9750fbc299f9b9b1770fd021352a3708b29dd7ba`
+  on `origin/codex/goal-04-costs-profitability`.
+- COST-02 is the only card in progress.
 - Verified: exact-cost check, SQLite migration/restart check, inventory seed
   fixture check, Convex typecheck/deploy, TypeScript, production build, and
   Capacitor Android sync. Graphify is refreshed to 2,441 nodes and 5,603 edges.
@@ -75,8 +76,9 @@ remaining goal and card sequence.
   140-task debug beta, install it on SM-X115, and run a cold-launch/Stock smoke
   test. The real 1340 × 800 POS and Stock screens are unclipped; post-unlock
   logcat has no Capacitor-console errors, uncaught exceptions, or crashes.
-- Exact next action: commit and push the verified COST-01 implementation, then
-  record its full SHA and remote branch before advancing to COST-02.
+- Exact next action: re-query Graphify and inspect the existing inventory
+  mutation/history paths before implementing retry-safe package receiving and
+  weighted-average valuation for COST-02.
 - PRINT-08 closeout commit
   `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -439,6 +441,19 @@ remaining goal and card sequence.
   found no Capacitor-console errors, uncaught exceptions, or crash records.
 - COST-01 is ready for the required implementation commit and push; it remains
   the only card in progress until that SHA is recorded.
+
+### 2026-08-22 — COST-01 complete; COST-02 started
+
+- Committed `COST-01: add exact cost foundation` as
+  `9750fbc299f9b9b1770fd021352a3708b29dd7ba`, pushed it to
+  `origin/codex/goal-04-costs-profitability`, and verified the remote resolves
+  to the same full SHA.
+- COST-01 is done only after focused checks, production build, Android sync and
+  beta build, physical SM-X115 install/Stock smoke, clean relevant logcat, and
+  Graphify evidence passed.
+- COST-02 is now the only card in progress. Next: inspect the established
+  inventory mutation/history ownership and implement package receiving with
+  append-only weighted-average valuation.
 
 ### 2026-08-22 — Goal 03 handoff audited
 
