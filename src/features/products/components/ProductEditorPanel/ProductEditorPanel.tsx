@@ -14,6 +14,7 @@ import type {
   ManagedModifierGroup,
   ManagedProduct,
   ManagedRecipeData,
+  ManagedProductCost,
   ProductSaveInput,
 } from '../../productManagementTypes';
 import { ModifierGroupDialog } from '../ModifierGroupDialog/ModifierGroupDialog';
@@ -30,6 +31,7 @@ interface ProductEditorPanelProps {
   ingredients: ManagedIngredient[];
   recipeData?: ManagedRecipeData;
   isRecipeLoading: boolean;
+  cost?: ManagedProductCost;
   onSave: (input: ProductSaveInput) => Promise<void>;
   onSetStatus: (
     product: ManagedProduct,
@@ -64,6 +66,7 @@ export function ProductEditorPanel({
   ingredients,
   recipeData,
   isRecipeLoading,
+  cost,
   onSave,
   onSetStatus,
   onSaveModifierGroup,
@@ -112,6 +115,9 @@ export function ProductEditorPanel({
     : available
       ? 'Active'
       : 'Unavailable';
+  const priceCentimes = Math.round(Number(priceMad) * 100);
+  const grossProfit = cost?.complete && cost.costCentimes !== undefined ? priceCentimes - cost.costCentimes : undefined;
+  const margin = grossProfit === undefined || priceCentimes <= 0 ? undefined : Math.round(grossProfit * 10000 / priceCentimes) / 100;
 
   async function save() {
     setSaving(true);
@@ -368,6 +374,9 @@ export function ProductEditorPanel({
           <ArrowRight size={11} weight="regular" aria-hidden="true" />
         </button>
       </div>
+      <p className={`${styles.cost} ${cost?.complete ? styles.costComplete : ''}`}>
+        {cost?.complete && cost.costCentimes !== undefined ? `Direct cost ${formatMad(cost.costCentimes)} · gross profit ${formatMad(grossProfit ?? 0)} · margin ${margin}%` : cost?.hasRecipe ? `Cost incomplete: ${cost.missingIngredientIds?.length ?? 0} ingredient cost${(cost.missingIngredientIds?.length ?? 0) === 1 ? '' : 's'} missing.` : 'Cost incomplete: add a recipe first.'}
+      </p>
 
       {message ? <p className={styles.notice}>{message}</p> : null}
       <button

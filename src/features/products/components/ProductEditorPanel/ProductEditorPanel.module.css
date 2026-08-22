@@ -480,6 +480,8 @@
   font-weight: 600;
 }
 
+.cost { position:absolute; top:578px; left:22px; width:396px; margin:0; color:var(--olaso-danger-ink); font-size:8px; font-weight:600; text-align:center; }.costComplete { color:var(--olaso-green); }
+
 .save {
   position: absolute;
   top: 620px;

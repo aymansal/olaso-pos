@@ -77,6 +77,13 @@ export type ManagedRecipeData = {
   ingredients: ManagedIngredient[];
 };
 
+export type ManagedProductCost = {
+  complete: boolean;
+  hasRecipe: boolean;
+  costCentimes?: number;
+  missingIngredientIds?: string[];
+};
+
 export type ProductSaveInput = {
   id?: string;
   name: string;

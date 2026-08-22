@@ -211,6 +211,7 @@ export function ProductsScreen({
         ingredients={management.ingredients}
         recipeData={management.recipeData}
         isRecipeLoading={management.isRecipeLoading}
+        cost={management.cost}
         onSave={saveProduct}
         onSetStatus={setProductStatus}
         onSaveModifierGroup={saveModifierGroup}

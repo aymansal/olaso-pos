@@ -24,6 +24,10 @@ export function useProductManagement(selectedProductId?: string) {
       ? { productId: selectedProductId as Id<'products'> }
       : 'skip',
   });
+  const costQuery = useQuery({
+    query: api.recipes.getCost,
+    args: selectedProductId ? { productId: selectedProductId as Id<'products'> } : 'skip',
+  });
 
   const saveCategoryMutation = useMutation(api.categories.save);
   const setCategoryArchivedMutation = useMutation(
@@ -145,6 +149,7 @@ export function useProductManagement(selectedProductId?: string) {
     modifierGroups,
     ingredients,
     recipeData,
+    cost: costQuery.status === 'success' ? costQuery.data : undefined,
     isLoading: queries.some((result) => result.status === 'pending'),
     isRecipeLoading:
       Boolean(selectedProductId) && recipeQuery.status === 'pending',

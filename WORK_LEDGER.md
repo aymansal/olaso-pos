@@ -106,6 +106,19 @@ remaining goal and card sequence.
   for final focused checks and commit/push.
 - Exact next action: re-query Graphify and inspect the recipe/product management
   and cost helper paths before implementing current product costs and margin.
+- COST-04 now has a deployed bounded `recipes.getCost` query. It returns active
+  recipe cost completeness, exact centimes, named missing ingredient IDs, and
+  per-modifier ingredient cost effects; Cappuccino's deterministic fixture is
+  complete at 504 centimes with the checked modifier costs.
+- Exact next action: map the cost result to the product editor and show price,
+  direct cost, gross profit, margin, and explicit missing ingredients, then run
+  focused/browser/Android verification.
+- The product hook and editor now show selling price, current direct cost, gross
+  profit, margin, and explicit incomplete/missing-cost state without allocating
+  compensation or overhead. TypeScript and production build pass; Graphify is
+  refreshed to 2,462 nodes and 5,639 edges.
+- Exact next action: verify the complete and incomplete product-cost states at
+  1340 × 800 and on SM-X115, then complete COST-04 checks and commit/push.
 - PRINT-08 closeout commit
   `1c1a34706154b3e6b93e92f4a83f9cc1a10493d9` is pushed to
   `origin/codex/goal-03-printing-integration`.
@@ -536,6 +549,27 @@ remaining goal and card sequence.
   clean relevant console/logcat output.
 - COST-04 is now the only card in progress. Next: calculate and present current
   active-recipe/product cost, gross profit, margin, and missing-cost ingredients.
+
+### 2026-08-22 — COST-04 domain calculation started
+
+- Added and deployed one bounded active-recipe cost query that reads the current
+  carrying value only, allocates direct ingredient cost deterministically, and
+  returns explicit incompleteness rather than zero for missing cost inputs.
+- Modifier additions/substitutions are returned as separate exact-cost effects;
+  Cappuccino verifies at 504 centimes direct cost with checked option effects.
+- Next: map the query into the existing product-editor presentation and verify
+  the complete/incomplete margin states at browser and tablet reference sizes.
+
+### 2026-08-22 — COST-04 product-cost presentation implemented
+
+- Mapped the bounded active-recipe cost query into the existing Products data
+  hook and editor. The editor now presents selling price, direct ingredient
+  cost, gross profit, margin, and an explicit missing-cost count.
+- No compensation, rent, utilities, or arbitrary overhead is included in the
+  per-product measure. TypeScript and production build pass; Graphify refreshed
+  to 2,462 nodes and 5,639 edges.
+- Next: browser/tablet verification of complete and incomplete product-cost
+  states, then COST-04 commit/push closeout.
 
 ### 2026-08-22 — Goal 03 handoff audited
 

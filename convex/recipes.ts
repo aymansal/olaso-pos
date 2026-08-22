@@ -1,5 +1,7 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
+import type { Id } from './_generated/dataModel';
+import { allocateCentimes } from '../src/lib/costs';
 import {
   boundedInteger,
   cleanOptionalText,
@@ -13,6 +15,69 @@ import {
 const MAX_RECIPE_ITEMS = 50;
 const MAX_INGREDIENTS = 100;
 const MAX_RECIPE_VERSIONS = 20;
+
+function ingredientCost(ingredient: {
+  _id: string;
+  currentStockQuantity: number;
+  inventoryValueCentimes?: number;
+  costStatus?: 'complete' | 'incomplete';
+}, quantity: number) {
+  if (
+    ingredient.costStatus !== 'complete' ||
+    ingredient.inventoryValueCentimes === undefined ||
+    ingredient.currentStockQuantity <= 0
+  ) return undefined;
+  return allocateCentimes(
+    ingredient.inventoryValueCentimes,
+    ingredient.currentStockQuantity,
+    quantity,
+  );
+}
+
+export const getCost = query({
+  args: { productId: v.id('products') },
+  handler: async (ctx, args) => {
+    await requireManagement(ctx);
+    const product = await ctx.db.get(args.productId);
+    if (!product) return notFound('Product');
+    if (!product.currentRecipeVersionId) {
+      return { complete: false, missingIngredientIds: [], hasRecipe: false, modifierCosts: [] };
+    }
+    const recipeItems = await ctx.db.query('recipeItems')
+      .withIndex('by_recipe_version', (index) => index.eq('recipeVersionId', product.currentRecipeVersionId!))
+      .take(MAX_RECIPE_ITEMS + 1);
+    if (recipeItems.length > MAX_RECIPE_ITEMS) throw new Error('Recipe cost exceeded its bounded limit.');
+    const ingredientIds = new Set(recipeItems.map((item) => item.ingredientId));
+    const groups = await Promise.all(product.modifierGroupIds.map((id) => ctx.db.get(id)));
+    const options = (await Promise.all(groups.filter(Boolean).map((group) => ctx.db.query('modifierOptions')
+      .withIndex('by_group_status_sort_order', (index) => index.eq('groupId', group!._id).eq('status', 'active'))
+      .take(101)))).flat();
+    for (const option of options) for (const effect of option.ingredientEffects) ingredientIds.add(effect.ingredientId);
+    const ingredients = await Promise.all([...ingredientIds].map((id) => ctx.db.get(id)));
+    const byId = new Map(ingredients.filter(Boolean).map((ingredient) => [ingredient!._id, ingredient!]));
+    const calculate = (effects: Array<{ ingredientId: Id<'ingredients'>; quantity: number }>) => {
+      const missingIngredientIds: string[] = [];
+      let costCentimes = 0;
+      for (const effect of effects) {
+        const ingredient = byId.get(effect.ingredientId);
+        const cost = ingredient ? ingredientCost(ingredient, Math.abs(effect.quantity)) : undefined;
+        if (cost === undefined) missingIngredientIds.push(effect.ingredientId);
+        else costCentimes += effect.quantity < 0 ? -cost : cost;
+      }
+      return missingIngredientIds.length ? { complete: false as const, missingIngredientIds: [...new Set(missingIngredientIds)].sort() } : { complete: true as const, costCentimes };
+    };
+    const base = calculate(recipeItems.map((item) => ({ ingredientId: item.ingredientId, quantity: item.quantity })));
+    return {
+      ...base,
+      hasRecipe: true,
+      modifierCosts: options.map((option) => ({
+        optionId: option._id,
+        optionName: option.name,
+        ...calculate(option.ingredientEffects.map((effect) => ({ ingredientId: effect.ingredientId, quantity: effect.quantityDelta }))),
+      })),
+    };
+  },
+});
 
 export const getEditorData = query({
   args: { productId: v.id('products') },
