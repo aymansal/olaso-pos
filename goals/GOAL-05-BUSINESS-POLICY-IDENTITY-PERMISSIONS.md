@@ -8,7 +8,7 @@ owns only Goal 05 execution scope and card order.
 
 **Goal:** Goal 05 — Business Policy, Identity, and Permissions
 
-**Status:** active; ID-02 in progress
+**Status:** active; PERM-01 in progress
 
 **Objective:** Replace temporary beta business rules and development-only
 authorization with the owner's confirmed operating policy, production identity
@@ -100,8 +100,8 @@ append-only cancellation/refund correction workflows.
 | --- | --- | --- | --- |
 | POLICY-01 | Confirm and record the owner decision matrix | done | `eafe2d3e6603cbf5957c548b5e83473da05465df` pushed to `origin/codex/goal-05-policy-identity-permissions` |
 | ID-01 | Define the production identity, offline session, lock, recovery, and threat model | done | `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9` pushed to `origin/codex/goal-05-policy-identity-permissions` |
-| ID-02 | Add production identity/session persistence and remove production authorization bypass | in progress | Implementation inspection pending |
-| PERM-01 | Enforce role permissions and sensitive-data return boundaries | pending | — |
+| ID-02 | Add production identity/session persistence and remove production authorization bypass | done | `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` pushed to `origin/codex/goal-05-policy-identity-permissions` |
+| PERM-01 | Enforce role permissions and sensitive-data return boundaries | in progress | Matrix inspection pending |
 | POLICY-02 | Implement confirmed tax, payment, receipt, customer/table, and language policy | pending | — |
 | ORDER-01 | Implement authorized cancellation/refund corrections and reversals | pending | — |
 | ID-03 | Verify offline session, lock, restart, recovery, and failed-access behavior | pending | — |
@@ -211,8 +211,8 @@ append-only cancellation/refund correction workflows.
 
 ## Current checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01
-  and ID-01 are pushed and recorded; ID-02 is the only active card.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`. POLICY-01,
+  ID-01, and ID-02 are pushed and recorded; PERM-01 is the only active card.
 - The confirmed matrix above replaces former temporary tax, service, payment,
   correction, role, and lock assumptions. Exact next action is implementing
   the documented protected-session boundary without starting loyalty work.
@@ -226,7 +226,9 @@ append-only cancellation/refund correction workflows.
   secure preferences/SQLite/source scans contain no plaintext PIN/session.
   Reconnected tablet PIN entry returns to the full POS screen without filtered
   crash/console errors; Graphify is refreshed to 2,671 nodes and 12,431 edges.
-  Exact next action: commit/push ID-02 and record its SHA before PERM-01.
+  ID-02 was committed as `f7f3aea090101e30ad09dba3d556a1aa3c58eadc`, pushed,
+  and confirmed on the canonical branch. Exact next action: inspect and apply
+  the confirmed permission matrix for PERM-01.
 
 ## Planning journal
 

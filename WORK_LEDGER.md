@@ -17,8 +17,8 @@ remaining goal and card sequence.
 | --- | --- |
 | POLICY-01 — Confirm and record the owner decision matrix | done — `eafe2d3e6603cbf5957c548b5e83473da05465df` on `origin/codex/goal-05-policy-identity-permissions` |
 | ID-01 — Define the production identity, offline session, lock, recovery, and threat model | done — `682f64d16f51a0276700eb16f2e6a4b9a07e3cc9` on `origin/codex/goal-05-policy-identity-permissions` |
-| ID-02 — Add production identity/session persistence and remove production authorization override | in progress |
-| PERM-01 — Enforce role permissions and sensitive-data return boundaries | pending |
+| ID-02 — Add production identity/session persistence and remove production authorization override | done — `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` on `origin/codex/goal-05-policy-identity-permissions` |
+| PERM-01 — Enforce role permissions and sensitive-data return boundaries | in progress |
 | POLICY-02 — Implement confirmed tax, payment, receipt, customer/table, and language policy | pending |
 | ORDER-01 — Implement authorized cancellation/refund corrections and reversals | pending |
 | ID-03 — Verify offline session, lock, restart, recovery, and failed-access behavior | pending |
@@ -78,8 +78,10 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; ID-02 is
-  the only card in progress at `9a4560902172ef3fbafb1a49796eef2402481859`.
+- Goal 05 is active on `codex/goal-05-policy-identity-permissions`; PERM-01
+  is the only card in progress after ID-02 commit
+  `f7f3aea090101e30ad09dba3d556a1aa3c58eadc` was pushed and verified on the
+  canonical remote branch.
 - ID-02 audit repair is uncommitted: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
@@ -93,8 +95,9 @@ remaining goal and card sequence.
   identity/Android checks, production build, 140-task Android beta, and
   `git diff --check` pass. Reconnected-tablet PIN entry returned to the full
   POS screen with no filtered crash/console errors. Graphify refreshed to
-  2,671 nodes and 12,431 edges. Exact next action: commit/push ID-02 and
-  record its SHA before PERM-01 starts.
+  2,671 nodes and 12,431 edges. ID-02 is done. Exact next action: inspect the
+  owner/manager/cashier matrix and current Convex/local/UI data paths for
+  PERM-01 without changing policy behavior.
 - Graphify was queried before resuming work. It confirms the existing saved
   receipt, Orders, and print-state paths that Goal 05 must preserve.
 - POLICY-01 is fully confirmed. Its authority updates document logo-only
