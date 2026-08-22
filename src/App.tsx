@@ -34,6 +34,22 @@ export function App() {
       .finally(() => setSessionReady(true));
   }, []);
 
+  useEffect(() => {
+    if (!terminal || terminal.isLocked) return;
+    let timeout = window.setTimeout(lock, 5 * 60_000);
+    const reset = () => {
+      window.clearTimeout(timeout);
+      timeout = window.setTimeout(lock, 5 * 60_000);
+    };
+    window.addEventListener('pointerdown', reset, { passive: true });
+    window.addEventListener('keydown', reset);
+    return () => {
+      window.clearTimeout(timeout);
+      window.removeEventListener('pointerdown', reset);
+      window.removeEventListener('keydown', reset);
+    };
+  }, [terminal?.isLocked]);
+
   async function lock() {
     await setTerminalLocked(true);
     setTerminal((current) =>
