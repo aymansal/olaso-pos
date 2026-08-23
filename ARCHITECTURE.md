@@ -221,6 +221,19 @@ Each entry contains:
 The queue uses bounded retry delays. It does not spin continuously when the
 network is unavailable.
 
+Only `pending` entries are eligible for automatic sending. A transport failure
+uses one stable safe error classification and returns to `pending` only after a
+new validated connection. Business/server rejections remain `failed` and
+visible until deliberate recovery. Manual Sync may explicitly release all
+failed entries.
+
+The authenticated `ReconnectProvider` is the only automatic worker. It is
+mounted inside the active staff session, coalesces overlapping requests into
+one flight, sends at most ten batches of ten entries with a yield between full
+batches, and refreshes the operational cache only when the complete outbox is
+empty. POS, Orders, Dashboard, Reports, and Settings observe its completion
+revision through their existing data hooks; hidden screens remain unmounted.
+
 ### Idempotency
 
 Every sale is identified by `deviceId + localSaleId`.
@@ -845,9 +858,9 @@ may request a fresh native reading but never override it.
 
 Lock, POS, and Settings consume that shared state. Locked connection changes
 update presentation only and never start staff-authorized cloud work. POS and
-Orders no longer own separate browser-event retry listeners. OFF-05 owns the
-single authenticated reconnect worker and remains responsible for outbox,
-cache, and visible-screen refresh ordering.
+Orders no longer own separate browser-event retry listeners. The single
+authenticated reconnect worker owns outbox, cache, and visible-screen refresh
+ordering.
 
 The first release does not use WorkManager for sale synchronization. That API
 is appropriate for deferred background work that may outlive the visible app,

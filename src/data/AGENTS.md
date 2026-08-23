@@ -7,20 +7,19 @@ tablet's local SQLite operational record.
 
 ## Ownership
 
-- `usePosData.ts` hydrates the POS from the local operational cache and
-  coordinates bounded cloud refresh plus sale retries.
+- `usePosData.ts` hydrates the POS from the local operational cache and asks
+  the shared worker to synchronize after a committed sale.
 - `useOrdersData.ts` renders the bounded local history page before remote work
   settles, requests cloud pages only while Orders is mounted, merges rows by
   the sale idempotency key while preserving tablet-local print state, and
-  coordinates deliberate sync/reprint recovery.
+  coordinates deliberate retry/reprint recovery through the shared worker.
 - `useDashboardData.ts` makes one saved-summary snapshot request only while
   Dashboard is mounted and exposes explicit retry state.
 - `useReportsData.ts` makes one saved-summary range request only while Reports
   is mounted or its period changes, and exposes explicit retry state.
 - `useSettingsData.ts` loads local device/sync state, saves validated non-secret
-  preferences, performs one bounded synchronization attempt per deliberate
-  action, and coordinates explicit printer test/logo-setup actions without
-  claiming paper state.
+  preferences, delegates deliberate Sync to the shared worker, and coordinates
+  explicit printer test/logo-setup actions without claiming paper state.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
   safe failure copy.
@@ -29,6 +28,8 @@ tablet's local SQLite operational record.
   credentials.
 - `connectionContext.tsx` owns the single Android-validated connection state
   and its foreground/resume recheck; it does not synchronize application data.
+- `reconnectContext.tsx` owns the authenticated single-flight outbox worker,
+  cache refresh gate, and visible-hook completion revision.
 - `identitySession.ts` derives and persists one protected local session/PIN
   verifier/attempt-state record per provisioned staff profile after successful
   sign-in; it never exposes those values through ordinary local data contracts.
@@ -64,8 +65,11 @@ tablet's local SQLite operational record.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry; tab switches remain local and never start another query.
 - Never refresh cloud cache data over pending local outbox work.
-- Treat the shared connection context as display/readiness state only. OFF-05's
-  one reconnect worker owns automatic outbox and cache work.
+- Treat the shared connection context as display/readiness state only. The one
+  reconnect worker owns automatic outbox and cache work.
+- Automatic sync reads only pending rows, releases only classified connection
+  failures after a real reconnect, and retains business failures. Manual Sync
+  is the deliberate all-failure recovery action.
 - Treat the unauthenticated Lock-screen server profile list as read-only. Only
   after a successful online sign-in may its complete bounded result reconcile
   the local staff directory and remove stale protected access. If that result

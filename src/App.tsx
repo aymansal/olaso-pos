@@ -15,6 +15,7 @@ import { LockScreen } from './features/settings/LockScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { StockScreen } from './features/stock/StockScreen';
 import { StaffSessionProvider } from './data/sessionContext';
+import { ReconnectProvider } from './data/reconnectContext';
 import type { StaffSession } from './data/identitySession';
 import { hasPermission, type Permission } from './data/permissions';
 
@@ -127,6 +128,7 @@ export function App() {
 
   return (
     <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
+      <ReconnectProvider>
       {!hasPermission(staffSession.role, screenPermission[screen]) ? (
       <PosScreen
         session={posSession}
@@ -181,6 +183,7 @@ export function App() {
       onOpenSettings={openSettings}
       />
       )}
+      </ReconnectProvider>
     </StaffSessionProvider>
   );
 }

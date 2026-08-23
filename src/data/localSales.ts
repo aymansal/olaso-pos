@@ -4,7 +4,10 @@ import {
   loadOperationalCache,
   type OperationalCacheSnapshot,
 } from './operationalCache.ts';
-import { listPendingOutbox } from './outbox.ts';
+import {
+  CONNECTION_SYNC_FAILURE,
+  listPendingOutbox,
+} from './outbox.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import { allocateCentimes } from '../lib/costs.ts';
 
@@ -795,7 +798,7 @@ export function describeSaleSyncFailure(caught: unknown, fallback: string) {
     return 'Synchronization access is unavailable. Restore terminal access and try again.';
   }
   if (/network|failed to fetch|offline/i.test(message)) {
-    return 'Cloud connection failed. Check the connection and try again.';
+    return CONNECTION_SYNC_FAILURE;
   }
   return fallback;
 }
@@ -911,5 +914,5 @@ export async function syncPendingSales(
       }
     }
   }
-  return { synced, failed };
+  return { synced, failed, processed: entries.length };
 }

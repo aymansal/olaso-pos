@@ -252,7 +252,7 @@ const ordersHook = readFileSync(
 assert(
   ordersHook.indexOf('setIsLoading(false)')
     < ordersHook.indexOf(
-      'Promise.allSettled([cloudHistory, synchronization])',
+      'Promise.allSettled([cloudHistory])',
     ),
   'Local order history must render before cloud work settles.',
 );

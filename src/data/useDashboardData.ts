@@ -3,6 +3,7 @@ import type { FunctionReturnType } from 'convex/server';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../convex/_generated/api';
 import { localBusinessDate } from '../lib/date';
+import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
 
 export type DashboardSnapshot =
@@ -10,6 +11,7 @@ export type DashboardSnapshot =
 
 export function useDashboardData() {
   const session = useStaffSession();
+  const reconnect = useReconnect();
   const convex = useConvex();
   const [businessDate] = useState(localBusinessDate);
   const [reload, setReload] = useState(0);
@@ -41,7 +43,7 @@ export function useDashboardData() {
     return () => {
       cancelled = true;
     };
-  }, [businessDate, convex, reload, session.deviceId, session.token]);
+  }, [businessDate, convex, reconnect.revision, reload, session.deviceId, session.token]);
 
   const refresh = useCallback(() => {
     setReload((value) => value + 1);

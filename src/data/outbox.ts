@@ -1,4 +1,8 @@
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
+import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
+
+export const CONNECTION_SYNC_FAILURE =
+  'Cloud connection failed. Check the connection and try again.';
 
 export type PendingOutboxEntry = {
   operationId: string;
@@ -11,19 +15,21 @@ export type PendingOutboxEntry = {
   availableAt: number;
 };
 
-export async function listPendingOutbox(
+type OutboxDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
+
+export async function listPendingOutboxFromDatabase(
+  database: OutboxDatabase,
   now = Date.now(),
   limit = 25,
 ): Promise<PendingOutboxEntry[]> {
   if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
     throw new Error('Outbox limit must be an integer from 1 to 100.');
   }
-  const database = await openLocalDatabase();
   const result = await database.query(
     `SELECT operation_id, device_id, operation_type, local_record_id,
       attempt_count, last_error, created_at, available_at
      FROM outbox
-     WHERE available_at <= ?
+     WHERE state = 'pending' AND available_at <= ?
      ORDER BY created_at
      LIMIT ?`,
     [now, limit],
@@ -38,6 +44,10 @@ export async function listPendingOutbox(
     createdAt: Number(row.created_at),
     availableAt: Number(row.available_at),
   }));
+}
+
+export async function listPendingOutbox(now = Date.now(), limit = 25) {
+  return listPendingOutboxFromDatabase(await openLocalDatabase(), now, limit);
 }
 
 export function recordOutboxFailure(
@@ -74,14 +84,32 @@ export function acknowledgeOutbox(operationId: string) {
   );
 }
 
-export function makePendingOutboxAvailable() {
-  return withLocalTransaction((database) =>
-    database.run(
-      `UPDATE outbox
-       SET state = 'pending', available_at = 0
-       WHERE state IN ('pending', 'failed')`,
-      [],
-      false,
-    ),
+export function makePendingOutboxAvailableInDatabase(database: OutboxDatabase) {
+  return database.run(
+    `UPDATE outbox
+     SET state = 'pending', available_at = 0
+     WHERE state IN ('pending', 'failed')`,
+    [],
+    false,
   );
+}
+
+export function makePendingOutboxAvailable() {
+  return withLocalTransaction(makePendingOutboxAvailableInDatabase);
+}
+
+export function makeConnectivityFailuresAvailableInDatabase(
+  database: OutboxDatabase,
+) {
+  return database.run(
+    `UPDATE outbox
+     SET state = 'pending', available_at = 0
+     WHERE state = 'failed' AND last_error = ?`,
+    [CONNECTION_SYNC_FAILURE],
+    false,
+  );
+}
+
+export function makeConnectivityFailuresAvailable() {
+  return withLocalTransaction(makeConnectivityFailuresAvailableInDatabase);
 }

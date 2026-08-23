@@ -239,7 +239,9 @@ Android warning/error.
 
 ### OFF-05 — Add the serialized reconnect worker
 
-**Status:** in progress; OFF-03 and OFF-04 are complete.
+**Status:** complete — one isolated physical-tablet offline sale synchronized
+exactly once after validated Wi-Fi returned, refreshed its current menu, and
+remained single-effect after a repeated reconnect.
 
 **Objective:** make a live, unlocked terminal recover automatically and safely
 when validated internet returns.
@@ -278,7 +280,7 @@ menu state, and no duplicate receipt, stock movement, warning, or error.
 
 ### OFF-06 — Full tablet reliability closeout
 
-**Status:** pending; requires OFF-01 through OFF-05.
+**Status:** in progress; OFF-01 through OFF-05 are complete.
 
 **Scenarios:**
 
@@ -298,6 +300,52 @@ menu state, and no duplicate receipt, stock movement, warning, or error.
 files changed, unresolved limitation, and the exact next action below.
 
 ## Journal
+
+### 2026-08-23 — OFF-05 complete; OFF-06 started
+
+- Added one authenticated `ReconnectProvider` inside the active staff session.
+  It coalesces overlapping automatic/manual requests, processes at most ten
+  batches of ten, yields between full batches, and notifies mounted data hooks
+  after completion. No worker exists while the terminal is locked.
+- Automatic selection now reads only `pending` outbox rows and releases failed
+  rows only when their stable safe error is a connection failure. Business
+  rejections stay failed and visible. Manual Sync deliberately releases all
+  failures through the same worker.
+- Removed direct synchronization from POS, Orders, and Settings. New sales and
+  same-day corrections finish locally first, then request the shared worker;
+  this also prevents the observed offline cancellation dialog from waiting on
+  cloud work. Cache replacement still requires a completely empty outbox.
+- Added the focused `check:reconnect` database/source check for pending-only
+  selection, connection-failure release, business-failure retention,
+  single-flight ownership, bounded batches, cache gating, and local-first
+  cancellation ordering. Local, sales, Orders, Settings, identity, POS,
+  TypeScript, production build, sync, and the 140-task beta build pass.
+- Read-only comparison showed the owner Android user's 14 cached product IDs
+  have no overlap with the current development backend after prior seed resets.
+  Its six failed development outbox rows were therefore preserved instead of
+  erased, retried as business work, or used for a false acceptance test.
+- Created temporary ephemeral Android user 10 on the same SM-X115, installed
+  the identical APK for that isolated user, completed its one online Owner
+  provisioning, and loaded the current cloud menu. The primary owner user and
+  application data remained isolated throughout.
+- With Wi-Fi off, completed receipt `0826-0001`: one standard Espresso for 10
+  MAD under Olaso Owner. Before reconnect, the cloud contained zero sales for
+  that temporary tablet. Printer configuration was intentionally absent, so
+  the local sale retained honest print-failure feedback without affecting sync.
+- Restored validated Wi-Fi and resumed the same open POS. Orders reported Last
+  sync 17:38, Completed, Synced, and Cloud copy confirmed. Server verification
+  found exactly one 1,000-centime sale, one line, and two stock movements
+  (`-18` coffee beans and `-1` cup). A second full reconnect still found exactly
+  one sale and produced no Android, Capacitor, or WebView error.
+- Verified the exact temporary-user target, switched back to Android Owner,
+  removed only user 10, and confirmed it no longer exists. The owner's Olaso
+  database remains unchanged at 10 sales, 10 items, 35 stock movements, 6
+  failed outbox rows, and 2 corrections; latest receipt `0826-0004` remains
+  completed/failed as before the isolated test.
+- OFF-05 is complete and OFF-06 is the sole active card. Exact next action:
+  run the complete physical reliability matrix, full automated checks,
+  Graphify/documentation closeout, then commit and push only if every required
+  scenario is honestly covered.
 
 ### 2026-08-23 — OFF-04 complete; OFF-05 started
 

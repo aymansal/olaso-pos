@@ -1,9 +1,8 @@
-import { useConvex, useMutation } from 'convex/react';
+import { useConvex } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../convex/_generated/api';
-import type { SaleCancellationPayload, SaleSyncPayload } from './localSales.ts';
-import { completeLocalSaleCancellation, syncPendingSales } from './localSales.ts';
+import { completeLocalSaleCancellation } from './localSales.ts';
 import {
   loadLocalOrderPage,
   loadLocalSyncSummary,
@@ -11,8 +10,8 @@ import {
   type LocalOrderCursor,
   type OrderHistoryRecord,
 } from './orderHistory.ts';
-import { toConvexSaleArgs } from './usePosData';
 import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
+import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
 
 const PAGE_SIZE = 6;
@@ -79,9 +78,8 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
 
 export function useOrdersData() {
   const session = useStaffSession();
+  const reconnect = useReconnect();
   const convex = useConvex();
-  const acceptMutation = useMutation(api.sales.accept);
-  const cancelMutation = useMutation(api.sales.cancel);
   const [orders, setOrders] = useState<OrderHistoryRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -97,30 +95,6 @@ export function useOrdersData() {
   const localDone = useRef(false);
   const cloudDone = useRef(false);
 
-  const acceptSale = useCallback(
-    async (input: SaleSyncPayload) => {
-      const result = await acceptMutation({
-        ...toConvexSaleArgs(input),
-        sessionToken: session.token,
-      });
-      return {
-        saleId: String(result.saleId),
-        acknowledgedAt: result.acknowledgedAt,
-      };
-    },
-    [acceptMutation, session.token],
-  );
-
-  const cancelSale = useCallback(
-    async (input: SaleCancellationPayload) => {
-      const result = await cancelMutation({ ...input, sessionToken: session.token });
-      return result.kind === 'original-pending'
-        ? result
-        : { kind: 'cancelled' as const, correctionId: String(result.correctionId), acknowledgedAt: result.acknowledgedAt };
-    },
-    [cancelMutation, session.token],
-  );
-
   const refresh = useCallback(async () => {
     setIsLoading(true);
     setMessage('');
@@ -128,10 +102,6 @@ export function useOrdersData() {
     cloudCursor.current = undefined;
     localDone.current = false;
     cloudDone.current = false;
-    const synchronization = syncPendingSales(acceptSale, cancelSale).catch(() => ({
-      synced: 0,
-      failed: 1,
-    }));
     const cloudHistory = convex.query(api.sales.listOrders, {
       sessionToken: session.token,
       deviceId: session.deviceId,
@@ -162,8 +132,8 @@ export function useOrdersData() {
     setMessage(errors[0] ?? '');
     setIsLoading(false);
 
-    void Promise.allSettled([cloudHistory, synchronization]).then(
-      ([cloudResult, syncResult]) => {
+    void Promise.allSettled([cloudHistory]).then(
+      ([cloudResult]) => {
         if (!mounted.current) return;
         const backgroundErrors: string[] = [];
         if (cloudResult.status === 'fulfilled') {
@@ -178,23 +148,12 @@ export function useOrdersData() {
             'Cloud history is unavailable; saved local orders remain visible.',
           );
         }
-        if (
-          (
-            syncResult.status === 'rejected'
-            || syncResult.value.failed > 0
-          )
-          && !errors.some((error) => error.includes('synchron'))
-        ) {
-          backgroundErrors.push(
-            'Some saved orders still need synchronization.',
-          );
-        }
         if (!errors.length && backgroundErrors.length) {
           setMessage(backgroundErrors[0]);
         }
       },
     );
-  }, [acceptSale, cancelSale, convex, session.deviceId, session.token]);
+  }, [convex, session.deviceId, session.token]);
 
   useEffect(() => {
     mounted.current = true;
@@ -202,7 +161,7 @@ export function useOrdersData() {
     return () => {
       mounted.current = false;
     };
-  }, [refresh]);
+  }, [reconnect.revision, refresh]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore.current || (localDone.current && cloudDone.current)) return;
@@ -257,7 +216,7 @@ export function useOrdersData() {
       setMessage('');
       try {
         await makeLocalSaleRetryAvailable(localSaleId);
-        const result = await syncPendingSales(acceptSale, cancelSale);
+        const result = await reconnect.run('automatic');
         if (result.failed > 0) {
           setMessage('The order is still saved locally and waiting to sync.');
         }
@@ -272,7 +231,7 @@ export function useOrdersData() {
         if (mounted.current) setRetryingId(undefined);
       }
     },
-    [acceptSale, cancelSale, refresh],
+    [reconnect, refresh],
   );
 
   const reprintReceipt = useCallback(
@@ -307,11 +266,9 @@ export function useOrdersData() {
           reason,
           actorName: session.name,
         });
-        const result = await syncPendingSales(acceptSale, cancelSale);
         await refresh();
-        setMessage(result.failed > 0
-          ? 'Correction saved locally and waiting to synchronize.'
-          : 'Order cancelled. Record a replacement sale if needed.');
+        setMessage('Correction saved locally and waiting to synchronize.');
+        void reconnect.run('automatic').catch(() => undefined);
       } catch (error) {
         setMessage(error instanceof Error ? error.message : 'Order correction could not be saved.');
         throw error;
@@ -319,7 +276,7 @@ export function useOrdersData() {
         if (mounted.current) setCancellingId(undefined);
       }
     },
-    [acceptSale, cancelSale, refresh, session.name],
+    [reconnect, refresh, session.name],
   );
 
   return {

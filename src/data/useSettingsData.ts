@@ -1,17 +1,7 @@
-import { useConvex, useMutation } from 'convex/react';
 import { useCallback, useEffect, useState } from 'react';
-import { api } from '../../convex/_generated/api';
-import type { Id } from '../../convex/_generated/dataModel';
-import {
-  syncPendingSales,
-  type SaleCancellationPayload,
-  type SaleSyncPayload,
-} from './localSales.ts';
-import { makePendingOutboxAvailable } from './outbox.ts';
-import { replaceOperationalCache } from './operationalCache.ts';
+import { useReconnect } from './reconnectContext';
 import {
   loadTerminalSettings,
-  recordSyncFailure,
   savePrinterPreferences,
   saveTerminalPreferences,
   type PrinterPreferences,
@@ -23,31 +13,10 @@ import {
   testPrinterConnection,
 } from '../printing/testPrinter.ts';
 import { installResidentLogo } from '../printing/printerTransport.ts';
-import { useStaffSession } from './sessionContext';
-
-function toConvexSaleArgs(input: SaleSyncPayload) {
-  return {
-    ...input,
-    lines: input.lines.map(({ recipeVersionId, ...line }) => ({
-      ...line,
-      productId: line.productId as Id<'products'>,
-      ...(recipeVersionId
-        ? { recipeVersionId: recipeVersionId as Id<'recipeVersions'> }
-        : {}),
-      modifierOptionIds: line.modifierOptionIds.map(
-        (id) => id as Id<'modifierOptions'>,
-      ),
-    })),
-  };
-}
 
 export function useSettingsData() {
-  const session = useStaffSession();
-  const convex = useConvex();
-  const acceptMutation = useMutation(api.sales.accept);
-  const cancelMutation = useMutation(api.sales.cancel);
+  const reconnect = useReconnect();
   const [settings, setSettings] = useState<TerminalSettings>();
-  const [isSyncing, setIsSyncing] = useState(false);
   const [isTestingPrinter, setIsTestingPrinter] = useState(false);
   const [isInstallingPrinterLogo, setIsInstallingPrinterLogo] = useState(false);
   const [message, setMessage] = useState('');
@@ -88,67 +57,32 @@ export function useSettingsData() {
   );
 
   const syncNow = useCallback(async () => {
-    setIsSyncing(true);
     setError('');
     setMessage('');
     try {
-      await makePendingOutboxAvailable();
-      const result = await syncPendingSales(async (input) => {
-        const accepted = await acceptMutation({
-          ...toConvexSaleArgs(input),
-          sessionToken: session.token,
-        });
-        return {
-          saleId: String(accepted.saleId),
-          acknowledgedAt: accepted.acknowledgedAt,
-        };
-      }, async (input: SaleCancellationPayload) => {
-        const cancelled = await cancelMutation({ ...input, sessionToken: session.token });
-        return cancelled.kind === 'original-pending'
-          ? cancelled
-          : { kind: 'cancelled' as const, correctionId: String(cancelled.correctionId), acknowledgedAt: cancelled.acknowledgedAt };
-      });
+      const result = await reconnect.run('manual');
       const afterSales = await refresh();
-      if (result.failed > 0) {
-        throw new Error(
+      if (result.failed > 0 || result.pending > 0) {
+        setError(
           afterSales.lastSyncError
-          ?? 'Some saved orders still need synchronization.',
-        );
-      }
-      if (afterSales.pendingSyncCount > 0) {
-        setMessage(
-          `${result.synced} order${result.synced === 1 ? '' : 's'} synced; `
-          + `${afterSales.pendingSyncCount} remain. Sync again to continue.`,
+          ?? `${result.pending} saved order${result.pending === 1 ? '' : 's'} still need synchronization.`,
         );
         return;
       }
-
-      const cloud = await convex.query(api.sync.getOperationalSnapshot, {
-        sessionToken: session.token,
-        deviceId: session.deviceId,
-        requestId: crypto.randomUUID(),
-      });
-      await replaceOperationalCache({
-        ...cloud,
-        products: cloud.products.map((product) => ({
-          ...product,
-          status: product.status === 'active' ? 'active' : 'unavailable',
-        })),
-      });
-      await refresh();
       setMessage(
         result.synced > 0
           ? `${result.synced} saved order${result.synced === 1 ? '' : 's'} and the menu synchronized.`
           : 'Menu and synchronization state are up to date.',
       );
     } catch (caught) {
-      const syncError = await recordSyncFailure(caught);
-      setError(syncError);
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'Synchronization failed. Try again.',
+      );
       await refresh().catch(() => undefined);
-    } finally {
-      setIsSyncing(false);
     }
-  }, [acceptMutation, cancelMutation, convex, refresh, session.deviceId, session.token]);
+  }, [reconnect, refresh]);
 
   const testPrinter = useCallback(
     async (input: PrinterPreferences) => {
@@ -202,7 +136,7 @@ export function useSettingsData() {
   return {
     settings,
     isLoading: !settings,
-    isSyncing,
+    isSyncing: reconnect.isSyncing,
     isTestingPrinter,
     isInstallingPrinterLogo,
     message,

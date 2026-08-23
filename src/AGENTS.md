@@ -12,6 +12,8 @@ application, global tokens, and the feature screens under `features/`.
   data boundary; screens consume it rather than registering network listeners.
 - `App.tsx` selects the active top-level screen and restores the non-secret
   local terminal-lock state before exposing the application.
+- `App.tsx` mounts the reconnect worker only inside an authenticated staff
+  session, so locked connection changes never perform cloud work.
 - `data/` owns the application-level Convex provider, feature-facing data
   hooks, local SQLite boundary, operational cache, and outbox.
 - `printing/` owns printer diagnostics, the Capacitor transport wrapper, the

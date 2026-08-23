@@ -2,6 +2,7 @@ import { useConvex } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../convex/_generated/api';
+import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
 
 export type ReportsSnapshot =
@@ -9,6 +10,7 @@ export type ReportsSnapshot =
 
 export function useReportsData(fromDate: string, toDate: string) {
   const session = useStaffSession();
+  const reconnect = useReconnect();
   const convex = useConvex();
   const [reload, setReload] = useState(0);
   const [snapshot, setSnapshot] = useState<ReportsSnapshot>();
@@ -41,7 +43,7 @@ export function useReportsData(fromDate: string, toDate: string) {
     return () => {
       cancelled = true;
     };
-  }, [convex, fromDate, reload, session.deviceId, session.token, toDate]);
+  }, [convex, fromDate, reconnect.revision, reload, session.deviceId, session.token, toDate]);
 
   const retry = useCallback(() => {
     setReload((value) => value + 1);

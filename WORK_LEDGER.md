@@ -98,20 +98,16 @@ No goal is active.
   public binary-only GitHub release repository; confirm whether public APK
   availability is acceptable before implementation.
 
-- OFF-03 and OFF-04 are complete under `OFFLINE_RELIABILITY_PLAN.md`; OFF-05 is
-  the sole active reliability card and no production goal is active. One
-  Android-validated connection callback and root provider now update Lock,
-  POS, and Settings without polling or per-screen listeners. Physical Lock
-  offline/online/offline, POS offline/online, and screen-off/resume transitions
-  passed at the fitted 1340 × 800 layout. Official Android research corrected
-  the first callback implementation to use default-network, callback-supplied
-  capability data rather than a racy synchronous query; the rebuilt APK and a
-  clean all-buffer transition log pass. The first online POS transition activated the old
-  snapshot sync path and left all six outbox rows failed without deleting or
-  duplicating sales, items, stock, receipts, or corrections. OFF-04 is pushed
-  as `60ac455fade5a825c5a01078da117b7a562f009e` on `origin/main`. Exact next
-  action: implement OFF-05's one authenticated, single-flight reconnect
-  sequence and preserve business failures for recovery.
+- OFF-03 through OFF-05 are complete under `OFFLINE_RELIABILITY_PLAN.md`;
+  OFF-06 is the sole active reliability card and no production goal is active.
+  One authenticated single-flight worker now owns pending outbox upload, safe
+  failure selection, empty-outbox cache refresh, manual Sync, and mounted-screen
+  refresh. An isolated ephemeral Android user preserved the owner's stale
+  development history while proving a fresh offline Espresso changed from zero
+  cloud sales to exactly one sale, one line, and two stock movements after
+  reconnect; a second reconnect remained exactly one. The temporary user was
+  removed and the owner database remains unchanged at 10/10/35/6/2. Exact next
+  action: run OFF-06's full physical reliability and regression matrix.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The
@@ -781,6 +777,17 @@ No goal is active.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-23 — OFF-05 exact-once reconnect accepted
+
+- Centralized all automatic and manual synchronization in one authenticated,
+  bounded worker. Automatic reconnect retains business failures and retries
+  only pending or known connection-failure work.
+- The same SM-X115 proved one isolated offline sale synchronized once, updated
+  Orders/menu state, and stayed single-effect across a second reconnect with
+  clean logs. The temporary Android user was removed and owner data is intact.
+- OFF-06 is now the only reliability card. Next: the final complete device,
+  regression, documentation, commit, and push closeout.
 
 ### 2026-08-23 — OFF-04 shared connection truth accepted
 
