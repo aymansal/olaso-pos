@@ -38,8 +38,8 @@ No implementation card is done until all applicable evidence is recorded:
    when the card can affect it.
 7. Graphify is refreshed after structural code changes, authorities and the
    ledger are current, and the exact next action is recorded.
-8. The card commit is pushed and its full SHA and remote branch are recorded in
-   WORK_LEDGER.md.
+8. The card commit is pushed directly to `origin/main` and its full SHA is
+   recorded in WORK_LEDGER.md.
 
 Pure planning or documentation-only cards validate their links, facts, and
 assets but do not rebuild or reinstall an unchanged APK merely to manufacture

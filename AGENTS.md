@@ -56,19 +56,22 @@ decision changes.
 - `WORK_LEDGER.md` tracks progress; it does not override `PRODUCT.md`,
   `ARCHITECTURE.md`, `DESIGN.md`, `BRAND.md`, or the applicable DOX chain.
 
-### Card commits and pushes
+### Main-only commits and pushes
 
 - Work on one ledger card at a time and keep unrelated changes out of its
   commit.
+- `main` is the only development and release branch. Do not create goal,
+  feature, worktree, or handoff branches unless the owner explicitly reverses
+  this decision.
 - Before finishing a card, run its required checks, refresh Graphify after
   structural changes, and update the ledger with evidence and the exact next
   action.
 - Commit messages start with the card ID and a concise imperative summary, for
   example `APP-03: connect product management`.
 - Include the ledger update in the same card commit.
-- Push the current goal branch immediately after every successful card commit.
+- Push `main` to `origin/main` immediately after every successful card commit.
 - A card is not `done` until the commit is pushed and its commit SHA and remote
-  branch are recorded in the ledger.
+  location `origin/main` are recorded in the ledger.
 - Follow-up commits for a card still start with that card ID.
 - Never commit `.env.local`, credentials, deployment secrets, signing keys, or
   printer secrets.

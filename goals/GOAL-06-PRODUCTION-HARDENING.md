@@ -95,14 +95,17 @@ against the near-final APK.
 
 ## Git workflow and card gate
 
-- Goal branch: codex/goal-06-production-hardening.
+- Work directly on `main`; it is the only local and remote branch.
 - The initial read-only review starts in a normal conversation, not `/goal`.
-  Do not create the implementation branch or mark a card active merely to load
-  context and discuss the first screen.
+  Do not mark a card active merely to load context and discuss the first
+  screen.
 - When the owner authorizes implementation, activate only the current card and
   keep later cards pending.
-- Keep one Goal 06 card in progress and unrelated work out of its commit.
-- Every commit begins with its card ID and is pushed before the card is done.
+- Keep one Goal 06 card in progress and unrelated work out of its commit. Do
+  not create goal, feature, or handoff branches and do not add PR ceremony for
+  this single-owner project.
+- Every card commit begins with its card ID and is pushed directly to
+  `origin/main` before the card is done.
 - Every implementation card follows PLAN.md, including focused checks, APK
   installation, physical Galaxy Tab A9 testing, and clean console/logcat
   evidence. Printer-impacting work also receives real paper verification.
@@ -326,16 +329,26 @@ against the near-final APK.
 
 ## Current checkpoint
 
-- Goal 06 is planned only; no card is active and no implementation branch
-  exists.
+- Goal 06 is planned only; no card is active. All future work stays on `main`.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
 - Exact next action: open a normal new conversation with the reviewed handoff
   prompt. It reads the project, confirms its understanding, and begins the
-  owner-led POS review without invoking `/goal`, activating a card, creating an
-  implementation branch, or changing code.
+  owner-led POS review without invoking `/goal`, activating a card, or changing
+  code.
 
 ## Planning journal
+
+### 2026-08-23 — Main-only workflow selected
+
+- The owner rejected goal/feature branches as unnecessary for this one-person
+  project. `main` is now the sole local and GitHub branch, and all future card
+  commits push directly to `origin/main`.
+- Before deletion, every non-main local and remote branch was verified to have
+  zero commits missing from `main`. Seven local and seven corresponding remote
+  branches were then deleted; no application or documentation work was lost.
+- Historical branch names in the work ledger remain audit text only; they are
+  not live Git references.
 
 ### 2026-08-23 — Cashier handoff and remote-update reminders recorded
 

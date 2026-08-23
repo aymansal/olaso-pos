@@ -79,6 +79,11 @@ No goal is active.
 
 ## Current Checkpoint
 
+- Repository workflow reminder: `main` is the only local and GitHub branch.
+  Every future change commits and pushes directly to `origin/main`; do not
+  create goal, feature, worktree, or handoff branches unless the owner
+  explicitly changes this decision. All deleted branches had zero commits
+  missing from `main` before removal.
 - Owner reminder — cashier handoff: cashiers cannot open Settings and therefore
   cannot reach the current Lock application action. Closing/reopening is only a
   temporary workaround. Do not fix it yet; Goal 06 LOCK-01 must add a shared
@@ -762,6 +767,15 @@ No goal is active.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-23 — Extra branches removed; main-only workflow adopted
+
+- Verified every non-main local and remote branch had zero commits absent from
+  `main`, then deleted all seven local branches and all seven corresponding
+  GitHub branches. `main` is the only remaining branch on both sides.
+- Updated the operating instructions, delivery plan, and Goal 06 workflow so
+  future work commits and pushes directly to `origin/main`. Historical branch
+  names remain only as audit evidence of where old commits were first made.
 
 ### 2026-08-23 — Cashier lock and client update delivery journaled
 
