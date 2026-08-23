@@ -79,6 +79,20 @@ No goal is active.
 
 ## Current Checkpoint
 
+- Owner reminder — cashier handoff: cashiers cannot open Settings and therefore
+  cannot reach the current Lock application action. Closing/reopening is only a
+  temporary workaround. Do not fix it yet; Goal 06 LOCK-01 must add a shared
+  Lock / Switch staff action without granting Settings access, after deciding
+  how an unfinished cart behaves during handoff.
+- Owner reminder — post-delivery updates: the client needs a simple remote path
+  for approved fixes without receiving APK files through WhatsApp. The source
+  repository is private, so the APK must never contain a GitHub token. HARD-06
+  now owns signed release automation plus a separate HTTPS download channel,
+  Android install confirmation, upgrade/data preservation, rollback, and
+  developer-verification readiness. Recommended starting option: a dedicated
+  public binary-only GitHub release repository; confirm whether public APK
+  availability is acceptable before implementation.
+
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The
@@ -748,6 +762,18 @@ No goal is active.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-23 — Cashier lock and client update delivery journaled
+
+- Recorded the cashier's inability to reach Lock application because Settings
+  is owner-only. The approved future behavior is a shared role-safe Lock /
+  Switch staff action; no application behavior changed now.
+- Recorded the need to deliver signed fixes remotely after the tablet and
+  printer are handed to the café. The private source repository cannot serve
+  the APK directly without exposing a credential, so Goal 06 now carries the
+  separate download-channel and guided Android installation decision.
+- Reminder list now includes both items and must be returned with the earlier
+  owner follow-ups whenever requested.
 
 ### 2026-08-22 — Goal 06 changed to normal owner-led collaboration
 

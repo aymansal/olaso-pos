@@ -34,7 +34,7 @@ the system.
 | Printing | Local Capacitor-to-Kotlin raw TCP/LAN bridge using WD8260 ESC/POS |
 | Costing | Perpetual weighted-average ingredient valuation with immutable sale cost snapshots |
 | Initial topology | One cafe and one POS tablet |
-| Updates | Signed APKs attached to GitHub Releases and installed manually |
+| Updates | Signed, versioned APK releases with a guided remote tablet update path |
 
 The repository includes the Convex development backend, Capacitor Android
 shell, and local SQLite operational record. APP-11 verified a development
@@ -927,13 +927,24 @@ navigation. Production signing, public distribution, post-checkout printing,
 and the remaining hardware acceptance checks remain outside this development
 beta.
 
+The source repository is private and is not a tablet download endpoint. The
+application must never embed a GitHub token or another long-lived download
+credential. The recommended first-release design, pending owner approval, is:
+
 ```text
-GitHub tag
-  -> GitHub Actions build
-  -> signed APK
-  -> GitHub Release
-  -> manual tablet installation
+GitHub tag in the private source repository
+  -> GitHub Actions checks and signed APK build
+  -> private GitHub Release retained as the release record
+  -> APK + version manifest + SHA-256 published to a tablet-reachable HTTPS endpoint
+  -> Olaso reports an available update to an authorized operator
+  -> operator chooses Update and Android asks for final installation confirmation
 ```
+
+A dedicated public, binary-only GitHub release repository is the smallest free
+HTTPS endpoint. If public APK availability is unacceptable, use a private
+distribution service instead; do not proxy the private source repository by
+placing a personal access token on the tablet. Google Play remains outside the
+first release unless the owner later chooses it.
 
 Release rules:
 
@@ -944,9 +955,18 @@ Release rules:
 - Never commit signing secrets.
 - Test installation over the previous production APK.
 - Verify that local SQLite data survives the upgrade.
-- Keep a known-good previous APK for rollback.
+- Never force an update or restart during an active order; retain a clear Later
+  path and require an authorized operator to begin installation.
+- Keep the known-good previous source and artifact. Android normally rejects a
+  lower version code, so production rollback rebuilds the known-good source
+  with a new higher version code and the same signing key.
+- Register the package name and signing key through the applicable Android
+  developer-verification path before worldwide enforcement reaches the target
+  tablet; direct sideloading is not an excuse to defer this release check.
 
-Google Play and live-update services are not used.
+Silent installation is not claimed. Without Google Play or enterprise
+device-owner management, Android may require the client to approve the install
+and to authorize the chosen download source for unknown-app installation.
 
 ## Failure behavior
 

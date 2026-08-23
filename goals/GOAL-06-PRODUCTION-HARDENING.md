@@ -70,6 +70,8 @@ against the near-final APK.
   and printer.
 - A normal owner-led screen-by-screen review, followed by only the changes
   explicitly approved for each screen.
+- A direct Lock / Switch staff action available to every authenticated role
+  without opening owner Settings.
 - A versioned category-artwork gallery with explicit category selection and a
   neutral fallback that never blocks an unfamiliar custom category.
 - A final compact Android app icon plus an optional minimal branded startup
@@ -111,6 +113,7 @@ against the near-final APK.
 | --- | --- | --- | --- |
 | POLISH-01 | Capture the owner's complete app-wide simplification and dislike list | pending | — |
 | POLISH-02 | Apply and verify approved changes one screen at a time | pending | — |
+| LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
 | STAFF-01 | Add minimal owner-only staff creation and initial PIN setup inside Settings | pending | — |
 | CATALOG-01 | Add curated category artwork selection and a neutral custom-category fallback | pending | — |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
@@ -168,6 +171,20 @@ against the near-final APK.
 - Verify on the physical tablet that the new profile signs in online once,
   unlocks offline with the correct role, and does not disturb existing staff
   profiles.
+
+### LOCK-01 — Lock and switch staff from every role
+
+- Put one short Lock / Switch staff action in the shared profile control used
+  by owner, manager, and cashier screens; do not grant Settings access merely
+  to expose this action.
+- Lock locally and immediately without deleting that profile's protected
+  offline provisioning, requiring internet, or treating an app restart as the
+  normal staff-handoff workflow.
+- Before implementation, confirm with the owner whether an unfinished cart is
+  preserved for the next staff member or requires an explicit warning; never
+  discard it silently.
+- Verify owner and cashier handoff, offline behavior, restart behavior, role
+  boundaries, and touch access on the physical tablet.
 
 ### HARD-01 — Baseline and instrumentation
 
@@ -252,6 +269,20 @@ against the near-final APK.
   settings, then rehearse rollback using the known-good previous artifact and
   documented data constraints.
 - Produce deterministic release notes, checksums, and installation steps.
+- Because the source repository is private, never embed a GitHub credential in
+  the APK. Publish the signed APK and small version manifest through a separate
+  tablet-reachable HTTPS channel; the leading recommendation is a dedicated
+  public binary-only release repository, pending owner acceptance of public APK
+  availability.
+- Let an authorized operator see Update / Later, download deliberately, and
+  enter Android's required installation-confirmation flow. Do not interrupt an
+  active order or claim silent installation without Play or device-owner
+  management.
+- Verify the update's package ID, higher version code, signing certificate,
+  checksum, SQLite migrations, protected staff access, Settings, pending sales,
+  and rollback-by-newer-known-good-build on the physical tablet.
+- Complete the applicable Android developer and package/signing-key
+  registration before its worldwide verification rollout affects delivery.
 
 ### HARD-07 — Readiness review
 
@@ -280,8 +311,8 @@ against the near-final APK.
 
 ## Goal completion criteria
 
-- POLISH-01, POLISH-02, STAFF-01, CATALOG-01, and HARD-01 through HARD-08 are done,
-  verified, committed, pushed, and recorded.
+- POLISH-01, POLISH-02, LOCK-01, STAFF-01, CATALOG-01, and HARD-01 through
+  HARD-08 are done, verified, committed, pushed, and recorded.
 - Android, WebView, and React present one immediate Olaso cream launch sequence
   and meet the physical-tablet startup budget without waiting for the network.
 - The owner-approved critique list is resolved, the app icon is accepted, and
@@ -305,6 +336,24 @@ against the near-final APK.
   implementation branch, or changing code.
 
 ## Planning journal
+
+### 2026-08-23 — Cashier handoff and remote-update reminders recorded
+
+- The current cashier role cannot open Settings, so it cannot reach the current
+  Lock application action. Closing and reopening the APK works only as a
+  temporary workaround. LOCK-01 now requires a shared Lock / Switch staff
+  action without expanding cashier permissions; application code was not
+  changed in this planning step.
+- After delivery, the owner must be able to send fixes to the café tablet
+  without asking the client to handle APK files through WhatsApp. The private
+  source repository cannot be queried by the APK without an unsafe embedded
+  credential. HARD-06 now records the recommended signed-release pipeline and
+  a separate HTTPS download channel, with Android's honest final confirmation.
+- The leading low-cost option is a dedicated public binary-only GitHub release
+  repository. Public APK availability versus a paid/private delivery service
+  remains an explicit owner decision before HARD-06 implementation.
+- Record and return both reminders whenever the owner asks for the outstanding
+  reminder list.
 
 ### 2026-08-22 — Normal screen-by-screen collaboration selected
 

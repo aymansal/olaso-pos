@@ -145,6 +145,7 @@ screen-by-screen work.
 | --- | --- |
 | POLISH-01 | Walk through the complete app with the owner and record every disliked, verbose, redundant, or “AI-ish” element before changing the interface. |
 | POLISH-02 | Apply and verify the approved changes one screen at a time before moving to the next screen. |
+| LOCK-01 | Give every staff role a direct Lock / Switch staff action without exposing owner Settings. |
 | STAFF-01 | Add and verify minimal owner-only staff profile creation and initial PIN setup inside Settings. |
 | CATALOG-01 | Add a curated category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
 | HARD-01 | Establish repeatable five-run cold/warm startup, APK, WebView, bundle, and readiness baselines on the physical tablet after the approved screen work is stable. |
@@ -152,7 +153,7 @@ screen-by-screen work.
 | HARD-03 | Consolidate safe SQLite/lock startup gating and remove empty intermediate rendering without exposing an unlocked POS. |
 | HARD-04 | Optimize only measured eager modules, assets, decoding, and sync scheduling while preserving behavior and recording before/after evidence. |
 | HARD-05 | Implement and rehearse documented export, backup, corrupt-data stop, restore, and support recovery paths. |
-| HARD-06 | Add protected production signing and GitHub Release automation, versioning, install-over-upgrade, rollback, and signing-key custody documentation. |
+| HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation. |
 | HARD-07 | Complete security, privacy, secret, dependency, Convex quota/index, performance, and operational-support review. |
 | HARD-08 | Run realistic service endurance, offline/reconnect, printer, upgrade, recovery, final owner acceptance, documentation, and release closeout. |
 
@@ -164,8 +165,10 @@ recoverable, stock and costs reconcile, permissions protect sensitive data,
 the accepted receipt prints and reprints on the real WD8260, launch meets its
 physical-tablet budget without an unbranded frame, upgrades preserve data,
 backup/recovery is rehearsed, the owner-approved simplification list is
-resolved, custom categories always have suitable artwork or a neutral fallback,
-and the owner accepts the production workflow.
+resolved, every role can lock or switch staff, the client can install an
+approved remote update without WhatsApp APK handling, custom categories always
+have suitable artwork or a neutral fallback, and the owner accepts the
+production workflow.
 
 ## Exact next action
 

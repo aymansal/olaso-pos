@@ -67,6 +67,8 @@ The cashier can:
 - Complete a sale without customer or table entry.
 - Complete a sale and print or reprint its receipt.
 - View recent orders needed for operational recovery.
+- Lock the terminal or switch to another staff member without needing Settings
+  access.
 
 ### Manager
 
@@ -172,6 +174,8 @@ Settings and staff management live under the owner profile instead of adding
 another permanent navigation item. The minimal owner-only creation flow asks
 for the staff member's name, approved role, six-digit PIN, and PIN confirmation;
 it does not expose identity implementation details to the café operator.
+The shared profile control gives every role a simple Lock / Switch staff action;
+this does not grant cashiers or managers access to owner Settings.
 
 Costs and profitability belong inside the Reports workspace rather than adding
 a seventh permanent navigation destination.
@@ -823,5 +827,7 @@ The first production release is done when:
 - The owner can edit menu and recipe data without code changes.
 - Reports match a checked sample of real sales and stock movements.
 - APK updates preserve application data.
+- The client can receive an approved signed update remotely and complete it
+  through a short guided confirmation without handling APK files in WhatsApp.
 - The physical tablet and printer pass the production test plan.
 - The owner confirms the menu, receipt, permissions, and operational workflow.
