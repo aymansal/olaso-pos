@@ -360,6 +360,8 @@ files changed, unresolved limitation, and the exact next action below.
 - Final owner-user operational counts are 11 sales, 12 items, 41 stock
   movements, 7 retained failed development outbox rows, and 2 corrections.
   Receipt `0826-0005` was added during owner testing and remains untouched.
+- Commit `c2b05a5f2de28f1ad3a391c24894567af60ffc20` is pushed to
+  `origin/main`.
 - Exact next action: return to the normal Goal 06 owner-led screen review at
   POLISH-01; offline reliability has no active card.
 

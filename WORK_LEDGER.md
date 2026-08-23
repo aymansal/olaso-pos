@@ -107,7 +107,9 @@ No goal is active.
   corrected the initial false all-screen pass before closeout. Final owner data
   is 11 sales, 12 items, 41 movements, 7 retained failed development outbox
   rows, and 2 corrections; the owner-added `0826-0005` remains untouched.
-  Exact next action: resume normal Goal 06 POLISH-01 screen review.
+  OFF-06 is pushed as `c2b05a5f2de28f1ad3a391c24894567af60ffc20`
+  on `origin/main`. Exact next action: resume normal Goal 06 POLISH-01 screen
+  review.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The
