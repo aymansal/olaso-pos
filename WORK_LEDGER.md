@@ -106,8 +106,9 @@ No goal is active.
   development history while proving a fresh offline Espresso changed from zero
   cloud sales to exactly one sale, one line, and two stock movements after
   reconnect; a second reconnect remained exactly one. The temporary user was
-  removed and the owner database remains unchanged at 10/10/35/6/2. Exact next
-  action: run OFF-06's full physical reliability and regression matrix.
+  removed and the owner database remains unchanged at 10/10/35/6/2. OFF-05 is
+  pushed as `8e176faa011d2814ae23755a5f05443873f8e2c5` on `origin/main`. Exact
+  next action: run OFF-06's full physical reliability and regression matrix.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The

@@ -342,6 +342,8 @@ files changed, unresolved limitation, and the exact next action below.
   database remains unchanged at 10 sales, 10 items, 35 stock movements, 6
   failed outbox rows, and 2 corrections; latest receipt `0826-0004` remains
   completed/failed as before the isolated test.
+- Commit `8e176faa011d2814ae23755a5f05443873f8e2c5` is pushed to
+  `origin/main`.
 - OFF-05 is complete and OFF-06 is the sole active card. Exact next action:
   run the complete physical reliability matrix, full automated checks,
   Graphify/documentation closeout, then commit and push only if every required
