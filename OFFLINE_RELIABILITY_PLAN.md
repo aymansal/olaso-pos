@@ -87,6 +87,9 @@ appropriate physical-tablet evidence.
   listener, so Android Wi-Fi changes can leave the displayed state stale.
 - The POS and Orders data paths have separate limited online-event retries;
   there is no one application-wide reconnect worker.
+- An offline cancellation commits its local correction and stock restoration,
+  but the current Orders action can remain visibly busy while it waits for a
+  cloud attempt. OFF-05 must keep local completion separate from reconnect work.
 
 ### User-reported production-like failure — not yet diagnosed
 
@@ -100,10 +103,8 @@ appropriate physical-tablet evidence.
 
 ### Still unverified
 
-- A full offline POS sale on the current installed build.
 - Reconnection without closing the application.
 - Exact-once upload of an offline sale after Wi-Fi returns.
-- Offline unlock for more than one provisioned staff profile.
 
 ## Work cards
 
@@ -186,7 +187,9 @@ online re-sign-in for one leaves the other functional offline.
 
 ### OFF-03 — Make offline sales an observed, proven flow
 
-**Status:** pending.
+**Status:** complete — a corrected physical Galaxy Tab A9 sale survived an
+offline restart with its receipt, stock effects, print state, and one pending
+upload intact.
 
 **Objective:** verify the already intended local-first sales path before
 changing reconnection automation.
@@ -205,7 +208,7 @@ restart and is waiting to synchronize, without claiming cloud success yet.
 
 ### OFF-04 — Establish one accurate application-wide connection state
 
-**Status:** pending.
+**Status:** in progress.
 
 **Objective:** replace fragmented browser-event detection with a shared source
 of truth based on Android-validated internet availability.
@@ -293,6 +296,122 @@ menu state, and no duplicate receipt, stock movement, warning, or error.
 files changed, unresolved limitation, and the exact next action below.
 
 ## Journal
+
+### 2026-08-23 — OFF-03 complete; OFF-04 started
+
+- With Wi-Fi disabled, completed receipt `0826-0003` for one standard Espresso.
+  It added one local sale, one item, two stock deductions, and one pending
+  upload; printing failed honestly as unreachable and restart preserved every
+  effect.
+- The physical receipt exposed a pre-existing audit defect: checkout and local
+  Orders used the fixed words `Development cashier` instead of the signed-in
+  profile. Replaced that placeholder with the existing authenticated name in
+  the saved receipt and stock-movement audit, and made local Orders read the
+  immutable saved name. No new identity or persistence system was added.
+- Cancelled the first test through the approved same-day correction flow with
+  a clear test reason, restoring its two stock deductions. The correction
+  committed locally, although the offline dialog remained busy while awaiting
+  cloud work; this observed issue is retained for OFF-05.
+- Built and installed the corrected APK over existing data with Wi-Fi still
+  off. Receipt `0826-0004`, one standard Espresso for 10 MAD, records Olaso
+  Owner, two stock deductions, failed/unreachable print state, and exactly one
+  pending upload. Force-close, cold launch, offline unlock, and Orders view
+  preserved it unchanged with clean error logs and a fitted 1340 × 800 layout.
+- Final safe tablet counts are 10 sales, 10 items, 35 stock movements, 6
+  outbox entries, and 2 corrections. They comprise the original baseline,
+  the corrected first test and its cancellation, and the accepted final test;
+  the three older failed uploads remain untouched.
+- `check:pos`, `check:sales`, `check:orders`, the 20-sale printing endurance
+  check, TypeScript, Android checks, production build, sync, and the 140-task
+  beta build pass. OFF-03 is complete and OFF-04 is the sole active card.
+- Exact next action: inspect the existing Android connectivity callback and
+  scattered browser listeners, then implement one shared, resume-aware
+  connection state before changing reconnect behavior.
+
+### 2026-08-23 — Native WebView viewport fix installed and verified
+
+- The owner rejected another CSS-width retry as insufficient and required
+  primary-source research before accepting a fourth scaling repair. Android's
+  official WebView guidance identifies wide-viewport plus overview mode as the
+  native fit-by-width mechanism, requires a `match_parent` WebView, and advises
+  invalidation when the activity handles configuration changes.
+- Replaced all JavaScript/CSS zoom code and lifecycle listeners with a custom
+  Capacitor WebView configured before page load. The HTML keeps only the fixed
+  1340-pixel viewport width; Android owns scaling. The activity invalidates the
+  retained WebView on handled configuration changes.
+- Updated the Android static check to require the native WebView/layout path
+  and reject React-entry scaling. `npm run check:android`, `npm run build`,
+  Android sync, and the 140-task beta build pass.
+- Installed the APK over existing tablet data with Wi-Fi still off. Six
+  force-stop cold launches, screen-off/resume, and background memory-pressure
+  resume all report a 1340 by approximately 800 visual viewport, no inline
+  zoom, and no horizontal content overflow. Physical screenshots remain
+  full-bleed and the filtered Android/WebView error log is empty.
+- The safe database baseline and three older failed outbox entries remain
+  untouched; no OFF-03 sale was created. Exact next action: the owner unlocks
+  privately, then complete the labeled offline sale and verify its local sale,
+  receipt, stock, print, restart, and pending-outbox effects before Wi-Fi
+  returns.
+
+### 2026-08-23 — OFF-03 blocked before sale by recurring launch scaling bug
+
+- Recorded the clean pre-sale tablet baseline at SQLite schema 12: 8 sales,
+  8 sale lines, 29 stock movements, 3 known older failed outbox entries, and
+  1 correction. No protected credential values were read or exported.
+- Force-stopped Olaso, disabled Wi-Fi, and cold-launched the physical SM-X115.
+  The activity had correct 1340 × 800 landscape bounds, but the web interface
+  rendered larger than the screen and required two-axis scrolling; the Lock
+  form was outside the visible area. The owner confirms this is the fourth
+  recurrence after earlier claimed fixes.
+- No OFF-03 sale was created, no tablet data was changed, and Wi-Fi remains
+  off. The known outbox entries remain untouched.
+- Exact next action: reproduce and measure the WebView scale/viewport lifecycle
+  at cold launch, identify why the bounded scaling correction is not applied,
+  implement the smallest root-cause fix with a focused regression check, then
+  rebuild/install and prove repeated cold launches before resuming the sale.
+
+### 2026-08-23 — Interim CSS-screen repair superseded by native viewport fitting
+
+- Git history proved the first accepted tablet-fit implementation used the
+  stable CSS `screen` long edge. ID-02 later changed it back to the known-racy
+  `outerWidth` value and changed the Android check to enforce that regression;
+  OFF-02's later timers only repeated the same unstable measurement.
+- Android WebView documentation distinguishes physical pixels, CSS pixels,
+  layout viewport, and visual viewport, while CSSOM documents that Chromium's
+  `outerWidth` can remain in default pixel units under zoom. That matches the
+  reproduced zoom-1 oversized launch rather than the required approximately
+  0.751 CSS-screen scale.
+- The interim attempt restored synchronous pre-React scaling from the
+  orientation-independent CSS `screen` long edge. Removed animation-frame,
+  timeout, and visual-viewport retry machinery; retained only resize/
+  orientation/pageshow/focus/visible reapplication using the same stable
+  value.
+- Strengthened `check:android` to require `screen`, reject `innerWidth` and
+  `outerWidth`, and reject timer-based scaling. `npm run check:android`,
+  `npm run build`, Android sync, and the 140-task beta build pass.
+- Installed the APK over existing data with Wi-Fi still off. Six consecutive
+  force-stop/cold launches, one 15-second screen-off resume, and one Home/
+  foreground resume all render the complete fitted Lock screen at 1340 × 800.
+- Files changed: `src/main.tsx`, `scripts/check-android-beta.mjs`, and the two
+  ledgers. No sale or sync data changed.
+- This evidence was useful for identifying the unstable browser measurements,
+  but the owner correctly rejected CSS lifecycle reapplication as the durable
+  solution. The later native WebView entry above supersedes this approach.
+
+### 2026-08-23 — OFF-03 activated
+
+- Owner authorized the physical offline-sale test. OFF-03 is the only
+  reliability card in progress; Goal 06 remains inactive.
+- Preserved the existing tablet data and the three known older failed outbox
+  entries. They will not be cleared, rewritten, or mistaken for the new sale.
+- Queried Graphify and reread the complete applicable DOX, delivery plan,
+  work ledger, offline ledger, and local-first checkout/printing authorities.
+- No application code, tablet data, connectivity, or printer state changed at
+  activation.
+- Exact next action: record safe pre-sale SQLite counts and tablet/network
+  state, take the tablet offline, complete one clearly identifiable normal
+  sale, and verify its local sale, receipt, stock, print, and pending-outbox
+  effects before restart.
 
 ### 2026-08-23 — Ledger created and OFF-01 started
 

@@ -208,13 +208,14 @@ export async function loadLocalOrderPage(
     }
     const localSaleId = String(row.local_sale_id);
     const deviceId = String(row.device_id);
+    const receipt = parseReceipt(row.receipt_snapshot_json);
     return {
       key: `${deviceId}:${localSaleId}`,
       deviceId,
       localSaleId,
       ...(row.cloud_sale_id ? { cloudSaleId: String(row.cloud_sale_id) } : {}),
       businessDate: String(row.business_date),
-      cashierName: 'Development cashier',
+      ...(receipt.cashierName ? { cashierName: receipt.cashierName } : {}),
       status: status as OrderStatus,
       syncState: syncState as OrderSyncState,
       syncAttemptCount: Number(row.attempt_count ?? 0),
@@ -224,7 +225,7 @@ export async function loadLocalOrderPage(
       ...(row.last_print_error_message
         ? { printError: String(row.last_print_error_message) }
         : {}),
-      receipt: parseReceipt(row.receipt_snapshot_json),
+      receipt,
     };
   });
   const last = pageRows.at(-1);

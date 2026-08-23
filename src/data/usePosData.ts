@@ -156,9 +156,12 @@ export function usePosData() {
   }, [acceptSale, cancelSale, reloadLocal]);
 
   const completeOrder = useCallback(
-    async (input: CompleteSaleInput) => {
+    async (input: Omit<CompleteSaleInput, 'cashierName'>) => {
       setPrintFeedback(undefined);
-      const result = await completeLocalSale(input);
+      const result = await completeLocalSale({
+        ...input,
+        cashierName: session.name,
+      });
       setPrintFeedback({
         kind: 'neutral',
         message: 'Sale saved. Sending receipt…',
@@ -180,7 +183,7 @@ export function usePosData() {
         );
       return result;
     },
-    [acceptSale, cancelSale, reloadLocal],
+    [acceptSale, cancelSale, reloadLocal, session.name],
   );
 
   return {

@@ -98,6 +98,20 @@ No goal is active.
   public binary-only GitHub release repository; confirm whether public APK
   availability is acceptable before implementation.
 
+- OFF-03 is complete under `OFFLINE_RELIABILITY_PLAN.md`; OFF-04 is the sole
+  active reliability card and no production goal is active. The installed
+  native WebView repair survives cold launch, sleep/resume, and memory-pressure
+  resume without oversized rendering. With Wi-Fi still off, accepted receipt
+  `0826-0004` records Olaso Owner, one standard Espresso for 10 MAD, two stock
+  deductions, failed/unreachable print state, and exactly one pending upload.
+  Force-close, cold launch, offline unlock, Orders display, database counts,
+  and focused error logs preserve that state. The earlier test receipt was
+  cancelled through the approved correction path after exposing and fixing the
+  old `Development cashier` placeholder. Final safe counts are 10 sales, 10
+  items, 35 stock movements, 6 outbox entries, and 2 corrections; the three
+  older failed uploads remain untouched. Exact next action: implement and test
+  one shared Android-validated connection state for OFF-04 without starting
+  reconnect automation.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The
@@ -107,7 +121,7 @@ No goal is active.
   beta, clean offline logs, restored Wi-Fi, and temporary-artifact cleanup pass.
   Graphify refresh was retried but remains blocked by the missing semantic API
   key and left the existing graph intact. Exact next reliability action:
-  activate OFF-03 only after owner direction. The complete repair and current
+  OFF-03 was activated after owner direction. The complete repair and current
   owner-approved tablet presentation set are pushed as
   `32dcc14155aeef4df8028b299620e92aaba2c07e` on
   `origin/codex/goal-06-production-hardening`.
@@ -767,6 +781,31 @@ No goal is active.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-23 — OFF-03 physical offline sale accepted
+
+- Completed, corrected, and repeated the physical offline sale path without
+  restoring Wi-Fi. The accepted receipt survives restart and remains pending
+  with exact local receipt, stock, print, and audit identity evidence.
+- Removed the fixed development cashier label from new sales and local Orders;
+  the already-available signed-in staff name now owns the immutable receipt and
+  stock audit. Focused sale/Orders/POS/printing checks, build, Android beta,
+  install-over-data, offline restart, database comparison, and clean logs pass.
+- OFF-04 is now the only reliability card in progress. Next: one truthful
+  application-wide connection state, tested by changing Wi-Fi while Lock and
+  POS remain open.
+
+### 2026-08-23 — Recurring tablet scale moved to Android WebView
+
+- The owner required primary-source research after the fourth intermittent
+  oversized launch. Android's native wide-viewport overview mode now fits the
+  fixed 1340-pixel page before load; React no longer measures or changes zoom.
+- The checked beta is installed over existing SM-X115 data. Six cold launches,
+  screen-off resume, and background memory-pressure resume preserve the fitted
+  viewport with clean focused logs. OFF-03 remains the sole reliability card;
+  Wi-Fi and the pre-sale database/outbox baseline remain unchanged.
+- Exact next action: owner unlocks privately, then continue OFF-03's labeled
+  offline sale and restart proof before restoring connectivity.
 
 ### 2026-08-23 — Extra branches removed; main-only workflow adopted
 

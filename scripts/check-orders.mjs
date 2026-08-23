@@ -28,6 +28,7 @@ const receipt = (number, completedAt, productName) =>
   JSON.stringify({
     receiptNumber: number,
     completedAt,
+    cashierName: 'Amina',
     serviceType: 'take-away',
     customerName: 'Amal',
     lines: [{
@@ -91,6 +92,7 @@ const firstPage = await loadLocalOrderPage({ limit: 1 }, adapter);
 assert.equal(firstPage.page.length, 1);
 assert.equal(firstPage.page[0].localSaleId, 'sale-2');
 assert.equal(firstPage.page[0].receipt.lines[0].productName, 'Butter Croissant');
+assert.equal(firstPage.page[0].cashierName, 'Amina');
 assert.equal(firstPage.page[0].syncState, 'failed');
 assert.equal(firstPage.page[0].syncAttemptCount, 2);
 assert.equal(firstPage.page[0].printState, 'pending');

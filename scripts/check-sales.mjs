@@ -121,6 +121,7 @@ const input = {
     'product-cappuccino',
     ['option-standard', 'option-oat'],
   ),
+  cashierName: 'Test cashier',
   serviceType: 'take-away',
   paymentMethod: 'Card',
   receiptLanguage: 'fr',
@@ -138,6 +139,7 @@ const completed = await commitLocalSale(
 database.exec('COMMIT');
 
 assert.equal(completed.receipt.totalCentimes, 2100);
+assert.equal(completed.receipt.cashierName, 'Test cashier');
 assert.equal(completed.receipt.costStatus, 'complete');
 assert.equal(completed.receipt.ingredientCostCentimes, 219);
 assert.equal(completed.receipt.lines[0].ingredientCostCentimes, 219);
@@ -182,6 +184,12 @@ assert.equal(
 );
 assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count,
+  3,
+);
+assert.equal(
+  database.prepare(
+    "SELECT COUNT(*) AS count FROM stock_movements WHERE actor_label = 'Test cashier'",
+  ).get().count,
   3,
 );
 

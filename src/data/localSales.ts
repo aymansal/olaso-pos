@@ -86,6 +86,7 @@ type SaleDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
 export type CompleteSaleInput = {
   cart: CartLine[];
+  cashierName: string;
   serviceType: Exclude<LocalServiceType, 'order-online'>;
   paymentMethod: PaymentMethod;
   receiptLanguage?: ReceiptLanguage;
@@ -102,7 +103,6 @@ export type SaleCancellationPayload = {
 };
 
 const TAX_POLICY_LABEL = 'No tax';
-const CASHIER_LABEL = 'Development cashier';
 
 function businessDate(timestamp: number) {
   const date = new Date(timestamp);
@@ -192,6 +192,10 @@ export function prepareSale(
   }
   const language = input.receiptLanguage ?? 'en';
   if (language !== 'en' && language !== 'fr') throw new Error('Receipt language is invalid.');
+  const cashierName = input.cashierName.trim();
+  if (!cashierName || cashierName.length > 80) {
+    throw new Error('The cashier name is invalid.');
+  }
 
   const products = new Map(menu.products.map((product) => [product.id, product]));
   const groups = new Map(menu.modifierGroups.map((group) => [group.id, group]));
@@ -391,7 +395,7 @@ export function prepareSale(
   const receipt: SavedReceipt = {
     receiptNumber: receiptNumber ?? fallbackReceiptNumber(completedAt),
     completedAt,
-    cashierName: CASHIER_LABEL,
+    cashierName,
     serviceType: input.serviceType,
     lines,
     subtotalCentimes,
@@ -506,7 +510,7 @@ export async function commitLocalSale(
         localSaleId,
         -quantity,
         `Recipe deduction for ${receipt.receiptNumber}`,
-        CASHIER_LABEL,
+        receipt.cashierName,
         prepared.businessDate,
         receipt.completedAt,
         ingredientCostCentimes === undefined ? null : -ingredientCostCentimes,

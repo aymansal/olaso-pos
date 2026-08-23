@@ -918,14 +918,15 @@ orientation restrictions for API-36-targeted large-screen applications, so
 this manual-distribution APK targets API 35 and also retains the API-36
 restricted-resizability compatibility property while the fixed landscape
 interface remains in use.
-The native Capacitor runtime scales the fixed 1340-pixel reference by the long
-edge of the CSS screen before React mounts and reapplies that scale after
-resize/orientation changes plus a short bounded startup/foreground settling
-window; ordinary browser previews remain unscaled. Physical testing confirmed
-the complete composition, touch targeting, and cart survival across POS
-navigation. Production signing, public distribution, post-checkout printing,
-and the remaining hardware acceptance checks remain outside this development
-beta.
+The native Capacitor shell loads the fixed 1340-pixel HTML viewport in a
+`match_parent` WebView with Android wide-viewport and overview mode enabled
+before page load. Android therefore owns fit-by-width scaling, and handled
+configuration changes invalidate the WebView without JavaScript zoom or
+lifecycle timers; ordinary browser previews remain unscaled. Physical testing
+confirmed the complete composition, touch targeting, and cart survival across
+POS navigation. Production signing, public distribution, post-checkout
+printing, and the remaining hardware acceptance checks remain outside this
+development beta.
 
 The source repository is private and is not a tablet download endpoint. The
 application must never embed a GitHub token or another long-lived download

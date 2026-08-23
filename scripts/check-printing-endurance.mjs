@@ -180,7 +180,10 @@ try {
       adapter(),
       {
         cart,
+        cashierName: 'Endurance cashier',
         serviceType,
+        paymentMethod: 'Cash',
+        receiptLanguage: 'en',
         customerName: serviceType === 'order-online' ? `Customer ${index}` : '',
         tableLabel: serviceType === 'dine-in' ? `T${index + 1}` : '',
         completedAt: startedAt + index * 1000,

@@ -28,6 +28,10 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   platform integration.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;
   system bars may appear transiently after an edge swipe.
+- `OlasoWebView` enables Android wide-viewport and overview mode before the
+  page loads so the fixed 1340-pixel HTML viewport fits by width. Preserve the
+  `match_parent` bridge layout and invalidate the WebView on handled
+  configuration changes; do not reintroduce JavaScript/CSS zoom listeners.
 - Android 16 ignores ordinary orientation restrictions for API-36-targeted
   large-screen apps. This manually distributed fixed-landscape POS therefore
   compiles with SDK 36 but targets API 35. Preserve the activity-level

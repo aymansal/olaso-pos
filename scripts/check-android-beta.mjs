@@ -14,6 +14,14 @@ const activity = readFileSync(
   'android/app/src/main/java/com/olaso/pos/MainActivity.java',
   'utf8',
 );
+const webView = readFileSync(
+  'android/app/src/main/java/com/olaso/pos/OlasoWebView.java',
+  'utf8',
+);
+const bridgeLayout = readFileSync(
+  'android/app/src/main/res/layout/capacitor_bridge_layout_main.xml',
+  'utf8',
+);
 const index = readFileSync('index.html', 'utf8');
 const main = readFileSync('src/main.tsx', 'utf8');
 
@@ -32,20 +40,16 @@ assert.match(
   manifest,
   /android\.window\.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"\s+android:value="true"/,
 );
-assert.match(index, /width=1340, initial-scale=1\.0/);
-assert.match(main, /Capacitor\.isNativePlatform\(\)/);
+assert.match(index, /content="width=1340"/);
+assert.doesNotMatch(index, /initial-scale/);
+assert.doesNotMatch(main, /Capacitor|zoom|innerWidth|outerWidth|screen\.width/);
+assert.match(webView, /extends CapacitorWebView/);
+assert.match(webView, /setUseWideViewPort\(true\)/);
+assert.match(webView, /setLoadWithOverviewMode\(true\)/);
 assert.match(
-  main,
-  /Math\.max\(window\.outerWidth, window\.outerHeight\) \/ 1340/,
+  bridgeLayout,
+  /<com\.olaso\.pos\.OlasoWebView[\s\S]*?android:layout_width="match_parent"[\s\S]*?android:layout_height="match_parent"/,
 );
-assert.match(main, /addEventListener\('resize', applyTabletScale/);
-assert.match(main, /screen\.orientation\.addEventListener\('change', applyTabletScale/);
-assert.match(main, /requestAnimationFrame\(applyTabletScale\)/);
-assert.match(main, /\[250, 750, 1_500, 2_000\]/);
-assert.match(main, /visualViewport\?\.addEventListener\('resize', applyTabletScale/);
-assert.match(main, /addEventListener\('pageshow', rescaleAfterViewportSettles/);
-assert.match(main, /addEventListener\('focus', rescaleAfterViewportSettles/);
-assert.match(main, /visibilitychange/);
 const printerPlugin = readFileSync(
   'android/app/src/main/java/com/olaso/pos/EscPosPrinterPlugin.kt',
   'utf8',
@@ -66,9 +70,10 @@ const acceptedLogo = readFileSync(
 const nativeLogo = readFileSync(
   'android/app/src/main/res/raw/olaso_nv_logo.bin',
 );
-assert.doesNotMatch(main, /window\.innerWidth/);
 assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
 assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
+assert.match(activity, /onConfigurationChanged/);
+assert.match(activity, /getBridge\(\)\.getWebView\(\)\.invalidate\(\)/);
 assert.match(activity, /registerPlugin\(EscPosPrinterPlugin\.class\)/);
 assert.match(activity, /registerPlugin\(SecureSessionPlugin\.class\)/);
 assert.match(rootBuild, /com\.android\.tools\.build:gradle:8\.13\.2/);
