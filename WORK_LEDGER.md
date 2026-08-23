@@ -109,9 +109,10 @@ No goal is active.
   cancelled through the approved correction path after exposing and fixing the
   old `Development cashier` placeholder. Final safe counts are 10 sales, 10
   items, 35 stock movements, 6 outbox entries, and 2 corrections; the three
-  older failed uploads remain untouched. Exact next action: implement and test
-  one shared Android-validated connection state for OFF-04 without starting
-  reconnect automation.
+  older failed uploads remain untouched. OFF-03 is pushed as
+  `0afdb3feccfe2079731afae41c05fbccf7704453` on `origin/main`. Exact next
+  action: implement and test one shared Android-validated connection state for
+  OFF-04 without starting reconnect automation.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The

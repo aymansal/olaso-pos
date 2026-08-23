@@ -324,6 +324,8 @@ files changed, unresolved limitation, and the exact next action below.
 - `check:pos`, `check:sales`, `check:orders`, the 20-sale printing endurance
   check, TypeScript, Android checks, production build, sync, and the 140-task
   beta build pass. OFF-03 is complete and OFF-04 is the sole active card.
+- Commit `0afdb3feccfe2079731afae41c05fbccf7704453` is pushed to
+  `origin/main`.
 - Exact next action: inspect the existing Android connectivity callback and
   scattered browser listeners, then implement one shared, resume-aware
   connection state before changing reconnect behavior.
