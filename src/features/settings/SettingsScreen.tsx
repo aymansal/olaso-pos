@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useConnectionStatus } from '../../data/connectionContext';
 import { useSettingsData } from '../../data/useSettingsData';
 import type { ClockFormat, TerminalPreferences } from '../../data/terminalSettings';
 import { Header } from '../pos/components/Header/Header';
@@ -24,19 +25,10 @@ export function SettingsScreen({
   onClockFormatChange,
 }: SettingsScreenProps) {
   const data = useSettingsData();
+  const { available } = useConnectionStatus();
   const [section, setSection] = useState<SettingsSection>('general');
-  const [online, setOnline] = useState(navigator.onLine);
+  const online = available === true;
   const [lockError, setLockError] = useState('');
-
-  useEffect(() => {
-    const update = () => setOnline(navigator.onLine);
-    window.addEventListener('online', update);
-    window.addEventListener('offline', update);
-    return () => {
-      window.removeEventListener('online', update);
-      window.removeEventListener('offline', update);
-    };
-  }, []);
 
   async function lock() {
     setLockError('');

@@ -4,14 +4,17 @@ import { Theme } from '@astryxdesign/core/theme';
 import { OlasothemeTheme } from '../Olasotheme';
 import { App } from './App';
 import { AppDataProvider } from './data/AppDataProvider';
+import { ConnectionProvider } from './data/connectionContext';
 import './globals.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppDataProvider>
-      <Theme theme={OlasothemeTheme} mode="light">
-        <App />
-      </Theme>
+      <ConnectionProvider>
+        <Theme theme={OlasothemeTheme} mode="light">
+          <App />
+        </Theme>
+      </ConnectionProvider>
     </AppDataProvider>
   </StrictMode>,
 );

@@ -199,11 +199,8 @@ export function useOrdersData() {
   useEffect(() => {
     mounted.current = true;
     void refresh();
-    const retryOnline = () => void refresh();
-    window.addEventListener('online', retryOnline);
     return () => {
       mounted.current = false;
-      window.removeEventListener('online', retryOnline);
     };
   }, [refresh]);
 

@@ -139,22 +139,6 @@ export function usePosData() {
     };
   }, [acceptSale, cancelSale, cloudSnapshot, reloadLocal]);
 
-  useEffect(() => {
-    const retry = () => {
-      syncPendingSales(acceptSale, cancelSale)
-        .then(reloadLocal)
-        .catch((error: unknown) =>
-          setLocalError(
-            error instanceof Error
-              ? error.message
-              : 'Order synchronization failed.',
-          ),
-        );
-    };
-    window.addEventListener('online', retry);
-    return () => window.removeEventListener('online', retry);
-  }, [acceptSale, cancelSale, reloadLocal]);
-
   const completeOrder = useCallback(
     async (input: Omit<CompleteSaleInput, 'cashierName'>) => {
       setPrintFeedback(undefined);

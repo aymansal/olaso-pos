@@ -1,11 +1,21 @@
-import { Capacitor, registerPlugin } from '@capacitor/core';
+import {
+  Capacitor,
+  registerPlugin,
+  type PluginListenerHandle,
+} from '@capacitor/core';
+
+type NetworkStatus = { available: boolean };
 
 type SecureSessionPlugin = {
   get(options: { key: string }): Promise<{ value: string | null }>;
   set(options: { key: string; value: string }): Promise<void>;
   remove(options: { key: string }): Promise<void>;
   monotonicClock(): Promise<{ elapsedRealtime: number; bootCount: number }>;
-  networkStatus(): Promise<{ available: boolean }>;
+  networkStatus(): Promise<NetworkStatus>;
+  addListener(
+    eventName: 'networkStatusChanged',
+    listener: (status: NetworkStatus) => void,
+  ): Promise<PluginListenerHandle>;
 };
 
 const nativeSecureSession = registerPlugin<SecureSessionPlugin>('SecureSession');
@@ -59,4 +69,17 @@ export async function readSecureSessionNetworkStatus() {
     throw new Error('Protected network status is unavailable.');
   }
   return status.available;
+}
+
+export async function watchSecureSessionNetworkStatus(
+  listener: (available: boolean) => void,
+) {
+  if (!Capacitor.isNativePlatform()) throw unavailable();
+  const handle = await nativeSecureSession.addListener(
+    'networkStatusChanged',
+    (status) => {
+      if (typeof status.available === 'boolean') listener(status.available);
+    },
+  );
+  return () => { void handle.remove(); };
 }

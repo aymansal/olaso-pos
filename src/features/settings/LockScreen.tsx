@@ -12,6 +12,7 @@ import {
   type StaffSession,
 } from '../../data/identitySession';
 import { readSecureSessionNetworkStatus } from '../../data/secureSession';
+import { useConnectionStatus } from '../../data/connectionContext';
 import {
   loadOperationalCache,
   reconcileAuthenticatedStaffProfiles,
@@ -50,7 +51,8 @@ type CachedStaff = {
 
 export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   const [now, setNow] = useState(new Date());
-  const [online, setOnline] = useState(navigator.onLine);
+  const { available } = useConnectionStatus();
+  const online = available === true;
   const [unlocking, setUnlocking] = useState(false);
   const [error, setError] = useState('');
   const [staff, setStaff] = useState<CachedStaff[]>([]);
@@ -62,21 +64,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
 
   useEffect(() => {
     const clock = window.setInterval(() => setNow(new Date()), 30_000);
-    let active = true;
-    const updateOnline = () => {
-      readSecureSessionNetworkStatus()
-        .then((available) => { if (active) setOnline(available); })
-        .catch(() => { if (active) setOnline(navigator.onLine); });
-    };
-    updateOnline();
-    window.addEventListener('online', updateOnline);
-    window.addEventListener('offline', updateOnline);
-    return () => {
-      active = false;
-      window.clearInterval(clock);
-      window.removeEventListener('online', updateOnline);
-      window.removeEventListener('offline', updateOnline);
-    };
+    return () => window.clearInterval(clock);
   }, []);
 
   useEffect(() => {
@@ -221,7 +209,11 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
           {online
             ? <WifiHigh size={14} aria-hidden="true" />
             : <WifiSlash size={14} aria-hidden="true" />}
-          <span>{online ? 'Terminal online' : 'Terminal offline · local service ready'}</span>
+          <span>{available === undefined
+            ? 'Checking connection…'
+            : online
+              ? 'Terminal online'
+              : 'Terminal offline · local service ready'}</span>
         </div>
         <div className={styles.dateTime}>
           <span>{date.toUpperCase()}</span>

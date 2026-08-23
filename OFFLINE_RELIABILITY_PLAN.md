@@ -82,11 +82,11 @@ appropriate physical-tablet evidence.
 - The current lock screen reads cached staff profiles from SQLite for offline
   startup. While online, a bounded server read may supply sign-in choices, but
   only the successfully authenticated profile is upserted into the local cache.
-- The current lock screen checks native network status at mount and responds to
-  browser `online` / `offline` events. It has no Android network-change
-  listener, so Android Wi-Fi changes can leave the displayed state stale.
-- The POS and Orders data paths have separate limited online-event retries;
-  there is no one application-wide reconnect worker.
+- One Android callback now reports only validated internet availability to one
+  shared React provider. Lock, POS, and Settings consume it, and foreground/
+  resume rechecks protect long-sleep recovery.
+- The POS and Orders browser-event retry listeners are removed. There is still
+  no application-wide reconnect worker; OFF-05 owns it.
 - An offline cancellation commits its local correction and stock restoration,
   but the current Orders action can remain visibly busy while it waits for a
   cloud attempt. OFF-05 must keep local completion separate from reconnect work.
@@ -208,7 +208,9 @@ restart and is waiting to synchronize, without claiming cloud success yet.
 
 ### OFF-04 — Establish one accurate application-wide connection state
 
-**Status:** in progress.
+**Status:** complete — Lock and POS followed validated Wi-Fi transitions while
+remaining open, including one screen-off/resume change, with no connection-
+listener warning or error.
 
 **Objective:** replace fragmented browser-event detection with a shared source
 of truth based on Android-validated internet availability.
@@ -237,7 +239,7 @@ Android warning/error.
 
 ### OFF-05 — Add the serialized reconnect worker
 
-**Status:** pending; requires OFF-03 and OFF-04.
+**Status:** in progress; OFF-03 and OFF-04 are complete.
 
 **Objective:** make a live, unlocked terminal recover automatically and safely
 when validated internet returns.
@@ -296,6 +298,49 @@ menu state, and no duplicate receipt, stock movement, warning, or error.
 files changed, unresolved limitation, and the exact next action below.
 
 ## Journal
+
+### 2026-08-23 — OFF-04 complete; OFF-05 started
+
+- At the owner's request, checked the implementation against current official
+  Android connectivity and background-work guidance before acceptance. The
+  research caught a callback race in the first implementation: Android warns
+  against querying capabilities again from inside a callback.
+- Corrected the native boundary to use the application's default-network
+  callback on supported Android versions and the callback-supplied ordered
+  capabilities. API 23 retains a bounded matching-network fallback. Both paths
+  unregister the single callback; no broadcast receiver, polling, or new
+  dependency was added.
+- WorkManager is intentionally not used: the first release requires an active
+  staff session and forbids staff-authorized cloud work while locked, whereas
+  WorkManager is for deferred work that may outlive the visible app.
+- Added one Android validated-network callback and one root React connection
+  provider. It subscribes once, cleans up, rechecks on focus/pageshow/visible
+  resume, and uses ordinary browser status only outside the installed app.
+- Lock and Settings now consume the shared result. POS uses its existing small
+  receipt-rail message to say offline sales remain saved locally; no new banner,
+  screen, state library, polling loop, or synchronization worker was added.
+- Removed the separate POS, Orders, Settings, and Lock browser-event listeners.
+  The existing fresh native read remains at PIN submission so unlock never
+  trusts stale presentation state.
+- Built and installed the APK over existing tablet data. With the app left
+  open, Lock changed offline → online → offline as Android gained and lost a
+  validated Wi-Fi connection. After offline unlock, POS changed offline →
+  online, and an online-to-offline change made while the screen slept was
+  correct immediately on resume. All views remained fitted at 1340 × 800.
+- The first online POS transition also activated the pre-existing POS snapshot
+  synchronization path and converted all six outbox rows to failed, including
+  the accepted OFF-03 sale. No sale, item, stock movement, receipt, or correction
+  was deleted or duplicated. This is retained evidence for OFF-05 rather than
+  being cleared or hidden.
+- A cleared-log second offline-to-online POS transition produced no Android,
+  WebView, or application error. Focused identity, Settings, POS, Android,
+  TypeScript, production build, sync, and the 140-task beta build pass.
+- Rebuilt and installed the research-corrected callback, then repeated locked
+  offline/online transitions. A fresh all-buffer log capture is empty for
+  Android, Capacitor, and WebView error levels.
+- OFF-04 is complete and OFF-05 is the sole active card. Exact next action:
+  inspect failure classification, manual Sync, snapshot refresh, and all sync
+  callers, then implement one authenticated single-flight reconnect sequence.
 
 ### 2026-08-23 — OFF-03 complete; OFF-04 started
 

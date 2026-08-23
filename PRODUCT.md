@@ -512,6 +512,8 @@ sale ingredient cost or required expense input is incomplete.
 - The tablet keeps the active menu, recipes, current stock, and unsynced sales
   locally.
 - The application takes orders while offline.
+- Lock and POS show one quiet, shared connection state based on real internet
+  availability, and it updates after Wi-Fi changes or app resume.
 - Cloud synchronization runs in the background when a connection exists.
 - An unsynced sale remains visible until acknowledged by Convex.
 - Retrying the same sale cannot create a duplicate.

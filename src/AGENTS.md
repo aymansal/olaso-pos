@@ -8,6 +8,8 @@ application, global tokens, and the feature screens under `features/`.
 ## Ownership
 
 - `main.tsx` mounts React and applies the pre-built Astryx Olaso theme.
+- `main.tsx` also mounts the single shared connection provider inside the local
+  data boundary; screens consume it rather than registering network listeners.
 - `App.tsx` selects the active top-level screen and restores the non-secret
   local terminal-lock state before exposing the application.
 - `data/` owns the application-level Convex provider, feature-facing data

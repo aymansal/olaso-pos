@@ -35,6 +35,9 @@ const sqliteSchema = readFileSync('src/data/schema.ts', 'utf8');
 const settings = readFileSync('src/data/terminalSettings.ts', 'utf8');
 const securePlugin = readFileSync('android/app/src/main/java/com/olaso/pos/SecureSessionPlugin.kt', 'utf8');
 const secureSession = readFileSync('src/data/secureSession.ts', 'utf8');
+const connectionContext = readFileSync('src/data/connectionContext.tsx', 'utf8');
+const main = readFileSync('src/main.tsx', 'utf8');
+const settingsScreen = readFileSync('src/features/settings/SettingsScreen.tsx', 'utf8');
 const identity = readFileSync('convex/identityInternal.ts', 'utf8');
 const identityAction = readFileSync('convex/identity.ts', 'utf8');
 const sessionBoundary = readFileSync('convex/lib/session.ts', 'utf8');
@@ -66,7 +69,24 @@ assert.match(app, /await setTerminalLocked\(true\)/);
 assert.doesNotMatch(sqliteSchema + settings, /identity\.(?:session|offline_pin|offline_attempts)/);
 assert.doesNotMatch(securePlugin, /Log\.|println|printStackTrace/);
 assert.match(securePlugin, /NetworkCapabilities\.NET_CAPABILITY_VALIDATED/);
+assert.match(securePlugin, /ConnectivityManager\.NetworkCallback/);
+assert.match(securePlugin, /registerDefaultNetworkCallback/);
+assert.match(securePlugin, /registerNetworkCallback/);
+assert.match(securePlugin, /unregisterNetworkCallback/);
+assert.match(securePlugin, /notifyListeners\(NETWORK_STATUS_CHANGED/);
+assert.doesNotMatch(
+  securePlugin.match(/private val networkCallback[\s\S]*?override fun load\(\)/)?.[0] ?? '',
+  /getNetworkCapabilities/,
+);
 assert.match(secureSession, /readSecureSessionNetworkStatus/);
+assert.match(secureSession, /watchSecureSessionNetworkStatus/);
+assert.match(main, /<ConnectionProvider>/);
+assert.match(connectionContext, /watchSecureSessionNetworkStatus\(update\)/);
+assert.match(connectionContext, /visibilitychange/);
+assert.match(connectionContext, /pageshow/);
+assert.match(lockScreen, /useConnectionStatus\(\)/);
+assert.match(settingsScreen, /useConnectionStatus\(\)/);
+assert.doesNotMatch(lockScreen + settingsScreen, /navigator\.onLine/);
 assert.match(lockScreen, /const networkAvailable = await readSecureSessionNetworkStatus\(\)/);
 assert.match(identity, /tokenHash/);
 assert.match(identity, /revokedAt/);

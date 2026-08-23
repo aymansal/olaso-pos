@@ -27,6 +27,8 @@ tablet's local SQLite operational record.
 - `secureSession.ts` owns the Android-only protected-storage wrapper for opaque
   session tokens and offline PIN verifiers; ordinary SQLite settings never hold
   credentials.
+- `connectionContext.tsx` owns the single Android-validated connection state
+  and its foreground/resume recheck; it does not synchronize application data.
 - `identitySession.ts` derives and persists one protected local session/PIN
   verifier/attempt-state record per provisioned staff profile after successful
   sign-in; it never exposes those values through ordinary local data contracts.
@@ -62,6 +64,8 @@ tablet's local SQLite operational record.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry; tab switches remain local and never start another query.
 - Never refresh cloud cache data over pending local outbox work.
+- Treat the shared connection context as display/readiness state only. OFF-05's
+  one reconnect worker owns automatic outbox and cache work.
 - Treat the unauthenticated Lock-screen server profile list as read-only. Only
   after a successful online sign-in may its complete bounded result reconcile
   the local staff directory and remove stale protected access. If that result

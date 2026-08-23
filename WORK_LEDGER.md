@@ -98,21 +98,19 @@ No goal is active.
   public binary-only GitHub release repository; confirm whether public APK
   availability is acceptable before implementation.
 
-- OFF-03 is complete under `OFFLINE_RELIABILITY_PLAN.md`; OFF-04 is the sole
-  active reliability card and no production goal is active. The installed
-  native WebView repair survives cold launch, sleep/resume, and memory-pressure
-  resume without oversized rendering. With Wi-Fi still off, accepted receipt
-  `0826-0004` records Olaso Owner, one standard Espresso for 10 MAD, two stock
-  deductions, failed/unreachable print state, and exactly one pending upload.
-  Force-close, cold launch, offline unlock, Orders display, database counts,
-  and focused error logs preserve that state. The earlier test receipt was
-  cancelled through the approved correction path after exposing and fixing the
-  old `Development cashier` placeholder. Final safe counts are 10 sales, 10
-  items, 35 stock movements, 6 outbox entries, and 2 corrections; the three
-  older failed uploads remain untouched. OFF-03 is pushed as
-  `0afdb3feccfe2079731afae41c05fbccf7704453` on `origin/main`. Exact next
-  action: implement and test one shared Android-validated connection state for
-  OFF-04 without starting reconnect automation.
+- OFF-03 and OFF-04 are complete under `OFFLINE_RELIABILITY_PLAN.md`; OFF-05 is
+  the sole active reliability card and no production goal is active. One
+  Android-validated connection callback and root provider now update Lock,
+  POS, and Settings without polling or per-screen listeners. Physical Lock
+  offline/online/offline, POS offline/online, and screen-off/resume transitions
+  passed at the fitted 1340 × 800 layout. Official Android research corrected
+  the first callback implementation to use default-network, callback-supplied
+  capability data rather than a racy synchronous query; the rebuilt APK and a
+  clean all-buffer transition log pass. The first online POS transition activated the old
+  snapshot sync path and left all six outbox rows failed without deleting or
+  duplicating sales, items, stock, receipts, or corrections. Exact next action:
+  implement OFF-05's one authenticated, single-flight reconnect sequence and
+  preserve business failures for recovery.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The
@@ -782,6 +780,15 @@ No goal is active.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-23 — OFF-04 shared connection truth accepted
+
+- The installed tablet now has one Android-validated online/offline state for
+  Lock, POS, and Settings, including live Wi-Fi changes and resume after sleep.
+  Separate screen listeners were deleted and no state package or polling was
+  added.
+- OFF-05 is the only card in progress. Next: replace scattered sync attempts
+  with one bounded worker that never duplicates local or cloud effects.
 
 ### 2026-08-23 — OFF-03 physical offline sale accepted
 

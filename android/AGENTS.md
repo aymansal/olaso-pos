@@ -24,6 +24,9 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   identity-session tokens and offline PIN verifiers. It stores encrypted values
   only; plaintext credentials never enter SharedPreferences, logs, or plugin
   return values beyond an explicit read to the authenticated web runtime.
+- The same minimal native boundary reports Android-validated internet state and
+  emits one change event. Preserve callback cleanup and never treat Wi-Fi
+  association alone as online.
 - Keep web application behavior in `src/`; native code is only for required
   platform integration.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;

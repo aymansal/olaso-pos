@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { ReceiptPreviewDialog } from '../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { usePosData } from '../../data/usePosData';
+import { useConnectionStatus } from '../../data/connectionContext';
 import type { ClockFormat } from '../../data/terminalSettings';
 import type { SavedReceipt } from '../../data/localSales.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
@@ -58,6 +59,7 @@ export function PosScreen({
   onNavigate,
   onOpenSettings,
 }: PosScreenProps) {
+  const { available } = useConnectionStatus();
   const {
     menu,
     completeOrder,
@@ -192,7 +194,9 @@ export function PosScreen({
             kind: 'success',
             message: 'Sale saved. Receipt remains pending.',
           }
-        : dataWarning
+        : available === false
+          ? { kind: 'neutral', message: 'Offline · sales stay saved on this tablet.' }
+          : dataWarning
           ? { kind: 'neutral', message: dataWarning }
           : validation.kind === 'error'
             ? { kind: 'error', message: validation.message }

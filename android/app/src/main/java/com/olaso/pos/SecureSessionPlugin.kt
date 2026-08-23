@@ -2,7 +2,10 @@ package com.olaso.pos
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.os.Build
 import android.os.SystemClock
 import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
@@ -22,6 +25,56 @@ import javax.crypto.spec.GCMParameterSpec
 
 @CapacitorPlugin(name = "SecureSession")
 class SecureSessionPlugin : Plugin() {
+    private var networkCallbackRegistered = false
+    @Volatile private var lastNetworkAvailable: Boolean? = null
+    private val fallbackNetworks = mutableMapOf<Network, Boolean>()
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onLost(network: Network) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                publishNetworkStatus(false)
+                return
+            }
+            synchronized(fallbackNetworks) {
+                fallbackNetworks.remove(network)
+                publishNetworkStatus(fallbackNetworks.values.any { it })
+            }
+        }
+
+        override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+            val available = hasValidatedInternet(capabilities)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                publishNetworkStatus(available)
+                return
+            }
+            synchronized(fallbackNetworks) {
+                fallbackNetworks[network] = available
+                publishNetworkStatus(fallbackNetworks.values.any { it })
+            }
+        }
+    }
+
+    override fun load() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivity().registerDefaultNetworkCallback(networkCallback)
+        } else {
+            connectivity().registerNetworkCallback(
+                NetworkRequest.Builder()
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .build(),
+                networkCallback,
+            )
+        }
+        networkCallbackRegistered = true
+    }
+
+    override fun handleOnDestroy() {
+        if (networkCallbackRegistered) {
+            connectivity().unregisterNetworkCallback(networkCallback)
+            networkCallbackRegistered = false
+        }
+        super.handleOnDestroy()
+    }
+
     @PluginMethod
     fun get(call: PluginCall) {
         val key = key(call) ?: return
@@ -58,12 +111,29 @@ class SecureSessionPlugin : Plugin() {
 
     @PluginMethod
     fun networkStatus(call: PluginCall) {
-        val connectivity = context.getSystemService(Context.CONNECTIVITY_SERVICE)
-            as ConnectivityManager
+        call.resolve(networkStatusResult(networkAvailable()))
+    }
+
+    private fun connectivity() = context.getSystemService(Context.CONNECTIVITY_SERVICE)
+        as ConnectivityManager
+
+    private fun networkAvailable(): Boolean {
+        val connectivity = connectivity()
         val capabilities = connectivity.activeNetwork?.let(connectivity::getNetworkCapabilities)
-        val available = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        return capabilities?.let(::hasValidatedInternet) == true
+    }
+
+    private fun hasValidatedInternet(capabilities: NetworkCapabilities) =
+        capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        call.resolve(JSObject().apply { put("available", available) })
+
+    private fun networkStatusResult(available: Boolean) =
+        JSObject().apply { put("available", available) }
+
+    private fun publishNetworkStatus(available: Boolean) {
+        if (lastNetworkAvailable == available) return
+        lastNetworkAvailable = available
+        notifyListeners(NETWORK_STATUS_CHANGED, networkStatusResult(available))
     }
 
     private fun key(call: PluginCall): String? {
@@ -119,6 +189,7 @@ class SecureSessionPlugin : Plugin() {
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val TAG_LENGTH_BITS = 128
         private const val MAX_VALUE_LENGTH = 8_192
+        private const val NETWORK_STATUS_CHANGED = "networkStatusChanged"
 
         internal fun isValidKey(value: String) = value.matches(Regex("[A-Za-z0-9._-]{1,100}"))
     }

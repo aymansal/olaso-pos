@@ -832,6 +832,29 @@ staff PIN
   lockouts; same-day offline corrections retain device time and are reconciled
   against the café business date when synchronized.
 
+### Connection truth and reconnect ownership
+
+Android is the production connection authority. The native boundary reports
+online only when the active network has both internet and Android validation;
+Wi-Fi association alone is insufficient. Android 7+ uses the application's
+default-network callback; the API-23 fallback observes matching networks. Both
+consume the ordered capability data supplied by the callback rather than
+querying again inside it. One native callback feeds one React provider, which
+also rechecks on visible foreground/resume. Browser online and offline events
+may request a fresh native reading but never override it.
+
+Lock, POS, and Settings consume that shared state. Locked connection changes
+update presentation only and never start staff-authorized cloud work. POS and
+Orders no longer own separate browser-event retry listeners. OFF-05 owns the
+single authenticated reconnect worker and remains responsible for outbox,
+cache, and visible-screen refresh ordering.
+
+The first release does not use WorkManager for sale synchronization. That API
+is appropriate for deferred background work that may outlive the visible app,
+while Olaso deliberately requires an active staff session and does no
+staff-authorized cloud work while locked. Revisit it only if that product and
+security policy changes.
+
 ## Printing boundary
 
 `printReceipt` is the only application-facing byte-generation/transport
