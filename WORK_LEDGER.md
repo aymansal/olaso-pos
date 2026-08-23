@@ -88,7 +88,10 @@ No goal is active.
   beta, clean offline logs, restored Wi-Fi, and temporary-artifact cleanup pass.
   Graphify refresh was retried but remains blocked by the missing semantic API
   key and left the existing graph intact. Exact next reliability action:
-  activate OFF-03 only after owner direction.
+  activate OFF-03 only after owner direction. The complete repair and current
+  owner-approved tablet presentation set are pushed as
+  `32dcc14155aeef4df8028b299620e92aaba2c07e` on
+  `origin/codex/goal-06-production-hardening`.
 - Owner-approved Settings direction: staff profile creation belongs under the
   owner profile, not permanent navigation. The screen must use short café-owner
   language, remove technical security essays and redundant helper copy, and

@@ -510,6 +510,9 @@ files changed, unresolved limitation, and the exact next action below.
   reliability action: activate OFF-03 only after owner direction, then prove a
   labeled offline sale and its pending local effects without synchronizing it
   prematurely.
+- The complete OFF-02 repair and the owner-approved tablet presentation work
+  were committed as `32dcc14155aeef4df8028b299620e92aaba2c07e` and pushed to
+  `origin/codex/goal-06-production-hardening`.
 - The required `graphify . --update` retry stopped before replacing the graph
   because the changed mixed document/image corpus requires a semantic backend
   API key that is not configured. The existing graph remains intact; the
