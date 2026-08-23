@@ -108,9 +108,10 @@ No goal is active.
   capability data rather than a racy synchronous query; the rebuilt APK and a
   clean all-buffer transition log pass. The first online POS transition activated the old
   snapshot sync path and left all six outbox rows failed without deleting or
-  duplicating sales, items, stock, receipts, or corrections. Exact next action:
-  implement OFF-05's one authenticated, single-flight reconnect sequence and
-  preserve business failures for recovery.
+  duplicating sales, items, stock, receipts, or corrections. OFF-04 is pushed
+  as `60ac455fade5a825c5a01078da117b7a562f009e` on `origin/main`. Exact next
+  action: implement OFF-05's one authenticated, single-flight reconnect
+  sequence and preserve business failures for recovery.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The

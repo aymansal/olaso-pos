@@ -338,6 +338,8 @@ files changed, unresolved limitation, and the exact next action below.
 - Rebuilt and installed the research-corrected callback, then repeated locked
   offline/online transitions. A fresh all-buffer log capture is empty for
   Android, Capacitor, and WebView error levels.
+- Commit `60ac455fade5a825c5a01078da117b7a562f009e` is pushed to
+  `origin/main`.
 - OFF-04 is complete and OFF-05 is the sole active card. Exact next action:
   inspect failure classification, manual Sync, snapshot refresh, and all sync
   callers, then implement one authenticated single-flight reconnect sequence.
