@@ -111,6 +111,7 @@ against the near-final APK.
 | --- | --- | --- | --- |
 | POLISH-01 | Capture the owner's complete app-wide simplification and dislike list | pending | — |
 | POLISH-02 | Apply and verify approved changes one screen at a time | pending | — |
+| STAFF-01 | Add minimal owner-only staff creation and initial PIN setup inside Settings | pending | — |
 | CATALOG-01 | Add curated category artwork selection and a neutral custom-category fallback | pending | — |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
@@ -153,6 +154,20 @@ against the near-final APK.
   tablet before asking the owner to accept it and move to the next screen.
   Visual cleanup cannot change persistence, authorization, printing, stock, or
   reporting behavior.
+
+### STAFF-01 — Minimal owner staff creation
+
+- Keep staff management inside the owner-only Settings workspace; do not add a
+  permanent navigation destination.
+- The creation form contains only name, approved role, six-digit PIN, PIN
+  confirmation, Cancel, and Add staff. Do not expose recovery codes, hashes,
+  sessions, storage, sync internals, or a decorative icon for every field.
+- Reuse the existing authenticated staff-profile and protected identity
+  boundaries. The support-only owner recovery secret never enters the UI, and
+  no raw PIN enters SQLite, logs, source control, or ordinary settings.
+- Verify on the physical tablet that the new profile signs in online once,
+  unlocks offline with the correct role, and does not disturb existing staff
+  profiles.
 
 ### HARD-01 — Baseline and instrumentation
 
@@ -265,7 +280,7 @@ against the near-final APK.
 
 ## Goal completion criteria
 
-- POLISH-01, POLISH-02, CATALOG-01, and HARD-01 through HARD-08 are done,
+- POLISH-01, POLISH-02, STAFF-01, CATALOG-01, and HARD-01 through HARD-08 are done,
   verified, committed, pushed, and recorded.
 - Android, WebView, and React present one immediate Olaso cream launch sequence
   and meet the physical-tablet startup budget without waiting for the network.

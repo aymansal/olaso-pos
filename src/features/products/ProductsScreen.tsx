@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useProductManagement } from '../../data/useProductManagement';
+import type { ClockFormat } from '../../data/terminalSettings';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { CategoryDialog } from './components/CategoryDialog/CategoryDialog';
@@ -14,6 +15,7 @@ import type {
 import styles from './ProductsScreen.module.css';
 
 interface ProductsScreenProps {
+  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
 }
@@ -22,6 +24,7 @@ type AvailabilityFilter = 'all' | ManagedProduct['status'];
 type ProductSort = 'updated' | 'name' | 'price';
 
 export function ProductsScreen({
+  clockFormat,
   onNavigate,
   onOpenSettings,
 }: ProductsScreenProps) {
@@ -90,8 +93,6 @@ export function ProductsScreen({
   const selectedCategory = management.categories.find(
     (category) => category.id === selectedCategoryId,
   );
-  const now = new Date();
-
   async function saveCategory(name: string) {
     const result = await management.saveCategory(
       categoryEditor === 'new'
@@ -151,14 +152,8 @@ export function ProductsScreen({
     <main className={styles.screen} aria-label="Olaso products">
       <Header
         activePage="Products"
-        brand="olaso"
+        clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
-        dateLabel={new Intl.DateTimeFormat('en-GB', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-        }).format(now)}
-        dateTime={now.toISOString().slice(0, 10)}
         onNavigate={onNavigate}
       />
       <ProductCatalogPanel

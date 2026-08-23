@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useOrdersData } from '../../data/useOrdersData';
+import type { ClockFormat } from '../../data/terminalSettings';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { OrderDetailPanel } from './components/OrderDetailPanel/OrderDetailPanel';
@@ -7,19 +8,19 @@ import { OrdersListPanel } from './components/OrdersListPanel/OrdersListPanel';
 import styles from './OrdersScreen.module.css';
 
 interface OrdersScreenProps {
+  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
 }
 
 export function OrdersScreen({
+  clockFormat,
   onNavigate,
   onOpenSettings,
 }: OrdersScreenProps) {
   const data = useOrdersData();
   const [selectedKey, setSelectedKey] = useState<string>();
   const selectedOrder = data.orders.find((order) => order.key === selectedKey);
-  const now = new Date();
-
   useEffect(() => {
     if (!selectedOrder && data.orders[0]) {
       setSelectedKey(data.orders[0].key);
@@ -30,14 +31,8 @@ export function OrdersScreen({
     <main className={styles.screen} aria-label="Olaso orders">
       <Header
         activePage="Orders"
-        brand="olaso"
+        clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
-        dateLabel={now.toLocaleDateString('en-GB', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-        })}
-        dateTime={now.toISOString().slice(0, 10)}
         onNavigate={onNavigate}
       />
       <OrdersListPanel

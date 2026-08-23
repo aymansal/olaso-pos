@@ -145,6 +145,7 @@ screen-by-screen work.
 | --- | --- |
 | POLISH-01 | Walk through the complete app with the owner and record every disliked, verbose, redundant, or “AI-ish” element before changing the interface. |
 | POLISH-02 | Apply and verify the approved changes one screen at a time before moving to the next screen. |
+| STAFF-01 | Add and verify minimal owner-only staff profile creation and initial PIN setup inside Settings. |
 | CATALOG-01 | Add a curated category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
 | HARD-01 | Establish repeatable five-run cold/warm startup, APK, WebView, bundle, and readiness baselines on the physical tablet after the approved screen work is stable. |
 | HARD-02 | Finalize the app icon and continuous branded launch, with optional measured logo motion after an immediate static first frame. |

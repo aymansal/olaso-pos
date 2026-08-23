@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Owns the profile-opened Settings workspace and local terminal lock
+Owns the profile-opened Settings workspace and the staff sign-in/terminal lock
 presentation.
 
 ## Local Contracts
@@ -23,10 +23,17 @@ presentation.
   reviewed native asset during deliberate setup.
 - A successful test means only that bytes were written; the operator must
   confirm paper separately.
-- Unlock is explicitly not authentication until owner-approved roles, PINs,
-  and login policy exist. Do not add placeholder credentials or a working
-  keypad.
-- Unconfirmed staff, receipt, and stock policies remain unavailable.
+- Unlock is the production staff-authentication boundary. Every owner, manager,
+  and cashier uses a separate six-digit PIN; never add placeholder, shared, or
+  default credentials.
+- Offline unlock is available only after that profile has signed in online on
+  this tablet. Its session, PIN verifier, and failed-attempt state remain in
+  profile-scoped Android protected storage, never ordinary settings or SQLite.
+- While locked, a bounded server profile read may provide sign-in choices, but
+  it is read-only: it never archives local profiles, clears protected access,
+  or starts staff-authorized synchronization. After a successful online
+  sign-in, its complete bounded result may reconcile the local staff directory;
+  otherwise only the authenticated profile is upserted.
 
 ## Verification
 

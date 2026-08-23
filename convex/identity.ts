@@ -150,6 +150,7 @@ export const listActiveProfiles = query({
       id: profile._id,
       name: profile.name,
       role: profile.role,
+      revision: profile.revision,
     }));
   },
 });

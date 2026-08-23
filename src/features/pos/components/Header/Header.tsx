@@ -1,4 +1,5 @@
 import { Bell, FileText, User } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
 import { IconButton } from '../IconButton/IconButton';
 import {
   TopNavigation,
@@ -7,40 +8,47 @@ import {
 import styles from './Header.module.css';
 import { useStaffSession } from '../../../../data/sessionContext';
 import { hasPermission } from '../../../../data/permissions';
+import type { ClockFormat } from '../../../../data/terminalSettings';
+import olasoLogo from '../../../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
 
 interface HeaderProps {
   activePage?: NavigationPage;
-  brand?: 'reference' | 'olaso';
-  dateLabel?: string;
-  dateTime?: string;
+  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
 }
 
 export function Header({
   activePage,
-  brand = 'reference',
-  dateLabel = 'Thursday, 23 June',
-  dateTime = '2026-06-23',
+  clockFormat,
   onNavigate,
   onOpenSettings,
 }: HeaderProps) {
+  const [now, setNow] = useState(new Date());
   const staff = useStaffSession();
   const canOpenSettings = hasPermission(staff.role, 'settings');
   const canViewReports = hasPermission(staff.role, 'reports');
+  useEffect(() => {
+    const clock = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(clock);
+  }, []);
+  const date = new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(now);
+  const time = new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: clockFormat === '12-hour',
+  }).format(now);
   return (
     <header className={styles.header}>
       <div className={styles.brandSide}>
-        <div
-          className={`${styles.wordmark} ${brand === 'olaso' ? styles.olasoWordmark : ''}`}
-          aria-label={brand === 'olaso' ? 'Olaso' : 'Green Grounds Coffee'}
-        >
-          <span className={styles.brandDot} />
-          {brand === 'olaso'
-            ? <span>OLASO</span>
-            : <span>GREEN<br />GROUNDS<br />COFFEE</span>}
+        <div className={styles.wordmark}>
+          <img src={olasoLogo} alt="Olaso" width={96} height={26} />
         </div>
-        <time className={styles.date} dateTime={dateTime}>{dateLabel}</time>
+        <time className={styles.date} dateTime={now.toISOString()}>{date} · {time}</time>
       </div>
 
       <TopNavigation activePage={activePage} onNavigate={onNavigate} role={staff.role} />

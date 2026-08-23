@@ -15,56 +15,40 @@
 }
 
 .brandSide {
+  isolation: isolate;
   color: var(--olaso-lock-ink);
   background: var(--olaso-lock-surface);
 }
 
-.largeShape,
-.upperShape {
+.backdrop,
+.backdropWash {
   position: absolute;
+  inset: 0;
   display: block;
-  border-radius: 50%;
   pointer-events: none;
 }
 
-.largeShape {
-  top: 430px;
-  left: -170px;
-  width: 720px;
-  height: 720px;
-  background: var(--olaso-lock-shape-large);
+.backdrop {
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
-.upperShape {
-  top: -210px;
-  left: 430px;
-  width: 480px;
-  height: 480px;
-  background: var(--olaso-lock-shape-upper);
+.backdropWash {
+  z-index: -1;
+  background: var(--olaso-lock-photo-wash);
 }
 
 .wordmark {
   position: absolute;
   top: 42px;
-  left: 64px;
-  display: flex;
-  align-items: center;
-  height: 82px;
-  gap: 12px;
-  color: var(--olaso-green);
-}
-
-.wordmark span {
-  width: 16px;
-  height: 16px;
-  border: 3px solid var(--olaso-green);
-  border-radius: 50%;
-  background: var(--olaso-white);
-}
-
-.wordmark strong {
-  font-size: 34px;
-  font-weight: 800;
+  left: 53px;
+  display: block;
+  width: 320px;
+  height: auto;
+  z-index: 1;
 }
 
 .accent {
@@ -75,6 +59,7 @@
   height: 4px;
   border-radius: 2px;
   background: var(--olaso-green);
+  z-index: 1;
 }
 
 .brandMessage {
@@ -82,6 +67,7 @@
   top: 190px;
   left: 64px;
   width: 520px;
+  z-index: 1;
 }
 
 .brandMessage h1,
@@ -129,6 +115,7 @@
   background: var(--olaso-lock-status);
   font-size: 9px;
   font-weight: 700;
+  z-index: 1;
 }
 
 .dateTime {
@@ -138,6 +125,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  z-index: 1;
 }
 
 .dateTime span {

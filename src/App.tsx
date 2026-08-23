@@ -95,6 +95,10 @@ export function App() {
     setScreen('POS');
   }
 
+  function updateClockFormat(clockFormat: TerminalSettings['clockFormat']) {
+    setTerminal((current) => current ? { ...current, clockFormat } : current);
+  }
+
   if (!sessionReady) return <main aria-label="Loading Olaso" aria-busy="true" />;
 
   if (startupError || !terminal) {
@@ -127,36 +131,44 @@ export function App() {
       <PosScreen
         session={posSession}
         onSessionChange={setPosSession}
+        clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
       />
       ) : screen === 'Settings' ? (
       <SettingsScreen
+        clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onLock={lock}
+        onClockFormatChange={updateClockFormat}
       />
       ) : screen === 'Dashboard' ? (
       <DashboardScreen
+        clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
       />
       ) : screen === 'Orders' ? (
       <OrdersScreen
+        clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
       />
       ) : screen === 'Products' ? (
       <ProductsScreen
+        clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
       />
       ) : screen === 'Stock' ? (
       <StockScreen
+        clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
       />
       ) : screen === 'Reports' ? (
       <ReportsScreen
+        clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
       />
@@ -164,6 +176,7 @@ export function App() {
       <PosScreen
       session={posSession}
       onSessionChange={setPosSession}
+      clockFormat={terminal.clockFormat}
       onNavigate={navigate}
       onOpenSettings={openSettings}
       />

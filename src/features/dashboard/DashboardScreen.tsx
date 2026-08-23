@@ -1,4 +1,5 @@
 import { useDashboardData } from '../../data/useDashboardData';
+import type { ClockFormat } from '../../data/terminalSettings';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { RecentOrdersPanel } from './components/RecentOrdersPanel/RecentOrdersPanel';
@@ -7,29 +8,23 @@ import { StockAttentionPanel } from './components/StockAttentionPanel/StockAtten
 import styles from './DashboardScreen.module.css';
 
 interface DashboardScreenProps {
+  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
 }
 
 export function DashboardScreen({
+  clockFormat,
   onNavigate,
   onOpenSettings,
 }: DashboardScreenProps) {
   const data = useDashboardData();
-  const date = new Date(`${data.businessDate}T12:00:00`);
-
   return (
     <main className={styles.screen} aria-label="Olaso operations dashboard">
       <Header
         activePage="Dashboard"
-        brand="olaso"
+        clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
-        dateLabel={date.toLocaleDateString('en-GB', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-        })}
-        dateTime={data.businessDate}
         onNavigate={onNavigate}
       />
       <SalesPulse

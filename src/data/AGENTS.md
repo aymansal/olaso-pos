@@ -27,9 +27,9 @@ tablet's local SQLite operational record.
 - `secureSession.ts` owns the Android-only protected-storage wrapper for opaque
   session tokens and offline PIN verifiers; ordinary SQLite settings never hold
   credentials.
-- `identitySession.ts` derives and persists the protected local session/PIN
-  verifier pair after successful sign-in; it never exposes those values through
-  ordinary local data contracts.
+- `identitySession.ts` derives and persists one protected local session/PIN
+  verifier/attempt-state record per provisioned staff profile after successful
+  sign-in; it never exposes those values through ordinary local data contracts.
 - `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt/print-state
   parsing, sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
@@ -62,6 +62,11 @@ tablet's local SQLite operational record.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry; tab switches remain local and never start another query.
 - Never refresh cloud cache data over pending local outbox work.
+- Treat the unauthenticated Lock-screen server profile list as read-only. Only
+  after a successful online sign-in may its complete bounded result reconcile
+  the local staff directory and remove stale protected access. If that result
+  is unavailable, upsert only the authenticated profile and preserve all
+  others.
 - Persist only safe operator sync-failure descriptions; never store raw server
   responses in SQLite or surface them to the application.
 - Device ID is immutable after first setup. Manual sync releases local retry

@@ -791,15 +791,25 @@ staff PIN
   and session-token verifier. The raw six-digit PIN and raw opaque session token
   are never written to React state beyond immediate entry, SQLite,
   `device_settings`, logs, source control, or normal exports. The Android
-  Keystore-backed bridge stores the current token and the local offline PIN
-  verifier; browser development has no production credential fallback. A new
-  sign-in revokes the prior token for that staff/device pair and removes already
-  revoked rows through the bounded staff-profile session index.
+  Keystore-backed bridge stores one independent session, offline PIN verifier,
+  and failed-attempt state per provisioned staff profile; browser development
+  has no production credential fallback. A new sign-in replaces only that
+  profile's local protected record, revokes the prior token for that
+  staff/device pair, and removes already revoked rows through the bounded
+  staff-profile session index.
 - **Offline:** after an online provisioning/login, the tablet can verify a
   registered staff PIN and continue a local session indefinitely while offline.
   The next successful synchronization applies archived/revoked identities and
   invalidates their protected local material. This is an explicit availability
   choice: an offline tablet cannot learn a new revocation.
+- **Locked profile discovery:** the unauthenticated Lock screen may read the
+  bounded active server profile list for sign-in choices, but that read never
+  archives local profiles or clears protected credentials. After a successful
+  online sign-in, the app may apply that complete bounded list as an
+  authenticated staff-directory refresh: stale local rows are archived, active
+  rows are upserted, and stale profile-scoped plus legacy protected records are
+  removed. If the bounded list was unavailable, only the authenticated profile
+  is upserted and every other local profile remains unchanged.
 - **Lock and switch:** lock clears active in-memory identity but not the
   protected credentials. Unlock requires PIN verification; a different staff
   member can then become the current actor. Restart begins locked. The native
@@ -909,12 +919,13 @@ this manual-distribution APK targets API 35 and also retains the API-36
 restricted-resizability compatibility property while the fixed landscape
 interface remains in use.
 The native Capacitor runtime scales the fixed 1340-pixel reference by the long
-edge of the CSS screen before React mounts and reapplies that scale after resize
-or orientation changes; ordinary browser previews remain unscaled. Physical
-testing confirmed the complete composition, touch targeting, and cart survival
-across POS navigation. Production signing, public distribution, post-checkout
-printing, and the remaining hardware acceptance checks remain outside this
-development beta.
+edge of the CSS screen before React mounts and reapplies that scale after
+resize/orientation changes plus a short bounded startup/foreground settling
+window; ordinary browser previews remain unscaled. Physical testing confirmed
+the complete composition, touch targeting, and cart survival across POS
+navigation. Production signing, public distribution, post-checkout printing,
+and the remaining hardware acceptance checks remain outside this development
+beta.
 
 ```text
 GitHub tag

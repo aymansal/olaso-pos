@@ -3,7 +3,7 @@ version: 0.5
 name: Olaso POS
 description: Touch-first landscape point-of-sale system for Olaso Club on the Samsung Galaxy Tab A9.
 status: active
-updated: 2026-08-21
+updated: 2026-08-22
 platform: React, Vite, and Capacitor Android
 visualAuthority: Pencil node W26Y6
 colors:
@@ -337,7 +337,7 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | Component | Required content | Variants and behavior |
 | --- | --- | --- |
 | `PosShell` | header, menu content, receipt rail | Full-bleed landscape application root at the target size; cream gutters may adapt on wider screens. |
-| `HeaderBar` | logo asset, date, order count, report action, alerts, cashier | One horizontal line. Use the real OLASO asset. |
+| `HeaderBar` | logo asset, live date/time, order count, report action, alerts, cashier | One horizontal line. Use the real OLASO asset; date and time never wrap and time follows the terminal clock-format preference. |
 | `SearchField` | query, search action | 966 by 50 at the target viewport. Visible focus state. Never use placeholder text as the only accessible label. |
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
 | `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. |

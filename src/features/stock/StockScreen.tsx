@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInventoryManagement } from '../../data/useInventoryManagement';
+import type { ClockFormat } from '../../data/terminalSettings';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { IngredientDialog } from './components/IngredientDialog/IngredientDialog';
@@ -21,6 +22,7 @@ import {
 import styles from './StockScreen.module.css';
 
 interface StockScreenProps {
+  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
 }
@@ -28,6 +30,7 @@ interface StockScreenProps {
 const PAGE_SIZE = 5;
 
 export function StockScreen({
+  clockFormat,
   onNavigate,
   onOpenSettings,
 }: StockScreenProps) {
@@ -81,8 +84,6 @@ export function StockScreen({
   const selectedIngredient = inventory.ingredients.find(
     (ingredient) => ingredient.id === selectedIngredientId,
   );
-  const now = new Date();
-
   useEffect(() => {
     setPage(0);
   }, [levelFilter, search, unitGroup]);
@@ -96,14 +97,8 @@ export function StockScreen({
     <main className={styles.screen} aria-label="Olaso stock">
       <Header
         activePage="Stock"
-        brand="olaso"
+        clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
-        dateLabel={new Intl.DateTimeFormat('en-GB', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-        }).format(now)}
-        dateTime={now.toISOString().slice(0, 10)}
         onNavigate={onNavigate}
       />
       <StockInventoryPanel

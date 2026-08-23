@@ -4,6 +4,7 @@ import {
   isServiceUnavailable,
   nextOfflinePinResult,
 } from '../src/data/identityPolicy.ts';
+import { offlineCredentialKeys } from '../src/data/offlineCredentials.ts';
 
 const clock = { elapsedRealtime: 10_000, bootCount: 4 };
 let attempt;
@@ -22,6 +23,12 @@ for (const rejection of ['PIN is incorrect.', 'Too many failed PIN attempts. Try
   assert.equal(isServiceUnavailable(new Error(rejection)), false);
 }
 
+const firstProfileKeys = offlineCredentialKeys('staff-profile-a');
+const secondProfileKeys = offlineCredentialKeys('staff-profile-b');
+assert.notDeepEqual(firstProfileKeys, secondProfileKeys);
+assert.equal(new Set(Object.values(firstProfileKeys)).size, 3);
+assert.ok(Object.values(firstProfileKeys).every((key) => /^[A-Za-z0-9._-]{1,100}$/.test(key)));
+
 const lockScreen = readFileSync('src/features/settings/LockScreen.tsx', 'utf8');
 const app = readFileSync('src/App.tsx', 'utf8');
 const sqliteSchema = readFileSync('src/data/schema.ts', 'utf8');
@@ -34,11 +41,25 @@ const sessionBoundary = readFileSync('convex/lib/session.ts', 'utf8');
 const management = readFileSync('convex/lib/management.ts', 'utf8');
 const operational = readFileSync('convex/lib/operational.ts', 'utf8');
 const posData = readFileSync('src/data/usePosData.ts', 'utf8');
+const identitySession = readFileSync('src/data/identitySession.ts', 'utf8');
+const operationalCache = readFileSync('src/data/operationalCache.ts', 'utf8');
 assert.match(lockScreen, /if \(!isServiceUnavailable\(onlineError\)\)/);
 assert.match(lockScreen, /Wrong PIN\. Try again\./);
 assert.doesNotMatch(lockScreen, /setError\(\s*caught instanceof Error/);
 assert.match(lockScreen, /saved\.name !== cached\.name \|\| saved\.role !== cached\.role/);
-assert.match(lockScreen, /member\.id === session\?\.staffProfileId/);
+assert.match(lockScreen, /loadStaffSession\(staffProfileId\)/);
+assert.match(lockScreen, /verifyOfflinePin\(staffProfileId, pin\)/);
+assert.match(lockScreen, /saveAuthenticatedStaffProfile/);
+assert.match(lockScreen, /reconcileAuthenticatedStaffProfiles/);
+assert.ok(
+  lockScreen.indexOf('await reconcileAuthenticatedStaffProfiles')
+    > lockScreen.indexOf("if (session.kind !== 'authenticated')"),
+);
+assert.ok(
+  lockScreen.indexOf('await clearStaffSession')
+    > lockScreen.indexOf("if (session.kind !== 'authenticated')"),
+);
+assert.doesNotMatch(lockScreen, /reconcileActiveStaffProfiles/);
 assert.match(app, /startupError \|\| !terminal/);
 assert.match(app, /POS remains locked/);
 assert.match(app, /await setTerminalLocked\(true\)/);
@@ -55,4 +76,11 @@ assert.match(sessionBoundary, /session\.deviceId !== args\.deviceId/);
 assert.match(sessionBoundary, /identity\.credentialVersion !== session\.credentialVersion/);
 assert.doesNotMatch(management + operational, /OLASO_ALLOW_DEV/);
 assert.match(posData, /sessionToken: session\.token/);
-console.log('Identity fallback, monotonic lockout, fail-closed startup, session revocation, and protected-storage checks passed.');
+assert.match(identitySession, /offlineCredentialKeys/);
+assert.match(identitySession, /migrateLegacyStaffSession/);
+assert.match(identitySession, /export async function clearLegacyStaffSession/);
+assert.match(operationalCache, /export async function saveAuthenticatedStaffProfile/);
+assert.match(operationalCache, /export async function reconcileAuthenticatedStaffProfiles/);
+assert.match(operationalCache, /profiles\.some\(\(profile\) => profile\.id === authenticatedProfileId\)/);
+assert.doesNotMatch(operationalCache, /export async function reconcileActiveStaffProfiles/);
+console.log('Identity fallback, profile-scoped offline credentials, monotonic lockout, fail-closed startup, session revocation, and protected-storage checks passed.');

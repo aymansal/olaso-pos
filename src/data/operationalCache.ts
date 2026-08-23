@@ -91,6 +91,8 @@ const LIMITS = {
   staffProfiles: 100,
 } as const;
 
+export type ActiveStaffProfile = OperationalCacheSnapshot['staffProfiles'][number];
+
 function assertBounded(snapshot: OperationalCacheSnapshot) {
   for (const key of Object.keys(LIMITS) as Array<keyof typeof LIMITS>) {
     if (snapshot[key].length > LIMITS[key]) {
@@ -346,6 +348,78 @@ export async function replaceOperationalCache(
       [Date.now()],
       false,
     );
+  });
+}
+
+export async function saveAuthenticatedStaffProfile(profile: ActiveStaffProfile) {
+  const updatedAt = Date.now();
+  return withLocalTransaction(async (database) => {
+    await database.run(
+      `INSERT INTO staff_profiles
+        (id, name, role, status, revision, updated_at, identity_revision)
+       VALUES (?, ?, ?, 'active', ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         name = excluded.name,
+         role = excluded.role,
+         status = 'active',
+         revision = excluded.revision,
+         updated_at = excluded.updated_at,
+         identity_revision = excluded.identity_revision`,
+      [
+        profile.id,
+        profile.name,
+        profile.role,
+        profile.revision,
+        updatedAt,
+        profile.identityRevision,
+      ],
+      false,
+    );
+  });
+}
+
+export async function reconcileAuthenticatedStaffProfiles(
+  profiles: ActiveStaffProfile[],
+  authenticatedProfileId: string,
+) {
+  if (!profiles.length || profiles.length > LIMITS.staffProfiles
+      || !profiles.some((profile) => profile.id === authenticatedProfileId)) {
+    throw new Error('The authenticated staff directory is unavailable.');
+  }
+  const updatedAt = Date.now();
+  return withLocalTransaction(async (database) => {
+    const previous = await database.query(
+      "SELECT id FROM staff_profiles WHERE status = 'active'",
+    );
+    const activeIds = new Set(profiles.map((profile) => profile.id));
+    const archivedProfileIds = (previous.values ?? [])
+      .map((row) => String(row.id))
+      .filter((id) => !activeIds.has(id));
+    await database.run("UPDATE staff_profiles SET status = 'archived'", [], false);
+    for (const profile of profiles) {
+      await database.run(
+        `INSERT INTO staff_profiles
+          (id, name, role, status, revision, updated_at, identity_revision)
+         VALUES (?, ?, ?, 'active', ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           name = excluded.name,
+           role = excluded.role,
+           status = 'active',
+           revision = excluded.revision,
+           updated_at = excluded.updated_at,
+           identity_revision = excluded.identity_revision`,
+        [
+          profile.id,
+          profile.name,
+          profile.role,
+          profile.revision,
+          updatedAt,
+          profile.identityRevision,
+        ],
+        false,
+      );
+    }
+    return archivedProfileIds;
   });
 }
 

@@ -38,7 +38,8 @@ application, global tokens, and the feature screens under `features/`.
 - Keep persistence, synchronization, reporting queries, and printing outside
   React components.
 - Keep Settings under the shared profile control rather than permanent
-  navigation, and never present the local beta lock as authentication.
+  navigation. The staff lock is the authentication boundary and application
+  startup fails closed until a valid staff session is established.
 - Do not add a shared-state library while local React state is sufficient.
 
 ## Work Guidance

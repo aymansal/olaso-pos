@@ -79,6 +79,64 @@ No goal is active.
 
 ## Current Checkpoint
 
+- OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
+  provisioned separately, Samira re-signed online, and both independently
+  unlocked after force-close/offline restart with their correct roles. The
+  authenticated-only directory refresh reduced the prior duplicate cache to
+  exactly one active Owner and one active Samira while the locked profile read
+  remains non-mutating. The final APK, focused checks, build, 140-task Android
+  beta, clean offline logs, restored Wi-Fi, and temporary-artifact cleanup pass.
+  Graphify refresh was retried but remains blocked by the missing semantic API
+  key and left the existing graph intact. Exact next reliability action:
+  activate OFF-03 only after owner direction.
+- Owner-approved Settings direction: staff profile creation belongs under the
+  owner profile, not permanent navigation. The screen must use short café-owner
+  language, remove technical security essays and redundant helper copy, and
+  use icons only where they materially improve recognition. Do not implement
+  this review inside OFF-02; record and approve the minimal Settings flow first.
+- The owner accepted the long sleep/resume result after approximately fifteen
+  minutes. The current scoped Lock-screen change replaces the first supplied
+  matcha artwork with the owner-supplied 1067 × 1272 Olaso drink photo, only on
+  the left panel. The white sign-in panel, flat Cream Surface wash, wordmark,
+  quote, status, clock, and all lock behavior remain unchanged. `check:settings`,
+  `check:android`, and `npm run build` pass; browser inspection at 1340 × 800
+  confirms exact viewport/document bounds, no overflow, and no warning/error.
+  The Android beta package was rebuilt and installed successfully on connected
+  SM-X115 (R8YX91AKWXJ); its Olaso process is running. Graphify refresh was
+  attempted but is blocked by the installed CLI's missing semantic-extraction
+  API key. Exact next action: owner visually approves or adjusts this Lock
+  screen before any commit or another screen.
+- The owner authorized three additional scoped review decisions: keep the
+  Lock-screen green wordmark but align its visible edge with the slogan; make
+  the shared Header the sole live date/time source on POS, Dashboard, Orders,
+  Products, Stock, Reports, and Settings; and eliminate the intermittent
+  Android oversized/scrollable launch. The Header date/time stays one line and
+  immediately follows the saved 12/24-hour setting. The Android scale now
+  retries only through a bounded two-second startup/foreground settle window
+  and still responds to real viewport/orientation changes. `check:settings`,
+  `check:pos`, `check:android`, and `npm run build` pass. The current APK is
+  installed on SM-X115; three consecutive force-stopped launches measure
+  1007 × 602 with zoom `0.751493` and no overflow. Graphify refresh remains
+  blocked by the installed CLI's missing semantic-extraction API key. The owner
+  identified the distinct long-tablet-lock resume path, so the current APK also
+  runs the same bounded settle sequence when the native activity returns focus.
+  Exact next action: owner performs a long lock/unlock with Olaso left open,
+  then inspects the resumed layout and shared Header/date/time before approval
+  or commit.
+- The owner superseded the white Lock-screen treatment: use the exact verified
+  transparent Operational Green `#006A2B` wordmark instead, larger on the Lock
+  screen and compact in the shared header used by POS, Dashboard, Orders,
+  Products, Stock, Reports, and Settings. The typed sign-in identity block and
+  all lock, session, permission, and offline behavior remain unchanged.
+  `check:settings`, `check:pos`, `check:identity`, `npm run build`, and the
+  Android beta checks/build pass. Browser inspection at 1340 × 800 confirms the
+  Lock screen has exact viewport/document bounds, no clipping/scrolling, and no
+  console warning/error. The debug APK was installed on connected SM-X115 and
+  launched. Graphify refresh was attempted after the shared Header change but
+  is blocked by the installed CLI's missing semantic-extraction API key; the
+  required pre-change graph query was completed. Exact next action: owner
+  unlocks SM-X115 to inspect the real Lock and shared-header treatments before
+  approval or commit.
 - No goal is active. Goal 05 is complete on `origin/main` at
   `aa6d26b651e644db47a521f467b16d01cecab426`.
 - Goal 06 is planned next as a normal collaborative conversation, not `/goal`.

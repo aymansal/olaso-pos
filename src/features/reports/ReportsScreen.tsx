@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useReportsData } from '../../data/useReportsData';
+import type { ClockFormat } from '../../data/terminalSettings';
 import { localBusinessDate, shiftBusinessDate } from '../../lib/date';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
@@ -9,11 +10,13 @@ import type { ReportTab } from './reportTypes';
 import styles from './ReportsScreen.module.css';
 
 interface ReportsScreenProps {
+  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
 }
 
 export function ReportsScreen({
+  clockFormat,
   onNavigate,
   onOpenSettings,
 }: ReportsScreenProps) {
@@ -23,20 +26,12 @@ export function ReportsScreen({
   });
   const [tab, setTab] = useState<ReportTab>('sales');
   const data = useReportsData(range.fromDate, range.toDate);
-  const now = new Date();
-
   return (
     <main className={styles.screen} aria-label="Olaso reports">
       <Header
         activePage="Reports"
-        brand="olaso"
+        clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
-        dateLabel={now.toLocaleDateString('en-GB', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-        })}
-        dateTime={localBusinessDate(now)}
         onNavigate={onNavigate}
       />
       <ReportsAnalyticsPanel

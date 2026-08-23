@@ -168,8 +168,10 @@ The approved shell contains these top-level destinations:
    comparisons.
 
 `POS` is the default destination when a cashier opens the application.
-Settings and staff management may be added under the owner profile instead of
-adding another permanent navigation item.
+Settings and staff management live under the owner profile instead of adding
+another permanent navigation item. The minimal owner-only creation flow asks
+for the staff member's name, approved role, six-digit PIN, and PIN confirmation;
+it does not expose identity implementation details to the café operator.
 
 Costs and profitability belong inside the Reports workspace rather than adding
 a seventh permanent navigation destination.

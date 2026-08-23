@@ -64,31 +64,43 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
 - Composition: custom white **OLASO** wordmark centered on a solid sage field.
 - The two “O” forms echo a coffee bean/oval with a horizontal counter. The inner letterforms use deliberate bends and cut-ins.
 
-### Derived POS launch asset
+### Derived POS application wordmark
 
 - File: [`assets/brand/olaso-wordmark-operational-green-transparent.png`](assets/brand/olaso-wordmark-operational-green-transparent.png)
 - Format: 720 × 196 RGBA PNG with true transparent background.
 - Composition: the supplied OLASO silhouette extracted at its original
   proportions and recolored to the POS Operational Green `#006A2B`.
 - Status: **provisional application derivative**, approved for the cream Android
-  launch/startup surface. It is not claimed as an official logo master or a new
-  official brand color.
-- Use it only where the white wordmark would disappear on the approved cream
-  surface. Continue using the supplied white-on-sage master for the logo lockup
-  and request the original designer's vector/transparent masters.
+  launch/startup surface, the Lock-screen brand area, and the common application
+  header. It is not claimed as an official logo master or a new official brand
+  color.
+- Use it only on those documented application surfaces. Continue using the
+  supplied white-on-sage master for the logo lockup and request the original
+  designer's vector/transparent masters.
+
+### Lock-screen background asset
+
+- File: [`assets/brand/olaso-lock-drink-note.jpg`](assets/brand/olaso-lock-drink-note.jpg)
+- Format: 1067 × 1272 JPEG.
+- Composition: owner-supplied Olaso drink photo with a handwritten flower note
+  in a green tennis-ball setting.
+- Status: approved only as the full-bleed left background of the Lock screen,
+  under a flat translucent Cream Surface wash that preserves the operational
+  wordmark, quote, status, and clock legibility. It is not a product image,
+  category asset, or general application backdrop.
 
 ### Usage rules
 
 - Treat the wordmark as artwork. Never recreate it with a font or typed text.
 - Keep its original proportions; do not stretch, condense, outline, bevel, or add shadows.
 - Prefer the supplied sage lockup until official transparent, black, white, and
-  vector masters are received, except for the documented cream startup surface
-  that uses the derived Operational Green wordmark.
+  vector masters are received, except for the documented cream startup surface,
+  Lock screen, and common application header that use the derived Operational
+  Green wordmark.
 - Keep a quiet exclusion area around the wordmark. **Provisional rule:** at least the height of the “O” counter on every side.
 - Do not place the wordmark directly over busy photography without a solid field or strong tonal control.
-- In small UI placements, use the full supplied square lockup until an official
-  compact mark is approved. The wide derived wordmark is a startup asset, not a
-  compact app icon.
+- In small UI placements, use the approved compact width of the derived
+  wordmark; it is not a compact app icon.
 
 ### Missing masters to request
 

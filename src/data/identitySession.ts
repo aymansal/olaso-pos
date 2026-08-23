@@ -10,14 +10,15 @@ import {
   type OfflineAttempt,
   type OfflinePinResult,
 } from './identityPolicy';
+import { offlineCredentialKeys } from './offlineCredentials.ts';
 import type { StaffRole } from '../../convex/lib/permissions';
 
 export { isServiceUnavailable, nextOfflinePinResult } from './identityPolicy';
 
 const PIN_ITERATIONS = 600_000;
-const SESSION_KEY = 'identity.session';
-const OFFLINE_PIN_KEY = 'identity.offline_pin';
-const OFFLINE_ATTEMPTS_KEY = 'identity.offline_attempts';
+const LEGACY_SESSION_KEY = 'identity.session';
+const LEGACY_OFFLINE_PIN_KEY = 'identity.offline_pin';
+const LEGACY_OFFLINE_ATTEMPTS_KEY = 'identity.offline_attempts';
 const MAX_OFFLINE_FAILURES = 5;
 
 export type StaffSession = {
@@ -70,21 +71,56 @@ function isStaffSession(value: unknown): value is StaffSession {
     && ['owner', 'manager', 'cashier'].includes(String(session.role));
 }
 
-export async function saveStaffSession(session: StaffSession, pin: string) {
-  if (!/^\d{6}$/.test(pin)) throw new Error('PIN must contain six digits.');
-  const salt = toBase64(crypto.getRandomValues(new Uint8Array(16)));
+async function migrateLegacyStaffSession(staffProfileId: string) {
+  const raw = await readSecureSessionValue(LEGACY_SESSION_KEY);
+  if (!raw) return;
+  const session: unknown = JSON.parse(raw);
+  if (!isStaffSession(session)) throw new Error('Stored staff session is invalid.');
+  if (session.staffProfileId !== staffProfileId) return;
+  const [pin, attempts] = await Promise.all([
+    readSecureSessionValue(LEGACY_OFFLINE_PIN_KEY),
+    readSecureSessionValue(LEGACY_OFFLINE_ATTEMPTS_KEY),
+  ]);
+  if (!pin) return;
+  const keys = offlineCredentialKeys(staffProfileId);
   await Promise.all([
-    writeSecureSessionValue(SESSION_KEY, JSON.stringify(session)),
-    writeSecureSessionValue(OFFLINE_PIN_KEY, `${salt}:${await derivePinHash(pin, salt)}`),
-    removeSecureSessionValue(OFFLINE_ATTEMPTS_KEY),
+    writeSecureSessionValue(keys.session, raw),
+    writeSecureSessionValue(keys.pin, pin),
+    attempts
+      ? writeSecureSessionValue(keys.attempts, attempts)
+      : removeSecureSessionValue(keys.attempts),
+  ]);
+  await Promise.all([
+    removeSecureSessionValue(LEGACY_SESSION_KEY),
+    removeSecureSessionValue(LEGACY_OFFLINE_PIN_KEY),
+    removeSecureSessionValue(LEGACY_OFFLINE_ATTEMPTS_KEY),
   ]);
 }
 
-export async function loadStaffSession() {
-  const raw = await readSecureSessionValue(SESSION_KEY);
+export async function saveStaffSession(session: StaffSession, pin: string) {
+  if (!/^\d{6}$/.test(pin)) throw new Error('PIN must contain six digits.');
+  const salt = toBase64(crypto.getRandomValues(new Uint8Array(16)));
+  const keys = offlineCredentialKeys(session.staffProfileId);
+  await Promise.all([
+    writeSecureSessionValue(keys.session, JSON.stringify(session)),
+    writeSecureSessionValue(keys.pin, `${salt}:${await derivePinHash(pin, salt)}`),
+    removeSecureSessionValue(keys.attempts),
+  ]);
+}
+
+export async function loadStaffSession(staffProfileId: string) {
+  const keys = offlineCredentialKeys(staffProfileId);
+  let raw = await readSecureSessionValue(keys.session);
+  if (!raw) {
+    await migrateLegacyStaffSession(staffProfileId);
+    raw = await readSecureSessionValue(keys.session);
+  }
   if (!raw) return undefined;
   const session: unknown = JSON.parse(raw);
   if (!isStaffSession(session)) throw new Error('Stored staff session is invalid.');
+  if (session.staffProfileId !== staffProfileId) {
+    throw new Error('Stored staff session does not match this profile.');
+  }
   return session;
 }
 
@@ -110,13 +146,23 @@ function parseOfflineAttempt(value: string | null) {
   return attempt as OfflineAttempt;
 }
 
-export async function verifyOfflinePin(pin: string): Promise<OfflinePinResult> {
+export async function verifyOfflinePin(
+  staffProfileId: string,
+  pin: string,
+): Promise<OfflinePinResult> {
   if (!/^\d{6}$/.test(pin)) return { kind: 'incorrect', attemptsRemaining: MAX_OFFLINE_FAILURES };
-  const stored = await readSecureSessionValue(OFFLINE_PIN_KEY);
+  const keys = offlineCredentialKeys(staffProfileId);
+  let stored = await readSecureSessionValue(keys.pin);
+  if (!stored) {
+    await migrateLegacyStaffSession(staffProfileId);
+    stored = await readSecureSessionValue(keys.pin);
+  }
   const [salt, expected] = stored?.split(':', 2) ?? [];
-  if (!salt || !expected) throw new Error('Protected offline credentials are unavailable. Connect and sign in.');
+  if (!salt || !expected) {
+    throw new Error('This profile must sign in online once before offline access is available.');
+  }
   const [rawAttempt, clock] = await Promise.all([
-    readSecureSessionValue(OFFLINE_ATTEMPTS_KEY),
+    readSecureSessionValue(keys.attempts),
     readSecureSessionClock(),
   ]);
   const next = nextOfflinePinResult(
@@ -125,17 +171,26 @@ export async function verifyOfflinePin(pin: string): Promise<OfflinePinResult> {
     clock,
   );
   if (next.attempt) {
-    await writeSecureSessionValue(OFFLINE_ATTEMPTS_KEY, JSON.stringify(next.attempt));
+    await writeSecureSessionValue(keys.attempts, JSON.stringify(next.attempt));
   } else {
-    await removeSecureSessionValue(OFFLINE_ATTEMPTS_KEY);
+    await removeSecureSessionValue(keys.attempts);
   }
   return next.result;
 }
 
-export async function clearStaffSession() {
+export async function clearStaffSession(staffProfileId: string) {
+  const keys = offlineCredentialKeys(staffProfileId);
   await Promise.all([
-    removeSecureSessionValue(SESSION_KEY),
-    removeSecureSessionValue(OFFLINE_PIN_KEY),
-    removeSecureSessionValue(OFFLINE_ATTEMPTS_KEY),
+    removeSecureSessionValue(keys.session),
+    removeSecureSessionValue(keys.pin),
+    removeSecureSessionValue(keys.attempts),
+  ]);
+}
+
+export async function clearLegacyStaffSession() {
+  await Promise.all([
+    removeSecureSessionValue(LEGACY_SESSION_KEY),
+    removeSecureSessionValue(LEGACY_OFFLINE_PIN_KEY),
+    removeSecureSessionValue(LEGACY_OFFLINE_ATTEMPTS_KEY),
   ]);
 }

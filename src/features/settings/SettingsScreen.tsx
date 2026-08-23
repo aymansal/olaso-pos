@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSettingsData } from '../../data/useSettingsData';
+import type { ClockFormat, TerminalPreferences } from '../../data/terminalSettings';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { SettingsContentPanel } from './components/SettingsContentPanel/SettingsContentPanel';
@@ -10,11 +11,18 @@ import {
 import styles from './SettingsScreen.module.css';
 
 interface SettingsScreenProps {
+  clockFormat: ClockFormat;
   onNavigate: (page: NavigationPage) => void;
   onLock: () => Promise<void>;
+  onClockFormatChange: (clockFormat: ClockFormat) => void;
 }
 
-export function SettingsScreen({ onNavigate, onLock }: SettingsScreenProps) {
+export function SettingsScreen({
+  clockFormat,
+  onNavigate,
+  onLock,
+  onClockFormatChange,
+}: SettingsScreenProps) {
   const data = useSettingsData();
   const [section, setSection] = useState<SettingsSection>('general');
   const [online, setOnline] = useState(navigator.onLine);
@@ -43,10 +51,15 @@ export function SettingsScreen({ onNavigate, onLock }: SettingsScreenProps) {
     }
   }
 
+  async function savePreferences(input: TerminalPreferences) {
+    await data.save(input);
+    onClockFormatChange(input.clockFormat);
+  }
+
   return (
     <main className={styles.screen}>
       <Header
-        brand="olaso"
+        clockFormat={clockFormat}
         onNavigate={onNavigate}
         onOpenSettings={() => undefined}
       />
@@ -66,7 +79,7 @@ export function SettingsScreen({ onNavigate, onLock }: SettingsScreenProps) {
         online={online}
         message={data.message}
         error={data.error || (section === 'sync' ? data.syncError : '')}
-        onSave={data.save}
+        onSave={savePreferences}
         onSync={data.syncNow}
         onTestPrinter={data.testPrinter}
         onInstallPrinterLogo={data.installPrinterLogo}

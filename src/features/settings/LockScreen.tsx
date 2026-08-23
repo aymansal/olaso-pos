@@ -3,6 +3,8 @@ import { useAction, useConvex } from 'convex/react';
 import { useEffect, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
 import {
+  clearLegacyStaffSession,
+  clearStaffSession,
   loadStaffSession,
   saveStaffSession,
   isServiceUnavailable,
@@ -10,9 +12,15 @@ import {
   type StaffSession,
 } from '../../data/identitySession';
 import { readSecureSessionNetworkStatus } from '../../data/secureSession';
-import { loadOperationalCache } from '../../data/operationalCache';
+import {
+  loadOperationalCache,
+  reconcileAuthenticatedStaffProfiles,
+  saveAuthenticatedStaffProfile,
+} from '../../data/operationalCache';
 import type { TerminalSettings } from '../../data/terminalSettings';
 import { isStaffRole, type StaffRole } from '../../data/permissions';
+import olasoLogo from '../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
+import lockBackground from '../../../assets/brand/olaso-lock-drink-note.jpg';
 import styles from './LockScreen.module.css';
 
 interface LockScreenProps {
@@ -28,6 +36,7 @@ function unlockErrorMessage(caught: unknown) {
   }
   if (/identity is unavailable offline/i.test(message)) return message;
   if (/staff access is unavailable/i.test(message)) return message;
+  if (/must sign in online once before offline access/i.test(message)) return message;
   if (/protected offline credentials are unavailable/i.test(message)) return message;
   return 'Unable to unlock. Check the connection and try again.';
 }
@@ -36,6 +45,7 @@ type CachedStaff = {
   id: string;
   name: string;
   role: StaffRole;
+  revision: number;
 };
 
 export function LockScreen({ settings, onUnlock }: LockScreenProps) {
@@ -44,6 +54,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   const [unlocking, setUnlocking] = useState(false);
   const [error, setError] = useState('');
   const [staff, setStaff] = useState<CachedStaff[]>([]);
+  const [authoritativeStaff, setAuthoritativeStaff] = useState<CachedStaff[]>();
   const [staffProfileId, setStaffProfileId] = useState('');
   const [pin, setPin] = useState('');
   const signIn = useAction(api.identity.signIn);
@@ -70,29 +81,23 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
 
   useEffect(() => {
     let active = true;
-    Promise.all([
-      loadOperationalCache(),
-      loadStaffSession(),
-    ]).then(([cache, session]) => {
+    setAuthoritativeStaff(undefined);
+    loadOperationalCache().then((cache) => {
       if (!active) return;
-      const activeStaff = cache.staffProfiles.flatMap(({ id, name, role }) =>
-        isStaffRole(role) ? [{ id, name, role }] : [],
+      const activeStaff = cache.staffProfiles.flatMap(({ id, name, role, revision }) =>
+        isStaffRole(role) ? [{ id, name, role, revision }] : [],
       );
       setStaff(activeStaff);
-      const savedStaff = activeStaff.find((member) =>
-        member.id === session?.staffProfileId
-        && member.name === session.name
-        && member.role === session.role,
-      );
-      setStaffProfileId(savedStaff?.id ?? activeStaff[0]?.id ?? '');
+      setStaffProfileId(activeStaff[0]?.id ?? '');
       if (online) {
         void convex.query(api.identity.listActiveProfiles, { deviceId: settings.deviceId })
           .then((profiles) => {
             if (!active) return;
-            const remoteStaff = profiles.flatMap(({ id, name, role }) =>
-              isStaffRole(role) ? [{ id: String(id), name, role }] : [],
+            const remoteStaff = profiles.flatMap(({ id, name, role, revision }) =>
+              isStaffRole(role) ? [{ id: String(id), name, role, revision: Number(revision) }] : [],
             );
             if (!remoteStaff.length) return;
+            setAuthoritativeStaff(remoteStaff);
             setStaff(remoteStaff);
             setStaffProfileId((current) =>
               remoteStaff.some((member) => member.id === current) ? current : remoteStaff[0].id,
@@ -116,13 +121,13 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     try {
       let unlockedSession: StaffSession | undefined;
       const unlockOffline = async () => {
-        const saved = await loadStaffSession();
+        const saved = await loadStaffSession(staffProfileId);
         const cached = staff.find((member) => member.id === staffProfileId);
         if (!saved || !cached || saved.staffProfileId !== cached.id
             || saved.name !== cached.name || saved.role !== cached.role) {
           throw new Error('This staff identity is unavailable offline. Connect and sync this terminal.');
         }
-        const result = await verifyOfflinePin(pin);
+        const result = await verifyOfflinePin(staffProfileId, pin);
         if (result.kind === 'locked') {
           throw new Error('Too many failed PIN attempts. Try again later.');
         }
@@ -143,7 +148,30 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
           }
           throw new Error('Wrong PIN. Try again.');
         }
+        const authenticatedProfile = staff.find((member) => member.id === session.staffProfileId);
+        if (!authenticatedProfile) throw new Error('Staff access is unavailable. Sign in again.');
+        const localProfile = {
+          ...authenticatedProfile,
+          name: session.name,
+          role: session.role,
+          identityRevision: 0,
+        };
+        const archivedProfileIds = authoritativeStaff?.some(
+          (member) => member.id === session.staffProfileId,
+        )
+          ? await reconcileAuthenticatedStaffProfiles(
+            authoritativeStaff.map((member) => ({ ...member, identityRevision: 0 })),
+            session.staffProfileId,
+          )
+          : [];
+        if (!authoritativeStaff?.some((member) => member.id === session.staffProfileId)) {
+          await saveAuthenticatedStaffProfile(localProfile);
+        }
         await saveStaffSession(session, pin);
+        for (const archivedProfileId of archivedProfileIds) {
+          await clearStaffSession(archivedProfileId);
+        }
+        await clearLegacyStaffSession();
         unlockedSession = session;
         } catch (onlineError) {
           if (!isServiceUnavailable(onlineError)) {
@@ -175,12 +203,15 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   return (
     <main className={styles.screen}>
       <section className={styles.brandSide} aria-label="Olaso terminal">
-        <span className={styles.largeShape} />
-        <span className={styles.upperShape} />
-        <div className={styles.wordmark}>
-          <span />
-          <strong>OLASO</strong>
-        </div>
+        <img className={styles.backdrop} src={lockBackground} alt="" aria-hidden="true" />
+        <span className={styles.backdropWash} aria-hidden="true" />
+        <img
+          className={styles.wordmark}
+          src={olasoLogo}
+          alt="Olaso"
+          width={320}
+          height={78}
+        />
         <span className={styles.accent} />
         <div className={styles.brandMessage}>
           <h1>Every sale.<br />Every gram.</h1>

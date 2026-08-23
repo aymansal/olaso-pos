@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { ReceiptPreviewDialog } from '../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { usePosData } from '../../data/usePosData';
+import type { ClockFormat } from '../../data/terminalSettings';
 import type { SavedReceipt } from '../../data/localSales.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
 import { Header } from './components/Header/Header';
@@ -38,6 +39,7 @@ import styles from './PosScreen.module.css';
 interface PosScreenProps {
   session: PosSession;
   onSessionChange: Dispatch<SetStateAction<PosSession>>;
+  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
 }
@@ -52,6 +54,7 @@ function localServiceType(
 export function PosScreen({
   session,
   onSessionChange,
+  clockFormat,
   onNavigate,
   onOpenSettings,
 }: PosScreenProps) {
@@ -272,6 +275,7 @@ export function PosScreen({
     <main className={styles.screen} aria-label="Olaso point of sale">
       <Header
         activePage="POS"
+        clockFormat={clockFormat}
         onNavigate={onNavigate}
         onOpenSettings={onOpenSettings}
       />

@@ -41,7 +41,11 @@ assert.match(
 assert.match(main, /addEventListener\('resize', applyTabletScale/);
 assert.match(main, /screen\.orientation\.addEventListener\('change', applyTabletScale/);
 assert.match(main, /requestAnimationFrame\(applyTabletScale\)/);
-assert.match(main, /setTimeout\(applyTabletScale, 250\)/);
+assert.match(main, /\[250, 750, 1_500, 2_000\]/);
+assert.match(main, /visualViewport\?\.addEventListener\('resize', applyTabletScale/);
+assert.match(main, /addEventListener\('pageshow', rescaleAfterViewportSettles/);
+assert.match(main, /addEventListener\('focus', rescaleAfterViewportSettles/);
+assert.match(main, /visibilitychange/);
 const printerPlugin = readFileSync(
   'android/app/src/main/java/com/olaso/pos/EscPosPrinterPlugin.kt',
   'utf8',

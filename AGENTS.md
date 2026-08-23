@@ -92,8 +92,11 @@ decision changes.
   local-first SQLite/outbox checkout with idempotent Convex synchronization.
   Goal 03 also includes a verified LAN endpoint plus a native printer
   settings/test boundary, deterministic receipt encoding, resident-logo setup,
-  post-commit first-print state, and saved-snapshot Orders reprinting; do not
-  imply that production authentication or cancellation/refund policy exists.
+  post-commit first-print state, and saved-snapshot Orders reprinting. Goal 05
+  includes separate staff PIN identities, protected offline sessions, enforced
+  roles, and same-day append-only whole-sale cancellation corrections; do not
+  imply that discounts, refunds, bank reversals, or production release
+  acceptance exist.
 
 ### Visual baseline
 

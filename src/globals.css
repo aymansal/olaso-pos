@@ -97,10 +97,9 @@
   --olaso-lock-copy-strong: #355e3b;
   --olaso-lock-meta: #5e7863;
   --olaso-lock-surface: #f0f3e4;
-  --olaso-lock-shape-large: #dde8d3;
-  --olaso-lock-shape-upper: #e4ecd8;
   --olaso-lock-identity: #d7e7d3;
   --olaso-lock-status: #ffffffb8;
+  --olaso-lock-photo-wash: #f0f3e499;
 }
 
 * {
