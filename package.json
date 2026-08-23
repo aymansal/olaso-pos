@@ -23,6 +23,7 @@
     "check:settings": "node scripts/check-settings.mjs",
     "check:identity": "node scripts/check-identity.mjs",
     "check:reconnect": "node --disable-warning=ExperimentalWarning scripts/check-reconnect.mjs",
+    "check:offline": "node scripts/check-offline-views.mjs",
     "check:permissions": "node scripts/check-permissions.mjs",
     "check:android": "node scripts/check-android-beta.mjs",
     "check:printing": "node scripts/check-printing.mjs",

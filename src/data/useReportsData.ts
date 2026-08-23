@@ -2,6 +2,8 @@ import { useConvex } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../convex/_generated/api';
+import { useConnectionStatus } from './connectionContext';
+import { loadOfflineReport } from './offlineViews';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
 
@@ -9,6 +11,7 @@ export type ReportsSnapshot =
   FunctionReturnType<typeof api.reports.getSummary>;
 
 export function useReportsData(fromDate: string, toDate: string) {
+  const { available } = useConnectionStatus();
   const session = useStaffSession();
   const reconnect = useReconnect();
   const convex = useConvex();
@@ -18,23 +21,26 @@ export function useReportsData(fromDate: string, toDate: string) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (available === undefined) return;
     let cancelled = false;
     setIsLoading(true);
     setError('');
     setSnapshot(undefined);
-    void convex
-      .query(api.reports.getSummary, {
-        fromDate,
-        toDate,
-        sessionToken: session.token,
-        deviceId: session.deviceId,
-      })
+    const request = available
+      ? convex.query(api.reports.getSummary, {
+          fromDate,
+          toDate,
+          sessionToken: session.token,
+          deviceId: session.deviceId,
+        })
+      : loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
+    void request
       .then((result) => {
         if (!cancelled) setSnapshot(result);
       })
       .catch(() => {
         if (!cancelled) {
-          setError('Report data is unavailable. Check the period and retry.');
+          setError('Saved report data is unavailable on this tablet.');
         }
       })
       .finally(() => {
@@ -43,7 +49,7 @@ export function useReportsData(fromDate: string, toDate: string) {
     return () => {
       cancelled = true;
     };
-  }, [convex, fromDate, reconnect.revision, reload, session.deviceId, session.token, toDate]);
+  }, [available, convex, fromDate, reconnect.revision, reload, session.deviceId, session.token, toDate]);
 
   const retry = useCallback(() => {
     setReload((value) => value + 1);

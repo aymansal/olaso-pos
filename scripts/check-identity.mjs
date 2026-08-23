@@ -40,6 +40,7 @@ const main = readFileSync('src/main.tsx', 'utf8');
 const settingsScreen = readFileSync('src/features/settings/SettingsScreen.tsx', 'utf8');
 const identity = readFileSync('convex/identityInternal.ts', 'utf8');
 const identityAction = readFileSync('convex/identity.ts', 'utf8');
+const sync = readFileSync('convex/sync.ts', 'utf8');
 const sessionBoundary = readFileSync('convex/lib/session.ts', 'utf8');
 const management = readFileSync('convex/lib/management.ts', 'utf8');
 const operational = readFileSync('convex/lib/operational.ts', 'utf8');
@@ -60,9 +61,15 @@ assert.ok(
     > lockScreen.indexOf("if (session.kind !== 'authenticated')"),
 );
 assert.ok(
-  lockScreen.indexOf('await clearStaffSession')
+  lockScreen.lastIndexOf('await clearStaffSession')
     > lockScreen.indexOf("if (session.kind !== 'authenticated')"),
 );
+assert.ok(
+  lockScreen.indexOf('await saveStaffSession(session, pin)')
+    > lockScreen.lastIndexOf('await clearStaffSession'),
+);
+assert.match(lockScreen, /saved\.identityRevision !== cached\.identityRevision/);
+assert.match(lockScreen, /await clearStaffSession\(staffProfileId\)/);
 assert.doesNotMatch(lockScreen, /reconcileActiveStaffProfiles/);
 assert.match(app, /startupError \|\| !terminal/);
 assert.match(app, /POS remains locked/);
@@ -93,6 +100,10 @@ assert.match(identity, /tokenHash/);
 assert.match(identity, /revokedAt/);
 assert.match(identity, /session\.deviceId !== args\.deviceId/);
 assert.match(identityAction, /export const validateSession/);
+assert.match(identityAction, /export const checkSession/);
+assert.match(identityAction, /identityRevision: record\.credentialVersion/);
+assert.match(sync, /credentialVersion \?\? 0/);
+assert.doesNotMatch(sync, /identityRevision: 0/);
 assert.match(sessionBoundary, /session\.deviceId !== args\.deviceId/);
 assert.match(sessionBoundary, /identity\.credentialVersion !== session\.credentialVersion/);
 assert.doesNotMatch(management + operational, /OLASO_ALLOW_DEV/);

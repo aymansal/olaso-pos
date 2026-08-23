@@ -30,6 +30,8 @@ tablet's local SQLite operational record.
   and its foreground/resume recheck; it does not synchronize application data.
 - `reconnectContext.tsx` owns the authenticated single-flight outbox worker,
   cache refresh gate, and visible-hook completion revision.
+- `offlineViews.ts` owns bounded tablet-only Products/Stock detail and
+  Dashboard/Reports fallback reads; it never performs management writes.
 - `identitySession.ts` derives and persists one protected local session/PIN
   verifier/attempt-state record per provisioned staff profile after successful
   sign-in; it never exposes those values through ordinary local data contracts.
@@ -61,9 +63,11 @@ tablet's local SQLite operational record.
 - Page local sale history by the created-time keyset index and keep public cloud
   history page sizes at 20 or fewer.
 - Dashboard reads use one bounded snapshot request on mount or deliberate
-  retry; never poll or subscribe while the screen is hidden.
+  retry, with a bounded saved-tablet fallback offline; never poll or subscribe
+  while the screen is hidden.
 - Reports reads use one bounded saved-summary request per selected range or
-  deliberate retry; tab switches remain local and never start another query.
+  deliberate retry, with a one-to-31-day saved-tablet fallback offline; tab
+  switches remain local and never start another query.
 - Never refresh cloud cache data over pending local outbox work.
 - Treat the shared connection context as display/readiness state only. The one
   reconnect worker owns automatic outbox and cache work.
@@ -93,6 +97,7 @@ tablet's local SQLite operational record.
 ## Verification
 
 - Run `npm run check:local`, `npm run check:sales`, `npm run check:settings`,
-  `npx tsc -b`, and `npm run build`.
+  `npm run check:reconnect`, `npm run check:offline`, `npx tsc -b`, and
+  `npm run build`.
 - Run `npm run android:sync` after changing Capacitor configuration or native
   plugin dependencies.

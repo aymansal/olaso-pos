@@ -22,7 +22,11 @@ type StaffIdentity = {
   name: string;
   role: StaffRole;
 };
-type SignInResult = StaffIdentity & { kind: 'authenticated'; token: string };
+type SignInResult = StaffIdentity & {
+  kind: 'authenticated';
+  token: string;
+  identityRevision: number;
+};
 type SignInFailure = { kind: 'invalid-pin' | 'locked' };
 
 function toBase64(bytes: Uint8Array) {
@@ -114,7 +118,12 @@ export const signIn = action({
       tokenHash: await tokenHash(token),
       now,
     }) as StaffIdentity;
-    return { kind: 'authenticated', token, ...staff };
+    return {
+      kind: 'authenticated',
+      token,
+      identityRevision: record.credentialVersion,
+      ...staff,
+    };
   },
 });
 
@@ -146,11 +155,28 @@ export const listActiveProfiles = query({
       .withIndex('by_status_name', (q) => q.eq('status', 'active'))
       .take(51);
     if (profiles.length > 50) throw new Error('Too many active staff profiles.');
+    const identities = await Promise.all(
+      profiles.map((profile) =>
+        ctx.db
+          .query('staffIdentities')
+          .withIndex('by_staff_profile', (index) =>
+            index.eq('staffProfileId', profile._id),
+          )
+          .unique(),
+      ),
+    );
+    const identityByProfile = new Map(
+      identities.flatMap((identity) =>
+        identity ? [[String(identity.staffProfileId), identity] as const] : [],
+      ),
+    );
     return profiles.map((profile) => ({
       id: profile._id,
       name: profile.name,
       role: profile.role,
       revision: profile.revision,
+      identityRevision:
+        identityByProfile.get(String(profile._id))?.credentialVersion ?? 0,
     }));
   },
 });
@@ -167,5 +193,23 @@ export const validateSession = action({
     }) as StaffIdentity | null;
     if (!session) throw new Error('Staff session is unavailable. Sign in again.');
     return session;
+  },
+});
+
+export const checkSession = action({
+  args: { token: v.string(), deviceId: v.string() },
+  handler: async (ctx, args): Promise<
+    | ({ kind: 'valid' } & StaffIdentity)
+    | { kind: 'invalid' }
+  > => {
+    if (!/^[A-Za-z0-9_-]{40,100}$/.test(args.token)
+        || !DEVICE_PATTERN.test(args.deviceId)) {
+      return { kind: 'invalid' };
+    }
+    const session = await ctx.runQuery(internal.identityInternal.validateSession, {
+      tokenHash: await tokenHash(args.token),
+      deviceId: args.deviceId,
+    }) as StaffIdentity | null;
+    return session ? { kind: 'valid', ...session } : { kind: 'invalid' };
   },
 });

@@ -512,6 +512,9 @@ sale ingredient cost or required expense input is incomplete.
 - The tablet keeps the active menu, recipes, current stock, and unsynced sales
   locally.
 - The application takes orders while offline.
+- Products, Stock, Dashboard, and Reports open from bounded saved tablet data
+  while disconnected instead of waiting on live cloud queries. Their offline
+  figures describe this tablet's saved records and refresh after synchronization.
 - Lock and POS show one quiet, shared connection state based on real internet
   availability, and it updates after Wi-Fi changes or app resume.
 - Cloud synchronization runs in the background when a connection exists.

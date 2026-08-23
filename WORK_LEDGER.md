@@ -98,17 +98,16 @@ No goal is active.
   public binary-only GitHub release repository; confirm whether public APK
   availability is acceptable before implementation.
 
-- OFF-03 through OFF-05 are complete under `OFFLINE_RELIABILITY_PLAN.md`;
-  OFF-06 is the sole active reliability card and no production goal is active.
-  One authenticated single-flight worker now owns pending outbox upload, safe
-  failure selection, empty-outbox cache refresh, manual Sync, and mounted-screen
-  refresh. An isolated ephemeral Android user preserved the owner's stale
-  development history while proving a fresh offline Espresso changed from zero
-  cloud sales to exactly one sale, one line, and two stock movements after
-  reconnect; a second reconnect remained exactly one. The temporary user was
-  removed and the owner database remains unchanged at 10/10/35/6/2. OFF-05 is
-  pushed as `8e176faa011d2814ae23755a5f05443873f8e2c5` on `origin/main`. Exact
-  next action: run OFF-06's full physical reliability and regression matrix.
+- OFF-01 through OFF-06 are complete under `OFFLINE_RELIABILITY_PLAN.md`; no
+  reliability card or production goal is active. The final APK has native
+  fitted viewport handling, independent offline staff access/lockout,
+  Android-validated connection truth, one authenticated reconnect worker,
+  exact-once physical sale sync, credential-revision locking, and bounded
+  offline Products, Stock, Dashboard, and Reports data. Physical user review
+  corrected the initial false all-screen pass before closeout. Final owner data
+  is 11 sales, 12 items, 41 movements, 7 retained failed development outbox
+  rows, and 2 corrections; the owner-added `0826-0005` remains untouched.
+  Exact next action: resume normal Goal 06 POLISH-01 screen review.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The
@@ -778,6 +777,15 @@ No goal is active.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-23 — Offline reliability closeout complete
+
+- Completed OFF-01 through OFF-06 with physical SM-X115 evidence, including
+  two-profile offline access, lockout isolation, native network state,
+  exact-once reconnect, saved-data management/report screens, credential
+  revision enforcement, final APK/build/checks, and clean application logs.
+- The reliability work is closed. Goal 06 remains the next normal collaborative
+  phase, beginning with the owner-led POS review and no autonomous `/goal`.
 
 ### 2026-08-23 — OFF-05 exact-once reconnect accepted
 

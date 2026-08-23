@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Provides owner-facing live category, product, modifier, and recipe management.
+Provides owner-facing category, product, modifier, and recipe management with
+saved tablet presentation during an outage.
 
 ## Ownership
 
@@ -29,6 +30,8 @@ Provides owner-facing live category, product, modifier, and recipe management.
   recipe meaning.
 - Archive and restore records that history may reference; do not expose
   destructive deletion.
+- Offline reads use the saved operational cache and must never remain on a live
+  loading state. Protected management writes retain their server boundary.
 
 ## Work Guidance
 

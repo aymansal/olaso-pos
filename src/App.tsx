@@ -128,7 +128,7 @@ export function App() {
 
   return (
     <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
-      <ReconnectProvider>
+      <ReconnectProvider onSessionUnavailable={lock}>
       {!hasPermission(staffSession.role, screenPermission[screen]) ? (
       <PosScreen
         session={posSession}

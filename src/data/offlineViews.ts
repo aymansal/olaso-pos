@@ -1,0 +1,411 @@
+import { shiftBusinessDate } from '../lib/date.ts';
+import { openLocalDatabase } from './localDatabase.ts';
+import { loadOperationalCache } from './operationalCache.ts';
+
+type SavedLine = {
+  productId: string;
+  productName: string;
+  quantity: number;
+  lineTotalCentimes: number;
+};
+
+type SavedReceipt = {
+  completedAt: number;
+  paymentMethod: string;
+  lines: SavedLine[];
+};
+
+function receipt(value: unknown): SavedReceipt {
+  const parsed = JSON.parse(String(value)) as SavedReceipt;
+  if (!parsed || !Array.isArray(parsed.lines)) {
+    throw new Error('A saved receipt is unavailable.');
+  }
+  return parsed;
+}
+
+async function localSales(fromDate: string, toDate: string) {
+  const database = await openLocalDatabase();
+  const result = await database.query(
+    `SELECT local_sale_id, receipt_number, status, service_type,
+      total_centimes, business_date, receipt_snapshot_json, created_at
+     FROM sales
+     WHERE business_date BETWEEN ? AND ?
+     ORDER BY created_at DESC
+     LIMIT 1001`,
+    [fromDate, toDate],
+  );
+  if ((result.values?.length ?? 0) > 1_000) {
+    throw new Error('Saved tablet sales exceed the offline report limit.');
+  }
+  return (result.values ?? []).map((row) => ({
+    id: String(row.local_sale_id),
+    receiptNumber: String(row.receipt_number),
+    status: String(row.status) as 'completed' | 'cancelled' | 'refunded',
+    serviceMode: row.service_type === 'dine-in'
+      ? 'dine-in' as const
+      : row.service_type === 'take-away'
+        ? 'take-away' as const
+        : 'online' as const,
+    totalCentimes: Number(row.total_centimes),
+    businessDate: String(row.business_date),
+    createdAt: Number(row.created_at),
+    receipt: receipt(row.receipt_snapshot_json),
+  }));
+}
+
+export function aggregateOfflineSales(
+  rows: Awaited<ReturnType<typeof localSales>>,
+  categoryByProduct: Map<string, { id: string; name: string }>,
+) {
+  const products = new Map<string, {
+    productId: string;
+    productName: string;
+    categoryName?: string;
+    quantity: number;
+    totalCentimes: number;
+  }>();
+  const categories = new Map<string, {
+    categoryId: string;
+    categoryName: string;
+    quantity: number;
+    totalCentimes: number;
+  }>();
+  const payments = new Map<string, {
+    paymentMethod: string;
+    totalCentimes: number;
+    orderCount: number;
+  }>();
+  let netCentimes = 0;
+  let itemCount = 0;
+  const completed = rows.filter((row) => row.status === 'completed');
+  for (const row of completed) {
+    netCentimes += row.totalCentimes;
+    const paymentMethod = row.receipt.paymentMethod || 'Unknown';
+    const payment = payments.get(paymentMethod) ?? {
+      paymentMethod,
+      totalCentimes: 0,
+      orderCount: 0,
+    };
+    payment.totalCentimes += row.totalCentimes;
+    payment.orderCount += 1;
+    payments.set(paymentMethod, payment);
+    for (const line of row.receipt.lines) {
+      itemCount += line.quantity;
+      const category = categoryByProduct.get(line.productId);
+      const product = products.get(line.productId) ?? {
+        productId: line.productId,
+        productName: line.productName,
+        ...(category ? { categoryName: category.name } : {}),
+        quantity: 0,
+        totalCentimes: 0,
+      };
+      product.quantity += line.quantity;
+      product.totalCentimes += line.lineTotalCentimes;
+      products.set(line.productId, product);
+      if (category) {
+        const total = categories.get(category.id) ?? {
+          categoryId: category.id,
+          categoryName: category.name,
+          quantity: 0,
+          totalCentimes: 0,
+        };
+        total.quantity += line.quantity;
+        total.totalCentimes += line.lineTotalCentimes;
+        categories.set(category.id, total);
+      }
+    }
+  }
+  return {
+    netCentimes,
+    orderCount: completed.length,
+    itemCount,
+    ingredientUsageEventCount: 0,
+    productTotals: [...products.values()]
+      .sort((left, right) => right.totalCentimes - left.totalCentimes)
+      .slice(0, 20),
+    categoryTotals: [...categories.values()]
+      .sort((left, right) => right.totalCentimes - left.totalCentimes)
+      .slice(0, 20),
+    paymentTotals: [...payments.values()]
+      .sort((left, right) => right.totalCentimes - left.totalCentimes)
+      .slice(0, 20),
+  };
+}
+
+async function ingredientUsage(fromDate: string, toDate: string) {
+  const database = await openLocalDatabase();
+  const result = await database.query(
+    `SELECT m.ingredient_id, i.name, i.base_unit,
+      SUM(-m.quantity_delta) AS quantity
+     FROM stock_movements m
+     JOIN ingredients i ON i.id = m.ingredient_id
+     JOIN sales s ON s.local_sale_id = m.local_sale_id
+     WHERE m.business_date BETWEEN ? AND ?
+       AND m.movement_type = 'sale'
+       AND s.status = 'completed'
+     GROUP BY m.ingredient_id, i.name, i.base_unit
+     ORDER BY i.name
+     LIMIT 21`,
+    [fromDate, toDate],
+  );
+  if ((result.values?.length ?? 0) > 20) {
+    throw new Error('Saved ingredient usage exceeds the offline report limit.');
+  }
+  return (result.values ?? []).map((row) => ({
+    ingredientId: String(row.ingredient_id),
+    ingredientName: String(row.name),
+    baseUnit: String(row.base_unit) as 'millilitre' | 'gram' | 'milligram' | 'piece',
+    quantity: Number(row.quantity),
+  }));
+}
+
+export async function loadOfflineDashboard(businessDate: string) {
+  const fromDate = shiftBusinessDate(businessDate, -11);
+  const [rows, cache] = await Promise.all([
+    localSales(fromDate, businessDate),
+    loadOperationalCache(),
+  ]);
+  const categories = new Map(cache.categories.map((category) => [category.id, category]));
+  const categoryByProduct = new Map(
+    cache.products.flatMap((product) => {
+      const category = categories.get(product.categoryId);
+      return category ? [[product.id, { id: category.id, name: category.name }] as const] : [];
+    }),
+  );
+  const todayRows = rows.filter((row) => row.businessDate === businessDate);
+  const yesterdayDate = shiftBusinessDate(businessDate, -1);
+  const today = aggregateOfflineSales(todayRows, categoryByProduct);
+  const yesterday = aggregateOfflineSales(
+    rows.filter((row) => row.businessDate === yesterdayDate),
+    categoryByProduct,
+  );
+  const bestSeller = today.productTotals[0];
+  return {
+    businessDate,
+    updatedAt: Math.max(0, ...todayRows.map((row) => row.createdAt)),
+    today: today.orderCount
+      ? {
+          grossCentimes: today.netCentimes,
+          netCentimes: today.netCentimes,
+          orderCount: today.orderCount,
+          itemCount: today.itemCount,
+          ...(bestSeller
+            ? {
+                bestSeller: {
+                  name: bestSeller.productName,
+                  quantity: bestSeller.quantity,
+                  totalCentimes: bestSeller.totalCentimes,
+                },
+              }
+            : {}),
+        }
+      : undefined,
+    yesterday: yesterday.orderCount
+      ? { netCentimes: yesterday.netCentimes, orderCount: yesterday.orderCount }
+      : undefined,
+    dailySales: Array.from({ length: 12 }, (_, index) => {
+      const date = shiftBusinessDate(businessDate, index - 11);
+      const daily = aggregateOfflineSales(
+        rows.filter((row) => row.businessDate === date),
+        categoryByProduct,
+      );
+      return {
+        businessDate: date,
+        netCentimes: daily.netCentimes,
+        orderCount: daily.orderCount,
+      };
+    }),
+    warnings: cache.ingredients
+      .filter((item) => item.currentStockQuantity <= item.lowStockThreshold)
+      .sort(
+        (left, right) =>
+          left.currentStockQuantity / Math.max(1, left.lowStockThreshold)
+          - right.currentStockQuantity / Math.max(1, right.lowStockThreshold),
+      )
+      .slice(0, 4)
+      .map((item) => ({
+        id: item.id,
+        key: item.id,
+        name: item.name,
+        baseUnit: item.baseUnit,
+        currentStockQuantity: item.currentStockQuantity,
+        lowStockThreshold: item.lowStockThreshold,
+      })),
+    recentOrders: rows.slice(0, 4).map((row) => ({
+      id: row.id,
+      receiptNumber: row.receiptNumber,
+      status: row.status,
+      serviceMode: row.serviceMode,
+      totalCentimes: row.totalCentimes,
+      completedAt: row.receipt.completedAt,
+      itemCount: row.receipt.lines.reduce((sum, line) => sum + line.quantity, 0),
+    })),
+  };
+}
+
+export async function loadOfflineReport(fromDate: string, toDate: string) {
+  const days = Math.floor(
+    (Date.parse(`${toDate}T00:00:00Z`) - Date.parse(`${fromDate}T00:00:00Z`))
+      / 86_400_000,
+  ) + 1;
+  if (days < 1 || days > 31) throw new Error('Report periods must contain 1 to 31 days.');
+  const previousTo = shiftBusinessDate(fromDate, -1);
+  const previousFrom = shiftBusinessDate(previousTo, 1 - days);
+  const [currentRows, previousRows, cache, usage] = await Promise.all([
+    localSales(fromDate, toDate),
+    localSales(previousFrom, previousTo),
+    loadOperationalCache(),
+    ingredientUsage(fromDate, toDate),
+  ]);
+  const categories = new Map(cache.categories.map((category) => [category.id, category]));
+  const categoryByProduct = new Map(
+    cache.products.flatMap((product) => {
+      const category = categories.get(product.categoryId);
+      return category ? [[product.id, { id: category.id, name: category.name }] as const] : [];
+    }),
+  );
+  const current = {
+    ...aggregateOfflineSales(currentRows, categoryByProduct),
+    ingredientUsageEventCount: usage.length,
+    ingredientTotals: usage,
+  };
+  const previous = {
+    ...aggregateOfflineSales(previousRows, categoryByProduct),
+    ingredientTotals: [],
+  };
+  return {
+    range: { from: fromDate, to: toDate, days },
+    comparisonRange: { from: previousFrom, to: previousTo },
+    current,
+    previous,
+    daily: Array.from({ length: days }, (_, index) => {
+      const date = shiftBusinessDate(fromDate, index);
+      const daily = aggregateOfflineSales(
+        currentRows.filter((row) => row.businessDate === date),
+        categoryByProduct,
+      );
+      return {
+        businessDate: date,
+        netCentimes: daily.netCentimes,
+        itemCount: daily.itemCount,
+        ingredientUsageEventCount: 0,
+      };
+    }),
+  };
+}
+
+export async function loadOfflineInventory() {
+  const [cache, database] = await Promise.all([
+    loadOperationalCache(),
+    openLocalDatabase(),
+  ]);
+  const today = new Date().toISOString().slice(0, 10);
+  const movementResult = await database.query(
+    `SELECT ingredient_id, COUNT(*) AS movement_count,
+      SUM(CASE WHEN movement_type IN ('manual-adjustment', 'stock-addition') THEN 1 ELSE 0 END) AS adjustment_count,
+      SUM(CASE WHEN movement_type = 'sale' AND quantity_delta < 0 THEN -quantity_delta ELSE 0 END) AS used_today
+     FROM stock_movements
+     WHERE business_date = ?
+     GROUP BY ingredient_id
+     LIMIT 1001`,
+    [today],
+  );
+  const movements = new Map(
+    (movementResult.values ?? []).map((row) => [String(row.ingredient_id), row]),
+  );
+  const ingredients = cache.ingredients.map((item) => ({
+    id: item.id,
+    key: item.id,
+    name: item.name,
+    baseUnit: item.baseUnit,
+    currentStockQuantity: item.currentStockQuantity,
+    inventoryValueCentimes: item.inventoryValueCentimes,
+    costStatus: item.costStatus,
+    valuationRevision: item.valuationRevision,
+    lowStockThreshold: item.lowStockThreshold,
+    usedToday: Number(movements.get(item.id)?.used_today ?? 0),
+    status: 'active' as const,
+    revision: item.revision,
+    updatedAt: cache.updatedAt,
+  }));
+  return {
+    cache,
+    ingredients,
+    metrics: {
+      ingredientCount: ingredients.length,
+      lowStockCount: ingredients.filter(
+        (item) => item.currentStockQuantity <= item.lowStockThreshold,
+      ).length,
+      movementCount: [...movements.values()].reduce(
+        (sum, row) => sum + Number(row.movement_count ?? 0),
+        0,
+      ),
+      adjustmentCount: [...movements.values()].reduce(
+        (sum, row) => sum + Number(row.adjustment_count ?? 0),
+        0,
+      ),
+    },
+  };
+}
+
+export async function loadOfflineIngredientDetail(ingredientId: string) {
+  const [database, cache] = await Promise.all([
+    openLocalDatabase(),
+    loadOperationalCache(),
+  ]);
+  const [movements, purchases] = await Promise.all([
+    database.query(
+      `SELECT id, quantity_delta, movement_type, reason, actor_label,
+        business_date, created_at
+       FROM stock_movements
+       WHERE ingredient_id = ?
+       ORDER BY created_at DESC
+       LIMIT 50`,
+      [ingredientId],
+    ),
+    database.query(
+      `SELECT id, package_label, package_count, quantity_per_package,
+        total_quantity, package_price_centimes, total_cost_centimes,
+        transaction_type, received_at
+       FROM inventory_purchases
+       WHERE ingredient_id = ?
+       ORDER BY received_at DESC
+       LIMIT 20`,
+      [ingredientId],
+    ),
+  ]);
+  const productById = new Map(cache.products.map((product) => [product.id, product]));
+  const activeVersions = new Map(
+    cache.recipeVersions.map((version) => [version.id, version]),
+  );
+  return {
+    movements: (movements.values ?? []).map((row) => ({
+      id: String(row.id),
+      quantityDelta: Number(row.quantity_delta),
+      movementType: String(row.movement_type),
+      reason: String(row.reason),
+      ...(row.actor_label ? { actorLabel: String(row.actor_label) } : {}),
+      businessDate: String(row.business_date),
+      createdAt: Number(row.created_at),
+    })),
+    purchases: (purchases.values ?? []).map((row) => ({
+      id: String(row.id),
+      packageLabel: String(row.package_label),
+      packageCount: Number(row.package_count),
+      quantityPerPackage: Number(row.quantity_per_package),
+      totalQuantity: Number(row.total_quantity),
+      packagePriceCentimes: Number(row.package_price_centimes),
+      totalCostCentimes: Number(row.total_cost_centimes),
+      transactionType: String(row.transaction_type),
+      receivedAt: Number(row.received_at),
+    })),
+    linkedRecipes: cache.recipeItems.flatMap((item) => {
+      if (item.ingredientId !== ingredientId) return [];
+      const version = activeVersions.get(item.recipeVersionId);
+      const product = version ? productById.get(version.productId) : undefined;
+      return product
+        ? [{ productId: product.id, productName: product.name, quantity: item.quantity }]
+        : [];
+    }),
+  };
+}

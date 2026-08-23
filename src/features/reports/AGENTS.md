@@ -24,6 +24,8 @@ performance, ingredient usage, and bounded period controls.
 - Stock-usage and product tabs must share the established report shell rather
   than duplicate it.
 - Keep ingredient base units separate; never invent a cross-unit stock total.
+- Offline Reports derive the selected one-to-31-day period from bounded saved
+  tablet receipts and movements and never remain on a cloud loading state.
 
 ## Work Guidance
 

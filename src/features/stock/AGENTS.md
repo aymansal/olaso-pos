@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Provides live ingredient inventory, low-stock status, stock selection,
+Provides ingredient inventory, low-stock status, stock selection,
 ingredient lifecycle actions, exact adjustments, and append-only movement
 history.
 
@@ -31,6 +31,8 @@ history.
 - Archived ingredients remain available to history and can be restored.
 - Do not add theoretical-waste or inventory-valuation claims without confirmed
   product contracts and source data.
+- Offline reads use saved ingredients plus bounded local movement, purchase,
+  and recipe-link detail instead of waiting for Convex.
 
 ## Work Guidance
 

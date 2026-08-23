@@ -26,6 +26,7 @@ export type StaffSession = {
   staffProfileId: string;
   name: string;
   role: StaffRole;
+  identityRevision: number;
 };
 
 
@@ -68,7 +69,17 @@ function isStaffSession(value: unknown): value is StaffSession {
   return typeof session.token === 'string'
     && typeof session.staffProfileId === 'string'
     && typeof session.name === 'string'
-    && ['owner', 'manager', 'cashier'].includes(String(session.role));
+    && ['owner', 'manager', 'cashier'].includes(String(session.role))
+    && (session.identityRevision === undefined
+      || (Number.isInteger(session.identityRevision)
+        && Number(session.identityRevision) >= 0));
+}
+
+function normalizedSession(session: StaffSession) {
+  return {
+    ...session,
+    identityRevision: Number(session.identityRevision ?? 0),
+  };
 }
 
 async function migrateLegacyStaffSession(staffProfileId: string) {
@@ -121,7 +132,7 @@ export async function loadStaffSession(staffProfileId: string) {
   if (session.staffProfileId !== staffProfileId) {
     throw new Error('Stored staff session does not match this profile.');
   }
-  return session;
+  return normalizedSession(session);
 }
 
 function parseOfflineAttempt(value: string | null) {

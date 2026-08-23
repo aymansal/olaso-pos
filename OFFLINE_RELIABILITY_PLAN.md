@@ -1,6 +1,6 @@
 # Olaso Offline Reliability Ledger
 
-**Status:** active owner-led reliability work. This is not a Goal 06 activation.
+**Status:** complete owner-led reliability work. This was not a Goal 06 activation.
 
 **Purpose:** make the tablet dependable through an outage: every provisioned
 staff member can unlock locally, sales remain local-first, and a returning real
@@ -280,7 +280,9 @@ menu state, and no duplicate receipt, stock movement, warning, or error.
 
 ### OFF-06 — Full tablet reliability closeout
 
-**Status:** in progress; OFF-01 through OFF-05 are complete.
+**Status:** complete — the current APK passed the complete physical reliability
+matrix, offline screen correction, focused/full regression, and documentation
+closeout.
 
 **Scenarios:**
 
@@ -300,6 +302,66 @@ menu state, and no duplicate receipt, stock movement, warning, or error.
 files changed, unresolved limitation, and the exact next action below.
 
 ## Journal
+
+### 2026-08-23 — OFF-06 complete
+
+- On the current primary-user APK with Wi-Fi disabled, Owner force-close/
+  restart unlock retained Dashboard, POS, Orders, Products, Stock, and Reports;
+  Samira retained only POS and Orders. Five wrong offline Samira attempts
+  produced the protected five-minute lockout, restart preserved it, and Owner
+  remained independently usable.
+- The owner correctly rejected the first all-screen Wi-Fi evidence: it proved
+  fitted shells but Products stayed on `Loading live menu`, while Stock,
+  Dashboard, and Reports also depended on live cloud reads. That evidence was
+  withdrawn rather than counted as a pass.
+- Added bounded saved-tablet fallbacks. Offline Products now shows all saved
+  categories, products, modifiers, active recipe/version data, and readable
+  generated codes; Stock shows saved quantities, low-stock metrics, linked
+  recipes, and bounded local movement/purchase detail; Dashboard derives the
+  tablet's saved sales/warnings/recent orders; Reports derives one-to-31-day
+  sales, products, payments, and stock usage from saved receipts and movements.
+- Physical Wi-Fi-off screenshots after the rebuilt install prove Products,
+  Stock, Dashboard, and Reports finish loading with real tablet data at
+  1340 × 800. POS and Orders retain their established local sources. The new
+  `check:offline` protects cancelled-sale exclusion and all four fallback
+  ownership paths.
+- Added credential-version propagation to active profile discovery and the
+  operational snapshot. Every reconnect now performs a structured active-
+  session check before outbox work, refreshes the small staff directory even
+  when business failures remain, clears only archived/revised profile records,
+  and locks immediately for an invalid active session without a Convex console
+  exception.
+- The first restored-Samira test exposed an ordering bug: the sign-in flow
+  saved her new protected record before clearing the old revision and therefore
+  deleted the new record. Reordered it to clear obsolete records first and save
+  the authenticated record last; a focused assertion preserves that order.
+- A development profile-list attempt initially rejected because historical
+  identities exceeded a global limit. Changed both active-profile and snapshot
+  reads to indexed per-active-profile identity lookups, so archived test
+  identities cannot block current staff discovery.
+- Physically rotated only Samira's development PIN through the protected
+  support boundary. The next real reconnect locked her active session with a
+  clean log. Restored the original PIN, signed Samira in online, then proved
+  force-close/offline restart unlock with cashier-only navigation. Repeated the
+  current Owner online sign-in so the tablet ends healthy under the Owner.
+- One rejected support call echoed the then-current development recovery value
+  before changing any PIN. Rotated the development recovery secret immediately;
+  no credential, PIN, verifier, or recovery value is stored in source or the
+  ledgers.
+- OFF-05's isolated physical exact-once evidence remains valid: one offline
+  Espresso became exactly one cloud sale, one line, and two stock movements;
+  a second reconnect remained one. The temporary Android user was removed.
+- Full management, inventory, cost, staff, expense, monthly-cost, local sale,
+  Orders, Dashboard, Reports, Settings, identity, permission, printing,
+  endurance, receipt-lab, reconnect, offline-view, TypeScript, Convex, build,
+  audit, Android sync, and 140-task beta checks pass. The final filtered
+  Capacitor/Android error log is empty; Samsung Chromium may emit its internal
+  first-paint metric diagnostic, which is not an application exception.
+- Final owner-user operational counts are 11 sales, 12 items, 41 stock
+  movements, 7 retained failed development outbox rows, and 2 corrections.
+  Receipt `0826-0005` was added during owner testing and remains untouched.
+- Exact next action: return to the normal Goal 06 owner-led screen review at
+  POLISH-01; offline reliability has no active card.
 
 ### 2026-08-23 — OFF-05 complete; OFF-06 started
 

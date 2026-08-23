@@ -45,6 +45,21 @@ export const getOperationalSnapshot = query({
     withinLimit(allOptions, 1000, 'Modifier options');
     withinLimit(ingredients, 1000, 'Ingredients');
     withinLimit(staffProfiles, 100, 'Staff profiles');
+    const staffIdentities = await Promise.all(
+      staffProfiles.map((profile) =>
+        ctx.db
+          .query('staffIdentities')
+          .withIndex('by_staff_profile', (index) =>
+            index.eq('staffProfileId', profile._id),
+          )
+          .unique(),
+      ),
+    );
+    const identityByProfile = new Map(
+      staffIdentities.flatMap((identity) =>
+        identity ? [[String(identity.staffProfileId), identity] as const] : [],
+      ),
+    );
 
     const products = allProducts
       .filter((product) => product.status !== 'archived')
@@ -193,7 +208,8 @@ export const getOperationalSnapshot = query({
         name: staff.name,
         role: staff.role,
         revision: staff.revision,
-        identityRevision: 0,
+        identityRevision:
+          identityByProfile.get(String(staff._id))?.credentialVersion ?? 0,
       })),
     };
   },

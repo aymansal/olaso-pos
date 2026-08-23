@@ -262,6 +262,21 @@ A network retry therefore produces the same result instead of another sale.
   the cashier operational cache.
 - The application exposes a manual `Sync now` recovery action.
 
+### Offline screen reads
+
+POS and Orders retain their established local-first sources. Products and Stock
+map the bounded operational cache into their normal screen contracts when
+validated internet is absent; Stock also reads bounded local movement and
+purchase detail. Dashboard and Reports calculate bounded tablet-only fallback
+summaries from immutable local receipt snapshots, current cached ingredients,
+and saved stock movements. Cancelled sales are excluded from net totals.
+
+These fallbacks never claim to be the complete cloud-wide record. They keep the
+same screen useful during an outage and are replaced by the normal bounded
+cloud results after reconnection. Product/recipe/ingredient management writes
+remain protected server operations; offline fallback is a read path, not a
+second mutation architecture.
+
 ### Current scaling limit
 
 This synchronization model is optimized for one active POS tablet.
@@ -810,6 +825,11 @@ staff PIN
   profile's local protected record, revokes the prior token for that
   staff/device pair, and removes already revoked rows through the bounded
   staff-profile session index.
+- **Revision propagation:** active profile discovery and operational sync carry
+  each profile's credential version. A changed version clears only that
+  profile's protected offline record. Every reconnect validates the active
+  session before outbox work; an invalid session locks the app through a
+  structured result rather than a logged server exception.
 - **Offline:** after an online provisioning/login, the tablet can verify a
   registered staff PIN and continue a local session indefinitely while offline.
   The next successful synchronization applies archived/revoked identities and

@@ -1,4 +1,4 @@
-import { useConvex, useMutation } from 'convex/react';
+import { useAction, useConvex, useMutation } from 'convex/react';
 import {
   createContext,
   useCallback,
@@ -20,7 +20,12 @@ import {
   makeConnectivityFailuresAvailable,
   makePendingOutboxAvailable,
 } from './outbox';
-import { replaceOperationalCache } from './operationalCache';
+import {
+  reconcileAuthenticatedStaffProfiles,
+  replaceOperationalCache,
+} from './operationalCache';
+import { clearStaffSession } from './identitySession';
+import { isStaffRole } from './permissions';
 import { useStaffSession } from './sessionContext';
 import {
   loadTerminalSettings,
@@ -60,12 +65,19 @@ function toConvexSaleArgs(input: SaleSyncPayload) {
   };
 }
 
-export function ReconnectProvider({ children }: { children: ReactNode }) {
+export function ReconnectProvider({
+  children,
+  onSessionUnavailable,
+}: {
+  children: ReactNode;
+  onSessionUnavailable: () => Promise<void>;
+}) {
   const { available } = useConnectionStatus();
   const session = useStaffSession();
   const convex = useConvex();
   const acceptMutation = useMutation(api.sales.accept);
   const cancelMutation = useMutation(api.sales.cancel);
+  const checkSession = useAction(api.identity.checkSession);
   const inFlight = useRef<Promise<ReconnectResult> | undefined>(undefined);
   const requestedMode = useRef<ReconnectMode | undefined>(undefined);
   const previousAvailable = useRef<boolean | undefined>(undefined);
@@ -83,12 +95,41 @@ export function ReconnectProvider({ children }: { children: ReactNode }) {
       };
     }
 
-    if (mode === 'manual') await makePendingOutboxAvailable();
-    else await makeConnectivityFailuresAvailable();
-
     let synced = 0;
     let failed = 0;
     try {
+      const sessionStatus = await checkSession({
+        token: session.token,
+        deviceId: session.deviceId,
+      });
+      if (sessionStatus.kind === 'invalid') {
+        throw new Error('Staff session is unavailable.');
+      }
+      const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
+        deviceId: session.deviceId,
+      });
+      const activeProfiles = remoteProfiles.flatMap((profile) =>
+        isStaffRole(profile.role)
+          ? [{
+              id: String(profile.id),
+              name: profile.name,
+              role: profile.role,
+              revision: Number(profile.revision),
+              identityRevision: Number(profile.identityRevision),
+            }]
+          : [],
+      );
+      const invalidatedProfileIds = await reconcileAuthenticatedStaffProfiles(
+        activeProfiles,
+        session.staffProfileId,
+      );
+      for (const profileId of invalidatedProfileIds) {
+        await clearStaffSession(profileId);
+      }
+
+      if (mode === 'manual') await makePendingOutboxAvailable();
+      else await makeConnectivityFailuresAvailable();
+
       for (let batch = 0; batch < 10; batch += 1) {
         const result = await syncPendingSales(
           async (input) => {
@@ -148,9 +189,12 @@ export function ReconnectProvider({ children }: { children: ReactNode }) {
     } catch (caught) {
       const message = await recordSyncFailure(caught);
       setRevision((value) => value + 1);
+      if (message.startsWith('Synchronization access is unavailable.')) {
+        await onSessionUnavailable();
+      }
       throw new Error(message);
     }
-  }, [acceptMutation, available, cancelMutation, convex, session.deviceId, session.token]);
+  }, [acceptMutation, available, cancelMutation, checkSession, convex, onSessionUnavailable, session.deviceId, session.staffProfileId, session.token]);
 
   const run = useCallback((mode: ReconnectMode = 'automatic') => {
     requestedMode.current = mode === 'manual' || requestedMode.current === 'manual'

@@ -235,7 +235,7 @@ export function setTerminalLocked(isLocked: boolean) {
 
 export function describeSyncFailure(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
-  if (/unauthenticated|sign-in is required/i.test(message)) {
+  if (/unauthenticated|sign-in is required|session is unavailable/i.test(message)) {
     return 'Synchronization access is unavailable. Restore terminal access and try again.';
   }
   if (/network|failed to fetch|offline/i.test(message)) {

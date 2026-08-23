@@ -57,13 +57,21 @@ const pos = readFileSync('src/data/usePosData.ts', 'utf8');
 const orders = readFileSync('src/data/useOrdersData.ts', 'utf8');
 const settings = readFileSync('src/data/useSettingsData.ts', 'utf8');
 assert.match(worker, /inFlight\.current/);
+assert.match(worker, /api\.identity\.checkSession/);
+assert.ok(
+  worker.indexOf('await checkSession')
+    < worker.indexOf('await makeConnectivityFailuresAvailable'),
+);
+assert.match(worker, /reconcileAuthenticatedStaffProfiles/);
+assert.match(worker, /await clearStaffSession/);
 assert.match(worker, /batch < 10/);
 assert.match(worker, /makeConnectivityFailuresAvailable/);
 assert.match(worker, /mode === 'manual'/);
 assert.match(worker, /settings\.pendingSyncCount === 0/);
 assert.match(worker, /replaceOperationalCache/);
 assert.match(worker, /previous !== true/);
-assert.ok(app.indexOf('<ReconnectProvider>') > app.indexOf('<StaffSessionProvider'));
+assert.ok(app.indexOf('<ReconnectProvider ') > app.indexOf('<StaffSessionProvider'));
+assert.match(app, /onSessionUnavailable=\{lock\}/);
 assert.doesNotMatch(pos + orders + settings, /syncPendingSales/);
 assert.ok(
   orders.indexOf('await refresh();')

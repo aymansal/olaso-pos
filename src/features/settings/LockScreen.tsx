@@ -47,6 +47,7 @@ type CachedStaff = {
   name: string;
   role: StaffRole;
   revision: number;
+  identityRevision: number;
 };
 
 export function LockScreen({ settings, onUnlock }: LockScreenProps) {
@@ -72,8 +73,8 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     setAuthoritativeStaff(undefined);
     loadOperationalCache().then((cache) => {
       if (!active) return;
-      const activeStaff = cache.staffProfiles.flatMap(({ id, name, role, revision }) =>
-        isStaffRole(role) ? [{ id, name, role, revision }] : [],
+      const activeStaff = cache.staffProfiles.flatMap(({ id, name, role, revision, identityRevision }) =>
+        isStaffRole(role) ? [{ id, name, role, revision, identityRevision }] : [],
       );
       setStaff(activeStaff);
       setStaffProfileId(activeStaff[0]?.id ?? '');
@@ -81,8 +82,16 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         void convex.query(api.identity.listActiveProfiles, { deviceId: settings.deviceId })
           .then((profiles) => {
             if (!active) return;
-            const remoteStaff = profiles.flatMap(({ id, name, role, revision }) =>
-              isStaffRole(role) ? [{ id: String(id), name, role, revision: Number(revision) }] : [],
+            const remoteStaff = profiles.flatMap(({ id, name, role, revision, identityRevision }) =>
+              isStaffRole(role)
+                ? [{
+                    id: String(id),
+                    name,
+                    role,
+                    revision: Number(revision),
+                    identityRevision: Number(identityRevision),
+                  }]
+                : [],
             );
             if (!remoteStaff.length) return;
             setAuthoritativeStaff(remoteStaff);
@@ -112,7 +121,9 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         const saved = await loadStaffSession(staffProfileId);
         const cached = staff.find((member) => member.id === staffProfileId);
         if (!saved || !cached || saved.staffProfileId !== cached.id
-            || saved.name !== cached.name || saved.role !== cached.role) {
+            || saved.name !== cached.name || saved.role !== cached.role
+            || saved.identityRevision !== cached.identityRevision) {
+          await clearStaffSession(staffProfileId);
           throw new Error('This staff identity is unavailable offline. Connect and sync this terminal.');
         }
         const result = await verifyOfflinePin(staffProfileId, pin);
@@ -142,23 +153,23 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
           ...authenticatedProfile,
           name: session.name,
           role: session.role,
-          identityRevision: 0,
+          identityRevision: session.identityRevision,
         };
         const archivedProfileIds = authoritativeStaff?.some(
           (member) => member.id === session.staffProfileId,
         )
           ? await reconcileAuthenticatedStaffProfiles(
-            authoritativeStaff.map((member) => ({ ...member, identityRevision: 0 })),
+            authoritativeStaff,
             session.staffProfileId,
           )
           : [];
         if (!authoritativeStaff?.some((member) => member.id === session.staffProfileId)) {
           await saveAuthenticatedStaffProfile(localProfile);
         }
-        await saveStaffSession(session, pin);
         for (const archivedProfileId of archivedProfileIds) {
           await clearStaffSession(archivedProfileId);
         }
+        await saveStaffSession(session, pin);
         await clearLegacyStaffSession();
         unlockedSession = session;
         } catch (onlineError) {

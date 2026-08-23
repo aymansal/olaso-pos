@@ -21,6 +21,8 @@ recent orders.
   navigation geometry.
 - Child regions stay prop-driven and render loading, empty, error, and live
   states without importing Convex.
+- Offline Dashboard uses bounded saved tablet sales and stock warnings; it does
+  not claim the complete cloud-wide total.
 - `View all` opens Orders; detailed stock and reporting work remains in its
   owning screen.
 

@@ -389,12 +389,15 @@ export async function reconcileAuthenticatedStaffProfiles(
   const updatedAt = Date.now();
   return withLocalTransaction(async (database) => {
     const previous = await database.query(
-      "SELECT id FROM staff_profiles WHERE status = 'active'",
+      "SELECT id, identity_revision FROM staff_profiles WHERE status = 'active'",
     );
-    const activeIds = new Set(profiles.map((profile) => profile.id));
-    const archivedProfileIds = (previous.values ?? [])
-      .map((row) => String(row.id))
-      .filter((id) => !activeIds.has(id));
+    const activeById = new Map(profiles.map((profile) => [profile.id, profile]));
+    const invalidatedProfileIds = (previous.values ?? []).flatMap((row) => {
+      const current = activeById.get(String(row.id));
+      return !current || current.identityRevision !== Number(row.identity_revision)
+        ? [String(row.id)]
+        : [];
+    });
     await database.run("UPDATE staff_profiles SET status = 'archived'", [], false);
     for (const profile of profiles) {
       await database.run(
@@ -419,7 +422,7 @@ export async function reconcileAuthenticatedStaffProfiles(
         false,
       );
     }
-    return archivedProfileIds;
+    return invalidatedProfileIds;
   });
 }
 
