@@ -41,8 +41,8 @@ tablet's local SQLite operational record.
   immutable receipt snapshots, and outbox acknowledgement/failure state.
 - `localManagement.ts` owns the shared local-first management operation
   persistence: atomic outbox enqueue, optional parent dependency, cloud
-  acknowledgement mapping, and safe retry/failure updates. Domain cards still
-  own their business validation and record changes.
+  acknowledgement plus local/cloud record mappings, and safe retry/failure
+  updates. Domain cards still own their business validation and record changes.
 - `managementOperation.ts` owns the plain operation envelope, bounded payload
   and protected-field validation, actor/role permission validation, saved-row
   parsing, and safe operator-facing sync-failure classification.

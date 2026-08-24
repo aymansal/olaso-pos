@@ -9,6 +9,7 @@ import {
   listPendingManagementOperationsFromDatabase,
   loadManagementOperationFromDatabase,
   recordManagementOperationFailureInDatabase,
+  resolveCloudRecordIdFromDatabase,
 } from '../src/data/localManagement.ts';
 import { describeManagementSyncFailure } from '../src/data/managementOperation.ts';
 import {
@@ -107,6 +108,7 @@ try {
   });
   await acknowledgeManagementOperationInDatabase(adapter, {
     operationId: 'ordinary-product-copy',
+    recordType: 'category',
     cloudRecordId: 'ordinary-product-copy-cloud',
     acknowledgedAt: 105,
   });
@@ -207,6 +209,7 @@ try {
   assert.equal(
     await acknowledgeManagementOperationInDatabase(adapter, {
       operationId: 'operation-category',
+      recordType: 'category',
       cloudRecordId: 'cloud-category',
       acknowledgedAt: 300,
     }),
@@ -224,12 +227,14 @@ try {
   );
   await acknowledgeManagementOperationInDatabase(adapter, {
     operationId: 'operation-category',
+    recordType: 'category',
     cloudRecordId: 'cloud-category',
     acknowledgedAt: 300,
   });
   await assert.rejects(
     acknowledgeManagementOperationInDatabase(adapter, {
       operationId: 'operation-category',
+      recordType: 'category',
       cloudRecordId: 'different-cloud-category',
       acknowledgedAt: 301,
     }),
@@ -241,6 +246,14 @@ try {
   );
   assert.equal(acknowledged?.cloudRecordId, 'cloud-category');
   assert.equal(acknowledged?.acknowledgedAt, 300);
+  assert.equal(
+    await resolveCloudRecordIdFromDatabase(adapter, 'category', 'local-category'),
+    'cloud-category',
+  );
+  assert.equal(
+    await resolveCloudRecordIdFromDatabase(adapter, 'product', 'existing-cloud-id'),
+    'existing-cloud-id',
+  );
   assert.equal(
     database.prepare(
       "SELECT COUNT(*) count FROM outbox WHERE operation_id = 'operation-category'",

@@ -207,15 +207,21 @@ try {
         `SELECT COUNT(*) AS count FROM sqlite_master
          WHERE type = 'table' AND name IN
            ('inventory_purchases', 'staff_profiles', 'compensation_periods',
-            'operating_expenses', 'management_operations')`,
+            'operating_expenses', 'management_operations',
+            'local_cloud_mappings')`,
       )
       .get().count,
-    5,
+    6,
   );
   assert.ok(
     database
       .prepare("SELECT name FROM pragma_table_info('outbox') WHERE name = ?")
       .get('depends_on_operation_id'),
+  );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('modifier_options') WHERE name = ?")
+      .get('key'),
   );
   database.close();
 

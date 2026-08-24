@@ -443,6 +443,24 @@ export const localMigrations = [
         ON management_operations(acknowledged_at, created_at)`,
     ],
   },
+  {
+    toVersion: 14,
+    statements: [
+      `ALTER TABLE modifier_options
+        ADD COLUMN key TEXT NOT NULL DEFAULT ''`,
+      `UPDATE modifier_options SET key = id WHERE key = ''`,
+      `CREATE TABLE local_cloud_mappings (
+        record_type TEXT NOT NULL,
+        local_record_id TEXT NOT NULL,
+        cloud_record_id TEXT NOT NULL,
+        acknowledged_at INTEGER NOT NULL CHECK (acknowledged_at >= 0),
+        PRIMARY KEY (record_type, local_record_id),
+        UNIQUE (record_type, cloud_record_id)
+      )`,
+      `CREATE INDEX local_cloud_mappings_by_cloud
+        ON local_cloud_mappings(record_type, cloud_record_id)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

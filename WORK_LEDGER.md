@@ -104,7 +104,10 @@ remaining goal and card sequence.
   native SQLite database remains the screen source of truth; each catalog/recipe
   save must update local rows plus the LOCAL-01 operation/outbox atomically and
   synchronize in stable parent order. Exact next action: implement the local
-  domain operations and reconnect handlers without starting LOCAL-03.
+  domain operations and reconnect handlers without starting LOCAL-03. The first
+  implementation checkpoint adds schema-14 local/cloud ID mappings after tracing
+  the required pending-catalog-to-sale dependency; category/product transactions
+  are the exact next action.
 - Known HARD-03 production bug: a SecureSession native connectivity callback can
   notify before Capacitor's JavaScript bridge is ready, producing an uncaught
   `triggerEvent` error during notification-shade/screen-off pre-bridge launches.
@@ -840,6 +843,19 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-02 mapping/dependency checkpoint
+
+- Tracing offline-created catalog use into checkout exposed that later sale
+  synchronization must wait for and translate new product/recipe/option IDs;
+  management UI synchronization alone would be incomplete.
+- Added migration 14 local/cloud mapping rows and persisted modifier-option keys,
+  then extended management acknowledgement/mapping resolution. Existing cloud
+  IDs remain valid when no mapping exists. Focused local-management, migration/
+  restart, and TypeScript checks pass.
+- No Product screen write is claimed offline yet. Exact next action is atomic
+  local category/product operations, followed by modifiers/recipes, sale
+  dependencies, and reconnect dispatch. LOCAL-03 remains pending.
 
 ### 2026-08-24 — LOCAL-02 started with Android offline-catalog decision
 

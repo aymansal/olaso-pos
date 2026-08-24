@@ -489,9 +489,27 @@ polishing screens or data paths that later functional work would change.
   deferred until every card through HARD-07 is complete.
 - Exact next action: trace and replace every Products management direct mutation
   with transaction-safe local category/product/modifier/recipe operations and
-  dependency-ordered reconnect handlers; do not start LOCAL-03.
+  dependency-ordered reconnect handlers, beginning with category/product local
+  transactions; do not start LOCAL-03.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-02 relational sync mapping foundation added
+
+- The caller trace found a critical dependency beyond ordinary management UI:
+  a sale can use a newly created offline product/recipe before cloud sync. Sale
+  upload must therefore wait for pending catalog parents and translate temporary
+  local product/recipe/option IDs through acknowledged mappings.
+- Added ordered migration 14 with durable local/cloud record mappings and the
+  modifier-option key needed to reconcile batched options after restart.
+  Extended LOCAL-01 acknowledgement to atomically preserve primary/related
+  mappings and added safe mapping resolution with cloud-ID fallback for existing
+  synchronized records.
+- Focused management, migration/restart, and TypeScript checks pass. No Products
+  UI/domain mutation is claimed local-first yet.
+- Exact next action: implement atomic local category/product operations, then
+  modifiers/recipes, attach pending catalog dependencies to sales, and add
+  reconnect handlers against the existing retry-safe Convex mutations.
 
 ### 2026-08-24 — LOCAL-02 activated with Android research
 

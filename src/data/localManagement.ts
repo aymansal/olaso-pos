@@ -20,6 +20,34 @@ import { listPendingOutboxFromDatabase } from './outbox.ts';
 
 type ManagementDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
+function mappingType(value: string) {
+  const cleaned = value.trim();
+  if (!/^[a-z][a-z0-9.-]{1,40}$/.test(cleaned)) {
+    throw new Error('Management record type is invalid.');
+  }
+  return cleaned;
+}
+
+export async function resolveCloudRecordIdFromDatabase(
+  database: ManagementDatabase,
+  recordType: string,
+  localRecordId: string,
+) {
+  const type = mappingType(recordType);
+  const localId = managementIdentifier(localRecordId, 'Local record ID');
+  const result = await database.query(
+    `SELECT cloud_record_id FROM local_cloud_mappings
+     WHERE record_type = ? AND local_record_id = ? LIMIT 1`,
+    [type, localId],
+  );
+  return result.values?.[0]
+    ? managementIdentifier(
+        String(result.values[0].cloud_record_id),
+        'Cloud record ID',
+      )
+    : localId;
+}
+
 export async function loadManagementOperationFromDatabase(
   database: ManagementDatabase,
   operationId: string,
@@ -205,11 +233,18 @@ export async function acknowledgeManagementOperationInDatabase(
   database: ManagementDatabase,
   input: {
     operationId: string;
+    recordType: string;
     cloudRecordId: string;
+    relatedMappings?: Array<{
+      recordType: string;
+      localRecordId: string;
+      cloudRecordId: string;
+    }>;
     acknowledgedAt: number;
   },
 ) {
   const operationId = managementIdentifier(input.operationId, 'Operation ID');
+  const recordType = mappingType(input.recordType);
   const cloudRecordId = managementIdentifier(
     input.cloudRecordId,
     'Cloud record ID',
@@ -225,6 +260,41 @@ export async function acknowledgeManagementOperationInDatabase(
   if (!operation) throw new Error('Management operation is unavailable.');
   if (operation.acknowledgedAt && operation.cloudRecordId !== cloudRecordId) {
     throw new Error('Management acknowledgement does not match the saved record.');
+  }
+  const mappings = [
+    {
+      recordType,
+      localRecordId: operation.localRecordId,
+      cloudRecordId,
+    },
+    ...(input.relatedMappings ?? []).map((mapping) => ({
+      recordType: mappingType(mapping.recordType),
+      localRecordId: managementIdentifier(
+        mapping.localRecordId,
+        'Related local record ID',
+      ),
+      cloudRecordId: managementIdentifier(
+        mapping.cloudRecordId,
+        'Related cloud record ID',
+      ),
+    })),
+  ];
+  for (const mapping of mappings) {
+    await database.run(
+      `INSERT INTO local_cloud_mappings
+        (record_type, local_record_id, cloud_record_id, acknowledged_at)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT(record_type, local_record_id) DO UPDATE SET
+         cloud_record_id = excluded.cloud_record_id,
+         acknowledged_at = excluded.acknowledged_at`,
+      [
+        mapping.recordType,
+        mapping.localRecordId,
+        mapping.cloudRecordId,
+        acknowledgedAt,
+      ],
+      false,
+    );
   }
   await database.run(
     `UPDATE management_operations
