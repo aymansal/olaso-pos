@@ -99,6 +99,12 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Known HARD-03 production bug: a SecureSession native connectivity callback can
+  notify before Capacitor's JavaScript bridge is ready, producing an uncaught
+  `triggerEvent` error during notification-shade/screen-off pre-bridge launches.
+  The app later refreshes connection state and no data loss/crash is observed,
+  but the error is not accepted. HARD-03 now explicitly requires the native
+  readiness fix and five-state physical lifecycle matrix before completion.
 - Universal Android rule: before every remaining card, research current official
   Android and applicable Capacitor/plugin guidance, record the native-versus-
   React/data boundary and rejected alternatives, then prove the choice on the
@@ -828,6 +834,21 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — triggerEvent lifecycle bug made a HARD-03 completion blocker
+
+- The owner challenged whether the previously mentioned pre-bridge error was
+  actually fixed. Confirmed it remains in the current APK and corrected the plan
+  so generic startup wording cannot let it be forgotten.
+- Evidence points to SecureSession Android connectivity `notifyListeners()`
+  running before Capacitor defines the JavaScript `triggerEvent` bridge. The
+  explicit visible-state refresh recovers, so observed impact is one lost early
+  event/console error rather than crash or data damage; production still rejects
+  it.
+- HARD-03 now requires official Android/Capacitor lifecycle research and clean
+  physical normal cold, screen-off, notification-shade, background/foreground,
+  and long-sleep/resume evidence without triggerEvent, duplicate listener,
+  crash, or stale connection state. No code/card status changed.
 
 ### 2026-08-24 — LOCAL-01 complete on origin/main
 

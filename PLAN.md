@@ -159,7 +159,7 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 | HARD-01 | Establish repeatable five-run cold/warm startup, navigation, APK, WebView, bundle, and readiness baselines after functional work is stable. |
 | NAV-01 | Preserve each visited authorized screen, keep saved content visible during refresh, and eliminate repeat page/image reconstruction. |
 | HARD-02 | Finalize the app icon and continuous branded launch, with optional measured logo motion after an immediate static first frame. |
-| HARD-03 | Consolidate safe SQLite/lock startup gating and remove empty intermediate rendering without exposing an unlocked POS. |
+| HARD-03 | Consolidate safe SQLite/lock startup gating, remove empty rendering, and eliminate the pre-bridge Android `triggerEvent` lifecycle error across cold launch, notification-shade, screen-off, and resume states. |
 | HARD-04 | Optimize only measured eager modules, assets, decoding, and sync scheduling while preserving behavior and recording before/after evidence. |
 | HARD-05 | Implement and rehearse documented export, backup, corrupt-data stop, restore, and support recovery paths. |
 | HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation. |

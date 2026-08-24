@@ -145,7 +145,7 @@ polishing screens or data paths that later functional work would change.
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
-| HARD-03 | Consolidate safe SQLite and terminal-lock startup gating | pending | — |
+| HARD-03 | Consolidate safe startup gating and eliminate the pre-bridge `triggerEvent` lifecycle error | pending | Known bug explicitly owned; implementation pending |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
 | HARD-06 | Add protected production signing, release, upgrade, and rollback workflow | pending | — |
@@ -308,12 +308,31 @@ polishing screens or data paths that later functional work would change.
 
 ### HARD-03 — Safe startup orchestration
 
+- Treat the current `Uncaught TypeError: ... triggerEvent` as a real known bug,
+  not harmless accepted noise. Current evidence points to
+  `SecureSessionPlugin.load()` registering Android connectivity callbacks that
+  can call `notifyListeners("networkStatusChanged", ...)` before Capacitor has
+  installed its JavaScript event bridge.
+- Before code, research the current official Capacitor Android plugin lifecycle,
+  listener-readiness, activity foreground/resume, and Android connectivity
+  callback guidance. Select the smallest native boundary that prevents an event
+  from reaching JavaScript before the bridge is ready while preserving the
+  explicit `networkStatus()` read as the initial source of truth.
+- Do not merely hide/suppress the console error, delay startup artificially, or
+  remove live connection updates. Buffer, defer, or gate the native notification
+  at the correct lifecycle boundary and retain one accurate status refresh when
+  React becomes visible.
 - Show one branded startup state while SQLite and terminal-lock state settle.
 - Remove empty intermediate rendering without exposing the POS before lock and
   database safety state are known.
 - Keep actionable failure behavior when local data cannot open.
 - Preserve ordered migrations, foreign keys, transaction serialization,
   outbox recovery, and local cart/session behavior.
+- HARD-03 cannot be done until normal cold launch, screen-off launch,
+  notification-shade launch, background/foreground return, and long sleep/resume
+  all show correct connection state with zero `triggerEvent`, uncaught Capacitor,
+  crash, duplicate-listener, or lost-resume errors in focused logcat/WebView
+  evidence on the physical Galaxy Tab A9.
 
 ### HARD-04 — Measured performance
 
@@ -453,12 +472,30 @@ polishing screens or data paths that later functional work would change.
   gaps explicitly; HARD-04 owns the measured image/asset follow-through.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
+- Known HARD-03 bug: the native SecureSession connectivity callback can emit
+  before the Capacitor JavaScript bridge is ready, producing an uncaught
+  `triggerEvent` error in notification-shade/screen-off pre-bridge launches. The
+  visible app recovers through its explicit status read, but production cannot
+  accept the error; the exact physical acceptance matrix is now in HARD-03.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
 - Exact next action: when the owner continues, begin LOCAL-02 with its official
   Android/Capacitor research checkpoint, then activate only LOCAL-02.
 
 ## Planning journal
+
+### 2026-08-24 — HARD-03 explicitly owns the pre-bridge triggerEvent bug
+
+- Confirmed the error remains in the current APK. It does not crash or damage
+  data and the explicit React connection refresh recovers the visible state,
+  but it is still a real lifecycle/console bug and not production-acceptable.
+- Traced the likely path from `SecureSessionPlugin.load()` Android connectivity
+  registration through `publishNetworkStatus()`/`notifyListeners()` before the
+  JavaScript bridge defines `Capacitor.triggerEvent`.
+- HARD-03 now requires official Capacitor/Android lifecycle research, a native
+  readiness gate that preserves live status, and physical normal/screen-off/
+  notification-shade/background/long-sleep tests with zero triggerEvent,
+  listener, crash, or lost-resume errors. No application code changed now.
 
 ### 2026-08-24 — LOCAL-01 complete and pushed
 
