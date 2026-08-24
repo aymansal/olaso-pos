@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { pbkdf2Sync, randomBytes, randomInt } from 'node:crypto';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
 import { ownerSession, requireOwnerTestPin } from './owner-session.mjs';
@@ -20,7 +21,51 @@ async function reset() {
 const sessionArgs = await reset();
 const query = (reference, args) => client.query(reference, { ...sessionArgs, ...args });
 const mutation = (reference, args) => client.mutation(reference, { ...sessionArgs, ...args });
+const action = (reference, args) => client.action(reference, { ...sessionArgs, ...args });
+const credential = (pin) => {
+  const pinSalt = randomBytes(16);
+  return {
+    pinSalt: pinSalt.toString('base64'),
+    pinHash: pbkdf2Sync(pin, pinSalt, 600_000, 32, 'sha256').toString('base64'),
+  };
+};
 try {
+  const initialPin = String(randomInt(0, 1_000_000)).padStart(6, '0');
+  const initialCredential = credential(initialPin);
+  const provisioned = await action(api.identity.createStaff, {
+    name: 'Offline staff check',
+    role: 'cashier',
+    ...initialCredential,
+    clientMutationId: 'staff01-profile-create',
+  });
+  assert.equal((await client.action(api.identity.checkSession, {
+    token: provisioned.token,
+    deviceId: sessionArgs.deviceId,
+  })).kind, 'valid');
+  const provisionedRetry = await action(api.identity.createStaff, {
+    name: 'Offline staff check',
+    role: 'cashier',
+    ...initialCredential,
+    clientMutationId: 'staff01-profile-create',
+  });
+  assert.equal(provisionedRetry.id, provisioned.id);
+  assert.equal(provisioned.identityRevision, 1);
+  assert.equal((await client.action(api.identity.checkSession, {
+    token: provisionedRetry.token,
+    deviceId: sessionArgs.deviceId,
+  })).kind, 'valid');
+  const signedIn = await client.action(api.identity.signIn, {
+    staffProfileId: provisioned.id,
+    pin: initialPin,
+    deviceId: sessionArgs.deviceId,
+  });
+  assert.equal(signedIn.kind, 'authenticated');
+  const provisionedList = await query(api.staff.list, {});
+  const safeProfile = provisionedList.find((row) => row.id === provisioned.id);
+  assert(safeProfile);
+  assert.equal(JSON.stringify(safeProfile).includes(initialPin), false);
+  assert.equal('pinHash' in safeProfile, false);
+
   const created = await mutation(api.staff.save, {
     name: 'Cost check cashier',
     role: 'cashier',

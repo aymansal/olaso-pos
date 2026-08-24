@@ -24,7 +24,10 @@ import {
   reconcileAuthenticatedStaffProfiles,
   replaceOperationalCache,
 } from './operationalCache';
-import { clearStaffSession } from './identitySession';
+import {
+  clearStaffSession,
+  isPendingStaffSession,
+} from './identitySession';
 import { syncPendingCatalogOperations } from './catalogSync';
 import {
   dispatchInventoryOperation,
@@ -44,6 +47,13 @@ import {
   replaceSavedCompensation,
   replaceSavedExpenses,
 } from './localCostViews';
+import {
+  cleanupAcknowledgedStaffProvisioning,
+} from './localStaff';
+import {
+  dispatchStaffOperation,
+  syncPendingStaffOperations,
+} from './staffSync';
 import { useStaffSession } from './sessionContext';
 import {
   loadTerminalSettings,
@@ -131,6 +141,7 @@ export function ReconnectProvider({
   const correctExpenseMutation = useMutation(api.expenses.correct);
   const addCompensationMutation = useMutation(api.staff.addCompensationPeriod);
   const checkSession = useAction(api.identity.checkSession);
+  const createStaffAction = useAction(api.identity.createStaff);
   const inFlight = useRef<Promise<ReconnectResult> | undefined>(undefined);
   const requestedMode = useRef<ReconnectMode | undefined>(undefined);
   const previousAvailable = useRef<boolean | undefined>(undefined);
@@ -138,7 +149,7 @@ export function ReconnectProvider({
   const [revision, setRevision] = useState(0);
 
   const perform = useCallback(async (mode: ReconnectMode) => {
-    if (available !== true) {
+    if (available !== true || isPendingStaffSession(session)) {
       const settings = await loadTerminalSettings();
       return {
         synced: 0,
@@ -158,6 +169,23 @@ export function ReconnectProvider({
       if (sessionStatus.kind === 'invalid') {
         throw new Error('Staff session is unavailable.');
       }
+
+      if (mode === 'manual') await makePendingOutboxAvailable();
+      else await makeConnectivityFailuresAvailable();
+
+      for (let batch = 0; batch < 10; batch += 1) {
+        const staffResult = await syncPendingStaffOperations((operation) =>
+          dispatchStaffOperation(operation, {
+            sessionArgs,
+            createStaff: (args) => createStaffAction(args as any) as any,
+          }));
+        synced += staffResult.synced;
+        failed += staffResult.failed;
+        if (staffResult.failed > 0 || staffResult.processed < 10) break;
+        await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+      }
+      await cleanupAcknowledgedStaffProvisioning();
+
       const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
         deviceId: session.deviceId,
       });
@@ -179,9 +207,6 @@ export function ReconnectProvider({
       for (const profileId of invalidatedProfileIds) {
         await clearStaffSession(profileId);
       }
-
-      if (mode === 'manual') await makePendingOutboxAvailable();
-      else await makeConnectivityFailuresAvailable();
 
       for (let batch = 0; batch < 10; batch += 1) {
         const catalog = await syncPendingCatalogOperations(async (operation) => {
@@ -425,7 +450,7 @@ export function ReconnectProvider({
       }
       throw new Error(message);
     }
-  }, [acceptMutation, addCompensationMutation, addExpenseMutation, archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, correctExpenseMutation, onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation, saveCategoryMutation, saveIngredientMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.name, session.role, session.staffProfileId, session.token, setProductStatusMutation]);
+  }, [acceptMutation, addCompensationMutation, addExpenseMutation, archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, correctExpenseMutation, createStaffAction, onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation, saveCategoryMutation, saveIngredientMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.name, session.provisioningState, session.role, session.staffProfileId, session.token, setProductStatusMutation]);
 
   const run = useCallback((mode: ReconnectMode = 'automatic') => {
     requestedMode.current = mode === 'manual' || requestedMode.current === 'manual'

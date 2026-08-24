@@ -3,17 +3,17 @@ import {
   readSecureSessionClock,
   removeSecureSessionValue,
   writeSecureSessionValue,
-} from './secureSession';
+} from './secureSession.ts';
 import {
   isServiceUnavailable,
   nextOfflinePinResult,
   type OfflineAttempt,
   type OfflinePinResult,
-} from './identityPolicy';
+} from './identityPolicy.ts';
 import { offlineCredentialKeys } from './offlineCredentials.ts';
 import type { StaffRole } from '../../convex/lib/permissions';
 
-export { isServiceUnavailable, nextOfflinePinResult } from './identityPolicy';
+export { isServiceUnavailable, nextOfflinePinResult } from './identityPolicy.ts';
 
 const PIN_ITERATIONS = 600_000;
 const LEGACY_SESSION_KEY = 'identity.session';
@@ -27,6 +27,12 @@ export type StaffSession = {
   name: string;
   role: StaffRole;
   identityRevision: number;
+  provisioningState?: 'pending';
+};
+
+export type PendingStaffCredential = {
+  pinSalt: string;
+  pinHash: string;
 };
 
 
@@ -72,7 +78,9 @@ function isStaffSession(value: unknown): value is StaffSession {
     && ['owner', 'manager', 'cashier'].includes(String(session.role))
     && (session.identityRevision === undefined
       || (Number.isInteger(session.identityRevision)
-        && Number(session.identityRevision) >= 0));
+        && Number(session.identityRevision) >= 0))
+    && (session.provisioningState === undefined
+      || session.provisioningState === 'pending');
 }
 
 function normalizedSession(session: StaffSession) {
@@ -80,6 +88,21 @@ function normalizedSession(session: StaffSession) {
     ...session,
     identityRevision: Number(session.identityRevision ?? 0),
   };
+}
+
+function isPendingStaffCredential(
+  value: unknown,
+): value is PendingStaffCredential {
+  if (!value || typeof value !== 'object') return false;
+  const credential = value as Record<string, unknown>;
+  try {
+    return typeof credential.pinSalt === 'string'
+      && typeof credential.pinHash === 'string'
+      && fromBase64(credential.pinSalt).length === 16
+      && fromBase64(credential.pinHash).length === 32;
+  } catch {
+    return false;
+  }
 }
 
 async function migrateLegacyStaffSession(staffProfileId: string) {
@@ -117,6 +140,91 @@ export async function saveStaffSession(session: StaffSession, pin: string) {
     writeSecureSessionValue(keys.pin, `${salt}:${await derivePinHash(pin, salt)}`),
     removeSecureSessionValue(keys.attempts),
   ]);
+}
+
+export async function savePendingStaffSession(
+  profile: { id: string; name: string; role: StaffRole },
+  pin: string,
+) {
+  if (!/^\d{6}$/.test(pin)) throw new Error('PIN must contain six digits.');
+  const pinSalt = toBase64(crypto.getRandomValues(new Uint8Array(16)));
+  const pinHash = await derivePinHash(pin, pinSalt);
+  const session: StaffSession = {
+    token: `pending_${crypto.randomUUID()}`,
+    staffProfileId: profile.id,
+    name: profile.name,
+    role: profile.role,
+    identityRevision: 0,
+    provisioningState: 'pending',
+  };
+  const keys = offlineCredentialKeys(profile.id);
+  try {
+    await Promise.all([
+      writeSecureSessionValue(keys.session, JSON.stringify(session)),
+      writeSecureSessionValue(keys.pin, `${pinSalt}:${pinHash}`),
+      writeSecureSessionValue(
+        keys.provisioning,
+        JSON.stringify({ pinSalt, pinHash } satisfies PendingStaffCredential),
+      ),
+      removeSecureSessionValue(keys.attempts),
+    ]);
+    return session;
+  } catch (error) {
+    await clearStaffSession(profile.id).catch(() => undefined);
+    throw error;
+  }
+}
+
+export async function loadPendingStaffCredential(staffProfileId: string) {
+  const value = await readSecureSessionValue(
+    offlineCredentialKeys(staffProfileId).provisioning,
+  );
+  let parsed: unknown;
+  try {
+    parsed = value ? JSON.parse(value) : undefined;
+  } catch {
+    parsed = undefined;
+  }
+  if (!isPendingStaffCredential(parsed)) {
+    throw new Error('Protected staff provisioning is unavailable.');
+  }
+  return parsed;
+}
+
+export async function saveProvisionedStaffSession(
+  localStaffProfileId: string,
+  session: StaffSession,
+) {
+  const localKeys = offlineCredentialKeys(localStaffProfileId);
+  const cloudKeys = offlineCredentialKeys(session.staffProfileId);
+  const verifier = await readSecureSessionValue(localKeys.pin);
+  const [salt, hash, extra] = verifier?.split(':') ?? [];
+  if (extra !== undefined || !isPendingStaffCredential({
+    pinSalt: salt,
+    pinHash: hash,
+  })) {
+    throw new Error('Protected staff access is unavailable.');
+  }
+  try {
+    await Promise.all([
+      writeSecureSessionValue(cloudKeys.session, JSON.stringify(session)),
+      writeSecureSessionValue(cloudKeys.pin, verifier!),
+      removeSecureSessionValue(cloudKeys.attempts),
+    ]);
+  } catch (error) {
+    await Promise.all([
+      removeSecureSessionValue(cloudKeys.session),
+      removeSecureSessionValue(cloudKeys.pin),
+      removeSecureSessionValue(cloudKeys.attempts),
+    ]).catch(() => undefined);
+    throw error;
+  }
+}
+
+export function isPendingStaffSession(
+  session: StaffSession | undefined,
+) {
+  return session?.provisioningState === 'pending';
 }
 
 export async function loadStaffSession(staffProfileId: string) {
@@ -195,6 +303,7 @@ export async function clearStaffSession(staffProfileId: string) {
     removeSecureSessionValue(keys.session),
     removeSecureSessionValue(keys.pin),
     removeSecureSessionValue(keys.attempts),
+    removeSecureSessionValue(keys.provisioning),
   ]);
 }
 

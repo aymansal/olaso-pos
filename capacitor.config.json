@@ -2,6 +2,7 @@
   "appId": "com.olaso.pos",
   "appName": "Olaso POS",
   "webDir": "dist",
+  "loggingBehavior": "none",
   "plugins": {
     "SystemBars": {
       "insetsHandling": "disable"

@@ -99,13 +99,20 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- STAFF-01 is the only in-progress card. Official Android Keystore,
-  KeyGenParameterSpec, cryptography, and current Capacitor plugin/runtime
-  guidance were reviewed after the Graphify/DOX/plan/ledger/authority preflight.
-  The existing Keystore AES-GCM plugin remains the native boundary; SQLite and
-  the ordinary outbox remain PIN-free. Exact next action: trace every current
-  staff/identity/protected-storage/directory/outbox/reconnect caller before
-  implementing local creation and later idempotent owner-authorized provisioning.
+- STAFF-01 is the only in-progress card and is ready to commit/push. The
+  owner-only minimal form, PIN-free local operation, protected immediate
+  offline access, restart survival, retry-safe cloud identity/session creation,
+  acknowledgement mapping, and protected cleanup are implemented and proved.
+  The physical SM-X115 created `Offline-QA` in flight mode, signed it in as a
+  cashier before and after app/tablet restart, synchronized exactly once across
+  two reconnects, signed in online and offline after promotion, retained Olaso
+  Owner and Samira Barista, and then cleanly archived/removed only the QA
+  access. SQLite, protected XML, and focused app logs contained no raw PIN.
+  The modal descendant-selector bug found during QA is root-fixed and checked.
+  The later React empty startup gate now shows an honest status; the distinct,
+  pre-existing native generic-splash/white-frame gap remains accurately owned
+  by HARD-02/HARD-03 and is not represented as solved. Exact next action: commit
+  and push STAFF-01, record its SHA, then leave CATALOG-01 pending.
 - LOCAL-03 is complete on `origin/main` at
   `1105de62d8133448b7202dd67971ee83c56ced12`. Schema 16, local Stock/finance
   operations, independent sync domains, role-scoped Costs, backend retries,
@@ -863,6 +870,51 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — STAFF-01 physical matrix complete and ready to push
+
+- Built and installed the checked 140-task Android beta without clearing the
+  tablet. At 1340 by 800, Staff & access preserved Olaso Owner and Samira
+  Barista, and the Add staff dialog fits with persistent labels and 44-pixel
+  actions. Physical QA exposed a descendant CSS selector that displaced the
+  dialog heading/close action; the root selector was narrowed to the direct page
+  header and a regression check now protects the nested dialog.
+- In Android flight mode, created one cashier `Offline-QA`. SQLite contained one
+  active local profile and one owner-audited, PIN-free staff operation/outbox
+  row; no raw PIN bytes existed in SQLite or protected SharedPreferences. The
+  new cashier signed in immediately, survived force-stop/relaunch and tablet
+  reboot, and retained cashier-only POS/Orders navigation.
+- Owner-authenticated reconnect created one cloud profile/credential/session,
+  acknowledged one operation, mapped and archived the temporary local ID,
+  removed its protected material, and preserved cloud-profile offline access.
+  A second reconnect left one cloud profile and zero staff outbox rows. Online
+  and later offline PIN sign-in both passed. The temporary cloud profile was
+  then archived; the final tablet shows only the two pre-existing active
+  profiles and neither temporary protected key set remains.
+- Capacitor/Android runtime failure count is zero and protected values never
+  appeared in focused logs. Browser lock QA reports no warning/error. Graphify
+  refreshed to 3,176 nodes and 7,370 edges. The separate native launch gap
+  remains the already-planned HARD-02/HARD-03 work; STAFF-01 does not claim it.
+  Exact next action is the implementation commit/push and SHA closeout record.
+
+### 2026-08-24 — STAFF-01 implementation ready for physical verification
+
+- Added the minimal owner Settings staff list/form with only name, role, PIN,
+  PIN confirmation, Cancel, and Add staff. A valid offline save immediately
+  creates an active local profile and a bounded owner-audited, PIN-free outbox
+  operation; the profile can unlock this tablet before internet returns.
+- Fixed a security flaw found in the first draft before device QA: reconnect no
+  longer stores or reloads the raw PIN. One PBKDF2 salt/hash pair supports both
+  protected offline verification and delayed cloud provisioning, while the
+  retry-safe cloud action creates the staff credential and device session.
+  Official Capacitor configuration now disables native/redirected logging so
+  protected session/verifier plugin values cannot leak through debug logcat.
+- Development Convex proof creates one profile across a duplicate retry,
+  validates the returned device session and later PIN sign-in, and rejects
+  manager/cashier provisioning. All focused local/security/regression checks
+  and the production build pass; the browser lock surface is exactly 1340 by
+  800 with no warning/error. Exact next action is Android build/install and the
+  full physical offline/restart/reconnect proof on the SM-X115.
 
 ### 2026-08-24 — STAFF-01 started with protected-storage decision
 

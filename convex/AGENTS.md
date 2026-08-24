@@ -23,6 +23,10 @@ data, reporting summaries, and development seeding.
   product, category, payment, service, and exact-unit ingredient aggregates.
 - `expenses.ts` owns retry-safe append-only expense creation/correction;
   `staff.ts` owns owner-only bounded compensation reads and period creation.
+- `identity.ts` and `identityInternal.ts` own PIN verification, device sessions,
+  and retry-safe owner-authorized staff credential provisioning. Public staff
+  creation receives only a derived credential and returns the new device
+  session; no raw PIN is queued for later synchronization.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts
@@ -69,6 +73,8 @@ data, reporting summaries, and development seeding.
   recent-order read changes.
 - Run `npm run check:reports` after saved report ranges or daily summary
   aggregation changes.
+- Run `npm run check:staff` and `npm run check:permissions` after staff
+  identity, credential provisioning, session, or authorization changes.
 - Run `npx convex dev --once` when schema or deployed functions change.
 - Review every new index against an implemented access path.
 

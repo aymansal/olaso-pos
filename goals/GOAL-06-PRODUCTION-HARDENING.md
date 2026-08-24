@@ -142,7 +142,7 @@ polishing screens or data paths that later functional work would change.
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
 | LOCAL-02 | Make catalog and recipe management fully local-first | done | `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main`; automated, Convex, Android, physical offline/restart/reconnect, cleanup, and Graphify evidence recorded in WORK_LEDGER.md |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | done | `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main`; full automated, Android, offline/restart/reconnect/exact-cloud, lifecycle, focus-zoom, Graphify, and documentation evidence recorded |
-| STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | in progress | Official Android/Capacitor protected-storage research, Graphify, DOX, plan, ledger, and authority preflight complete; implementation pending |
+| STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | in progress | Implementation, focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local and cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass; ready to commit/push |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |

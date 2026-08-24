@@ -74,6 +74,10 @@ export const FINANCE_MANAGEMENT_OPERATION_TYPES = [
   ...COMPENSATION_MANAGEMENT_OPERATION_TYPES,
 ] as const;
 
+export const STAFF_MANAGEMENT_OPERATION_TYPES = [
+  'management.staff.create',
+] as const;
+
 const permissions = new Set<ManagementPermission>([
   'products',
   'stock',

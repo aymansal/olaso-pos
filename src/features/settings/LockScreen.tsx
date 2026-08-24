@@ -5,6 +5,7 @@ import { api } from '../../../convex/_generated/api';
 import {
   clearLegacyStaffSession,
   clearStaffSession,
+  isPendingStaffSession,
   loadStaffSession,
   saveStaffSession,
   isServiceUnavailable,
@@ -95,9 +96,18 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
             );
             if (!remoteStaff.length) return;
             setAuthoritativeStaff(remoteStaff);
-            setStaff(remoteStaff);
+            const pendingLocal = activeStaff.filter((member) =>
+              member.id.startsWith('staff:'));
+            const visibleStaff = [
+              ...remoteStaff,
+              ...pendingLocal.filter((local) =>
+                !remoteStaff.some((remote) => remote.id === local.id)),
+            ];
+            setStaff(visibleStaff);
             setStaffProfileId((current) =>
-              remoteStaff.some((member) => member.id === current) ? current : remoteStaff[0].id,
+              visibleStaff.some((member) => member.id === current)
+                ? current
+                : visibleStaff[0].id,
             );
           })
           .catch(() => undefined);
@@ -136,7 +146,8 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         unlockedSession = saved;
       };
       const networkAvailable = await readSecureSessionNetworkStatus();
-      if (!networkAvailable) {
+      const pendingSession = await loadStaffSession(staffProfileId);
+      if (!networkAvailable || isPendingStaffSession(pendingSession)) {
         await unlockOffline();
       } else {
         try {

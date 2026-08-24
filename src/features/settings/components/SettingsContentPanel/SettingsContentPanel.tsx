@@ -311,15 +311,15 @@ export function SettingsContentPanel({
           </div>
           <div>
             <dt>Authentication</dt>
-            <dd>Not configured; owner role and PIN decisions are pending</dd>
+            <dd>Separate staff PINs with protected offline tablet access</dd>
           </div>
           <div>
             <dt>Receipts</dt>
-            <dd>Saved snapshots and on-screen preview only</dd>
+            <dd>Saved snapshots with printing and safe reprinting</dd>
           </div>
           <div>
             <dt>Printer integration</dt>
-            <dd>LAN settings test only; checkout printing is not connected yet</dd>
+            <dd>LAN checkout printing, diagnostics, and saved-logo setup</dd>
           </div>
         </dl>
       </section>

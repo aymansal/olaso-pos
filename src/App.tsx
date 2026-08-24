@@ -18,6 +18,7 @@ import { StaffSessionProvider } from './data/sessionContext';
 import { ReconnectProvider } from './data/reconnectContext';
 import type { StaffSession } from './data/identitySession';
 import { hasPermission, type Permission } from './data/permissions';
+import startupStyles from './data/AppDataProvider.module.css';
 
 type AppScreen = NavigationPage | 'Settings';
 
@@ -100,7 +101,19 @@ export function App() {
     setTerminal((current) => current ? { ...current, clockFormat } : current);
   }
 
-  if (!sessionReady) return <main aria-label="Loading Olaso" aria-busy="true" />;
+  if (!sessionReady) {
+    return (
+      <main
+        className={startupStyles.startup}
+        aria-label="Loading Olaso"
+        aria-busy="true"
+        role="status"
+      >
+        <strong>Starting Olaso…</strong>
+        <span>Checking terminal access.</span>
+      </main>
+    );
+  }
 
   if (startupError || !terminal) {
     return (

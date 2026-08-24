@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useConnectionStatus } from '../../data/connectionContext';
 import { useSettingsData } from '../../data/useSettingsData';
+import { useStaffManagement } from '../../data/useStaffManagement';
 import type { ClockFormat, TerminalPreferences } from '../../data/terminalSettings';
 import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { SettingsContentPanel } from './components/SettingsContentPanel/SettingsContentPanel';
+import { StaffAccessPanel } from './components/StaffAccessPanel/StaffAccessPanel';
 import {
   SettingsNavigationPanel,
   type SettingsSection,
@@ -25,6 +27,7 @@ export function SettingsScreen({
   onClockFormatChange,
 }: SettingsScreenProps) {
   const data = useSettingsData();
+  const staff = useStaffManagement();
   const { available } = useConnectionStatus();
   const [section, setSection] = useState<SettingsSection>('general');
   const online = available === true;
@@ -61,7 +64,7 @@ export function SettingsScreen({
         onSectionChange={setSection}
         onLock={lock}
       />
-      <SettingsContentPanel
+      {section === 'staff' ? <StaffAccessPanel management={staff} /> : <SettingsContentPanel
         section={section}
         settings={data.settings}
         isLoading={data.isLoading}
@@ -75,7 +78,7 @@ export function SettingsScreen({
         onSync={data.syncNow}
         onTestPrinter={data.testPrinter}
         onInstallPrinterLogo={data.installPrinterLogo}
-      />
+      />}
     </main>
   );
 }

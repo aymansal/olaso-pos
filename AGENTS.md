@@ -115,7 +115,10 @@ decision changes.
   acknowledgement and dependent sale translation. LOCAL-03 adds schema 16 and
   makes ingredient, purchase, stock-adjustment, expense, and compensation
   management local-first, with role-scoped saved Costs reporting and finance
-  synchronization that cannot block sales. Staff creation remains STAFF-01.
+  synchronization that cannot block sales. STAFF-01 adds owner-only offline
+  staff creation, protected profile-scoped initial-PIN verification, and
+  retry-safe server provisioning without placing the raw PIN in SQLite or the
+  ordinary outbox.
 
 ### Visual baseline
 

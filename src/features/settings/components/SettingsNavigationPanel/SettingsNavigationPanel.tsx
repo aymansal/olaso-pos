@@ -10,7 +10,7 @@ import {
 } from '@phosphor-icons/react';
 import styles from './SettingsNavigationPanel.module.css';
 
-export type SettingsSection = 'general' | 'printer' | 'sync' | 'about';
+export type SettingsSection = 'general' | 'staff' | 'printer' | 'sync' | 'about';
 
 const items: ReadonlyArray<{
   id?: SettingsSection;
@@ -19,11 +19,7 @@ const items: ReadonlyArray<{
   unavailable?: string;
 }> = [
   { id: 'general', label: 'General', icon: Gear },
-  {
-    label: 'Staff & access',
-    icon: UsersThree,
-    unavailable: 'Pending owner role and login decisions',
-  },
+  { id: 'staff', label: 'Staff & access', icon: UsersThree },
   { id: 'printer', label: 'Printer & hardware', icon: Printer },
   {
     label: 'Orders & receipts',

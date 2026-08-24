@@ -24,6 +24,9 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   identity-session tokens and offline PIN verifiers. It stores encrypted values
   only; plaintext credentials never enter SharedPreferences, logs, or plugin
   return values beyond an explicit read to the authenticated web runtime.
+- Capacitor logging remains disabled because generic plugin-call logging can
+  expose protected values in a debuggable APK. Focused QA uses the WebView
+  debugging boundary plus filtered Android runtime checks instead.
 - The same minimal native boundary reports Android-validated internet state and
   emits one change event. Preserve callback cleanup and never treat Wi-Fi
   association alone as online.

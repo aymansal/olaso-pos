@@ -26,7 +26,7 @@ for (const rejection of ['PIN is incorrect.', 'Too many failed PIN attempts. Try
 const firstProfileKeys = offlineCredentialKeys('staff-profile-a');
 const secondProfileKeys = offlineCredentialKeys('staff-profile-b');
 assert.notDeepEqual(firstProfileKeys, secondProfileKeys);
-assert.equal(new Set(Object.values(firstProfileKeys)).size, 3);
+assert.equal(new Set(Object.values(firstProfileKeys)).size, 4);
 assert.ok(Object.values(firstProfileKeys).every((key) => /^[A-Za-z0-9._-]{1,100}$/.test(key)));
 
 const lockScreen = readFileSync('src/features/settings/LockScreen.tsx', 'utf8');
@@ -48,6 +48,7 @@ const posData = readFileSync('src/data/usePosData.ts', 'utf8');
 const reconnect = readFileSync('src/data/reconnectContext.tsx', 'utf8');
 const identitySession = readFileSync('src/data/identitySession.ts', 'utf8');
 const operationalCache = readFileSync('src/data/operationalCache.ts', 'utf8');
+const capacitorConfig = JSON.parse(readFileSync('capacitor.config.json', 'utf8'));
 const ownerSessionCheck = readFileSync('scripts/owner-session.mjs', 'utf8');
 const resetChecks = [
   'scripts/check-dashboard.mjs',
@@ -82,6 +83,8 @@ assert.match(lockScreen, /saved\.identityRevision !== cached\.identityRevision/)
 assert.match(lockScreen, /await clearStaffSession\(staffProfileId\)/);
 assert.doesNotMatch(lockScreen, /reconcileActiveStaffProfiles/);
 assert.match(app, /startupError \|\| !terminal/);
+assert.match(app, /className=\{startupStyles\.startup\}/);
+assert.doesNotMatch(app, /if \(!sessionReady\) return <main[^>]*\/>/);
 assert.match(app, /POS remains locked/);
 assert.match(app, /await setTerminalLocked\(true\)/);
 assert.doesNotMatch(sqliteSchema + settings, /identity\.(?:session|offline_pin|offline_attempts)/);
@@ -126,6 +129,7 @@ assert.match(operationalCache, /export async function saveAuthenticatedStaffProf
 assert.match(operationalCache, /export async function reconcileAuthenticatedStaffProfiles/);
 assert.match(operationalCache, /profiles\.some\(\(profile\) => profile\.id === authenticatedProfileId\)/);
 assert.doesNotMatch(operationalCache, /export async function reconcileActiveStaffProfiles/);
+assert.equal(capacitorConfig.loggingBehavior, 'none');
 assert.match(ownerSessionCheck, /export function requireOwnerTestPin/);
 for (const resetCheck of resetChecks) {
   assert.ok(

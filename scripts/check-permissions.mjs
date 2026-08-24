@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
-import { randomInt } from 'node:crypto';
+import { randomBytes, randomInt } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
@@ -32,6 +32,10 @@ const deviceId = 'perm-check-tablet';
 const ownerPin = process.env.OLASO_OWNER_PIN;
 assert(/^\d{6}$/.test(ownerPin ?? ''), 'OLASO_OWNER_PIN must be a six-digit test restore PIN');
 const pin = () => String(randomInt(0, 1_000_000)).padStart(6, '0');
+const credential = () => ({
+  pinSalt: randomBytes(16).toString('base64'),
+  pinHash: randomBytes(32).toString('base64'),
+});
 const checkId = `perm-check-${Date.now()}`;
 
 async function ownerProfileId() {
@@ -142,6 +146,16 @@ try {
   await expectForbidden(() => client.mutation(api.staff.save, {
     ...managerArgs,
     name: 'Denied staff', role: 'cashier', clientMutationId: 'perm-check-manager-staff',
+  }));
+  await expectForbidden(() => client.action(api.identity.createStaff, {
+    ...managerArgs,
+    name: 'Denied manager provisioning', role: 'cashier', ...credential(),
+    clientMutationId: 'perm-check-manager-provisioning',
+  }));
+  await expectForbidden(() => client.action(api.identity.createStaff, {
+    ...cashierArgs,
+    name: 'Denied cashier provisioning', role: 'cashier', ...credential(),
+    clientMutationId: 'perm-check-cashier-provisioning',
   }));
   assert((await client.query(api.staff.list, ownerArgs)).length >= 3);
   await client.query(api.reports.getMonthlyCosts, { ...ownerArgs, month: '2026-07' });

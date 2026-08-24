@@ -947,11 +947,21 @@ staff PIN
   profile's protected offline record. Every reconnect validates the active
   session before outbox work; an invalid session locks the app through a
   structured result rather than a logged server exception.
-- **Offline:** after an online provisioning/login, the tablet can verify a
-  registered staff PIN and continue a local session indefinitely while offline.
-  The next successful synchronization applies archived/revoked identities and
-  invalidates their protected local material. This is an explicit availability
-  choice: an offline tablet cannot learn a new revocation.
+- **Offline:** after an online sign-in, or immediately after owner-authorized
+  local creation, the tablet can verify a registered staff PIN and continue a
+  local session indefinitely while offline. Local creation saves only the
+  derived server credential and offline verifier in profile-scoped protected
+  storage. Owner-authenticated reconnect creates the cloud identity and device
+  session idempotently, promotes the protected access to the cloud profile ID,
+  maps the SQLite audit record, and deletes the temporary protected material.
+  The next successful synchronization also applies archived/revoked identities
+  and invalidates their protected local material. This is an explicit
+  availability choice: an offline tablet cannot learn a new revocation.
+- **Protected logging:** Capacitor native and redirected JavaScript logging is
+  disabled in every build. The generic plugin bridge carries protected session
+  and verifier values, so debug plugin-call logging is not an acceptable QA
+  mechanism; WebView console inspection and filtered Android runtime evidence
+  remain available without printing protected values.
 - **Locked profile discovery:** the unauthenticated Lock screen may read the
   bounded active server profile list for sign-in choices, but that read never
   archives local profiles or clears protected credentials. After a successful

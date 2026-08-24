@@ -37,7 +37,12 @@ tablet's local SQLite operational record.
   Dashboard/Reports fallback reads; it never performs management writes.
 - `identitySession.ts` derives and persists one protected local session/PIN
   verifier/attempt-state record per provisioned staff profile after successful
-  sign-in; it never exposes those values through ordinary local data contracts.
+  sign-in; it also promotes an offline-created profile's protected verifier and
+  returned cloud session without retaining the raw PIN. It never exposes those
+  values through ordinary local data contracts.
+- `localStaff.ts` owns owner-only local profile creation plus its PIN-free
+  management operation; `staffSync.ts` owns protected credential provisioning,
+  cloud acknowledgement, and local/cloud profile-session promotion.
 - `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt/print-state
   parsing, sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
@@ -128,6 +133,7 @@ tablet's local SQLite operational record.
 
 - Run `npm run check:local`, `npm run check:local-management`,
   `npm run check:local-inventory-costs`,
+  `npm run check:local-staff`,
   `npm run check:sales`, `npm run check:settings`,
   `npm run check:reconnect`, `npm run check:offline`, `npx tsc -b`, and
   `npm run build`.

@@ -9,12 +9,13 @@ export function offlineCredentialKeys(staffProfileId: string) {
     .replace(/\//g, '_')
     .replace(/=+$/g, '');
   const prefix = `identity.staff.${encoded}`;
-  if (prefix.length + '.attempts'.length > 100) {
+  if (prefix.length + '.provisioning_credential'.length > 100) {
     throw new Error('Staff profile storage key is too long.');
   }
   return {
     session: `${prefix}.session`,
     pin: `${prefix}.offline_pin`,
     attempts: `${prefix}.offline_attempts`,
+    provisioning: `${prefix}.provisioning_credential`,
   };
 }

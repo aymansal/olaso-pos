@@ -1,9 +1,19 @@
 import { v } from 'convex/values';
 import { internalMutation, internalQuery } from './_generated/server';
+import {
+  cleanText,
+  mutationId,
+  requirePermission,
+} from './lib/management';
 
 const ACTIVE = 'active' as const;
 const MAX_FAILURES = 5;
 const LOCKOUT_MS = 5 * 60_000;
+const staffRole = v.union(
+  v.literal('owner'),
+  v.literal('manager'),
+  v.literal('cashier'),
+);
 
 export const getSignInRecord = internalQuery({
   args: { staffProfileId: v.id('staffProfiles'), deviceId: v.string() },
@@ -184,5 +194,67 @@ export const replaceCredential = internalMutation({
       session.revokedAt ? undefined : ctx.db.patch(session._id, { revokedAt: args.now }),
     ));
     return { staffProfileId: staff._id, name: staff.name, role: staff.role };
+  },
+});
+
+export const createStaffWithCredential = internalMutation({
+  args: {
+    sessionToken: v.string(),
+    deviceId: v.string(),
+    name: v.string(),
+    role: staffRole,
+    pinSalt: v.string(),
+    pinHash: v.string(),
+    clientMutationId: v.string(),
+    now: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const actor = await requirePermission(ctx, args, 'staff');
+    const clientMutationId = mutationId(args.clientMutationId);
+    const previous = await ctx.db
+      .query('staffProfiles')
+      .withIndex('by_client_mutation', (index) =>
+        index.eq('lastMutationId', clientMutationId),
+      )
+      .unique();
+    if (previous) {
+      const identity = await ctx.db
+        .query('staffIdentities')
+        .withIndex('by_staff_profile', (index) =>
+          index.eq('staffProfileId', previous._id),
+        )
+        .unique();
+      if (!identity) throw new Error('Staff provisioning retry found no credential.');
+      return {
+        id: previous._id,
+        name: previous.name,
+        role: previous.role,
+        revision: previous.revision,
+        identityRevision: identity.credentialVersion,
+      };
+    }
+    const active = await ctx.db
+      .query('staffProfiles')
+      .withIndex('by_status_name', (index) => index.eq('status', 'active'))
+      .take(51);
+    if (active.length >= 50) throw new Error('Staff list has reached the 50-profile limit.');
+    const name = cleanText(args.name, 'Staff name', 100);
+    const id = await ctx.db.insert('staffProfiles', {
+      name,
+      role: args.role,
+      status: 'active',
+      revision: 1,
+      updatedAt: args.now,
+      updatedBy: actor.name,
+      lastMutationId: clientMutationId,
+    });
+    await ctx.db.insert('staffIdentities', {
+      staffProfileId: id,
+      pinSalt: args.pinSalt,
+      pinHash: args.pinHash,
+      credentialVersion: 1,
+      updatedAt: args.now,
+    });
+    return { id, name, role: args.role, revision: 1, identityRevision: 1 };
   },
 });

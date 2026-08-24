@@ -115,6 +115,13 @@ export async function replaceOperationalCache(
 ) {
   assertBounded(snapshot);
   return withLocalTransaction(async (database) => {
+    const pendingStaff = await database.query(
+      `SELECT local_record_id FROM outbox
+       WHERE operation_type = 'management.staff.create' LIMIT 101`,
+    );
+    if ((pendingStaff.values?.length ?? 0) > 100) {
+      throw new Error('Pending staff exceeds the local cache limit.');
+    }
     const unsynced = await database.query(
       `SELECT 1 FROM outbox
        WHERE operation_type IN (${OPERATIONAL_MANAGEMENT_OPERATION_TYPES.map(() => '?').join(', ')})
@@ -391,6 +398,14 @@ export async function replaceOperationalCache(
         false,
       );
     }
+    for (const pending of pendingStaff.values ?? []) {
+      await database.run(
+        `UPDATE staff_profiles SET status = 'active'
+         WHERE id = ?`,
+        [String(pending.local_record_id)],
+        false,
+      );
+    }
     await database.run(
       `INSERT INTO device_settings (key, value, updated_at)
        VALUES ('operational_cache_updated_at', ?, ?)
@@ -447,13 +462,26 @@ export async function reconcileAuthenticatedStaffProfiles(
   }
   const updatedAt = Date.now();
   return withLocalTransaction(async (database) => {
-    const previous = await database.query(
-      "SELECT id, identity_revision FROM staff_profiles WHERE status = 'active'",
+    const [previous, pending] = await Promise.all([
+      database.query(
+        "SELECT id, identity_revision FROM staff_profiles WHERE status = 'active'",
+      ),
+      database.query(
+        `SELECT local_record_id FROM outbox
+         WHERE operation_type = 'management.staff.create' LIMIT 101`,
+      ),
+    ]);
+    if ((pending.values?.length ?? 0) > 100) {
+      throw new Error('Pending staff exceeds the local directory limit.');
+    }
+    const pendingIds = new Set(
+      (pending.values ?? []).map((row) => String(row.local_record_id)),
     );
     const activeById = new Map(profiles.map((profile) => [profile.id, profile]));
     const invalidatedProfileIds = (previous.values ?? []).flatMap((row) => {
       const current = activeById.get(String(row.id));
-      return !current || current.identityRevision !== Number(row.identity_revision)
+      return !pendingIds.has(String(row.id))
+        && (!current || current.identityRevision !== Number(row.identity_revision))
         ? [String(row.id)]
         : [];
     });
@@ -478,6 +506,13 @@ export async function reconcileAuthenticatedStaffProfiles(
           updatedAt,
           profile.identityRevision,
         ],
+        false,
+      );
+    }
+    for (const pendingId of pendingIds) {
+      await database.run(
+        `UPDATE staff_profiles SET status = 'active' WHERE id = ?`,
+        [pendingId],
         false,
       );
     }

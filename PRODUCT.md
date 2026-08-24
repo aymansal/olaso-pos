@@ -198,10 +198,11 @@ a seventh permanent navigation destination.
   available, but technical explanation may move behind progressive disclosure
   instead of occupying the normal coffee-shop operator flow.
 
-The current beta exposes confirmed device and synchronization settings from that
-profile. Goal 05 replaces its convenience lock with individual staff identity:
-owner, manager, and cashier each receive a private six-digit PIN; a locked
-screen supports staff switching and appears after application/tablet restart.
+The application exposes confirmed device and synchronization settings from that
+profile. Owner, manager, and cashier each receive a private six-digit PIN; an
+owner can create that profile while offline and the person can sign in on this
+tablet immediately. A locked screen supports staff switching and appears after
+application/tablet restart.
 It auto-locks after an owner-configurable five-minute default and imposes a
 five-minute lockout after five failed attempts. Registered staff continue to
 authenticate locally throughout an outage; a revocation reaches the tablet on

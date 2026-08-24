@@ -7,6 +7,11 @@ import { isStaffRole, type StaffRole } from './lib/permissions';
 const PIN_PATTERN = /^\d{6}$/;
 const DEVICE_PATTERN = /^[A-Za-z0-9._-]{1,120}$/;
 const PIN_ITERATIONS = 600_000;
+const staffRole = v.union(
+  v.literal('owner'),
+  v.literal('manager'),
+  v.literal('cashier'),
+);
 declare const process: { env: Record<string, string | undefined> };
 type SignInRecord = {
   staffProfileId: Id<'staffProfiles'>;
@@ -27,6 +32,14 @@ type SignInResult = StaffIdentity & {
   token: string;
   identityRevision: number;
 };
+type CreatedStaffRecord = {
+  id: Id<'staffProfiles'>;
+  name: string;
+  role: StaffRole;
+  revision: number;
+  identityRevision: number;
+};
+type CreatedStaff = CreatedStaffRecord & { token: string };
 type SignInFailure = { kind: 'invalid-pin' | 'locked' };
 
 function toBase64(bytes: Uint8Array) {
@@ -74,6 +87,15 @@ function createToken() {
 
 function createSalt() {
   return toBase64(crypto.getRandomValues(new Uint8Array(16)));
+}
+
+function hasDecodedLength(value: string, length: number) {
+  try {
+    const decoded = fromBase64(value);
+    return decoded.length === length && toBase64(decoded) === value;
+  } catch {
+    return false;
+  }
 }
 
 function assertSupportCode(value: string) {
@@ -193,6 +215,47 @@ export const validateSession = action({
     }) as StaffIdentity | null;
     if (!session) throw new Error('Staff session is unavailable. Sign in again.');
     return session;
+  },
+});
+
+export const createStaff = action({
+  args: {
+    sessionToken: v.string(),
+    deviceId: v.string(),
+    name: v.string(),
+    role: staffRole,
+    pinSalt: v.string(),
+    pinHash: v.string(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args): Promise<CreatedStaff> => {
+    if (!DEVICE_PATTERN.test(args.deviceId)
+        || !hasDecodedLength(args.pinSalt, 16)
+        || !hasDecodedLength(args.pinHash, 32)) {
+      throw new Error('Staff details are invalid.');
+    }
+    const created = await ctx.runMutation(
+      internal.identityInternal.createStaffWithCredential,
+      {
+      sessionToken: args.sessionToken,
+      deviceId: args.deviceId,
+      name: args.name,
+      role: args.role,
+      pinSalt: args.pinSalt,
+      pinHash: args.pinHash,
+      clientMutationId: args.clientMutationId,
+      now: Date.now(),
+      },
+    ) as CreatedStaffRecord;
+    const token = createToken();
+    await ctx.runMutation(internal.identityInternal.createSession, {
+      staffProfileId: created.id,
+      deviceId: args.deviceId,
+      credentialVersion: created.identityRevision,
+      tokenHash: await tokenHash(token),
+      now: Date.now(),
+    });
+    return { ...created, token };
   },
 });
 

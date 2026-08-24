@@ -13,6 +13,7 @@
     "check:local-management": "node --disable-warning=ExperimentalWarning scripts/check-local-management.mjs",
     "check:local-catalog": "node --disable-warning=ExperimentalWarning scripts/check-local-catalog.mjs",
     "check:local-inventory-costs": "node --disable-warning=ExperimentalWarning scripts/check-local-inventory-costs.mjs",
+    "check:local-staff": "node --disable-warning=ExperimentalWarning scripts/check-local-staff.mjs",
     "check:inventory": "node scripts/check-inventory.mjs",
     "check:costs": "node scripts/check-costs.mjs",
     "check:staff": "node scripts/check-staff.mjs",

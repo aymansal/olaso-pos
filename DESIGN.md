@@ -505,6 +505,10 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   `Test printer`, and a secondary `Restore saved logo` setup action. The logo
   action requires an explicit replacement warning. Both keep 44-pixel targets
   and ask the operator to inspect paper rather than claiming it.
+- The owner-only Staff & access panel lists name, role, and quiet `Ready` or
+  `Waiting to sync` state. Its Add staff dialog uses only persistent labels for
+  name, role, six-digit PIN, and PIN confirmation plus Cancel and Add staff;
+  no field receives a decorative icon or identity/storage explanation.
 - The current diagnostic explanations are a functional baseline, not final
   coffee-shop copy. POLISH-01 decides what the owner wants shortened or hidden;
   POLISH-02 keeps everyday labels concise and moves retained support detail

@@ -26,9 +26,14 @@ presentation.
 - Unlock is the production staff-authentication boundary. Every owner, manager,
   and cashier uses a separate six-digit PIN; never add placeholder, shared, or
   default credentials.
-- Offline unlock is available only after that profile has signed in online on
-  this tablet. Its session, PIN verifier, and failed-attempt state remain in
-  profile-scoped Android protected storage, never ordinary settings or SQLite.
+- Offline unlock is available after that profile has signed in online on this
+  tablet or an owner created it locally through Staff & access. Its session,
+  PIN verifier, pending provisioning verifier, and failed-attempt state remain
+  in profile-scoped Android protected storage, never ordinary settings or
+  SQLite.
+- Staff & access is owner-only. Its create dialog contains only name, role,
+  six-digit PIN, PIN confirmation, Cancel, and Add staff; a successful offline
+  save appears immediately as waiting to sync.
 - While locked, a bounded server profile read may provide sign-in choices, but
   it is read-only: it never archives local profiles, clears protected access,
   or starts staff-authorized synchronization. After a successful online
@@ -37,6 +42,7 @@ presentation.
 
 ## Verification
 
-- Run `npm run check:settings` and `npm run build`.
+- Run `npm run check:settings`, `npm run check:local-staff`, and
+  `npm run build`.
 - Inspect Settings and Lock at 1340 × 800, including persistence, manual sync,
   offline/error feedback, unlock, focus, clipping, overflow, and console state.
