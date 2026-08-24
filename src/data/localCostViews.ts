@@ -179,6 +179,55 @@ export async function loadLocalCostManagement(
   );
 }
 
+export async function pruneSavedExpensesFromDatabase(
+  database: Database,
+  incomingIds: string[],
+) {
+  const incoming = incomingIds.length
+    ? `id NOT IN (${incomingIds.map(() => '?').join(', ')})`
+    : '1 = 1';
+  await database.run(
+    `DELETE FROM operating_expenses
+     WHERE ${incoming}
+       AND id NOT IN (
+         SELECT m.local_record_id
+         FROM management_operations m
+         JOIN outbox o ON o.operation_id = m.operation_id
+         WHERE m.operation_type IN (
+           'management.expense.add', 'management.expense.correct'
+         )
+         UNION
+         SELECT json_extract(m.payload_json, '$.localReversalId')
+         FROM management_operations m
+         JOIN outbox o ON o.operation_id = m.operation_id
+         WHERE m.operation_type = 'management.expense.correct'
+       )`,
+    incomingIds,
+    false,
+  );
+}
+
+export async function pruneSavedCompensationFromDatabase(
+  database: Database,
+  incomingIds: string[],
+) {
+  const incoming = incomingIds.length
+    ? `id NOT IN (${incomingIds.map(() => '?').join(', ')})`
+    : '1 = 1';
+  await database.run(
+    `DELETE FROM compensation_periods
+     WHERE ${incoming}
+       AND id NOT IN (
+         SELECT m.local_record_id
+         FROM management_operations m
+         JOIN outbox o ON o.operation_id = m.operation_id
+         WHERE m.operation_type = 'management.compensation.add'
+       )`,
+    incomingIds,
+    false,
+  );
+}
+
 export function replaceSavedExpenses(
   rows: Array<{
     id: string;
@@ -226,6 +275,7 @@ export function replaceSavedExpenses(
         false,
       );
     }
+    await pruneSavedExpensesFromDatabase(database, rows.map((row) => row.id));
   });
 }
 
@@ -259,5 +309,9 @@ export function replaceSavedCompensation(
         false,
       );
     }
+    await pruneSavedCompensationFromDatabase(
+      database,
+      rows.map((row) => row.id),
+    );
   });
 }

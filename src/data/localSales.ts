@@ -9,7 +9,10 @@ import {
   listPendingOutbox,
 } from './outbox.ts';
 import { latestPendingManagementOperationIdFromDatabase } from './localManagement.ts';
-import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
+import {
+  managementIdentifier,
+  OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+} from './managementOperation.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import { allocateCentimes } from '../lib/costs.ts';
 
@@ -65,6 +68,8 @@ export type SavedReceipt = {
 };
 
 export type SaleSyncPayload = {
+  actorProfileId?: string;
+  actorName: string;
   deviceId: string;
   localSaleId: string;
   receiptNumber: string;
@@ -91,6 +96,7 @@ type SaleDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
 export type CompleteSaleInput = {
   cart: CartLine[];
+  cashierProfileId: string;
   cashierName: string;
   serviceType: Exclude<LocalServiceType, 'order-online'>;
   paymentMethod: PaymentMethod;
@@ -99,6 +105,8 @@ export type CompleteSaleInput = {
 };
 
 export type SaleCancellationPayload = {
+  actorProfileId?: string;
+  actorName: string;
   deviceId: string;
   localCorrectionId: string;
   originalLocalSaleId: string;
@@ -438,6 +446,10 @@ export async function commitLocalSale(
 
   const localSaleId = idFactory();
   const operationId = idFactory();
+  const actorProfileId = managementIdentifier(
+    input.cashierProfileId,
+    'Cashier profile ID',
+  );
   const menu = await loadOperationalCache(database as SQLiteDBConnection);
   const completedAt = input.completedAt ?? Date.now();
   const receiptNumber = await allocateReceiptNumber(database, completedAt);
@@ -446,14 +458,16 @@ export async function commitLocalSale(
 
   await database.run(
     `INSERT INTO sales
-      (local_sale_id, device_id, receipt_number, status, service_type,
+      (local_sale_id, device_id, actor_profile_id, receipt_number, status,
+       service_type,
        customer_name, table_label, subtotal_centimes, tax_centimes,
        total_centimes, currency, business_date, receipt_snapshot_json,
        ingredient_cost_centimes, cost_status, sync_state, created_at)
-     VALUES (?, ?, ?, 'completed', ?, ?, ?, ?, ?, ?, 'MAD', ?, ?, ?, ?, 'pending', ?)`,
+     VALUES (?, ?, ?, ?, 'completed', ?, ?, ?, ?, ?, ?, 'MAD', ?, ?, ?, ?, 'pending', ?)`,
     [
       localSaleId,
       deviceId,
+      actorProfileId,
       receipt.receiptNumber,
       input.serviceType,
       null,
@@ -553,11 +567,13 @@ export async function cancelLocalSale(
   {
     originalLocalSaleId,
     reason,
+    actorProfileId,
     actorName,
     correctedAt = Date.now(),
   }: {
     originalLocalSaleId: string;
     reason: string;
+    actorProfileId: string;
     actorName: string;
     correctedAt?: number;
   },
@@ -570,6 +586,10 @@ export async function cancelLocalSale(
   if (cleanedReason.length < 3 || cleanedReason.length > 240) {
     throw new Error('Correction reason must contain 3 to 240 characters.');
   }
+  const savedActorProfileId = managementIdentifier(
+    actorProfileId,
+    'Correction actor profile ID',
+  );
   if (!actorName.trim() || actorName.length > 120) throw new Error('Correction actor is invalid.');
   if (!Number.isSafeInteger(correctedAt) || correctedAt < 0) throw new Error('Correction time is invalid.');
   const originalResult = await database.query(
@@ -643,10 +663,19 @@ export async function cancelLocalSale(
   }
   await database.run(
     `INSERT INTO sale_corrections
-     (local_correction_id, original_local_sale_id, device_id, reason, actor_name,
-      business_date, corrected_at, sync_state)
-     VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')`,
-    [localCorrectionId, originalLocalSaleId, String(original.device_id), cleanedReason, actorName.trim(), date, correctedAt],
+     (local_correction_id, original_local_sale_id, device_id, actor_profile_id,
+      reason, actor_name, business_date, corrected_at, sync_state)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+    [
+      localCorrectionId,
+      originalLocalSaleId,
+      String(original.device_id),
+      savedActorProfileId,
+      cleanedReason,
+      actorName.trim(),
+      date,
+      correctedAt,
+    ],
     false,
   );
   await database.run(
@@ -683,7 +712,7 @@ async function loadSaleSyncPayload(
 ): Promise<SaleSyncPayload> {
   const database = await openLocalDatabase();
   const result = await database.query(
-    `SELECT device_id, receipt_number, service_type, business_date,
+    `SELECT device_id, actor_profile_id, receipt_number, service_type, business_date,
       receipt_snapshot_json
      FROM sales
      WHERE local_sale_id = ?
@@ -697,6 +726,10 @@ async function loadSaleSyncPayload(
     throw new Error('The pending receipt snapshot is invalid.');
   }
   return {
+    ...(row.actor_profile_id
+      ? { actorProfileId: String(row.actor_profile_id) }
+      : {}),
+    actorName: String(receipt.cashierName ?? ''),
     deviceId: String(row.device_id),
     localSaleId,
     receiptNumber: String(row.receipt_number),
@@ -731,14 +764,18 @@ async function loadSaleCancellationPayload(
 ): Promise<SaleCancellationPayload> {
   const database = await openLocalDatabase();
   const result = await database.query(
-    `SELECT device_id, local_correction_id, original_local_sale_id, reason,
-      business_date, corrected_at
+    `SELECT device_id, actor_profile_id, local_correction_id,
+      original_local_sale_id, reason, actor_name, business_date, corrected_at
      FROM sale_corrections WHERE local_correction_id = ? LIMIT 1`,
     [localCorrectionId],
   );
   const row = result.values?.[0];
   if (!row) throw new Error('The pending correction is missing.');
   return {
+    ...(row.actor_profile_id
+      ? { actorProfileId: String(row.actor_profile_id) }
+      : {}),
+    actorName: String(row.actor_name),
     deviceId: String(row.device_id),
     localCorrectionId: String(row.local_correction_id),
     originalLocalSaleId: String(row.original_local_sale_id),

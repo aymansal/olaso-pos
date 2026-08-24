@@ -8,6 +8,64 @@ import {
   makeConnectivityFailuresAvailableInDatabase,
   makePendingOutboxAvailableInDatabase,
 } from '../src/data/outbox.ts';
+import { operationSessionArgs } from '../src/data/operationSession.ts';
+
+const activeSession = {
+  token: 'owner-session-token',
+  staffProfileId: 'owner-cloud',
+  name: 'Olaso Owner',
+  role: 'owner',
+  deviceId: 'reconnect-device',
+};
+const managerSession = {
+  token: 'manager-session-token',
+  staffProfileId: 'manager-cloud',
+  name: 'Original Manager',
+  role: 'manager',
+};
+const sessionServices = {
+  resolveProfileId: async (id) => id === 'manager-local' ? 'manager-cloud' : id,
+  loadProfileSession: async (id) => id === 'manager-cloud' ? managerSession : undefined,
+};
+assert.deepEqual(
+  await operationSessionArgs({
+    staffProfileId: 'manager-local',
+    name: 'Original Manager',
+    requiredPermission: 'products',
+  }, activeSession, sessionServices),
+  { sessionToken: 'manager-session-token', deviceId: 'reconnect-device' },
+);
+assert.deepEqual(
+  await operationSessionArgs({
+    staffProfileId: 'owner-cloud',
+    name: 'Olaso Owner',
+    requiredPermission: 'staff',
+  }, activeSession, sessionServices),
+  { sessionToken: 'owner-session-token', deviceId: 'reconnect-device' },
+);
+await assert.rejects(
+  operationSessionArgs({
+    name: 'Another cashier',
+    requiredPermission: 'pos',
+  }, activeSession, sessionServices),
+  /original staff session is unavailable/i,
+);
+await assert.rejects(
+  operationSessionArgs({
+    staffProfileId: 'cashier-cloud',
+    name: 'Cashier',
+    requiredPermission: 'products',
+  }, activeSession, {
+    resolveProfileId: async (id) => id,
+    loadProfileSession: async () => ({
+      token: 'cashier-session-token',
+      staffProfileId: 'cashier-cloud',
+      name: 'Cashier',
+      role: 'cashier',
+    }),
+  }),
+  /can no longer make this change/i,
+);
 
 const database = new DatabaseSync(':memory:');
 for (const migration of localMigrations) {
@@ -59,6 +117,7 @@ const settings = readFileSync('src/data/useSettingsData.ts', 'utf8');
 const dashboard = readFileSync('src/data/useDashboardData.ts', 'utf8');
 const reports = readFileSync('src/data/useReportsData.ts', 'utf8');
 const dataProvider = readFileSync('src/data/AppDataProvider.tsx', 'utf8');
+const connection = readFileSync('src/data/connectionContext.tsx', 'utf8');
 const main = readFileSync('src/main.tsx', 'utf8');
 const html = readFileSync('index.html', 'utf8');
 assert.match(worker, /inFlight\.current/);
@@ -68,6 +127,8 @@ assert.ok(
     < worker.indexOf('await makeConnectivityFailuresAvailable'),
 );
 assert.match(worker, /reconcileAuthenticatedStaffProfiles/);
+assert.match(worker, /operationSessionArgs/);
+assert.match(worker, /actorProfileId/);
 assert.match(worker, /await clearStaffSession/);
 assert.match(worker, /batch < 10/);
 assert.match(worker, /makeConnectivityFailuresAvailable/);
@@ -85,6 +146,8 @@ assert.match(dataProvider, /void previous\.close\(\)/);
 assert.match(dataProvider, /retiredForOutage\.current/);
 assert.match(dataProvider, /addEventListener\('offline', retireConvexClient\)/);
 assert.match(worker, /available !== true \|\| !foreground/);
+assert.match(connection, /document\.hasFocus\(\)/);
+assert.match(connection, /addEventListener\('blur', suspend\)/);
 assert.match(worker, /const ready = available === true && foreground/);
 assert.match(dashboard, /available === undefined \|\| !foreground/);
 assert.match(reports, /available === undefined \|\| !foreground/);

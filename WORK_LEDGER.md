@@ -22,6 +22,7 @@ remaining goal and card sequence.
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
 | LOCAL-04 — Offline management closeout | in progress |
+| DELETE-01 — Safe permanent deletion and archived-cache cleanup | pending — discuss after LOCAL-04 |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
@@ -99,16 +100,43 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- LOCAL-04 is the only in-progress card. Current official Android guidance
-  keeps persisted local data as the screen source of truth and recommends a
-  local-first lazy write for critical offline changes; the installed Capacitor
-  SQLite plugin supplies the explicit native transaction boundary already used
-  by LOCAL-01 through STAFF-01. This closeout adds no Room, second database,
-  state library, Kotlin service, dependency, or WorkManager job. Staff-authorized
-  synchronization remains in the visible authenticated foreground worker
-  because locked/background cloud access is explicitly forbidden. Exact next
-  action: inspect the existing operation/test surfaces and derive the complete
-  physical UI, restart, reconnect, duplicate, failure, cleanup, and role matrix.
+- LOCAL-04 is the only in-progress card and is ready for final diff/commit.
+  SQLite schema 18 stores new sale/correction actor profile IDs; every queued
+  management/sale/correction write resolves the originating profile's protected
+  session instead of crediting the later synchronizing staff member. On the
+  physical SM-X115, manager-created catalog, modifier, recipe, ingredient,
+  purchase, count, expense/correction, and owner compensation work all saved in
+  flight mode, appeared immediately, survived repeated install/force-stop/
+  restart, synchronized in dependency order under the owner, and remained one
+  cloud effect after repeat reconnect. Exact cloud `updatedBy` stayed LOCAL04
+  Manager for manager work and Olaso Owner for staff/compensation.
+- Root-fixed replacement accumulation across catalog and finance: Products
+  dropped from 500 stale rows to the current 15, Stock normal view from 675 to
+  14 active ingredients, and stale anonymous compensation/LOCAL03 expense rows
+  disappeared. Pending local rows and stock/sale history are explicitly
+  preserved; archived records appear only through deliberate filters. The
+  development reset removed all LOCAL04 QA cloud data, authenticated directory
+  reconciliation left only Owner and Samira active, and the tablet remains at
+  schema 18 with 11 sales plus the seven unchanged historical failed sale/
+  correction outbox rows and zero management rows.
+- The apparent 1340 by 2244 install reading was measured while Samsung keyguard
+  owned a portrait display and Olaso was hidden. System unlock returned 1340 by
+  800. A real bug did exist: wake behind keyguard could mark the visible document
+  foreground and retry Convex DNS. Foreground now requires document visibility
+  plus window focus. Two exact hidden wake cycles produce zero WebView errors;
+  final unlocked POS is 1340 by 800 with zero focused Android failures. Full
+  local/cloud/permission/identity/Android/TypeScript/build regression passes;
+  Graphify is current at 3,241 nodes and 7,452 edges. Exact next action: final
+  review, commit/push LOCAL-04, record its SHA, then stop for DELETE-01 discussion.
+- Owner deletion decision: archive is not the universal answer. Products may be
+  permanently deleted because completed orders already own immutable product/
+  price/modifier/recipe snapshots. Categories may be deleted only when empty;
+  modifier groups only when unused; ingredients only when no recipe, purchase,
+  movement, valuation, or pending operation needs them. Staff identities,
+  sales, corrections, purchases, movements, expenses, and compensation remain
+  archived or append-only because removing them would falsify audit/cost data.
+  DELETE-01 remains a planned follow-up after LOCAL-04; normal lists exclude
+  archived rows and the existing Archived filters remain the deliberate view.
 - LOCK-01 is complete and pushed to `origin/main` as
   `4486a8921d893e3e5edce098b8a17a500cf0a537`. A shared profile menu gives every
   role `Lock / switch staff`; Settings remains owner-only. `App.tsx` owns the
@@ -918,6 +946,94 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-04 full matrix and mandatory fixes complete
+
+- Added schema 18 actor profile IDs and one tested operation-session resolver.
+  The owner can reconnect another person's queued work, but each cloud mutation
+  authenticates with the original profile's protected token. Legacy label-only
+  rows fail unless the active name matches. Local and cloud proof retained the
+  manager actor across category/product/modifier/recipe/ingredient/purchase/
+  adjustment/expense work and the owner actor for staff/compensation.
+- The real tablet completed every authorized UI in flight mode, including an
+  offline-created manager/PIN, exact stock package/count operations, POS use of
+  the offline product/required modifier/recipe, expense correction, and one
+  owner-only compensation period. All survived restart; six pending second-
+  batch operations synchronized to zero, and repeat reconnect left one group,
+  product, compensation and one three-row expense correction set.
+- Physical QA root-fixed stale replacement accumulation in catalog and finance,
+  plus default Products/Stock archived filtering. Current seed refresh leaves
+  4 categories, 15 products, 14 active ingredients, zero expenses, one seed
+  compensation, Owner/Samira only, 11 preserved local sales, seven unchanged
+  historical failed sale/correction rows, and zero management outbox rows.
+- A system-keyguard portrait measurement was not a visible app defect: unlock
+  correctly restored 1340 by 800. The associated hidden-wake network race was
+  real and is fixed by requiring both visibility and window focus. Two exact
+  wake-behind-keyguard cycles now emit zero WebView warning/error; focused
+  Android runtime failures are zero and final owner POS is exact 1340 by 800.
+- Full local management/catalog/inventory/cost/staff/migration/reconnect/sales/
+  Orders/backend/permissions/offline/identity/Settings/POS/Dashboard/Reports/
+  Android/TypeScript/Convex/build checks pass. Graphify refreshed to 3,241
+  nodes and 7,452 edges. The temporary app-private pre-migration backup was
+  removed after verified preservation. Exact next action is implementation
+  commit/push and SHA closeout, then stop for the owner's DELETE-01 discussion.
+
+### 2026-08-24 — DELETE-01 added before final offline closeout
+
+- The owner rejected archive-only CRUD and the resulting duplicate archived
+  records in everyday Products/Stock lists. Permanent deletion must exist where
+  historical truth already survives independently, but not where deletion
+  would break staff identity, stock valuation, expense, compensation, sale, or
+  correction history.
+- This is not a safe one-button patch: it needs local-first delete operations,
+  dependency validation, idempotent cloud acknowledgement, restart/reconnect,
+  and real UI confirmation. Added DELETE-01 as a dedicated card before LOCAL-04
+  can close. Product deletion preserves immutable sale snapshots; empty
+  categories and unused modifiers can delete; only never-used ingredients can
+  delete. Staff and append-only financial/stock/sale records do not hard-delete.
+- The owner later directed completion of all LOCAL-04 work first, followed by a
+  stop for discussion. DELETE-01 therefore remains pending after LOCAL-04 and
+  before HARD-01; no manual-polish card moves earlier.
+
+### 2026-08-24 — LOCAL-04 paused on cross-staff audit root cause
+
+- Caller inspection found that local management rows correctly persist actor
+  profile/name/role, but `ReconnectProvider` passes the currently unlocked
+  session to every catalog, inventory, cost, and staff cloud mutation. If a
+  different staff member restores internet, cloud `updatedBy` falsely records
+  that later person. Pending sales/corrections have the same systemic problem
+  and currently persist only an actor label, not the originating profile ID.
+- The acceptance matrix is paused under the mandatory bug rule. The root fix is
+  to keep original profile identity with every new local sale/correction and
+  use the existing profile-scoped protected session for each queued write. The
+  visible current staff still owns reconnect orchestration, but never replaces
+  the operation actor. Legacy rows may sync only when their saved actor label
+  matches the active profile; otherwise they fail honestly rather than being
+  misattributed.
+- Exact next action: add one ordered migration, a small tested actor-session
+  resolver, route every queued management/sale/correction dispatch through it,
+  and reproduce manager-offline/owner-reconnect attribution before resuming the
+  rest of LOCAL-04.
+
+### 2026-08-24 — LOCAL-04 physical UI exposed stale catalog accumulation
+
+- The schema-18 APK upgraded the real database without clearing data and the
+  offline-created `LOCAL04 Manager` immediately unlocked with manager access.
+  Before adding catalog QA data, Products rendered the 15 live products plus
+  the full 500-row bound and dozens of duplicate archived categories left by
+  earlier development cloud resets.
+- Root cause is `replaceOperationalCache`: it archived every prior cloud row
+  and upserted the new bounded snapshot but never deleted cloud-owned category,
+  product, modifier, or recipe rows absent from the replacement. Immutable sale
+  snapshots do not depend on those stale catalog rows, and refresh is already
+  forbidden while operational management work is pending.
+- Added bounded stale-catalog pruning after a successful replacement, ordered
+  from recipe children through products/categories, while retaining every row
+  present in the current snapshot and leaving ingredient/stock history intact.
+  A focused regression reproduces and removes the old archived category/product
+  pair while preserving the current pair. Exact next action: rebuild/install,
+  continue the offline matrix, then prove reconnect collapses the tablet back
+  to the current bounded cloud catalog without losing QA data.
 
 ### 2026-08-24 — LOCAL-04 activated as an acceptance and bug-fix card
 

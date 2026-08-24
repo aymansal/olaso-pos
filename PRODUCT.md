@@ -75,7 +75,8 @@ The cashier can:
 ### Manager
 
 The manager can do everything a cashier can do, plus:
-- Add, edit, archive, and restore products.
+- Add, edit, archive, restore, and permanently delete products while completed
+  orders keep their saved product snapshots.
 - Organize products into categories.
 - Set prices, sizes, options, and extras.
 - Create ingredients and define their measurement units.
@@ -84,6 +85,13 @@ The manager can do everything a cashier can do, plus:
   review stock movements and valuation.
 - View operational sales reports.
 - Record one-time and recurring operating expenses.
+
+Archive keeps a record available for deliberate restoration; it is not a
+substitute for deletion everywhere. Managers and owners can permanently delete
+products, empty categories, unused modifier groups, and never-used ingredients.
+Archived records stay out of normal lists. Staff identities and completed
+sale, stock, purchase, expense, compensation, and correction history are never
+hard-deleted because the café's audit and financial reports depend on them.
 
 ### Owner
 

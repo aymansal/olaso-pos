@@ -527,6 +527,13 @@ export const localMigrations = [
       END`,
     ],
   },
+  {
+    toVersion: 18,
+    statements: [
+      `ALTER TABLE sales ADD COLUMN actor_profile_id TEXT`,
+      `ALTER TABLE sale_corrections ADD COLUMN actor_profile_id TEXT`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

@@ -145,7 +145,8 @@ polishing screens or data paths that later functional work would change.
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | done | `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main`; focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local/cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
-| LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | in progress | Official Android/Capacitor research and acceptance boundary recorded; full matrix inspection next |
+| LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | in progress | Full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass; commit/push pending |
+| DELETE-01 | Add safe permanent deletion and archived-cache cleanup | pending | Owner policy recorded; discuss after LOCAL-04 |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
@@ -266,6 +267,28 @@ polishing screens or data paths that later functional work would change.
   state, and correct cloud/local reconciliation.
 - Repeat negative cashier/manager/owner checks offline and online, including
   sensitive compensation and protected credential material.
+
+### DELETE-01 — Safe deletion and archive cleanup
+
+- Give Products and Stock concise, explicit Archive/Restore/Delete choices
+  without showing archived records in ordinary lists. Destructive confirmation
+  names the record and consequence; no technical essay or icon clutter.
+- Product deletion removes current catalog/recipe/modifier links locally and in
+  Convex while immutable completed-order snapshots keep every historical name,
+  price, modifier, recipe, cost, and receipt. Category deletion is allowed only
+  when empty; modifier-group deletion only when no product uses it.
+- Ingredient deletion is allowed only when no recipe item, modifier effect,
+  purchase, movement, valuation, or pending operation refers to it. Otherwise
+  Archive remains the honest choice. Staff profiles, identities, sales,
+  corrections, purchases, stock movements, expenses, and compensation periods
+  never hard-delete through normal UI because they are audit/financial history.
+- Implement each allowed delete as a validated local transaction plus durable
+  management operation, dependency ordering, retry-safe cloud mutation, and
+  bounded acknowledgement. Prove offline, restart, reconnect, duplicate retry,
+  role isolation, snapshot preservation, and safe rejection on the tablet.
+- Clean stale cloud-cache copies absent from a replacement snapshot without
+  deleting current records, pending local work, immutable order snapshots, or
+  referenced stock history.
 
 ### HARD-01 — Baseline and instrumentation
 
@@ -452,7 +475,7 @@ polishing screens or data paths that later functional work would change.
 ## Goal completion criteria
 
 - POLISH-01, POLISH-02, LOCK-01, LOCAL-01 through LOCAL-04, STAFF-01,
-  CATALOG-01, NAV-01, and HARD-01 through HARD-08 are done, verified,
+  CATALOG-01, DELETE-01, NAV-01, and HARD-01 through HARD-08 are done, verified,
   committed, pushed, and recorded.
 - Every authorized management workflow saves and survives restart offline,
   appears immediately in the normal app, and synchronizes exactly once after
@@ -475,9 +498,9 @@ polishing screens or data paths that later functional work would change.
 
 - Goal 06 remains active on `main`; LOCAL-01 through LOCK-01 are done and
   LOCAL-04 is the only card in progress.
-- LOCAL-01 through STAFF-01 now implement local-first catalog, recipe,
-  inventory, cost, compensation, and protected staff creation. LOCAL-04 remains
-  before complete offline-management acceptance.
+- LOCAL-01 through STAFF-01 implement local-first catalog, recipe, inventory,
+  cost, compensation, and protected staff creation. LOCAL-04's full matrix and
+  mandatory root fixes pass; commit/push remains before acceptance.
   Top-level navigation still destroys/reconstructs screens, data hooks, and
   oversized product images; NAV-01 and HARD-04 own that measured work.
 - The startup wordmark asset exists but is intentionally not consumed before
@@ -489,11 +512,80 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- LOCAL-04 research/activation is recorded. Exact next action: inspect the
-  existing operation and test surfaces, derive the full physical matrix, then
-  execute it without beginning HARD-01.
+- Exact next action: final review, commit/push LOCAL-04 and record its SHA, then
+  stop for the owner's requested DELETE-01 discussion. Do not activate another
+  card.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-04 physical matrix and root fixes complete
+
+- Schema 18 plus the protected operation-session resolver preserve original
+  staff attribution across cross-staff reconnect for management, sales, and
+  corrections. Physical manager work synchronized under the owner but cloud
+  `updatedBy` remained the manager; staff creation and compensation remained
+  the owner. Legacy label-only work cannot receive a fabricated actor.
+- Flight-mode UI covered category/product/modifier/recipe, immediate POS use,
+  ingredient/opening stock, priced purchase, exact count, expense plus
+  correction, compensation, offline staff/PIN, owner/manager/cashier role
+  isolation, force-stop/install/restart, ordered reconnect, and repeated retry.
+  The second batch drained six management rows to zero and produced exactly one
+  cloud effect per operation.
+- Root fixes remove cloud-owned catalog/finance rows absent from replacement
+  snapshots while preserving pending local work and immutable stock/sale/audit
+  history. Normal Products and Stock lists exclude archived rows; current clean
+  seed shows 4 categories, 15 products, 14 active ingredients, zero expenses,
+  one compensation period, Owner/Samira only, and no LOCAL04/LOCAL03 clutter.
+- Samsung keyguard can own a portrait display while Olaso is hidden; unlock
+  correctly returns 1340 by 800. The real hidden-wake Convex DNS race was fixed
+  by requiring both document visibility and window focus. Two repeated hidden
+  wake cycles now have zero WebView warning/error; focused Android failures are
+  zero and final owner POS is exact 1340 by 800.
+- Full relevant local/cloud/security/Android/TypeScript/Convex/build checks pass
+  and Graphify is current at 3,241 nodes and 7,452 edges. QA cloud rows were
+  removed by the deterministic development reset, authenticated reconciliation
+  removed the temporary manager locally, and the temporary schema backup was
+  deleted after preservation proof. Exact next action is commit/push/SHA, then
+  stop for DELETE-01 discussion as the owner requested.
+
+### 2026-08-24 — DELETE-01 added as a LOCAL-04 dependency
+
+- The owner rejected archive-only CRUD and asked for real removal. Permanent
+  deletion is a separate offline/sync domain change, not a safe quick button,
+  so DELETE-01 must complete before LOCAL-04 can accept management behavior.
+- Products can delete because sale snapshots preserve history; categories must
+  be empty, modifiers unused, and ingredients never referenced. Staff and
+  append-only sale/stock/cost records remain archive/correction-only. Everyday
+  lists hide archived rows; deliberate Archived filters expose them.
+- The owner later directed full LOCAL-04 completion first and a stop for
+  discussion. DELETE-01 remains the planned next card before HARD-01 but is not
+  activated automatically.
+
+### 2026-08-24 — LOCAL-04 paused on cross-staff cloud attribution
+
+- The queued management record preserves its original profile/name/role, but
+  reconnect currently sends every cloud mutation with the later staff member
+  who happens to unlock. Sales and corrections also omit originating profile
+  IDs and therefore share the same false-attribution risk.
+- Mandatory bug handling pauses the matrix. Add one ordered migration for new
+  sale/correction actor IDs and use each operation actor's existing protected
+  profile session during cloud dispatch. Legacy rows may use the active session
+  only when their saved label matches it; otherwise fail visibly rather than
+  fabricate history. Add focused migration/session-selection regression proof,
+  then reproduce manager-offline/owner-reconnect on the tablet.
+
+### 2026-08-24 — Physical Products exposed stale replacement rows
+
+- The schema-18 APK migrated the real tablet safely and an offline-created
+  manager unlocked immediately. Products then exposed 500 bounded rows and
+  repeated archived categories from old development resets before new catalog
+  QA data was created.
+- `replaceOperationalCache` archived old cloud rows but never pruned rows absent
+  from the new replacement snapshot. Added ordered pruning for stale recipes,
+  products, modifiers, and categories only after pending operational work is
+  already excluded; current snapshot rows and immutable sale/stock history stay
+  untouched. The focused regression preserves current rows and removes the
+  stale pair. Rebuilt physical reconnect proof remains pending.
 
 ### 2026-08-24 — LOCAL-04 activated with the existing native boundary
 

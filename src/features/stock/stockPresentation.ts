@@ -4,7 +4,7 @@ import type {
   StockBaseUnit,
 } from './stockManagementTypes';
 import type { StockIconName } from './components/StockIcon/StockIcon';
-export { formatStockQuantity } from '../../lib/stock';
+export { formatStockQuantity } from '../../lib/stock.ts';
 
 export type StockUnitGroup = 'all' | 'liquids' | 'weighed' | 'pieces';
 export type StockLevelFilter = 'all' | 'low' | 'healthy' | 'archived';
@@ -36,6 +36,16 @@ export function ingredientLevel(
   return ingredient.currentStockQuantity <= ingredient.lowStockThreshold
     ? 'Low'
     : 'Healthy';
+}
+
+export function matchesLevelFilter(
+  ingredient: ManagedIngredient,
+  filter: StockLevelFilter,
+) {
+  const level = ingredientLevel(ingredient).toLowerCase();
+  if (filter === 'archived') return level === 'archived';
+  return ingredient.status === 'active'
+    && (filter === 'all' || level === filter);
 }
 
 export function ingredientIcon(ingredient: ManagedIngredient): StockIconName {

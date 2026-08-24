@@ -15,6 +15,7 @@ import type {
 } from './stockManagementTypes';
 import {
   ingredientLevel,
+  matchesLevelFilter,
   type StockLevelFilter,
   type StockUnitGroup,
   unitGroup as ingredientUnitGroup,
@@ -65,14 +66,13 @@ export function StockScreen({
   const visibleIngredients = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase();
     return inventory.ingredients.filter((ingredient) => {
-      const level = ingredientLevel(ingredient).toLowerCase();
       return (
         (!normalizedSearch ||
           ingredient.name.toLocaleLowerCase().includes(normalizedSearch) ||
           ingredient.key.toLocaleLowerCase().includes(normalizedSearch)) &&
         (unitGroup === 'all' ||
           ingredientUnitGroup(ingredient.baseUnit) === unitGroup) &&
-        (levelFilter === 'all' || level === levelFilter)
+        matchesLevelFilter(ingredient, levelFilter)
       );
     });
   }, [inventory.ingredients, levelFilter, search, unitGroup]);

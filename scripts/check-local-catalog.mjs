@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { saveLocalCategory, saveLocalProduct, setLocalProductStatus } from '../src/data/localCatalog.ts';
 import { saveLocalModifierGroup, saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
 import { localMigrations } from '../src/data/schema.ts';
+import { pruneStaleOperationalCatalog } from '../src/data/operationalCache.ts';
 import {
   CATEGORY_ARTWORK_OPTIONS,
   categoryArtworkKey,
@@ -114,6 +115,41 @@ await assert.rejects(
   /artwork is invalid/,
 );
 database.close();
+
+const pruneDatabase = new DatabaseSync(':memory:');
+pruneDatabase.exec('PRAGMA foreign_keys = ON');
+for (const migration of localMigrations) {
+  for (const statement of migration.statements) pruneDatabase.exec(statement);
+}
+pruneDatabase.exec(`
+  INSERT INTO categories
+    (id, key, name, artwork_key, sort_order, status, revision, updated_at)
+  VALUES
+    ('category-current', 'current', 'Current', 'neutral', 1, 'active', 1, 2),
+    ('category-stale', 'stale', 'Stale', 'neutral', 2, 'archived', 1, 1);
+  INSERT INTO products
+    (id, key, category_id, name, receipt_name, price_centimes, status,
+     sort_order, revision, updated_at)
+  VALUES
+    ('product-current', 'current', 'category-current', 'Current', 'Current',
+     100, 'active', 1, 1, 2),
+    ('product-stale', 'stale', 'category-stale', 'Stale', 'Stale',
+     100, 'archived', 2, 1, 1);
+`);
+await pruneStaleOperationalCatalog({
+  run(statement, values = []) {
+    return pruneDatabase.prepare(statement).run(...values);
+  },
+}, 2);
+assert.deepEqual(
+  pruneDatabase.prepare('SELECT id FROM categories ORDER BY id').all().map((row) => row.id),
+  ['category-current'],
+);
+assert.deepEqual(
+  pruneDatabase.prepare('SELECT id FROM products ORDER BY id').all().map((row) => row.id),
+  ['product-current'],
+);
+pruneDatabase.close();
 assert.equal(CATEGORY_ARTWORK_OPTIONS.length, 6);
 assert.equal(categoryArtworkKey('future-asset'), 'neutral');
 assert.equal(categoryArtworkUrl('future-asset'), categoryArtworkUrl('neutral'));
@@ -141,6 +177,12 @@ assert.match(productHookSource, /saveLocalCategory/);
 assert.match(productHookSource, /saveLocalProduct/);
 assert.match(productHookSource, /saveLocalModifierGroup/);
 assert.match(productHookSource, /saveLocalRecipeVersion/);
+const productScreenSource = readFileSync(
+  'src/features/products/ProductsScreen.tsx',
+  'utf8',
+);
+assert.match(productScreenSource, /product\.status !== 'archived'/);
+assert.match(productScreenSource, /category\.status !== 'archived'/);
 assert.ok(
   [...operationalCacheSource.matchAll(/CASE WHEN status = 'archived'/g)].length >= 4,
   'Bounded catalog reads must prioritize live records over archived history.',

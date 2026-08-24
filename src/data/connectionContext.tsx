@@ -16,13 +16,15 @@ type ConnectionState = {
   foreground: boolean;
 };
 
+function isForeground() {
+  return document.visibilityState === 'visible' && document.hasFocus();
+}
+
 const ConnectionContext = createContext<ConnectionState | undefined>(undefined);
 
 export function ConnectionProvider({ children }: { children: ReactNode }) {
   const [available, setAvailable] = useState<boolean>();
-  const [foreground, setForeground] = useState(
-    () => document.visibilityState === 'visible',
-  );
+  const [foreground, setForeground] = useState(isForeground);
 
   useEffect(() => {
     let active = true;
@@ -42,10 +44,11 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
       }
     };
     const resume = () => {
-      const visible = document.visibilityState === 'visible';
+      const visible = isForeground();
       setForeground(visible);
       if (visible) void refresh();
     };
+    const suspend = () => setForeground(false);
 
     if (Capacitor.isNativePlatform()) {
       void watchSecureSessionNetworkStatus(update).then((remove) => {
@@ -57,6 +60,7 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
     window.addEventListener('online', resume);
     window.addEventListener('offline', resume);
     window.addEventListener('focus', resume);
+    window.addEventListener('blur', suspend);
     window.addEventListener('pageshow', resume);
     document.addEventListener('visibilitychange', resume);
     return () => {
@@ -65,6 +69,7 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('online', resume);
       window.removeEventListener('offline', resume);
       window.removeEventListener('focus', resume);
+      window.removeEventListener('blur', suspend);
       window.removeEventListener('pageshow', resume);
       document.removeEventListener('visibilitychange', resume);
     };

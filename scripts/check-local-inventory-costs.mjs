@@ -10,9 +10,24 @@ import {
   addLocalExpense,
   correctLocalExpense,
 } from '../src/data/localCosts.ts';
-import { loadLocalCostManagementFromDatabase } from '../src/data/localCostViews.ts';
+import {
+  loadLocalCostManagementFromDatabase,
+  pruneSavedCompensationFromDatabase,
+  pruneSavedExpensesFromDatabase,
+} from '../src/data/localCostViews.ts';
 import { listPendingOutboxFromDatabase } from '../src/data/outbox.ts';
 import { localMigrations } from '../src/data/schema.ts';
+import { matchesLevelFilter } from '../src/features/stock/stockPresentation.ts';
+
+const activeIngredient = {
+  id: 'active', key: 'active', name: 'Active', baseUnit: 'gram',
+  currentStockQuantity: 10, lowStockThreshold: 1, status: 'active',
+  revision: 1, updatedAt: 1,
+};
+const archivedIngredient = { ...activeIngredient, id: 'archived', status: 'archived' };
+assert.equal(matchesLevelFilter(activeIngredient, 'all'), true);
+assert.equal(matchesLevelFilter(archivedIngredient, 'all'), false);
+assert.equal(matchesLevelFilter(archivedIngredient, 'archived'), true);
 
 const database = new DatabaseSync(':memory:');
 database.exec('PRAGMA foreign_keys = ON');
@@ -190,6 +205,29 @@ const stockQueue = database.prepare(
 assert.equal(stockQueue[0].depends_on_operation_id, ingredient.operationId);
 assert.equal(stockQueue[1].depends_on_operation_id, purchase.operationId);
 assert.ok(adjustment.operationId);
+database.prepare(`INSERT INTO operating_expenses
+  (id, category, description, amount_centimes, recurrence, effective_date,
+   status, revision, created_at, transaction_type)
+  VALUES ('stale-expense', 'Old', 'Old cloud copy', 1, 'one-time',
+    '2026-08-01', 'active', 1, 1, 'recorded')`).run();
+database.prepare(`INSERT INTO compensation_periods
+  (id, staff_profile_id, monthly_amount_centimes, effective_start_month,
+   revision, created_at)
+  VALUES ('stale-compensation', 'manager-local', 1, '2025-01', 1, 1)`).run();
+await pruneSavedExpensesFromDatabase(adapter, []);
+await pruneSavedCompensationFromDatabase(adapter, []);
+assert.equal(database.prepare(
+  "SELECT COUNT(*) count FROM operating_expenses WHERE id = 'stale-expense'",
+).get().count, 0);
+assert.equal(database.prepare(
+  "SELECT COUNT(*) count FROM compensation_periods WHERE id = 'stale-compensation'",
+).get().count, 0);
+assert.equal(database.prepare(
+  'SELECT COUNT(*) count FROM operating_expenses',
+).get().count, 3);
+assert.equal(database.prepare(
+  'SELECT COUNT(*) count FROM compensation_periods',
+).get().count, 1);
 database.close();
 
 console.log('Local-first inventory, expense, compensation, and dependency checks passed.');

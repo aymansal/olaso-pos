@@ -43,10 +43,11 @@ export function usePosData() {
   }, []);
 
   const completeOrder = useCallback(
-    async (input: Omit<CompleteSaleInput, 'cashierName'>) => {
+    async (input: Omit<CompleteSaleInput, 'cashierName' | 'cashierProfileId'>) => {
       setPrintFeedback(undefined);
       const result = await completeLocalSale({
         ...input,
+        cashierProfileId: session.staffProfileId,
         cashierName: session.name,
       });
       setPrintFeedback({

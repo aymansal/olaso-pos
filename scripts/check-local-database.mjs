@@ -252,6 +252,16 @@ try {
       .prepare("SELECT name FROM pragma_table_info('operating_expenses') WHERE name = ?")
       .get('transaction_type'),
   );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('sales') WHERE name = ?")
+      .get('actor_profile_id'),
+  );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('sale_corrections') WHERE name = ?")
+      .get('actor_profile_id'),
+  );
   database.close();
 
   database = new DatabaseSync(databasePath);

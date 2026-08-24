@@ -69,7 +69,9 @@ export function ProductsScreen({
       (product) =>
         (selectedCategoryId === 'all' ||
           product.categoryId === selectedCategoryId) &&
-        (availability === 'all' || product.status === availability) &&
+        (availability === 'all'
+          ? product.status !== 'archived'
+          : product.status === availability) &&
         (!normalizedSearch ||
           product.name.toLocaleLowerCase().includes(normalizedSearch) ||
           product.key.toLocaleLowerCase().includes(normalizedSearch)),
@@ -88,6 +90,14 @@ export function ProductsScreen({
     selectedCategoryId,
     sort,
   ]);
+  const visibleCategories = useMemo(
+    () => availability === 'archived'
+      ? management.categories
+      : management.categories.filter(
+          (category) => category.status !== 'archived',
+        ),
+    [availability, management.categories],
+  );
 
   const selectedProduct = management.products.find(
     (product) => product.id === selectedProductId,
@@ -162,7 +172,7 @@ export function ProductsScreen({
         onSwitchStaff={onSwitchStaff}
       />
       <ProductCatalogPanel
-        categories={management.categories}
+        categories={visibleCategories}
         products={visibleProducts}
         selectedCategoryId={selectedCategoryId}
         selectedProductId={selectedProductId}

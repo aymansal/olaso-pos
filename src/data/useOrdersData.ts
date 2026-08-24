@@ -270,6 +270,7 @@ export function useOrdersData() {
         await completeLocalSaleCancellation({
           originalLocalSaleId: order.localSaleId,
           reason,
+          actorProfileId: session.staffProfileId,
           actorName: session.name,
         });
         await refresh();

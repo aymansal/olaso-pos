@@ -62,6 +62,9 @@ tablet's local SQLite operational record.
 - `managementOperation.ts` owns the plain operation envelope, bounded payload
   and protected-field validation, actor/role permission validation, saved-row
   parsing, and safe operator-facing sync-failure classification.
+- `operationSession.ts` resolves each queued operation's original local/cloud
+  profile and returns that profile's protected session arguments; the staff
+  member who happens to reconnect never replaces the saved actor.
 - `printState.ts` owns persisted pending/printed/failed sale print attempts;
   `receiptPrinting.ts` coordinates one post-commit attempt and never calls sale
   or stock creation logic.
@@ -84,6 +87,9 @@ tablet's local SQLite operational record.
   actor's cumulative role permission before commit and let Convex enforce it
   again during synchronization. Never store a raw PIN or session secret in a
   management payload.
+- New sales and corrections persist their originating profile ID. Management,
+  sales, and corrections synchronize with that profile's protected session;
+  legacy label-only rows may use the active session only when its name matches.
 - Serialize transactions on the shared SQLite connection; callers may start
   concurrently but `BEGIN`/`COMMIT` boundaries may not overlap.
 - Re-read trusted product, modifier, recipe, and ingredient data inside the
@@ -111,8 +117,12 @@ tablet's local SQLite operational record.
 - Treat the shared connection context as display/readiness state only. The one
   reconnect worker owns automatic outbox and cache work.
 - Cloud clients, reads, and reconnect work require both validated internet and
-  a visible foreground activity. Hidden/offline screens keep saved content and
-  must not open or retry a WebSocket.
+  a visible and focused foreground activity. A visible document behind the
+  Samsung keyguard/notification shade is still hidden operationally and must
+  not open or retry a WebSocket.
+- Complete cloud replacement snapshots prune cloud-owned catalog, expense, and
+  compensation rows absent from the new bounded snapshot. Pending local
+  operations and stock/sale/audit history remain untouched.
 - Automatic sync reads only pending rows, releases only classified connection
   failures after a real reconnect, and retains business failures. Manual Sync
   is the deliberate all-failure recovery action.

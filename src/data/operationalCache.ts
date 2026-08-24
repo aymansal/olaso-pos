@@ -111,6 +111,41 @@ function assertBounded(snapshot: OperationalCacheSnapshot) {
   }
 }
 
+export async function pruneStaleOperationalCatalog(
+  database: Pick<SQLiteDBConnection, 'run'>,
+  snapshotUpdatedAt: number,
+) {
+  await database.run(
+    `DELETE FROM recipe_items WHERE recipe_version_id IN (
+       SELECT rv.id FROM recipe_versions rv
+       JOIN products p ON p.id = rv.product_id
+       WHERE p.status = 'archived' AND p.updated_at <> ?
+     )`,
+    [snapshotUpdatedAt],
+    false,
+  );
+  await database.run(
+    `DELETE FROM recipe_versions WHERE product_id IN (
+       SELECT id FROM products
+       WHERE status = 'archived' AND updated_at <> ?
+     )`,
+    [snapshotUpdatedAt],
+    false,
+  );
+  for (const table of [
+    'modifier_options',
+    'products',
+    'modifier_groups',
+    'categories',
+  ]) {
+    await database.run(
+      `DELETE FROM ${table} WHERE status = 'archived' AND updated_at <> ?`,
+      [snapshotUpdatedAt],
+      false,
+    );
+  }
+}
+
 export async function replaceOperationalCache(
   snapshot: OperationalCacheSnapshot,
 ) {
@@ -401,6 +436,7 @@ export async function replaceOperationalCache(
         false,
       );
     }
+    await pruneStaleOperationalCatalog(database, snapshot.updatedAt);
     for (const pending of pendingStaff.values ?? []) {
       await database.run(
         `UPDATE staff_profiles SET status = 'active'

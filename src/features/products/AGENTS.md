@@ -38,6 +38,8 @@ saved tablet presentation during an outage.
 - Offline reads and authorized writes use the saved operational cache and must
   never remain on a live loading state. Cloud acknowledgement follows later in
   dependency order.
+- Ordinary category/product lists exclude archived records. The existing
+  Archived availability filter is the deliberate way to inspect/restore them.
 
 ## Work Guidance
 

@@ -27,6 +27,7 @@ import {
 import {
   clearStaffSession,
   isPendingStaffSession,
+  loadStaffSession,
 } from './identitySession';
 import { syncPendingCatalogOperations } from './catalogSync';
 import {
@@ -55,6 +56,7 @@ import {
   syncPendingStaffOperations,
 } from './staffSync';
 import { useStaffSession } from './sessionContext';
+import { operationSessionArgs } from './operationSession.ts';
 import {
   loadTerminalSettings,
   recordSyncFailure,
@@ -77,7 +79,11 @@ type ReconnectState = {
 
 const ReconnectContext = createContext<ReconnectState | undefined>(undefined);
 
-async function toConvexSaleArgs(input: SaleSyncPayload) {
+async function toConvexSaleArgs({
+  actorProfileId: _actorProfileId,
+  actorName: _actorName,
+  ...input
+}: SaleSyncPayload) {
   return {
     ...input,
     lines: await Promise.all(input.lines.map(async ({ recipeVersionId, ...line }) => ({
@@ -162,6 +168,15 @@ export function ReconnectProvider({
     let synced = 0;
     let failed = 0;
     try {
+      const sessionFor = (
+        actor: Parameters<typeof operationSessionArgs>[0],
+      ) => operationSessionArgs(actor, session, {
+        resolveProfileId: (profileId) => resolveCloudRecordId(
+          'staff-profile',
+          profileId,
+        ),
+        loadProfileSession: loadStaffSession,
+      });
       const sessionStatus = await checkSession({
         token: session.token,
         deviceId: session.deviceId,
@@ -174,9 +189,13 @@ export function ReconnectProvider({
       else await makeConnectivityFailuresAvailable();
 
       for (let batch = 0; batch < 10; batch += 1) {
-        const staffResult = await syncPendingStaffOperations((operation) =>
+        const staffResult = await syncPendingStaffOperations(async (operation) =>
           dispatchStaffOperation(operation, {
-            sessionArgs,
+            sessionArgs: await sessionFor({
+              staffProfileId: operation.actor.staffProfileId,
+              name: operation.actor.name,
+              requiredPermission: operation.requiredPermission,
+            }),
             createStaff: (args) => createStaffAction(args as any) as any,
           }));
         synced += staffResult.synced;
@@ -212,9 +231,14 @@ export function ReconnectProvider({
         const catalog = await syncPendingCatalogOperations(async (operation) => {
           const payload = operation.payload as Record<string, any>;
           const acknowledgedAt = Date.now();
+          const actorSessionArgs = await sessionFor({
+            staffProfileId: operation.actor.staffProfileId,
+            name: operation.actor.name,
+            requiredPermission: operation.requiredPermission,
+          });
           if (operation.operationType === 'management.category.save') {
             const result = await saveCategoryMutation({
-              ...sessionArgs,
+              ...actorSessionArgs,
               ...(operation.expectedRevision === undefined
                 ? { key: String(payload.key) }
                 : {
@@ -229,7 +253,7 @@ export function ReconnectProvider({
           }
           if (operation.operationType === 'management.category.archive') {
             const result = await archiveCategoryMutation({
-              ...sessionArgs,
+              ...actorSessionArgs,
               id: await resolveCloudRecordId('category', operation.localRecordId) as Id<'categories'>,
               archived: Boolean(payload.archived),
               expectedRevision: operation.expectedRevision!,
@@ -239,7 +263,7 @@ export function ReconnectProvider({
           }
           if (operation.operationType === 'management.product.save') {
             const result = await saveProductMutation({
-              ...sessionArgs,
+              ...actorSessionArgs,
               ...(operation.expectedRevision === undefined
                 ? { key: String(payload.key) }
                 : {
@@ -259,7 +283,7 @@ export function ReconnectProvider({
           }
           if (operation.operationType === 'management.product.status') {
             const result = await setProductStatusMutation({
-              ...sessionArgs,
+              ...actorSessionArgs,
               id: await resolveCloudRecordId('product', operation.localRecordId) as Id<'products'>,
               status: payload.status, expectedRevision: operation.expectedRevision!,
               clientMutationId: operation.operationId,
@@ -268,7 +292,7 @@ export function ReconnectProvider({
           }
           if (operation.operationType === 'management.modifier.archive') {
             const result = await archiveModifierMutation({
-              ...sessionArgs,
+              ...actorSessionArgs,
               id: await resolveCloudRecordId('modifier-group', operation.localRecordId) as Id<'modifierGroups'>,
               archived: Boolean(payload.archived), expectedRevision: operation.expectedRevision!,
               clientMutationId: operation.operationId,
@@ -298,7 +322,7 @@ export function ReconnectProvider({
               };
             }));
             const result = await saveModifierMutation({
-              ...sessionArgs,
+              ...actorSessionArgs,
               ...(operation.expectedRevision === undefined
                 ? { key: String(payload.key) }
                 : {
@@ -310,7 +334,7 @@ export function ReconnectProvider({
               sortOrder: Number(payload.sortOrder), clientMutationId: operation.operationId,
               options: preparedOptions,
             });
-            const latest = await convex.query(api.modifiers.list, sessionArgs);
+            const latest = await convex.query(api.modifiers.list, actorSessionArgs);
             const cloudOptions = latest.options.filter((option) => option.groupId === result.id);
             return {
               recordType: 'modifier-group', cloudRecordId: String(result.id), acknowledgedAt,
@@ -322,7 +346,7 @@ export function ReconnectProvider({
           }
           if (operation.operationType === 'management.recipe.save') {
             const result = await saveRecipeMutation({
-              ...sessionArgs,
+              ...actorSessionArgs,
               productId: await resolveCloudRecordId('product', String(payload.productId)) as Id<'products'>,
               expectedProductRevision: operation.expectedRevision!,
               clientMutationId: operation.operationId,
@@ -337,9 +361,13 @@ export function ReconnectProvider({
         });
         synced += catalog.synced;
         failed += catalog.failed;
-        const inventory = await syncPendingInventoryOperations((operation) =>
+        const inventory = await syncPendingInventoryOperations(async (operation) =>
           dispatchInventoryOperation(operation, {
-            sessionArgs,
+            sessionArgs: await sessionFor({
+              staffProfileId: operation.actor.staffProfileId,
+              name: operation.actor.name,
+              requiredPermission: operation.requiredPermission,
+            }),
             resolve: resolveCloudRecordId,
             saveIngredient: (args) => saveIngredientMutation(args as any),
             archiveIngredient: (args) => archiveIngredientMutation(args as any),
@@ -354,9 +382,14 @@ export function ReconnectProvider({
         }
         const result = await syncPendingSales(
           async (input) => {
+            const actorSessionArgs = await sessionFor({
+              staffProfileId: input.actorProfileId,
+              name: input.actorName,
+              requiredPermission: 'pos',
+            });
             const accepted = await acceptMutation({
               ...await toConvexSaleArgs(input),
-              sessionToken: session.token,
+              sessionToken: actorSessionArgs.sessionToken,
             });
             return {
               saleId: String(accepted.saleId),
@@ -364,9 +397,19 @@ export function ReconnectProvider({
             };
           },
           async (input: SaleCancellationPayload) => {
+            const {
+              actorProfileId,
+              actorName,
+              ...cancellation
+            } = input;
+            const actorSessionArgs = await sessionFor({
+              staffProfileId: actorProfileId,
+              name: actorName,
+              requiredPermission: 'orders',
+            });
             const cancelled = await cancelMutation({
-              ...input,
-              sessionToken: session.token,
+              ...cancellation,
+              sessionToken: actorSessionArgs.sessionToken,
             });
             return cancelled.kind === 'original-pending'
               ? cancelled
@@ -379,9 +422,13 @@ export function ReconnectProvider({
         );
         synced += result.synced;
         failed += result.failed;
-        const costs = await syncPendingCostOperations((operation) =>
+        const costs = await syncPendingCostOperations(async (operation) =>
           dispatchCostOperation(operation, {
-            sessionArgs,
+            sessionArgs: await sessionFor({
+              staffProfileId: operation.actor.staffProfileId,
+              name: operation.actor.name,
+              requiredPermission: operation.requiredPermission,
+            }),
             resolve: resolveCloudRecordId,
             addExpense: (args) => addExpenseMutation(args as any),
             correctExpense: (args) => correctExpenseMutation(args as any),

@@ -522,6 +522,9 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Authorized management saves use the same immediate local feedback. A quiet
   `Waiting to sync` state may communicate pending cloud acknowledgement, but
   offline status never disables an otherwise valid management form.
+- Ordinary Products and Stock lists exclude archived records. Archived items
+  appear only after the operator deliberately selects the existing Archived
+  filter; restoration stays available there.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
 Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate layout dimensions. Respect `prefers-reduced-motion`.

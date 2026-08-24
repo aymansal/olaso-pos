@@ -124,6 +124,10 @@ decision changes.
   reads/work while the activity is hidden or offline. LOCK-01 adds one shared
   role-safe profile menu; deliberate staff switching preserves an unfinished
   App-owned cart after confirmation without clearing protected profile access.
+  LOCAL-04 adds SQLite schema 18 sale/correction actor IDs, dispatches queued
+  writes with the originating profile's protected session, prunes stale
+  replacement-cache rows while preserving pending/history rows, and requires
+  both WebView visibility and window focus before cloud work.
 
 ### Visual baseline
 

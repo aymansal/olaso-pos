@@ -286,6 +286,20 @@ snapshots back into SQLite without returning compensation or profitability to
 a manager. Expense-correction retries return the saved reversal/replacement
 pair instead of appending another pair.
 
+Every queued management operation uses its saved originating profile's
+profile-scoped protected session when Convex validates and records the write;
+the currently unlocked person only starts the worker and never replaces the
+actor. Local schema 18 also stores the originating profile ID on new sales and
+corrections so cross-staff reconnect preserves cashier/correction attribution.
+Legacy label-only rows may synchronize only when the active profile name
+matches, otherwise they remain failed rather than receiving a false actor.
+
+Successful bounded replacement snapshots remove cloud-owned catalog rows and
+saved finance rows absent from the new snapshot. Operational refresh remains
+blocked by pending local catalog/inventory work, and finance cleanup explicitly
+preserves pending expense/correction/compensation rows. Immutable sale/receipt
+snapshots and referenced stock history are not pruned.
+
 ### Idempotency
 
 Every cloud-bound operation is identified by `deviceId + operationId`; a sale
@@ -721,11 +735,20 @@ activation index only with the implemented query that uses it.
 
 ### Delete
 
-- Archive categories, products, ingredients, recipes, and modifiers referenced
-  by history.
-- Physically delete only unused draft data after validation.
-- Sales and stock movements are never hard deleted through ordinary CRUD.
-- A cancellation or refund creates explicit corrective state and movements.
+- Archive remains a reversible catalog state, but ordinary active lists never
+  mix archived rows into daily work.
+- Products may be hard-deleted after validation because completed sales own
+  immutable product, price, modifier, recipe, cost, and receipt snapshots.
+- A category may be deleted only when empty; a modifier group only when no
+  product uses it; an ingredient only when no recipe, modifier effect, purchase,
+  stock movement, valuation, or pending operation references it.
+- Allowed deletes are local-first, restart-safe, permission-checked, and
+  idempotently synchronized like other management operations. Replacement-cache
+  cleanup may remove stale unreferenced cloud copies absent from the current
+  bounded snapshot.
+- Staff profiles/identities and sales, corrections, purchases, stock movements,
+  expenses, and compensation periods are never hard-deleted through ordinary
+  CRUD. Their archive or append-only correction preserves audit/financial truth.
 
 ## Quota and performance budget
 
@@ -1009,9 +1032,10 @@ querying again inside it. One native callback feeds one React provider, which
 also rechecks on visible foreground/resume. Browser online and offline events
 may request a fresh native reading but never override it.
 
-The shared context also records whether the WebView activity is visible. Cloud
-reads and reconnect work require both validated internet and a visible
-foreground activity. An immediate browser `offline` hint may close transport
+The shared context also records whether the WebView activity is visible and has
+window focus. Cloud reads and reconnect work require validated internet plus
+both conditions; a visible document behind Samsung's keyguard or notification
+shade remains operationally hidden. An immediate browser `offline` hint may close transport
 before the native round-trip completes, but Android remains authoritative for
 application state. The data boundary replaces a closed Convex client with a
 fresh lazy client, so hidden/offline screens keep SQLite content without

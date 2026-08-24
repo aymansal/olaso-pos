@@ -121,6 +121,7 @@ const input = {
     'product-cappuccino',
     ['option-standard', 'option-oat'],
   ),
+  cashierProfileId: 'profile-test-cashier',
   cashierName: 'Test cashier',
   serviceType: 'take-away',
   paymentMethod: 'Card',
@@ -144,9 +145,10 @@ assert.equal(completed.receipt.costStatus, 'complete');
 assert.equal(completed.receipt.ingredientCostCentimes, 219);
 assert.equal(completed.receipt.lines[0].ingredientCostCentimes, 219);
 const persistedCost = database.prepare(
-  `SELECT ingredient_cost_centimes, cost_status FROM sales
+  `SELECT actor_profile_id, ingredient_cost_centimes, cost_status FROM sales
    WHERE local_sale_id = 'local-sale-check'`,
 ).get();
+assert.equal(persistedCost.actor_profile_id, 'profile-test-cashier');
 assert.equal(persistedCost.ingredient_cost_centimes, 219);
 assert.equal(persistedCost.cost_status, 'complete');
 const incompleteMenu = await loadOperationalCache(adapter);
@@ -201,6 +203,7 @@ const localCorrection = await cancelLocalSale(
   {
     originalLocalSaleId: 'local-sale-check',
     reason: 'Customer changed order',
+    actorProfileId: 'profile-test-cashier',
     actorName: 'Test cashier',
     correctedAt: now + 60_000,
   },
@@ -212,11 +215,17 @@ assert.equal(database.prepare("SELECT status FROM sales WHERE local_sale_id = 'l
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sales').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_items').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_corrections').get().count, 1);
+assert.equal(
+  database.prepare('SELECT actor_profile_id FROM sale_corrections').get().actor_profile_id,
+  'profile-test-cashier',
+);
 assert.equal(database.prepare("SELECT COUNT(*) AS count FROM stock_movements WHERE movement_type = 'cancellation'").get().count, 3);
 assert.equal(database.prepare("SELECT local_stock_delta FROM ingredients WHERE id = 'ingredient-oat'").get().local_stock_delta, 0);
 await assert.rejects(
   cancelLocalSale(adapter, {
-    originalLocalSaleId: 'local-sale-check', reason: 'Again', actorName: 'Test cashier', correctedAt: now + 60_000,
+    originalLocalSaleId: 'local-sale-check', reason: 'Again',
+    actorProfileId: 'profile-test-cashier', actorName: 'Test cashier',
+    correctedAt: now + 60_000,
   }),
   /Only a completed order|already has a correction/,
 );

@@ -124,8 +124,8 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 through 05 are complete. Goal 06 is active; LOCK-01 is complete and
-LOCAL-04 is the next pending card.
+Goals 03 through 05 are complete. Goal 06 is active; LOCAL-04 is in progress
+and DELETE-01 is the planned discussion afterward.
 
 ## Goal 04 — Costs and profitability
 
@@ -181,6 +181,7 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 | CATALOG-01 | Add an offline category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
 | LOCK-01 | Give every staff role a direct Lock / Switch staff action without exposing owner Settings. |
 | LOCAL-04 | Prove all authorized management through flight mode, restart, ordered reconnect, duplicate retry, failure recovery, and role isolation. |
+| DELETE-01 | Add safe permanent deletion, explicit archive/delete choices, historical-snapshot preservation, and stale archived-cache cleanup. |
 | HARD-01 | Establish repeatable five-run cold/warm startup, navigation, APK, WebView, bundle, and readiness baselines after functional work is stable. |
 | NAV-01 | Preserve each visited authorized screen, keep saved content visible during refresh, and eliminate repeat page/image reconstruction. |
 | HARD-02 | Finalize the app icon and continuous branded launch, with optional measured logo motion after an immediate static first frame. |
@@ -209,9 +210,8 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Complete only LOCAL-04. Run every authorized catalog, recipe, inventory,
-purchase, adjustment, expense, compensation, and staff/PIN workflow through
-the real tablet UI in flight mode; force-close/restart, reconnect in dependency
-order, repeat retry, reconcile exact local/cloud effects, and prove offline and
-online role isolation. Any reproduced bug pauses the matrix until root-fixed
-and regression-proved. Do not begin HARD-01 or later work.
+Finish, commit, and push only LOCAL-04, then stop for the owner's requested
+deletion discussion. DELETE-01 is the planned next card and remains unactivated;
+it adds concise permanent-delete choices for safe catalog records while
+preserving order snapshots and immutable staff/finance/stock audit history.
+Do not begin DELETE-01, HARD-01, or later work without the owner's direction.
