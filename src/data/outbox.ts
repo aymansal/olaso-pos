@@ -9,6 +9,7 @@ export type PendingOutboxEntry = {
   deviceId: string;
   operationType: string;
   localRecordId: string;
+  dependsOnOperationId?: string;
   attemptCount: number;
   lastError?: string;
   createdAt: number;
@@ -21,24 +22,46 @@ export async function listPendingOutboxFromDatabase(
   database: OutboxDatabase,
   now = Date.now(),
   limit = 25,
+  operationTypes?: readonly string[],
 ): Promise<PendingOutboxEntry[]> {
   if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
     throw new Error('Outbox limit must be an integer from 1 to 100.');
   }
+  if (operationTypes && (
+    operationTypes.length < 1
+    || operationTypes.length > 20
+    || operationTypes.some((value) => !/^[a-z][a-z0-9.-]{1,63}$/.test(value))
+  )) {
+    throw new Error('Outbox operation types are invalid.');
+  }
+  const typeFilter = operationTypes
+    ? `AND candidate.operation_type IN (${operationTypes.map(() => '?').join(', ')})`
+    : '';
   const result = await database.query(
     `SELECT operation_id, device_id, operation_type, local_record_id,
-      attempt_count, last_error, created_at, available_at
-     FROM outbox
-     WHERE state = 'pending' AND available_at <= ?
-     ORDER BY created_at
+      depends_on_operation_id, attempt_count, last_error, created_at, available_at
+     FROM outbox AS candidate
+     WHERE candidate.state = 'pending' AND candidate.available_at <= ?
+       ${typeFilter}
+       AND (
+         candidate.depends_on_operation_id IS NULL
+         OR NOT EXISTS (
+           SELECT 1 FROM outbox AS dependency
+           WHERE dependency.operation_id = candidate.depends_on_operation_id
+         )
+       )
+     ORDER BY candidate.created_at, candidate.rowid
      LIMIT ?`,
-    [now, limit],
+    [now, ...(operationTypes ?? []), limit],
   );
   return (result.values ?? []).map((row) => ({
     operationId: String(row.operation_id),
     deviceId: String(row.device_id),
     operationType: String(row.operation_type),
     localRecordId: String(row.local_record_id),
+    dependsOnOperationId: row.depends_on_operation_id
+      ? String(row.depends_on_operation_id)
+      : undefined,
     attemptCount: Number(row.attempt_count),
     lastError: row.last_error ? String(row.last_error) : undefined,
     createdAt: Number(row.created_at),
@@ -46,8 +69,17 @@ export async function listPendingOutboxFromDatabase(
   }));
 }
 
-export async function listPendingOutbox(now = Date.now(), limit = 25) {
-  return listPendingOutboxFromDatabase(await openLocalDatabase(), now, limit);
+export async function listPendingOutbox(
+  now = Date.now(),
+  limit = 25,
+  operationTypes?: readonly string[],
+) {
+  return listPendingOutboxFromDatabase(
+    await openLocalDatabase(),
+    now,
+    limit,
+    operationTypes,
+  );
 }
 
 export function recordOutboxFailure(

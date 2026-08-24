@@ -24,21 +24,25 @@ card order, dependencies, and completion gates.
 
 No implementation card is done until all applicable evidence is recorded:
 
-1. Its focused automated checks pass, including the smallest new check for any
+1. Before code, its official Android/Capacitor research checkpoint records the
+   applicable native platform options, the selected native-versus-React/data
+   boundary, rejected alternatives, and target-device implications. The card
+   then follows that decision and proves it on the Galaxy Tab A9.
+2. Its focused automated checks pass, including the smallest new check for any
    non-trivial business rule.
-2. npm run build passes after source, theme, styling, or bundled-asset changes.
-3. Native changes pass npm run check:android, npm run android:sync, and the
+3. npm run build passes after source, theme, styling, or bundled-asset changes.
+4. Native changes pass npm run check:android, npm run android:sync, and the
    appropriate APK build.
-4. The current APK is installed on the connected physical Galaxy Tab A9 and a
+5. The current APK is installed on the connected physical Galaxy Tab A9 and a
    card-specific smoke test passes. UI cards also pass a focused 1340 by 800
    visual and touch check; printer cards also produce and inspect real paper.
-5. Browser console and Android logcat contain no error or warning introduced by
+6. Browser console and Android logcat contain no error or warning introduced by
    the card.
-6. Offline, restart, retry, migration, security, or hardware recovery is tested
+7. Offline, restart, retry, migration, security, or hardware recovery is tested
    when the card can affect it.
-7. Graphify is refreshed after structural code changes, authorities and the
+8. Graphify is refreshed after structural code changes, authorities and the
    ledger are current, and the exact next action is recorded.
-8. The card commit is pushed directly to `origin/main` and its full SHA is
+9. The card commit is pushed directly to `origin/main` and its full SHA is
    recorded in WORK_LEDGER.md.
 
 Pure planning or documentation-only cards validate their links, facts, and

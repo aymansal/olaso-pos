@@ -206,10 +206,16 @@ try {
       .prepare(
         `SELECT COUNT(*) AS count FROM sqlite_master
          WHERE type = 'table' AND name IN
-           ('inventory_purchases', 'staff_profiles', 'compensation_periods', 'operating_expenses')`,
+           ('inventory_purchases', 'staff_profiles', 'compensation_periods',
+            'operating_expenses', 'management_operations')`,
       )
       .get().count,
-    4,
+    5,
+  );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('outbox') WHERE name = ?")
+      .get('depends_on_operation_id'),
   );
   database.close();
 

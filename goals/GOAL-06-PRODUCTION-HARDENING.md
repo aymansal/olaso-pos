@@ -120,6 +120,13 @@ polishing screens or data paths that later functional work would change.
   this single-owner project.
 - Every card commit begins with its card ID and is pushed directly to
   `origin/main` before the card is done.
+- Before every implementation card, search current official Android and
+  Capacitor/plugin documentation for the affected platform behavior. Record the
+  applicable native option, the selected native-versus-React/data boundary,
+  why rejected alternatives do not fit this tablet/product, and the physical
+  test that will prove the decision. Never treat the packaged app as an ordinary
+  website, and never add native code merely to call an existing correct native
+  plugin through Capacitor.
 - Every implementation card follows PLAN.md, including focused checks, APK
   installation, physical Galaxy Tab A9 testing, and clean console/logcat
   evidence. Printer-impacting work also receives real paper verification.
@@ -128,7 +135,7 @@ polishing screens or data paths that later functional work would change.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | in progress | Graphify preflight and authority/DOX reread complete; implementation pending |
+| LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | in progress | Implementation/device verification complete; commit and pushed SHA pending |
 | LOCAL-02 | Make catalog and recipe management fully local-first | pending | — |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | pending | — |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
@@ -151,6 +158,13 @@ polishing screens or data paths that later functional work would change.
 
 ### LOCAL-01 — Local-first management foundation
 
+- Android research decision: follow Android's offline-first local-source-of-
+  truth and lazy-write guidance using the already-installed native SQLite
+  Capacitor plugin and explicit transactions. Keep the authenticated foreground
+  reconnect worker; do not add Room, a second database, or WorkManager while
+  staff-authorized cloud work is forbidden when locked. Revisit WorkManager only
+  if synchronization must continue after the app exits and the security policy
+  provides a native background credential boundary.
 - Extend the established serialized SQLite/outbox path instead of adding a
   state library, second database, generic repository layer, or direct offline
   clone of every Convex function.
@@ -440,11 +454,62 @@ polishing screens or data paths that later functional work would change.
   HARD-02.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: trace every existing outbox/sync/management caller, then
-  implement the smallest local management operation foundation and focused
-  migration/restart/idempotency/permission checks without starting LOCAL-02.
+- Exact next action: commit and push the verified LOCAL-01 implementation,
+  record its full SHA, then leave LOCAL-02 pending until the owner continues.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-01 implementation and device verification complete
+
+- Added ordered SQLite migration 13 with immutable management-operation audit/
+  payload/acknowledgement rows and optional outbox parent dependencies. Existing
+  sale synchronization now requests only sale/correction outbox types, so later
+  management work cannot starve or be miscounted as a sale batch.
+- Added separate pure `managementOperation.ts` validation/permission/failure
+  rules and `localManagement.ts` persistence helpers. Local enqueue validates
+  the device, stable IDs, actor, cumulative role permission, expected revision,
+  bounded payload, protected-field exclusion, dependency, and idempotent retry.
+  Acknowledgement preserves cloud mapping/audit and releases dependent work;
+  missing/corrupt pairs and mismatched acknowledgements fail safely.
+- `check:local-management`, `check:local`, `check:reconnect`, `check:settings`,
+  `check:offline`, `check:pos`, TypeScript, production build, Android static/
+  sync, and the 140-task Android beta pass. `check:orders` and `check:sales`
+  stopped before data work because this machine has no six-digit development
+  restore PIN; no secret was retrieved or printed and LOCAL-01 changes no cloud
+  sale/correction function.
+- The final APK installed over the real SM-X115 data. Native SQLite logged the
+  12-to-13 upgrade, the existing database and saved operational/identity state
+  remained present, and an awake cold launch reached the fitted Olaso Lock
+  screen without a fatal, uncaught, or SQLite migration error.
+- Full semantic Graphify refresh was unavailable without an external LLM key;
+  `graphify update .` completed the required no-key code refresh to 2,911 nodes,
+  6,672 edges, and 150 communities.
+- Exact next action: commit/push LOCAL-01 on `main`, record the full SHA in the
+  ledger/board, and keep LOCAL-02 pending.
+
+### 2026-08-24 — Android-native research gate added
+
+- The owner requires every remaining card to research official Android-native
+  solutions before implementation so the APK is designed as an Android product,
+  not treated as a browser page. Added this as a universal PLAN/Goal 06/DOX gate
+  with a recorded native-versus-React decision and physical-tablet proof.
+- LOCAL-01 research used Android's current offline-first/data-layer and
+  persistent-work guidance plus the Capacitor Community SQLite transaction/API
+  documentation. The official pattern is local database source of truth plus a
+  durable queued lazy write, which matches the implemented SQLite operation and
+  outbox foundation.
+- Room is rejected because the existing Capacitor plugin already provides
+  native Android SQLite and transactions; a second database stack would create
+  two sources of truth. WorkManager is deferred because Olaso permits cloud work
+  only inside an active staff session and does not require upload after the app
+  exits; local work already survives in SQLite.
+- Sources: https://developer.android.com/topic/architecture/data-layer/offline-first,
+  https://developer.android.com/topic/architecture/data-layer,
+  https://developer.android.com/develop/background-work/background-tasks/persistent,
+  and https://github.com/capacitor-community/sqlite/blob/master/docs/SQLiteTransaction.md.
+- Exact next action: review the existing LOCAL-01 implementation against this
+  boundary, finish the native install-over migration/device evidence, then run
+  closeout checks and Graphify refresh.
 
 ### 2026-08-24 — LOCAL-01 activated
 

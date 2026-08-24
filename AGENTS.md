@@ -80,6 +80,13 @@ decision changes.
 
 - Use the smallest correct change and existing dependencies before adding code,
   abstractions, or packages.
+- Before implementing every card, research the current official Android
+  guidance and the official Capacitor/plugin guidance for any affected storage,
+  lifecycle, background-work, networking, security, update, rendering, or
+  hardware boundary. Record what belongs in native Android, what remains in the
+  React/data layer, and why. Treat Olaso as an Android product, not a browser
+  page, but do not add Kotlin or a native dependency when the existing native
+  Capacitor boundary already provides the correct behavior.
 - Keep each named reusable or independently interactive React component in its
   own `.tsx` file with a colocated `.module.css` when it owns styles.
 - Keep screen layout in screen modules and child internals in child modules.
@@ -100,6 +107,11 @@ decision changes.
   roles, and same-day append-only whole-sale cancellation corrections; do not
   imply that discounts, refunds, bank reversals, or production release
   acceptance exist.
+- Goal 06 LOCAL-01 adds SQLite schema 13 and the shared local-first management
+  operation/outbox foundation with actor/role evidence, bounded non-secret
+  payloads, parent dependencies, acknowledgement mapping, and safe retry state.
+  It does not yet make any Product, Stock, cost, or staff form writable offline;
+  those remain LOCAL-02, LOCAL-03, and STAFF-01 work.
 
 ### Visual baseline
 
@@ -112,6 +124,9 @@ decision changes.
 
 ## Verification
 
+- Every implementation card records its Android-native research decision and
+  verifies the chosen boundary on the physical Galaxy Tab A9. Official research
+  is a pre-implementation gate, not a substitute for device evidence.
 - Run `npm run build` after source, theme, or styling changes.
 - For visual changes, inspect the affected screen at 1340 × 800 and confirm no
   clipping, overflow, console errors, or console warnings.

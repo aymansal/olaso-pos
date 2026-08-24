@@ -39,6 +39,13 @@ tablet's local SQLite operational record.
   parsing, sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
   immutable receipt snapshots, and outbox acknowledgement/failure state.
+- `localManagement.ts` owns the shared local-first management operation
+  persistence: atomic outbox enqueue, optional parent dependency, cloud
+  acknowledgement mapping, and safe retry/failure updates. Domain cards still
+  own their business validation and record changes.
+- `managementOperation.ts` owns the plain operation envelope, bounded payload
+  and protected-field validation, actor/role permission validation, saved-row
+  parsing, and safe operator-facing sync-failure classification.
 - `printState.ts` owns persisted pending/printed/failed sale print attempts;
   `receiptPrinting.ts` coordinates one post-commit attempt and never calls sale
   or stock creation logic.
@@ -53,6 +60,14 @@ tablet's local SQLite operational record.
 - Store money in integer centimes and ingredient quantities in integer base
   units.
 - Commit related local sale, stock, and outbox effects in one transaction.
+- Commit each management domain change, immutable management-operation record,
+  and outbox entry in one serialized transaction. A dependency remains blocked
+  while its parent outbox row exists; acknowledgement deletes only the parent
+  outbox row and preserves its audit/mapping record.
+- Management operation types use the `management.` prefix. Enforce the local
+  actor's cumulative role permission before commit and let Convex enforce it
+  again during synchronization. Never store a raw PIN or session secret in a
+  management payload.
 - Serialize transactions on the shared SQLite connection; callers may start
   concurrently but `BEGIN`/`COMMIT` boundaries may not overlap.
 - Re-read trusted product, modifier, recipe, and ingredient data inside the
@@ -96,7 +111,8 @@ tablet's local SQLite operational record.
 
 ## Verification
 
-- Run `npm run check:local`, `npm run check:sales`, `npm run check:settings`,
+- Run `npm run check:local`, `npm run check:local-management`,
+  `npm run check:sales`, `npm run check:settings`,
   `npm run check:reconnect`, `npm run check:offline`, `npx tsc -b`, and
   `npm run build`.
 - Run `npm run android:sync` after changing Capacitor configuration or native

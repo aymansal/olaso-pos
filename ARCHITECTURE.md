@@ -1,8 +1,8 @@
 ---
-version: 0.5
+version: 0.6
 name: Olaso POS Architecture
 status: active
-updated: 2026-08-23
+updated: 2026-08-24
 authority: Technical architecture, persistence, synchronization, performance, and code ownership
 ---
 
@@ -324,6 +324,37 @@ This synchronization model is optimized for one active POS tablet.
 Multi-device conflict resolution is added only when a second POS device is
 approved. Cloud idempotency and transactional mutations are retained because
 they are required even for one device.
+
+### Android-native implementation decision
+
+Every card that affects storage, lifecycle, background work, connectivity,
+security, updates, rendering, or hardware starts with current official Android
+and Capacitor/plugin research. The chosen native-versus-React/data boundary and
+physical Galaxy Tab A9 proof are recorded before completion. Native code is
+required when Android owns the behavior; it is not added when an existing
+Capacitor plugin already exposes the correct native facility.
+
+LOCAL-01 follows Android's offline-first local-source-of-truth and lazy-write
+model. `@capacitor-community/sqlite` is the one native Android SQLite boundary;
+the React data layer uses its explicit transaction API to save the domain change,
+immutable management operation, and outbox row together. Room or another ORM/
+database is not added because that would create a second source of truth.
+
+WorkManager remains deferred for sale and management synchronization. Android
+recommends it for persistent work that must continue after the process exits or
+the device restarts, but Olaso deliberately performs staff-authorized cloud work
+only while an authenticated session is active and never while locked. The
+SQLite queue already preserves work across exit/reboot; the one foreground
+reconnect worker drains it after unlock. Revisit WorkManager only if the product
+later requires background upload and defines a safe native credential/session
+boundary.
+
+Primary references:
+
+- https://developer.android.com/topic/architecture/data-layer/offline-first
+- https://developer.android.com/topic/architecture/data-layer
+- https://developer.android.com/develop/background-work/background-tasks/persistent
+- https://github.com/capacitor-community/sqlite/blob/master/docs/SQLiteTransaction.md
 
 ## Cloud data model
 

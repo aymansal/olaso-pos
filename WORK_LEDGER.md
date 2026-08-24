@@ -99,11 +99,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Universal Android rule: before every remaining card, research current official
+  Android and applicable Capacitor/plugin guidance, record the native-versus-
+  React/data boundary and rejected alternatives, then prove the choice on the
+  physical tablet. Do not treat the APK as a web page or force unnecessary
+  Kotlin when a correct native plugin boundary already exists.
 - Goal 06 is active on `main`; LOCAL-01 is the only in-progress card. Graphify
-  preflight and the complete applicable DOX/plan/authority reread are complete.
-  Exact next action: trace current SQLite/outbox/reconnect/management callers,
-  implement the minimum reusable local management-operation foundation, add its
-  focused checks, and do not start LOCAL-02.
+  preflight, Android-native research, implementation, focused/full local checks,
+  production build, final Android beta, install-over schema-13 migration, awake
+  physical Lock smoke, and no-key code Graphify refresh are complete. Exact next
+  action: commit/push LOCAL-01, record the full SHA, and keep LOCAL-02 pending.
 - Owner sequencing decision: the manual screen-by-screen critique and UI polish
   are the final change phase. LOCAL-01 through HARD-07 must first make the app
   fully functional, offline-capable, fast, recoverable, secure, and releasable.
@@ -823,6 +828,48 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-01 implementation ready to commit
+
+- SQLite migration 13 adds durable immutable management-operation rows and
+  optional outbox dependencies without changing existing sale/stock data.
+  Separate small data files own pure envelope/permission/secret validation and
+  SQLite enqueue/list/acknowledge/failure persistence; domain business writes
+  remain explicitly outside this foundation card.
+- The focused check proves migration/restart survival, immutable retry IDs,
+  manager/owner/cashier permission boundaries, protected-key rejection without
+  false-positive ordinary fields, parent blocking/release, connection retry,
+  cloud mapping, mismatched acknowledgement rejection, and missing-pair stops.
+- Existing sale/correction synchronization filters its own outbox types, so
+  future management entries cannot consume or starve the ten-sale batch.
+- Local-management/local/reconnect/settings/offline/POS/TypeScript/build and
+  Android beta checks pass. Cloud-integrated Orders/Sales checks require a
+  six-digit development restore PIN that is intentionally absent; they stopped
+  before data work and no secret was retrieved. No Convex sale code changed.
+- The real SM-X115 accepted install-over migration 12-to-13 and retained its
+  existing database and app identity; the fitted Lock screen opens on an awake
+  cold launch with no fatal/uncaught/SQLite migration error. Graphify code
+  refresh is 2,911 nodes/6,672 edges/150 communities.
+- Exact next action: commit and push LOCAL-01, record its full SHA, then leave
+  LOCAL-02 pending until the owner continues.
+
+### 2026-08-24 — Android-native research required for every card
+
+- The owner requires official Android-native research before every card. PLAN,
+  Goal 06, and root DOX now require the applicable native options, selected
+  boundary, rejected alternatives, and physical Galaxy Tab A9 proof before a
+  card can finish.
+- LOCAL-01 official research confirms the correct Android offline-first pattern:
+  SQLite is the immediate source of truth, critical writes save locally first,
+  and a durable queue synchronizes later. The existing Capacitor Community
+  SQLite plugin already supplies native Android SQLite/transactions.
+- Rejected Room because it would add a second database/source of truth. Deferred
+  WorkManager because Olaso deliberately performs no staff-authorized cloud work
+  while locked and does not require upload after process exit; the durable local
+  data waits safely for the authenticated foreground reconnect worker.
+- The already-running Android beta completed successfully with 140 tasks. Exact
+  next action: verify install-over migration 13 and preserved tablet data, then
+  finish LOCAL-01 regression/Graphify/ledger/commit/push.
 
 ### 2026-08-24 — Goal 06 LOCAL-01 started
 

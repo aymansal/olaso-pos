@@ -884,7 +884,11 @@ export async function syncPendingSales(
     | { kind: 'original-pending' }
   >,
 ) {
-  const entries = await listPendingOutbox(Date.now(), 10);
+  const entries = await listPendingOutbox(
+    Date.now(),
+    10,
+    ['sale-completed', 'sale-cancelled'],
+  );
   let synced = 0;
   let failed = 0;
   for (const entry of entries) {

@@ -406,6 +406,43 @@ export const localMigrations = [
         ON sale_corrections(sync_state, corrected_at)`,
     ],
   },
+  {
+    toVersion: 13,
+    statements: [
+      `ALTER TABLE outbox
+        ADD COLUMN depends_on_operation_id TEXT`,
+      `CREATE INDEX outbox_by_dependency
+        ON outbox(depends_on_operation_id, state, available_at)`,
+      `CREATE TABLE management_operations (
+        operation_id TEXT PRIMARY KEY NOT NULL,
+        device_id TEXT NOT NULL,
+        operation_type TEXT NOT NULL,
+        local_record_id TEXT NOT NULL,
+        depends_on_operation_id TEXT,
+        required_permission TEXT NOT NULL CHECK (
+          required_permission IN (
+            'products', 'stock', 'expenses', 'compensation', 'staff'
+          )
+        ),
+        actor_profile_id TEXT NOT NULL,
+        actor_name TEXT NOT NULL,
+        actor_role TEXT NOT NULL CHECK (
+          actor_role IN ('owner', 'manager', 'cashier')
+        ),
+        expected_revision INTEGER CHECK (expected_revision > 0),
+        payload_json TEXT NOT NULL CHECK (
+          length(payload_json) BETWEEN 2 AND 65536
+        ),
+        cloud_record_id TEXT,
+        created_at INTEGER NOT NULL CHECK (created_at >= 0),
+        acknowledged_at INTEGER CHECK (acknowledged_at >= 0)
+      )`,
+      `CREATE INDEX management_operations_by_record
+        ON management_operations(operation_type, local_record_id, created_at)`,
+      `CREATE INDEX management_operations_by_acknowledgement
+        ON management_operations(acknowledged_at, created_at)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =
