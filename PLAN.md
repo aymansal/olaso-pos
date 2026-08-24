@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-02 done, LOCAL-03 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-03 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -208,7 +208,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Complete LOCAL-02 as the only in-progress card: make category, product, modifier,
-availability/price, and recipe writes local-first, immediately visible to
-Products/POS, restart-safe, and dependency-ordered for exactly-once reconnect.
-Do not begin LOCAL-03 or later work.
+Complete LOCAL-03 as the only in-progress card: trace the existing ingredient,
+purchase, adjustment, expense, compensation, Stock, Reports, SQLite, and Convex
+paths, then make every authorized write local-first and exactly-once without
+double-counting stock or cost. Do not begin STAFF-01 or later work.

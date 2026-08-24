@@ -17,7 +17,7 @@ remaining goal and card sequence.
 | --- | --- |
 | LOCAL-01 — Shared local-first management identity/outbox/sync foundation | done — `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main` |
 | LOCAL-02 — Local-first catalog and recipes | done — `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main` |
-| LOCAL-03 — Local-first inventory, expenses, and compensation | pending |
+| LOCAL-03 — Local-first inventory, expenses, and compensation | in progress |
 | STAFF-01 — Offline staff creation and protected initial PIN | pending |
 | CATALOG-01 — Offline category artwork | pending |
 | LOCK-01 — Role-safe Lock / Switch staff | pending |
@@ -99,6 +99,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- LOCAL-03 is the only in-progress card. Official Android offline-first/data-
+  layer, WorkManager, and Capacitor Community SQLite transaction guidance were
+  reviewed after the Graphify/DOX/plan/ledger/authority preflight. SQLite stays
+  the immediate source of truth; exact domain changes plus management outbox
+  commit atomically and the authenticated foreground worker synchronizes later.
+  Room, another database, WorkManager under the locked-session policy, direct
+  UI network writes, and last-write-wins are rejected. Exact next action: trace
+  every ingredient, purchase, adjustment, expense, compensation, Stock,
+  Reports, local schema, and Convex caller before implementing local domain
+  operations. The mandatory bug rule overrides this work if any failure appears.
 - LOCAL-02 is complete and pushed to `origin/main` at
   `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29`. Its local catalog/recipe
   implementation builds and opens on the physical tablet. A failed test APK had rewritten
@@ -130,9 +140,8 @@ remaining goal and card sequence.
   React/data boundary and rejected alternatives, then prove the choice on the
   physical tablet. Do not treat the APK as a web page or force unnecessary
   Kotlin when a correct native plugin boundary already exists.
-- Goal 06 is active on `main`; LOCAL-01 is complete at
-  `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`, and LOCAL-02 is
-  the only active card.
+- Goal 06 is active on `main`; LOCAL-01 and LOCAL-02 are complete, and LOCAL-03
+  is the only active card.
 - Owner sequencing decision: the manual screen-by-screen critique and UI polish
   are the final change phase. LOCAL-01 through HARD-07 must first make the app
   fully functional, offline-capable, fast, recoverable, secure, and releasable.
@@ -852,6 +861,24 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-03 started with native local-first decision
+
+- Activated only LOCAL-03 after the owner's instruction. LOCAL-01 and LOCAL-02
+  remain done; STAFF-01 and every later card remain pending.
+- Graphify and the complete applicable DOX/plan/ledger chain were read before
+  manual inspection. Official Android guidance confirms a persisted local
+  source of truth plus lazy queued writes for critical offline operations; the
+  existing Capacitor SQLite explicit transaction is the selected native path.
+- LOCAL-03 must preserve integer base-unit quantities, integer centimes,
+  append-only stock/purchase/valuation history, recurring effective periods,
+  owner-only compensation, immediate saved Stock/Reports state, and exactly-once
+  reconnect. No Room, WorkManager, second database, state library, direct UI
+  network mutation, or last-write-wins is added.
+- Exact next action: inspect the existing ingredient/purchase/adjustment/
+  expense/compensation callers and implement the smallest complete local
+  operations and reconnect handlers. Any bug pauses the card until fixed and
+  regression-proved.
 
 ### 2026-08-24 — Owner made root-cause bug fixing non-negotiable
 

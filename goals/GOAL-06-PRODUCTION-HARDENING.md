@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCAL-02 is done and LOCAL-03 is next, with no card currently in progress
+**Status:** active; LOCAL-03 is the only card in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -141,7 +141,7 @@ polishing screens or data paths that later functional work would change.
 | --- | --- | --- | --- |
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
 | LOCAL-02 | Make catalog and recipe management fully local-first | done | `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main`; automated, Convex, Android, physical offline/restart/reconnect, cleanup, and Graphify evidence recorded in WORK_LEDGER.md |
-| LOCAL-03 | Make inventory, expense, and compensation management fully local-first | pending | — |
+| LOCAL-03 | Make inventory, expense, and compensation management fully local-first | in progress | Official Android/Capacitor research, Graphify, DOX, plan, ledger, and authority preflight complete; implementation pending |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
@@ -475,9 +475,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 and LOCAL-02 are done, no card is
-  currently in progress, and LOCAL-03 is next subject to the mandatory bug
-  rule.
+- Goal 06 remains active on `main`; LOCAL-01 and LOCAL-02 are done and LOCAL-03
+  is the only card in progress, subject to the mandatory bug rule.
 - Owner review has identified two non-negotiable production gaps: management
   writes are currently online-only despite the required offline operation, and
   top-level navigation currently destroys/reconstructs screens, data hooks, and
@@ -492,12 +491,41 @@ polishing screens or data paths that later functional work would change.
   accept the error; the exact physical acceptance matrix is now in HARD-03.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action when the owner continues: perform LOCAL-03's official
-  Android/Capacitor research, then activate only LOCAL-03 for local-first
-  inventory, expense, and compensation management. Any reproduced bug pauses
-  that work until its root-cause fix passes the mandatory bug gate.
+- Exact next action: trace the current ingredient, purchase, adjustment,
+  expense, compensation, Stock, Reports, SQLite, and Convex callers, then
+  implement the smallest complete local domain operations and ordered reconnect
+  dispatch. Any reproduced bug pauses that work until its root-cause fix passes
+  the mandatory bug gate.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-03 activated with Android research
+
+- The owner said to continue. LOCAL-03 is the only in-progress card; STAFF-01
+  and every later card remain pending. The complete applicable DOX chain, plan,
+  Goal 06 contract, ledger, and stock/cost/permission authorities were reread,
+  and Graphify was queried before manual code inspection.
+- Current Android offline-first guidance requires a persisted local source of
+  truth and recommends lazy writes for critical data: write locally first, then
+  queue network synchronization with explicit conflict handling. The existing
+  `@capacitor-community/sqlite` plugin provides the required native transaction
+  controls for one atomic domain change plus management operation/outbox.
+- Selected boundary: keep Stock, expense, compensation, and role-appropriate
+  Reports reads on SQLite; commit each exact integer quantity/centime change and
+  outbox row in one serialized transaction; drain through the authenticated
+  foreground reconnect worker. Rejected Room/another database, a state library,
+  direct UI-to-Convex writes, and last-write-wins.
+- WorkManager remains deferred because Olaso forbids staff-authorized cloud work
+  while locked and does not require upload after process exit. SQLite preserves
+  the work across restart; the foreground worker drains it after unlock. If the
+  product later authorizes native background credentials, reconsider it then.
+- Sources: https://developer.android.com/topic/architecture/data-layer/offline-first,
+  https://developer.android.com/topic/architecture/data-layer,
+  https://developer.android.com/develop/background-work/background-tasks/persistent,
+  and https://github.com/capacitor-community/sqlite/blob/master/docs/SQLiteTransaction.md.
+- Exact next action: inspect every existing write/read/sync caller and schema
+  invariant before editing application code. Any discovered bug invokes the
+  mandatory root-cause gate.
 
 ### 2026-08-24 — Root-cause bug fixing made a mandatory plan gate
 
