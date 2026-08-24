@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-03 done; STAFF-01 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; STAFF-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -208,7 +208,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-LOCAL-03 is complete. When the owner continues, research the current official
-Android/Capacitor protected-credential boundary for STAFF-01, then activate
-only STAFF-01 for minimal owner-only offline staff creation and protected
-initial-PIN setup. Do not begin CATALOG-01 or later work.
+Complete STAFF-01 as the only in-progress card: trace the current Settings,
+staff-profile, identity, protected-session, local directory, management outbox,
+and reconnect paths, then add minimal owner-only offline staff creation with
+protected initial-PIN setup. Do not begin CATALOG-01 or later work.

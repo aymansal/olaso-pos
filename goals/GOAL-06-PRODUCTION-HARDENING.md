@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCAL-03 is done and no card is currently in progress
+**Status:** active; STAFF-01 is the only card in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -142,7 +142,7 @@ polishing screens or data paths that later functional work would change.
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
 | LOCAL-02 | Make catalog and recipe management fully local-first | done | `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main`; automated, Convex, Android, physical offline/restart/reconnect, cleanup, and Graphify evidence recorded in WORK_LEDGER.md |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | done | `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main`; full automated, Android, offline/restart/reconnect/exact-cloud, lifecycle, focus-zoom, Graphify, and documentation evidence recorded |
-| STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
+| STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | in progress | Official Android/Capacitor protected-storage research, Graphify, DOX, plan, ledger, and authority preflight complete; implementation pending |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |
@@ -473,8 +473,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-03 are done and no
-  card is currently in progress. STAFF-01 is next.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-03 are done and
+  STAFF-01 is the only card in progress.
 - Owner review has identified two non-negotiable production gaps: management
   writes are currently online-only despite the required offline operation, and
   top-level navigation currently destroys/reconstructs screens, data hooks, and
@@ -489,10 +489,47 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action when the owner continues: complete STAFF-01 official
-  Android/Capacitor protected-credential research, then activate only STAFF-01.
+- Exact next action: trace every current staff/identity/protected-storage/local-
+  directory/outbox/reconnect caller, then implement the smallest complete
+  offline staff-creation and protected provisioning flow.
 
 ## Planning journal
+
+### 2026-08-24 — STAFF-01 activated with Android security research
+
+- The owner said to continue. STAFF-01 is the only in-progress card; CATALOG-01
+  and every later card remain pending. Graphify, the complete applicable DOX,
+  plan, Goal 06 contract, ledger, and identity/Settings authorities were read
+  before code inspection.
+- Android's current Keystore guidance keeps cryptographic key material non-
+  exportable and recommends established AES-GCM primitives. The existing
+  `SecureSessionPlugin` already supplies Keystore-backed AES/GCM encryption and
+  bounded profile-scoped values, so STAFF-01 adds no dependency, second native
+  plugin, Room/database, or StrongBox requirement.
+- Selected boundary: the owner form holds the six-digit PIN only while
+  submitting; the derived offline verifier/session and the temporary pending
+  provisioning PIN live only in Android protected storage. SQLite stores the
+  non-secret local staff profile, actor/audit envelope, and PIN-free outbox.
+  Reconnect under an authenticated owner reads the protected PIN briefly,
+  creates the cloud profile and credential idempotently, provisions the cloud
+  session for this tablet, maps the local/cloud IDs, then removes pending
+  protected material.
+- WorkManager remains rejected because staff-authorized synchronization is
+  forbidden while locked and the SQLite/protected records already survive
+  process/device restart. StrongBox is not required for the accepted physical-
+  custody threat model and would add device-specific failure/performance paths.
+- Sources: https://developer.android.com/privacy-and-security/keystore,
+  https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec,
+  https://developer.android.com/privacy-and-security/cryptography,
+  https://github.com/ionic-team/capacitor/blob/main/android/capacitor/src/main/java/com/getcapacitor/PluginHandle.java,
+  and https://github.com/ionic-team/capacitor/blob/main/core/src/runtime.ts.
+- Physical acceptance will create a uniquely named profile in flight mode,
+  restart the app/tablet, sign into that profile offline with its exact role,
+  reconnect under the owner, prove one cloud profile/identity/session and zero
+  pending operation, then repeat reconnect and clean up through ordinary
+  archive/reconciliation paths.
+- Exact next action: inspect every existing caller/invariant before editing
+  application code; any reproduced bug invokes the mandatory root-cause gate.
 
 ### 2026-08-24 — LOCAL-03 complete on origin/main
 

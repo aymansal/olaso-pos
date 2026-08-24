@@ -18,7 +18,7 @@ remaining goal and card sequence.
 | LOCAL-01 — Shared local-first management identity/outbox/sync foundation | done — `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main` |
 | LOCAL-02 — Local-first catalog and recipes | done — `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main` |
 | LOCAL-03 — Local-first inventory, expenses, and compensation | done — `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main` |
-| STAFF-01 — Offline staff creation and protected initial PIN | pending |
+| STAFF-01 — Offline staff creation and protected initial PIN | in progress |
 | CATALOG-01 — Offline category artwork | pending |
 | LOCK-01 — Role-safe Lock / Switch staff | pending |
 | LOCAL-04 — Offline management closeout | pending |
@@ -99,6 +99,13 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- STAFF-01 is the only in-progress card. Official Android Keystore,
+  KeyGenParameterSpec, cryptography, and current Capacitor plugin/runtime
+  guidance were reviewed after the Graphify/DOX/plan/ledger/authority preflight.
+  The existing Keystore AES-GCM plugin remains the native boundary; SQLite and
+  the ordinary outbox remain PIN-free. Exact next action: trace every current
+  staff/identity/protected-storage/directory/outbox/reconnect caller before
+  implementing local creation and later idempotent owner-authorized provisioning.
 - LOCAL-03 is complete on `origin/main` at
   `1105de62d8133448b7202dd67971ee83c56ced12`. Schema 16, local Stock/finance
   operations, independent sync domains, role-scoped Costs, backend retries,
@@ -856,6 +863,19 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — STAFF-01 started with protected-storage decision
+
+- Activated only STAFF-01 after the owner's instruction. LOCAL-01 through
+  LOCAL-03 remain done; CATALOG-01 and all later cards remain pending.
+- Official Android guidance confirms the existing non-exportable Keystore AES-
+  GCM key and profile-scoped encrypted values are the correct native boundary.
+  The React/data layer owns validation, derived offline verification, PIN-free
+  SQLite/outbox work, and owner-session reconnect orchestration.
+- No new plugin, dependency, database, WorkManager job, StrongBox requirement,
+  support recovery secret, or raw-PIN SQLite/outbox/log path is allowed. Exact
+  next action: inspect all current call sites and implement the minimal complete
+  offline create/restart/sign-in/reconnect flow.
 
 ### 2026-08-24 — LOCAL-03 complete and pushed
 
