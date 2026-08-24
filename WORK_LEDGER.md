@@ -18,7 +18,7 @@ remaining goal and card sequence.
 | LOCAL-01 — Shared local-first management identity/outbox/sync foundation | done — `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main` |
 | LOCAL-02 — Local-first catalog and recipes | done — `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main` |
 | LOCAL-03 — Local-first inventory, expenses, and compensation | done — `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main` |
-| STAFF-01 — Offline staff creation and protected initial PIN | in progress |
+| STAFF-01 — Offline staff creation and protected initial PIN | done — `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main` |
 | CATALOG-01 — Offline category artwork | pending |
 | LOCK-01 — Role-safe Lock / Switch staff | pending |
 | LOCAL-04 — Offline management closeout | pending |
@@ -99,7 +99,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- STAFF-01 is the only in-progress card and is ready to commit/push. The
+- STAFF-01 is complete and pushed to `origin/main` as
+  `9754897f4be65ffca1b572140e44fc229cad948f`. The
   owner-only minimal form, PIN-free local operation, protected immediate
   offline access, restart survival, retry-safe cloud identity/session creation,
   acknowledgement mapping, and protected cleanup are implemented and proved.
@@ -111,8 +112,9 @@ remaining goal and card sequence.
   The modal descendant-selector bug found during QA is root-fixed and checked.
   The later React empty startup gate now shows an honest status; the distinct,
   pre-existing native generic-splash/white-frame gap remains accurately owned
-  by HARD-02/HARD-03 and is not represented as solved. Exact next action: commit
-  and push STAFF-01, record its SHA, then leave CATALOG-01 pending.
+  by HARD-02/HARD-03 and is not represented as solved. No card is currently in
+  progress. Exact next action when the owner continues: research and activate
+  only CATALOG-01.
 - LOCAL-03 is complete on `origin/main` at
   `1105de62d8133448b7202dd67971ee83c56ced12`. Schema 16, local Stock/finance
   operations, independent sync domains, role-scoped Costs, backend retries,
@@ -870,6 +872,16 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — STAFF-01 complete on origin/main
+
+- `STAFF-01: add offline staff creation` is pushed directly to `origin/main` as
+  `9754897f4be65ffca1b572140e44fc229cad948f`; local `main` and the remote
+  resolved to the same SHA before this completion record.
+- STAFF-01 is done with its protected-storage, local/cloud, authorization,
+  exact-retry, browser, Android beta, flight-mode, app/tablet restart, role,
+  cleanup, log, Graphify, and documentation evidence recorded above. No card is
+  active. CATALOG-01 is the next pending card when the owner continues.
 
 ### 2026-08-24 — STAFF-01 physical matrix complete and ready to push
 

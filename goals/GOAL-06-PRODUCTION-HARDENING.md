@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; STAFF-01 is the only card in progress
+**Status:** active; STAFF-01 is done; no card is currently in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -142,7 +142,7 @@ polishing screens or data paths that later functional work would change.
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
 | LOCAL-02 | Make catalog and recipe management fully local-first | done | `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main`; automated, Convex, Android, physical offline/restart/reconnect, cleanup, and Graphify evidence recorded in WORK_LEDGER.md |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | done | `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main`; full automated, Android, offline/restart/reconnect/exact-cloud, lifecycle, focus-zoom, Graphify, and documentation evidence recorded |
-| STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | in progress | Implementation, focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local and cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass; ready to commit/push |
+| STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | done | `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main`; focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local/cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |
@@ -473,13 +473,13 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-03 are done and
-  STAFF-01 is the only card in progress.
-- Owner review has identified two non-negotiable production gaps: management
-  writes are currently online-only despite the required offline operation, and
-  top-level navigation currently destroys/reconstructs screens, data hooks, and
-  oversized product images. LOCAL-01 through LOCAL-04 and NAV-01 now own those
-  gaps explicitly; HARD-04 owns the measured image/asset follow-through.
+- Goal 06 remains active on `main`; LOCAL-01 through STAFF-01 are done and no
+  card is currently in progress. CATALOG-01 is next when the owner continues.
+- LOCAL-01 through STAFF-01 now implement local-first catalog, recipe,
+  inventory, cost, compensation, and protected staff creation. CATALOG-01,
+  LOCK-01, and LOCAL-04 remain before complete offline-management acceptance.
+  Top-level navigation still destroys/reconstructs screens, data hooks, and
+  oversized product images; NAV-01 and HARD-04 own that measured work.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
 - The pre-bridge lifecycle error is fixed early under the mandatory bug rule.
@@ -489,9 +489,8 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: trace every current staff/identity/protected-storage/local-
-  directory/outbox/reconnect caller, then implement the smallest complete
-  offline staff-creation and protected provisioning flow.
+- Exact next action when the owner continues: perform CATALOG-01's official
+  Android/Capacitor research and activate only CATALOG-01.
 
 ## Planning journal
 
