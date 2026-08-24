@@ -4,20 +4,24 @@ import {
   ChartLineUp,
   Package,
   Stack,
+  Wallet,
 } from '@phosphor-icons/react';
 import { useState } from 'react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
+import type { useCostManagement } from '../../../../data/useCostManagement';
 import { shiftBusinessDate } from '../../../../lib/date';
 import type { ReportTab } from '../../reportTypes';
 import { ProductPerformanceTable } from '../ProductPerformanceTable/ProductPerformanceTable';
 import { ReportsKpiStrip } from '../ReportsKpiStrip/ReportsKpiStrip';
 import { SalesTrendChart } from '../SalesTrendChart/SalesTrendChart';
+import { CostsPanel } from '../CostsPanel/CostsPanel';
 import styles from './ReportsAnalyticsPanel.module.css';
 
 const reportTabs = [
   { value: 'sales', label: 'Sales', icon: ChartLineUp },
   { value: 'products', label: 'Products', icon: Package },
   { value: 'stock', label: 'Stock usage', icon: Stack },
+  { value: 'costs', label: 'Costs', icon: Wallet },
 ] as const;
 
 function dateRangeLabel(fromDate: string, toDate: string) {
@@ -43,6 +47,10 @@ export function ReportsAnalyticsPanel({
   isLoading,
   error,
   onRetry,
+  showCosts,
+  costMonth,
+  onCostMonthChange,
+  costManagement,
 }: {
   tab: ReportTab;
   onTabChange: (tab: ReportTab) => void;
@@ -53,6 +61,10 @@ export function ReportsAnalyticsPanel({
   isLoading: boolean;
   error: string;
   onRetry: () => void;
+  showCosts: boolean;
+  costMonth: string;
+  onCostMonthChange: (month: string) => void;
+  costManagement: ReturnType<typeof useCostManagement>;
 }) {
   const [dateOpen, setDateOpen] = useState(false);
   const [draftFrom, setDraftFrom] = useState(fromDate);
@@ -147,7 +159,7 @@ export function ReportsAnalyticsPanel({
       ) : null}
 
       <nav className={styles.tabs} aria-label="Report type">
-        {reportTabs.map(({ value, label, icon: Icon }) => {
+        {reportTabs.filter((item) => item.value !== 'costs' || showCosts).map(({ value, label, icon: Icon }) => {
           const active = value === tab;
           return (
           <button
@@ -163,15 +175,25 @@ export function ReportsAnalyticsPanel({
         )})}
       </nav>
 
-      <ReportsKpiStrip
-        tab={tab}
-        snapshot={snapshot}
-        isLoading={isLoading}
-        error={error}
-        onRetry={onRetry}
-      />
-      <SalesTrendChart tab={tab} snapshot={snapshot} />
-      <ProductPerformanceTable tab={tab} snapshot={snapshot} />
+      {tab === 'costs' ? (
+        <CostsPanel
+          month={costMonth}
+          onMonthChange={onCostMonthChange}
+          management={costManagement}
+        />
+      ) : (
+        <>
+          <ReportsKpiStrip
+            tab={tab}
+            snapshot={snapshot}
+            isLoading={isLoading}
+            error={error}
+            onRetry={onRetry}
+          />
+          <SalesTrendChart tab={tab} snapshot={snapshot} />
+          <ProductPerformanceTable tab={tab} snapshot={snapshot} />
+        </>
+      )}
     </section>
   );
 }

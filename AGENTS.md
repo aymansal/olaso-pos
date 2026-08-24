@@ -112,8 +112,10 @@ decision changes.
   payloads, parent dependencies, acknowledgement mapping, and safe retry state.
   Goal 06 LOCAL-02 adds schema 14/15 mappings and makes category, product,
   modifier, option, and immutable recipe management local-first with ordered
-  acknowledgement and dependent sale translation. Stock, cost, and staff forms
-  remain LOCAL-03 and STAFF-01 work.
+  acknowledgement and dependent sale translation. LOCAL-03 adds schema 16 and
+  makes ingredient, purchase, stock-adjustment, expense, and compensation
+  management local-first, with role-scoped saved Costs reporting and finance
+  synchronization that cannot block sales. Staff creation remains STAFF-01.
 
 ### Visual baseline
 

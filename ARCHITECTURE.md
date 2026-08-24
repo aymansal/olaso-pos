@@ -222,6 +222,11 @@ low-stock thresholds, inventory purchases and adjustments, operating expenses,
 compensation periods, staff profiles, and protected initial PIN setup. Archive
 and correction history remains append-only where the domain requires it.
 
+Catalog and inventory operations share one dependency chain because a sale may
+use a newly saved product, recipe, ingredient, or valuation. Expense and
+compensation operations use independent finance chains, so an unrelated
+finance failure cannot block an eligible sale or operational-cache refresh.
+
 The tablet-generated record ID remains stable across retries. Convex may keep
 its own document ID, but the acknowledgement maps it to the stable tablet ID;
 references created during the same outage synchronize only after their parent
@@ -274,6 +279,12 @@ acknowledged; a pending or business-failed sale does not freeze the catalog
 because the sale already owns an immutable receipt/product snapshot and local
 stock delta. POS, Orders, Dashboard, Reports, and Settings observe its
 completion revision without treating a tab switch as a refresh request.
+
+The worker drains catalog/inventory parents before dependent sales and drains
+expense/compensation independently. It merges bounded role-appropriate finance
+snapshots back into SQLite without returning compensation or profitability to
+a manager. Expense-correction retries return the saved reversal/replacement
+pair instead of appending another pair.
 
 ### Idempotency
 
@@ -350,6 +361,18 @@ SQLite queue already preserves work across exit/reboot; the one foreground
 reconnect worker drains it after unlock. Revisit WorkManager only if the product
 later requires background upload and defines a safe native credential/session
 boundary.
+
+The fixed 1340-pixel WebView keeps Android wide-viewport/overview fitting and
+uses `user-scalable=no`; this one approved landscape layout is already known to
+fit, and small inputs cannot leave the visual viewport zoomed after the keyboard
+closes. No JavaScript zoom correction is used.
+
+Capacitor's Cordova compatibility bridge can emit native `pause`/`resume`
+scripts before its JavaScript event function exists when initial loading is
+paused. `OlasoWebView` guards only those direct lifecycle evaluations until
+`window.Capacitor.triggerEvent` exists. Ordinary bridge scripts and later
+events remain unchanged, while connection state still performs an explicit
+native read after its listener is installed.
 
 Primary references:
 
@@ -1174,6 +1197,9 @@ The smallest runnable tests must cover:
 - Offline category, product, modifier, recipe, ingredient, purchase,
   adjustment, expense, compensation, and staff/profile operations survive
   restart and synchronize exactly once in dependency order.
+- Finance failures do not block independent sales; catalog/inventory parents
+  still block only dependent sales.
+- A missing protected cloud-test PIN stops before any development reseed.
 - Offline initial PIN setup leaves no raw PIN in SQLite/outbox/logs and permits
   the new profile to sign in locally before later protected provisioning.
 - Recipe edits do not change historical sale snapshots.
@@ -1192,6 +1218,8 @@ The smallest runnable tests must cover:
   immediately.
 - Physical-tablet before/after traces cover repeated navigation, image decode,
   memory, cold/warm startup, long sleep/resume, offline use, and reconnect.
+- Focusing and closing the Android keyboard cannot change the fitted viewport
+  or create horizontal/vertical application scrolling.
 
 ### Hardware tests
 

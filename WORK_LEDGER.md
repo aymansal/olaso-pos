@@ -105,10 +105,11 @@ remaining goal and card sequence.
   the immediate source of truth; exact domain changes plus management outbox
   commit atomically and the authenticated foreground worker synchronizes later.
   Room, another database, WorkManager under the locked-session policy, direct
-  UI network writes, and last-write-wins are rejected. Exact next action: trace
-  every ingredient, purchase, adjustment, expense, compensation, Stock,
-  Reports, local schema, and Convex caller before implementing local domain
-  operations. The mandatory bug rule overrides this work if any failure appears.
+  UI network writes, and last-write-wins are rejected. Schema 16, local Stock/
+  finance operations, independent sync domains, role-scoped Costs, backend
+  retries, physical offline/restart/reconnect evidence, and the mandatory
+  lifecycle/focus-zoom bug repairs now pass. Exact next action: final Graphify,
+  checks, documentation, commit/push, and SHA recording; do not start STAFF-01.
 - LOCAL-02 is complete and pushed to `origin/main` at
   `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29`. Its local catalog/recipe
   implementation builds and opens on the physical tablet. A failed test APK had rewritten
@@ -129,12 +130,10 @@ remaining goal and card sequence.
   No card is currently in progress. Exact next action when the owner continues:
   perform LOCAL-03's official Android/Capacitor research and activate only
   LOCAL-03 for local-first inventory, expense, and compensation management.
-- Known HARD-03 production bug: a SecureSession native connectivity callback can
-  notify before Capacitor's JavaScript bridge is ready, producing an uncaught
-  `triggerEvent` error during notification-shade/screen-off pre-bridge launches.
-  The app later refreshes connection state and no data loss/crash is observed,
-  but the error is not accepted. HARD-03 now explicitly requires the native
-  readiness fix and five-state physical lifecycle matrix before completion.
+- The former HARD-03 `triggerEvent` bug was fixed early when LOCAL-03 reproduced
+  it. The actual source was Capacitor's Cordova-compatible `pause` evaluation,
+  not SecureSession. Normal, screen-off, and notification-shade launches now
+  pass without the error; HARD-03 still owns the full startup/long-sleep matrix.
 - Universal Android rule: before every remaining card, research current official
   Android and applicable Capacitor/plugin guidance, record the native-versus-
   React/data boundary and rejected alternatives, then prove the choice on the
@@ -861,6 +860,34 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-03 ready for Graphify and commit
+
+- SQLite schema 16 and separate local inventory/cost/report/sync boundaries now
+  save ingredients, thresholds, priced purchases, count adjustments, expenses,
+  expense corrections, and compensation locally with exact quantities and
+  integer centimes. Finance dependencies are isolated from sale/operational
+  dependencies; compensation/profitability stays owner-only.
+- Focused local management/catalog/inventory-cost/migration/reconnect/offline,
+  backend inventory/expense/staff/monthly-cost, permission, sales, Orders,
+  Reports, Dashboard, management, identity, TypeScript, production build,
+  Android static, JVM, sync, and 140-task beta checks pass. Expense correction
+  retry is now idempotent and the missing-PIN harness fails before reseeding.
+- Installed schema 15-to-16 over the real SM-X115 without clearing data. In
+  flight mode the full Stock and Costs workflows saved immediately, survived
+  force-stop/restart, synchronized in order after validated Wi-Fi returned, and
+  remained single-effect after a second reconnect. Exact cloud proof found one
+  archived QA ingredient (revision 4, 400 g, 800 centimes), one expense
+  original/reversal/replacement trio, and one future owner compensation period.
+  The seven historical failed sale rows remain visible and unchanged.
+- Reproduced and fixed two Android defects under the mandatory bug rule. The
+  pre-bridge error came from Capacitor's Cordova `pause` event, not the
+  SecureSession callback; `OlasoWebView` now gates that direct event until
+  `triggerEvent` exists. The fixed viewport now rejects focus/user zoom, so
+  closing the keyboard keeps the full 1340 by 800 layout. Normal, screen-off,
+  notification-shade, and search-focus/close evidence has clean focused logs.
+- Exact next action: refresh Graphify, rerun final closeout checks, commit/push
+  LOCAL-03 on `main`, record the full SHA, and leave STAFF-01 pending.
 
 ### 2026-08-24 — LOCAL-03 started with native local-first decision
 

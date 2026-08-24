@@ -4,20 +4,10 @@ import {
   recordManagementOperationFailure,
 } from './localManagement.ts';
 import { describeManagementSyncFailure } from './managementOperation.ts';
+import { CATALOG_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 
-export const CATALOG_OPERATION_TYPES = [
-  'management.category.save',
-  'management.category.archive',
-  'management.product.save',
-  'management.product.status',
-  'management.modifier.save',
-  'management.modifier.archive',
-  'management.recipe.save',
-] as const;
-
-export type CatalogOperationType = (typeof CATALOG_OPERATION_TYPES)[number];
-
-export async function syncPendingCatalogOperations(
+export async function syncPendingManagementOperations(
+  operationTypes: readonly string[],
   send: (operation: Awaited<ReturnType<typeof listPendingManagementOperations>>[number]) => Promise<{
     recordType: string;
     cloudRecordId: string;
@@ -30,7 +20,7 @@ export async function syncPendingCatalogOperations(
   }>,
 ) {
   const operations = await listPendingManagementOperations(
-    CATALOG_OPERATION_TYPES,
+    operationTypes,
     Date.now(),
     10,
   );
@@ -57,4 +47,13 @@ export async function syncPendingCatalogOperations(
     }
   }
   return { synced, failed, processed: operations.length };
+}
+
+export function syncPendingCatalogOperations(
+  send: Parameters<typeof syncPendingManagementOperations>[1],
+) {
+  return syncPendingManagementOperations(
+    CATALOG_MANAGEMENT_OPERATION_TYPES,
+    send,
+  );
 }

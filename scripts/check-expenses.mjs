@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
-import { ownerSession } from './owner-session.mjs';
+import { ownerSession, requireOwnerTestPin } from './owner-session.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const env = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
@@ -12,6 +12,7 @@ const url = env.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
 assert(url, 'VITE_CONVEX_URL is missing from .env.local');
 const client = new ConvexHttpClient(url);
 async function reset() {
+  requireOwnerTestPin();
   execSync('npm run seed:dev', { cwd: root, stdio: 'pipe' });
   return ownerSession(client, root, 'expenses-check-device');
 }
@@ -49,6 +50,17 @@ try {
     effectiveStartMonth: '2026-08',
     clientMutationId: 'cost07-rent-correction',
   });
+  const correctedRetry = await mutation(api.expenses.correct, {
+    expenseId: created.id,
+    expectedRevision: created.revision,
+    category: 'Rent',
+    description: 'August rent corrected',
+    amountCentimes: 1250000,
+    recurrence: 'monthly',
+    effectiveStartMonth: '2026-08',
+    clientMutationId: 'cost07-rent-correction',
+  });
+  assert.deepEqual(correctedRetry, corrected);
   assert.notEqual(corrected.reversalId, corrected.replacementId);
   const expenses = await query(api.expenses.list, { limit: 20 });
   assert.equal(expenses.filter((row) => row.category === 'Rent').length, 3);

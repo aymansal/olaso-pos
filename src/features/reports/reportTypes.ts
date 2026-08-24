@@ -1,1 +1,1 @@
-export type ReportTab = 'sales' | 'products' | 'stock';
+export type ReportTab = 'sales' | 'products' | 'stock' | 'costs';

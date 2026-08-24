@@ -22,12 +22,19 @@ type ManagementDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
 export async function latestPendingManagementOperationIdFromDatabase(
   database: ManagementDatabase,
+  operationTypes?: readonly string[],
 ) {
+  const types = operationTypes?.map(managementOperationType);
+  if (types && (types.length < 1 || types.length > 20)) {
+    throw new Error('Management operation types are invalid.');
+  }
   const result = await database.query(
     `SELECT operation_id FROM outbox
      WHERE state IN ('pending', 'failed')
        AND operation_type LIKE 'management.%'
+       ${types ? `AND operation_type IN (${types.map(() => '?').join(', ')})` : ''}
      ORDER BY rowid DESC LIMIT 1`,
+    types,
   );
   return result.values?.[0]
     ? managementIdentifier(String(result.values[0].operation_id), 'Operation ID')
@@ -36,17 +43,29 @@ export async function latestPendingManagementOperationIdFromDatabase(
 
 export async function hasPendingManagementOperationsFromDatabase(
   database: ManagementDatabase,
+  operationTypes?: readonly string[],
 ) {
+  const types = operationTypes?.map(managementOperationType);
+  if (types && (types.length < 1 || types.length > 20)) {
+    throw new Error('Management operation types are invalid.');
+  }
   const result = await database.query(
     `SELECT 1 FROM outbox
      WHERE operation_type LIKE 'management.%'
+       ${types ? `AND operation_type IN (${types.map(() => '?').join(', ')})` : ''}
      LIMIT 1`,
+    types,
   );
   return Boolean(result.values?.[0]);
 }
 
-export async function hasPendingManagementOperations() {
-  return hasPendingManagementOperationsFromDatabase(await openLocalDatabase());
+export async function hasPendingManagementOperations(
+  operationTypes?: readonly string[],
+) {
+  return hasPendingManagementOperationsFromDatabase(
+    await openLocalDatabase(),
+    operationTypes,
+  );
 }
 
 function mappingType(value: string) {

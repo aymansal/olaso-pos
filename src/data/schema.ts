@@ -474,6 +474,45 @@ export const localMigrations = [
         ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0`,
     ],
   },
+  {
+    toVersion: 16,
+    statements: [
+      `ALTER TABLE ingredients
+        ADD COLUMN key TEXT NOT NULL DEFAULT ''`,
+      `UPDATE ingredients SET key = id WHERE key = ''`,
+      `ALTER TABLE stock_movements
+        ADD COLUMN client_mutation_id TEXT`,
+      `CREATE UNIQUE INDEX stock_movements_by_client_mutation
+        ON stock_movements(ingredient_id, client_mutation_id)
+        WHERE client_mutation_id IS NOT NULL`,
+      `ALTER TABLE inventory_purchases
+        ADD COLUMN actor_label TEXT`,
+      `ALTER TABLE compensation_periods
+        ADD COLUMN updated_by TEXT`,
+      `ALTER TABLE compensation_periods
+        ADD COLUMN client_mutation_id TEXT`,
+      `CREATE UNIQUE INDEX compensation_periods_by_client_mutation
+        ON compensation_periods(client_mutation_id)
+        WHERE client_mutation_id IS NOT NULL`,
+      `ALTER TABLE operating_expenses
+        ADD COLUMN transaction_type TEXT NOT NULL DEFAULT 'recorded'
+        CHECK (transaction_type IN ('recorded', 'reversal'))`,
+      `ALTER TABLE operating_expenses
+        ADD COLUMN correction_of_expense_id TEXT
+        REFERENCES operating_expenses(id)`,
+      `ALTER TABLE operating_expenses
+        ADD COLUMN updated_by TEXT`,
+      `ALTER TABLE operating_expenses
+        ADD COLUMN client_mutation_id TEXT`,
+      `CREATE UNIQUE INDEX operating_expenses_by_client_mutation
+        ON operating_expenses(client_mutation_id)
+        WHERE client_mutation_id IS NOT NULL`,
+      `CREATE INDEX operating_expenses_by_status_created_at
+        ON operating_expenses(status, created_at DESC)`,
+      `CREATE INDEX operating_expenses_by_correction
+        ON operating_expenses(correction_of_expense_id, created_at DESC)`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

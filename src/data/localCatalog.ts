@@ -10,6 +10,7 @@ import {
   latestPendingManagementOperationIdFromDatabase,
 } from './localManagement.ts';
 import type { LocalManagementActor } from './managementOperation.ts';
+import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 import { keyFromName } from './managementMutations.ts';
 
 type CatalogDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
@@ -37,7 +38,10 @@ function integer(value: number, label: string, minimum: number, maximum: number)
 }
 
 async function dependency(database: CatalogDatabase) {
-  return latestPendingManagementOperationIdFromDatabase(database);
+  return latestPendingManagementOperationIdFromDatabase(
+    database,
+    OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+  );
 }
 
 async function row(database: CatalogDatabase, table: string, recordId: string) {

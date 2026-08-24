@@ -1,4 +1,4 @@
-import { shiftBusinessDate } from '../lib/date.ts';
+import { localBusinessDate, shiftBusinessDate } from '../lib/date.ts';
 import { openLocalDatabase } from './localDatabase.ts';
 import { loadOperationalCache } from './operationalCache.ts';
 
@@ -295,45 +295,89 @@ export async function loadOfflineReport(fromDate: string, toDate: string) {
 }
 
 export async function loadOfflineInventory() {
-  const [cache, database] = await Promise.all([
-    loadOperationalCache(),
-    openLocalDatabase(),
+  const database = await openLocalDatabase();
+  const today = localBusinessDate();
+  const [ingredientResult, movementResult] = await Promise.all([
+    database.query(
+      `SELECT i.id, i.key, i.name, i.base_unit,
+        i.current_stock_quantity + i.local_stock_delta AS current_stock_quantity,
+        CASE WHEN i.inventory_value_centimes IS NULL THEN NULL
+          ELSE i.inventory_value_centimes + i.local_inventory_value_delta END
+          AS inventory_value_centimes,
+        i.cost_status, i.valuation_revision, i.low_stock_threshold,
+        i.status, i.revision, i.updated_at
+       FROM ingredients i
+       WHERE NOT EXISTS (
+         SELECT 1 FROM local_cloud_mappings m
+         JOIN ingredients cloud ON cloud.id = m.cloud_record_id
+         WHERE m.record_type = 'ingredient'
+           AND m.local_record_id = i.id
+           AND m.local_record_id <> m.cloud_record_id
+       )
+       ORDER BY CASE WHEN i.status = 'archived' THEN 1 ELSE 0 END,
+         i.name
+       LIMIT 1001`,
+    ),
+    database.query(
+      `SELECT ingredient_id, COUNT(*) AS movement_count,
+        SUM(CASE WHEN movement_type IN ('manual-adjustment', 'stock-addition') THEN 1 ELSE 0 END) AS adjustment_count,
+        SUM(CASE WHEN movement_type = 'sale' AND quantity_delta < 0 THEN -quantity_delta ELSE 0 END) AS used_today
+       FROM stock_movements
+       WHERE business_date = ?
+       GROUP BY ingredient_id
+       LIMIT 1001`,
+      [today],
+    ),
   ]);
-  const today = new Date().toISOString().slice(0, 10);
-  const movementResult = await database.query(
-    `SELECT ingredient_id, COUNT(*) AS movement_count,
-      SUM(CASE WHEN movement_type IN ('manual-adjustment', 'stock-addition') THEN 1 ELSE 0 END) AS adjustment_count,
-      SUM(CASE WHEN movement_type = 'sale' AND quantity_delta < 0 THEN -quantity_delta ELSE 0 END) AS used_today
-     FROM stock_movements
-     WHERE business_date = ?
-     GROUP BY ingredient_id
-     LIMIT 1001`,
-    [today],
+  if ((ingredientResult.values?.length ?? 0) > 1_000
+      || (movementResult.values?.length ?? 0) > 1_000) {
+    throw new Error('Saved stock exceeds the offline inventory limit.');
+  }
+  const mappedMovementId = new Map<string, string>();
+  const mappings = await database.query(
+    `SELECT local_record_id, cloud_record_id FROM local_cloud_mappings
+     WHERE record_type = 'ingredient' LIMIT 1001`,
   );
-  const movements = new Map(
-    (movementResult.values ?? []).map((row) => [String(row.ingredient_id), row]),
-  );
-  const ingredients = cache.ingredients.map((item) => ({
-    id: item.id,
-    key: item.id,
-    name: item.name,
-    baseUnit: item.baseUnit,
-    currentStockQuantity: item.currentStockQuantity,
-    inventoryValueCentimes: item.inventoryValueCentimes,
-    costStatus: item.costStatus,
-    valuationRevision: item.valuationRevision,
-    lowStockThreshold: item.lowStockThreshold,
-    usedToday: Number(movements.get(item.id)?.used_today ?? 0),
-    status: 'active' as const,
-    revision: item.revision,
-    updatedAt: cache.updatedAt,
+  for (const mapping of mappings.values ?? []) {
+    mappedMovementId.set(String(mapping.local_record_id), String(mapping.cloud_record_id));
+  }
+  const movements = new Map<string, { movement_count: number; adjustment_count: number; used_today: number }>();
+  for (const row of movementResult.values ?? []) {
+    const ingredientId = mappedMovementId.get(String(row.ingredient_id))
+      ?? String(row.ingredient_id);
+    const current = movements.get(ingredientId) ?? {
+      movement_count: 0,
+      adjustment_count: 0,
+      used_today: 0,
+    };
+    current.movement_count += Number(row.movement_count ?? 0);
+    current.adjustment_count += Number(row.adjustment_count ?? 0);
+    current.used_today += Number(row.used_today ?? 0);
+    movements.set(ingredientId, current);
+  }
+  const ingredients = (ingredientResult.values ?? []).map((item) => ({
+    id: String(item.id),
+    key: String(item.key),
+    name: String(item.name),
+    baseUnit: item.base_unit as 'millilitre' | 'gram' | 'milligram' | 'piece',
+    currentStockQuantity: Number(item.current_stock_quantity),
+    ...(item.inventory_value_centimes === null
+      ? {}
+      : { inventoryValueCentimes: Number(item.inventory_value_centimes) }),
+    costStatus: item.cost_status === 'complete' ? 'complete' as const : 'incomplete' as const,
+    valuationRevision: Number(item.valuation_revision),
+    lowStockThreshold: Number(item.low_stock_threshold),
+    usedToday: movements.get(String(item.id))?.used_today ?? 0,
+    status: item.status === 'archived' ? 'archived' as const : 'active' as const,
+    revision: Number(item.revision),
+    updatedAt: Number(item.updated_at),
   }));
+  const active = ingredients.filter((item) => item.status === 'active');
   return {
-    cache,
     ingredients,
     metrics: {
-      ingredientCount: ingredients.length,
-      lowStockCount: ingredients.filter(
+      ingredientCount: active.length,
+      lowStockCount: active.filter(
         (item) => item.currentStockQuantity <= item.lowStockThreshold,
       ).length,
       movementCount: [...movements.values()].reduce(
@@ -358,20 +402,26 @@ export async function loadOfflineIngredientDetail(ingredientId: string) {
       `SELECT id, quantity_delta, movement_type, reason, actor_label,
         business_date, created_at
        FROM stock_movements
-       WHERE ingredient_id = ?
+       WHERE ingredient_id = ? OR ingredient_id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'ingredient' AND cloud_record_id = ?
+       )
        ORDER BY created_at DESC
        LIMIT 50`,
-      [ingredientId],
+      [ingredientId, ingredientId],
     ),
     database.query(
       `SELECT id, package_label, package_count, quantity_per_package,
         total_quantity, package_price_centimes, total_cost_centimes,
         transaction_type, received_at
        FROM inventory_purchases
-       WHERE ingredient_id = ?
+       WHERE ingredient_id = ? OR ingredient_id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'ingredient' AND cloud_record_id = ?
+       )
        ORDER BY received_at DESC
        LIMIT 20`,
-      [ingredientId],
+      [ingredientId, ingredientId],
     ),
   ]);
   const productById = new Map(cache.products.map((product) => [product.id, product]));

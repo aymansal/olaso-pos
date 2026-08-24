@@ -8,7 +8,10 @@ import {
   enqueueManagementOperation,
   latestPendingManagementOperationIdFromDatabase,
 } from './localManagement.ts';
-import type { LocalManagementActor } from './managementOperation.ts';
+import {
+  OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+  type LocalManagementActor,
+} from './managementOperation.ts';
 import { keyFromName } from './managementMutations.ts';
 
 type Database = Pick<SQLiteDBConnection, 'query' | 'run'>;
@@ -111,7 +114,10 @@ export function saveLocalModifierGroup(context: Context, group: ManagedModifierG
       deviceId: context.deviceId,
       operationType: 'management.modifier.save',
       localRecordId: id,
-      dependsOnOperationId: await latestPendingManagementOperationIdFromDatabase(database),
+      dependsOnOperationId: await latestPendingManagementOperationIdFromDatabase(
+        database,
+        OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+      ),
       requiredPermission: 'products',
       actor: context.actor,
       expectedRevision: group.revision,
@@ -148,7 +154,10 @@ export function setLocalModifierGroupArchived(
       deviceId: context.deviceId,
       operationType: 'management.modifier.archive',
       localRecordId: id,
-      dependsOnOperationId: await latestPendingManagementOperationIdFromDatabase(database),
+      dependsOnOperationId: await latestPendingManagementOperationIdFromDatabase(
+        database,
+        OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+      ),
       requiredPermission: 'products', actor: context.actor, expectedRevision,
       payload: { archived }, createdAt: now,
     });
@@ -205,7 +214,10 @@ export function saveLocalRecipeVersion(
       deviceId: context.deviceId,
       operationType: 'management.recipe.save',
       localRecordId: recipeId,
-      dependsOnOperationId: await latestPendingManagementOperationIdFromDatabase(database),
+      dependsOnOperationId: await latestPendingManagementOperationIdFromDatabase(
+        database,
+        OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+      ),
       requiredPermission: 'products', actor: context.actor,
       expectedRevision: product.revision,
       payload: { productId: product.id, items }, createdAt: now,

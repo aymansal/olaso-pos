@@ -237,6 +237,21 @@ try {
       .prepare("SELECT name FROM pragma_table_info('modifier_options') WHERE name = ?")
       .get('key'),
   );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('ingredients') WHERE name = ?")
+      .get('key'),
+  );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('stock_movements') WHERE name = ?")
+      .get('client_mutation_id'),
+  );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('operating_expenses') WHERE name = ?")
+      .get('transaction_type'),
+  );
   database.close();
 
   database = new DatabaseSync(databasePath);

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
-import { ownerSession } from './owner-session.mjs';
+import { ownerSession, requireOwnerTestPin } from './owner-session.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
@@ -15,6 +15,7 @@ const client = new ConvexHttpClient(convexUrl);
 const mutationId = (label) => `app03-check-${label}`;
 
 async function reseed() {
+  requireOwnerTestPin();
   execSync('npm run seed:dev', {
     cwd: projectRoot,
     stdio: 'pipe',

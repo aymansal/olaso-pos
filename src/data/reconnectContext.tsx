@@ -27,10 +27,23 @@ import {
 import { clearStaffSession } from './identitySession';
 import { syncPendingCatalogOperations } from './catalogSync';
 import {
+  dispatchInventoryOperation,
+  syncPendingInventoryOperations,
+} from './inventorySync';
+import {
+  dispatchCostOperation,
+  syncPendingCostOperations,
+} from './costSync';
+import {
   hasPendingManagementOperations,
   resolveCloudRecordId,
 } from './localManagement';
-import { isStaffRole } from './permissions';
+import { hasPermission, isStaffRole } from './permissions';
+import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation';
+import {
+  replaceSavedCompensation,
+  replaceSavedExpenses,
+} from './localCostViews';
 import { useStaffSession } from './sessionContext';
 import {
   loadTerminalSettings,
@@ -74,6 +87,15 @@ async function toConvexSaleArgs(input: SaleSyncPayload) {
           id,
         ) as Id<'modifierOptions'>,
       )),
+      valuationRevisions: await Promise.all(line.valuationRevisions.map(
+        async (valuation) => ({
+          ingredientId: await resolveCloudRecordId(
+            'ingredient',
+            valuation.ingredientId,
+          ) as Id<'ingredients'>,
+          revision: valuation.revision,
+        }),
+      )),
     }))),
   };
 }
@@ -101,6 +123,13 @@ export function ReconnectProvider({
   const saveModifierMutation = useMutation(api.modifiers.saveGroup);
   const archiveModifierMutation = useMutation(api.modifiers.setGroupArchived);
   const saveRecipeMutation = useMutation(api.recipes.saveVersion);
+  const saveIngredientMutation = useMutation(api.inventory.saveIngredient);
+  const archiveIngredientMutation = useMutation(api.inventory.setIngredientArchived);
+  const receivePurchaseMutation = useMutation(api.inventory.receivePurchase);
+  const recordAdjustmentMutation = useMutation(api.inventory.recordAdjustment);
+  const addExpenseMutation = useMutation(api.expenses.add);
+  const correctExpenseMutation = useMutation(api.expenses.correct);
+  const addCompensationMutation = useMutation(api.staff.addCompensationPeriod);
   const checkSession = useAction(api.identity.checkSession);
   const inFlight = useRef<Promise<ReconnectResult> | undefined>(undefined);
   const requestedMode = useRef<ReconnectMode | undefined>(undefined);
@@ -282,8 +311,18 @@ export function ReconnectProvider({
         });
         synced += catalog.synced;
         failed += catalog.failed;
-        if (catalog.failed > 0) break;
-        if (catalog.processed > 0) {
+        const inventory = await syncPendingInventoryOperations((operation) =>
+          dispatchInventoryOperation(operation, {
+            sessionArgs,
+            resolve: resolveCloudRecordId,
+            saveIngredient: (args) => saveIngredientMutation(args as any),
+            archiveIngredient: (args) => archiveIngredientMutation(args as any),
+            receivePurchase: (args) => receivePurchaseMutation(args as any),
+            recordAdjustment: (args) => recordAdjustmentMutation(args as any),
+          }));
+        synced += inventory.synced;
+        failed += inventory.failed;
+        if (catalog.processed + inventory.processed > 0) {
           await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
           continue;
         }
@@ -314,13 +353,25 @@ export function ReconnectProvider({
         );
         synced += result.synced;
         failed += result.failed;
-        if (result.failed > 0 || result.processed < 10) break;
+        const costs = await syncPendingCostOperations((operation) =>
+          dispatchCostOperation(operation, {
+            sessionArgs,
+            resolve: resolveCloudRecordId,
+            addExpense: (args) => addExpenseMutation(args as any),
+            correctExpense: (args) => correctExpenseMutation(args as any),
+            addCompensation: (args) => addCompensationMutation(args as any),
+          }));
+        synced += costs.synced;
+        failed += costs.failed;
+        if (result.processed + costs.processed === 0) break;
         await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
       }
 
       const settings = await loadTerminalSettings();
       let refreshed = false;
-      if (!await hasPendingManagementOperations()) {
+      if (!await hasPendingManagementOperations(
+        OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+      )) {
         const cloud = await convex.query(api.sync.getOperationalSnapshot, {
           sessionToken: session.token,
           deviceId: session.deviceId,
@@ -334,6 +385,30 @@ export function ReconnectProvider({
           })),
         });
         refreshed = true;
+      }
+      if (hasPermission(session.role, 'expenses')) {
+        const expenses = await convex.query(api.expenses.list, {
+          ...sessionArgs,
+          limit: 100,
+        });
+        await replaceSavedExpenses(expenses.map((expense) => ({
+          ...expense,
+          id: String(expense.id),
+          ...(expense.correctionOfExpenseId
+            ? { correctionOfExpenseId: String(expense.correctionOfExpenseId) }
+            : {}),
+        })));
+      }
+      if (hasPermission(session.role, 'compensation')) {
+        const compensation = await convex.query(
+          api.staff.listAllCompensation,
+          sessionArgs,
+        );
+        await replaceSavedCompensation(compensation.map((period) => ({
+          ...period,
+          id: String(period.id),
+          staffProfileId: String(period.staffProfileId),
+        })));
       }
       setRevision((value) => value + 1);
       return {
@@ -350,7 +425,7 @@ export function ReconnectProvider({
       }
       throw new Error(message);
     }
-  }, [acceptMutation, archiveCategoryMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, onSessionUnavailable, saveCategoryMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.staffProfileId, session.token, setProductStatusMutation]);
+  }, [acceptMutation, addCompensationMutation, addExpenseMutation, archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, correctExpenseMutation, onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation, saveCategoryMutation, saveIngredientMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.name, session.role, session.staffProfileId, session.token, setProductStatusMutation]);
 
   const run = useCallback((mode: ReconnectMode = 'automatic') => {
     requestedMode.current = mode === 'manual' || requestedMode.current === 'manual'

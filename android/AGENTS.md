@@ -35,6 +35,12 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   page loads so the fixed 1340-pixel HTML viewport fits by width. Preserve the
   `match_parent` bridge layout and invalidate the WebView on handled
   configuration changes; do not reintroduce JavaScript/CSS zoom listeners.
+  The fixed viewport disables user/focus scaling so a small input cannot leave
+  the whole application zoomed after the keyboard closes.
+- `OlasoWebView` guards Capacitor/Cordova lifecycle event evaluation until
+  `window.Capacitor.triggerEvent` exists. This prevents pre-bridge pause/resume
+  errors during screen-off or notification-shade launch while leaving ordinary
+  bridge scripts and later lifecycle events unchanged.
 - Android 16 ignores ordinary orientation restrictions for API-36-targeted
   large-screen apps. This manually distributed fixed-landscape POS therefore
   compiles with SDK 36 but targets API 35. Preserve the activity-level

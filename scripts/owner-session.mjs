@@ -2,9 +2,14 @@ import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
 import { api } from '../convex/_generated/api.js';
 
-export async function ownerSession(client, root, deviceId) {
+export function requireOwnerTestPin() {
   const pin = process.env.OLASO_OWNER_PIN;
   assert(/^\d{6}$/.test(pin ?? ''), 'OLASO_OWNER_PIN must be a six-digit test restore PIN');
+  return pin;
+}
+
+export async function ownerSession(client, root, deviceId) {
+  const pin = requireOwnerTestPin();
   const seeded = JSON.parse(execSync('npx convex run seed:verify', {
     cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
   }));

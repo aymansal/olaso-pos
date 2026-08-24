@@ -79,6 +79,9 @@ export const list = query({
       ...(row.effectiveStartMonth ? { effectiveStartMonth: row.effectiveStartMonth } : {}),
       ...(row.effectiveEndMonth ? { effectiveEndMonth: row.effectiveEndMonth } : {}),
       transactionType: row.transactionType,
+      ...(row.correctionOfExpenseId
+        ? { correctionOfExpenseId: row.correctionOfExpenseId }
+        : {}),
       revision: row.revision,
     }));
   },
@@ -135,6 +138,29 @@ export const correct = mutation({
   handler: async (ctx, args) => {
     const actor = (await requirePermission(ctx, args, 'expenses')).name;
     const clientMutationId = mutationId(args.clientMutationId);
+    const [previousReversal, previousReplacement] = await Promise.all([
+      ctx.db
+        .query('operatingExpenses')
+        .withIndex('by_client_mutation', (index) =>
+          index.eq('clientMutationId', `${clientMutationId}:reversal`),
+        )
+        .unique(),
+      ctx.db
+        .query('operatingExpenses')
+        .withIndex('by_client_mutation', (index) =>
+          index.eq('clientMutationId', `${clientMutationId}:replacement`),
+        )
+        .unique(),
+    ]);
+    if (previousReversal || previousReplacement) {
+      if (!previousReversal || !previousReplacement) {
+        throw new Error('Expense correction retry found incomplete history.');
+      }
+      return {
+        reversalId: previousReversal._id,
+        replacementId: previousReplacement._id,
+      };
+    }
     const original = await ctx.db.get(args.expenseId);
     if (!original) return notFound('Operating expense');
     if (original.transactionType !== 'recorded') return conflict('Only recorded expenses can be corrected.');

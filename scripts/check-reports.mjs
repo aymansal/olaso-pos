@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
-import { ownerSession } from './owner-session.mjs';
+import { ownerSession, requireOwnerTestPin } from './owner-session.mjs';
 
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
@@ -12,6 +12,7 @@ const convexUrl = localEnv.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
 assert(convexUrl, 'VITE_CONVEX_URL is missing from .env.local');
 
 const client = new ConvexHttpClient(convexUrl);
+requireOwnerTestPin();
 execSync('npm run seed:dev', { cwd: projectRoot, stdio: 'pipe', encoding: 'utf8' });
 const sessionArgs = await ownerSession(client, projectRoot, 'reports-check-device');
 const query = (reference, args) => client.query(reference, { ...sessionArgs, ...args });

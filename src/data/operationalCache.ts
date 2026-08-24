@@ -1,5 +1,6 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
+import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 
 export type IngredientEffect = {
   ingredientId: string;
@@ -116,8 +117,9 @@ export async function replaceOperationalCache(
   return withLocalTransaction(async (database) => {
     const unsynced = await database.query(
       `SELECT 1 FROM outbox
-       WHERE operation_type LIKE 'management.%'
+       WHERE operation_type IN (${OPERATIONAL_MANAGEMENT_OPERATION_TYPES.map(() => '?').join(', ')})
        LIMIT 1`,
+      [...OPERATIONAL_MANAGEMENT_OPERATION_TYPES],
     );
     if (unsynced.values?.length) {
       throw new Error(

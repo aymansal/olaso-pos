@@ -18,7 +18,8 @@ history.
 - `stockManagementTypes.ts` defines plain feature records and actions;
   `stockPresentation.ts` formats exact quantities at the display edge.
 - `src/data/useInventoryManagement.ts` is the application data boundary that
-  maps Convex records and mutations into these plain feature contracts.
+  maps the saved SQLite record and local-first operations into these plain
+  feature contracts; reconnect synchronization stays outside the feature.
 
 ## Local Contracts
 
@@ -33,6 +34,8 @@ history.
   product contracts and source data.
 - Offline reads use saved ingredients plus bounded local movement, purchase,
   and recipe-link detail instead of waiting for Convex.
+- Internet state never disables a valid ingredient, threshold, purchase,
+  archive/restore, or stock-adjustment form.
 
 ## Work Guidance
 

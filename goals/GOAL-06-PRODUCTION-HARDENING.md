@@ -141,7 +141,7 @@ polishing screens or data paths that later functional work would change.
 | --- | --- | --- | --- |
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
 | LOCAL-02 | Make catalog and recipe management fully local-first | done | `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main`; automated, Convex, Android, physical offline/restart/reconnect, cleanup, and Graphify evidence recorded in WORK_LEDGER.md |
-| LOCAL-03 | Make inventory, expense, and compensation management fully local-first | in progress | Official Android/Capacitor research, Graphify, DOX, plan, ledger, and authority preflight complete; implementation pending |
+| LOCAL-03 | Make inventory, expense, and compensation management fully local-first | in progress | Implementation, focused/backend/build/Android, offline/restart/reconnect/exact-cloud tablet evidence complete; Graphify/docs/commit/push pending |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
@@ -149,7 +149,7 @@ polishing screens or data paths that later functional work would change.
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
-| HARD-03 | Consolidate safe startup gating and eliminate the pre-bridge `triggerEvent` lifecycle error | pending | Known bug explicitly owned; implementation pending |
+| HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | pending | Pre-bridge event error fixed early under mandatory bug rule; full startup orchestration/matrix remains |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
 | HARD-06 | Add protected production signing, release, upgrade, and rollback workflow | pending | — |
@@ -320,20 +320,18 @@ polishing screens or data paths that later functional work would change.
 
 ### HARD-03 — Safe startup orchestration
 
-- Treat the current `Uncaught TypeError: ... triggerEvent` as a real known bug,
-  not harmless accepted noise. Current evidence points to
-  `SecureSessionPlugin.load()` registering Android connectivity callbacks that
-  can call `notifyListeners("networkStatusChanged", ...)` before Capacitor has
-  installed its JavaScript event bridge.
+- LOCAL-03's mandatory bug gate traced the former `triggerEvent` error to
+  Capacitor's Cordova-compatible pre-bridge `pause`/`resume` evaluation, not the
+  SecureSession network callback. `OlasoWebView` now guards only those direct
+  lifecycle calls until the JavaScript event function exists.
 - Before code, research the current official Capacitor Android plugin lifecycle,
   listener-readiness, activity foreground/resume, and Android connectivity
   callback guidance. Select the smallest native boundary that prevents an event
   from reaching JavaScript before the bridge is ready while preserving the
   explicit `networkStatus()` read as the initial source of truth.
-- Do not merely hide/suppress the console error, delay startup artificially, or
-  remove live connection updates. Buffer, defer, or gate the native notification
-  at the correct lifecycle boundary and retain one accurate status refresh when
-  React becomes visible.
+- Do not remove or weaken the guard, delay startup artificially, or remove live
+  connection updates. Retain the explicit native status read when React becomes
+  visible.
 - Show one branded startup state while SQLite and terminal-lock state settle.
 - Remove empty intermediate rendering without exposing the POS before lock and
   database safety state are known.
@@ -484,20 +482,51 @@ polishing screens or data paths that later functional work would change.
   gaps explicitly; HARD-04 owns the measured image/asset follow-through.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
-- Known HARD-03 bug: the native SecureSession connectivity callback can emit
-  before the Capacitor JavaScript bridge is ready, producing an uncaught
-  `triggerEvent` error in notification-shade/screen-off pre-bridge launches. The
-  visible app recovers through its explicit status read, but production cannot
-  accept the error; the exact physical acceptance matrix is now in HARD-03.
+- The pre-bridge lifecycle error is fixed early under the mandatory bug rule.
+  Source/log tracing identified Capacitor's Cordova `pause` event rather than
+  SecureSession; normal, screen-off, and notification-shade launches now have
+  zero `triggerEvent`/uncaught errors. HARD-03 still owns the complete startup,
+  long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: trace the current ingredient, purchase, adjustment,
-  expense, compensation, Stock, Reports, SQLite, and Convex callers, then
-  implement the smallest complete local domain operations and ordered reconnect
-  dispatch. Any reproduced bug pauses that work until its root-cause fix passes
-  the mandatory bug gate.
+- Exact next action: refresh Graphify, rerun final closeout checks, update all
+  evidence, commit/push LOCAL-03 on `main`, and record its full SHA. Do not start
+  STAFF-01.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-03 implementation and physical proof complete
+
+- Added ordered SQLite migration 16 plus atomic local ingredient, threshold,
+  archive/restore, priced-purchase, stock-adjustment, expense-correction, and
+  compensation-period operations. Stock and Costs read SQLite both online and
+  offline; managers never receive compensation/profitability data.
+- Split catalog/inventory from finance dependencies. Sales wait only for
+  catalog/inventory parents they can use; a failed expense or compensation
+  cannot block an independent sale or operational refresh. Reconnect maps
+  ingredient/purchase/movement/expense/compensation IDs and valuation revisions,
+  and expense correction retries return one saved reversal/replacement pair.
+- On SM-X115 in flight mode, created `LOCAL03_QA_Beans`, received 500 g for
+  10 MAD, counted it to 400 g, saved a 0.01 MAD expense and future 0.01 MAD
+  compensation, then force-stopped/restarted and proved all data remained.
+  Reconnect produced exactly one archived cloud ingredient at revision 4 with
+  400 g / 800 centimes, three append-only expense rows, and one 2027-08 owner
+  compensation period. A second reconnect created no duplicates; seven older
+  failed sale rows remained untouched. The expense correction moves its net
+  effect out of the current month and the QA ingredient is archived.
+- Mandatory bug gate fixed three root causes encountered during proof: guarded
+  Capacitor's pre-bridge Cordova lifecycle event in `OlasoWebView`; disabled
+  focus/user scaling for the known fixed viewport; and made cloud-test PIN
+  readiness fail before any development reset. Normal, screen-off, notification-
+  shade, keyboard-focus/close, restart, and repeat-reconnect tablet paths pass.
+- Official sources for the added native decisions:
+  https://github.com/ionic-team/capacitor/blob/main/android/capacitor/src/main/java/com/getcapacitor/Plugin.java,
+  https://github.com/ionic-team/capacitor/blob/main/android/capacitor/src/main/java/com/getcapacitor/Bridge.java,
+  https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback,
+  https://developer.android.com/develop/ui/views/layout/webapps/targeting, and
+  https://developer.android.com/develop/ui/views/layout/webapps/understand-window-insets.
+- Exact next action: Graphify refresh, final checks/docs, implementation commit
+  and push, then record the full SHA and mark LOCAL-03 done.
 
 ### 2026-08-24 — LOCAL-03 activated with Android research
 

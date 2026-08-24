@@ -8,8 +8,11 @@ performance, ingredient usage, and bounded period controls.
 ## Ownership
 
 - `ReportsScreen.tsx` composes the summary and analytics panels.
-- `ReportsAnalyticsPanel` owns local Sales, Products, and Stock Usage tab
-  selection plus native date and quick-period controls.
+- `ReportsAnalyticsPanel` owns local Sales, Products, Stock Usage, and
+  role-appropriate Costs tab selection plus native date/period controls.
+- `CostsPanel` owns saved monthly costs and opens the separate expense and
+  compensation dialogs. Managers see expenses and purchase cash; owners also
+  see compensation and profitability.
 - `ReportSummaryPanel`, `ReportsKpiStrip`, `SalesTrendChart`, and
   `ProductPerformanceTable` own prop-driven analytics regions.
 
@@ -26,6 +29,8 @@ performance, ingredient usage, and bounded period controls.
 - Keep ingredient base units separate; never invent a cross-unit stock total.
 - Offline Reports derive the selected one-to-31-day period from bounded saved
   tablet receipts and movements and never remain on a cloud loading state.
+- Expense and compensation saves appear immediately from SQLite. Compensation
+  and profitability are never rendered for a non-owner role.
 
 ## Work Guidance
 

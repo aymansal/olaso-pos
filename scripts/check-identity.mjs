@@ -48,6 +48,16 @@ const posData = readFileSync('src/data/usePosData.ts', 'utf8');
 const reconnect = readFileSync('src/data/reconnectContext.tsx', 'utf8');
 const identitySession = readFileSync('src/data/identitySession.ts', 'utf8');
 const operationalCache = readFileSync('src/data/operationalCache.ts', 'utf8');
+const ownerSessionCheck = readFileSync('scripts/owner-session.mjs', 'utf8');
+const resetChecks = [
+  'scripts/check-dashboard.mjs',
+  'scripts/check-expenses.mjs',
+  'scripts/check-inventory.mjs',
+  'scripts/check-management.mjs',
+  'scripts/check-monthly-costs.mjs',
+  'scripts/check-reports.mjs',
+  'scripts/check-staff.mjs',
+].map((path) => readFileSync(path, 'utf8'));
 assert.match(lockScreen, /if \(!isServiceUnavailable\(onlineError\)\)/);
 assert.match(lockScreen, /Wrong PIN\. Try again\./);
 assert.doesNotMatch(lockScreen, /setError\(\s*caught instanceof Error/);
@@ -116,4 +126,12 @@ assert.match(operationalCache, /export async function saveAuthenticatedStaffProf
 assert.match(operationalCache, /export async function reconcileAuthenticatedStaffProfiles/);
 assert.match(operationalCache, /profiles\.some\(\(profile\) => profile\.id === authenticatedProfileId\)/);
 assert.doesNotMatch(operationalCache, /export async function reconcileActiveStaffProfiles/);
+assert.match(ownerSessionCheck, /export function requireOwnerTestPin/);
+for (const resetCheck of resetChecks) {
+  assert.ok(
+    resetCheck.indexOf('requireOwnerTestPin()')
+      < resetCheck.indexOf('npm run seed:dev'),
+    'Protected test PIN readiness must be checked before a development reset.',
+  );
+}
 console.log('Identity fallback, profile-scoped offline credentials, monotonic lockout, fail-closed startup, session revocation, and protected-storage checks passed.');

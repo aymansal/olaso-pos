@@ -40,12 +40,16 @@ assert.match(
   manifest,
   /android\.window\.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"\s+android:value="true"/,
 );
-assert.match(index, /content="width=1340"/);
+assert.match(index, /content="width=1340,/);
+assert.match(index, /user-scalable=no/);
 assert.doesNotMatch(index, /initial-scale/);
 assert.doesNotMatch(main, /Capacitor|zoom|innerWidth|outerWidth|screen\.width/);
 assert.match(webView, /extends CapacitorWebView/);
 assert.match(webView, /setUseWideViewPort\(true\)/);
 assert.match(webView, /setLoadWithOverviewMode\(true\)/);
+assert.match(webView, /@Override\s+public void evaluateJavascript/);
+assert.match(webView, /guardCapacitorEventScript/);
+assert.match(webView, /typeof window\.Capacitor\.triggerEvent === 'function'/);
 assert.match(
   bridgeLayout,
   /<com\.olaso\.pos\.OlasoWebView[\s\S]*?android:layout_width="match_parent"[\s\S]*?android:layout_height="match_parent"/,

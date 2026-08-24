@@ -277,6 +277,9 @@ All primary touch targets are at least 44 by 44 pixels. Maintain at least 8 pixe
 
 - Treat 1340 by 800 as the design reference, not a promise that Android WebView CSS pixels equal physical screen pixels.
 - The physical Galaxy Tab A9 SM-X115 exposes approximately 1007 by 601 CSS pixels for its 1340 by 800 panel. The native APK declares the fixed 1340-pixel HTML viewport and uses Android WebView wide-viewport overview mode to fit it by width before the page loads.
+- The installed fixed-layout APK disables user/focus scaling after that native
+  fit. Opening and closing a small form field must not leave the whole
+  application zoomed or scrollable; browser previews remain unscaled.
 - Browser previews remain unscaled so the approved screen can still be inspected directly at 1340 by 800.
 - At the reference ratio, preserve the documented geometry exactly.
 - On a slightly different landscape viewport, keep 18-pixel minimum outer gutters, the 320-pixel receipt rail, card aspect ratios, and touch targets before distributing remaining space.

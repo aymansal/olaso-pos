@@ -9,6 +9,7 @@ import {
   listPendingOutbox,
 } from './outbox.ts';
 import { latestPendingManagementOperationIdFromDatabase } from './localManagement.ts';
+import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import { allocateCentimes } from '../lib/costs.ts';
 
@@ -533,7 +534,10 @@ export async function commitLocalSale(
       localSaleId,
       receipt.completedAt,
       receipt.completedAt,
-      (await latestPendingManagementOperationIdFromDatabase(database)) ?? null,
+      (await latestPendingManagementOperationIdFromDatabase(
+        database,
+        OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+      )) ?? null,
     ],
     false,
   );

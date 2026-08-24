@@ -17,6 +17,9 @@ tablet's local SQLite operational record.
   Dashboard is mounted and exposes explicit retry state.
 - `useReportsData.ts` makes one saved-summary range request only while Reports
   is mounted or its period changes, and exposes explicit retry state.
+- `useInventoryManagement.ts` and `useCostManagement.ts` render from SQLite,
+  commit authorized writes locally first, refresh after the shared worker, and
+  never call Convex directly.
 - `useSettingsData.ts` loads local device/sync state, saves validated non-secret
   preferences, delegates deliberate Sync to the shared worker, and coordinates
   explicit printer test/logo-setup actions without claiming paper state.
@@ -43,6 +46,10 @@ tablet's local SQLite operational record.
   persistence: atomic outbox enqueue, optional parent dependency, cloud
   acknowledgement plus local/cloud record mappings, and safe retry/failure
   updates. Domain cards still own their business validation and record changes.
+- `localInventory.ts` owns ingredient, purchase, valuation, and stock-
+  adjustment transactions. `localCosts.ts` owns expense/compensation writes;
+  `localCostViews.ts` owns bounded role-scoped reads and cloud snapshot merging.
+  `inventorySync.ts` and `costSync.ts` own their reconnect dispatch boundaries.
 - `managementOperation.ts` owns the plain operation envelope, bounded payload
   and protected-field validation, actor/role permission validation, saved-row
   parsing, and safe operator-facing sync-failure classification.
@@ -86,6 +93,12 @@ tablet's local SQLite operational record.
 - Never refresh cloud catalog data over pending local management work. Pending
   or failed sales keep their immutable snapshots and stock deltas but must not
   freeze category/product/modifier/recipe refreshes indefinitely.
+- Operational catalog/inventory dependencies are ordered separately from
+  finance work. A failed expense or compensation never blocks an eligible sale
+  or operational cache refresh; a sale still waits for catalog/inventory data
+  used by its saved product, recipe, ingredient, or valuation.
+- Managers may read saved expenses but never compensation/profitability rows.
+  Only owners may query or render individual compensation and monthly profit.
 - Treat the shared connection context as display/readiness state only. The one
   reconnect worker owns automatic outbox and cache work.
 - Automatic sync reads only pending rows, releases only classified connection
@@ -114,6 +127,7 @@ tablet's local SQLite operational record.
 ## Verification
 
 - Run `npm run check:local`, `npm run check:local-management`,
+  `npm run check:local-inventory-costs`,
   `npm run check:sales`, `npm run check:settings`,
   `npm run check:reconnect`, `npm run check:offline`, `npx tsc -b`, and
   `npm run build`.

@@ -138,6 +138,25 @@ export const listCompensation = query({
   },
 });
 
+export const listAllCompensation = query({
+  args: { ...sessionArgs },
+  handler: async (ctx, args) => {
+    await requireOwner(ctx, args);
+    const rows = await ctx.db.query('compensationPeriods').take(101);
+    if (rows.length > 100) {
+      throw new Error('Compensation history exceeds the 100-period limit.');
+    }
+    return rows.map((row) => ({
+      id: row._id,
+      staffProfileId: row.staffProfileId,
+      monthlyAmountCentimes: row.monthlyAmountCentimes,
+      effectiveStartMonth: row.effectiveStartMonth,
+      ...(row.effectiveEndMonth ? { effectiveEndMonth: row.effectiveEndMonth } : {}),
+      revision: row.revision,
+    }));
+  },
+});
+
 export const addCompensationPeriod = mutation({
   args: {
     ...sessionArgs,

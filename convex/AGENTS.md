@@ -21,6 +21,8 @@ data, reporting summaries, and development seeding.
   recent-order snapshot.
 - `reports.ts` owns the one-call current/prior saved-summary range and bounded
   product, category, payment, service, and exact-unit ingredient aggregates.
+- `expenses.ts` owns retry-safe append-only expense creation/correction;
+  `staff.ts` owns owner-only bounded compensation reads and period creation.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts

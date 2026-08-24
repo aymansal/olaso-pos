@@ -66,6 +66,9 @@ assert.match(stock, /loadOfflineInventory/);
 assert.match(stock, /loadOfflineIngredientDetail/);
 assert.match(dashboard, /loadOfflineDashboard/);
 assert.match(reports, /loadOfflineReport/);
-assert.match(products + stock, /available === true \? sessionArgs : 'skip'|available === true \? \{ \.\.\.sessionArgs/);
+assert.doesNotMatch(products + stock, /useQuery_experimental|useMutation/);
+assert.match(stock, /saveLocalIngredient/);
+assert.match(stock, /receiveLocalPurchase/);
+assert.match(stock, /recordLocalStockAdjustment/);
 
 console.log('Offline Products, Stock, Dashboard, and Reports fallback checks passed.');

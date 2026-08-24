@@ -183,7 +183,7 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 | HARD-01 | Establish repeatable five-run cold/warm startup, navigation, APK, WebView, bundle, and readiness baselines after functional work is stable. |
 | NAV-01 | Preserve each visited authorized screen, keep saved content visible during refresh, and eliminate repeat page/image reconstruction. |
 | HARD-02 | Finalize the app icon and continuous branded launch, with optional measured logo motion after an immediate static first frame. |
-| HARD-03 | Consolidate safe SQLite/lock startup gating, remove empty rendering, and eliminate the pre-bridge Android `triggerEvent` lifecycle error across cold launch, notification-shade, screen-off, and resume states. |
+| HARD-03 | Consolidate safe SQLite/lock startup gating, remove empty rendering, and revalidate the early LOCAL-03 lifecycle-event guard across cold launch, notification-shade, screen-off, and resume states. |
 | HARD-04 | Optimize only measured eager modules, assets, decoding, and sync scheduling while preserving behavior and recording before/after evidence. |
 | HARD-05 | Implement and rehearse documented export, backup, corrupt-data stop, restore, and support recovery paths. |
 | HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation. |
@@ -208,7 +208,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Complete LOCAL-03 as the only in-progress card: trace the existing ingredient,
-purchase, adjustment, expense, compensation, Stock, Reports, SQLite, and Convex
-paths, then make every authorized write local-first and exactly-once without
-double-counting stock or cost. Do not begin STAFF-01 or later work.
+Close LOCAL-03 as the only in-progress card: refresh Graphify, rerun final
+focused/build/Android checks, record the verified offline/restart/reconnect/
+role/lifecycle evidence, commit and push `main`, then record the pushed SHA.
+Do not begin STAFF-01 or later work.
