@@ -21,7 +21,7 @@ remaining goal and card sequence.
 | STAFF-01 — Offline staff creation and protected initial PIN | done — `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main` |
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
-| LOCAL-04 — Offline management closeout | pending |
+| LOCAL-04 — Offline management closeout | in progress |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
@@ -99,6 +99,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- LOCAL-04 is the only in-progress card. Current official Android guidance
+  keeps persisted local data as the screen source of truth and recommends a
+  local-first lazy write for critical offline changes; the installed Capacitor
+  SQLite plugin supplies the explicit native transaction boundary already used
+  by LOCAL-01 through STAFF-01. This closeout adds no Room, second database,
+  state library, Kotlin service, dependency, or WorkManager job. Staff-authorized
+  synchronization remains in the visible authenticated foreground worker
+  because locked/background cloud access is explicitly forbidden. Exact next
+  action: inspect the existing operation/test surfaces and derive the complete
+  physical UI, restart, reconnect, duplicate, failure, cleanup, and role matrix.
 - LOCK-01 is complete and pushed to `origin/main` as
   `4486a8921d893e3e5edce098b8a17a500cf0a537`. A shared profile menu gives every
   role `Lock / switch staff`; Settings remains owner-only. `App.tsx` owns the
@@ -908,6 +918,32 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-04 activated as an acceptance and bug-fix card
+
+- The owner said to continue. LOCAL-04 is the only in-progress card; HARD-01
+  and every later card remain pending. `main` was clean and synchronized at
+  `faf811611f55804b4baa9e535f47b7b009ee70c0` before activation.
+- Reread the applicable root/Android/Convex/source/data/feature DOX, PLAN, Goal
+  06 contract, ledger, and local-first authorities, then queried Graphify for
+  the catalog, recipe, inventory, finance, staff, permission, outbox, mapping,
+  and reconnect paths before manual inspection.
+- Android's current offline-first guidance requires local data as the exclusive
+  upper-layer source and recommends critical lazy writes: commit locally, queue,
+  then reconcile. The existing Capacitor SQLite explicit transactions remain
+  the native boundary. WorkManager remains rejected because Olaso does not
+  authorize staff cloud work after lock/process exit; the durable SQLite queue
+  waits for the next visible authenticated session.
+- Sources: https://developer.android.com/topic/architecture/data-layer/offline-first,
+  https://developer.android.com/develop/background-work/background-tasks/persistent,
+  https://github.com/capacitor-community/sqlite/blob/master/docs/SQLiteTransaction.md,
+  and https://capacitorjs.com/docs.
+- LOCAL-04 begins with evidence, not new architecture. It must exercise every
+  real owner/manager/cashier UI path in flight mode, restart before reconnect,
+  verify parent ordering and single effects after repeated reconnect, inject a
+  recoverable failure, prove sensitive role isolation online/offline, and clean
+  QA records through normal archive/correction flows. Any bug invokes the
+  mandatory root-cause gate.
 
 ### 2026-08-24 — LOCK-01 complete on origin/main
 

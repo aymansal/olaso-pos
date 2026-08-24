@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; no card in progress, LOCAL-04 next
+**Status:** active; LOCAL-04 is the only card in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -145,7 +145,7 @@ polishing screens or data paths that later functional work would change.
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | done | `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main`; focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local/cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
-| LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |
+| LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | in progress | Official Android/Capacitor research and acceptance boundary recorded; full matrix inspection next |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
@@ -473,8 +473,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through LOCK-01 are done and no
-  card is currently in progress.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCK-01 are done and
+  LOCAL-04 is the only card in progress.
 - LOCAL-01 through STAFF-01 now implement local-first catalog, recipe,
   inventory, cost, compensation, and protected staff creation. LOCAL-04 remains
   before complete offline-management acceptance.
@@ -489,12 +489,32 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- LOCK-01 is pushed and complete. Exact next action when the owner continues:
-  perform LOCAL-04's official Android/Capacitor research, activate only
-  LOCAL-04, and derive its acceptance matrix from the completed local-first
-  management and staff work.
+- LOCAL-04 research/activation is recorded. Exact next action: inspect the
+  existing operation and test surfaces, derive the full physical matrix, then
+  execute it without beginning HARD-01.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-04 activated with the existing native boundary
+
+- The owner said to continue. LOCAL-04 is the only active card; every later
+  hardening and polish card remains pending. Clean synchronized starting SHA is
+  `faf811611f55804b4baa9e535f47b7b009ee70c0` on `main` and `origin/main`.
+- Official Android offline-first guidance confirms local data as the screen
+  source and critical lazy writes as local commit plus durable queued network
+  reconciliation. The current Capacitor SQLite transaction/outbox and visible
+  authenticated reconnect worker are retained. Room, another database, state
+  library, new native service/dependency, and WorkManager are rejected here;
+  the product forbids staff-authorized cloud work while locked or hidden.
+- Sources: https://developer.android.com/topic/architecture/data-layer/offline-first,
+  https://developer.android.com/develop/background-work/background-tasks/persistent,
+  https://github.com/capacitor-community/sqlite/blob/master/docs/SQLiteTransaction.md,
+  and https://capacitorjs.com/docs.
+- This is an acceptance/root-fix card. Run every real management UI in flight
+  mode, restart before reconnect, prove ordered exactly-once cloud effects and
+  repeated retry, inject and recover one bounded failure, verify role/sensitive
+  data isolation online and offline, and clean only through normal workflows.
+  Exact next action is caller/check/matrix inspection.
 
 ### 2026-08-24 — LOCK-01 complete on origin/main
 

@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCK-01 done, LOCAL-04 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-04 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -209,8 +209,9 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-When the owner continues, research and activate only LOCAL-04. Derive its full
-offline management acceptance matrix from the completed LOCAL-01 through
-LOCK-01 work, then prove flight mode, restart, ordered reconnect, duplicate
-retry, failure recovery, and role isolation without bypassing any discovered
-bug. Do not begin HARD-01 or later work.
+Complete only LOCAL-04. Run every authorized catalog, recipe, inventory,
+purchase, adjustment, expense, compensation, and staff/PIN workflow through
+the real tablet UI in flight mode; force-close/restart, reconnect in dependency
+order, repeat retry, reconcile exact local/cloud effects, and prove offline and
+online role isolation. Any reproduced bug pauses the matrix until root-fixed
+and regression-proved. Do not begin HARD-01 or later work.
