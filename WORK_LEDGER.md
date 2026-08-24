@@ -19,7 +19,7 @@ remaining goal and card sequence.
 | LOCAL-02 — Local-first catalog and recipes | done — `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main` |
 | LOCAL-03 — Local-first inventory, expenses, and compensation | done — `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main` |
 | STAFF-01 — Offline staff creation and protected initial PIN | done — `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main` |
-| CATALOG-01 — Offline category artwork | in progress |
+| CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
 | LOCK-01 — Role-safe Lock / Switch staff | pending |
 | LOCAL-04 — Offline management closeout | pending |
 | HARD-01 — Physical startup/navigation baseline | pending |
@@ -99,7 +99,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- CATALOG-01 is the only in-progress card and is ready to commit/push.
+- CATALOG-01 is complete and pushed to `origin/main` as
+  `43c9e4a3ed169ae7a07344f9587a51f65051e203`.
   The six-asset gallery, neutral resolver, category picker, schema 17, and full
   local/outbox/cloud/snapshot/POS path are implemented. The SM-X115 upgraded its
   real schema-16 database in place, preserving 11 sales; the four existing
@@ -119,8 +120,9 @@ remaining goal and card sequence.
   returns to 1340 by 800. Full local/catalog/staff/sales/Orders/Dashboard/
   Reports/Settings/offline/reconnect/identity/Android/build checks pass;
   Graphify is current at 3,192 nodes and 7,382 edges, authorities/DOX are
-  updated, and focused Android runtime failures are zero. Exact next action:
-  commit/push CATALOG-01, record its SHA, and leave LOCK-01 pending.
+  updated, and focused Android runtime failures are zero. No card is currently
+  in progress. Exact next action when the owner continues: confirm LOCK-01's
+  unfinished-cart handoff policy, research it, and activate only LOCK-01.
 - STAFF-01 is complete and pushed to `origin/main` as
   `9754897f4be65ffca1b572140e44fc229cad948f`. The
   owner-only minimal form, PIN-free local operation, protected immediate
@@ -894,6 +896,18 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — CATALOG-01 complete on origin/main
+
+- `CATALOG-01: add offline category artwork` is pushed directly to
+  `origin/main` as `43c9e4a3ed169ae7a07344f9587a51f65051e203`; local `main` and
+  the remote resolved to the same SHA before this completion record.
+- CATALOG-01 is done with its gallery, schema 17, local/cloud/fallback,
+  migration, physical offline/restart/reconnect/cleanup, mandatory cache/
+  favicon/cloud-lifecycle bug fixes, full regression, repeated Android beta,
+  exact viewport, clean console/runtime, Graphify, authority, and DOX evidence.
+  No card is active. LOCK-01 is next only after the owner confirms what happens
+  to an unfinished cart when staff switch.
 
 ### 2026-08-24 — CATALOG-01 physical workflow and mandatory bugs complete
 
