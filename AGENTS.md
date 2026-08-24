@@ -110,8 +110,10 @@ decision changes.
 - Goal 06 LOCAL-01 adds SQLite schema 13 and the shared local-first management
   operation/outbox foundation with actor/role evidence, bounded non-secret
   payloads, parent dependencies, acknowledgement mapping, and safe retry state.
-  It does not yet make any Product, Stock, cost, or staff form writable offline;
-  those remain LOCAL-02, LOCAL-03, and STAFF-01 work.
+  Goal 06 LOCAL-02 adds schema 14/15 mappings and makes category, product,
+  modifier, option, and immutable recipe management local-first with ordered
+  acknowledgement and dependent sale translation. Stock, cost, and staff forms
+  remain LOCAL-03 and STAFF-01 work.
 
 ### Visual baseline
 

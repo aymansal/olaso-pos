@@ -83,7 +83,9 @@ tablet's local SQLite operational record.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry, with a one-to-31-day saved-tablet fallback offline; tab
   switches remain local and never start another query.
-- Never refresh cloud cache data over pending local outbox work.
+- Never refresh cloud catalog data over pending local management work. Pending
+  or failed sales keep their immutable snapshots and stock deltas but must not
+  freeze category/product/modifier/recipe refreshes indefinitely.
 - Treat the shared connection context as display/readiness state only. The one
   reconnect worker owns automatic outbox and cache work.
 - Automatic sync reads only pending rows, releases only classified connection

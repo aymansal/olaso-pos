@@ -269,9 +269,11 @@ The authenticated `ReconnectProvider` is the only automatic worker. It is
 mounted inside the active staff session, coalesces overlapping requests into
 one flight, sends at most ten batches of ten entries with a yield between full
 batches, and respects parent/dependent management-operation order. It refreshes
-the saved local view only after every eligible operation is acknowledged. POS,
-Orders, Dashboard, Reports, and Settings observe its completion revision
-without treating a tab switch as a refresh request.
+the saved operational catalog after local management operations are
+acknowledged; a pending or business-failed sale does not freeze the catalog
+because the sale already owns an immutable receipt/product snapshot and local
+stock delta. POS, Orders, Dashboard, Reports, and Settings observe its
+completion revision without treating a tab switch as a refresh request.
 
 ### Idempotency
 

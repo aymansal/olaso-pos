@@ -136,7 +136,7 @@ polishing screens or data paths that later functional work would change.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
-| LOCAL-02 | Make catalog and recipe management fully local-first | in progress | Android research/Graphify/DOX preflight complete; implementation pending |
+| LOCAL-02 | Make catalog and recipe management fully local-first | in progress | Implementation and complete automated/physical verification pass; commit and push pending |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | pending | — |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |

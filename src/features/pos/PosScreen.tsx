@@ -83,7 +83,9 @@ export function PosScreen({
   );
   const categories: Category[] = useMemo(
     () =>
-      (menu?.categories ?? []).map((category) => ({
+      (menu?.categories ?? []).filter(
+        (category) => category.status !== 'archived',
+      ).map((category) => ({
         id: category.key,
         name: category.name,
         count:

@@ -20,6 +20,35 @@ import { listPendingOutboxFromDatabase } from './outbox.ts';
 
 type ManagementDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
+export async function latestPendingManagementOperationIdFromDatabase(
+  database: ManagementDatabase,
+) {
+  const result = await database.query(
+    `SELECT operation_id FROM outbox
+     WHERE state IN ('pending', 'failed')
+       AND operation_type LIKE 'management.%'
+     ORDER BY rowid DESC LIMIT 1`,
+  );
+  return result.values?.[0]
+    ? managementIdentifier(String(result.values[0].operation_id), 'Operation ID')
+    : undefined;
+}
+
+export async function hasPendingManagementOperationsFromDatabase(
+  database: ManagementDatabase,
+) {
+  const result = await database.query(
+    `SELECT 1 FROM outbox
+     WHERE operation_type LIKE 'management.%'
+     LIMIT 1`,
+  );
+  return Boolean(result.values?.[0]);
+}
+
+export async function hasPendingManagementOperations() {
+  return hasPendingManagementOperationsFromDatabase(await openLocalDatabase());
+}
+
 function mappingType(value: string) {
   const cleaned = value.trim();
   if (!/^[a-z][a-z0-9.-]{1,40}$/.test(cleaned)) {
@@ -46,6 +75,17 @@ export async function resolveCloudRecordIdFromDatabase(
         'Cloud record ID',
       )
     : localId;
+}
+
+export async function resolveCloudRecordId(
+  recordType: string,
+  localRecordId: string,
+) {
+  return resolveCloudRecordIdFromDatabase(
+    await openLocalDatabase(),
+    recordType,
+    localRecordId,
+  );
 }
 
 export async function loadManagementOperationFromDatabase(
@@ -280,6 +320,7 @@ export async function acknowledgeManagementOperationInDatabase(
     })),
   ];
   for (const mapping of mappings) {
+    if (mapping.localRecordId === mapping.cloudRecordId) continue;
     await database.run(
       `INSERT INTO local_cloud_mappings
         (record_type, local_record_id, cloud_record_id, acknowledged_at)

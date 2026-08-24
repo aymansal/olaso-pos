@@ -302,7 +302,7 @@ export function ProductEditorPanel({
         </button>
       </div>
       <div className={styles.options}>
-        {activeModifierGroups.slice(0, 4).map((group) => {
+        {activeModifierGroups.map((group) => {
           const selected = Boolean(group.id && modifierGroupIds.includes(group.id));
           return (
             <button

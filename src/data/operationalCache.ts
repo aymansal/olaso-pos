@@ -13,31 +13,39 @@ export type OperationalCacheSnapshot = {
     key: string;
     name: string;
     sortOrder: number;
+    status?: 'active' | 'archived';
     revision: number;
   }>;
   products: Array<{
     id: string;
+    key: string;
     categoryId: string;
     name: string;
     receiptName: string;
     priceCentimes: number;
-    status: 'active' | 'unavailable';
+    status: 'active' | 'unavailable' | 'archived';
     imageAssetKey?: string;
     sortOrder: number;
     currentRecipeVersionId?: string;
     revision: number;
+    updatedAt: number;
   }>;
   modifierGroups: Array<{
     id: string;
+    key: string;
     name: string;
     minimumSelections: number;
     maximumSelections: number;
+    sortOrder: number;
+    status?: 'active' | 'archived';
     revision: number;
   }>;
   modifierOptions: Array<{
     id: string;
     modifierGroupId: string;
+    key: string;
     name: string;
+    status?: 'active' | 'archived';
     priceDeltaCentimes: number;
     ingredientEffects: IngredientEffect[];
     sortOrder: number;
@@ -106,10 +114,14 @@ export async function replaceOperationalCache(
 ) {
   assertBounded(snapshot);
   return withLocalTransaction(async (database) => {
-    const unsynced = await database.query('SELECT 1 FROM outbox LIMIT 1');
+    const unsynced = await database.query(
+      `SELECT 1 FROM outbox
+       WHERE operation_type LIKE 'management.%'
+       LIMIT 1`,
+    );
     if (unsynced.values?.length) {
       throw new Error(
-        'Operational cache refresh is unavailable while local changes are pending.',
+        'Operational cache refresh is unavailable while local management changes are pending.',
       );
     }
     await database.execute(
@@ -123,12 +135,46 @@ export async function replaceOperationalCache(
        DELETE FROM product_modifier_groups;`,
       false,
     );
+    await database.execute(
+      `DELETE FROM recipe_items WHERE recipe_version_id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'recipe-version' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM product_modifier_groups WHERE product_id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'product' AND local_record_id <> cloud_record_id
+       ) OR modifier_group_id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'modifier-group' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM modifier_options WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'modifier-option' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM recipe_versions WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'recipe-version' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM products WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'product' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM modifier_groups WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'modifier-group' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM categories WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'category' AND local_record_id <> cloud_record_id
+       );`,
+      false,
+    );
 
     for (const category of snapshot.categories) {
       await database.run(
         `INSERT INTO categories
           (id, key, name, sort_order, status, revision, updated_at)
-         VALUES (?, ?, ?, ?, 'active', ?, ?)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            key = excluded.key,
            name = excluded.name,
@@ -141,6 +187,7 @@ export async function replaceOperationalCache(
           category.key,
           category.name,
           category.sortOrder,
+          category.status ?? 'active',
           category.revision,
           snapshot.updatedAt,
         ],
@@ -150,16 +197,17 @@ export async function replaceOperationalCache(
     for (const product of snapshot.products) {
       await database.run(
         `INSERT INTO products
-          (id, category_id, name, receipt_name, price_centimes, status,
+          (id, category_id, name, receipt_name, price_centimes, status, key,
            image_asset_key, sort_order, current_recipe_version_id, revision,
            updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            category_id = excluded.category_id,
            name = excluded.name,
            receipt_name = excluded.receipt_name,
            price_centimes = excluded.price_centimes,
            status = excluded.status,
+           key = excluded.key,
            image_asset_key = excluded.image_asset_key,
            sort_order = excluded.sort_order,
            current_recipe_version_id = excluded.current_recipe_version_id,
@@ -172,6 +220,7 @@ export async function replaceOperationalCache(
           product.receiptName,
           product.priceCentimes,
           product.status,
+          product.key,
           product.imageAssetKey ?? null,
           product.sortOrder,
           product.currentRecipeVersionId ?? null,
@@ -184,21 +233,26 @@ export async function replaceOperationalCache(
     for (const group of snapshot.modifierGroups) {
       await database.run(
         `INSERT INTO modifier_groups
-          (id, name, minimum_selections, maximum_selections, status, revision,
-           updated_at)
-         VALUES (?, ?, ?, ?, 'active', ?, ?)
+          (id, key, name, minimum_selections, maximum_selections, status,
+           sort_order, revision, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            name = excluded.name,
+           key = excluded.key,
            minimum_selections = excluded.minimum_selections,
            maximum_selections = excluded.maximum_selections,
-           status = 'active',
+           status = excluded.status,
+           sort_order = excluded.sort_order,
            revision = excluded.revision,
            updated_at = excluded.updated_at`,
         [
           group.id,
+          group.key,
           group.name,
           group.minimumSelections,
           group.maximumSelections,
+          group.status ?? 'active',
+          group.sortOrder,
           group.revision,
           snapshot.updatedAt,
         ],
@@ -208,11 +262,12 @@ export async function replaceOperationalCache(
     for (const option of snapshot.modifierOptions) {
       await database.run(
         `INSERT INTO modifier_options
-          (id, modifier_group_id, name, price_delta_centimes, status,
+          (id, modifier_group_id, key, name, price_delta_centimes, status,
            ingredient_effects_json, sort_order, revision, updated_at)
-         VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            modifier_group_id = excluded.modifier_group_id,
+           key = excluded.key,
            name = excluded.name,
            price_delta_centimes = excluded.price_delta_centimes,
            status = 'active',
@@ -223,8 +278,10 @@ export async function replaceOperationalCache(
         [
           option.id,
           option.modifierGroupId,
+          option.key,
           option.name,
           option.priceDeltaCentimes,
+          option.status ?? 'active',
           JSON.stringify(option.ingredientEffects),
           option.sortOrder,
           option.revision,
@@ -463,49 +520,55 @@ export async function loadOperationalCache(
     cacheState,
   ] = await Promise.all([
       database.query(
-        `SELECT id, key, name, sort_order, revision
+        `SELECT id, key, name, sort_order, status, revision
          FROM categories
-         WHERE status = 'active'
-         ORDER BY sort_order
+         ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
+           sort_order, updated_at DESC
          LIMIT ${LIMITS.categories}`,
       ),
       database.query(
-        `SELECT id, category_id, name, receipt_name, price_centimes, status,
-          image_asset_key, sort_order, current_recipe_version_id, revision
+        `SELECT id, key, category_id, name, receipt_name, price_centimes, status,
+          image_asset_key, sort_order, current_recipe_version_id, revision, updated_at
          FROM products
-         WHERE status <> 'archived'
-         ORDER BY sort_order
+         ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
+           sort_order, updated_at DESC
          LIMIT ${LIMITS.products}`,
       ),
       database.query(
-        `SELECT id, name, minimum_selections, maximum_selections, revision
+         `SELECT id, key, name, minimum_selections, maximum_selections, status,
+          sort_order, revision
          FROM modifier_groups
-         WHERE status = 'active'
+         ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
+           sort_order, name
          LIMIT ${LIMITS.modifierGroups}`,
       ),
       database.query(
-        `SELECT id, modifier_group_id, name, price_delta_centimes, sort_order,
+         `SELECT id, modifier_group_id, key, name, price_delta_centimes, status, sort_order,
           ingredient_effects_json, revision
          FROM modifier_options
-         WHERE status = 'active'
+         ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
+           modifier_group_id, sort_order, name
          LIMIT ${LIMITS.modifierOptions}`,
       ),
       database.query(
-        `SELECT product_id, modifier_group_id, sort_order
-         FROM product_modifier_groups
+        `SELECT pmg.product_id, pmg.modifier_group_id, pmg.sort_order
+         FROM product_modifier_groups pmg
+         JOIN products p ON p.id = pmg.product_id
+         ORDER BY CASE WHEN p.status = 'archived' THEN 1 ELSE 0 END,
+           p.updated_at DESC, pmg.sort_order
          LIMIT ${LIMITS.productModifierGroups}`,
       ),
       database.query(
-        `SELECT id, product_id, version, created_at
+         `SELECT id, product_id, version, created_at
          FROM recipe_versions
-         WHERE is_active = 1
+         ORDER BY is_active DESC, created_at DESC
          LIMIT ${LIMITS.recipeVersions}`,
       ),
       database.query(
         `SELECT ri.recipe_version_id, ri.ingredient_id, ri.quantity
          FROM recipe_items ri
          JOIN recipe_versions rv ON rv.id = ri.recipe_version_id
-         WHERE rv.is_active = 1
+         ORDER BY rv.is_active DESC, rv.created_at DESC
          LIMIT ${LIMITS.recipeItems}`,
       ),
       database.query(
@@ -538,15 +601,19 @@ export async function loadOperationalCache(
       key: String(row.key),
       name: String(row.name),
       sortOrder: Number(row.sort_order),
+      status: row.status === 'archived' ? 'archived' : 'active',
       revision: Number(row.revision),
     })),
     products: (products.values ?? []).map((row) => ({
       id: String(row.id),
+      key: String(row.key),
       categoryId: String(row.category_id),
       name: String(row.name),
       receiptName: String(row.receipt_name),
       priceCentimes: Number(row.price_centimes),
-      status: row.status === 'active' ? 'active' : 'unavailable',
+      status: ['active', 'unavailable', 'archived'].includes(String(row.status))
+        ? row.status as 'active' | 'unavailable' | 'archived'
+        : 'unavailable',
       ...(row.image_asset_key
         ? { imageAssetKey: String(row.image_asset_key) }
         : {}),
@@ -555,18 +622,24 @@ export async function loadOperationalCache(
         ? { currentRecipeVersionId: String(row.current_recipe_version_id) }
         : {}),
       revision: Number(row.revision),
+      updatedAt: Number(row.updated_at),
     })),
     modifierGroups: (modifierGroups.values ?? []).map((row) => ({
       id: String(row.id),
+      key: String(row.key),
       name: String(row.name),
       minimumSelections: Number(row.minimum_selections),
       maximumSelections: Number(row.maximum_selections),
+      sortOrder: Number(row.sort_order),
+      status: row.status === 'archived' ? 'archived' : 'active',
       revision: Number(row.revision),
     })),
     modifierOptions: (modifierOptions.values ?? []).map((row) => ({
       id: String(row.id),
       modifierGroupId: String(row.modifier_group_id),
+      key: String(row.key),
       name: String(row.name),
+      status: row.status === 'archived' ? 'archived' : 'active',
       priceDeltaCentimes: Number(row.price_delta_centimes),
       ingredientEffects: parseIngredientEffects(row.ingredient_effects_json),
       sortOrder: Number(row.sort_order),

@@ -135,6 +135,7 @@ export const getOperationalSnapshot = query({
       })),
       products: products.map((product) => ({
         id: product._id,
+        key: product.key,
         categoryId: product.categoryId,
         name: product.name,
         receiptName: product.receiptName,
@@ -148,17 +149,21 @@ export const getOperationalSnapshot = query({
           ? { currentRecipeVersionId: product.currentRecipeVersionId }
           : {}),
         revision: product.revision,
+        updatedAt: product.updatedAt,
       })),
       modifierGroups: modifierGroups.map((group) => ({
         id: group._id,
+        key: group.key,
         name: group.name,
         minimumSelections: group.minSelections,
         maximumSelections: group.maxSelections,
+        sortOrder: group.sortOrder,
         revision: group.revision,
       })),
       modifierOptions: modifierOptions.map((option) => ({
         id: option._id,
         modifierGroupId: option.groupId,
+        key: option.key,
         name: option.name,
         priceDeltaCentimes: option.priceDeltaCentimes,
         ingredientEffects: option.ingredientEffects.map((effect) => ({

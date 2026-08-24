@@ -8,6 +8,7 @@ import {
   CONNECTION_SYNC_FAILURE,
   listPendingOutbox,
 } from './outbox.ts';
+import { latestPendingManagementOperationIdFromDatabase } from './localManagement.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import { allocateCentimes } from '../lib/costs.ts';
 
@@ -524,14 +525,15 @@ export async function commitLocalSale(
   await database.run(
     `INSERT INTO outbox
       (operation_id, device_id, operation_type, local_record_id, state,
-       created_at, available_at)
-     VALUES (?, ?, 'sale-completed', ?, 'pending', ?, ?)`,
+       created_at, available_at, depends_on_operation_id)
+     VALUES (?, ?, 'sale-completed', ?, 'pending', ?, ?, ?)`,
     [
       operationId,
       deviceId,
       localSaleId,
       receipt.completedAt,
       receipt.completedAt,
+      (await latestPendingManagementOperationIdFromDatabase(database)) ?? null,
     ],
     false,
   );
@@ -645,9 +647,22 @@ export async function cancelLocalSale(
   );
   await database.run(
     `INSERT INTO outbox
-     (operation_id, device_id, operation_type, local_record_id, state, created_at, available_at)
-     VALUES (?, ?, 'sale-cancelled', ?, 'pending', ?, ?)`,
-    [operationId, String(original.device_id), localCorrectionId, correctedAt, correctedAt],
+     (operation_id, device_id, operation_type, local_record_id, state, created_at,
+      available_at, depends_on_operation_id)
+     VALUES (?, ?, 'sale-cancelled', ?, 'pending', ?, ?, ?)`,
+    [
+      operationId,
+      String(original.device_id),
+      localCorrectionId,
+      correctedAt,
+      correctedAt,
+      (await database.query(
+        `SELECT operation_id FROM outbox
+         WHERE operation_type = 'sale-completed' AND local_record_id = ?
+         LIMIT 1`,
+        [originalLocalSaleId],
+      )).values?.[0]?.operation_id ?? null,
+    ],
     false,
   );
   return { localCorrectionId, operationId, originalLocalSaleId, correctedAt };

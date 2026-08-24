@@ -15,8 +15,8 @@ saved tablet presentation during an outage.
   dialogs.
 - `productManagementTypes.ts` owns the plain feature contracts passed to child
   components.
-- `src/data/useProductManagement.ts` is the application data boundary that maps
-  Convex results and exposes deliberate feature actions.
+- `src/data/useProductManagement.ts` maps the saved SQLite operational catalog
+  and exposes deliberate local-first feature actions.
 
 ## Local Contracts
 
@@ -24,14 +24,16 @@ saved tablet presentation during an outage.
   coherent editing workspace.
 - Keep leaf components prop-driven; only the application data hook imports
   Convex.
-- Category, product, modifier, and recipe writes use the validated domain
-  actions and surface backend failures without optimistic false claims.
+- Category, product, modifier, and recipe writes use validated local domain
+  actions plus the management outbox and surface synchronization failures
+  without optimistic false claims.
 - Every recipe save creates a new immutable version; never overwrite historical
   recipe meaning.
 - Archive and restore records that history may reference; do not expose
   destructive deletion.
-- Offline reads use the saved operational cache and must never remain on a live
-  loading state. Protected management writes retain their server boundary.
+- Offline reads and authorized writes use the saved operational cache and must
+  never remain on a live loading state. Cloud acknowledgement follows later in
+  dependency order.
 
 ## Work Guidance
 

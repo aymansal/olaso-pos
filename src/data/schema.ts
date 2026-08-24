@@ -461,6 +461,19 @@ export const localMigrations = [
         ON local_cloud_mappings(record_type, cloud_record_id)`,
     ],
   },
+  {
+    toVersion: 15,
+    statements: [
+      `ALTER TABLE products
+        ADD COLUMN key TEXT NOT NULL DEFAULT ''`,
+      `UPDATE products SET key = id WHERE key = ''`,
+      `ALTER TABLE modifier_groups
+        ADD COLUMN key TEXT NOT NULL DEFAULT ''`,
+      `UPDATE modifier_groups SET key = id WHERE key = ''`,
+      `ALTER TABLE modifier_groups
+        ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

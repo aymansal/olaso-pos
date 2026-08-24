@@ -99,15 +99,25 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- LOCAL-02 is the only in-progress card. Official Android/Capacitor research,
-  Graphify, and the applicable product/data/Convex DOX reread are complete. The
-  native SQLite database remains the screen source of truth; each catalog/recipe
-  save must update local rows plus the LOCAL-01 operation/outbox atomically and
-  synchronize in stable parent order. Exact next action: implement the local
-  domain operations and reconnect handlers without starting LOCAL-03. The first
-  implementation checkpoint adds schema-14 local/cloud ID mappings after tracing
-  the required pending-catalog-to-sale dependency; category/product transactions
-  are the exact next action.
+- LOCAL-02 is the only in-progress card. Its local catalog/recipe implementation
+  now builds and opens on the physical tablet. A failed test APK had rewritten
+  published migration 14 and added unsafe uniqueness rules; the tablet database
+  was preserved, backed up in app-private storage, restored with commit
+  `26ae027`, then upgraded cleanly from schema 13 through the restored migration
+  14 and new migration 15. `check:local`, `check:local-catalog`, the production
+  build, Android checks/sync/beta build, APK install, owner unlock through ADB,
+  POS catalog load, and focused logcat error scan pass. The stale-parent case is
+  also repaired: failed sale outbox rows no longer freeze catalog refreshes,
+  while pending management rows still protect local catalog changes. Physical
+  proof refreshed an archived Coffee ID, created a Coffee product offline,
+  survived restart, synchronized it once, and retained seven unrelated sale
+  rows. Offline modifier/product/recipe dependency ordering, restart survival,
+  POS modifier selection, acknowledgement mapping, refresh cleanup, and QA
+  archive cleanup are also physically proved. All required focused/backend/
+  build/Android checks pass and Graphify's deterministic code graph is current.
+  Exact next action: commit and push the verified LOCAL-02 implementation, then
+  record its full `origin/main` SHA and mark LOCAL-02 done without activating
+  LOCAL-03 in the same commit.
 - Known HARD-03 production bug: a SecureSession native connectivity callback can
   notify before Capacitor's JavaScript bridge is ready, producing an uncaught
   `triggerEvent` error during notification-shade/screen-off pre-bridge launches.
@@ -119,11 +129,9 @@ remaining goal and card sequence.
   React/data boundary and rejected alternatives, then prove the choice on the
   physical tablet. Do not treat the APK as a web page or force unnecessary
   Kotlin when a correct native plugin boundary already exists.
-- Goal 06 is active on `main`; LOCAL-01 is complete and no card is currently in
-  progress. Its implementation is pushed as
-  `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`. LOCAL-02 is next
-  but pending. Exact next action when the owner continues: research official
-  Android/Capacitor catalog/recipe offline patterns, then activate only LOCAL-02.
+- Goal 06 is active on `main`; LOCAL-01 is complete at
+  `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`, and LOCAL-02 is
+  the only active card.
 - Owner sequencing decision: the manual screen-by-screen critique and UI polish
   are the final change phase. LOCAL-01 through HARD-07 must first make the app
   fully functional, offline-capable, fast, recoverable, secure, and releasable.
@@ -843,6 +851,122 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-02 closeout ready to commit
+
+- Physical SM-X115 continuation created `Temperature QA 1308` with Hot/Cold
+  options offline, assigned it to the synchronized QA product, and saved an
+  immutable one-item recipe offline. The dependency chain was modifier group,
+  product assignment, then recipe version. All survived force-close/restart;
+  POS displayed the optional Temperature group and added Cold to the cart.
+- Physical testing found and fixed three closeout defects: a fifth modifier
+  group was rendered but unreachable because the editor sliced the list to
+  four; acknowledging a cloud-owned edit attempted a duplicate identity
+  mapping; and refresh inserted a cloud recipe before removing its mapped local
+  temporary version. The final scrollable four-card geometry, identity-mapping
+  skip, and pre-insert mapped-record cleanup all pass on the tablet.
+- Reconnect produced one cloud group, two options, one product link, one recipe
+  version, and one recipe item with zero management outbox rows. The QA product,
+  group, and category were then archived through ordinary app actions and
+  synchronized; the seven pre-existing historical sale outbox rows were not
+  changed.
+- Final checks pass: `check:local-management`, `check:local-catalog`,
+  `check:local`, `check:reconnect`, `check:offline`, `check:pos`,
+  `check:settings`, `check:sales`, `check:management`, `check:convex`,
+  `npm run build`, `npx convex dev --once`, and the 140-task `android:beta`
+  build. The final APK installed and cold-started offline at 1340 by 800, owner
+  unlock succeeded through ADB, the clean four-category/15-product POS rendered,
+  and the focused introduced-error scan was empty.
+- `graphify . --update` could not perform mixed semantic extraction without an
+  LLM key. `graphify update .` completed the supported deterministic code-only
+  refresh, repeated after the final code fix: 2,984 nodes, 6,857 edges, and 147
+  communities. Exact next action:
+  commit/push LOCAL-02, then record the implementation SHA and mark it done.
+
+### 2026-08-24 — LOCAL-02 stale catalog freeze fixed and physically proved
+
+- The owner correctly rejected bypassing a stale Coffee category by choosing a
+  fresh test category. Root cause: the reconnect worker required the entire
+  outbox to be empty before refreshing the operational catalog, so seven older
+  sale failures indefinitely kept an archived cloud category ID active in the
+  tablet cache.
+- Changed the boundary so only pending/failed `management.*` operations block a
+  catalog refresh. Immutable pending/failed sales keep their receipt/product
+  snapshots and stock deltas but no longer freeze categories, products,
+  modifiers, or recipes. Active rows are also prioritized before archived rows
+  in every bounded catalog read, so live offline records cannot fall beyond a
+  limit filled by historical archived data.
+- Focused management, reconnect, migration, and catalog checks pass; the test
+  explicitly proves that a sale-only failed outbox does not count as pending
+  management work. Production build, Android static/sync, and the 140-task beta
+  build pass.
+- Physical SM-X115 proof restored the stale pre-test database, retained seven
+  sale outbox rows, refreshed Coffee from its old archived ID to the current
+  active ID, and left zero management rows. `Offline Coffee 1302` was then
+  created under Coffee with Wi-Fi/mobile data disabled, survived force-close
+  and owner unlock, appeared as Coffee item 10 in POS, synchronized on reconnect
+  to one cloud product/mapping/acknowledgement, and left zero product or
+  management outbox rows. No category conflict recurred.
+- The separate known HARD-03 pre-bridge `triggerEvent` bug produced one black
+  launch during the lifecycle portion and remains assigned to HARD-03; an awake
+  foreground relaunch completed this card's data proof. LOCAL-02 remains in
+  progress. Exact next action: finish offline modifier and recipe physical
+  creation/edit/restart/POS/reconnect proof, then close the card gate.
+
+### 2026-08-24 — LOCAL-02 database-upgrade incident recovered and fixed
+
+- An unfinished test APK failed to open SQLite because it rewrote published
+  migration 14 and tried to create `categories_by_local_key` as a unique index
+  over historical duplicate category keys. Android logcat recorded schema
+  13-to-14 failure `UNIQUE constraint failed: categories.key`; this was caused
+  by the in-progress change, not the protected PIN or existing application data.
+- Preserved the 1,200,128-byte database and copied it to app-private
+  `files/recovery-20260824-1235-olaso_posSQLite.db`. Installed a clean APK built
+  from known-good commit `26ae027` with `adb install -r`; no uninstall or data
+  clear occurred. The lock screen and saved POS catalog reopened successfully.
+- Corrected the working source by restoring published migration 14 exactly and
+  moving the new product/modifier-group columns to migration 15 without the
+  unnecessary uniqueness rules. The migration check now includes an archived
+  duplicate category-key fixture matching the physical failure.
+- `npm run check:local`, `npm run check:local-catalog`, `npm run build`, Android
+  static/sync/beta build, install-over-upgrade, and the real schema 13-to-15
+  migration pass. The owner supplied the test PIN; ADB entered it without
+  printing it to logs, the current POS reopened with saved products, and the
+  focused final error scan was empty.
+- LOCAL-02 remains in progress. Exact next action: complete its flight-mode
+  create/edit/restart/reconnect/exactly-once physical workflow before Graphify,
+  documentation, commit, and push. Do not activate LOCAL-03.
+
+### 2026-08-24 — LOCAL-02 physical workflow prepared
+
+- The complete current source passes local-management, local-catalog,
+  migration/restart, reconnect, offline-view, POS, Settings, TypeScript,
+  production-build, Convex deployment/typecheck, Android static/sync, and the
+  140-task beta build. The final APK installed successfully on SM-X115 and cold
+  started at the required Lock boundary.
+- Automated code now covers atomic local category/product/status/modifier/
+  recipe writes, parent-ordered catalog dispatch, local/cloud mappings,
+  sale/correction dependencies, ID translation, local cost display, archived
+  management records, and synchronized temporary-row cleanup.
+- The owner later supplied the owner PIN explicitly, allowing ADB to enter it
+  for the physical workflow. The PIN remains absent from source, Git, application
+  logs, SQLite, and ledger evidence beyond this owner-provided test credential.
+  The remaining work is flight-mode UI creation, force-close/restart
+  persistence, POS visibility/sale dependency, reconnect, exactly-once cloud
+  mapping, clean logs, Graphify, docs, commit, and push.
+- LOCAL-02 remains the only active card; nothing is committed or claimed done.
+
+### 2026-08-24 — LOCAL-02 local catalog implementation in progress
+
+- Added atomic local category, product, status, modifier/option, archive, and
+  recipe-version operations plus catalog reconnect dispatch against the existing
+  retry-safe Convex mutations. Products now reads and saves through SQLite as
+  the single screen source; TypeScript passes.
+- This work is not yet accepted or committed. Remaining before LOCAL-02 can be
+  done: attach pending catalog dependencies/mappings to sale payloads, add the
+  complete focused catalog/reconnect checks, run build/browser/flight-mode/
+  restart/reconnect/tablet evidence, refresh Graphify, and record pushed SHAs.
+- LOCAL-02 remains the only active card. Do not activate LOCAL-03.
 
 ### 2026-08-24 — LOCAL-02 mapping/dependency checkpoint
 

@@ -348,10 +348,14 @@
   width: 396px;
   height: 42px;
   gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
+.options::-webkit-scrollbar { display: none; }
+
 .option {
-  flex: 1;
+  flex: 0 0 93px;
   height: 42px;
   gap: 8px;
   padding: 0 10px;

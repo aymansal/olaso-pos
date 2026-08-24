@@ -6,6 +6,7 @@ import { DatabaseSync } from 'node:sqlite';
 import {
   acknowledgeManagementOperationInDatabase,
   enqueueManagementOperation,
+  hasPendingManagementOperationsFromDatabase,
   listPendingManagementOperationsFromDatabase,
   loadManagementOperationFromDatabase,
   recordManagementOperationFailureInDatabase,
@@ -70,6 +71,7 @@ try {
   assert.equal(category.operationId, 'operation-category');
   assert.equal(category.deviceId, 'tablet-1');
   assert.equal(category.actor.name, 'Olaso Manager');
+  assert.equal(await hasPendingManagementOperationsFromDatabase(adapter), true);
   assert.deepEqual(category.payload, categoryInput.payload);
   assert.equal(
     (await enqueueManagementOperation(adapter, categoryInput)).operationId,
@@ -250,9 +252,42 @@ try {
     await resolveCloudRecordIdFromDatabase(adapter, 'category', 'local-category'),
     'cloud-category',
   );
+  await enqueueManagementOperation(adapter, {
+    ...categoryInput,
+    operationId: 'cloud-category-update',
+    localRecordId: 'cloud-category',
+    expectedRevision: 1,
+    createdAt: 350,
+  });
+  await acknowledgeManagementOperationInDatabase(adapter, {
+    operationId: 'cloud-category-update',
+    recordType: 'category',
+    cloudRecordId: 'cloud-category',
+    acknowledgedAt: 351,
+  });
+  assert.equal(
+    database.prepare(
+      "SELECT COUNT(*) count FROM local_cloud_mappings WHERE record_type = 'category' AND cloud_record_id = 'cloud-category'",
+    ).get().count,
+    1,
+    'Acknowledging a cloud-owned edit must not insert a duplicate identity mapping.',
+  );
   assert.equal(
     await resolveCloudRecordIdFromDatabase(adapter, 'product', 'existing-cloud-id'),
     'existing-cloud-id',
+  );
+  database.prepare("DELETE FROM outbox WHERE operation_type LIKE 'management.%'").run();
+  database.prepare(
+    `INSERT INTO outbox
+      (operation_id, device_id, operation_type, local_record_id, state,
+       created_at, available_at)
+     VALUES ('sale-only', 'tablet-1', 'sale-completed', 'sale-1',
+       'failed', 400, 400)`,
+  ).run();
+  assert.equal(
+    await hasPendingManagementOperationsFromDatabase(adapter),
+    false,
+    'A failed sale must not freeze operational catalog refreshes.',
   );
   assert.equal(
     database.prepare(

@@ -130,6 +130,20 @@ try {
   database.exec('PRAGMA foreign_keys = ON');
   assert.equal(migrate(database, 1), 1);
   seedRepresentativeRecords(database);
+  assert.equal(migrate(database, 13), 13);
+  database.prepare(
+    `INSERT INTO categories
+      (id, key, name, sort_order, status, revision, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    'category-coffee-archived-copy',
+    'category-coffee',
+    'Coffee archived copy',
+    99,
+    'archived',
+    1,
+    1_785_255_600_000,
+  );
   database.close();
 
   database = new DatabaseSync(databasePath);

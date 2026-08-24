@@ -25,6 +25,11 @@ import {
   replaceOperationalCache,
 } from './operationalCache';
 import { clearStaffSession } from './identitySession';
+import { syncPendingCatalogOperations } from './catalogSync';
+import {
+  hasPendingManagementOperations,
+  resolveCloudRecordId,
+} from './localManagement';
 import { isStaffRole } from './permissions';
 import { useStaffSession } from './sessionContext';
 import {
@@ -49,19 +54,27 @@ type ReconnectState = {
 
 const ReconnectContext = createContext<ReconnectState | undefined>(undefined);
 
-function toConvexSaleArgs(input: SaleSyncPayload) {
+async function toConvexSaleArgs(input: SaleSyncPayload) {
   return {
     ...input,
-    lines: input.lines.map(({ recipeVersionId, ...line }) => ({
+    lines: await Promise.all(input.lines.map(async ({ recipeVersionId, ...line }) => ({
       ...line,
-      productId: line.productId as Id<'products'>,
+      productId: await resolveCloudRecordId('product', line.productId) as Id<'products'>,
       ...(recipeVersionId
-        ? { recipeVersionId: recipeVersionId as Id<'recipeVersions'> }
+        ? {
+            recipeVersionId: await resolveCloudRecordId(
+              'recipe-version',
+              recipeVersionId,
+            ) as Id<'recipeVersions'>,
+          }
         : {}),
-      modifierOptionIds: line.modifierOptionIds.map(
-        (id) => id as Id<'modifierOptions'>,
-      ),
-    })),
+      modifierOptionIds: await Promise.all(line.modifierOptionIds.map(
+        async (id) => await resolveCloudRecordId(
+          'modifier-option',
+          id,
+        ) as Id<'modifierOptions'>,
+      )),
+    }))),
   };
 }
 
@@ -74,9 +87,20 @@ export function ReconnectProvider({
 }) {
   const { available } = useConnectionStatus();
   const session = useStaffSession();
+  const sessionArgs = {
+    sessionToken: session.token,
+    deviceId: session.deviceId,
+  };
   const convex = useConvex();
   const acceptMutation = useMutation(api.sales.accept);
   const cancelMutation = useMutation(api.sales.cancel);
+  const saveCategoryMutation = useMutation(api.categories.save);
+  const archiveCategoryMutation = useMutation(api.categories.setArchived);
+  const saveProductMutation = useMutation(api.products.save);
+  const setProductStatusMutation = useMutation(api.products.setStatus);
+  const saveModifierMutation = useMutation(api.modifiers.saveGroup);
+  const archiveModifierMutation = useMutation(api.modifiers.setGroupArchived);
+  const saveRecipeMutation = useMutation(api.recipes.saveVersion);
   const checkSession = useAction(api.identity.checkSession);
   const inFlight = useRef<Promise<ReconnectResult> | undefined>(undefined);
   const requestedMode = useRef<ReconnectMode | undefined>(undefined);
@@ -131,10 +155,142 @@ export function ReconnectProvider({
       else await makeConnectivityFailuresAvailable();
 
       for (let batch = 0; batch < 10; batch += 1) {
+        const catalog = await syncPendingCatalogOperations(async (operation) => {
+          const payload = operation.payload as Record<string, any>;
+          const acknowledgedAt = Date.now();
+          if (operation.operationType === 'management.category.save') {
+            const result = await saveCategoryMutation({
+              ...sessionArgs,
+              ...(operation.expectedRevision === undefined
+                ? { key: String(payload.key) }
+                : {
+                    id: await resolveCloudRecordId('category', operation.localRecordId) as Id<'categories'>,
+                    expectedRevision: operation.expectedRevision,
+                  }),
+              name: String(payload.name), sortOrder: Number(payload.sortOrder),
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'category', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.category.archive') {
+            const result = await archiveCategoryMutation({
+              ...sessionArgs,
+              id: await resolveCloudRecordId('category', operation.localRecordId) as Id<'categories'>,
+              archived: Boolean(payload.archived),
+              expectedRevision: operation.expectedRevision!,
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'category', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.product.save') {
+            const result = await saveProductMutation({
+              ...sessionArgs,
+              ...(operation.expectedRevision === undefined
+                ? { key: String(payload.key) }
+                : {
+                    id: await resolveCloudRecordId('product', operation.localRecordId) as Id<'products'>,
+                    expectedRevision: operation.expectedRevision,
+                  }),
+              categoryId: await resolveCloudRecordId('category', String(payload.categoryId)) as Id<'categories'>,
+              name: String(payload.name), receiptName: String(payload.receiptName),
+              basePriceCentimes: Number(payload.basePriceCentimes),
+              status: payload.status, sortOrder: Number(payload.sortOrder),
+              modifierGroupIds: await Promise.all((payload.modifierGroupIds as string[]).map(
+                async (id) => await resolveCloudRecordId('modifier-group', id) as Id<'modifierGroups'>,
+              )),
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'product', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.product.status') {
+            const result = await setProductStatusMutation({
+              ...sessionArgs,
+              id: await resolveCloudRecordId('product', operation.localRecordId) as Id<'products'>,
+              status: payload.status, expectedRevision: operation.expectedRevision!,
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'product', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.modifier.archive') {
+            const result = await archiveModifierMutation({
+              ...sessionArgs,
+              id: await resolveCloudRecordId('modifier-group', operation.localRecordId) as Id<'modifierGroups'>,
+              archived: Boolean(payload.archived), expectedRevision: operation.expectedRevision!,
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'modifier-group', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.modifier.save') {
+            const options = payload.options as Array<Record<string, any>>;
+            const preparedOptions = await Promise.all(options.map(async (option) => {
+              const mappedId = await resolveCloudRecordId(
+                'modifier-option',
+                String(option.id),
+              );
+              return {
+                ...(mappedId !== String(option.id) || !String(option.id).includes(':')
+                  ? { id: mappedId as Id<'modifierOptions'> }
+                  : {}),
+                key: String(option.key), name: String(option.name),
+                priceDeltaCentimes: Number(option.priceDeltaCentimes), status: option.status,
+                sortOrder: Number(option.sortOrder),
+                ingredientEffects: await Promise.all((option.ingredientEffects as Array<Record<string, any>>).map(
+                  async (effect) => ({
+                    ingredientId: await resolveCloudRecordId('ingredient', String(effect.ingredientId)) as Id<'ingredients'>,
+                    quantityDelta: Number(effect.quantityDelta),
+                  }),
+                )),
+              };
+            }));
+            const result = await saveModifierMutation({
+              ...sessionArgs,
+              ...(operation.expectedRevision === undefined
+                ? { key: String(payload.key) }
+                : {
+                    id: await resolveCloudRecordId('modifier-group', operation.localRecordId) as Id<'modifierGroups'>,
+                    expectedRevision: operation.expectedRevision,
+                  }),
+              name: String(payload.name), required: Boolean(payload.required),
+              minSelections: Number(payload.minSelections), maxSelections: Number(payload.maxSelections),
+              sortOrder: Number(payload.sortOrder), clientMutationId: operation.operationId,
+              options: preparedOptions,
+            });
+            const latest = await convex.query(api.modifiers.list, sessionArgs);
+            const cloudOptions = latest.options.filter((option) => option.groupId === result.id);
+            return {
+              recordType: 'modifier-group', cloudRecordId: String(result.id), acknowledgedAt,
+              relatedMappings: options.flatMap((option) => {
+                const cloud = cloudOptions.find((candidate) => candidate.key === option.key);
+                return cloud ? [{ recordType: 'modifier-option', localRecordId: String(option.id), cloudRecordId: String(cloud._id) }] : [];
+              }),
+            };
+          }
+          if (operation.operationType === 'management.recipe.save') {
+            const result = await saveRecipeMutation({
+              ...sessionArgs,
+              productId: await resolveCloudRecordId('product', String(payload.productId)) as Id<'products'>,
+              expectedProductRevision: operation.expectedRevision!,
+              clientMutationId: operation.operationId,
+              items: await Promise.all((payload.items as Array<Record<string, any>>).map(async (item) => ({
+                ingredientId: await resolveCloudRecordId('ingredient', String(item.ingredientId)) as Id<'ingredients'>,
+                quantity: Number(item.quantity),
+              }))),
+            });
+            return { recordType: 'recipe-version', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          throw new Error('Catalog synchronization operation is unsupported.');
+        });
+        synced += catalog.synced;
+        failed += catalog.failed;
+        if (catalog.failed > 0) break;
+        if (catalog.processed > 0) {
+          await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+          continue;
+        }
         const result = await syncPendingSales(
           async (input) => {
             const accepted = await acceptMutation({
-              ...toConvexSaleArgs(input),
+              ...await toConvexSaleArgs(input),
               sessionToken: session.token,
             });
             return {
@@ -164,7 +320,7 @@ export function ReconnectProvider({
 
       const settings = await loadTerminalSettings();
       let refreshed = false;
-      if (settings.pendingSyncCount === 0) {
+      if (!await hasPendingManagementOperations()) {
         const cloud = await convex.query(api.sync.getOperationalSnapshot, {
           sessionToken: session.token,
           deviceId: session.deviceId,
@@ -194,7 +350,7 @@ export function ReconnectProvider({
       }
       throw new Error(message);
     }
-  }, [acceptMutation, available, cancelMutation, checkSession, convex, onSessionUnavailable, session.deviceId, session.staffProfileId, session.token]);
+  }, [acceptMutation, archiveCategoryMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, onSessionUnavailable, saveCategoryMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.staffProfileId, session.token, setProductStatusMutation]);
 
   const run = useCallback((mode: ReconnectMode = 'automatic') => {
     requestedMode.current = mode === 'manual' || requestedMode.current === 'manual'
