@@ -1,8 +1,8 @@
 ---
-version: 0.4
+version: 0.5
 name: Olaso POS Architecture
 status: active
-updated: 2026-08-21
+updated: 2026-08-23
 authority: Technical architecture, persistence, synchronization, performance, and code ownership
 ---
 
@@ -28,7 +28,7 @@ the system.
 | Styling | Colocated CSS Modules |
 | Android | Capacitor packaging for a manually installed APK |
 | Primary device | Samsung Galaxy Tab A9 in landscape |
-| Local data | SQLite on the tablet |
+| Local data | SQLite is the immediate record for every authorized café operation |
 | Cloud data | Convex |
 | Hosting | No Vercel dependency in the production APK runtime |
 | Printing | Local Capacitor-to-Kotlin raw TCP/LAN bridge using WD8260 ESC/POS |
@@ -76,6 +76,8 @@ The installed application owns:
 - Current cart and transient screen state.
 - Local active menu and recipe cache.
 - Local stock view.
+- Locally created and edited menu, recipe, inventory, expense, compensation,
+  and staff-management records waiting for synchronization.
 - Cached ingredient valuation required for offline sale cost snapshots.
 - Completed local sales.
 - Unsynced-operation queue.
@@ -97,6 +99,8 @@ It stores the minimum data needed for service:
 - Stock movements created by those sales.
 - Outbox entries waiting for Convex.
 - Device settings and last synchronization cursor.
+- Role-scoped local management records and their pending/failed synchronization
+  state. Protected credential material remains outside SQLite.
 
 All local effects of a completed order are committed in one SQLite transaction.
 If that transaction fails, nothing from the order is treated as complete.
@@ -138,9 +142,9 @@ TypeScript 7 compiler; this avoids downgrading the application toolchain.
 
 ### Convex
 
-Convex owns the synchronized cloud record:
+Convex owns the synchronized cloud record and backup:
 
-- Canonical editable menu and recipe data.
+- Acknowledged editable menu and recipe data.
 - Acknowledged sales and sale lines.
 - Ingredient and stock movement history.
 - Report summaries.
@@ -200,6 +204,40 @@ only its attempt counter and records `printed` byte/timing evidence or `failed`
 bounded error code/message; it never inserts another sale, item, stock movement,
 or outbox event.
 
+## Local-first management operations
+
+Every manager/owner operation required for normal café work uses the same
+tablet-first rule as checkout:
+
+1. Verify the active protected staff session and required role locally.
+2. Validate the complete business operation using trusted local records.
+3. Generate a durable tablet record ID and operation ID.
+4. Save the record changes, revision/audit identity, and one outbox entry in a
+   single serialized SQLite transaction.
+5. Update the ordinary screen and POS/menu/stock views immediately.
+6. Synchronize the committed operation later in dependency order.
+
+This covers categories, products, modifiers, recipe versions, ingredients,
+low-stock thresholds, inventory purchases and adjustments, operating expenses,
+compensation periods, staff profiles, and protected initial PIN setup. Archive
+and correction history remains append-only where the domain requires it.
+
+The tablet-generated record ID remains stable across retries. Convex may keep
+its own document ID, but the acknowledgement maps it to the stable tablet ID;
+references created during the same outage synchronize only after their parent
+records. A retry returns the existing acknowledgement rather than creating a
+duplicate. Because the first release has one active tablet, it does not add a
+general multi-device merge system. An unexpected stale cloud revision keeps the
+local operation visible as failed/pending-owner-recovery and never silently
+discards either side.
+
+Staff creation follows the same availability rule without weakening credential
+storage: the raw PIN never enters SQLite, the ordinary outbox, logs, or exports.
+The Android protected-storage boundary keeps only the derived profile-scoped
+credential material needed for immediate local sign-in and later authorized
+server provisioning, then clears pending provisioning material after cloud
+acknowledgement.
+
 ## Synchronization
 
 ### Outbox rule
@@ -230,13 +268,15 @@ failed entries.
 The authenticated `ReconnectProvider` is the only automatic worker. It is
 mounted inside the active staff session, coalesces overlapping requests into
 one flight, sends at most ten batches of ten entries with a yield between full
-batches, and refreshes the operational cache only when the complete outbox is
-empty. POS, Orders, Dashboard, Reports, and Settings observe its completion
-revision through their existing data hooks; hidden screens remain unmounted.
+batches, and respects parent/dependent management-operation order. It refreshes
+the saved local view only after every eligible operation is acknowledged. POS,
+Orders, Dashboard, Reports, and Settings observe its completion revision
+without treating a tab switch as a refresh request.
 
 ### Idempotency
 
-Every sale is identified by `deviceId + localSaleId`.
+Every cloud-bound operation is identified by `deviceId + operationId`; a sale
+also retains `deviceId + localSaleId` as its business idempotency key.
 
 The Convex sale mutation:
 
@@ -245,7 +285,8 @@ The Convex sale mutation:
 3. Otherwise inserts the sale, lines, stock movements, and report updates in
    one mutation.
 
-A network retry therefore produces the same result instead of another sale.
+A network retry therefore produces the same result instead of another sale or
+management record/effect.
 
 ### Download synchronization
 
@@ -262,20 +303,20 @@ A network retry therefore produces the same result instead of another sale.
   the cashier operational cache.
 - The application exposes a manual `Sync now` recovery action.
 
-### Offline screen reads
+### Saved-screen reads and offline operation
 
-POS and Orders retain their established local-first sources. Products and Stock
-map the bounded operational cache into their normal screen contracts when
-validated internet is absent; Stock also reads bounded local movement and
-purchase detail. Dashboard and Reports calculate bounded tablet-only fallback
-summaries from immutable local receipt snapshots, current cached ingredients,
-and saved stock movements. Cancelled sales are excluded from net totals.
+Every screen starts from its bounded saved tablet record whether internet is
+available or not. POS and Orders retain their established local-first sources;
+Products and Stock use the same saved records for both display and management;
+Dashboard and Reports calculate bounded tablet summaries from immutable local
+receipts, ingredients, stock movements, and the role-appropriate saved cost
+records. Cancelled sales are excluded from net totals.
 
-These fallbacks never claim to be the complete cloud-wide record. They keep the
-same screen useful during an outage and are replaced by the normal bounded
-cloud results after reconnection. Product/recipe/ingredient management writes
-remain protected server operations; offline fallback is a read path, not a
-second mutation architecture.
+Saved tablet figures never claim to include work performed elsewhere that has
+not synchronized. They remain visible while a bounded cloud refresh runs and
+are reconciled after acknowledgement. Creating or editing an authorized
+management record is a local SQLite operation plus outbox entry, not a direct
+React-to-Convex mutation and not an online-only alternate path.
 
 ### Current scaling limit
 
@@ -661,6 +702,22 @@ Rules:
 - Keep the critical startup module graph small. The POS shell and the minimum
   lock/startup path may load eagerly; screens not required for the initial
   destination load on demand through the existing React/Vite stack.
+- After an authorized screen's first visit, retain its prepared React/DOM state
+  with React 19 `Activity` rather than deleting and reconstructing it on every
+  tab switch. Hidden activities stop their effects/subscriptions. Do not keep
+  every screen actively running with CSS, and never pre-render a screen the
+  current role cannot access.
+- A simple navigation change preserves the latest snapshot, selection, search,
+  filters, report range, and scroll position. It performs no local/cloud reload
+  by itself. A real data revision, completed local operation, reconnect,
+  deliberate retry, or stale-time policy may refresh in the background without
+  clearing the visible saved snapshot.
+- Lock/switch staff removes retained management screens and their in-memory
+  sensitive state. The separate unfinished-cart handoff policy remains owned by
+  LOCK-01.
+- Foreground/resume refreshes the displayed local clock immediately before its
+  normal interval continues; a suspended timer must not leave stale time after
+  a long tablet sleep.
 - Start background synchronization only after the local POS is rendered and
   responsive. Deferral must not weaken outbox recovery or idempotency.
 - Ship product artwork at dimensions and formats appropriate to its rendered
@@ -710,9 +767,9 @@ limits must be checked again before production launch:
 | Open active menu | Local read; sync only when stale |
 | Open order history | One paginated query |
 | Open report period | One summary query plus paginated detail on demand |
-| Save related recipe changes | One batched mutation |
-| Receive purchased stock | One mutation for purchase, movement, balance, and valuation |
-| Save compensation or expense | One validated retry-safe mutation |
+| Save related recipe changes | One local transaction; later one batched idempotent sync mutation |
+| Receive purchased stock | One local transaction; later one mutation for purchase, movement, balance, and valuation |
+| Save compensation or expense | One local transaction; later one validated retry-safe mutation |
 | Open monthly Costs report | One bounded summary query plus paginated purchase/expense detail on demand |
 
 At 500 sales per day, one sale mutation produces about 15,000 sale calls in a
@@ -780,6 +837,10 @@ longer answer the owner's confirmed reports.
   development but must not exist on a production deployment.
 - Public functions expose the smallest required operation.
 - Scheduled and internal composition calls use internal functions.
+- Local management operations enforce the same cumulative role matrix before
+  committing SQLite/outbox work. Convex rechecks the authenticated actor and
+  business rules when synchronizing; neither side treats UI visibility as
+  authorization.
 
 The confirmed policy is cumulative cashier < manager < owner authorization.
 Cashiers use POS, reprint, same-day whole-sale correction, and low-stock
@@ -1029,7 +1090,7 @@ and to authorize the chosen download source for unknown-app installation.
 
 | Failure | Required behavior |
 | --- | --- |
-| No internet | Continue local ordering and queue sync |
+| No internet | Continue every authorized café operation locally and queue sync |
 | Convex rejection | Keep outbox item, show actionable sync error |
 | Duplicate retry | Return existing acknowledgement |
 | Local save failure | Keep cart intact; do not print |
@@ -1077,10 +1138,27 @@ The smallest runnable tests must cover:
 - A complete sale commits all local records or none.
 - Duplicate Convex submissions create one sale.
 - Duplicate purchase, compensation, and expense mutations create one effect.
+- Offline category, product, modifier, recipe, ingredient, purchase,
+  adjustment, expense, compensation, and staff/profile operations survive
+  restart and synchronize exactly once in dependency order.
+- Offline initial PIN setup leaves no raw PIN in SQLite/outbox/logs and permits
+  the new profile to sign in locally before later protected provisioning.
 - Recipe edits do not change historical sale snapshots.
 - Archived products remain visible in historical sales.
 - Outbox retries survive application restarts.
 - APK schema migrations preserve existing data.
+
+### Navigation performance tests
+
+- Returning to every previously visited authorized screen restores its saved
+  content and interaction state without an empty/full-page loading state.
+- A simple tab switch starts no SQLite or cloud reload and does not visibly
+  recreate product/category images.
+- Hidden screens have no active network/database effects; locking removes
+  retained sensitive screen state; foreground resume refreshes the clock
+  immediately.
+- Physical-tablet before/after traces cover repeated navigation, image decode,
+  memory, cold/warm startup, long sleep/resume, offline use, and reconnect.
 
 ### Hardware tests
 
@@ -1120,6 +1198,8 @@ Do not build these before the trigger occurs:
 - [ ] One completed sale uses one idempotent Convex mutation.
 - [ ] A sale is committed locally before printing.
 - [ ] Internet failure does not block valid local checkout.
+- [ ] Internet failure does not block any authorized day-to-day management
+  operation; every such change is locally durable and retry-safe.
 - [ ] Money and stock use integer base units.
 - [ ] Purchase, inventory, sale-cost, compensation, and expense money uses
   integer centimes with deterministic cost allocation.
@@ -1139,6 +1219,8 @@ Do not build these before the trigger occurs:
 - [ ] APK upgrades preserve SQLite data.
 - [ ] Android launch has no default/blank frame and meets the measured startup
   budget on the physical tablet without waiting for the network.
+- [ ] Previously visited screens return with retained state and saved content,
+  without repeated full loading or visible image reconstruction.
 - [ ] Physical hardware testing happens before production approval.
 
 ## Open technical decisions

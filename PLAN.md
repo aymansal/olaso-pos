@@ -14,9 +14,9 @@ card order, dependencies, and completion gates.
 - The next step is always the first pending card in the first incomplete goal,
   unless WORK_LEDGER.md records an explicit dependency or blocker.
 - When the user asks what comes next, answer from this plan and the relevant
-  goal file. Goal 06 starts in a normal collaborative conversation, never with
-  `/goal`; use its reviewed handoff contract and do not let an agent run the
-  remaining plan autonomously.
+  goal file. Goal 06 continues card by card in normal collaboration, never as
+  one autonomous `/goal`. The owner's manual screen review and UI polish are
+  the final change phase, after functional and technical completion.
 - Detailed card contracts live in the linked goal files. This file stays the
   single overview rather than duplicating every implementation detail.
 
@@ -48,9 +48,11 @@ evidence. Every implementation card receives real physical-tablet testing.
 ## Verified baseline
 
 - Goal 01 is complete: the approved POS interactions work.
-- Goal 02 is complete: the offline-capable full application beta, SQLite
-  checkout/outbox, Convex synchronization, management screens, reports,
-  settings, lock, and Android package work.
+- Goal 02 is complete as a beta: SQLite checkout/outbox, Convex synchronization,
+  management screens, reports, settings, lock, and Android packaging exist.
+  Later OFF-01 through OFF-06 proved offline identity/sales/reconnect and saved
+  screen reads. Offline management writes remain the explicit LOCAL-01 through
+  LOCAL-04 production gap; “offline-capable beta” never means they are done.
 - The Galaxy Tab A9 has verified the complete 1340 by 800 composition, touch
   targeting, and cart survival across navigation.
 - The separate D:\Olaso-escpos-lab has verified the accepted 80 mm WDLink
@@ -75,7 +77,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Owner-led screen review, approved simplification, startup, release hardening, and final acceptance | planned; begins with owner review | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -135,45 +137,50 @@ POLICY-01 through POLICY-03 are complete.
 
 ## Goal 06 — Production hardening and acceptance
 
-Goal 06 begins as a normal owner-led conversation, not an autonomous `/goal`.
-The owner and agent review the real application one screen at a time, agree on
-what should stay or change, and implement only after the owner explicitly
-approves the current screen. Technical hardening follows the approved
-screen-by-screen work.
+Goal 06 completes all functional, offline, performance, recovery, security, and
+release-pipeline work first. Only after the application is fully functional and
+technically stable does the owner manually review each real screen and prompt
+the final UI polish. HARD-08 then verifies and accepts that finished product.
+Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 
 | Card | Outcome |
 | --- | --- |
-| POLISH-01 | Walk through the complete app with the owner and record every disliked, verbose, redundant, or “AI-ish” element before changing the interface. |
-| POLISH-02 | Apply and verify the approved changes one screen at a time before moving to the next screen. |
+| LOCAL-01 | Add the shared local-first management record, permission, audit, dependency, and outbox foundation. |
+| LOCAL-02 | Make category, product, modifier, recipe, price, and availability management fully local-first and immediately visible in POS. |
+| LOCAL-03 | Make ingredient, threshold, purchase, adjustment, expense, and compensation management fully local-first. |
+| STAFF-01 | Add minimal owner-only staff profile and protected initial-PIN setup that works offline and synchronizes later. |
+| CATALOG-01 | Add an offline category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
 | LOCK-01 | Give every staff role a direct Lock / Switch staff action without exposing owner Settings. |
-| STAFF-01 | Add and verify minimal owner-only staff profile creation and initial PIN setup inside Settings. |
-| CATALOG-01 | Add a curated category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
-| HARD-01 | Establish repeatable five-run cold/warm startup, APK, WebView, bundle, and readiness baselines on the physical tablet after the approved screen work is stable. |
+| LOCAL-04 | Prove all authorized management through flight mode, restart, ordered reconnect, duplicate retry, failure recovery, and role isolation. |
+| HARD-01 | Establish repeatable five-run cold/warm startup, navigation, APK, WebView, bundle, and readiness baselines after functional work is stable. |
+| NAV-01 | Preserve each visited authorized screen, keep saved content visible during refresh, and eliminate repeat page/image reconstruction. |
 | HARD-02 | Finalize the app icon and continuous branded launch, with optional measured logo motion after an immediate static first frame. |
 | HARD-03 | Consolidate safe SQLite/lock startup gating and remove empty intermediate rendering without exposing an unlocked POS. |
 | HARD-04 | Optimize only measured eager modules, assets, decoding, and sync scheduling while preserving behavior and recording before/after evidence. |
 | HARD-05 | Implement and rehearse documented export, backup, corrupt-data stop, restore, and support recovery paths. |
 | HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation. |
 | HARD-07 | Complete security, privacy, secret, dependency, Convex quota/index, performance, and operational-support review. |
+| POLISH-01 | Walk through the now fully functional app with the owner and record every disliked, verbose, redundant, or “AI-ish” element. |
+| POLISH-02 | Apply and verify the owner's final changes one screen at a time before moving to the next screen. |
 | HARD-08 | Run realistic service endurance, offline/reconnect, printer, upgrade, recovery, final owner acceptance, documentation, and release closeout. |
 
 ## First-production-release exit
 
 The project is finished only when every remaining card is done and pushed and
-the PRODUCT.md definition of done is satisfied: offline sales are exact and
-recoverable, stock and costs reconcile, permissions protect sensitive data,
-the accepted receipt prints and reprints on the real WD8260, launch meets its
-physical-tablet budget without an unbranded frame, upgrades preserve data,
-backup/recovery is rehearsed, the owner-approved simplification list is
-resolved, every role can lock or switch staff, the client can install an
-approved remote update without WhatsApp APK handling, custom categories always
-have suitable artwork or a neutral fallback, and the owner accepts the
-production workflow.
+the PRODUCT.md definition of done is satisfied: offline sales and every
+authorized management operation are durable and retry-safe, stock and costs
+reconcile, permissions protect sensitive data, previously visited screens
+return immediately without image/full-page reload, the accepted receipt prints
+and reprints on the real WD8260, launch meets its physical-tablet budget without
+an unbranded frame, upgrades preserve data, backup/recovery is rehearsed, the
+owner-approved simplification list is resolved, every role can lock or switch
+staff, the client can install an approved remote update without WhatsApp APK
+handling, custom categories always have suitable artwork or a neutral fallback,
+and the owner accepts the production workflow.
 
 ## Exact next action
 
-Open a normal new conversation with the Goal 06 handoff prompt. It must read the
-project, confirm its understanding, and begin POLISH-01 with the POS screen
-unless the owner chooses another screen. Do not invoke `/goal`, activate an
-implementation card, or change code before the owner approves the current
-screen's decisions.
+Complete LOCAL-01 as the only in-progress card on `main`: extend the existing
+serialized SQLite/outbox/reconnect path with the smallest durable management
+record, permission, audit, dependency, acknowledgement, and retry foundation.
+Do not begin LOCAL-02 or any later card until LOCAL-01 is verified and pushed.

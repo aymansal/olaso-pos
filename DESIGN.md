@@ -1,9 +1,9 @@
 ---
-version: 0.5
+version: 0.6
 name: Olaso POS
 description: Touch-first landscape point-of-sale system for Olaso Club on the Samsung Galaxy Tab A9.
 status: active
-updated: 2026-08-22
+updated: 2026-08-23
 platform: React, Vite, and Capacitor Android
 visualAuthority: Pencil node W26Y6
 colors:
@@ -203,9 +203,10 @@ Principles, in priority order:
 
 ### Deferred owner-led simplification
 
-- Do not redesign or “clean up” the working application piecemeal while feature
-  goals are still moving. During final hardening, the owner reviews every screen
-  and state on the real tablet and records exact keep/remove/shorten/hide choices.
+- Do not redesign or “clean up” the working application piecemeal while
+  functional or technical cards are still moving. Only after HARD-07 is
+  complete does the owner review every screen and state on the real tablet and
+  record the final keep/remove/shorten/hide choices.
 - Treat redundant icons, corporate-sounding guidance, duplicate status, and
   permanently visible support detail as review candidates, not automatic bugs.
 - Implement only the approved list. Preserve essential validation, destructive
@@ -470,6 +471,21 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 
 ## Interaction and State
 
+- After its first authorized visit, each top-level screen returns in the state
+  the operator left it: content, selection, search, filters, report period, and
+  scroll position remain prepared. Locking/switching staff clears retained
+  management-screen state; LOCK-01 separately decides unfinished-cart handoff.
+- Previously saved content stays visible during background refresh. Use a
+  full-page loading state only when that screen has no safe saved snapshot;
+  never replace a usable screen with a spinner, skeleton, or empty state merely
+  because the operator navigated away and back.
+- A tab switch provides immediate pressed/selected feedback and does not wait
+  for internet, SQLite, image decoding, or a decorative transition. A restrained
+  125-to-150-millisecond opacity transition may be added only after measured
+  navigation is already immediate and must respect reduced motion.
+- The shared Header and Lock clock read tablet time locally, refresh immediately
+  on foreground/resume, and then continue their normal interval without an
+  internet dependency.
 - Tapping a product adds one unit to the active order and provides visible pressed feedback within 100 milliseconds.
 - Quantity controls update the line total, subtotal, and total immediately.
   Decrement is disabled at the minimum allowed value.
@@ -491,6 +507,9 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   POLISH-02 keeps everyday labels concise and moves retained support detail
   behind deliberate disclosure.
 - A local persistence failure keeps the order intact. A cloud failure marks the saved sale as waiting to sync without blocking service.
+- Authorized management saves use the same immediate local feedback. A quiet
+  `Waiting to sync` state may communicate pending cloud acknowledgement, but
+  offline status never disables an otherwise valid management form.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
 Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate layout dimensions. Respect `prefers-reduced-motion`.

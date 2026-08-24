@@ -1,8 +1,8 @@
 ---
-version: 0.4
+version: 0.5
 name: Olaso POS Product Specification
 status: active
-updated: 2026-08-21
+updated: 2026-08-23
 authority: Product purpose, scope, workflows, and operational behavior
 ---
 
@@ -37,8 +37,10 @@ In plain English:
 
 These rules are ordered by importance:
 
-1. **Never block service unnecessarily.** Taking an order and printing a
-   receipt must not depend on a fast internet connection.
+1. **Never block service unnecessarily.** Every authorized day-to-day café
+   operation, including menu, stock, cost, and staff management, must save on
+   the tablet without internet. Printing remains a local LAN operation; cloud
+   synchronization happens later.
 2. **Prevent lost or duplicate sales.** A retry must never record the same sale
    twice or deduct its stock twice.
 3. **Keep numbers exact.** Prices, costs, valuations, and recipe quantities are
@@ -120,6 +122,10 @@ repeat the check after material Android, WebView, or native-shell changes.
 - Startup performance is measured on the physical Galaxy Tab A9 after Android
   or WebView updates. A single developer-machine result is not release
   evidence.
+- Returning to a previously visited authorized screen restores its prepared
+  content and interaction state instead of rebuilding the screen or replacing
+  saved content with another loading state. A simple navigation change does
+  not itself justify a database or cloud reload.
 - The working performance budget is a median usable cold start of at most two
   seconds and a median warm start of at most one second across five controlled
   runs on the target tablet. A missed budget is investigated and documented;
@@ -182,8 +188,9 @@ a seventh permanent navigation destination.
 
 ### Deferred owner-led simplification
 
-- After the functional and policy goals are stable, the owner reviews the whole
-  application on the physical tablet and supplies one explicit list of disliked,
+- After every functional, offline, performance, recovery, and readiness card
+  through HARD-07 is complete, the owner reviews the whole application on the
+  physical tablet and supplies the final screen-by-screen list of disliked,
   verbose, redundant, or “AI-ish” interface elements.
 - No speculative cleanup happens before that review. The final pass removes or
   shortens only owner-approved copy, icons, groupings, and visible information.
@@ -511,10 +518,24 @@ sale ingredient cost or required expense input is incomplete.
   later application release; owner-uploaded artwork remains deferred.
 - The tablet keeps the active menu, recipes, current stock, and unsynced sales
   locally.
-- The application takes orders while offline.
+- The application takes orders and completes every authorized day-to-day
+  management operation while offline. This includes category, product,
+  modifier, recipe, ingredient, low-stock threshold, purchase, stock
+  adjustment, operating-expense, compensation, staff-profile, and initial-PIN
+  work permitted by the signed-in role.
+- Every offline change appears immediately in the normal screen and is placed
+  in a durable waiting queue in the same local save. Restarting the app or
+  tablet cannot lose it. Reconnection sends it in dependency order and a retry
+  cannot create a duplicate.
+- Raw PINs and session secrets are never placed in SQLite or an ordinary sync
+  record. Offline staff setup uses the protected Android credential boundary
+  defined by `ARCHITECTURE.md`.
 - Products, Stock, Dashboard, and Reports open from bounded saved tablet data
   while disconnected instead of waiting on live cloud queries. Their offline
   figures describe this tablet's saved records and refresh after synchronization.
+- Saved tablet content remains visible during background refresh. A previously
+  visited screen does not return to an empty, skeleton, or full-page loading
+  state merely because the operator navigated away and back.
 - Lock and POS show one quiet, shared connection state based on real internet
   availability, and it updates after Wi-Fi changes or app resume.
 - Cloud synchronization runs in the background when a connection exists.
@@ -768,12 +789,17 @@ workflow feedback.
 
 ### Phase 6 — production hardening
 
-- Owner-led full-application critique and approved operator-UI simplification.
+- Complete local-first management for menu, stock, costs, staff, and protected
+  initial PIN setup, followed by restart/reconnect/exact-once verification.
+- Retained visited-screen state, saved-content-first rendering, right-sized
+  images, and measured smooth navigation on the physical tablet.
 - Curated category artwork selection plus a neutral custom-category fallback.
 - Final app icon and measured optional branded startup motion.
 - Recovery and backup checks.
 - Permission review.
 - Performance and quota review.
+- Final owner-led full-application critique and approved operator-UI
+  simplification after functional/technical completion.
 - Endurance test during realistic service volume.
 - Owner acceptance.
 
@@ -785,9 +811,12 @@ safe saved-sale reprinting, Goal 04 delivered purchased-stock costing and
 monthly profitability, and Goal 05 delivered confirmed business policy,
 production identity, and permissions. The remaining work is:
 
-1. Owner-led simplification, category artwork, measured startup/launch
-   continuity, signing, backup/recovery, endurance testing, and final owner
-   acceptance against the near-final APK.
+1. Complete offline management; retained, smooth screen navigation; category,
+   staff, and lock workflows; measured startup/launch continuity; signing;
+   backup/recovery; and security/readiness work.
+2. Perform the owner's final manual screen-by-screen critique and prompted UI
+   polish only after that functional and technical work is complete.
+3. Run endurance testing and final owner acceptance against the polished APK.
 
 Detailed goal status and activation order live in `WORK_LEDGER.md` and the
 canonical `PLAN.md`.
@@ -823,6 +852,10 @@ canonical `PLAN.md`.
 The first production release is done when:
 
 - The cashier can complete and recover orders without internet.
+- Every manager/owner operation required during normal café work can be saved
+  without internet, survives restart, appears immediately on the tablet, and
+  synchronizes exactly once after reconnection with the same role checks and
+  audit identity.
 - Every valid completed sale is recorded exactly once.
 - Stock deductions match the active recipe version.
 - Received stock preserves purchase cost and inventory valuation history.
@@ -830,6 +863,9 @@ The first production release is done when:
 - Monthly profitability separates purchases, inventory, ingredient cost,
   compensation, and other expenses without double counting.
 - The owner can edit menu and recipe data without code changes.
+- Returning to any previously visited authorized screen restores its content,
+  selection, filters, and scroll position without visible image reload or a
+  repeated full-page loading state.
 - Reports match a checked sample of real sales and stock movements.
 - APK updates preserve application data.
 - The client can receive an approved signed update remotely and complete it

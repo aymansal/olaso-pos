@@ -10,6 +10,22 @@ This is the working ledger for this narrow topic. It records decisions, actual
 evidence, work done, mistakes to avoid, and the next action. `PRODUCT.md` owns
 the operator behaviour and `ARCHITECTURE.md` owns the technical boundaries.
 
+## Closure boundary
+
+- OFF-01 through OFF-06 are complete and stay closed. They proved protected
+  multi-profile offline unlock, local sales/corrections, Android-validated
+  connection truth, one reconnect worker, exact-once sale upload, and bounded
+  saved Products/Stock/Dashboard/Reports reads on the physical tablet.
+- This ledger never implemented offline creation or editing of catalog, recipe,
+  inventory, expense, compensation, or staff-management records. The earlier
+  read-only offline screen boundary is now superseded as a production target by
+  Goal 06 LOCAL-01 through LOCAL-04 in `PLAN.md`.
+- Do not reactivate or rename the completed OFF cards. Reuse their evidence and
+  extend their SQLite/outbox/reconnect foundation through the new LOCAL cards.
+- The next remaining functional card is LOCAL-01. The owner's manual
+  screen-by-screen review and UI polish wait until functional and technical
+  completion through HARD-07.
+
 ## Non-negotiable rules
 
 - Never store a raw PIN in React state beyond immediate entry, SQLite, logs,
@@ -85,13 +101,13 @@ appropriate physical-tablet evidence.
 - One Android callback now reports only validated internet availability to one
   shared React provider. Lock, POS, and Settings consume it, and foreground/
   resume rechecks protect long-sleep recovery.
-- The POS and Orders browser-event retry listeners are removed. There is still
-  no application-wide reconnect worker; OFF-05 owns it.
-- An offline cancellation commits its local correction and stock restoration,
-  but the current Orders action can remain visibly busy while it waits for a
-  cloud attempt. OFF-05 must keep local completion separate from reconnect work.
+- The POS and Orders browser-event retry listeners are removed. OFF-05 added
+  the single authenticated application-wide reconnect worker.
+- Offline cancellation commits its local correction and stock restoration
+  without waiting for cloud work; OFF-05 separated local completion from later
+  reconnect synchronization.
 
-### User-reported production-like failure — not yet diagnosed
+### User-reported production-like failure — resolved by OFF-01/OFF-02
 
 - A staff profile whose PIN is six ones had previously been used on the tablet.
   After the app was closed, Wi-Fi was disabled, and the app was reopened, that
@@ -101,10 +117,11 @@ appropriate physical-tablet evidence.
   the PIN is wrong, that the profile lacks provisioning, or that SQLite data is
   missing.
 
-### Still unverified
+### Originally unverified — completed by OFF-05/OFF-06
 
-- Reconnection without closing the application.
-- Exact-once upload of an offline sale after Wi-Fi returns.
+- Reconnection without closing the application passed on the physical tablet.
+- Exact-once upload of an offline sale after Wi-Fi returns passed and remained
+  single-effect across a second reconnect.
 
 ## Work cards
 

@@ -8,26 +8,27 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** planned; not active; begins with a normal owner-led conversation
+**Status:** active; LOCAL-01 is the only card in progress
 
-**Objective:** Review the complete working product with the owner one screen at
-a time, implement only explicitly approved changes, then measure and remove the
-remaining startup, recovery, security, performance, packaging, upgrade, and
-operational risks before accepting a reproducible signed release for the real
+**Objective:** Complete every authorized management operation as a local-first
+workflow, preserve prepared screens and saved content across navigation, remove
+the remaining startup, recovery, security, performance, packaging, upgrade, and
+operational risks, then let the owner perform the final manual screen-by-screen
+review and UI polish before accepting a reproducible signed release for the real
 tablet and printer.
 
 ## Sequencing decision
 
-Goal 06 is not an autonomous `/goal`. It starts in a normal new conversation
-that reconstructs the project and then collaborates with the owner screen by
-screen. The agent must not jump ahead, invent a redesign, batch every question,
-or change application code before the owner explicitly approves the current
-screen's decisions.
+Goal 06 is not one autonomous `/goal`; it proceeds one reviewed card at a time.
+Functional completion comes first: local-first management, staff/lock/category
+work, physical offline/reconnect closeout, navigation/startup performance,
+backup, release/update readiness, and security review.
 
-Startup quality remains required, but measurement and optimization happen after
-the approved screen work is stable. The branded transparent wordmark is
-prepared now; actual launch integration and measured optimization happen
-against the near-final APK.
+POLISH-01 and POLISH-02 are deliberately last. Only after LOCAL-01 through
+HARD-07 are complete does the owner manually inspect every fully functional
+screen, prompt the desired UI changes, and approve each result. HARD-08 then
+runs final endurance and acceptance against that polished product. This avoids
+polishing screens or data paths that later functional work would change.
 
 ## Verified starting leads
 
@@ -35,6 +36,12 @@ against the near-final APK.
   the application becomes visible.
 - React waits for SQLite and then terminal settings, has an empty intermediate
   render, eagerly imports major screens, and includes oversized source images.
+- `App.tsx` currently removes the old screen on every tab change. Returning to
+  POS reconstructs its data hook and image elements; Dashboard/Reports can
+  re-enter full loading and Reports explicitly clears its prior snapshot.
+- Products and Stock currently provide saved offline reads but deliberately
+  reject management writes without internet. This contradicts the confirmed
+  requirement that every authorized day-to-day café operation work offline.
 - The local POS already works independently of Convex success, so network work
   must never gate usable startup.
 - The physical Galaxy Tab A9 and current WebView expose the approved full
@@ -61,6 +68,10 @@ against the near-final APK.
 - One continuous branded cream Android/WebView/React launch surface.
 - Safe SQLite/lock startup gating and elimination of blank intermediate state.
 - Profile-driven bundle, image, decode, and synchronization scheduling work.
+- Local-first category, product, modifier, recipe, inventory, purchase,
+  adjustment, expense, compensation, and protected staff/PIN management.
+- Retained visited-screen state, saved-content-first refresh, immediate resume
+  clock correction, and navigation/image reconstruction removal.
 - Export, backup, restore, corrupt-data stop, and support recovery rehearsal.
 - Protected signing, versioning, GitHub Actions/Release flow, upgrade, rollback,
   and signing-key custody documentation.
@@ -82,8 +93,11 @@ against the near-final APK.
 - Replacing React, Vite, Capacitor, SQLite, Convex, Astryx, or the approved UI.
 - A state library, service worker, custom cache framework, native UI rewrite,
   splash dependency, artificial splash delay, or optimization without a trace.
+- Multi-tablet merge/conflict machinery; the first release keeps one active POS
+  tablet and surfaces an unexpected stale cloud revision instead of silently
+  overwriting it.
 - New product features, reports, printer transports, speculative scaling,
-  Google Play distribution, multi-branch, or multi-tablet conflict machinery.
+  Google Play distribution, or multi-branch support.
 - Runtime AI image generation, attempting to predict every possible category,
   or requiring a perfect artwork match before a category can be created.
 - Preselecting GIF, MP4, or another startup format without bundle/decode/startup
@@ -114,52 +128,63 @@ against the near-final APK.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| POLISH-01 | Capture the owner's complete app-wide simplification and dislike list | pending | — |
-| POLISH-02 | Apply and verify approved changes one screen at a time | pending | — |
+| LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | in progress | Graphify preflight and authority/DOX reread complete; implementation pending |
+| LOCAL-02 | Make catalog and recipe management fully local-first | pending | — |
+| LOCAL-03 | Make inventory, expense, and compensation management fully local-first | pending | — |
+| STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
+| CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
-| STAFF-01 | Add minimal owner-only staff creation and initial PIN setup inside Settings | pending | — |
-| CATALOG-01 | Add curated category artwork selection and a neutral custom-category fallback | pending | — |
+| LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
+| NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
 | HARD-03 | Consolidate safe SQLite and terminal-lock startup gating | pending | — |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
 | HARD-06 | Add protected production signing, release, upgrade, and rollback workflow | pending | — |
 | HARD-07 | Complete security, privacy, dependency, quota, and support readiness review | pending | — |
+| POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | — |
+| POLISH-02 | Apply and verify the owner's final changes one screen at a time | pending | — |
 | HARD-08 | Run service endurance, final owner acceptance, and release closeout | pending | — |
 
 ## Card contracts
 
-### POLISH-01 — Owner walkthrough
+### LOCAL-01 — Local-first management foundation
 
-- First read the complete DOX chain, ledger, plan, authorities, and this file;
-  query Graphify; inspect the current application state; and explain the
-  understood product back to the owner in plain English.
-- Review one real screen and its important states at a time, beginning with POS
-  unless the owner chooses another screen. Do not flood the owner with a
-  whole-application questionnaire.
-- Let the owner identify what feels wrong before proposing solutions. Discuss
-  each point and record exact keep, remove, shorten, rename, regroup, behavior,
-  and visual decisions only after the owner confirms them.
-- Treat unnecessary icons, corporate-sounding guidance, duplicated status, and
-  permanently visible technical detail as review targets.
-- Separate operator-facing essentials from installation, support, recovery, and
-  destructive actions that must remain reachable.
-- Keep a concise approved checklist for the current screen. Do not change code
-  or move to another screen until the owner explicitly says to proceed.
+- Extend the established serialized SQLite/outbox path instead of adding a
+  state library, second database, generic repository layer, or direct offline
+  clone of every Convex function.
+- Define durable tablet record IDs, operation IDs, revisions, actor/role audit,
+  dependency ordering, acknowledgement mapping, and bounded failure/retry
+  behavior for management operations.
+- Enforce the same cashier/manager/owner matrix before local commit and again
+  at Convex acknowledgement. UI visibility never authorizes a write.
+- Keep an unexpected stale cloud revision visible for deliberate recovery; do
+  not silently discard the local operation or overwrite a newer cloud record.
+- Add ordered migrations and the smallest runnable checks for restart,
+  dependency order, duplicate retry, rejection, and role isolation.
 
-### POLISH-02 — Approved simplification
+### LOCAL-02 — Local-first catalog and recipes
 
-- Apply only the owner-approved checklist for the current screen using the
-  existing geometry, components, Phosphor family, and Olaso tokens.
-- Prefer short natural labels and progressive disclosure. Hide support detail
-  until it is useful instead of removing the underlying recovery path.
-- Simplify Settings and printer setup for a coffee-shop operator while retaining
-  validation, test, logo restoration, failure recovery, and accessibility.
-- Recheck the affected workflow in browser and on the physical 1340 by 800
-  tablet before asking the owner to accept it and move to the next screen.
-  Visual cleanup cannot change persistence, authorization, printing, stock, or
-  reporting behavior.
+- Save category, product, price, availability/archive, modifier group/option,
+  and recipe-version changes to SQLite plus outbox in one operation.
+- Reflect a successful local save immediately in Products and POS, including
+  offline-created records and relationships. Internet state never disables an
+  otherwise valid catalog form.
+- Synchronize parent records before dependent products/modifiers/recipes and
+  map cloud acknowledgements without changing the stable local references.
+- Preserve recipe version/history rules and never let a later sync rewrite an
+  immutable sale snapshot.
+
+### LOCAL-03 — Local-first stock, expenses, and compensation
+
+- Save ingredients, units, thresholds, purchases, stock adjustments, operating
+  expenses, and effective compensation periods locally before cloud work.
+- Preserve exact integer quantities/centimes, append-only stock/valuation
+  history, retry-safe purchase effects, recurring-expense periods, and owner-
+  only compensation visibility while offline.
+- Make saved changes appear immediately in Stock and role-appropriate Reports;
+  reconnect acknowledges each effect exactly once without double counting.
 
 ### STAFF-01 — Minimal owner staff creation
 
@@ -169,11 +194,26 @@ against the near-final APK.
   confirmation, Cancel, and Add staff. Do not expose recovery codes, hashes,
   sessions, storage, sync internals, or a decorative icon for every field.
 - Reuse the existing authenticated staff-profile and protected identity
-  boundaries. The support-only owner recovery secret never enters the UI, and
-  no raw PIN enters SQLite, logs, source control, or ordinary settings.
-- Verify on the physical tablet that the new profile signs in online once,
-  unlocks offline with the correct role, and does not disturb existing staff
-  profiles.
+  boundaries. Creating staff and setting the initial PIN must work without
+  internet and allow that profile to sign in on the same tablet immediately.
+- The support-only owner recovery secret never enters the UI. No raw PIN enters
+  SQLite, ordinary outbox records, logs, source control, settings, or exports;
+  pending server provisioning uses only the Android protected credential
+  boundary and clears its pending material after acknowledgement.
+- Verify on the physical tablet that an offline-created profile survives app
+  and tablet restart, signs in with the correct role, synchronizes once after
+  reconnect, and does not disturb existing staff profiles.
+
+### CATALOG-01 — Category artwork
+
+- Ship a small curated gallery for common café categories and let category
+  management select an artwork key; do not bind artwork permanently to names.
+- Provide one approved neutral Olaso illustration for any unfamiliar custom
+  category so creation never depends on finding an exact match.
+- Keep the gallery versioned in the APK, right-sized for the 234 by 120 cards,
+  decorative to assistive technology, and expandable through later releases.
+- Do not generate artwork at runtime, require network access, or use generic
+  stock coffee imagery.
 
 ### LOCK-01 — Lock and switch staff from every role
 
@@ -189,28 +229,50 @@ against the near-final APK.
 - Verify owner and cashier handoff, offline behavior, restart behavior, role
   boundaries, and touch access on the physical tablet.
 
+### LOCAL-04 — Offline management closeout
+
+- In flight mode, perform every authorized catalog, recipe, stock, purchase,
+  adjustment, expense, compensation, and staff/PIN workflow through its real UI.
+- Force-close and restart before reconnecting; prove every saved change remains
+  usable locally, retains its actor/role, and appears in the correct screen/POS.
+- Restore internet and prove dependency-ordered exactly-once acknowledgement,
+  no duplicate stock/cost/profile effects, no lost records, bounded outbox
+  state, and correct cloud/local reconciliation.
+- Repeat negative cashier/manager/owner checks offline and online, including
+  sensitive compensation and protected credential material.
+
 ### HARD-01 — Baseline and instrumentation
 
-- After the approved screen work is stable, rebuild/install the near-final
-  baseline and record at least five force-stopped cold launches and five warm
-  launches on the physical tablet.
+- After the approved screen and local-first work is stable, rebuild/install the
+  near-final baseline and record at least five force-stopped cold launches and
+  five warm launches on the physical tablet.
 - Record Android initial display and application ready marks for SQLite, lock,
   POS shell, and cached menu, plus exact APK, Android, and WebView identity.
 - Record median, minimum, and maximum rather than optimizing from one subjective
   launch.
-- Measure initial JavaScript/CSS, APK assets, image dimensions/decoding, and
-  synchronization start without adding a permanent telemetry framework.
+- Measure repeated tab navigation, local/cloud work, initial JavaScript/CSS,
+  APK assets, image dimensions/decoding, and synchronization start without
+  adding a permanent telemetry framework.
 
-### CATALOG-01 — Category artwork
+### NAV-01 — Retained smooth navigation
 
-- Ship a small curated gallery for common café categories and let category
-  management select an artwork key; do not bind artwork permanently to names.
-- Provide one approved neutral Olaso illustration for any unfamiliar custom
-  category so creation never depends on finding an exact match.
-- Keep the gallery versioned in the APK, right-sized for the 234 by 120 cards,
-  decorative to assistive technology, and expandable through later releases.
-- Do not generate artwork at runtime, require network access, or use generic
-  stock coffee imagery.
+- Replace the current one-screen conditional destruction with React 19
+  `Activity` boundaries for screens the active role has actually visited. Do
+  not add a router, state library, custom cache framework, or always-running
+  CSS-hidden screens.
+- Keep the last safe tablet snapshot visible while a genuine revision/reconnect
+  refreshes in the background. A tab switch alone starts no SQLite/cloud load
+  and never clears Dashboard/Reports/Products/Stock/POS content.
+- Preserve each screen's selection, search, filters, report range, and scroll
+  position; keep product/category DOM and images prepared so return navigation
+  has no visible image reconstruction.
+- Stop hidden-screen effects/subscriptions, never retain a screen the role
+  cannot access, clear retained management state on Lock / Switch staff, and
+  refresh Header/Lock tablet time immediately after foreground/resume.
+- On the physical tablet, compare repeated navigation before/after traces and
+  verify offline/reconnect, long sleep/resume, lock, restart, console/logcat,
+  memory, and touch behavior. A 125-to-150-millisecond fade is optional only
+  after the transition is already immediate and reduced motion remains static.
 
 ### HARD-02 — Launch continuity
 
@@ -243,9 +305,10 @@ against the near-final APK.
 
 - Keep only the initial POS, required lock/startup path, and proven shared shell
   eager; load secondary screens on demand only when traces show benefit.
-- Right-size local product/category assets for their actual rendering, reserve
-  dimensions, and defer only below-the-fold decoding without blur or layout
-  shift.
+- Replace the current 1408 by 768 POS/category sources with visually checked,
+  right-sized modern-format APK assets for their actual 72 by 92 product and
+  234 by 120 category rendering. Reserve dimensions and defer only below-the-
+  fold decoding without blur, image flash, or layout shift.
 - Start cloud refresh/outbox work after the cached local POS is responsive while
   preserving eventual automatic recovery and idempotency.
 - Compare timing, bundle, APK, memory/decode, offline, and visual evidence after
@@ -298,6 +361,37 @@ against the near-final APK.
 - Record first-production-week Convex and operational monitoring steps without
   adding speculative infrastructure.
 
+### POLISH-01 — Final owner walkthrough
+
+- Start only after LOCAL-01 through HARD-07 are complete and the physical
+  tablet exposes the fully functional, technically stable application.
+- First read the complete DOX chain, ledger, plan, authorities, and this file;
+  query Graphify; inspect the current application state; and explain the
+  understood product back to the owner in plain English.
+- Review one real screen and its important states at a time, beginning with POS
+  unless the owner chooses another screen. Do not flood the owner with a
+  whole-application questionnaire.
+- Let the owner identify what feels wrong before proposing solutions. Discuss
+  each point and record exact keep, remove, shorten, rename, regroup, behavior,
+  and visual decisions only after the owner confirms them.
+- Treat unnecessary icons, corporate-sounding guidance, duplicated status, and
+  permanently visible technical detail as review targets.
+- Keep a concise approved checklist for the current screen. Do not change code
+  or move to another screen until the owner explicitly says to proceed.
+
+### POLISH-02 — Final approved simplification
+
+- Apply only the owner-approved checklist for the current screen using the
+  existing geometry, components, Phosphor family, and Olaso tokens.
+- Prefer short natural labels and progressive disclosure. Hide support detail
+  until it is useful instead of removing the underlying recovery path.
+- Simplify Settings and printer setup for a coffee-shop operator while retaining
+  validation, test, logo restoration, failure recovery, and accessibility.
+- Recheck the affected workflow in browser and on the physical 1340 by 800
+  tablet before asking the owner to accept it and move to the next screen.
+  Visual cleanup cannot change persistence, authorization, printing, stock, or
+  reporting behavior.
+
 ### HARD-08 — Endurance and acceptance
 
 - Repeat five cold and five warm startup runs. Require median usable cold start
@@ -314,8 +408,15 @@ against the near-final APK.
 
 ## Goal completion criteria
 
-- POLISH-01, POLISH-02, LOCK-01, STAFF-01, CATALOG-01, and HARD-01 through
-  HARD-08 are done, verified, committed, pushed, and recorded.
+- POLISH-01, POLISH-02, LOCK-01, LOCAL-01 through LOCAL-04, STAFF-01,
+  CATALOG-01, NAV-01, and HARD-01 through HARD-08 are done, verified,
+  committed, pushed, and recorded.
+- Every authorized management workflow saves and survives restart offline,
+  appears immediately in the normal app, and synchronizes exactly once after
+  reconnect with the correct actor and permission boundary.
+- Previously visited screens return with retained content and interaction state,
+  without a repeated full loading state, visible image reconstruction, or a
+  navigation-triggered database/cloud request.
 - Android, WebView, and React present one immediate Olaso cream launch sequence
   and meet the physical-tablet startup budget without waiting for the network.
 - The owner-approved critique list is resolved, the app icon is accepted, and
@@ -329,15 +430,72 @@ against the near-final APK.
 
 ## Current checkpoint
 
-- Goal 06 is planned only; no card is active. All future work stays on `main`.
+- Goal 06 is active on `main`; LOCAL-01 is the only card in progress.
+- Owner review has identified two non-negotiable production gaps: management
+  writes are currently online-only despite the required offline operation, and
+  top-level navigation currently destroys/reconstructs screens, data hooks, and
+  oversized product images. LOCAL-01 through LOCAL-04 and NAV-01 now own those
+  gaps explicitly; HARD-04 owns the measured image/asset follow-through.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
-- Exact next action: open a normal new conversation with the reviewed handoff
-  prompt. It reads the project, confirms its understanding, and begins the
-  owner-led POS review without invoking `/goal`, activating a card, or changing
-  code.
+- The owner's manual screen-by-screen review and UI prompting are intentionally
+  deferred until every card through HARD-07 is complete.
+- Exact next action: trace every existing outbox/sync/management caller, then
+  implement the smallest local management operation foundation and focused
+  migration/restart/idempotency/permission checks without starting LOCAL-02.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-01 activated
+
+- The owner authorized Goal 06 implementation. Goal 06 is active on `main` and
+  LOCAL-01 is the only in-progress card; every later card remains pending.
+- Re-read the root/source/data/Convex DOX, PLAN, Goal 06, current ledger, and
+  authorities, then queried Graphify for SQLite transactions, outbox, sale and
+  cancellation payloads, ReconnectProvider dispatch, management IDs/revisions,
+  and Convex acknowledgements before manual code inspection.
+- LOCAL-01 is foundation only. It does not convert Products/recipes (LOCAL-02),
+  Stock/costs (LOCAL-03), or staff/PIN creation (STAFF-01) in this card.
+- Exact next action: preserve/push the approved planning state, inspect every
+  current caller and schema path, then implement and verify the minimum shared
+  local management operation boundary.
+
+### 2026-08-23 — Final manual polish moved behind functional completion
+
+- The owner clarified that screen-by-screen critique and manually prompted UI
+  polish must operate on the fully functional product, not lead Goal 06.
+- Reordered the remaining cards: LOCAL-01 through HARD-07 now complete business
+  behavior, offline management, staff/lock/category work, physical reconnect,
+  navigation/startup performance, recovery, updates, and readiness first.
+  POLISH-01 and POLISH-02 are the final change phase; HARD-08 performs final
+  endurance and owner acceptance afterward.
+- The completed OFFLINE_RELIABILITY_PLAN remains closed historical evidence for
+  offline identities, sales, connection truth, reconnect, and saved screen
+  reads. It did not implement offline management writes; LOCAL-01 through
+  LOCAL-04 extend that foundation without reopening OFF-01 through OFF-06.
+- No application card is active. Exact next action is LOCAL-01 when the owner
+  says to begin.
+
+### 2026-08-23 — Offline management and retained navigation made explicit
+
+- The owner confirmed that every authorized day-to-day café operation must work
+  without internet. The current saved-data-only Products/Stock behavior and
+  direct online mutations are therefore an incomplete beta boundary, not an
+  accepted production limitation.
+- Added LOCAL-01 through LOCAL-04 so catalog, recipes, stock, purchases,
+  adjustments, expenses, compensation, staff profiles, and protected initial
+  PIN setup save locally, survive restart, appear immediately, and synchronize
+  exactly once after reconnect with unchanged role/audit rules.
+- Recorded the measured navigation root cause: `App.tsx` removes the inactive
+  screen, screen hooks restart, Reports clears its snapshot, and 1408 by 768
+  images are recreated for much smaller cards. NAV-01 now retains only visited,
+  authorized screens with React `Activity`, saved-content-first refresh, state
+  preservation, hidden-effect cleanup, lock clearing, and immediate resume
+  clock correction. HARD-04 keeps the right-sized image/decode work.
+- A GIF/loading delay, state library, service worker, custom cache framework,
+  always-running hidden screens, and multi-tablet conflict machinery remain
+  excluded. No application code or card status changed; exact next action
+  remains the owner-led POLISH-01 review.
 
 ### 2026-08-23 — Main-only workflow selected
 

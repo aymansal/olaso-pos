@@ -7,7 +7,26 @@ remaining goal and card sequence.
 
 ## Active Goal
 
-No goal is active.
+### Goal 06 — Production Hardening, Release, and Acceptance
+
+**Status:** active
+
+**Branch:** `main`
+
+| Card | Status |
+| --- | --- |
+| LOCAL-01 — Shared local-first management identity/outbox/sync foundation | in progress |
+| LOCAL-02 — Local-first catalog and recipes | pending |
+| LOCAL-03 — Local-first inventory, expenses, and compensation | pending |
+| STAFF-01 — Offline staff creation and protected initial PIN | pending |
+| CATALOG-01 — Offline category artwork | pending |
+| LOCK-01 — Role-safe Lock / Switch staff | pending |
+| LOCAL-04 — Offline management closeout | pending |
+| HARD-01 — Physical startup/navigation baseline | pending |
+| NAV-01 — Retained smooth navigation | pending |
+| HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending |
+| HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
 
@@ -73,12 +92,36 @@ No goal is active.
   card IDs, dependencies, and universal automated/browser/Android/physical
   tablet/printer completion gates.
 - [Goal 06 — Production Hardening, Release, and Acceptance](goals/GOAL-06-PRODUCTION-HARDENING.md)
-  — final normal-conversation phase containing owner-led screen review,
-  approved simplification, category artwork, app icon, measured startup,
-  recovery, signing, upgrade, security/quota, endurance, and owner acceptance.
+  — final normal-conversation phase containing complete local-first management,
+  retained smooth navigation, category/staff/lock completion, measured startup,
+  recovery, signing, upgrade, security/quota, then the owner's final manual
+  screen review, approved simplification, endurance, and acceptance.
 
 ## Current Checkpoint
 
+- Goal 06 is active on `main`; LOCAL-01 is the only in-progress card. Graphify
+  preflight and the complete applicable DOX/plan/authority reread are complete.
+  Exact next action: trace current SQLite/outbox/reconnect/management callers,
+  implement the minimum reusable local management-operation foundation, add its
+  focused checks, and do not start LOCAL-02.
+- Owner sequencing decision: the manual screen-by-screen critique and UI polish
+  are the final change phase. LOCAL-01 through HARD-07 must first make the app
+  fully functional, offline-capable, fast, recoverable, secure, and releasable.
+  POLISH-01/POLISH-02 follow; HARD-08 verifies the polished product. No early
+  screen polish is the current next action.
+- Owner requirement — complete offline operation: the current beta can read
+  Products/Stock offline but deliberately rejects management writes. That is
+  not accepted production behavior. Goal 06 LOCAL-01 through LOCAL-04 now make
+  every role-authorized catalog, recipe, stock, purchase, adjustment, expense,
+  compensation, staff-profile, and protected initial-PIN operation local-first,
+  restart-safe, immediately visible, ordered, and exactly-once after reconnect.
+- Owner requirement — smooth retained navigation: `App.tsx` currently destroys
+  inactive screens, restarts their hooks, can clear saved report content, and
+  recreates oversized images. Goal 06 NAV-01 retains visited authorized screens
+  and their interaction state without active hidden effects; HARD-04 right-sizes
+  assets and measures decode/scheduling. Foreground/resume also refreshes the
+  local Header/Lock clock immediately. No loading-screen delay, state library,
+  custom cache framework, or fake animation is approved.
 - Repository workflow reminder: `main` is the only local and GitHub branch.
   Every future change commits and pushes directly to `origin/main`; do not
   create goal, feature, worktree, or handoff branches unless the owner
@@ -108,8 +151,9 @@ No goal is active.
   is 11 sales, 12 items, 41 movements, 7 retained failed development outbox
   rows, and 2 corrections; the owner-added `0826-0005` remains untouched.
   OFF-06 is pushed as `c2b05a5f2de28f1ad3a391c24894567af60ffc20`
-  on `origin/main`. Exact next action: resume normal Goal 06 POLISH-01 screen
-  review.
+  on `origin/main`. That narrow reliability ledger remains complete; its saved
+  offline reads did not include management writes. Exact next action is Goal 06
+  LOCAL-01 when the owner starts it.
 - OFF-02 is complete under `OFFLINE_RELIABILITY_PLAN.md`. Owner and Samira were
   provisioned separately, Samira re-signed online, and both independently
   unlocked after force-close/offline restart with their correct roles. The
@@ -173,9 +217,9 @@ No goal is active.
   approval or commit.
 - No goal is active. Goal 05 is complete on `origin/main` at
   `aa6d26b651e644db47a521f467b16d01cecab426`.
-- Goal 06 is planned next as a normal collaborative conversation, not `/goal`.
-  Exact next action: load the project context and begin POLISH-01 with the POS
-  screen without activating implementation or changing code.
+- Goal 06 is planned next as normal card-by-card collaboration, not one
+  autonomous `/goal`. Exact next action is LOCAL-01; POLISH-01 is deferred until
+  every card through HARD-07 is complete.
 - ID-02 audit repair is complete: strict transport-only offline fallback,
   protected monotonic PIN lockout, fail-closed terminal startup, and
   device-bound token enforcement now cover protected Convex operations; no
@@ -779,6 +823,59 @@ No goal is active.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — Goal 06 LOCAL-01 started
+
+- The owner said to start. Activated Goal 06 directly on `main` with LOCAL-01
+  as the only in-progress card; all later functionality, hardening, polish, and
+  acceptance cards remain pending.
+- Graphify preflight traced the existing serialized local sale transaction,
+  generic outbox rows, ReconnectProvider dispatch, operational cache, session
+  permissions, and Convex management mutations. The root/source/data/Convex
+  DOX, canonical plan, Goal 06, ledger, and authorities were reread before code.
+- Scope remains the shared foundation only: durable management record/operation
+  identity, local permission/audit, dependency order, acknowledgement mapping,
+  bounded retry/failure state, ordered migration, and focused checks. Domain
+  workflows begin only in LOCAL-02/LOCAL-03/STAFF-01.
+- Exact next action: preserve the approved plan state, inspect every current
+  caller, then implement LOCAL-01 without touching later cards.
+
+### 2026-08-23 — Manual UI polish moved to the final change phase
+
+- The owner requires the manual screen-by-screen critique and individually
+  prompted UI polish to happen only after the application is fully functional.
+  Reordered Goal 06 so LOCAL-01 through HARD-07 complete functionality,
+  offline management, staff/lock/category workflows, reconnect proof,
+  navigation/startup performance, recovery, updates, and readiness first.
+- POLISH-01 and POLISH-02 now follow HARD-07. HARD-08 remains last because it
+  performs final endurance and owner acceptance after the polish is finished.
+- Confirmed `OFFLINE_RELIABILITY_PLAN.md` is complete, not abandoned: OFF-01
+  through OFF-06 physically proved offline staff access, sales/corrections,
+  connection truth, reconnect, exact-once sale upload, and saved screen reads.
+  It never covered offline management writes; LOCAL-01 through LOCAL-04 now own
+  that separate remaining requirement without rewriting historical evidence.
+- No goal/card is active. Exact next action is LOCAL-01 when the owner says to
+  begin; early manual polish is explicitly blocked by the revised order.
+
+### 2026-08-23 — Offline management and smooth navigation added to Goal 06
+
+- Corrected the prior online-only management assumption. The owner requires
+  every authorized day-to-day café operation to save and remain usable without
+  internet, survive app/tablet restart, and synchronize exactly once after
+  reconnect. PRODUCT, ARCHITECTURE, PLAN, DESIGN, and Goal 06 now agree; current
+  application code remains unchanged.
+- Added LOCAL-01 through LOCAL-04 for the shared local management/outbox
+  foundation, catalog/recipes, stock/costs, protected offline staff/PIN setup,
+  and full flight-mode/restart/reconnect closeout.
+- Added NAV-01 for React `Activity`-based visited-screen retention,
+  saved-content-first background refresh, state/scroll preservation, hidden
+  effect cleanup, lock isolation, and immediate resume clock correction.
+  HARD-04 explicitly owns replacement of the current 1408 by 768 card artwork
+  with measured right-sized assets. A loading GIF/fake delay and new cache/state
+  framework remain excluded.
+- Goal 06 remains planned with no active card. Exact next action remains the
+  normal owner-led POLISH-01 screen review; implementation follows the revised
+  order and cannot skip the new local-first/navigation cards.
 
 ### 2026-08-23 — Offline reliability closeout complete
 
