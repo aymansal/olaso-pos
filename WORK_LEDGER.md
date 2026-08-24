@@ -15,7 +15,7 @@ remaining goal and card sequence.
 
 | Card | Status |
 | --- | --- |
-| LOCAL-01 — Shared local-first management identity/outbox/sync foundation | in progress |
+| LOCAL-01 — Shared local-first management identity/outbox/sync foundation | done — `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main` |
 | LOCAL-02 — Local-first catalog and recipes | pending |
 | LOCAL-03 — Local-first inventory, expenses, and compensation | pending |
 | STAFF-01 — Offline staff creation and protected initial PIN | pending |
@@ -104,11 +104,11 @@ remaining goal and card sequence.
   React/data boundary and rejected alternatives, then prove the choice on the
   physical tablet. Do not treat the APK as a web page or force unnecessary
   Kotlin when a correct native plugin boundary already exists.
-- Goal 06 is active on `main`; LOCAL-01 is the only in-progress card. Graphify
-  preflight, Android-native research, implementation, focused/full local checks,
-  production build, final Android beta, install-over schema-13 migration, awake
-  physical Lock smoke, and no-key code Graphify refresh are complete. Exact next
-  action: commit/push LOCAL-01, record the full SHA, and keep LOCAL-02 pending.
+- Goal 06 is active on `main`; LOCAL-01 is complete and no card is currently in
+  progress. Its implementation is pushed as
+  `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`. LOCAL-02 is next
+  but pending. Exact next action when the owner continues: research official
+  Android/Capacitor catalog/recipe offline patterns, then activate only LOCAL-02.
 - Owner sequencing decision: the manual screen-by-screen critique and UI polish
   are the final change phase. LOCAL-01 through HARD-07 must first make the app
   fully functional, offline-capable, fast, recoverable, secure, and releasable.
@@ -828,6 +828,18 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-01 complete on origin/main
+
+- `LOCAL-01: add local-first management foundation` is pushed as
+  `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`.
+- SQLite schema 13, immutable management envelopes, role/secret validation,
+  dependent outbox eligibility, acknowledgement mapping, safe failures, focused
+  checks, Android research, final build/beta/install-over, physical migration/
+  Lock smoke, and Graphify code refresh satisfy the card contract.
+- LOCAL-02 is next but not active. It must begin with its own official Android/
+  Capacitor research checkpoint; no catalog/recipe workflow is claimed offline
+  yet.
 
 ### 2026-08-24 — LOCAL-01 implementation ready to commit
 

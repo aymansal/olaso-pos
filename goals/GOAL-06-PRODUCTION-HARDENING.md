@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCAL-01 is the only card in progress
+**Status:** active; LOCAL-01 complete; LOCAL-02 is next and pending
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -135,7 +135,7 @@ polishing screens or data paths that later functional work would change.
 
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
-| LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | in progress | Implementation/device verification complete; commit and pushed SHA pending |
+| LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
 | LOCAL-02 | Make catalog and recipe management fully local-first | pending | — |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | pending | — |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
@@ -444,7 +444,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 is active on `main`; LOCAL-01 is the only card in progress.
+- Goal 06 remains active on `main`; LOCAL-01 is done and no card is currently in
+  progress. LOCAL-02 is next and remains pending until the owner continues.
 - Owner review has identified two non-negotiable production gaps: management
   writes are currently online-only despite the required offline operation, and
   top-level navigation currently destroys/reconstructs screens, data hooks, and
@@ -454,10 +455,23 @@ polishing screens or data paths that later functional work would change.
   HARD-02.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: commit and push the verified LOCAL-01 implementation,
-  record its full SHA, then leave LOCAL-02 pending until the owner continues.
+- Exact next action: when the owner continues, begin LOCAL-02 with its official
+  Android/Capacitor research checkpoint, then activate only LOCAL-02.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-01 complete and pushed
+
+- Pushed `LOCAL-01: add local-first management foundation` as
+  `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` to `origin/main`.
+- The card is complete with Android-native research, migration/restart,
+  permission/secret/dependency/idempotency checks, production build, 140-task
+  beta, install-over schema migration on SM-X115, awake cold-launch smoke, and
+  code Graphify refresh evidence recorded. The cloud Orders/Sales check
+  limitation from the missing test restore PIN remains explicitly documented.
+- LOCAL-02 remains pending. Its first step is fresh official Android/Capacitor
+  research for offline catalog/recipe storage, lifecycle, and synchronization;
+  no Product or recipe form was converted by LOCAL-01.
 
 ### 2026-08-24 — LOCAL-01 implementation and device verification complete
 

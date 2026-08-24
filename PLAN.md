@@ -81,7 +81,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-01 done, LOCAL-02 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -184,7 +184,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Complete LOCAL-01 as the only in-progress card on `main`: extend the existing
-serialized SQLite/outbox/reconnect path with the smallest durable management
-record, permission, audit, dependency, acknowledgement, and retry foundation.
-Do not begin LOCAL-02 or any later card until LOCAL-01 is verified and pushed.
+LOCAL-01 is complete and pushed. Keep LOCAL-02 pending until the owner continues;
+before its code, run the required official Android/Capacitor research checkpoint
+for offline catalog/recipe data, lifecycle, storage, and synchronization, then
+activate only LOCAL-02.
