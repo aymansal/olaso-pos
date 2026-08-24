@@ -21,7 +21,7 @@ remaining goal and card sequence.
 | STAFF-01 — Offline staff creation and protected initial PIN | done — `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main` |
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
-| LOCAL-04 — Offline management closeout | in progress |
+| LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
 | DELETE-01 — Safe permanent deletion and archived-cache cleanup | pending — discuss after LOCAL-04 |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
@@ -100,7 +100,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- LOCAL-04 is the only in-progress card and is ready for final diff/commit.
+- LOCAL-04 is complete and pushed to `origin/main` as
+  `7f240210c2a591649f7fabd3c3fe51fb9db72df3`.
   SQLite schema 18 stores new sale/correction actor profile IDs; every queued
   management/sale/correction write resolves the originating profile's protected
   session instead of crediting the later synchronizing staff member. On the
@@ -126,8 +127,9 @@ remaining goal and card sequence.
   plus window focus. Two exact hidden wake cycles produce zero WebView errors;
   final unlocked POS is 1340 by 800 with zero focused Android failures. Full
   local/cloud/permission/identity/Android/TypeScript/build regression passes;
-  Graphify is current at 3,241 nodes and 7,452 edges. Exact next action: final
-  review, commit/push LOCAL-04, record its SHA, then stop for DELETE-01 discussion.
+  Graphify is current at 3,241 nodes and 7,452 edges. No card is currently in
+  progress. Exact next action is stop for the owner's DELETE-01 discussion;
+  do not activate or implement it automatically.
 - Owner deletion decision: archive is not the universal answer. Products may be
   permanently deleted because completed orders already own immutable product/
   price/modifier/recipe snapshots. Categories may be deleted only when empty;
@@ -946,6 +948,19 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-04 complete on origin/main
+
+- `LOCAL-04: close offline management reliability` is pushed directly to
+  `origin/main` as `7f240210c2a591649f7fabd3c3fe51fb9db72df3`; local and remote
+  resolved to that same full SHA before this completion record.
+- LOCAL-04 is done with schema 18/original-actor attribution, every physical
+  flight-mode management UI, repeated restart/reconnect/exactly-once proof,
+  role isolation, stale catalog/finance cleanup, explicit archived filters,
+  hidden-keyguard focus gating, full regression, repeated 140-task Android beta,
+  final exact APK, clean logs, Graphify, authority, DOX, and QA cleanup evidence.
+- No card is active. Per the owner's instruction, stop now and discuss the
+  pending DELETE-01 policy/UI before any deletion implementation or HARD-01.
 
 ### 2026-08-24 — LOCAL-04 full matrix and mandatory fixes complete
 

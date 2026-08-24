@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-04 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-04 done, DELETE-01 discussion next | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -124,8 +124,8 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 through 05 are complete. Goal 06 is active; LOCAL-04 is in progress
-and DELETE-01 is the planned discussion afterward.
+Goals 03 through 05 are complete. Goal 06 is active; LOCAL-04 is complete and
+DELETE-01 is the planned discussion afterward.
 
 ## Goal 04 — Costs and profitability
 
@@ -210,8 +210,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Finish, commit, and push only LOCAL-04, then stop for the owner's requested
-deletion discussion. DELETE-01 is the planned next card and remains unactivated;
-it adds concise permanent-delete choices for safe catalog records while
-preserving order snapshots and immutable staff/finance/stock audit history.
-Do not begin DELETE-01, HARD-01, or later work without the owner's direction.
+Stop for the owner's requested deletion discussion. LOCAL-04 is complete;
+DELETE-01 is the planned next card and remains unactivated. Confirm its exact
+permanent-delete/retain rules and concise UI before code. Do not begin
+DELETE-01, HARD-01, or later work without the owner's direction.

@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCAL-04 is the only card in progress
+**Status:** active; no card in progress, DELETE-01 discussion next
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -145,7 +145,7 @@ polishing screens or data paths that later functional work would change.
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | done | `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main`; focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local/cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
-| LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | in progress | Full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass; commit/push pending |
+| LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | done | `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main`; full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass |
 | DELETE-01 | Add safe permanent deletion and archived-cache cleanup | pending | Owner policy recorded; discuss after LOCAL-04 |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
@@ -496,8 +496,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through LOCK-01 are done and
-  LOCAL-04 is the only card in progress.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04 are done and no
+  card is currently in progress.
 - LOCAL-01 through STAFF-01 implement local-first catalog, recipe, inventory,
   cost, compensation, and protected staff creation. LOCAL-04's full matrix and
   mandatory root fixes pass; commit/push remains before acceptance.
@@ -512,11 +512,21 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: final review, commit/push LOCAL-04 and record its SHA, then
-  stop for the owner's requested DELETE-01 discussion. Do not activate another
-  card.
+- Exact next action: stop for the owner's requested DELETE-01 discussion. Do
+  not activate another card.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-04 complete on origin/main
+
+- Pushed `LOCAL-04: close offline management reliability` directly to
+  `origin/main` as `7f240210c2a591649f7fabd3c3fe51fb9db72df3` and verified the
+  remote resolves to the same full SHA.
+- All research, schema/actor, local-first UI, restart/reconnect/exactly-once,
+  role, cleanup, lifecycle, viewport, log, full regression, Android, Graphify,
+  authority, DOX, and development QA cleanup gates pass. No card is active.
+- Stop here as instructed. DELETE-01 remains pending for owner discussion and
+  is not activated automatically.
 
 ### 2026-08-24 — LOCAL-04 physical matrix and root fixes complete
 
