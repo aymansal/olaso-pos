@@ -853,6 +853,19 @@ remaining goal and card sequence.
 
 ## Planning Journal
 
+### 2026-08-24 — Owner made root-cause bug fixing non-negotiable
+
+- Added PLAN.md's mandatory bug rule. Any bug discovered or reproduced during
+  work pauses the current card and overrides ordinary card order until its root
+  cause is fixed, protected by the smallest regression check, and proved under
+  the original conditions on the physical Galaxy Tab A9.
+- A different record, alternate workflow, clean database, restart, hidden error,
+  weakened validation, or later-card assignment cannot be used as completion
+  evidence. If a safe fix cannot be completed, the card remains blocked with an
+  exact evidence-backed next action.
+- This is a documentation-only owner decision. LOCAL-02 remains complete, no
+  card is active, and LOCAL-03 remains next subject to the mandatory bug gate.
+
 ### 2026-08-24 — LOCAL-02 complete on origin/main
 
 - Committed the verified local-first category/product/modifier/recipe workflow,

@@ -120,6 +120,10 @@ polishing screens or data paths that later functional work would change.
   this single-owner project.
 - Every card commit begins with its card ID and is pushed directly to
   `origin/main` before the card is done.
+- PLAN.md's mandatory bug rule overrides this card order: any reproduced bug
+  pauses the active card until the original path is fixed, regression-protected,
+  and physically proved. A workaround, restart, cleaner test state, alternate
+  record, or later card assignment is not completion evidence.
 - Before every implementation card, search current official Android and
   Capacitor/plugin documentation for the affected platform behavior. Record the
   applicable native option, the selected native-versus-React/data boundary,
@@ -471,8 +475,9 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 is done and LOCAL-02 is the only
-  card in progress.
+- Goal 06 remains active on `main`; LOCAL-01 and LOCAL-02 are done, no card is
+  currently in progress, and LOCAL-03 is next subject to the mandatory bug
+  rule.
 - Owner review has identified two non-negotiable production gaps: management
   writes are currently online-only despite the required offline operation, and
   top-level navigation currently destroys/reconstructs screens, data hooks, and
@@ -487,12 +492,25 @@ polishing screens or data paths that later functional work would change.
   accept the error; the exact physical acceptance matrix is now in HARD-03.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: trace and replace every Products management direct mutation
-  with transaction-safe local category/product/modifier/recipe operations and
-  dependency-ordered reconnect handlers, beginning with category/product local
-  transactions; do not start LOCAL-03.
+- Exact next action when the owner continues: perform LOCAL-03's official
+  Android/Capacitor research, then activate only LOCAL-03 for local-first
+  inventory, expense, and compensation management. Any reproduced bug pauses
+  that work until its root-cause fix passes the mandatory bug gate.
 
 ## Planning journal
+
+### 2026-08-24 — Root-cause bug fixing made a mandatory plan gate
+
+- The owner requires a daily-use client application, not passing evidence built
+  around known failures. Any bug discovered or reproduced now interrupts the
+  current card and overrides ordinary card order until the root cause is fixed,
+  regression-protected, and physically proved on the Galaxy Tab A9.
+- Explicitly prohibited using different test data, another record/workflow, a
+  clean database, repeated restarts, hidden errors, weakened validation, or a
+  later-card label to bypass a failure. If a safe fix is impossible, the card
+  remains blocked rather than being marked done or worked around.
+- No application code changed. LOCAL-02 remains complete; no card is active.
+  LOCAL-03 remains the planned next card, subject to this mandatory bug gate.
 
 ### 2026-08-24 — LOCAL-02 relational sync mapping foundation added
 

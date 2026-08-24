@@ -24,6 +24,30 @@ card order, dependencies, and completion gates.
 
 No implementation card is done until all applicable evidence is recorded:
 
+### Mandatory bug rule
+
+- Any bug discovered or reproduced during implementation, automated checks,
+  browser QA, Android QA, physical-tablet testing, printing, migration,
+  reconnect, or cleanup immediately pauses the current card and overrides the
+  ordinary card order.
+- Diagnose and fix the root cause before continuing. Do not bypass the bug by
+  changing test data, selecting a different record or workflow, using a clean
+  database, restarting until the symptom disappears, weakening validation,
+  hiding the error, or calling it unrelated merely because another card could
+  own it.
+- Add the smallest regression check that would fail on the original bug, then
+  reproduce the original conditions and prove the fix on the physical Galaxy
+  Tab A9. A compile, successful alternate path, or one clean relaunch is not
+  sufficient evidence.
+- If a safe fix genuinely cannot be completed, keep the current card blocked
+  with the exact root cause, impact, preserved data, attempted evidence, and
+  next action. Never mark the card done or continue later-card development to
+  work around the blocker.
+- A known bug remains a release blocker until its root-cause fix and regression
+  evidence are committed and pushed. HARD-08 cannot accept the application
+  while any known daily-operation, data, security, startup, layout, printing,
+  offline, synchronization, or recovery bug remains unresolved.
+
 1. Before code, its official Android/Capacitor research checkpoint records the
    applicable native platform options, the selected native-versus-React/data
    boundary, rejected alternatives, and target-device implications. The card
