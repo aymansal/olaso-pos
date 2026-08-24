@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCAL-02 is the only card in progress
+**Status:** active; LOCAL-02 is done and LOCAL-03 is next, with no card currently in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -136,7 +136,7 @@ polishing screens or data paths that later functional work would change.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
-| LOCAL-02 | Make catalog and recipe management fully local-first | in progress | Implementation and complete automated/physical verification pass; commit and push pending |
+| LOCAL-02 | Make catalog and recipe management fully local-first | done | `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main`; automated, Convex, Android, physical offline/restart/reconnect, cleanup, and Graphify evidence recorded in WORK_LEDGER.md |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | pending | — |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |

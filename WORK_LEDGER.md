@@ -16,7 +16,7 @@ remaining goal and card sequence.
 | Card | Status |
 | --- | --- |
 | LOCAL-01 — Shared local-first management identity/outbox/sync foundation | done — `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main` |
-| LOCAL-02 — Local-first catalog and recipes | in progress |
+| LOCAL-02 — Local-first catalog and recipes | done — `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main` |
 | LOCAL-03 — Local-first inventory, expenses, and compensation | pending |
 | STAFF-01 — Offline staff creation and protected initial PIN | pending |
 | CATALOG-01 — Offline category artwork | pending |
@@ -99,8 +99,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- LOCAL-02 is the only in-progress card. Its local catalog/recipe implementation
-  now builds and opens on the physical tablet. A failed test APK had rewritten
+- LOCAL-02 is complete and pushed to `origin/main` at
+  `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29`. Its local catalog/recipe
+  implementation builds and opens on the physical tablet. A failed test APK had rewritten
   published migration 14 and added unsafe uniqueness rules; the tablet database
   was preserved, backed up in app-private storage, restored with commit
   `26ae027`, then upgraded cleanly from schema 13 through the restored migration
@@ -115,9 +116,9 @@ remaining goal and card sequence.
   POS modifier selection, acknowledgement mapping, refresh cleanup, and QA
   archive cleanup are also physically proved. All required focused/backend/
   build/Android checks pass and Graphify's deterministic code graph is current.
-  Exact next action: commit and push the verified LOCAL-02 implementation, then
-  record its full `origin/main` SHA and mark LOCAL-02 done without activating
-  LOCAL-03 in the same commit.
+  No card is currently in progress. Exact next action when the owner continues:
+  perform LOCAL-03's official Android/Capacitor research and activate only
+  LOCAL-03 for local-first inventory, expense, and compensation management.
 - Known HARD-03 production bug: a SecureSession native connectivity callback can
   notify before Capacitor's JavaScript bridge is ready, producing an uncaught
   `triggerEvent` error during notification-shade/screen-off pre-bridge launches.
@@ -851,6 +852,20 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-02 complete on origin/main
+
+- Committed the verified local-first category/product/modifier/recipe workflow,
+  stale-cache and migration recovery fixes, bounded active-first reads, ordered
+  reconnect mappings, dependent-sale translation, modifier overflow access,
+  focused checks, Android evidence, authorities, and ledger in
+  `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` (`LOCAL-02: add local-first catalog management`).
+- Pushed `main` directly to `origin/main`; the remote advanced from `d6f010e` to
+  `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29`. LOCAL-02 is done and no later card
+  was activated in that commit.
+- Exact next action when the owner continues: research the official Android and
+  Capacitor boundaries for LOCAL-03, then activate only LOCAL-03. Do not begin
+  STAFF-01 or polish work.
 
 ### 2026-08-24 — LOCAL-02 closeout ready to commit
 
