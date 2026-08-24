@@ -20,7 +20,7 @@ remaining goal and card sequence.
 | LOCAL-03 — Local-first inventory, expenses, and compensation | done — `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main` |
 | STAFF-01 — Offline staff creation and protected initial PIN | done — `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main` |
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
-| LOCK-01 — Role-safe Lock / Switch staff | pending |
+| LOCK-01 — Role-safe Lock / Switch staff | in progress |
 | LOCAL-04 — Offline management closeout | pending |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
@@ -99,6 +99,18 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- LOCK-01 is the only in-progress card. The owner approved preserving any
+  unfinished cart and showing a concise confirmation before staff switch; the
+  staff member who later completes the sale is recorded as cashier. Android's
+  current UI-state guidance supports retaining transient state in the existing
+  higher-scoped state holder during normal navigation, while persistent data
+  remains local. Capacitor remains web-first; deliberate in-app lock needs no
+  App plugin. Selected boundary: `App.tsx` continues owning the one lock action,
+  terminal lock persistence, staff-session clearing, and POS session; the
+  shared Header exposes one action to every role. Existing Keystore-backed
+  profile credentials remain untouched. No Kotlin, plugin, migration, storage,
+  state library, or new dependency is added. Exact next action: inspect every
+  Header caller plus lock/cart/session invariant before implementation.
 - CATALOG-01 is complete and pushed to `origin/main` as
   `43c9e4a3ed169ae7a07344f9587a51f65051e203`.
   The six-asset gallery, neutral resolver, category picker, schema 17, and full
@@ -896,6 +908,22 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCK-01 activated with approved cart handoff
+
+- The owner confirmed that staff switching preserves an unfinished cart even
+  though the workflow should be rare. The app must show a short confirmation;
+  it never silently discards the order. The staff member who completes checkout
+  remains the saved cashier.
+- Graphify, the full applicable DOX chain, plan, Goal 06 contract, ledger, and
+  lock/session/cart authorities were read before application inspection.
+  Official Android guidance treats an in-progress cart as transient UI state
+  for normal navigation and recommends keeping state above individual screens;
+  Capacitor requires native code only for actual platform capabilities.
+- Reuse the existing App-owned cart and lock implementation. Add one shared
+  role-safe entry point through Header, retain protected offline credentials,
+  and avoid new navigation, persistence, plugin, native code, or state library.
+  Exact next action is complete caller/invariant inspection.
 
 ### 2026-08-24 — CATALOG-01 complete on origin/main
 

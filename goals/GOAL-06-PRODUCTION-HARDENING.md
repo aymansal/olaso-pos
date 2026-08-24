@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; CATALOG-01 is done; no card is currently in progress
+**Status:** active; LOCK-01 is the only card in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -144,7 +144,7 @@ polishing screens or data paths that later functional work would change.
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | done | `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main`; full automated, Android, offline/restart/reconnect/exact-cloud, lifecycle, focus-zoom, Graphify, and documentation evidence recorded |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | done | `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main`; focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local/cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
-| LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
+| LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | in progress | Owner approved preserving the unfinished cart with a short confirmation; official Android UI-state/lifecycle and Capacitor web-native guidance reviewed; existing React/App lock plus Keystore boundary selected with no native code/dependency |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
@@ -473,9 +473,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through CATALOG-01 are done and no
-  card is currently in progress. LOCK-01 is next after its required cart-policy
-  confirmation.
+- Goal 06 remains active on `main`; LOCAL-01 through CATALOG-01 are done and
+  LOCK-01 is the only card in progress.
 - LOCAL-01 through STAFF-01 now implement local-first catalog, recipe,
   inventory, cost, compensation, and protected staff creation. CATALOG-01,
   LOCK-01, and LOCAL-04 remain before complete offline-management acceptance.
@@ -490,9 +489,8 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action when the owner continues: confirm LOCK-01's unfinished-cart
-  handoff policy, perform its official Android/Capacitor research, and activate
-  only LOCK-01.
+- Exact next action: trace the shared Header/profile caller chain, App lock and
+  staff-session ownership, and POS cart state before implementing LOCK-01.
 
 ## Planning journal
 
