@@ -16,7 +16,7 @@ remaining goal and card sequence.
 | Card | Status |
 | --- | --- |
 | LOCAL-01 — Shared local-first management identity/outbox/sync foundation | done — `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main` |
-| LOCAL-02 — Local-first catalog and recipes | pending |
+| LOCAL-02 — Local-first catalog and recipes | in progress |
 | LOCAL-03 — Local-first inventory, expenses, and compensation | pending |
 | STAFF-01 — Offline staff creation and protected initial PIN | pending |
 | CATALOG-01 — Offline category artwork | pending |
@@ -99,6 +99,12 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- LOCAL-02 is the only in-progress card. Official Android/Capacitor research,
+  Graphify, and the applicable product/data/Convex DOX reread are complete. The
+  native SQLite database remains the screen source of truth; each catalog/recipe
+  save must update local rows plus the LOCAL-01 operation/outbox atomically and
+  synchronize in stable parent order. Exact next action: implement the local
+  domain operations and reconnect handlers without starting LOCAL-03.
 - Known HARD-03 production bug: a SecureSession native connectivity callback can
   notify before Capacitor's JavaScript bridge is ready, producing an uncaught
   `triggerEvent` error during notification-shade/screen-off pre-bridge launches.
@@ -834,6 +840,20 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-02 started with Android offline-catalog decision
+
+- Activated only LOCAL-02 after the owner's instruction. LOCAL-01 remains done;
+  every later card is pending.
+- Official Android guidance confirms local-source-of-truth plus lazy writes for
+  critical offline data. The existing native Capacitor SQLite transaction is
+  selected for category/product/modifier/recipe rows and their operation/outbox;
+  stable local IDs and parent dependencies preserve relationships.
+- Rejected Room/another ORM or database, WorkManager under the locked-session
+  policy, last-write-wins conflict loss, and direct Products UI-to-Convex writes.
+  Existing revision validation remains the conflict boundary.
+- Exact next action: replace current Products direct mutations with the minimum
+  complete local domain operations and dependency-aware reconnect dispatch.
 
 ### 2026-08-24 — triggerEvent lifecycle bug made a HARD-03 completion blocker
 

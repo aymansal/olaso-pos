@@ -81,7 +81,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-01 done, LOCAL-02 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-02 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -184,7 +184,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-LOCAL-01 is complete and pushed. Keep LOCAL-02 pending until the owner continues;
-before its code, run the required official Android/Capacitor research checkpoint
-for offline catalog/recipe data, lifecycle, storage, and synchronization, then
-activate only LOCAL-02.
+Complete LOCAL-02 as the only in-progress card: make category, product, modifier,
+availability/price, and recipe writes local-first, immediately visible to
+Products/POS, restart-safe, and dependency-ordered for exactly-once reconnect.
+Do not begin LOCAL-03 or later work.

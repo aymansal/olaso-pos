@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCAL-01 complete; LOCAL-02 is next and pending
+**Status:** active; LOCAL-02 is the only card in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -136,7 +136,7 @@ polishing screens or data paths that later functional work would change.
 | ID | Task | Status | Completion evidence |
 | --- | --- | --- | --- |
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
-| LOCAL-02 | Make catalog and recipe management fully local-first | pending | — |
+| LOCAL-02 | Make catalog and recipe management fully local-first | in progress | Android research/Graphify/DOX preflight complete; implementation pending |
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | pending | — |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
@@ -180,6 +180,14 @@ polishing screens or data paths that later functional work would change.
 
 ### LOCAL-02 — Local-first catalog and recipes
 
+- Android research decision: use the native Capacitor SQLite database as the
+  exclusive screen-visible source of truth online and offline. Save each domain
+  row change plus the immutable LOCAL-01 operation/outbox envelope in one
+  explicit transaction, then let the authenticated foreground worker push it.
+  Preserve stable tablet IDs and parent dependencies across category, product,
+  modifier, and recipe relationships; keep explicit revisions and surface a
+  stale conflict instead of applying last-write-wins. Do not add Room, another
+  database/ORM, WorkManager, or direct UI-to-network writes.
 - Save category, product, price, availability/archive, modifier group/option,
   and recipe-version changes to SQLite plus outbox in one operation.
 - Reflect a successful local save immediately in Products and POS, including
@@ -463,8 +471,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 is done and no card is currently in
-  progress. LOCAL-02 is next and remains pending until the owner continues.
+- Goal 06 remains active on `main`; LOCAL-01 is done and LOCAL-02 is the only
+  card in progress.
 - Owner review has identified two non-negotiable production gaps: management
   writes are currently online-only despite the required offline operation, and
   top-level navigation currently destroys/reconstructs screens, data hooks, and
@@ -479,10 +487,32 @@ polishing screens or data paths that later functional work would change.
   accept the error; the exact physical acceptance matrix is now in HARD-03.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: when the owner continues, begin LOCAL-02 with its official
-  Android/Capacitor research checkpoint, then activate only LOCAL-02.
+- Exact next action: trace and replace every Products management direct mutation
+  with transaction-safe local category/product/modifier/recipe operations and
+  dependency-ordered reconnect handlers; do not start LOCAL-03.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-02 activated with Android research
+
+- The owner continued to the next card. LOCAL-02 is the sole in-progress card;
+  LOCAL-03 and all later cards remain pending.
+- Graphify traced Products UI/useProductManagement, current Convex mutations,
+  SQLite operational tables, POS cache reads, reconnect refresh, revisions,
+  mutation IDs, and category/product/modifier/recipe relationships. The complete
+  feature/data/Convex DOX and current plan/ledger were reread.
+- Official Android offline-first/data-layer guidance requires local data to be
+  the UI source of truth and critical writes to update it first. Capacitor SQLite
+  provides native transactions for the related local rows plus operation/outbox.
+  Stable local IDs and LOCAL-01 dependencies handle relational parent ordering;
+  existing revisions reject conflicts. Room/another ORM, WorkManager, last-write-
+  wins, and direct UI network mutations are rejected for this one-tablet design.
+- Sources: https://developer.android.com/topic/architecture/data-layer/offline-first,
+  https://developer.android.com/topic/architecture/data-layer,
+  https://developer.android.com/training/data-storage/room/relationships, and
+  https://github.com/capacitor-community/sqlite/blob/master/docs/SQLiteTransaction.md.
+- Exact next action: inspect all current hook/domain payloads and implement the
+  smallest complete local catalog/recipe operations and reconnect dispatch.
 
 ### 2026-08-24 — HARD-03 explicitly owns the pre-bridge triggerEvent bug
 
