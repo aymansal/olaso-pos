@@ -20,7 +20,7 @@ remaining goal and card sequence.
 | LOCAL-03 — Local-first inventory, expenses, and compensation | done — `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main` |
 | STAFF-01 — Offline staff creation and protected initial PIN | done — `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main` |
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
-| LOCK-01 — Role-safe Lock / Switch staff | in progress |
+| LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
 | LOCAL-04 — Offline management closeout | pending |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
@@ -99,7 +99,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- LOCK-01 is the only in-progress card. A shared profile menu now gives every
+- LOCK-01 is complete and pushed to `origin/main` as
+  `4486a8921d893e3e5edce098b8a17a500cf0a537`. A shared profile menu gives every
   role `Lock / switch staff`; Settings remains owner-only. `App.tsx` owns the
   deliberate switch, asks for confirmation only when the cart has lines, then
   reuses the existing persisted local lock without clearing `posSession` or any
@@ -109,8 +110,9 @@ remaining goal and card sequence.
   and no sale/count mutation. Live WebView content is exactly 1340 by 800 with
   no overflow or warning/error; focused Android runtime failures are zero. Full
   lock/POS/local/sales/Orders/Dashboard/Reports/identity/Settings/staff/
-  reconnect/offline/Android/TypeScript/build checks pass. Exact next action:
-  refresh Graphify, review the final diff/authorities, commit and push LOCK-01.
+  reconnect/offline/Android/TypeScript/build checks pass. No card is currently
+  in progress. Exact next action when the owner continues: research and
+  activate only LOCAL-04 for the full offline-management closeout matrix.
 - CATALOG-01 is complete and pushed to `origin/main` as
   `43c9e4a3ed169ae7a07344f9587a51f65051e203`.
   The six-asset gallery, neutral resolver, category picker, schema 17, and full
@@ -132,9 +134,8 @@ remaining goal and card sequence.
   returns to 1340 by 800. Full local/catalog/staff/sales/Orders/Dashboard/
   Reports/Settings/offline/reconnect/identity/Android/build checks pass;
   Graphify is current at 3,192 nodes and 7,382 edges, authorities/DOX are
-  updated, and focused Android runtime failures are zero. No card is currently
-  in progress. Exact next action when the owner continues: confirm LOCK-01's
-  unfinished-cart handoff policy, research it, and activate only LOCK-01.
+  updated, and focused Android runtime failures are zero. LOCK-01 later closed
+  the cashier handoff gap recorded by this completed CATALOG-01 checkpoint.
 - STAFF-01 is complete and pushed to `origin/main` as
   `9754897f4be65ffca1b572140e44fc229cad948f`. The
   owner-only minimal form, PIN-free local operation, protected immediate
@@ -212,11 +213,10 @@ remaining goal and card sequence.
   create goal, feature, worktree, or handoff branches unless the owner
   explicitly changes this decision. All deleted branches had zero commits
   missing from `main` before removal.
-- Owner reminder — cashier handoff: cashiers cannot open Settings and therefore
-  cannot reach the current Lock application action. Closing/reopening is only a
-  temporary workaround. Do not fix it yet; Goal 06 LOCK-01 must add a shared
-  Lock / Switch staff action without granting Settings access, after deciding
-  how an unfinished cart behaves during handoff.
+- Completed owner reminder — cashier handoff: LOCK-01 now gives cashiers,
+  managers, and owners the shared Lock / Switch staff action without expanding
+  Settings access. The approved confirmation preserves an unfinished cart for
+  the next verified staff member.
 - Owner reminder — post-delivery updates: the client needs a simple remote path
   for approved fixes without receiving APK files through WhatsApp. The source
   repository is private, so the APK must never contain a GitHub token. HARD-06
@@ -908,6 +908,17 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCK-01 complete on origin/main
+
+- `LOCK-01: add role-safe staff switching` is pushed directly to `origin/main`
+  as `4486a8921d893e3e5edce098b8a17a500cf0a537`; local `main` and the remote
+  resolved to that same full SHA before this completion record.
+- LOCK-01 is done with approved cart policy, shared role-safe access, protected
+  credential preservation, full regression/build, repeated 140-task Android
+  beta, final APK install, owner/cashier online/offline/restart handoff, exact
+  viewport, clean logs, mandatory redundant-Settings fix, Graphify, authority,
+  and DOX evidence. No card is active; LOCAL-04 is next when the owner continues.
 
 ### 2026-08-24 — LOCK-01 physical handoff and regression complete
 

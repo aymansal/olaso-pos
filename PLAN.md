@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCK-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCK-01 done, LOCAL-04 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -124,7 +124,8 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 through 05 are complete. Goal 06 is planned next; no card is active.
+Goals 03 through 05 are complete. Goal 06 is active; LOCK-01 is complete and
+LOCAL-04 is the next pending card.
 
 ## Goal 04 — Costs and profitability
 
@@ -208,7 +209,8 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Complete LOCK-01 as the only in-progress card: add one shared role-safe Lock /
-Switch staff action, preserve any unfinished cart after a concise confirmation,
-lock locally without deleting protected profile access, and prove owner/cashier
-offline handoff plus restart behavior. Do not begin LOCAL-04 or later work.
+When the owner continues, research and activate only LOCAL-04. Derive its full
+offline management acceptance matrix from the completed LOCAL-01 through
+LOCK-01 work, then prove flight mode, restart, ordered reconnect, duplicate
+retry, failure recovery, and role isolation without bypassing any discovered
+bug. Do not begin HARD-01 or later work.

@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCK-01 is the only card in progress
+**Status:** active; no card in progress, LOCAL-04 next
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -144,7 +144,7 @@ polishing screens or data paths that later functional work would change.
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | done | `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main`; full automated, Android, offline/restart/reconnect/exact-cloud, lifecycle, focus-zoom, Graphify, and documentation evidence recorded |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | done | `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main`; focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local/cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
-| LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | in progress | Owner policy/research, shared role menu, confirmed App-owned cart handoff, full regression/build, 140-task beta, owner/cashier online/offline/restart physical matrix, exact 1340 × 800 viewport, clean WebView/runtime, and unchanged sale/outbox counts pass; Graphify/commit/push pending |
+| LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
@@ -473,11 +473,11 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through CATALOG-01 are done and
-  LOCK-01 is the only card in progress.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCK-01 are done and no
+  card is currently in progress.
 - LOCAL-01 through STAFF-01 now implement local-first catalog, recipe,
-  inventory, cost, compensation, and protected staff creation. CATALOG-01,
-  LOCK-01, and LOCAL-04 remain before complete offline-management acceptance.
+  inventory, cost, compensation, and protected staff creation. LOCAL-04 remains
+  before complete offline-management acceptance.
   Top-level navigation still destroys/reconstructs screens, data hooks, and
   oversized product images; NAV-01 and HARD-04 own that measured work.
 - The startup wordmark asset exists but is intentionally not consumed before
@@ -489,11 +489,22 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- LOCK-01 implementation and physical acceptance pass. Exact next action:
-  refresh Graphify, review authorities and final diff, commit and push the card,
-  then record its SHA before activating LOCAL-04.
+- LOCK-01 is pushed and complete. Exact next action when the owner continues:
+  perform LOCAL-04's official Android/Capacitor research, activate only
+  LOCAL-04, and derive its acceptance matrix from the completed local-first
+  management and staff work.
 
 ## Planning journal
+
+### 2026-08-24 — LOCK-01 complete on origin/main
+
+- Pushed `LOCK-01: add role-safe staff switching` directly to `origin/main` as
+  `4486a8921d893e3e5edce098b8a17a500cf0a537` and verified the remote resolves
+  to the same full SHA.
+- The card is done with policy, implementation, regression, final installed APK,
+  physical owner/cashier online/offline/restart proof, exact viewport, clean
+  logs, root-cause Settings-menu fix, Graphify, authorities, and DOX current.
+  LOCAL-04 remains pending and no card is active.
 
 ### 2026-08-24 — LOCK-01 physical acceptance complete
 
