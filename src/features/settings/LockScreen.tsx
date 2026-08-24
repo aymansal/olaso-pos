@@ -53,7 +53,7 @@ type CachedStaff = {
 
 export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   const [now, setNow] = useState(new Date());
-  const { available } = useConnectionStatus();
+  const { available, foreground } = useConnectionStatus();
   const online = available === true;
   const [unlocking, setUnlocking] = useState(false);
   const [error, setError] = useState('');
@@ -79,7 +79,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       );
       setStaff(activeStaff);
       setStaffProfileId(activeStaff[0]?.id ?? '');
-      if (online) {
+      if (online && foreground) {
         void convex.query(api.identity.listActiveProfiles, { deviceId: settings.deviceId })
           .then((profiles) => {
             if (!active) return;
@@ -116,7 +116,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       if (active) setError('Staff access is unavailable. Connect and sync this terminal.');
     });
     return () => { active = false; };
-  }, [convex, online, settings.deviceId]);
+  }, [convex, foreground, online, settings.deviceId]);
 
   async function unlock() {
     if (!staffProfileId || !/^\d{6}$/.test(pin)) {

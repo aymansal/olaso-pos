@@ -125,7 +125,7 @@ try {
   await expectForbidden(() => client.query(api.reports.getMonthlyCosts, { ...cashierArgs, month: '2026-07' }));
   await expectForbidden(() => client.mutation(api.categories.save, {
     ...cashierArgs,
-    key: 'permission-check', name: 'Permission check', sortOrder: 1,
+    key: 'permission-check', name: 'Permission check', artworkKey: 'neutral', sortOrder: 1,
     clientMutationId: 'perm-check-cashier-category',
   }));
   await expectForbidden(() => client.mutation(api.inventory.saveIngredient, {

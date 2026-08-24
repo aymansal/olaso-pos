@@ -11,12 +11,18 @@ import {
   watchSecureSessionNetworkStatus,
 } from './secureSession';
 
-type ConnectionState = { available: boolean | undefined };
+type ConnectionState = {
+  available: boolean | undefined;
+  foreground: boolean;
+};
 
 const ConnectionContext = createContext<ConnectionState | undefined>(undefined);
 
 export function ConnectionProvider({ children }: { children: ReactNode }) {
   const [available, setAvailable] = useState<boolean>();
+  const [foreground, setForeground] = useState(
+    () => document.visibilityState === 'visible',
+  );
 
   useEffect(() => {
     let active = true;
@@ -36,7 +42,9 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
       }
     };
     const resume = () => {
-      if (document.visibilityState === 'visible') void refresh();
+      const visible = document.visibilityState === 'visible';
+      setForeground(visible);
+      if (visible) void refresh();
     };
 
     if (Capacitor.isNativePlatform()) {
@@ -63,7 +71,7 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <ConnectionContext.Provider value={{ available }}>
+    <ConnectionContext.Provider value={{ available, foreground }}>
       {children}
     </ConnectionContext.Provider>
   );

@@ -25,7 +25,10 @@ export function useProductManagement(selectedProductId?: string) {
     currentRecipeVersionId: product.currentRecipeVersionId, revision: product.revision, updatedAt: product.updatedAt,
   }));
   const categories: ManagedCategory[] = (cache?.categories ?? []).map((category) => ({
-    ...category, status: category.status ?? 'active', productCount: products.filter((product) => product.categoryId === category.id).length,
+    ...category,
+    artworkKey: category.artworkKey,
+    status: category.status ?? 'active',
+    productCount: products.filter((product) => product.categoryId === category.id).length,
   }));
   const ingredients: ManagedIngredient[] = (cache?.ingredients ?? []).map((ingredient) => ({ id: ingredient.id, key: ingredient.id, name: ingredient.name, baseUnit: ingredient.baseUnit }));
   const modifierGroups: ManagedModifierGroup[] = (cache?.modifierGroups ?? []).map((group, index) => ({

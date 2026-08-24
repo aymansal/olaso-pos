@@ -2,6 +2,7 @@ import { useConvex } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../convex/_generated/api';
+import { useConnectionStatus } from './connectionContext.tsx';
 import { completeLocalSaleCancellation } from './localSales.ts';
 import {
   loadLocalOrderPage,
@@ -77,6 +78,7 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
 }
 
 export function useOrdersData() {
+  const { available, foreground } = useConnectionStatus();
   const session = useStaffSession();
   const reconnect = useReconnect();
   const convex = useConvex();
@@ -102,11 +104,14 @@ export function useOrdersData() {
     cloudCursor.current = undefined;
     localDone.current = false;
     cloudDone.current = false;
-    const cloudHistory = convex.query(api.sales.listOrders, {
-      sessionToken: session.token,
-      deviceId: session.deviceId,
-      limit: PAGE_SIZE,
-    });
+    const cloudHistory = available && foreground
+      ? convex.query(api.sales.listOrders, {
+          sessionToken: session.token,
+          deviceId: session.deviceId,
+          limit: PAGE_SIZE,
+        })
+      : undefined;
+    cloudDone.current = !cloudHistory;
     const [localResult, summaryResult] = await Promise.allSettled([
       loadLocalOrderPage({ limit: PAGE_SIZE }),
       loadLocalSyncSummary(),
@@ -132,6 +137,7 @@ export function useOrdersData() {
     setMessage(errors[0] ?? '');
     setIsLoading(false);
 
+    if (!cloudHistory) return;
     void Promise.allSettled([cloudHistory]).then(
       ([cloudResult]) => {
         if (!mounted.current) return;
@@ -153,7 +159,7 @@ export function useOrdersData() {
         }
       },
     );
-  }, [convex, session.deviceId, session.token]);
+  }, [available, convex, foreground, session.deviceId, session.token]);
 
   useEffect(() => {
     mounted.current = true;
@@ -180,7 +186,7 @@ export function useOrdersData() {
         }),
       );
     }
-    if (!cloudDone.current) {
+    if (!cloudDone.current && available && foreground) {
       requests.push(
         convex
           .query(api.sales.listOrders, {
@@ -208,7 +214,7 @@ export function useOrdersData() {
       setIsLoadingMore(false);
     }
     loadingMore.current = false;
-  }, [convex, session.deviceId, session.token]);
+  }, [available, convex, foreground, session.deviceId, session.token]);
 
   const retrySync = useCallback(
     async (localSaleId: string) => {

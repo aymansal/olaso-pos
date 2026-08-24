@@ -42,6 +42,7 @@ async function verifyManagement() {
     const categoryCreateArgs = {
       key: 'app03-test-category',
       name: 'APP-03 Test Category',
+      artworkKey: 'neutral',
       sortOrder: 90,
       clientMutationId: mutationId('category-create'),
     };
@@ -59,10 +60,17 @@ async function verifyManagement() {
     const categoryUpdated = await mutation(api.categories.save, {
       id: categoryCreated.id,
       name: 'APP-03 Renamed Category',
+      artworkKey: 'cold-drinks',
       sortOrder: 91,
       expectedRevision: categoryCreated.revision,
       clientMutationId: mutationId('category-update'),
     });
+    assert.equal(
+      (await query(api.categories.list, {})).find(
+        (category) => category._id === categoryCreated.id,
+      )?.artworkKey,
+      'cold-drinks',
+    );
     const categoryArchived = await mutation(
       api.categories.setArchived,
       {

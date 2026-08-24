@@ -117,7 +117,7 @@ export function ReconnectProvider({
   children: ReactNode;
   onSessionUnavailable: () => Promise<void>;
 }) {
-  const { available } = useConnectionStatus();
+  const { available, foreground } = useConnectionStatus();
   const session = useStaffSession();
   const sessionArgs = {
     sessionToken: session.token,
@@ -149,7 +149,7 @@ export function ReconnectProvider({
   const [revision, setRevision] = useState(0);
 
   const perform = useCallback(async (mode: ReconnectMode) => {
-    if (available !== true || isPendingStaffSession(session)) {
+    if (available !== true || !foreground || isPendingStaffSession(session)) {
       const settings = await loadTerminalSettings();
       return {
         synced: 0,
@@ -221,7 +221,8 @@ export function ReconnectProvider({
                     id: await resolveCloudRecordId('category', operation.localRecordId) as Id<'categories'>,
                     expectedRevision: operation.expectedRevision,
                   }),
-              name: String(payload.name), sortOrder: Number(payload.sortOrder),
+              name: String(payload.name), artworkKey: String(payload.artworkKey),
+              sortOrder: Number(payload.sortOrder),
               clientMutationId: operation.operationId,
             });
             return { recordType: 'category', cloudRecordId: String(result.id), acknowledgedAt };
@@ -450,7 +451,7 @@ export function ReconnectProvider({
       }
       throw new Error(message);
     }
-  }, [acceptMutation, addCompensationMutation, addExpenseMutation, archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, correctExpenseMutation, createStaffAction, onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation, saveCategoryMutation, saveIngredientMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.name, session.provisioningState, session.role, session.staffProfileId, session.token, setProductStatusMutation]);
+  }, [acceptMutation, addCompensationMutation, addExpenseMutation, archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, correctExpenseMutation, createStaffAction, foreground, onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation, saveCategoryMutation, saveIngredientMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.name, session.provisioningState, session.role, session.staffProfileId, session.token, setProductStatusMutation]);
 
   const run = useCallback((mode: ReconnectMode = 'automatic') => {
     requestedMode.current = mode === 'manual' || requestedMode.current === 'manual'
@@ -477,12 +478,13 @@ export function ReconnectProvider({
   }, [perform]);
 
   useEffect(() => {
+    const ready = available === true && foreground;
     const previous = previousAvailable.current;
-    previousAvailable.current = available;
-    if (available === true && previous !== true) {
+    previousAvailable.current = ready;
+    if (ready && previous !== true) {
       void run('automatic').catch(() => undefined);
     }
-  }, [available, run]);
+  }, [available, foreground, run]);
 
   return (
     <ReconnectContext.Provider value={{ isSyncing, revision, run }}>

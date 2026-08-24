@@ -12,7 +12,7 @@ export type DashboardSnapshot =
   FunctionReturnType<typeof api.dashboard.getSnapshot>;
 
 export function useDashboardData() {
-  const { available } = useConnectionStatus();
+  const { available, foreground } = useConnectionStatus();
   const session = useStaffSession();
   const reconnect = useReconnect();
   const convex = useConvex();
@@ -23,7 +23,7 @@ export function useDashboardData() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (available === undefined) return;
+    if (available === undefined || !foreground) return;
     let cancelled = false;
     setIsLoading(true);
     setError('');
@@ -49,7 +49,7 @@ export function useDashboardData() {
     return () => {
       cancelled = true;
     };
-  }, [available, businessDate, convex, reconnect.revision, reload, session.deviceId, session.token]);
+  }, [available, businessDate, convex, foreground, reconnect.revision, reload, session.deviceId, session.token]);
 
   const refresh = useCallback(() => {
     setReload((value) => value + 1);

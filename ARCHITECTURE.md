@@ -389,6 +389,8 @@ must remain separate.
 ### `categories`
 
 - Name.
+- Bounded artwork key resolved against the versioned APK gallery; missing or
+  unknown keys render the neutral fallback.
 - Sort order.
 - Active or archived state.
 - Revision/update metadata.
@@ -1002,6 +1004,15 @@ consume the ordered capability data supplied by the callback rather than
 querying again inside it. One native callback feeds one React provider, which
 also rechecks on visible foreground/resume. Browser online and offline events
 may request a fresh native reading but never override it.
+
+The shared context also records whether the WebView activity is visible. Cloud
+reads and reconnect work require both validated internet and a visible
+foreground activity. An immediate browser `offline` hint may close transport
+before the native round-trip completes, but Android remains authoritative for
+application state. The data boundary replaces a closed Convex client with a
+fresh lazy client, so hidden/offline screens keep SQLite content without
+opening or retrying WebSockets; returning foreground creates a connection only
+when real cloud work runs.
 
 Lock, POS, and Settings consume that shared state. Locked connection changes
 update presentation only and never start staff-authorized cloud work. POS and

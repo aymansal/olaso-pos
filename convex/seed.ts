@@ -145,12 +145,13 @@ type DailyAccumulator = {
 };
 
 const categorySeeds = [
-  { key: 'coffee', name: 'Coffee', sortOrder: 10 },
-  { key: 'matcha-tea', name: 'Matcha & Tea', sortOrder: 20 },
-  { key: 'cold-sweet', name: 'Cold & Sweet', sortOrder: 30 },
+  { key: 'coffee', name: 'Coffee', artworkKey: 'coffee', sortOrder: 10 },
+  { key: 'matcha-tea', name: 'Matcha & Tea', artworkKey: 'tea', sortOrder: 20 },
+  { key: 'cold-sweet', name: 'Cold & Sweet', artworkKey: 'cold-drinks', sortOrder: 30 },
   {
     key: 'bakery-savoury',
     name: 'Bakery & Savoury',
+    artworkKey: 'bakery',
     sortOrder: 40,
   },
 ] as const;
@@ -927,6 +928,7 @@ export const resetAndSeed = internalMutation({
       const id = await ctx.db.insert('categories', {
         key: category.key,
         name: category.name,
+        artworkKey: category.artworkKey,
         sortOrder: category.sortOrder,
         status: 'active',
         revision: 1,

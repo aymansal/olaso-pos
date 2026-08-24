@@ -8,8 +8,10 @@ application, global tokens, and the feature screens under `features/`.
 ## Ownership
 
 - `main.tsx` mounts React and applies the pre-built Astryx Olaso theme.
-- `main.tsx` also mounts the single shared connection provider inside the local
-  data boundary; screens consume it rather than registering network listeners.
+- `main.tsx` mounts the single shared connection provider outside the local
+  data/Convex boundary so Android connection and foreground truth can prevent
+  the cloud client from opening while hidden or offline; screens consume it
+  rather than registering network listeners.
 - `App.tsx` selects the active top-level screen and restores the non-secret
   local terminal-lock state before exposing the application.
 - `App.tsx` mounts the reconnect worker only inside an authenticated staff

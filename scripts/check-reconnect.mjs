@@ -56,6 +56,11 @@ const app = readFileSync('src/App.tsx', 'utf8');
 const pos = readFileSync('src/data/usePosData.ts', 'utf8');
 const orders = readFileSync('src/data/useOrdersData.ts', 'utf8');
 const settings = readFileSync('src/data/useSettingsData.ts', 'utf8');
+const dashboard = readFileSync('src/data/useDashboardData.ts', 'utf8');
+const reports = readFileSync('src/data/useReportsData.ts', 'utf8');
+const dataProvider = readFileSync('src/data/AppDataProvider.tsx', 'utf8');
+const main = readFileSync('src/main.tsx', 'utf8');
+const html = readFileSync('index.html', 'utf8');
 assert.match(worker, /inFlight\.current/);
 assert.match(worker, /api\.identity\.checkSession/);
 assert.ok(
@@ -74,6 +79,21 @@ assert.match(worker, /previous !== true/);
 assert.ok(app.indexOf('<ReconnectProvider ') > app.indexOf('<StaffSessionProvider'));
 assert.match(app, /onSessionUnavailable=\{lock\}/);
 assert.doesNotMatch(pos + orders + settings, /syncPendingSales/);
+assert.match(dataProvider, /useConnectionStatus\(\)/);
+assert.match(dataProvider, /available === false/);
+assert.match(dataProvider, /void previous\.close\(\)/);
+assert.match(dataProvider, /retiredForOutage\.current/);
+assert.match(dataProvider, /addEventListener\('offline', retireConvexClient\)/);
+assert.match(worker, /available !== true \|\| !foreground/);
+assert.match(worker, /const ready = available === true && foreground/);
+assert.match(dashboard, /available === undefined \|\| !foreground/);
+assert.match(reports, /available === undefined \|\| !foreground/);
+assert.match(orders, /available && foreground/);
+assert.ok(
+  main.indexOf('<ConnectionProvider>') < main.indexOf('<AppDataProvider>'),
+  'Android connection truth must exist before the Convex client boundary.',
+);
+assert.match(html, /<link rel="icon" href="data:," \/>/);
 assert.ok(
   orders.indexOf('await refresh();')
     < orders.indexOf("void reconnect.run('automatic')"),

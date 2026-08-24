@@ -525,6 +525,9 @@ Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-laye
 
 - Category names and artwork are separate data. Management chooses one key from
   a curated bundled gallery instead of depending on name matching.
+- The initial gallery contains Olaso neutral, Coffee, Tea & matcha, Cold drinks,
+  Bakery, and Snacks & sweets. Each source is a true-alpha 320 by 320 lossless
+  WebP in Operational Green and renders as decorative artwork.
 - Include common café directions, but do not attempt an exhaustive category
   list. Every unknown or custom category uses one neutral Olaso illustration
   until the owner selects another gallery asset.

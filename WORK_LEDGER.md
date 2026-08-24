@@ -99,18 +99,28 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- CATALOG-01 is the only in-progress card. Graphify traced POS category cards
-  to the current name-based asset resolver and Products category management.
-  Official Android guidance confirms that resource count and bitmap size affect
-  APK/load cost and that WebView graphics must account for CSS-pixel scaling;
-  Capacitor's web-first boundary already packages the built Vite assets into
-  Android. Selected boundary: a small reviewed, right-sized gallery stays in
-  the React/Vite bundle; SQLite/Convex persist only a bounded artwork key;
-  React resolves every missing/unknown key to one bundled neutral asset. No
-  Kotlin, plugin, permission, owner upload, download, runtime AI, name inference,
-  or new dependency is added. Exact next action: inspect the complete current
-  category schema/editor/sync/resolver/assets flow before choosing the minimum
-  migration and gallery shape.
+- CATALOG-01 is the only in-progress card and is ready to commit/push.
+  The six-asset gallery, neutral resolver, category picker, schema 17, and full
+  local/outbox/cloud/snapshot/POS path are implemented. The SM-X115 upgraded its
+  real schema-16 database in place, preserving 11 sales; the four existing
+  categories mapped to distinct keys. In flight mode, `Seasonal-QA` defaulted
+  to neutral, changed to snacks/sweets, survived force-stop/restart, then two
+  ordered saves became one revision-2 cloud category with zero pending category
+  rows and no duplicate after reconnect. QA cleanup archived only that category
+  and restored the four real active categories.
+- Physical QA exposed and root-fixed three bugs: the local cache mapper attached
+  artwork to modifier options instead of categories; the missing favicon caused
+  a WebView 404; and Convex sockets/readers retried while offline or hidden.
+  Category artwork is now required by the cache type, the favicon is explicit,
+  and the shared connection context gates Lock/Orders/Dashboard/Reports/
+  reconnect on validated internet plus foreground visibility while retiring
+  transport immediately on browser offline hints. The exact screen-off/resume
+  plus airplane loss/recovery matrix now yields zero WebView warning/error and
+  returns to 1340 by 800. Full local/catalog/staff/sales/Orders/Dashboard/
+  Reports/Settings/offline/reconnect/identity/Android/build checks pass;
+  Graphify is current at 3,192 nodes and 7,382 edges, authorities/DOX are
+  updated, and focused Android runtime failures are zero. Exact next action:
+  commit/push CATALOG-01, record its SHA, and leave LOCK-01 pending.
 - STAFF-01 is complete and pushed to `origin/main` as
   `9754897f4be65ffca1b572140e44fc229cad948f`. The
   owner-only minimal form, PIN-free local operation, protected immediate
@@ -884,6 +894,53 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — CATALOG-01 physical workflow and mandatory bugs complete
+
+- Installed the checked 140-task beta over the real schema-16 database after an
+  app-private backup. Schema 17 applied without clearing 11 sales and mapped
+  Coffee/Tea/Cold/Bakery to their intended artwork keys; the temporary backup
+  was removed only after migration and workflow proof passed.
+- In flight mode, created `Seasonal-QA` with the neutral default, then selected
+  Snacks & sweets. Both local-first operations survived restart, rendered in
+  POS, synchronized in order to one cloud revision-2 category, and stayed
+  duplicate-free on another reconnect. Archived only the QA cloud category and
+  confirmed the four real categories/keys remained active with no category
+  outbox row.
+- The first physical POS showed neutral art on every card despite correct SQL.
+  Root cause was a cache mapping typo that placed `artworkKey` on modifier
+  options; made category artwork required in the TypeScript cache contract and
+  added an exact mapper regression. A missing favicon and offline/hidden Convex
+  retry loop were also reproduced from WebView logs. Added an explicit data
+  favicon, promoted foreground visibility into the shared Android connection
+  context, retired the cloud client on immediate offline hints, and gated every
+  direct Lock/Orders/Dashboard/Reports/reconnect caller. Live CDP proof across
+  screen off/resume and airplane loss/recovery reports zero warnings/errors,
+  visible state, and exact 1340 by 800 bounds.
+- Focused/full local, catalog, Orders, offline, reconnect, identity, permission,
+  management, TypeScript, Convex deployment, production build, Android sync,
+  and repeated 140-task beta checks pass. Graphify, authorities, DOX, final
+  regression, live WebView console, exact viewport, and Android runtime checks
+  now pass. Exact next action is the implementation commit and push.
+
+### 2026-08-24 — CATALOG-01 gallery and data path implemented
+
+- Reused the three versioned line-art sources for coffee, tea, and snacks; used
+  built-in image generation for neutral botanical, iced citrus drink, and
+  croissant/wheat artwork. Two initial outputs contained baked checkerboards;
+  rejected them and edited the backgrounds to real alpha before repository use.
+  All six final images were normalized to Operational Green and lossless 320 px
+  WebP, totaling about 142 KB instead of adding six 1,200 px PNGs to the APK.
+- Added one shared registry/fallback and one compact six-choice picker inside
+  the existing category dialog. Artwork stays decorative and selectable; names
+  never choose or change it automatically.
+- Added SQLite migration 17 and propagated `artworkKey` through local save,
+  PIN-free management payload, reconnect, Convex validation/storage/seed,
+  bounded snapshot, Products, and POS. Focused migration, custom fallback,
+  invalid key, asset size, local transaction, cloud retry/update, permission,
+  TypeScript, deployment, and production-build checks pass. Exact next action
+  is checked Android packaging and the real flight-mode/restart/reconnect UI
+  proof on the SM-X115.
 
 ### 2026-08-24 — CATALOG-01 activated with bundled-asset decision
 

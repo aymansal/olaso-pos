@@ -10,6 +10,7 @@ import { usePosData } from '../../data/usePosData';
 import { useConnectionStatus } from '../../data/connectionContext';
 import type { ClockFormat } from '../../data/terminalSettings';
 import type { SavedReceipt } from '../../data/localSales.ts';
+import { categoryArtworkUrl } from '../../lib/categoryArtwork.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
 import { Header } from './components/Header/Header';
 import {
@@ -20,7 +21,7 @@ import { ProductGrid } from './components/ProductGrid/ProductGrid';
 import { ReceiptRail } from './components/ReceiptRail/ReceiptRail';
 import { SearchField } from './components/SearchField/SearchField';
 import type { NavigationPage } from './components/TopNavigation/TopNavigation';
-import { categoryImage, type Category } from './data/categories';
+import type { Category } from './data/categories';
 import { productImage, type Product } from './data/products';
 import {
   addProduct,
@@ -81,6 +82,10 @@ export function PosScreen({
     () => new Map(menu?.categories.map((category) => [category.id, category.key])),
     [menu],
   );
+  const categoryArtworkKeyById = useMemo(
+    () => new Map(menu?.categories.map((category) => [category.id, category.artworkKey])),
+    [menu],
+  );
   const categories: Category[] = useMemo(
     () =>
       (menu?.categories ?? []).filter(
@@ -96,7 +101,7 @@ export function PosScreen({
           ).length ?? 0,
         status: 'Available',
         variant: 'default',
-        image: categoryImage(category.key),
+        image: categoryArtworkUrl(category.artworkKey),
       })),
     [menu],
   );
@@ -106,15 +111,16 @@ export function PosScreen({
         .filter((product) => product.status === 'active')
         .map((product) => {
           const categoryKey = categoryKeyById.get(product.categoryId) ?? '';
+          const categoryArtworkKey = categoryArtworkKeyById.get(product.categoryId);
           return {
             id: product.id,
             categoryId: categoryKey,
             name: product.name,
             priceCentimes: product.priceCentimes,
-            image: productImage(product.imageAssetKey, categoryKey),
+            image: productImage(product.imageAssetKey, categoryArtworkKey),
           };
         }),
-    [categoryKeyById, menu],
+    [categoryArtworkKeyById, categoryKeyById, menu],
   );
   const productById = useMemo(
     () => new Map(products.map((product) => [product.id, product])),

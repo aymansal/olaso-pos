@@ -8,7 +8,7 @@ import icedCoffeeMilk from '../../../../images/generated-1784303399328.png';
 import latte from '../../../../images/generated-1784303397938.png';
 import mocha from '../../../../images/generated-1784303398686.png';
 import type { CategoryId } from './categories';
-import { categoryImage } from './categories';
+import { categoryArtworkUrl } from '../../../lib/categoryArtwork.ts';
 
 export type Product = {
   id: string;
@@ -32,9 +32,9 @@ const productImages: Record<string, string> = {
 
 export function productImage(
   imageAssetKey: string | undefined,
-  categoryKey: string,
+  categoryArtworkKey: string | undefined,
 ) {
   return imageAssetKey
-    ? productImages[imageAssetKey] ?? categoryImage(categoryKey)
-    : categoryImage(categoryKey);
+    ? productImages[imageAssetKey] ?? categoryArtworkUrl(categoryArtworkKey)
+    : categoryArtworkUrl(categoryArtworkKey);
 }

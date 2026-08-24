@@ -13,6 +13,8 @@ saved tablet presentation during an outage.
   browsing.
 - `ProductEditorPanel` owns product editing and opens the modifier and recipe
   dialogs.
+- `CategoryArtworkPicker` owns the compact six-choice bundled artwork selector
+  inside the existing category dialog.
 - `productManagementTypes.ts` owns the plain feature contracts passed to child
   components.
 - `src/data/useProductManagement.ts` maps the saved SQLite operational catalog
@@ -27,6 +29,8 @@ saved tablet presentation during an outage.
 - Category, product, modifier, and recipe writes use validated local domain
   actions plus the management outbox and surface synchronization failures
   without optimistic false claims.
+- Category names and artwork keys are independent; every create/edit persists
+  the explicit selection and missing/future keys render the neutral fallback.
 - Every recipe save creates a new immutable version; never overwrite historical
   recipe meaning.
 - Archive and restore records that history may reference; do not expose

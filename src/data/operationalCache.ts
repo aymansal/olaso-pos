@@ -13,6 +13,7 @@ export type OperationalCacheSnapshot = {
     id: string;
     key: string;
     name: string;
+    artworkKey: string;
     sortOrder: number;
     status?: 'active' | 'archived';
     revision: number;
@@ -182,11 +183,12 @@ export async function replaceOperationalCache(
     for (const category of snapshot.categories) {
       await database.run(
         `INSERT INTO categories
-          (id, key, name, sort_order, status, revision, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)
+          (id, key, name, artwork_key, sort_order, status, revision, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            key = excluded.key,
            name = excluded.name,
+           artwork_key = excluded.artwork_key,
            sort_order = excluded.sort_order,
            status = 'active',
            revision = excluded.revision,
@@ -195,6 +197,7 @@ export async function replaceOperationalCache(
           category.id,
           category.key,
           category.name,
+          category.artworkKey ?? 'neutral',
           category.sortOrder,
           category.status ?? 'active',
           category.revision,
@@ -557,7 +560,7 @@ export async function loadOperationalCache(
     cacheState,
   ] = await Promise.all([
       database.query(
-        `SELECT id, key, name, sort_order, status, revision
+        `SELECT id, key, name, artwork_key, sort_order, status, revision
          FROM categories
          ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
            sort_order, updated_at DESC
@@ -637,6 +640,7 @@ export async function loadOperationalCache(
       id: String(row.id),
       key: String(row.key),
       name: String(row.name),
+      artworkKey: String(row.artwork_key || 'neutral'),
       sortOrder: Number(row.sort_order),
       status: row.status === 'archived' ? 'archived' : 'active',
       revision: Number(row.revision),

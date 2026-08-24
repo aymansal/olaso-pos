@@ -9,12 +9,12 @@ import './globals.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppDataProvider>
-      <ConnectionProvider>
+    <ConnectionProvider>
+      <AppDataProvider>
         <Theme theme={OlasothemeTheme} mode="light">
           <App />
         </Theme>
-      </ConnectionProvider>
-    </AppDataProvider>
+      </AppDataProvider>
+    </ConnectionProvider>
   </StrictMode>,
 );

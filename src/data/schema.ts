@@ -513,6 +513,20 @@ export const localMigrations = [
         ON operating_expenses(correction_of_expense_id, created_at DESC)`,
     ],
   },
+  {
+    toVersion: 17,
+    statements: [
+      `ALTER TABLE categories
+        ADD COLUMN artwork_key TEXT NOT NULL DEFAULT 'neutral'`,
+      `UPDATE categories SET artwork_key = CASE key
+        WHEN 'coffee' THEN 'coffee'
+        WHEN 'matcha-tea' THEN 'tea'
+        WHEN 'cold-sweet' THEN 'cold-drinks'
+        WHEN 'bakery-savoury' THEN 'bakery'
+        ELSE 'neutral'
+      END`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

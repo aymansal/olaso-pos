@@ -89,14 +89,17 @@
 
 .illustration {
   position: absolute;
-  top: 22px;
-  left: 95px;
-  width: 138.5px;
-  height: 98px;
-  object-fit: cover;
+  top: 10px;
+  left: 108px;
+  width: 118px;
+  height: 108px;
+  object-fit: contain;
+  opacity: 0.16;
 }
 
 .active .illustration {
-  left: 85px;
-  width: 148.5px;
+  left: 100px;
+  width: 126px;
+  opacity: 1;
+  filter: brightness(0) invert(1);
 }

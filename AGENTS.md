@@ -118,7 +118,10 @@ decision changes.
   synchronization that cannot block sales. STAFF-01 adds owner-only offline
   staff creation, protected profile-scoped initial-PIN verification, and
   retry-safe server provisioning without placing the raw PIN in SQLite or the
-  ordinary outbox.
+  ordinary outbox. CATALOG-01 adds SQLite schema 17, explicit category artwork
+  keys, a six-asset offline gallery, and a neutral fallback. Android connection
+  truth plus foreground state closes idle Convex transports and prevents cloud
+  reads/work while the activity is hidden or offline.
 
 ### Visual baseline
 

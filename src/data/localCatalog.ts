@@ -37,6 +37,14 @@ function integer(value: number, label: string, minimum: number, maximum: number)
   return value;
 }
 
+function artworkKey(value: string) {
+  if (value.length > 80 || value !== value.trim().toLowerCase()
+      || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)) {
+    throw new Error('Category artwork is invalid.');
+  }
+  return value;
+}
+
 async function dependency(database: CatalogDatabase) {
   return latestPendingManagementOperationIdFromDatabase(
     database,
@@ -57,6 +65,7 @@ export function saveLocalCategory(
   input: {
     id?: string;
     name: string;
+    artworkKey: string;
     sortOrder: number;
     expectedRevision?: number;
   },
@@ -65,6 +74,7 @@ export function saveLocalCategory(
   return transact(async (database) => {
     const now = Date.now();
     const name = text(input.name, 'Category name', 80);
+    const savedArtworkKey = artworkKey(input.artworkKey);
     const sortOrder = integer(input.sortOrder, 'Sort order', 0, 10_000);
     const existing = input.id ? await row(database, 'categories', input.id) : undefined;
     if (input.id && !existing) throw new Error('Category is unavailable.');
@@ -79,12 +89,13 @@ export function saveLocalCategory(
     const revision = existing ? Number(existing.revision) + 1 : 1;
     await database.run(
       `INSERT INTO categories
-        (id, key, name, sort_order, status, revision, updated_at)
-       VALUES (?, ?, ?, ?, 'active', ?, ?)
+        (id, key, name, artwork_key, sort_order, status, revision, updated_at)
+       VALUES (?, ?, ?, ?, ?, 'active', ?, ?)
        ON CONFLICT(id) DO UPDATE SET name = excluded.name,
+         artwork_key = excluded.artwork_key,
          sort_order = excluded.sort_order, revision = excluded.revision,
          updated_at = excluded.updated_at`,
-      [localId, key, name, sortOrder, revision, now],
+      [localId, key, name, savedArtworkKey, sortOrder, revision, now],
       false,
     );
     const operation = await enqueueManagementOperation(database, {
@@ -95,7 +106,7 @@ export function saveLocalCategory(
       requiredPermission: 'products',
       actor: context.actor,
       expectedRevision: input.expectedRevision,
-      payload: { key, name, sortOrder },
+      payload: { key, name, artworkKey: savedArtworkKey, sortOrder },
       createdAt: now,
     });
     return { id: localId, revision, operationId: operation.operationId };

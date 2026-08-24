@@ -11,7 +11,7 @@ export type ReportsSnapshot =
   FunctionReturnType<typeof api.reports.getSummary>;
 
 export function useReportsData(fromDate: string, toDate: string) {
-  const { available } = useConnectionStatus();
+  const { available, foreground } = useConnectionStatus();
   const session = useStaffSession();
   const reconnect = useReconnect();
   const convex = useConvex();
@@ -21,7 +21,7 @@ export function useReportsData(fromDate: string, toDate: string) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (available === undefined) return;
+    if (available === undefined || !foreground) return;
     let cancelled = false;
     setIsLoading(true);
     setError('');
@@ -49,7 +49,7 @@ export function useReportsData(fromDate: string, toDate: string) {
     return () => {
       cancelled = true;
     };
-  }, [available, convex, fromDate, reconnect.revision, reload, session.deviceId, session.token, toDate]);
+  }, [available, convex, foreground, fromDate, reconnect.revision, reload, session.deviceId, session.token, toDate]);
 
   const retry = useCallback(() => {
     setReload((value) => value + 1);

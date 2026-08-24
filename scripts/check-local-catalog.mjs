@@ -1,9 +1,40 @@
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { saveLocalCategory, saveLocalProduct, setLocalProductStatus } from '../src/data/localCatalog.ts';
 import { saveLocalModifierGroup, saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
 import { localMigrations } from '../src/data/schema.ts';
+import {
+  CATEGORY_ARTWORK_OPTIONS,
+  categoryArtworkKey,
+  categoryArtworkUrl,
+} from '../src/lib/categoryArtwork.ts';
+
+const upgrade = new DatabaseSync(':memory:');
+for (const migration of localMigrations.filter((item) => item.toVersion <= 16)) {
+  for (const statement of migration.statements) upgrade.exec(statement);
+}
+upgrade.prepare(`INSERT INTO categories
+  (id, key, name, sort_order, status, revision, updated_at)
+  VALUES (?, ?, ?, ?, 'active', 1, 1)`).run(
+  'existing-coffee', 'coffee', 'Renamed coffee', 10,
+);
+upgrade.prepare(`INSERT INTO categories
+  (id, key, name, sort_order, status, revision, updated_at)
+  VALUES (?, ?, ?, ?, 'active', 1, 1)`).run(
+  'existing-custom', 'summer-specials', 'Summer specials', 20,
+);
+for (const statement of localMigrations.find(
+  (item) => item.toVersion === 17,
+).statements) upgrade.exec(statement);
+assert.equal(upgrade.prepare(
+  'SELECT artwork_key FROM categories WHERE id = ?',
+).get('existing-coffee').artwork_key, 'coffee');
+assert.equal(upgrade.prepare(
+  'SELECT artwork_key FROM categories WHERE id = ?',
+).get('existing-custom').artwork_key, 'neutral');
+upgrade.close();
 
 const database = new DatabaseSync(':memory:');
 database.exec('PRAGMA foreign_keys = ON');
@@ -22,7 +53,9 @@ database.prepare(`INSERT INTO ingredients
    revision, updated_at, inventory_value_centimes, cost_status, valuation_revision)
   VALUES ('ingredient:test', 'Test ingredient', 'gram', 1000, 100, 'active', 1, 1, 10000, 'complete', 1)`).run();
 const context = { deviceId: 'tablet-test', actor: { staffProfileId: 'manager-test', name: 'Manager', role: 'manager' } };
-const category = await saveLocalCategory(context, { name: 'Offline category', sortOrder: 90 }, transaction);
+const category = await saveLocalCategory(context, {
+  name: 'Offline category', artworkKey: 'cold-drinks', sortOrder: 90,
+}, transaction);
 const modifier = await saveLocalModifierGroup(context, {
   name: 'Offline options', required: false, minSelections: 0, maxSelections: 1,
   status: 'active', sortOrder: 90, options: [{ key: 'extra', name: 'Extra',
@@ -44,6 +77,12 @@ const recipe = await saveLocalRecipeVersion(context, managedProduct, [
 ], transaction);
 assert.equal(recipe.productRevision, 2);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM categories').get().count, 1);
+assert.equal(database.prepare(
+  'SELECT artwork_key FROM categories WHERE id = ?',
+).get(category.id).artwork_key, 'cold-drinks');
+assert.equal(JSON.parse(database.prepare(
+  'SELECT payload_json FROM management_operations WHERE operation_type = ? LIMIT 1',
+).get('management.category.save').payload_json).artworkKey, 'cold-drinks');
 assert.equal(database.prepare('SELECT COUNT(*) count FROM products').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM modifier_options').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM recipe_items').get().count, 1);
@@ -68,7 +107,21 @@ await assert.rejects(
   /Category is unavailable/,
 );
 assert.equal(database.prepare("SELECT COUNT(*) count FROM products WHERE name = 'Broken'").get().count, 0);
+await assert.rejects(
+  saveLocalCategory(context, {
+    name: 'Invalid artwork', artworkKey: 'Not Valid', sortOrder: 100,
+  }, transaction),
+  /artwork is invalid/,
+);
 database.close();
+assert.equal(CATEGORY_ARTWORK_OPTIONS.length, 6);
+assert.equal(categoryArtworkKey('future-asset'), 'neutral');
+assert.equal(categoryArtworkUrl('future-asset'), categoryArtworkUrl('neutral'));
+for (const option of CATEGORY_ARTWORK_OPTIONS) {
+  const path = fileURLToPath(option.image);
+  assert.equal(path.endsWith('.webp'), true);
+  assert(statSync(path).size < 40_000, `${option.key} artwork is not right-sized.`);
+}
 const localSalesSource = readFileSync('src/data/localSales.ts', 'utf8');
 const reconnectSource = readFileSync('src/data/reconnectContext.tsx', 'utf8');
 const productHookSource = readFileSync('src/data/useProductManagement.ts', 'utf8');
@@ -93,4 +146,12 @@ assert.ok(
   'Bounded catalog reads must prioritize live records over archived history.',
 );
 assert.match(operationalCacheSource, /ORDER BY is_active DESC, created_at DESC/);
+const categoryMapping = operationalCacheSource.match(
+  /categories: \(categories\.values[\s\S]*?products: \(products\.values/,
+)?.[0] ?? '';
+const modifierMapping = operationalCacheSource.match(
+  /modifierOptions: \(modifierOptions\.values[\s\S]*?productModifierGroups:/,
+)?.[0] ?? '';
+assert.match(categoryMapping, /artworkKey: String\(row\.artwork_key/);
+assert.doesNotMatch(modifierMapping, /artworkKey/);
 console.log('Local-first catalog and recipe transaction checks passed.');

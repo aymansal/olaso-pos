@@ -15,6 +15,9 @@ owns the shared Header and TopNavigation currently used across the application.
   POS location.
 - `data/categories.ts` and `data/products.ts` map approved content assets onto
   the live local operational menu.
+- `src/lib/categoryArtwork.ts` is the shared Products/POS gallery registry and
+  neutral fallback; POS consumes the saved category artwork key rather than
+  inferring from its name.
 - Approved Pencil node `W26Y6` owns POS geometry and composition.
 
 ## Local Contracts

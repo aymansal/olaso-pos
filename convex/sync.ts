@@ -130,6 +130,7 @@ export const getOperationalSnapshot = query({
         id: category._id,
         key: category.key,
         name: category.name,
+        artworkKey: category.artworkKey ?? 'neutral',
         sortOrder: category.sortOrder,
         revision: category.revision,
       })),

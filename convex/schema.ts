@@ -67,6 +67,7 @@ export default defineSchema({
   categories: defineTable({
     key: v.string(),
     name: v.string(),
+    artworkKey: v.optional(v.string()),
     sortOrder: v.number(),
     status: activeStatus,
     revision: v.number(),

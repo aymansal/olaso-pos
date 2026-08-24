@@ -1,12 +1,14 @@
 import { FloppyDisk, X } from '@phosphor-icons/react';
 import { useState } from 'react';
 import type { ManagedCategory } from '../../productManagementTypes';
+import { CategoryArtworkPicker } from '../CategoryArtworkPicker/CategoryArtworkPicker.tsx';
+import { categoryArtworkKey } from '../../../../lib/categoryArtwork.ts';
 import styles from './CategoryDialog.module.css';
 
 interface CategoryDialogProps {
   category?: ManagedCategory;
   onClose: () => void;
-  onSave: (name: string) => Promise<void>;
+  onSave: (name: string, artworkKey: string) => Promise<void>;
 }
 
 export function CategoryDialog({
@@ -15,6 +17,9 @@ export function CategoryDialog({
   onSave,
 }: CategoryDialogProps) {
   const [name, setName] = useState(category?.name ?? '');
+  const [artworkKey, setArtworkKey] = useState(
+    categoryArtworkKey(category?.artworkKey),
+  );
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const title = category ? `Edit ${category.name}` : 'Add category';
@@ -23,7 +28,7 @@ export function CategoryDialog({
     setSaving(true);
     setError('');
     try {
-      await onSave(name);
+      await onSave(name, artworkKey);
       onClose();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Category save failed.');
@@ -61,6 +66,11 @@ export function CategoryDialog({
             }}
           />
         </label>
+
+        <CategoryArtworkPicker
+          value={artworkKey}
+          onChange={setArtworkKey}
+        />
 
         {error ? <p>{error}</p> : null}
         <footer>

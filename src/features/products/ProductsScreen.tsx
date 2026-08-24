@@ -93,11 +93,12 @@ export function ProductsScreen({
   const selectedCategory = management.categories.find(
     (category) => category.id === selectedCategoryId,
   );
-  async function saveCategory(name: string) {
+  async function saveCategory(name: string, artworkKey: string) {
     const result = await management.saveCategory(
       categoryEditor === 'new'
         ? {
             name,
+            artworkKey,
             sortOrder:
               Math.max(
                 0,
@@ -107,6 +108,7 @@ export function ProductsScreen({
         : {
             id: categoryEditor?.id,
             name,
+            artworkKey,
             sortOrder: categoryEditor?.sortOrder ?? 0,
             expectedRevision: categoryEditor?.revision,
           },

@@ -38,6 +38,7 @@ export const save = mutation({
     id: v.optional(v.id('categories')),
     key: v.optional(v.string()),
     name: v.string(),
+    artworkKey: v.string(),
     sortOrder: v.number(),
     expectedRevision: v.optional(v.number()),
     clientMutationId: v.string(),
@@ -46,6 +47,7 @@ export const save = mutation({
     const updatedBy = await requireManagement(ctx, args);
     const clientMutationId = mutationId(args.clientMutationId);
     const name = cleanText(args.name, 'Category name', 80);
+    const artworkKey = cleanKey(args.artworkKey, 'Artwork key');
     const sortOrder = boundedInteger(args.sortOrder, 'Sort order', 0, 10_000);
     const updatedAt = Date.now();
 
@@ -58,6 +60,7 @@ export const save = mutation({
       expectRevision(args.expectedRevision, category.revision);
       await ctx.db.patch(category._id, {
         name,
+        artworkKey,
         sortOrder,
         revision: category.revision + 1,
         updatedAt,
@@ -85,6 +88,7 @@ export const save = mutation({
     const id = await ctx.db.insert('categories', {
       key,
       name,
+      artworkKey,
       sortOrder,
       status: 'active',
       revision: 1,

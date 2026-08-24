@@ -29,8 +29,12 @@ tablet's local SQLite operational record.
 - `secureSession.ts` owns the Android-only protected-storage wrapper for opaque
   session tokens and offline PIN verifiers; ordinary SQLite settings never hold
   credentials.
-- `connectionContext.tsx` owns the single Android-validated connection state
-  and its foreground/resume recheck; it does not synchronize application data.
+- `connectionContext.tsx` owns the single Android-validated connection state,
+  foreground visibility, and resume recheck; it does not synchronize
+  application data.
+- `AppDataProvider.tsx` owns the local-database readiness gate and Convex client
+  lifetime. An immediate browser offline hint may close transport early, while
+  Android validated state remains authoritative for application behavior.
 - `reconnectContext.tsx` owns the authenticated single-flight outbox worker,
   cache refresh gate, and visible-hook completion revision.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail and
@@ -61,8 +65,8 @@ tablet's local SQLite operational record.
 - `printState.ts` owns persisted pending/printed/failed sale print attempts;
   `receiptPrinting.ts` coordinates one post-commit attempt and never calls sale
   or stock creation logic.
-- `operationalCache.ts` owns the bounded cloud-to-local menu, modifier, recipe,
-  and stock snapshot.
+- `operationalCache.ts` owns the bounded cloud-to-local menu, category artwork
+  key, modifier, recipe, and stock snapshot.
 
 ## Local Contracts
 
@@ -106,6 +110,9 @@ tablet's local SQLite operational record.
   Only owners may query or render individual compensation and monthly profit.
 - Treat the shared connection context as display/readiness state only. The one
   reconnect worker owns automatic outbox and cache work.
+- Cloud clients, reads, and reconnect work require both validated internet and
+  a visible foreground activity. Hidden/offline screens keep saved content and
+  must not open or retry a WebSocket.
 - Automatic sync reads only pending rows, releases only classified connection
   failures after a real reconnect, and retains business failures. Manual Sync
   is the deliberate all-failure recovery action.

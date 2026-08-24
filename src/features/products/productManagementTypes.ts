@@ -2,6 +2,7 @@ export type ManagedCategory = {
   id: string;
   key: string;
   name: string;
+  artworkKey: string;
   sortOrder: number;
   status: 'active' | 'archived';
   revision: number;

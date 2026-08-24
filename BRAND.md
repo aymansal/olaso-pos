@@ -131,6 +131,12 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
 - Avoid generic stock photography and runtime AI generation inside the POS.
   New approved gallery assets can be generated or commissioned outside the app,
   reviewed, optimized, and shipped in a later release.
+- CATALOG-01 ships the initial application gallery under
+  `assets/category-art/`: neutral botanical, coffee, tea, cold drinks, bakery,
+  and snacks/sweets. All are true-alpha Operational Green line illustrations,
+  normalized to 320 by 320 lossless WebP for the fixed POS card. The neutral
+  botanical is the fallback for every absent or future key. Final owner visual
+  acceptance remains part of the planned whole-app review and HARD-08.
 
 ## 4. Color
 
@@ -245,7 +251,8 @@ Ask the owner or creative team to confirm:
 - [ ] Official vector logo pack and compact app icon.
 - [ ] Approve or reject the minimal launch-motion prototype and its static
       reduced-motion frame.
-- [ ] Approve the initial category-art gallery and neutral fallback.
+- [x] Initial application category-art gallery and neutral fallback selected;
+      final whole-app visual acceptance remains.
 - [ ] Confirm whether the official physical green is RAL 6011 / Vert réséda.
 - [ ] Obtain the approved RGB/HEX equivalent; until then, keep the supplied digital value `#909F78`.
 - [ ] Exact official palette beyond the primary green and white.
