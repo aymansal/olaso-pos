@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; LOCAL-03 is the only card in progress
+**Status:** active; LOCAL-03 is done and no card is currently in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -141,7 +141,7 @@ polishing screens or data paths that later functional work would change.
 | --- | --- | --- | --- |
 | LOCAL-01 | Add the shared local-first management identity/outbox/sync foundation | done | `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main`; focused/build/Android/tablet/Graphify evidence below |
 | LOCAL-02 | Make catalog and recipe management fully local-first | done | `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main`; automated, Convex, Android, physical offline/restart/reconnect, cleanup, and Graphify evidence recorded in WORK_LEDGER.md |
-| LOCAL-03 | Make inventory, expense, and compensation management fully local-first | in progress | Implementation, focused/backend/build/Android, offline/restart/reconnect/exact-cloud tablet evidence complete; Graphify/docs/commit/push pending |
+| LOCAL-03 | Make inventory, expense, and compensation management fully local-first | done | `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main`; full automated, Android, offline/restart/reconnect/exact-cloud, lifecycle, focus-zoom, Graphify, and documentation evidence recorded |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | pending | — |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | pending | — |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | pending | — |
@@ -473,8 +473,8 @@ polishing screens or data paths that later functional work would change.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 and LOCAL-02 are done and LOCAL-03
-  is the only card in progress, subject to the mandatory bug rule.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-03 are done and no
+  card is currently in progress. STAFF-01 is next.
 - Owner review has identified two non-negotiable production gaps: management
   writes are currently online-only despite the required offline operation, and
   top-level navigation currently destroys/reconstructs screens, data hooks, and
@@ -489,11 +489,18 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: refresh Graphify, rerun final closeout checks, update all
-  evidence, commit/push LOCAL-03 on `main`, and record its full SHA. Do not start
-  STAFF-01.
+- Exact next action when the owner continues: complete STAFF-01 official
+  Android/Capacitor protected-credential research, then activate only STAFF-01.
 
 ## Planning journal
+
+### 2026-08-24 — LOCAL-03 complete on origin/main
+
+- Pushed `LOCAL-03: add local-first inventory and costs` as
+  `1105de62d8133448b7202dd67971ee83c56ced12` to `origin/main` and verified the
+  remote branch resolves to the same full SHA.
+- LOCAL-03 is done. No later card was activated; STAFF-01 remains the exact
+  next card when the owner continues.
 
 ### 2026-08-24 — LOCAL-03 implementation and physical proof complete
 

@@ -17,7 +17,7 @@ remaining goal and card sequence.
 | --- | --- |
 | LOCAL-01 — Shared local-first management identity/outbox/sync foundation | done — `0c7da7d63c293c4d96b5c28d8425210c6f9cc8b8` on `origin/main` |
 | LOCAL-02 — Local-first catalog and recipes | done — `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main` |
-| LOCAL-03 — Local-first inventory, expenses, and compensation | in progress |
+| LOCAL-03 — Local-first inventory, expenses, and compensation | done — `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main` |
 | STAFF-01 — Offline staff creation and protected initial PIN | pending |
 | CATALOG-01 — Offline category artwork | pending |
 | LOCK-01 — Role-safe Lock / Switch staff | pending |
@@ -99,17 +99,13 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- LOCAL-03 is the only in-progress card. Official Android offline-first/data-
-  layer, WorkManager, and Capacitor Community SQLite transaction guidance were
-  reviewed after the Graphify/DOX/plan/ledger/authority preflight. SQLite stays
-  the immediate source of truth; exact domain changes plus management outbox
-  commit atomically and the authenticated foreground worker synchronizes later.
-  Room, another database, WorkManager under the locked-session policy, direct
-  UI network writes, and last-write-wins are rejected. Schema 16, local Stock/
-  finance operations, independent sync domains, role-scoped Costs, backend
-  retries, physical offline/restart/reconnect evidence, and the mandatory
-  lifecycle/focus-zoom bug repairs now pass. Exact next action: final Graphify,
-  checks, documentation, commit/push, and SHA recording; do not start STAFF-01.
+- LOCAL-03 is complete on `origin/main` at
+  `1105de62d8133448b7202dd67971ee83c56ced12`. Schema 16, local Stock/finance
+  operations, independent sync domains, role-scoped Costs, backend retries,
+  physical offline/restart/reconnect proof, lifecycle/focus-zoom repairs,
+  Graphify, documentation, and full checks pass. No card is currently in
+  progress. Exact next action when the owner continues: research and activate
+  only STAFF-01 for protected offline staff/PIN creation.
 - LOCAL-02 is complete and pushed to `origin/main` at
   `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29`. Its local catalog/recipe
   implementation builds and opens on the physical tablet. A failed test APK had rewritten
@@ -860,6 +856,15 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCAL-03 complete and pushed
+
+- `LOCAL-03: add local-first inventory and costs` is pushed directly to
+  `origin/main` as `1105de62d8133448b7202dd67971ee83c56ced12`; local `main` and
+  the remote resolved to the same SHA before this completion record.
+- LOCAL-03 is done with its automated, cloud, APK, physical tablet, role,
+  offline/restart/reconnect, exact-cloud, lifecycle, viewport, Graphify, and
+  documentation evidence. STAFF-01 is next and remains pending.
 
 ### 2026-08-24 — LOCAL-03 ready for Graphify and commit
 
