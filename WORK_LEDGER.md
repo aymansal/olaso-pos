@@ -19,7 +19,7 @@ remaining goal and card sequence.
 | LOCAL-02 — Local-first catalog and recipes | done — `1cfbf92fe6df3c8d6a8ee2065f60dafdad041d29` on `origin/main` |
 | LOCAL-03 — Local-first inventory, expenses, and compensation | done — `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main` |
 | STAFF-01 — Offline staff creation and protected initial PIN | done — `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main` |
-| CATALOG-01 — Offline category artwork | pending |
+| CATALOG-01 — Offline category artwork | in progress |
 | LOCK-01 — Role-safe Lock / Switch staff | pending |
 | LOCAL-04 — Offline management closeout | pending |
 | HARD-01 — Physical startup/navigation baseline | pending |
@@ -99,6 +99,18 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- CATALOG-01 is the only in-progress card. Graphify traced POS category cards
+  to the current name-based asset resolver and Products category management.
+  Official Android guidance confirms that resource count and bitmap size affect
+  APK/load cost and that WebView graphics must account for CSS-pixel scaling;
+  Capacitor's web-first boundary already packages the built Vite assets into
+  Android. Selected boundary: a small reviewed, right-sized gallery stays in
+  the React/Vite bundle; SQLite/Convex persist only a bounded artwork key;
+  React resolves every missing/unknown key to one bundled neutral asset. No
+  Kotlin, plugin, permission, owner upload, download, runtime AI, name inference,
+  or new dependency is added. Exact next action: inspect the complete current
+  category schema/editor/sync/resolver/assets flow before choosing the minimum
+  migration and gallery shape.
 - STAFF-01 is complete and pushed to `origin/main` as
   `9754897f4be65ffca1b572140e44fc229cad948f`. The
   owner-only minimal form, PIN-free local operation, protected immediate
@@ -872,6 +884,22 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — CATALOG-01 activated with bundled-asset decision
+
+- Activated only CATALOG-01 after the owner's instruction; LOCK-01 and all later
+  cards remain pending. Queried the refreshed Graphify graph, reread the full
+  applicable DOX chain, plan, Goal 06 contract, ledger, and product/design/brand
+  category-art authorities before application inspection.
+- Android's current APK guidance favors fewer, smaller image resources and
+  documents density-aware WebView graphics. Capacitor remains web-first and
+  copies the built web bundle into Android, so the correct native decision is
+  no native implementation: ship a small, optimized gallery through Vite and
+  the existing checked Capacitor sync/build path.
+- Category names and artwork remain independent. The data layer will persist a
+  validated gallery key, while one bundled neutral illustration handles every
+  absent, corrupt, or future key offline. Exact next action is end-to-end caller,
+  schema, migration, payload, and asset inspection before implementation.
 
 ### 2026-08-24 — STAFF-01 complete on origin/main
 

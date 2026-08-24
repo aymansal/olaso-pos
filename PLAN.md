@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; STAFF-01 done; CATALOG-01 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete offline management, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; CATALOG-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -208,7 +208,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-STAFF-01 is complete on `origin/main`. When the owner continues, perform
-CATALOG-01's official Android/Capacitor research and activate only CATALOG-01
-for the offline category-artwork gallery and neutral fallback. Do not begin
-LOCK-01 or later work at the same time.
+Complete CATALOG-01 as the only in-progress card: trace the current category
+schema, local-first editor, synchronization payload, POS artwork resolver, and
+bundled assets; then add the smallest right-sized offline gallery, explicit
+artwork-key selection, and neutral fallback. Do not begin LOCK-01 or later work.
