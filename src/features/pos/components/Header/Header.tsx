@@ -1,4 +1,4 @@
-import { Bell, FileText, User } from '@phosphor-icons/react';
+import { Bell, FileText } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { IconButton } from '../IconButton/IconButton';
 import {
@@ -10,12 +10,14 @@ import { useStaffSession } from '../../../../data/sessionContext';
 import { hasPermission } from '../../../../data/permissions';
 import type { ClockFormat } from '../../../../data/terminalSettings';
 import olasoLogo from '../../../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
+import { ProfileControl } from '../ProfileControl/ProfileControl.tsx';
 
 interface HeaderProps {
   activePage?: NavigationPage;
   clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
+  onSwitchStaff: () => Promise<boolean>;
 }
 
 export function Header({
@@ -23,10 +25,12 @@ export function Header({
   clockFormat,
   onNavigate,
   onOpenSettings,
+  onSwitchStaff,
 }: HeaderProps) {
   const [now, setNow] = useState(new Date());
   const staff = useStaffSession();
-  const canOpenSettings = hasPermission(staff.role, 'settings');
+  const canOpenSettings = Boolean(onOpenSettings)
+    && hasPermission(staff.role, 'settings');
   const canViewReports = hasPermission(staff.role, 'reports');
   useEffect(() => {
     const clock = window.setInterval(() => setNow(new Date()), 30_000);
@@ -62,24 +66,13 @@ export function Header({
           <IconButton label="Notifications" icon={<Bell size={18} />} />
           <span className={styles.badge}>1</span>
         </div>
-        {canOpenSettings ? <button
-          className={styles.profile}
-          type="button"
-          aria-label="Open settings"
-          onClick={onOpenSettings}
-        >
-          <span className={styles.avatar}><User size={22} /></span>
-          <span className={styles.profileCopy}>
-            <strong>{staff.name}</strong>
-            <small>{staff.role}</small>
-          </span>
-        </button> : <div className={styles.profile}>
-          <span className={styles.avatar}><User size={22} /></span>
-          <span className={styles.profileCopy}>
-            <strong>{staff.name}</strong>
-            <small>{staff.role}</small>
-          </span>
-        </div>}
+        <ProfileControl
+          name={staff.name}
+          role={staff.role}
+          canOpenSettings={canOpenSettings}
+          onOpenSettings={onOpenSettings}
+          onSwitchStaff={onSwitchStaff}
+        />
       </div>
     </header>
   );

@@ -12,8 +12,7 @@
 .brandSide,
 .actions,
 .wordmark,
-.report,
-.profile {
+.report {
   display: flex;
   align-items: center;
 }
@@ -87,53 +86,4 @@
   font-size: 9px;
   font-weight: 700;
   pointer-events: none;
-}
-
-.profile {
-  width: 178px;
-  height: 50px;
-  gap: 10px;
-  padding: 5px 10px;
-  border: 0;
-  border-radius: 25px;
-  color: inherit;
-  background: var(--olaso-white);
-  text-align: left;
-  cursor: pointer;
-}
-
-.profile:focus-visible {
-  outline: 2px solid var(--olaso-green);
-  outline-offset: 2px;
-}
-
-.profile:active {
-  background: var(--olaso-soft);
-}
-
-.avatar {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 2px solid var(--olaso-green);
-  border-radius: 50%;
-  color: #101611;
-  background: #efe4d6;
-}
-
-.profileCopy {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  line-height: 1;
-}
-
-.profileCopy strong {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.profileCopy small {
-  font-size: 10px;
 }

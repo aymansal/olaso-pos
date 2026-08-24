@@ -144,7 +144,7 @@ polishing screens or data paths that later functional work would change.
 | LOCAL-03 | Make inventory, expense, and compensation management fully local-first | done | `1105de62d8133448b7202dd67971ee83c56ced12` on `origin/main`; full automated, Android, offline/restart/reconnect/exact-cloud, lifecycle, focus-zoom, Graphify, and documentation evidence recorded |
 | STAFF-01 | Add minimal owner-only offline staff creation and protected initial PIN setup | done | `9754897f4be65ffca1b572140e44fc229cad948f` on `origin/main`; focused/cloud/full regression, Android beta, exact 1340 × 800 UI, flight-mode creation, app/tablet restart, local/cloud sign-in, duplicate reconnect, protected cleanup, QA cleanup, and Graphify evidence pass |
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
-| LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | in progress | Owner approved preserving the unfinished cart with a short confirmation; official Android UI-state/lifecycle and Capacitor web-native guidance reviewed; existing React/App lock plus Keystore boundary selected with no native code/dependency |
+| LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | in progress | Owner policy/research, shared role menu, confirmed App-owned cart handoff, full regression/build, 140-task beta, owner/cashier online/offline/restart physical matrix, exact 1340 × 800 viewport, clean WebView/runtime, and unchanged sale/outbox counts pass; Graphify/commit/push pending |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | pending | — |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
@@ -489,10 +489,26 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: trace the shared Header/profile caller chain, App lock and
-  staff-session ownership, and POS cart state before implementing LOCK-01.
+- LOCK-01 implementation and physical acceptance pass. Exact next action:
+  refresh Graphify, review authorities and final diff, commit and push the card,
+  then record its SHA before activating LOCAL-04.
 
 ## Planning journal
+
+### 2026-08-24 — LOCK-01 physical acceptance complete
+
+- The installed SM-X115 proved owner/cashier role menus, empty immediate lock,
+  non-empty Cancel/confirm, exact cart handoff, both profiles online/offline,
+  flight-mode switching, force-stop/restart lock, and protected offline unlock.
+  The test item was removed without checkout; sale and historical outbox counts
+  did not change.
+- Live WebView content is exactly 1340 by 800 without overflow or warning/error;
+  focused Android runtime failures are zero. Full focused/local/cloud/offline/
+  identity/Android/TypeScript/build checks pass. Final APK QA caught and fixed
+  the redundant Settings item while already inside Settings; a source check and
+  the rebuilt/reinstalled tablet now prove only the switch action remains there.
+  Graphify is current at 3,211 nodes and 7,405 edges. Exact next action is final
+  review, implementation commit, and push.
 
 ### 2026-08-24 — STAFF-01 activated with Android security research
 

@@ -1,0 +1,101 @@
+.wrap {
+  position: relative;
+  z-index: 60;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  width: 178px;
+  height: 50px;
+  gap: 10px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 25px;
+  color: inherit;
+  background: var(--olaso-white);
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile:focus-visible,
+.menu button:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.profile:active,
+.menu button:active {
+  background: var(--olaso-soft);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--olaso-green);
+  border-radius: 50%;
+  color: #101611;
+  background: #efe4d6;
+}
+
+.profileCopy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1;
+}
+
+.profileCopy strong,
+.profileCopy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileCopy strong {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profileCopy small {
+  font-size: 10px;
+}
+
+.menu {
+  position: absolute;
+  top: 56px;
+  right: 0;
+  display: grid;
+  width: 190px;
+  padding: 8px;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 18px;
+  background: var(--olaso-white);
+  box-shadow: 0 10px 24px rgb(28 33 27 / 14%);
+}
+
+.menu button {
+  height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.menu button:disabled {
+  opacity: 0.55;
+}
+
+.menu p {
+  margin: 6px 8px 2px;
+  color: var(--olaso-danger-ink);
+  font-size: 8px;
+  line-height: 1.3;
+}

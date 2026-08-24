@@ -39,7 +39,7 @@ interface SettingsNavigationPanelProps {
   activeSection: SettingsSection;
   lockError: string;
   onSectionChange: (section: SettingsSection) => void;
-  onLock: () => Promise<void>;
+  onLock: () => Promise<boolean>;
 }
 
 export function SettingsNavigationPanel({
@@ -78,7 +78,7 @@ export function SettingsNavigationPanel({
       </nav>
 
       <div className={styles.lockWrap}>
-        <button className={styles.lock} type="button" onClick={onLock}>
+        <button className={styles.lock} type="button" onClick={() => void onLock()}>
           <LockKey size={16} aria-hidden="true" />
           <span>Lock application</span>
         </button>

@@ -16,7 +16,7 @@ import styles from './SettingsScreen.module.css';
 interface SettingsScreenProps {
   clockFormat: ClockFormat;
   onNavigate: (page: NavigationPage) => void;
-  onLock: () => Promise<void>;
+  onLock: () => Promise<boolean>;
   onClockFormatChange: (clockFormat: ClockFormat) => void;
 }
 
@@ -36,13 +36,14 @@ export function SettingsScreen({
   async function lock() {
     setLockError('');
     try {
-      await onLock();
+      return await onLock();
     } catch (caught) {
       setLockError(
         caught instanceof Error
           ? caught.message
           : 'This terminal could not be locked.',
       );
+      return false;
     }
   }
 
@@ -56,7 +57,7 @@ export function SettingsScreen({
       <Header
         clockFormat={clockFormat}
         onNavigate={onNavigate}
-        onOpenSettings={() => undefined}
+        onSwitchStaff={lock}
       />
       <SettingsNavigationPanel
         activeSection={section}

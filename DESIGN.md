@@ -342,6 +342,7 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | --- | --- | --- |
 | `PosShell` | header, menu content, receipt rail | Full-bleed landscape application root at the target size; cream gutters may adapt on wider screens. |
 | `HeaderBar` | logo asset, live date/time, order count, report action, alerts, cashier | One horizontal line. Use the real OLASO asset; date and time never wrap and time follows the terminal clock-format preference. |
+| `ProfileControl` | staff name, role, profile menu | Preserve the 178 by 50 Header control. Every role sees one 44-pixel `Lock / switch staff` action; only the owner sees Settings, and Settings is omitted when already open. |
 | `SearchField` | query, search action | 966 by 50 at the target viewport. Visible focus state. Never use placeholder text as the only accessible label. |
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
 | `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. |
@@ -489,6 +490,10 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - The shared Header and Lock clock read tablet time locally, refresh immediately
   on foreground/resume, and then continue their normal interval without an
   internet dependency.
+- A deliberate staff switch with an unfinished order uses one concise native
+  confirmation that says the order will remain. Cancel keeps the current staff
+  and order; confirm locks and hands the order to the next verified staff
+  member. An empty order locks immediately.
 - Tapping a product adds one unit to the active order and provides visible pressed feedback within 100 milliseconds.
 - Quantity controls update the line total, subtotal, and total immediately.
   Decrement is disabled at the minimum allowed value.

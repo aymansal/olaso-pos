@@ -121,7 +121,9 @@ decision changes.
   ordinary outbox. CATALOG-01 adds SQLite schema 17, explicit category artwork
   keys, a six-asset offline gallery, and a neutral fallback. Android connection
   truth plus foreground state closes idle Convex transports and prevents cloud
-  reads/work while the activity is hidden or offline.
+  reads/work while the activity is hidden or offline. LOCK-01 adds one shared
+  role-safe profile menu; deliberate staff switching preserves an unfinished
+  App-owned cart after confirmation without clearing protected profile access.
 
 ### Visual baseline
 

@@ -972,11 +972,15 @@ staff PIN
   rows are upserted, and stale profile-scoped plus legacy protected records are
   removed. If the bounded list was unavailable, only the authenticated profile
   is upserted and every other local profile remains unchanged.
-- **Lock and switch:** lock clears active in-memory identity but not the
-  protected credentials. Unlock requires PIN verification; a different staff
-  member can then become the current actor. Restart begins locked. The native
-  monotonic clock, not editable wall time, measures the five-minute idle and
-  failed-attempt lockouts.
+- **Lock and switch:** lock clears active in-memory identity but not protected
+  credentials. A deliberate switch asks for confirmation only when the
+  App-owned POS cart has lines and preserves that cart in memory for the next
+  verified staff member; cancelling changes neither identity nor cart. The
+  staff member who completes checkout becomes the immutable sale actor. Empty
+  carts, idle locks, invalid sessions, and restart lock immediately without a
+  cart prompt. Restart begins locked and does not claim process-death cart
+  persistence. The native monotonic clock, not editable wall time, measures the
+  five-minute idle and failed-attempt lockouts.
 - **Convex enforcement:** public protected functions receive an opaque session
   token and use one shared session helper to verify active staff identity,
   role, device binding, and revocation state. Existing `ctx.auth` development

@@ -16,12 +16,14 @@ interface ReportsScreenProps {
   clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
+  onSwitchStaff: () => Promise<boolean>;
 }
 
 export function ReportsScreen({
   clockFormat,
   onNavigate,
   onOpenSettings,
+  onSwitchStaff,
 }: ReportsScreenProps) {
   const [range, setRange] = useState(() => {
     const toDate = localBusinessDate();
@@ -39,6 +41,7 @@ export function ReportsScreen({
         clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
         onNavigate={onNavigate}
+        onSwitchStaff={onSwitchStaff}
       />
       <ReportsAnalyticsPanel
         tab={tab}

@@ -14,6 +14,9 @@ application, global tokens, and the feature screens under `features/`.
   rather than registering network listeners.
 - `App.tsx` selects the active top-level screen and restores the non-secret
   local terminal-lock state before exposing the application.
+- `App.tsx` owns the single deliberate staff-switch action and the POS session;
+  it preserves an unfinished cart across an in-process lock and never clears
+  profile-scoped protected access.
 - `App.tsx` mounts the reconnect worker only inside an authenticated staff
   session, so locked connection changes never perform cloud work.
 - `data/` owns the application-level Convex provider, feature-facing data

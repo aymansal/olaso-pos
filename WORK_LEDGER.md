@@ -99,18 +99,18 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- LOCK-01 is the only in-progress card. The owner approved preserving any
-  unfinished cart and showing a concise confirmation before staff switch; the
-  staff member who later completes the sale is recorded as cashier. Android's
-  current UI-state guidance supports retaining transient state in the existing
-  higher-scoped state holder during normal navigation, while persistent data
-  remains local. Capacitor remains web-first; deliberate in-app lock needs no
-  App plugin. Selected boundary: `App.tsx` continues owning the one lock action,
-  terminal lock persistence, staff-session clearing, and POS session; the
-  shared Header exposes one action to every role. Existing Keystore-backed
-  profile credentials remain untouched. No Kotlin, plugin, migration, storage,
-  state library, or new dependency is added. Exact next action: inspect every
-  Header caller plus lock/cart/session invariant before implementation.
+- LOCK-01 is the only in-progress card. A shared profile menu now gives every
+  role `Lock / switch staff`; Settings remains owner-only. `App.tsx` owns the
+  deliberate switch, asks for confirmation only when the cart has lines, then
+  reuses the existing persisted local lock without clearing `posSession` or any
+  profile-scoped protected credential. The installed SM-X115 proved owner and
+  cashier menus, empty immediate lock, non-empty cancel/confirm, exact cart
+  handoff, online and offline unlock for both profiles, force-stop/restart lock,
+  and no sale/count mutation. Live WebView content is exactly 1340 by 800 with
+  no overflow or warning/error; focused Android runtime failures are zero. Full
+  lock/POS/local/sales/Orders/Dashboard/Reports/identity/Settings/staff/
+  reconnect/offline/Android/TypeScript/build checks pass. Exact next action:
+  refresh Graphify, review the final diff/authorities, commit and push LOCK-01.
 - CATALOG-01 is complete and pushed to `origin/main` as
   `43c9e4a3ed169ae7a07344f9587a51f65051e203`.
   The six-asset gallery, neutral resolver, category picker, schema 17, and full
@@ -908,6 +908,44 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-24 — LOCK-01 physical handoff and regression complete
+
+- Installed the checked 140-task beta over the real tablet data without
+  clearing it. Owner sees Settings plus Lock / switch staff; Samira Barista sees
+  only Lock / switch staff. Empty-cart switching locks immediately. With one
+  Espresso Plus in the cart, Cancel kept owner and the exact cart; confirm
+  locked, then Samira unlocked and inherited that exact cart.
+- In flight mode, Samira locked and owner unlocked with the cart preserved. The
+  test cart was removed without checkout, force-stop/relaunch returned to Lock,
+  and Samira unlocked offline after restart. Internet was restored and the
+  tablet was left online as owner with an empty cart. Sales remained 11 and the
+  seven pre-existing failed development outbox rows were unchanged.
+- Exact 1340 by 800 live WebView bounds have no overflow and produced zero
+  warning/error after reload. Focused Android runtime failures are zero. Full
+  focused, local, cloud-backed, offline, identity, Android, TypeScript, and
+  production build checks pass. Final APK QA caught one redundant Settings menu
+  item while Settings was already open: `SettingsScreen` supplied a dummy open
+  callback. The callback was removed, the source regression now rejects it,
+  and the rebuilt/reinstalled APK proves POS has Settings plus switch while
+  Settings has switch only. Graphify is current at 3,211 nodes and 7,405 edges.
+  Exact next action is final review, implementation commit, and push.
+
+### 2026-08-24 — LOCK-01 shared action implemented
+
+- Added one compact profile menu used by every Header. Owners see Settings plus
+  Lock / switch staff; managers and cashiers see only Lock / switch staff.
+  Outside-click and Escape close it, and lock failure remains visible without
+  exposing Settings or credential details.
+- App retains ownership of the only lock transaction and the POS session. An
+  empty cart locks immediately; a non-empty cart uses the approved one-sentence
+  confirmation. Cancel leaves the current staff/cart untouched; confirm saves
+  the lock flag, clears only active in-memory staff identity, and preserves the
+  cart for the next authenticated staff member.
+- Added the focused `check:lock-switch` guard plus existing identity, Settings,
+  POS, TypeScript, and production build verification. No database/schema,
+  native code, plugin, dependency, or new application state layer was added.
+  Exact next action is the full physical SM-X115 handoff matrix.
 
 ### 2026-08-24 — LOCK-01 activated with approved cart handoff
 

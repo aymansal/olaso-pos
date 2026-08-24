@@ -13,8 +13,10 @@ presentation.
   non-secret local preferences.
 - Manual synchronization calls the data hook once per deliberate action and
   reports pending, success, offline, and error states.
-- The local lock survives restart and preserves the in-memory POS order while
-  the app remains open.
+- Every role reaches the same local Lock / Switch staff action from the Header;
+  this does not grant Settings access. A deliberate non-empty-cart switch asks
+  for confirmation and preserves that order while the app process remains
+  alive; empty-cart, idle, invalid-session, and restart locks need no prompt.
 - Printer & hardware persists a validated IPv4/raw-port endpoint and exposes one
   Android-only non-sale Test printer action with honest configuration,
   unavailable, timeout, write, and unknown feedback.

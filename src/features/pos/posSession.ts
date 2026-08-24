@@ -45,6 +45,10 @@ export function createInitialPosSession(): PosSession {
   };
 }
 
+export function hasUnfinishedCart(session: Pick<PosSession, 'cart'>) {
+  return session.cart.length > 0;
+}
+
 export function addProduct(
   cart: CartLine[],
   productId: string,

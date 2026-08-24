@@ -44,6 +44,7 @@ interface PosScreenProps {
   clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
+  onSwitchStaff: () => Promise<boolean>;
 }
 
 function localServiceType(
@@ -59,6 +60,7 @@ export function PosScreen({
   clockFormat,
   onNavigate,
   onOpenSettings,
+  onSwitchStaff,
 }: PosScreenProps) {
   const { available } = useConnectionStatus();
   const {
@@ -290,6 +292,7 @@ export function PosScreen({
         clockFormat={clockFormat}
         onNavigate={onNavigate}
         onOpenSettings={onOpenSettings}
+        onSwitchStaff={onSwitchStaff}
       />
       <section className={styles.menu} aria-label="Product menu">
         <SearchField

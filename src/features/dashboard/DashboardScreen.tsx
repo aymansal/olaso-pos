@@ -11,12 +11,14 @@ interface DashboardScreenProps {
   clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
+  onSwitchStaff: () => Promise<boolean>;
 }
 
 export function DashboardScreen({
   clockFormat,
   onNavigate,
   onOpenSettings,
+  onSwitchStaff,
 }: DashboardScreenProps) {
   const data = useDashboardData();
   return (
@@ -26,6 +28,7 @@ export function DashboardScreen({
         clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
         onNavigate={onNavigate}
+        onSwitchStaff={onSwitchStaff}
       />
       <SalesPulse
         snapshot={data.snapshot}

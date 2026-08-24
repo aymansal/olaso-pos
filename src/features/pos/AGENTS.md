@@ -13,6 +13,9 @@ owns the shared Header and TopNavigation currently used across the application.
 - `components/` owns the named POS controls and regions.
 - `Header` and `TopNavigation` are cross-screen contracts despite their current
   POS location.
+- `ProfileControl` is the shared role-safe Header menu: every role can lock or
+  switch staff, while only an owner outside the Settings screen can open
+  Settings from it.
 - `data/categories.ts` and `data/products.ts` map approved content assets onto
   the live local operational menu.
 - `src/lib/categoryArtwork.ts` is the shared Products/POS gallery registry and
@@ -27,6 +30,9 @@ owns the shared Header and TopNavigation currently used across the application.
 - Product and category assets are content; do not recreate them with UI icons.
 - All interface icons come from Phosphor.
 - Search, category, and cart behavior must stay local during service.
+- A deliberate staff switch confirms only a non-empty cart and preserves it for
+  the next verified staff member; checkout records the staff member who
+  completes the sale.
 - Required modifier groups are explicit cashier choices; never silently select
   an option.
 - Clear the cart only after the local sale transaction commits.

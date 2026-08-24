@@ -8,7 +8,10 @@ import { DashboardScreen } from './features/dashboard/DashboardScreen';
 import { OrdersScreen } from './features/orders/OrdersScreen';
 import { PosScreen } from './features/pos/PosScreen';
 import type { NavigationPage } from './features/pos/components/TopNavigation/TopNavigation';
-import { createInitialPosSession } from './features/pos/posSession';
+import {
+  createInitialPosSession,
+  hasUnfinishedCart,
+} from './features/pos/posSession';
 import { ProductsScreen } from './features/products/ProductsScreen';
 import { ReportsScreen } from './features/reports/ReportsScreen';
 import { LockScreen } from './features/settings/LockScreen';
@@ -115,6 +118,14 @@ export function App() {
     );
   }
 
+  async function requestStaffSwitch() {
+    if (hasUnfinishedCart(posSession) && !window.confirm(
+      'Switch staff? The current order will stay for the next staff member.',
+    )) return false;
+    await lock();
+    return true;
+  }
+
   if (startupError || !terminal) {
     return (
       <main aria-label="Terminal recovery" role="alert">
@@ -149,12 +160,13 @@ export function App() {
         clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
+        onSwitchStaff={requestStaffSwitch}
       />
       ) : screen === 'Settings' ? (
       <SettingsScreen
         clockFormat={terminal.clockFormat}
         onNavigate={navigate}
-        onLock={lock}
+        onLock={requestStaffSwitch}
         onClockFormatChange={updateClockFormat}
       />
       ) : screen === 'Dashboard' ? (
@@ -162,30 +174,35 @@ export function App() {
         clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
+        onSwitchStaff={requestStaffSwitch}
       />
       ) : screen === 'Orders' ? (
       <OrdersScreen
         clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
+        onSwitchStaff={requestStaffSwitch}
       />
       ) : screen === 'Products' ? (
       <ProductsScreen
         clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
+        onSwitchStaff={requestStaffSwitch}
       />
       ) : screen === 'Stock' ? (
       <StockScreen
         clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
+        onSwitchStaff={requestStaffSwitch}
       />
       ) : screen === 'Reports' ? (
       <ReportsScreen
         clockFormat={terminal.clockFormat}
         onNavigate={navigate}
         onOpenSettings={openSettings}
+        onSwitchStaff={requestStaffSwitch}
       />
       ) : (
       <PosScreen
@@ -194,6 +211,7 @@ export function App() {
       clockFormat={terminal.clockFormat}
       onNavigate={navigate}
       onOpenSettings={openSettings}
+      onSwitchStaff={requestStaffSwitch}
       />
       )}
       </ReconnectProvider>

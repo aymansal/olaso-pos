@@ -18,6 +18,7 @@ interface ProductsScreenProps {
   clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
+  onSwitchStaff: () => Promise<boolean>;
 }
 
 type AvailabilityFilter = 'all' | ManagedProduct['status'];
@@ -27,6 +28,7 @@ export function ProductsScreen({
   clockFormat,
   onNavigate,
   onOpenSettings,
+  onSwitchStaff,
 }: ProductsScreenProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState<string>();
@@ -157,6 +159,7 @@ export function ProductsScreen({
         clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
         onNavigate={onNavigate}
+        onSwitchStaff={onSwitchStaff}
       />
       <ProductCatalogPanel
         categories={management.categories}

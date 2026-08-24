@@ -11,12 +11,14 @@ interface OrdersScreenProps {
   clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
+  onSwitchStaff: () => Promise<boolean>;
 }
 
 export function OrdersScreen({
   clockFormat,
   onNavigate,
   onOpenSettings,
+  onSwitchStaff,
 }: OrdersScreenProps) {
   const data = useOrdersData();
   const [selectedKey, setSelectedKey] = useState<string>();
@@ -34,6 +36,7 @@ export function OrdersScreen({
         clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
         onNavigate={onNavigate}
+        onSwitchStaff={onSwitchStaff}
       />
       <OrdersListPanel
         orders={data.orders}

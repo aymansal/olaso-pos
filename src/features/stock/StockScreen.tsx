@@ -25,6 +25,7 @@ interface StockScreenProps {
   clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
+  onSwitchStaff: () => Promise<boolean>;
 }
 
 const PAGE_SIZE = 5;
@@ -33,6 +34,7 @@ export function StockScreen({
   clockFormat,
   onNavigate,
   onOpenSettings,
+  onSwitchStaff,
 }: StockScreenProps) {
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>();
   const [search, setSearch] = useState('');
@@ -100,6 +102,7 @@ export function StockScreen({
         clockFormat={clockFormat}
         onOpenSettings={onOpenSettings}
         onNavigate={onNavigate}
+        onSwitchStaff={onSwitchStaff}
       />
       <StockInventoryPanel
         metrics={inventory.metrics}

@@ -181,7 +181,10 @@ another permanent navigation item. The minimal owner-only creation flow asks
 for the staff member's name, approved role, six-digit PIN, and PIN confirmation;
 it does not expose identity implementation details to the café operator.
 The shared profile control gives every role a simple Lock / Switch staff action;
-this does not grant cashiers or managers access to owner Settings.
+this does not grant cashiers or managers access to owner Settings. Switching
+with an unfinished order requires confirmation and preserves that order for
+the next staff member. Cancelling the confirmation keeps both the current staff
+member and order; the staff member who completes checkout is saved as cashier.
 
 Costs and profitability belong inside the Reports workspace rather than adding
 a seventh permanent navigation destination.
