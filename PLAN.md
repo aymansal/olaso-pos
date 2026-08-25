@@ -220,5 +220,5 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-HARD-04 is done on `origin/main` pending SHA record. No card is in progress.
-Activate HARD-05 only when the owner asks.
+HARD-04 is done on `origin/main`. No card is in progress. Activate HARD-05 only
+when the owner asks.
