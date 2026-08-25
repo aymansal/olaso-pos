@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useReconnect } from './reconnectContext';
 import {
+  checkForAppUpdate,
+  installAvailableUpdate,
+  isUpdateChannelConfigured,
+  readInstalledAppInfo,
+  type InstalledAppInfo,
+  type UpdateManifest,
+} from './appUpdate.ts';
+import {
   loadTerminalSettings,
   savePrinterPreferences,
   saveTerminalPreferences,
@@ -14,12 +22,18 @@ import {
 } from '../printing/testPrinter.ts';
 import { installResidentLogo } from '../printing/printerTransport.ts';
 
-export function useSettingsData() {
+export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
   const reconnect = useReconnect();
   const [settings, setSettings] = useState<TerminalSettings>();
   const loaded = useRef(false);
   const [isTestingPrinter, setIsTestingPrinter] = useState(false);
   const [isInstallingPrinterLogo, setIsInstallingPrinterLogo] = useState(false);
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  const [isInstallingUpdate, setIsInstallingUpdate] = useState(false);
+  const [installedApp, setInstalledApp] = useState<InstalledAppInfo | null>(null);
+  const [pendingManifest, setPendingManifest] = useState<UpdateManifest | null>(
+    null,
+  );
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -38,6 +52,9 @@ export function useSettingsData() {
           : 'Local settings could not be loaded.',
       ),
     );
+    void readInstalledAppInfo()
+      .then(setInstalledApp)
+      .catch(() => setInstalledApp(null));
   }, [refresh]);
 
   const save = useCallback(
@@ -135,12 +152,77 @@ export function useSettingsData() {
     [refresh],
   );
 
+  const checkUpdate = useCallback(async () => {
+    setIsCheckingUpdate(true);
+    setError('');
+    setMessage('');
+    setPendingManifest(null);
+    try {
+      const availability = await checkForAppUpdate();
+      if (availability.status === 'available') {
+        setPendingManifest(availability.manifest);
+        setMessage(
+          `Version ${availability.manifest.versionName} is ready to install.`,
+        );
+      } else if (availability.status === 'current') {
+        setMessage('This tablet already has the latest published version.');
+      } else {
+        setMessage(availability.reason);
+      }
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'Update check failed. Try again.',
+      );
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  }, []);
+
+  const installUpdate = useCallback(async () => {
+    if (!pendingManifest) {
+      setError('Check for an update before installing.');
+      return;
+    }
+    setIsInstallingUpdate(true);
+    setError('');
+    setMessage('');
+    try {
+      await installAvailableUpdate(pendingManifest, {
+        hasUnfinishedCart: options.hasUnfinishedCart,
+      });
+      setMessage(
+        'Android will ask you to confirm the update. The app restarts after installation.',
+      );
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'Update installation could not start.',
+      );
+    } finally {
+      setIsInstallingUpdate(false);
+    }
+  }, [options.hasUnfinishedCart, pendingManifest]);
+
+  const dismissUpdate = useCallback(() => {
+    setPendingManifest(null);
+    setMessage('Update postponed. You can check again later.');
+    setError('');
+  }, []);
+
   return {
     settings,
     isLoading: !settings,
     isSyncing: reconnect.isSyncing,
     isTestingPrinter,
     isInstallingPrinterLogo,
+    isCheckingUpdate,
+    isInstallingUpdate,
+    installedApp,
+    updateChannelConfigured: isUpdateChannelConfigured(),
+    pendingManifest,
     message,
     error,
     syncError: settings?.lastSyncError || '',
@@ -148,5 +230,8 @@ export function useSettingsData() {
     syncNow,
     testPrinter,
     installPrinterLogo,
+    checkUpdate,
+    installUpdate,
+    dismissUpdate,
   };
 }

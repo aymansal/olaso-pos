@@ -29,6 +29,9 @@ presentation.
 - Unlock is the production staff-authentication boundary. Every owner, manager,
   and cashier uses a separate six-digit PIN; never add placeholder, shared, or
   default credentials.
+- About shows the installed version and, when an HTTPS update manifest URL is
+  built in, Check for update / Update / Later. Update is blocked while a cart is
+  unfinished and always requires Android installation confirmation.
 - Offline unlock is available after that profile has signed in online on this
   tablet or an owner created it locally through Staff & access. Its session,
   PIN verifier, pending provisioning verifier, and failed-attempt state remain

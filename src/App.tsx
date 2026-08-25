@@ -213,6 +213,7 @@ export function App() {
               {visited === 'Settings' ? (
                 <SettingsScreen
                   clockFormat={terminal.clockFormat}
+                  hasUnfinishedCart={hasUnfinishedCart(posSession)}
                   onNavigate={navigate}
                   onLock={requestStaffSwitch}
                   onPreferencesChange={updatePreferences}

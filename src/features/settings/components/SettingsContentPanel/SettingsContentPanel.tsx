@@ -1,4 +1,5 @@
 import {
+  ArrowClockwise,
   CheckCircle,
   CloudArrowUp,
   Database,
@@ -9,6 +10,7 @@ import {
   WarningCircle,
 } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
+import type { InstalledAppInfo } from '../../../../data/appUpdate';
 import type {
   TerminalPreferences,
   PrinterPreferences,
@@ -32,6 +34,12 @@ interface SettingsContentPanelProps {
   isSyncing: boolean;
   isTestingPrinter: boolean;
   isInstallingPrinterLogo: boolean;
+  isCheckingUpdate: boolean;
+  isInstallingUpdate: boolean;
+  installedApp: InstalledAppInfo | null;
+  updateChannelConfigured: boolean;
+  pendingUpdateVersion: string | null;
+  hasUnfinishedCart: boolean;
   online: boolean;
   message: string;
   error: string;
@@ -39,6 +47,9 @@ interface SettingsContentPanelProps {
   onSync: () => Promise<void>;
   onTestPrinter: (input: PrinterPreferences) => Promise<void>;
   onInstallPrinterLogo: (input: PrinterPreferences) => Promise<void>;
+  onCheckUpdate: () => Promise<void>;
+  onInstallUpdate: () => Promise<void>;
+  onDismissUpdate: () => void;
 }
 
 export function SettingsContentPanel({
@@ -48,6 +59,12 @@ export function SettingsContentPanel({
   isSyncing,
   isTestingPrinter,
   isInstallingPrinterLogo,
+  isCheckingUpdate,
+  isInstallingUpdate,
+  installedApp,
+  updateChannelConfigured,
+  pendingUpdateVersion,
+  hasUnfinishedCart,
   online,
   message,
   error,
@@ -55,6 +72,9 @@ export function SettingsContentPanel({
   onSync,
   onTestPrinter,
   onInstallPrinterLogo,
+  onCheckUpdate,
+  onInstallUpdate,
+  onDismissUpdate,
 }: SettingsContentPanelProps) {
   const [terminalName, setTerminalName] = useState('');
   const [clockFormat, setClockFormat] =
@@ -292,20 +312,82 @@ export function SettingsContentPanel({
   }
 
   if (section === 'about') {
+    const versionLabel = installedApp
+      ? `${installedApp.versionName} (${installedApp.versionCode})`
+      : '0.1.0-rc.2';
     return (
       <section className={styles.panel} aria-labelledby="about-heading">
         <div className={styles.header}>
           <div>
-            <h2 id="about-heading">About this beta</h2>
-            <p>Current terminal scope and pending production decisions</p>
+            <h2 id="about-heading">About Olaso</h2>
+            <p>Installed version and guided tablet updates</p>
           </div>
         </div>
         <div className={styles.aboutLead}>
           <span className={styles.olasoMark}>O</span>
           <div>
             <strong>Olaso POS</strong>
-            <span>Functional application beta · 0.1.0</span>
+            <span>Release candidate · {versionLabel}</span>
           </div>
+        </div>
+        <div className={styles.updateBlock}>
+          <p>
+            {updateChannelConfigured
+              ? 'Check for a signed update over HTTPS, then choose Update or Later. Android confirms installation. An open order blocks Update.'
+              : 'This build has no HTTPS update channel configured. Signed releases still install with the same application ID and signing key.'}
+          </p>
+          <div className={styles.updateActions}>
+            <button
+              className={styles.primary}
+              type="button"
+              disabled={
+                isCheckingUpdate ||
+                isInstallingUpdate ||
+                !updateChannelConfigured ||
+                !online
+              }
+              onClick={() => void onCheckUpdate()}
+            >
+              <ArrowClockwise size={17} aria-hidden="true" />
+              <span>
+                {isCheckingUpdate ? 'Checking…' : 'Check for update'}
+              </span>
+            </button>
+            {pendingUpdateVersion ? (
+              <>
+                <button
+                  className={styles.primary}
+                  type="button"
+                  disabled={
+                    isInstallingUpdate ||
+                    isCheckingUpdate ||
+                    hasUnfinishedCart
+                  }
+                  onClick={() => void onInstallUpdate()}
+                >
+                  <CheckCircle size={17} aria-hidden="true" />
+                  <span>
+                    {isInstallingUpdate
+                      ? 'Starting…'
+                      : `Update to ${pendingUpdateVersion}`}
+                  </span>
+                </button>
+                <button
+                  className={`${styles.primary} ${styles.secondary}`}
+                  type="button"
+                  disabled={isInstallingUpdate}
+                  onClick={onDismissUpdate}
+                >
+                  Later
+                </button>
+              </>
+            ) : null}
+          </div>
+          {hasUnfinishedCart && pendingUpdateVersion ? (
+            <p className={styles.updateHint}>
+              Finish or clear the open order before installing an update.
+            </p>
+          ) : null}
         </div>
         <dl className={styles.aboutList}>
           <div>
@@ -325,6 +407,7 @@ export function SettingsContentPanel({
             <dd>LAN checkout printing, diagnostics, and saved-logo setup</dd>
           </div>
         </dl>
+        <Feedback message={message} error={error} />
       </section>
     );
   }

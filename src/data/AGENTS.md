@@ -22,8 +22,11 @@ tablet's local SQLite operational record.
   commit authorized writes locally first, refresh after the shared worker, and
   never call Convex directly.
 - `useSettingsData.ts` loads local device/sync state, saves validated non-secret
-  preferences, delegates deliberate Sync to the shared worker, and coordinates
-  explicit printer test/logo-setup actions without claiming paper state.
+  preferences, delegates deliberate Sync to the shared worker, coordinates
+  explicit printer test/logo-setup actions without claiming paper state, and
+  owns Check for update / Update / Later against the HTTPS manifest channel.
+- `appUpdate.ts` owns manifest parsing, checksum expectations, and the Android
+  AppUpdate plugin boundary; it never embeds a download credential.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
   safe failure copy.

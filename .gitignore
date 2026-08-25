@@ -5,6 +5,9 @@ public/assets/sql-wasm.wasm
 tmp/
 .env.local
 .env.*.local
+*.jks
+*.keystore
+android/keystore.properties
 graphify-out/
 .kotlin/
 tools/wd8260-receipt-lab/out/

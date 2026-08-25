@@ -18,6 +18,9 @@ Android APK.
 - Keep `tools/wd8260-receipt-lab/` and `tools/recovery/` self-contained.
   Recovery notes are for support and are never imported by the React
   application or packaged in the Android APK.
+- `tools/release/` documents signing-key custody, local rehearsal keystore
+  env vars, HTTPS update-manifest shape, and rollback-by-higher-version-code.
+  It is never imported by the application.
 - Keep `node_modules/` and regenerated `out/` files untracked. Version generated
   bytes only when they are intentional reviewed fixtures under `fixtures/`.
 - Supply Windows printer queue names at execution time; never version a local

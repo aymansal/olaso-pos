@@ -15,6 +15,7 @@ import styles from './SettingsScreen.module.css';
 
 interface SettingsScreenProps {
   clockFormat: ClockFormat;
+  hasUnfinishedCart: boolean;
   onNavigate: (page: NavigationPage) => void;
   onLock: () => Promise<boolean>;
   onPreferencesChange: (preferences: TerminalPreferences) => void;
@@ -22,11 +23,14 @@ interface SettingsScreenProps {
 
 export function SettingsScreen({
   clockFormat,
+  hasUnfinishedCart,
   onNavigate,
   onLock,
   onPreferencesChange,
 }: SettingsScreenProps) {
-  const data = useSettingsData();
+  const data = useSettingsData({
+    hasUnfinishedCart,
+  });
   const staff = useStaffManagement();
   const { available } = useConnectionStatus();
   const [section, setSection] = useState<SettingsSection>('general');
@@ -72,6 +76,12 @@ export function SettingsScreen({
         isSyncing={data.isSyncing}
         isTestingPrinter={data.isTestingPrinter}
         isInstallingPrinterLogo={data.isInstallingPrinterLogo}
+        isCheckingUpdate={data.isCheckingUpdate}
+        isInstallingUpdate={data.isInstallingUpdate}
+        installedApp={data.installedApp}
+        updateChannelConfigured={data.updateChannelConfigured}
+        pendingUpdateVersion={data.pendingManifest?.versionName ?? null}
+        hasUnfinishedCart={hasUnfinishedCart}
         online={online}
         message={data.message}
         error={data.error || (section === 'sync' ? data.syncError : '')}
@@ -79,6 +89,9 @@ export function SettingsScreen({
         onSync={data.syncNow}
         onTestPrinter={data.testPrinter}
         onInstallPrinterLogo={data.installPrinterLogo}
+        onCheckUpdate={data.checkUpdate}
+        onInstallUpdate={data.installUpdate}
+        onDismissUpdate={data.dismissUpdate}
       />}
     </main>
   );

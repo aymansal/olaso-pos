@@ -64,8 +64,8 @@ assert.equal(capacitor.backgroundColor, '#F8F7EA');
 assert.equal(capacitor.plugins.SystemBars.insetsHandling, 'disable');
 assert.match(appBuild, /namespace = "com\.olaso\.pos"/);
 assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
-assert.match(appBuild, /versionCode 2/);
-assert.match(appBuild, /versionName "0\.1\.0-beta\.1"/);
+assert.match(appBuild, /versionCode 4/);
+assert.match(appBuild, /versionName "0\.1\.0-rc\.2"/);
 assert.match(variables, /compileSdkVersion = 36/);
 assert.match(variables, /targetSdkVersion = 35/);
 assert.match(manifest, /android\.permission\.INTERNET/);
@@ -186,6 +186,7 @@ assert.match(
 );
 assert.match(activity, /registerPlugin\(EscPosPrinterPlugin\.class\)/);
 assert.match(activity, /registerPlugin\(SecureSessionPlugin\.class\)/);
+assert.match(activity, /registerPlugin\(AppUpdatePlugin\.class\)/);
 assert.match(rootBuild, /com\.android\.tools\.build:gradle:8\.13\.2/);
 assert.match(rootBuild, /kotlin-gradle-plugin:2\.3\.21/);
 assert.match(appBuildScript, /org\.jetbrains\.kotlin\.android/);
@@ -199,6 +200,14 @@ assert.match(socketWriter, /Socket\(\)/);
 assert.match(socketWriter, /connectTimeoutMs/);
 assert.match(socketWriter, /writeTimeoutMs/);
 assert.doesNotMatch(printerPlugin + socketWriter, /Bluetooth|Usb|USB/);
+const updatePlugin = readFileSync(
+  'android/app/src/main/java/com/olaso/pos/AppUpdatePlugin.kt',
+  'utf8',
+);
+assert.match(updatePlugin, /@CapacitorPlugin\(name = "AppUpdate"\)/);
+assert.match(updatePlugin, /PackageInstaller/);
+assert.match(updatePlugin, /REQUEST_INSTALL|canRequestPackageInstalls/);
+assert.match(manifest, /android\.permission\.REQUEST_INSTALL_PACKAGES/);
 assert.match(secureSessionPlugin, /@CapacitorPlugin\(name = "SecureSession"\)/);
 assert.match(secureSessionPlugin, /AndroidKeyStore/);
 assert.match(secureSessionPlugin, /AES\/GCM\/NoPadding/);

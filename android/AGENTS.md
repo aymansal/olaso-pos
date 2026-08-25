@@ -81,12 +81,16 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   ignored output is `android/app/build/outputs/apk/debug/app-debug.apk`.
 - The beta build runs app JVM unit tests before assembly, including exact socket
   bytes and closed-endpoint behavior for the native LAN writer.
+- Run `npm run android:release` only when upload-keystore env vars are set.
+  Signed output is `android/app/build/outputs/apk/release/app-release.apk`.
+  Custody and HTTPS update publishing live in `tools/release/README.md`.
+- `AppUpdatePlugin` owns HTTPS APK download, SHA-256 verification, package /
+  version / signing-certificate checks, and PackageInstaller user confirmation.
+  Do not embed a GitHub credential in the APK.
 - Every native implementation card installs the current APK on the connected
   physical Galaxy Tab A9 and records its focused console/logcat/hardware smoke
   test before the card is done.
 - The generated project requires Java 21 and Android SDK 36 for Gradle builds.
-- The Goal 02 beta uses Android's local debug identity. Production signing and
-  distribution remain later release work.
 
 ## Verification
 

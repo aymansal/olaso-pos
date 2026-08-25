@@ -29,7 +29,7 @@ remaining goal and card sequence.
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
 | HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
-| HARD-06 — Signed release and upgrade | in progress |
+| HARD-06 — Signed release and upgrade | done — pending push SHA |
 | HARD-07 — Readiness review | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -113,26 +113,20 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-05 closeout follow-up is ready to push: owner removed in-app
-  Export/Verify; sync prefers original staff session then falls back to the
-  active signed-in profile; irreparable catalog/receipt failures leave the
-  outbox; Settings Sync now reports from real pending count. Physical Tab A9
-  verified Waiting sales **0** / Up to date. Auto Backup exclusion remains.
-- HARD-06 is activated next after this push. Research decision (Android +
-  Capacitor): keep `com.olaso.pos`; production release uses a durable upload
-  keystore in protected secrets (never in git); bump `versionCode`/
-  `versionName` per release; same signing cert required for install-over-
-  upgrade; publish signed APK + checksum/manifest over HTTPS (private source
-  repo must not embed GitHub credentials in the APK); operator Update uses
-  Android `PackageInstaller` / user confirmation, not silent install. Prefer
-  Capacitor/`gradle` signed release APK in CI with keystore secrets.
-- Sources: https://developer.android.com/studio/publish/versioning ;
-  https://developer.android.com/studio/publish/app-signing ;
-  https://developer.android.com/reference/android/content/pm/PackageInstaller ;
-  https://capacitorjs.com/docs/cli/commands/build ;
-  https://capacitorjs.com/docs/basics/workflow .
-- Exact next action: commit/push HARD-05 follow-up, then implement HARD-06
-  release/signing/update path.
+- HARD-06 signed release/upgrade is implemented and physically rehearsed on
+  Galaxy Tab A9 SM-X115: same `com.olaso.pos` cert, versionCode 3 → 4
+  install-over-upgrade kept `firstInstallTime=2026-08-25 19:34:46` while
+  `lastUpdateTime` advanced; APK `0.1.0-rc.2`. Debug→first release required
+  uninstall (expected cert change).
+- Artifacts: env-signed `android:release`, `.github/workflows/android-release.yml`,
+  `tools/release/README.md` custody, `AppUpdatePlugin` + Settings About
+  Check/Update/Later (HTTPS manifest; no GitHub token in APK), `check:release`.
+- Owner still needs: durable production keystore in CI secrets (rehearsal jks
+  is local `tmp/` only), HTTPS binary host URL via
+  `VITE_OLASO_UPDATE_MANIFEST_URL`, and Android developer package/signing
+  registration before worldwide sideload enforcement.
+- Checks: `check:release`, `check:android`, `check:settings`, `build`, Graphify
+  update. Exact next action: commit/push HARD-06, record SHA, activate HARD-07.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -3417,6 +3411,21 @@ remaining goal and card sequence.
   planning/asset change added no application import or runtime behavior.
 - No React, data, Convex, or Android application behavior changed and no goal
   was activated.
+
+### 2026-08-25 — HARD-06 signed release and upgrade
+
+- Official Android PackageInstaller + app-signing research: durable upload
+  keystore in secrets; same application ID and cert for upgrades; HTTPS
+  APK+manifest without embedding GitHub credentials; operator Update with
+  user confirmation; rollback by rebuilding known-good with a higher
+  versionCode.
+- Implemented release signing env, GitHub Actions workflow, AppUpdatePlugin,
+  Settings About Check/Update/Later, custody docs, check:release, version
+  4 / 0.1.0-rc.2.
+- Physical Tab A9: signed v3 install then v4 install-over-upgrade kept
+  firstInstallTime and signing digest; lastUpdateTime advanced.
+- Remaining owner ops: production keystore CI secrets, HTTPS binary host,
+  Android developer verification registration.
 
 ## Completed Goals
 

@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; HARD-06 in progress
+**Status:** active; HARD-06 done pending push
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -165,8 +165,7 @@ that polished product.
 | HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | done | `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main`; branded staff-session gap; physical cold/shade/screen-off/bg-fg/long-sleep matrix clean; OlasoWebView guard retained |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | done | `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main`; right-sized WebP; React.lazy secondary screens; post-paint reconnect; APK 26.3 MB; physical measure/visual pass |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | done | `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7` on `origin/main`; owner follow-up removed in-app export, fixed sync attribution/abandon, tablet Waiting sales 0 |
-| HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation | in progress | Research: durable keystore in secrets; versionCode bump; same cert for upgrade; HTTPS APK+manifest; PackageInstaller user confirm |
-| HARD-06 | Add protected production signing, release, upgrade, and rollback workflow | pending | — |
+| HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation | done | pending push SHA; Tab A9 install-over-upgrade 3→4 same cert; firstInstallTime preserved; CI + custody docs + PackageInstaller About Update/Later |
 | HARD-07 | Complete security, privacy, dependency, quota, and support readiness review | pending | — |
 | OPTIONS-01 | Add backward-compatible product-owned size, choice, and exact-recipe foundations | pending | Separate approved blueprint; follows original technical-hardening cards |
 | OPTIONS-02 | Add custom product choices, exact ingredient actions, and independent copying | pending | — |
@@ -660,13 +659,13 @@ owner verification; every authorized screen remained usable without internet.
 
 ## Current checkpoint
 
-- HARD-06 is active. HARD-05 owner closeout (no in-app export; sync
-  attribution/abandon; Waiting sales 0) is committing to `origin/main`.
-  Research: durable production keystore in protected secrets; same application
-  ID and signing cert for upgrades; bump versionCode/name; publish signed APK
-  + checksum/manifest over HTTPS without embedding GitHub credentials; operator
-  Update via PackageInstaller with user confirmation. Exact next action:
-  implement release signing/CI and guided update path.
+- HARD-06 is complete pending push. Signed release uses env/CI upload keystore
+  secrets; version `4` / `0.1.0-rc.2`; Settings About Update/Later via
+  PackageInstaller; custody in `tools/release/README.md`; GitHub Actions
+  `android-release.yml`. Physical SM-X115: uninstall debug then install v3 then
+  install-over-upgrade v4 with unchanged firstInstallTime and same signing
+  digest. HTTPS binary host and Android developer verification remain owner
+  ops. Exact next action: push HARD-06, then activate HARD-07.
 - NAV-01's verified category-image root fix is committed and pushed directly
   to `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   No card is in progress. Exact next action: stop and keep HARD-02 pending
