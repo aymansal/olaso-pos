@@ -28,7 +28,8 @@ remaining goal and card sequence.
 | HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
-| HARD-05 through HARD-07 — Recovery, release, and readiness | pending |
+| HARD-05 — Backup and recovery | done — pending push SHA |
+| HARD-06 through HARD-07 — Release and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
@@ -111,12 +112,32 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-04 is done and pushed to `origin/main` as
-  `cce0ebf73143b6feff72bcd33534a96804fb8512`. Physical Galaxy Tab A9 proof
-  covered right-sized WebP assets, lazy secondary screens, post-paint
-  reconnect, APK 26.3 MB, and accepted POS visuals at 1340×800.
-- No card is in progress. Exact next action: stop. Activate HARD-05 only when
-  the owner asks.
+- HARD-05 is complete pending push. Official Android Auto Backup / backup
+  security guidance requires excluding sensitive app data from cloud and
+  device-to-device transfer; Capacitor SQLite guidance matches
+  `allowBackup=false` plus `data-extraction-rules` excludes for database and
+  shared preferences. Owner export uses Android SAF
+  `ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT` through one minimal
+  `DocumentExport` plugin—no Filesystem plugin, no whole-DB `exportToJson`.
+  Documented JSON export from bounded SQLite reads never includes PIN, session
+  tokens, or Keystore material. Corrupt open fails closed. Recovery runbook
+  lives under `tools/recovery/` (not in the APK).
+- Physical Galaxy Tab A9 SM-X115: owner Export backup wrote
+  `olaso-backup-2026-08-25 (1).json` (108,164 bytes,
+  format `olaso-operational-backup` v1, 13 sales / 15 products / recipes /
+  stock / purchases / compensation / staff; zero secret keys in `data`);
+  Waiting sales stayed **7** through export; Verify backup reported
+  `13 sales (6 unsynced), 15 products` for the same device ID; merged
+  manifest `allowBackup=false`. Focused `check:recovery`, `check:android`,
+  TypeScript, and production build pass. Graphify code-only: 2,500 nodes /
+  4,700 edges.
+- Sources: https://developer.android.com/identity/data/autobackup ;
+  https://developer.android.com/privacy-and-security/risks/backup-best-practices ;
+  https://developer.android.com/training/data-storage/shared/documents-files ;
+  https://capacitorjs.com/docs/plugins/android ;
+  Capacitor community SQLite Android quirks for backup exclusion.
+- Exact next action: commit/push HARD-05 to `origin/main`, record SHA, stop
+  before HARD-06.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1226,6 +1247,17 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-05 backup/export/verify rehearsed
+
+- Research: disable Auto Backup; exclude DB/prefs via `data_extraction_rules`
+  + `backup_rules`; owner JSON from bounded SQLite reads via SAF
+  `DocumentExportPlugin`; corrupt open fail-closed; recovery docs in
+  `tools/recovery/`. Rejected Filesystem npm packages and whole-DB export.
+- Implemented Settings Export/Verify, privacy assert, `check:recovery`,
+  ARCHITECTURE/DOX updates. Physical Tab A9 export + verify preserved 7
+  waiting sales; backup has no PIN/session secrets in data payload.
+- Exact next action: commit/push and stop before HARD-06.
 
 ### 2026-08-25 — HARD-04 pushed to origin/main
 

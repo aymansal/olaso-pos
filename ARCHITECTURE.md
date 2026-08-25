@@ -1326,12 +1326,20 @@ and to authorize the chosen download source for unknown-app installation.
 - Convex is the synchronized cloud record, not the only copy of unsynced sales.
 - SQLite persists unsynced work across restarts.
 - The owner can export sales, products, recipes, stock movements, purchases,
-  compensation periods, and operating expenses in a documented format.
+  compensation periods, and operating expenses as documented JSON through
+  Settings → Data & sync. Export is read-only and never includes PINs, session
+  tokens, or Keystore material. Verify backup opens a saved file and reports
+  counts without writing local data.
+- Android Auto Backup is disabled; database and shared preferences are excluded
+  from cloud backup and device-to-device transfer via
+  `data_extraction_rules` / `fullBackupContent`.
+- Corrupt or unrecoverable local open fails closed: checkout stays locked.
 - A backup/export process must be tested before production.
-- Free-plan backup limitations must be reviewed before the client depends on
-  the system.
-- Recovery instructions and signing-key storage location must be documented
-  outside the source repository.
+- Free-plan Convex backup/storage/I/O limitations must be reviewed before the
+  client depends on the cloud alone for retention. Re-check
+  https://docs.convex.dev/production/state/limits before launch.
+- Recovery instructions for support live in `tools/recovery/` (not packaged).
+  Signing-key storage locations remain outside the source repository.
 
 ## Testing strategy
 

@@ -13,6 +13,13 @@ import {
   testPrinterConnection,
 } from '../printing/testPrinter.ts';
 import { installResidentLogo } from '../printing/printerTransport.ts';
+import {
+  buildOperationalBackup,
+  assertBackupHasNoSecrets,
+  parseOperationalBackup,
+  summarizeOperationalBackup,
+} from './operationalExport.ts';
+import { openTextDocument, saveTextDocument } from './documentExport.ts';
 
 export function useSettingsData() {
   const reconnect = useReconnect();
@@ -20,6 +27,8 @@ export function useSettingsData() {
   const loaded = useRef(false);
   const [isTestingPrinter, setIsTestingPrinter] = useState(false);
   const [isInstallingPrinterLogo, setIsInstallingPrinterLogo] = useState(false);
+  const [isExportingBackup, setIsExportingBackup] = useState(false);
+  const [isVerifyingBackup, setIsVerifyingBackup] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -109,6 +118,71 @@ export function useSettingsData() {
     [refresh],
   );
 
+  const exportBackup = useCallback(async () => {
+    setIsExportingBackup(true);
+    setError('');
+    setMessage('');
+    try {
+      const pendingBefore = (await refresh()).pendingSyncCount;
+      const backup = await buildOperationalBackup();
+      const text = JSON.stringify(backup);
+      assertBackupHasNoSecrets(text);
+      const stamp = backup.exportedAt.slice(0, 10);
+      const result = await saveTextDocument(
+        `olaso-backup-${stamp}.json`,
+        text,
+      );
+      const pendingAfter = (await refresh()).pendingSyncCount;
+      if (pendingAfter !== pendingBefore) {
+        throw new Error('Pending sales changed during export. Try again.');
+      }
+      setMessage(
+        `Backup saved (${result.bytesWritten} bytes, ${backup.counts.sales} sales, ${pendingAfter} still waiting to sync).`,
+      );
+    } catch (caught) {
+      if (caught && typeof caught === 'object' && 'code' in caught && caught.code === 'CANCELLED') {
+        setMessage('Export cancelled.');
+        return;
+      }
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'The operational backup could not be exported.',
+      );
+      throw caught;
+    } finally {
+      setIsExportingBackup(false);
+    }
+  }, [refresh]);
+
+  const verifyBackup = useCallback(async () => {
+    setIsVerifyingBackup(true);
+    setError('');
+    setMessage('');
+    try {
+      const opened = await openTextDocument();
+      assertBackupHasNoSecrets(opened.text);
+      const backup = parseOperationalBackup(opened.text);
+      const summary = summarizeOperationalBackup(backup);
+      setMessage(
+        `Backup verified: ${summary.counts.sales ?? 0} sales (${summary.pendingSales} unsynced), ${summary.counts.products ?? 0} products, device ${summary.deviceId}.`,
+      );
+    } catch (caught) {
+      if (caught && typeof caught === 'object' && 'code' in caught && caught.code === 'CANCELLED') {
+        setMessage('Backup open cancelled.');
+        return;
+      }
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'The backup file could not be verified.',
+      );
+      throw caught;
+    } finally {
+      setIsVerifyingBackup(false);
+    }
+  }, []);
+
   const installPrinterLogo = useCallback(
     async (input: PrinterPreferences) => {
       setIsInstallingPrinterLogo(true);
@@ -141,6 +215,8 @@ export function useSettingsData() {
     isSyncing: reconnect.isSyncing,
     isTestingPrinter,
     isInstallingPrinterLogo,
+    isExportingBackup,
+    isVerifyingBackup,
     message,
     error,
     syncError: settings?.lastSyncError || '',
@@ -148,5 +224,7 @@ export function useSettingsData() {
     syncNow,
     testPrinter,
     installPrinterLogo,
+    exportBackup,
+    verifyBackup,
   };
 }

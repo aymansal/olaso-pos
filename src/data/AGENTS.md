@@ -27,6 +27,9 @@ tablet's local SQLite operational record.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
   safe failure copy.
+- `operationalExport.ts` builds the documented owner backup JSON from bounded
+  SQLite reads; `documentExport.ts` wraps the Android SAF save/open plugin.
+  Neither stores credentials.
 - `secureSession.ts` owns the Android-only protected-storage wrapper for opaque
   session tokens and offline PIN verifiers; ordinary SQLite settings never hold
   credentials.

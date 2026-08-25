@@ -79,6 +79,10 @@ export function SettingsScreen({
         onSync={data.syncNow}
         onTestPrinter={data.testPrinter}
         onInstallPrinterLogo={data.installPrinterLogo}
+        isExportingBackup={data.isExportingBackup}
+        isVerifyingBackup={data.isVerifyingBackup}
+        onExportBackup={data.exportBackup}
+        onVerifyBackup={data.verifyBackup}
       />}
     </main>
   );

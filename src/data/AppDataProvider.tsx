@@ -60,7 +60,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         <img className={styles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
         {localState === 'error' ? <strong>Local data unavailable</strong> : <StartupDots />}
         {localState === 'error' && (
-          <span>Restart the app before taking orders.</span>
+          <>
+            <span>Checkout stays locked until local data opens again.</span>
+            <span>Restart the app. If this continues, contact support with the last owner backup export.</span>
+          </>
         )}
       </main>
     );

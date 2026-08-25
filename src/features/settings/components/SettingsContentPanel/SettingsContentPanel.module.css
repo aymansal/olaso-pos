@@ -85,6 +85,11 @@
   gap: 10px;
 }
 
+.headerActions .primary {
+  min-width: 0;
+  padding: 0 12px;
+}
+
 .secondary {
   border: 1px solid var(--olaso-green);
   color: var(--olaso-green);

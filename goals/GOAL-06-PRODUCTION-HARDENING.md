@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; HARD-04 done on origin/main; no card in progress
+**Status:** active; HARD-05 done pending push
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -164,7 +164,7 @@ that polished product.
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | done | `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main`; cream native splash, one green web OLASO + dots, white-on-sage launcher, no tile-memory errors, lock-ready medians cold 1911 ms / warm 574 ms |
 | HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | done | `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main`; branded staff-session gap; physical cold/shade/screen-off/bg-fg/long-sleep matrix clean; OlasoWebView guard retained |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | done | `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main`; right-sized WebP; React.lazy secondary screens; post-paint reconnect; APK 26.3 MB; physical measure/visual pass |
-| HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
+| HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | done — pending push SHA | Auto Backup disabled; SAF DocumentExport; physical Tab A9 export/verify with 7 waiting sales preserved; `tools/recovery/`; `check:recovery` |
 | HARD-06 | Add protected production signing, release, upgrade, and rollback workflow | pending | — |
 | HARD-07 | Complete security, privacy, dependency, quota, and support readiness review | pending | — |
 | OPTIONS-01 | Add backward-compatible product-owned size, choice, and exact-recipe foundations | pending | Separate approved blueprint; follows original technical-hardening cards |
@@ -659,9 +659,11 @@ owner verification; every authorized screen remained usable without internet.
 
 ## Current checkpoint
 
-- HARD-04 is done and pushed to `origin/main` as
-  `cce0ebf73143b6feff72bcd33534a96804fb8512`. Exact next action: stop. Activate
-  HARD-05 only when the owner requests backup/recovery work.
+- HARD-05 is complete pending push. Auto Backup disabled with DB/prefs
+  exclusion; owner SAF JSON export/verify on Tab A9 preserved waiting sales
+  and excluded secrets; corrupt open fails closed; Convex limits and recovery
+  steps live in `tools/recovery/`. Exact next action: push, record SHA, stop
+  before HARD-06.
 - NAV-01's verified category-image root fix is committed and pushed directly
   to `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   No card is in progress. Exact next action: stop and keep HARD-02 pending
