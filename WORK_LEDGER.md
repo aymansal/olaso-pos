@@ -24,7 +24,7 @@ remaining goal and card sequence.
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
 | DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
 | HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
-| NAV-01 — Retained smooth navigation | in progress — final Android build, 30 zero-work physical switches, offline roles, security, clock, Graphify, and checks verified; awaiting push |
+| NAV-01 — Retained smooth navigation | done — `0e79396d56215f193d80dafd3405518f1e26f2d3` on `origin/main` |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -108,6 +108,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- NAV-01 is complete and pushed directly to `origin/main` as
+  `0e79396d56215f193d80dafd3405518f1e26f2d3`. No card is in progress;
+  HARD-02 remains pending until the owner explicitly asks to continue.
 - Final NAV-01 implementation and physical owner/cashier matrix pass. Five
   post-build cold/warm runs retain usable startup; five additional settled
   rounds across Dashboard/POS/Orders/Products/Stock/Reports prove all 30
@@ -126,9 +129,10 @@ remaining goal and card sequence.
 - Graphify is refreshed to 3,334 nodes and 7,625 edges. Final normal owner POS
   has exactly one visible/six retained screens, unclipped 1340 by 800 geometry,
   restored internet, an empty QA cart, no alert, and clean Android runtime.
-- Exact current next action: commit/push NAV-01 directly to `origin/main`,
-  record its implementation SHA, and stop with HARD-02 pending.
-- NAV-01 is the only card in progress. Official Android guidance recommends
+- Exact current next action: stop. When the owner requests the next card,
+  research current official Android/Capacitor splash and icon guidance, then
+  activate HARD-02 alone for the approved branded launch and app icon.
+- NAV-01's official Android guidance recommends
   preserving each visited navigation destination's saved state and keeping
   previously loaded content immediately available; official React 19.2
   Activity boundaries preserve state and DOM while automatically cleaning up
@@ -146,48 +150,6 @@ remaining goal and card sequence.
   https://developer.android.com/topic/architecture/ui-layer/stateholders;
   https://developer.android.com/guide/navigation/backstack/multi-back-stacks;
   https://capacitorjs.com/docs/apis/app.
-- Exact current next action: inspect every App navigation, screen permission,
-  session/profile-switch, data-hook revision/subscription, Header/Lock clock,
-  and lifecycle caller before implementing NAV-01 and proving it on the
-  physical Galaxy Tab A9.
-- Caller tracing confirms React `19.2.7` already exports Activity. App
-  currently destroys each page, every screen's mount effect reruns local/cloud
-  loads when Activity reveals it, Reports explicitly discards its previous
-  snapshot, and Header/Lock clocks wait up to 30 seconds after foreground.
-  Proper retention therefore requires visited/role/session scoping plus
-  revision-aware hook effects, preserved report snapshots, immediate visible
-  clocks, and visibility-aware physical measurement selectors.
-- First NAV-01 implementation now uses visited-only, role-authorized React
-  Activity boundaries and clears retained screen trees on every staff switch.
-  POS, Products, Stock/detail, Orders, Dashboard, Reports/costs, Settings, and
-  Staff hooks skip same-revision reveal reloads; saved report/dashboard/order
-  content remains visible; receipt language follows the actual App-owned
-  preferences; and Header/Lock clocks refresh on foreground. Stock pagination
-  survives reveal and the physical harness ignores hidden retained DOM.
-- The new focused `npm run check:navigation`, existing role-safe lock check,
-  offline read check, host harness syntax, and TypeScript currently pass.
-- First rebuilt/reinstalled 140-task beta passes five cold/five warm tablet
-  launches and five six-screen rounds. Once initial reconnect finishes,
-  three independent complete six-screen rounds prove zero SQLite requests,
-  zero added/removed images, and exactly one visible screen on every one of 18
-  switches. POS search, the exact drink-image DOM node, Reports tab, and Stock
-  filter survive navigation unchanged.
-- Mandatory role proof found the existing active Samira cloud profile had no
-  credential record (`identity_revision=0`), so online and offline unlock both
-  failed independently of NAV-01. Restored only the existing owner-approved
-  Samira credential through the established protected support action without
-  recording a PIN/recovery value. Actual online first sign-in then provisions
-  offline access; flight-mode owner/cashier switching preserves the test cart,
-  clears every retained owner management DOM node, shows cashier POS/Orders
-  only, hides Settings, and returns the owner to all authorized screens.
-- That exact handoff also exposed a brief false invalid-order alert before the
-  replacement staff menu finished loading. Root-fixed validation to wait for
-  trusted local menu availability and added it to the focused navigation
-  guard; the final APK must still be rebuilt/reinstalled and retested.
-- Exact next action: build and install the current Android beta, run one
-  physical diagnostic navigation pass, fix any real reproduced issue at its
-  root, then complete five-run before/after, owner/cashier, offline, resume,
-  and final main-push verification.
 - HARD-01 is complete and pushed directly to `origin/main` as
   `0e0042aeb2da5f9df534fa0f5184d176965d3f8d`; its verified measurements remain
   the NAV-01 before-change baseline.
@@ -1222,6 +1184,17 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — NAV-01 complete and pushed; HARD-02 pending
+
+- Committed and pushed verified NAV-01 directly to `origin/main` as
+  `0e79396d56215f193d80dafd3405518f1e26f2d3`; local and remote SHAs match.
+- Physical 30-switch zero-image/zero-SQLite navigation, preserved interaction
+  state, protected Owner/Samira offline cart handoff, restored cashier access,
+  immediate clock resume, historical data, exact viewport, clean logs, focused
+  regressions, 140-task beta, authorities, DOX, and Graphify all pass.
+- Exact next action: stop with no active card. Activate only HARD-02 after the
+  owner requests the approved Android OLASO launch and app icon.
 
 ### 2026-08-25 — NAV-01 final physical retained-navigation matrix passes
 

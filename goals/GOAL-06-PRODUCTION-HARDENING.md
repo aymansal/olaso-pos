@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; NAV-01 in progress
+**Status:** active; NAV-01 done, HARD-02 pending
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -160,7 +160,7 @@ that polished product.
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | done | `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main`; full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass |
 | DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | done | `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main`; official Android research, schema-19 migration, immutable history, local/cloud deletion, stale-copy and ordering root fixes, owner/cashier security, full regression/build, physical flight-mode/restart/exact-once reconnect, 1340 × 800 screens, clean logs, and Graphify pass |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | done | `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main`; official research, five physical cold/warm runs, 30 navigation samples, offline/history proof, native lifecycle root fix, full regression/build, clean tablet logs, and Graphify pass |
-| NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | in progress | Official research, five-run Android build, 30 zero-query/image physical switches, offline roles, clean logs, exact viewport, regression, and Graphify pass; awaiting main push |
+| NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | done | `0e79396d56215f193d80dafd3405518f1e26f2d3` on `origin/main`; official research, 30 zero-query/image physical switches, five-run Android build, offline Owner/Samira handoff, foreground clock, clean logs, exact viewport, regression, and Graphify pass |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
 | HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | pending | Pre-bridge event error fixed early under mandatory bug rule; full startup orchestration/matrix remains |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
@@ -651,8 +651,9 @@ owner verification; every authorized screen remained usable without internet.
 ## Current checkpoint
 
 - Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04, DELETE-01,
-  and HARD-01 are complete. NAV-01 is the only card in progress; HARD-01's
-  five-run measurements remain the before-change physical evidence.
+  HARD-01, and NAV-01 are complete. NAV-01 is pushed to `origin/main` as
+  `0e79396d56215f193d80dafd3405518f1e26f2d3`. No card is in progress;
+  HARD-02 remains pending until the owner requests it.
 - Official Android navigation guidance preserves each visited destination's
   screen state and avoids reloading prior content. React's installed Activity
   primitive preserves existing DOM/state and cleans up hidden effects. Keep
@@ -665,28 +666,16 @@ owner verification; every authorized screen remained usable without internet.
   https://developer.android.com/topic/architecture/ui-layer/stateholders;
   https://developer.android.com/guide/navigation/backstack/multi-back-stacks;
   https://capacitorjs.com/docs/apis/app.
-- Source/caller tracing confirms installed React 19.2.7 exposes Activity, but
-  simply replacing conditional screen rendering is insufficient: reactivated
-  effects would repeat SQLite/cloud queries; Reports clears its saved snapshot;
-  existing clock intervals do not update immediately on foreground; and
-  measurement selectors must ignore retained hidden DOM. NAV-01 must fix all
-  of these causes without retaining an unauthorized or previous-staff screen.
-- Initial implementation adds visited/role-scoped Activity retention, ordered
-  staff-switch cleanup, revision-aware local/report/history/cost/staff loads,
-  preserved report snapshots/stock pagination, App-owned receipt preferences,
-  immediate foreground clocks, and visibility-correct physical profiling.
-  The focused navigation/lock/offline/TypeScript checks pass; real current-APK
-  physical before/after and multi-role verification remain mandatory.
-- First physical five-run install confirms retained images and, after initial
-  reconnect settles, 18 consecutive six-screen switches with zero SQLite work,
-  zero image insertion/removal, one visible page, and preserved POS search,
-  exact image DOM identity, Reports tab, and Stock search.
-- Cashier acceptance uncovered an existing development Samira profile with no
-  protected cloud identity. The approved existing support boundary restored
-  only that cashier credential; online provisioning plus offline Owner/Samira
-  switches now preserve the cart, clear prior-role pages, and expose cashier
-  POS/Orders only. A transient invalid-cart warning during menu reload is
-  root-fixed and guarded; final rebuilt-APK verification remains required.
+- NAV-01 is physically verified: installed React 19.2.7 preserves only visited
+  authorized screens; revision-aware hooks perform zero repeat SQLite/cloud
+  reads; saved snapshots, DOM/images, searches, filters, scroll, and receipt
+  preferences persist; hidden effects stop; and physical Owner/Samira offline
+  handoff clears prior-role screens while preserving the approved draft cart.
+- The existing missing Samira cloud identity was safely reprovisioned through
+  the protected support action, and transient pre-menu cart validation was
+  root-fixed. The final 140-task APK, 30 settled zero-image/zero-query
+  transitions, preserved 13 sales/seven outbox rows/two active staff, exact
+  viewport, immediate resumed clock, clean logs, and Graphify all pass.
 - HARD-01 physical warm-recreation testing exposed an existing release blocker:
   the installed SQLite plugin does not release its Activity-owned database
   connection when the Capacitor bridge is destroyed. The recreated Activity
@@ -748,11 +737,22 @@ owner verification; every authorized screen remained usable without internet.
 - Focused Android, local management, identity, offline/reconnect, POS, costs,
   printing, TypeScript, and build regressions pass; Graphify is refreshed to
   3,320 nodes/7,602 edges and final physical 1340 by 800/runtime checks pass.
-- Exact next action: trace existing navigation, protected role changes, lock,
-  screen effects/revisions, clock updates, and app foreground callers; then
-  implement and physically verify only NAV-01.
+- Exact next action: stop. When the owner requests the next card, research
+  official Android/Capacitor splash and app-icon guidance before activating
+  HARD-02 alone.
 
 ## Planning journal
+
+### 2026-08-25 — NAV-01 pushed; HARD-02 remains pending
+
+- Published NAV-01 directly to `origin/main` as
+  `0e79396d56215f193d80dafd3405518f1e26f2d3`; local and remote SHA match.
+- Official research, role-safe retained screens, 30 physical zero-query/
+  zero-image switches, Owner/Samira offline cart handoff, restored cashier
+  identity, immediate resumed clock, five-run startup, exact viewport, clean
+  runtime, focused checks, 140-task beta, docs, and Graphify all pass.
+- No next card is active. Resume with HARD-02 only when the owner requests
+  the approved native cream/green OLASO startup and app icon.
 
 ### 2026-08-25 — NAV-01 physical navigation, identity, and sleep matrix passes
 

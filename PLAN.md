@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 done, HARD-02 pending | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -220,11 +220,13 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-NAV-01 is the only card in progress. Its official Android, Capacitor, and React
-research, role-safe React Activity implementation, five-run Android build,
-30 zero-query/zero-image physical switches, offline Owner/Samira handoff,
-foreground clock, exact viewport, clean logs, focused checks, and Graphify
-refresh now pass. Commit and push NAV-01 directly to `origin/main`, record its
-implementation SHA, and stop with HARD-02 pending. Finish the original
-hardening sequence before the separate OPTIONS-01 through OPTIONS-04 blueprint
-and final owner-led polish.
+NAV-01 is complete and pushed directly to `origin/main` as
+`0e79396d56215f193d80dafd3405518f1e26f2d3`. Its official research, retained
+role-safe screens, 30 zero-query/zero-image physical switches, offline staff
+handoff, foreground clock, exact viewport, clean logs, Android build, focused
+checks, and Graphify pass. Stop with no card in progress. When the owner asks
+to continue, activate only HARD-02: research official Android and Capacitor
+splash/icon guidance, then replace the generic startup with the approved
+continuous cream/green OLASO launch and an appropriate app icon. Finish the
+original hardening sequence before OPTIONS-01 through OPTIONS-04 and final
+owner-led polish.
