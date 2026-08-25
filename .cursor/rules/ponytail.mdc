@@ -1,0 +1,22 @@
+---
+description: MANDATORY — always use Ponytail on every coding task
+alwaysApply: true
+---
+
+# Ponytail — always
+
+**MANDATORY on every coding task** for every agent and every subagent:
+implementing, fixing, refactoring, reviewing, designing, or choosing
+dependencies.
+
+1. Read and follow the `ponytail` skill immediately (default intensity: **full**).
+2. Climb the ladder and stop at the first rung that works: YAGNI → reuse repo
+   code → stdlib → native platform → installed dependency → shortest correct
+   diff.
+3. No speculative abstractions, boilerplate, new packages, or "for later"
+   scaffolding. Prefer deletion and reuse over addition.
+4. Bug fixes go to the root cause shared by callers, not only the reported path.
+5. Off only when the owner explicitly says `stop ponytail` or `normal mode`.
+
+Also required by root `AGENTS.md` Core Contract. Pair with the Graphify-always
+rule: orient with graphify, then apply ponytail to the change.

@@ -6,6 +6,12 @@ instructions. A file is governed by this document and every more specific
 
 ## Core Contract
 
+- **Always use Graphify** before exploring or changing code (see Repository
+  Rails). Non-negotiable for every agent and subagent.
+- **Always use Ponytail** on every coding task: smallest correct change,
+  YAGNI, reuse existing code/stdlib/native/installed deps before adding
+  anything. Read and follow the `ponytail` skill at full intensity unless the
+  owner says otherwise. Non-negotiable for every agent and subagent.
 - Read the complete instruction chain before editing.
 - The deepest applicable instruction wins when rules conflict.
 - Keep instructions current, concise, and operational. Do not use them as a
@@ -34,12 +40,21 @@ decision changes.
 
 ### Graphify first
 
-- Before inspecting, explaining, or changing the codebase, query
-  `graphify-out/graph.json`.
+- **Mandatory on every turn that touches the codebase.** Before inspecting,
+  explaining, or changing code, query `graphify-out/graph.json`.
 - If the graph is missing, generate it with `/graphify .`.
 - Refresh it with `/graphify . --update` after structural code changes.
 - Graphify is development tooling only; never import it into the application or
   production bundle.
+
+### Ponytail always
+
+- **Mandatory on every coding task** (implement, fix, refactor, review, design,
+  dependency choice). Follow the `ponytail` skill at **full** intensity.
+- Prefer: skip unnecessary work → reuse repo code → stdlib/native → installed
+  deps → shortest correct diff. No speculative abstractions or new packages
+  without a proven need.
+- Off only if the owner explicitly says so (`stop ponytail` / `normal mode`).
 
 ### Work ledger
 
