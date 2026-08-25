@@ -568,7 +568,10 @@ real-device acceptance matrix.
   live product reassignment/recipe repair and historical actor/financial
   snapshots. Final owner-led visual polish remains after HARD-07.
 - Documentation only; no application or Android code changed. No implementation
-  card is active. OPTIONS-01 is the next step when the owner authorizes it.
+  card is active. The approved blueprint is pushed directly to `origin/main`
+  as `b68aa8c11a01229cc2f7f0fdf176f324e046cd24`; internal document links,
+  all three task-board orders, and staged whitespace checks passed. OPTIONS-01
+  is the next step when the owner authorizes it.
 
 ### 2026-08-24 — LOCAL-04 complete on origin/main
 
