@@ -30,7 +30,7 @@ remaining goal and card sequence.
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
 | HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
 | HARD-06 — Signed release and upgrade | done — follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870` on `origin/main` (base `87bc12f7480084b6703e16f59f317c63d32249fa`) |
-| HARD-07 — Readiness review | done — pending-push |
+| HARD-07 — Readiness review | done — `bb9279350c95779b1503964bb8dd80d4322c2a3c` on `origin/main` |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — next after HARD-07 |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
@@ -113,22 +113,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-07 readiness review complete pending push. Official Android guidance:
-  release APKs stay non-debuggable; keep Keystore-backed PIN/session storage,
-  Auto Backup off, HTTPS update channel without embedded credentials; reject
-  Play Integrity / SSL-pinning for this manually distributed Capacitor POS.
-- Findings fixed: release `debuggable false` (was true for QA). Biometric
-  permissions already stripped via `tools:node="remove"`. No secrets or
-  deployment auth bypass in source. Convex reads stay bounded (no unbounded
-  `.collect()`). SQLCipher remains available but encryption stays an accepted
-  later decision for a single owned tablet.
-- Checks: permissions, staff, identity, settings, release, android, convex,
-  sales, offline, build. Physical Tab A9: non-DEBUGGABLE release 1.1 installed;
-  owner unlock; Settings → About shows `Version 1.1` only; Install unknown apps
-  Allowed.
-- First-week monitoring recorded in ARCHITECTURE.md. Patch package updates
-  available (Capacitor 8.5, Convex 1.45, etc.) but not bumped this card.
-- Exact next action after push: stop; OPTIONS-01 when the owner continues.
+- HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
+  Exact next action: stop; OPTIONS-01 when the owner continues.
 - HARD-06 follow-up is on `origin/main` as
   `f1f3168c927fae74c47d4d9353e556b7f8fe4870`. Shop versions `1.0`/`1.1`
   (versionCode 7/8), About shows `Version 1.1` only, Tab A9 proved private/public
