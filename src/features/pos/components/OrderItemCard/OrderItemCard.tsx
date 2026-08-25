@@ -23,7 +23,14 @@ export function OrderItemCard({
 }: OrderItemCardProps) {
   return (
     <article className={styles.card}>
-      <img className={styles.photo} src={product.image} alt={product.name} />
+      <img
+        className={styles.photo}
+        src={product.image}
+        alt={product.name}
+        width={60}
+        height={76}
+        decoding="async"
+      />
       <strong className={styles.name}>{product.name}</strong>
       <strong className={styles.total}>
         {formatMoney(product.priceCentimes * quantity)}

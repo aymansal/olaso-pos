@@ -11,7 +11,14 @@ type ProductCardProps = Product & {
 export function ProductCard({ name, priceCentimes, image, onAdd }: ProductCardProps) {
   return (
     <Card className={styles.card} width={174} height={162} padding={0}>
-      <img className={styles.photo} src={image} alt={name} />
+      <img
+        className={styles.photo}
+        src={image}
+        alt={name}
+        width={72}
+        height={92}
+        decoding="async"
+      />
       <strong className={styles.name}>{name}</strong>
       <span className={styles.price}>{formatMoney(priceCentimes)}</span>
       <button

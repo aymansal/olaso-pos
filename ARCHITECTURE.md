@@ -907,11 +907,14 @@ Rules:
   normal interval continues; a suspended timer must not leave stale time after
   a long tablet sleep.
 - Start background synchronization only after the local POS is rendered and
-  responsive. Deferral must not weaken outbox recovery or idempotency.
+  responsive. The reconnect worker waits for a double animation frame plus an
+  idle callback (750 ms timeout) before automatic outbox/cache work. Deferral
+  must not weaken outbox recovery, manual Sync, or idempotency.
 - Ship product artwork at dimensions and formats appropriate to its rendered
   size, declare dimensions to prevent layout shift, and defer below-the-fold
-  decoding. Do not decode full 1408 by 768 images for 174-pixel cards when a
-  checked smaller asset is visually equivalent.
+  decoding. POS drink photos ship as `144 × 184` WebP for the `72 × 92`
+  display slot; category illustrations ship near their card art size as WebP.
+  Do not decode full `1408 × 768` sources for those cards.
 - Do not add a state library, service worker, custom cache framework, or native
   rewrite for startup. Add machinery only when a trace proves the existing
   platform cannot meet the budget.

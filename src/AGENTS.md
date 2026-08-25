@@ -37,6 +37,9 @@ application, global tokens, and the feature screens under `features/`.
 ## Local Contracts
 
 - Keep `App.tsx` a thin screen selector until real routing is required.
+  POS and Lock stay eagerly imported; Dashboard, Orders, Products, Stock,
+  Reports, and Settings load through `React.lazy` on first visit while
+  previously visited authorized screens remain in React Activity boundaries.
 - Preserve visited screen DOM/state with installed React Activity boundaries;
   hidden effects must stop and unvisited/unauthorized screens never mount.
   Do not replace this with a router, custom cache, or CSS-hidden live screens.

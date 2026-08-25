@@ -27,7 +27,8 @@ remaining goal and card sequence.
 | NAV-01 — Retained smooth navigation | done — `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix physically verified |
 | HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
-| HARD-04 through HARD-07 — Performance, recovery, release, and readiness | pending |
+| HARD-04 — Measured performance (assets, modules, sync scheduling) | done — pending SHA after push |
+| HARD-05 through HARD-07 — Recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
@@ -110,13 +111,18 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-03 is done and pushed to `origin/main` as
-  `590c9cecfe485cd7debb28abd08d3310cd0079aa`. Physical Galaxy Tab A9 matrix
-  covered cold, notification-shade, screen-off, background/foreground, and
-  long sleep/resume with zero triggerEvent/Capacitor/uncaught/AndroidRuntime
-  errors; branded staff-session gap; viewport 1340×800.
-- No card is in progress. Exact next action: stop. Activate HARD-04 only when
-  the owner asks.
+- HARD-04 is physically verified on Galaxy Tab A9 SM-X115. Official Android
+  render/WebP/startup research kept decode in the Capacitor WebView with
+  right-sized assets; no Coil/Glide or second Activity. Secondary screens use
+  Vite/`React.lazy`; automatic reconnect waits for post-paint idle.
+- Before/after evidence: APK `31,626,309` → `26,321,088` bytes; initial index
+  JS `~925 KB` → `~292 KB`; nine drink sources `1408×768` PNG (`~4.2 MB`) →
+  `144×184` WebP (`~22 KB`); category art `1408×768` → `~216×216` WebP
+  (`~71 KB`). Cold lock median `1,957 ms`, unlock-to-menu `787 ms`; warm lock
+  `589 ms`, unlock-to-menu `700 ms`. POS return median `151 ms`. Visual POS
+  shows sharp drink photos, category art, empty cart, `1340×800`, no alert.
+- Exact next action: commit/push HARD-04, record SHA, then stop. Activate
+  HARD-05 only when the owner asks.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1226,6 +1232,14 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-04 measured assets, lazy screens, deferred sync
+
+- Research kept WebView decode (right-sized WebP), Vite lazy secondary screens,
+  and post-paint automatic reconnect; rejected Coil/Glide and WorkManager for
+  this card. Physical before/after: APK −5.3 MB, main JS −633 KB, drink decode
+  from 1408×768 to 144×184, visual POS accepted, measure medians recorded.
+  Exact next action: commit/push and stop before HARD-05.
 
 ### 2026-08-25 — HARD-03 pushed to origin/main
 

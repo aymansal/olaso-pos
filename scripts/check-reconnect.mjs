@@ -149,6 +149,8 @@ assert.match(worker, /available !== true \|\| !foreground/);
 assert.match(connection, /document\.hasFocus\(\)/);
 assert.match(connection, /addEventListener\('blur', suspend\)/);
 assert.match(worker, /const ready = available === true && foreground/);
+assert.match(worker, /requestAnimationFrame/);
+assert.match(worker, /requestIdleCallback/);
 assert.match(dashboard, /available === undefined \|\| !foreground/);
 assert.match(reports, /available === undefined \|\| !foreground/);
 assert.match(orders, /available && foreground/);

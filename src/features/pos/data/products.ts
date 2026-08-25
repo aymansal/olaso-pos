@@ -1,12 +1,12 @@
-import americano from '../../../../images/generated-1784303398691.png';
-import cappuccino from '../../../../images/generated-1784303397619.png';
-import caramelMac from '../../../../images/generated-1784303398948.png';
-import coldBrew from '../../../../images/generated-1784303397988.png';
-import espresso from '../../../../images/generated-1784303398789.png';
-import flatWhite from '../../../../images/generated-1784303397633.png';
-import icedCoffeeMilk from '../../../../images/generated-1784303399328.png';
-import latte from '../../../../images/generated-1784303397938.png';
-import mocha from '../../../../images/generated-1784303398686.png';
+import americano from '../../../../images/pos-product-americano.webp';
+import cappuccino from '../../../../images/pos-product-cappuccino.webp';
+import caramelMac from '../../../../images/pos-product-caramel-mac.webp';
+import coldBrew from '../../../../images/pos-product-cold-brew.webp';
+import espresso from '../../../../images/pos-product-espresso.webp';
+import flatWhite from '../../../../images/pos-product-flat-white.webp';
+import icedCoffeeMilk from '../../../../images/pos-product-iced-coffee-milk.webp';
+import latte from '../../../../images/pos-product-latte.webp';
+import mocha from '../../../../images/pos-product-mocha.webp';
 import type { CategoryId } from './categories';
 import { categoryArtworkUrl } from '../../../lib/categoryArtwork.ts';
 

@@ -32,7 +32,14 @@ export function CategoryCard({
         <span className={styles.status}>{status}</span>
         <strong className={styles.name}>{name}</strong>
         <span className={styles.count}>{count} items</span>
-        <img className={styles.illustration} src={image} alt="" />
+        <img
+          className={styles.illustration}
+          src={image}
+          alt=""
+          width={126}
+          height={108}
+          decoding="async"
+        />
       </Card>
     </button>
   );

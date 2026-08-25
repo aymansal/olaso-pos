@@ -565,9 +565,34 @@ export function ReconnectProvider({
     const ready = available === true && foreground;
     const previous = previousAvailable.current;
     previousAvailable.current = ready;
-    if (ready && previous !== true) {
-      void run('automatic').catch(() => undefined);
-    }
+    if (!(ready && previous !== true)) return;
+
+    let cancelled = false;
+    let idleHandle: number | undefined;
+    let timeoutHandle: number | undefined;
+    let secondFrame = 0;
+    const start = () => {
+      if (!cancelled) void run('automatic').catch(() => undefined);
+    };
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        if (typeof window.requestIdleCallback === 'function') {
+          idleHandle = window.requestIdleCallback(start, { timeout: 750 });
+        } else {
+          timeoutHandle = window.setTimeout(start, 0);
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+      if (idleHandle !== undefined && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleHandle);
+      }
+      if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle);
+    };
   }, [available, foreground, run]);
 
   return (

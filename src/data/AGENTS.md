@@ -40,7 +40,9 @@ tablet's local SQLite operational record.
   An immediate browser offline hint may close transport early, while Android
   validated state remains authoritative for application behavior.
 - `reconnectContext.tsx` owns the authenticated single-flight outbox worker,
-  cache refresh gate, and visible-hook completion revision.
+  cache refresh gate, and visible-hook completion revision. Automatic runs
+  start only after local POS paint (double rAF + idle callback); manual Sync
+  remains immediate.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail and
   Dashboard/Reports fallback reads; it never performs management writes.
 - `identitySession.ts` derives and persists one protected local session/PIN

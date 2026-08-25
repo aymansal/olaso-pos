@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 const capacitor = JSON.parse(readFileSync('capacitor.config.json', 'utf8'));
 const appBuild = readFileSync('android/app/build.gradle', 'utf8');
@@ -238,6 +238,34 @@ const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' });
 assert.doesNotMatch(
   tracked,
   /(?:^|\/)(?:local\.properties|.*\.(?:apk|aab|jks|keystore|p12|pem|key))$/im,
+);
+
+const productAssets = readFileSync('src/features/pos/data/products.ts', 'utf8');
+assert.match(productAssets, /pos-product-americano\.webp/);
+assert.doesNotMatch(productAssets, /\.png['"]/);
+for (const drink of [
+  'americano',
+  'cappuccino',
+  'caramel-mac',
+  'cold-brew',
+  'espresso',
+  'flat-white',
+  'iced-coffee-milk',
+  'latte',
+  'mocha',
+]) {
+  assert.ok(
+    existsSync(`images/pos-product-${drink}.webp`),
+    `Missing right-sized product asset for ${drink}`,
+  );
+}
+assert.match(
+  readFileSync('src/features/pos/components/ProductCard/ProductCard.tsx', 'utf8'),
+  /width=\{72\}[\s\S]*?height=\{92\}[\s\S]*?decoding="async"/,
+);
+assert.match(
+  readFileSync('src/data/reconnectContext.tsx', 'utf8'),
+  /requestIdleCallback\(start, \{ timeout: 750 \}\)/,
 );
 
 console.log('Android beta identity, version, permission, and artifact checks passed.');

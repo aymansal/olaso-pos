@@ -1,23 +1,17 @@
-import { Activity, useEffect, useState } from 'react';
+import { Activity, lazy, Suspense, useEffect, useState } from 'react';
 import {
   loadTerminalSettings,
   setTerminalLocked,
   type TerminalPreferences,
   type TerminalSettings,
 } from './data/terminalSettings';
-import { DashboardScreen } from './features/dashboard/DashboardScreen';
-import { OrdersScreen } from './features/orders/OrdersScreen';
 import { PosScreen } from './features/pos/PosScreen';
 import type { NavigationPage } from './features/pos/components/TopNavigation/TopNavigation';
 import {
   createInitialPosSession,
   hasUnfinishedCart,
 } from './features/pos/posSession';
-import { ProductsScreen } from './features/products/ProductsScreen';
-import { ReportsScreen } from './features/reports/ReportsScreen';
 import { LockScreen } from './features/settings/LockScreen';
-import { SettingsScreen } from './features/settings/SettingsScreen';
-import { StockScreen } from './features/stock/StockScreen';
 import { StaffSessionProvider } from './data/sessionContext';
 import { ReconnectProvider } from './data/reconnectContext';
 import type { StaffSession } from './data/identitySession';
@@ -25,6 +19,37 @@ import { hasPermission, type Permission } from './data/permissions';
 import olasoLogo from '../assets/brand/olaso-wordmark-operational-green-transparent.png';
 import { StartupDots } from './components/StartupDots/StartupDots';
 import startupStyles from './data/AppDataProvider.module.css';
+
+const DashboardScreen = lazy(() =>
+  import('./features/dashboard/DashboardScreen').then((module) => ({
+    default: module.DashboardScreen,
+  })),
+);
+const OrdersScreen = lazy(() =>
+  import('./features/orders/OrdersScreen').then((module) => ({
+    default: module.OrdersScreen,
+  })),
+);
+const ProductsScreen = lazy(() =>
+  import('./features/products/ProductsScreen').then((module) => ({
+    default: module.ProductsScreen,
+  })),
+);
+const ReportsScreen = lazy(() =>
+  import('./features/reports/ReportsScreen').then((module) => ({
+    default: module.ReportsScreen,
+  })),
+);
+const SettingsScreen = lazy(() =>
+  import('./features/settings/SettingsScreen').then((module) => ({
+    default: module.SettingsScreen,
+  })),
+);
+const StockScreen = lazy(() =>
+  import('./features/stock/StockScreen').then((module) => ({
+    default: module.StockScreen,
+  })),
+);
 
 type AppScreen = NavigationPage | 'Settings';
 
@@ -184,6 +209,7 @@ export function App() {
               key={visited}
               mode={visited === activeScreen ? 'visible' : 'hidden'}
             >
+              <Suspense fallback={<div aria-busy="true" aria-label="Loading screen" />}>
               {visited === 'Settings' ? (
                 <SettingsScreen
                   clockFormat={terminal.clockFormat}
@@ -237,6 +263,7 @@ export function App() {
                   onSwitchStaff={requestStaffSwitch}
                 />
               )}
+              </Suspense>
             </Activity>
           ),
         )}
