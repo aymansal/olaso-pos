@@ -29,7 +29,7 @@ remaining goal and card sequence.
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
 | HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
-| HARD-06 — Signed release and upgrade | done — follow-up `pending-push`; base `87bc12f7480084b6703e16f59f317c63d32249fa` on `origin/main` |
+| HARD-06 — Signed release and upgrade | done — follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870` on `origin/main` (base `87bc12f7480084b6703e16f59f317c63d32249fa`) |
 | HARD-07 — Readiness review | in progress |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -113,16 +113,13 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-06 follow-up ready to push: shop versions `1.0`/`1.1` (versionCode 7/8),
-  About shows `Version 1.1` only, release `debuggable true` for adb WebView QA,
-  Tab A9 proved private “No update available,” public Check → Update to 1.1 →
-  PackageInstaller confirm → versionCode 8 with preserved firstInstallTime, then
-  channel private again. Install-unknown-apps required once.
-- HARD-07 is active after that push. Exact next action: readiness review
-  (secrets, overrides, quotas, indexes, permissions, dependencies, logs,
-  support) with physical-tablet evidence where applicable.
-- HARD-06 base implementation remains on `origin/main` as
-  `87bc12f7480084b6703e16f59f317c63d32249fa`.
+- HARD-06 follow-up is on `origin/main` as
+  `f1f3168c927fae74c47d4d9353e556b7f8fe4870`. Shop versions `1.0`/`1.1`
+  (versionCode 7/8), About shows `Version 1.1` only, Tab A9 proved private/public
+  update path and install-over with preserved firstInstallTime.
+- HARD-07 is active. Exact next action: readiness review (secrets, overrides,
+  quotas, indexes, permissions, dependencies, logs, support) with physical-
+  tablet evidence where applicable.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -3420,8 +3417,18 @@ remaining goal and card sequence.
   4 / 0.1.0-rc.2.
 - Physical Tab A9: signed v3 install then v4 install-over-upgrade kept
   firstInstallTime and signing digest; lastUpdateTime advanced.
-- Remaining owner ops: production keystore CI secrets, HTTPS binary host,
-  Android developer verification registration.
+- Follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870`: shop versions 1.0/1.1,
+  About without versionCode, public `olaso-pos-releases` channel with
+  private/no-update UX, Tab A9 Settings→Update 1.0→1.1 proven, Install
+  unknown apps once, release debuggable for adb WebView QA.
+- Remaining owner ops: production keystore CI secrets, Android developer
+  verification registration.
+
+### 2026-08-25 — HARD-07 readiness review started
+
+- Owner authorized push of HARD-06 follow-up then HARD-07. Exact next action:
+  secrets/overrides/unbounded reads/index/permission/privacy/deps/Android/
+  logs/support review with required checks and tablet smoke.
 
 ## Completed Goals
 
