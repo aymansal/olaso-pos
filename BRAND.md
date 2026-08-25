@@ -78,6 +78,22 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
   supplied white-on-sage master for the logo lockup and request the original
   designer's vector/transparent masters.
 
+### Derived Android launcher artwork
+
+- File: `android/app/src/main/res/drawable/olaso_launcher_foreground.xml`
+  reproduces the five exact visible paths from the previously approved
+  receipt-laboratory tracing of the supplied OLASO wordmark.
+- The launcher keeps the complete, uncropped white wordmark on the supplied
+  digital Olaso Sage `#909F78`, centered within Android's adaptive-icon safe
+  area.
+- The native Android splash uses plain Cream Surface only
+  (`olaso_launch_blank`). The one green OLASO wordmark for startup is the
+  approved transparent Operational Green PNG on the web/React cream surface,
+  not a second native logo.
+- Status: application-specific reproductions of already approved artwork, not
+  an official designer-provided compact icon or replacement logo master. A
+  future separately approved compact mark can replace the launcher safely.
+
 ### Lock-screen background asset
 
 - File: [`assets/brand/olaso-lock-drink-note.jpg`](assets/brand/olaso-lock-drink-note.jpg)
@@ -118,8 +134,10 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
   wordmark. Motion is optional, reduced-motion remains static, and the delivery
   format is chosen only after real APK/decode/startup measurement; GIF is not a
   default merely because it loops.
-- The launcher icon needs an approved compact composition derived from real
-  brand artwork. The wide startup wordmark must not be cropped into a square.
+- Until a separately approved compact icon is supplied, the launcher uses the
+  entire real white-on-sage master composition, scaled proportionally inside
+  Android's adaptive safe zone. Never crop the wordmark into a square or claim
+  this application derivative is the missing official compact icon master.
 
 ### Provisional category artwork direction
 
@@ -225,9 +243,10 @@ This section defines invariants only; screen layout and components belong in the
 
 - The POS is a staff tool first: speed, legibility, mistake prevention, and touch comfort outrank decorative branding.
 - Brand presence should come from sage surfaces, the real wordmark, warm neutral space, confident typography, and small human touches—not café-themed ornament.
-- The cream Android startup surface may use the documented transparent
-  Operational Green wordmark derivative; preserve its proportions and do not
-  type, mirror, stretch, outline, or decorate it.
+- The cream web/React startup surface uses the documented transparent
+  Operational Green wordmark derivative plus bouncing dots after Android's
+  plain-cream native splash; preserve proportions and do not type, mirror,
+  stretch, outline, or decorate the mark, or restore `Starting Olaso…`.
 - Product photography may help recognition, but must never slow down ordering or make prices hard to scan.
 - Operational messages should stay direct: “Order sent,” “Payment failed,” “Item unavailable.”
 - Use brand playfulness at low-risk moments such as the welcome screen or empty states, not during payment, refunds, or error recovery.

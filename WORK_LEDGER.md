@@ -25,7 +25,8 @@ remaining goal and card sequence.
 | DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
 | HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
 | NAV-01 — Retained smooth navigation | done — `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix physically verified |
-| HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
+| HARD-02 — Branded Android launch and approved-artwork app icon | done — pending SHA after push |
+| HARD-03 through HARD-07 — Startup, performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
@@ -108,6 +109,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- HARD-02 is physically verified on Galaxy Tab A9 SM-X115. Approved sequence
+  works: plain cream native splash, then one green web OLASO with bouncing
+  dots, then Lock. No `Starting Olaso…`, no duplicate logo, no white frame,
+  no Chromium tile-memory / Capacitor / AndroidRuntime / console errors.
+  Launcher remains full white-on-sage. Exact viewport 1340 × 800. Five-run
+  lock-ready medians: cold 1,911 ms (budget ≤ 2,000), warm 574 ms (budget ≤
+  1,000). Splash handoff uses SplashScreen exit overlay + Capacitor
+  `onPageCommitVisible`. Exact next action: Graphify refresh, commit/push to
+  `origin/main`, record the full SHA, leave owner POS ready, stop before
+  HARD-03.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1217,6 +1228,64 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-02 physical launch continuity verified
+
+- Installed current beta on SM-X115. Cold-launch contact sheet shows cream
+  native splash, then one green OLASO with three dots, then Lock. App drawer
+  shows the full white-on-sage launcher. Focused logs had zero tile-memory,
+  Capacitor, AndroidRuntime, chromium error, or `Starting Olaso…` hits.
+- Five cold / five warm lock-ready runs: cold median Android/lock
+  1,093/1,911 ms; warm 244/574 ms. All viewports 1340 × 800. Budgets pass.
+- Docs updated for cream-native splash, web wordmark+dots, and
+  `onPageCommitVisible` handoff. Exact next action: push and record SHA.
+
+### 2026-08-25 — HARD-02 resumes on unverified onPageCommitVisible handoff
+
+- Owner-approved design is one green web OLASO plus bouncing dots after a
+  plain cream native splash; no duplicate logo and no “Starting Olaso…”.
+- Earlier `postVisualStateCallback` path caused Chromium tile-memory warnings
+  on the Galaxy Tab A9. Current code uses SplashScreen exit-overlay retention
+  plus Capacitor `onPageCommitVisible` / page-failure release. Final APK
+  build/test after that change was interrupted and is not yet proven.
+- Exact next action: build/install and physical cold-launch recording proof.
+
+### 2026-08-25 — HARD-02 recording exposed early WebView splash dismissal
+
+- The first implementation passes its 140-task Android beta and is installed.
+  Samsung's app drawer shows the genuine complete white-on-sage OLASO icon;
+  cold-launch recording shows the genuine green logo on the cream surface.
+- The original physical recording nevertheless exposes two intermediate
+  cream-only frames after Android dismisses the splash and before HTML paints.
+  Android explicitly documents that page-finished alone is insufficient;
+  `postVisualStateCallback` is the exact HTML/image/CSS first-frame guarantee.
+- Existing Capacitor `WebViewListener.onPageLoaded` provides the correct native
+  callback without replacing the existing bridge client. Keep the system
+  splash only until the actual page visual state is ready, releasing failures
+  immediately; no fixed delay or additional dependency.
+- Mandatory bug gate: root-fix and prove the exact recorded launch before
+  proceeding with HARD-02 acceptance. Later physical runs of that callback
+  produced Chromium tile-memory warnings, so the handoff was revised again.
+
+### 2026-08-25 — HARD-02 activated after official Android launch research
+
+- The owner explicitly authorized only HARD-02. Re-read the full applicable
+  root/Android/source/data instruction chains, canonical plan, active ledger,
+  goal contract, and approved brand/startup authorities; Graphify was queried
+  before inspecting code, and `main` is clean and matches `origin/main`.
+- Android requires one static opaque system launch surface, an actual vector
+  drawable inside the splash/adaptive mask, a post-splash theme, and the
+  centered 66 × 66 adaptive safe area. The existing app already depends on
+  `androidx.core:core-splashscreen:1.2.0`; Capacitor does not require its
+  separate optional splash plugin for the Android system's launch behavior.
+- Keep native launch/icon/window/WebView appearance in Android; retain SQLite
+  and lock readiness in their existing React/data owners. Reuse exact traced
+  owner-supplied artwork, original white-on-sage launcher branding, and the
+  approved green-on-cream launch wordmark. Add no plugin, second activity,
+  animation format, artificial delay, crop, stretch, or speculative icon.
+- Exact next action: implement HARD-02 alone and verify true cold/warm
+  launches, the real launcher icon, startup continuity, the exact viewport,
+  protected lock/POS access, focused regressions, and clean physical logs.
 
 ### 2026-08-25 — NAV-01 category-image correction pushed to main
 

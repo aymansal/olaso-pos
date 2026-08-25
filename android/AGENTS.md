@@ -32,6 +32,15 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   association alone as online.
 - Keep web application behavior in `src/`; native code is only for required
   platform integration.
+- Startup uses the already-installed AndroidX system SplashScreen with a plain
+  cream splash drawable, cream post-launch/window/WebView surface, and no
+  native logo. The adaptive and Android-24 fallback launcher preserve the
+  original full white-on-sage OLASO composition inside Android's safe zone.
+  Keep all five traced glyph paths unchanged. MainActivity retains the
+  SplashScreen exit overlay until Capacitor's existing
+  `WebViewListener.onPageCommitVisible` or a real page failure releases it;
+  do not restore `postVisualStateCallback`, add a timer, splash plugin,
+  Activity, crop the launcher mark, or show default Capacitor artwork.
 - Keep the POS activity in sensor-aware landscape and immersive fullscreen;
   system bars may appear transiently after an edge swipe.
 - `OlasoWebView` enables Android wide-viewport and overview mode before the

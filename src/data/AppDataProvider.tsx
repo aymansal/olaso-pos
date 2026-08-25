@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { openLocalDatabase } from './localDatabase';
 import { useConnectionStatus } from './connectionContext.tsx';
+import olasoLogo from '../../assets/brand/olaso-wordmark-operational-green-transparent.png';
+import { StartupDots } from '../components/StartupDots/StartupDots';
 import styles from './AppDataProvider.module.css';
 
 function createConvexClient() {
@@ -51,19 +53,15 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     return (
       <main
         className={styles.startup}
+        data-olaso-startup="database"
         aria-live="polite"
         role={localState === 'error' ? 'alert' : 'status'}
       >
-        <strong>
-          {localState === 'error'
-            ? 'Local data unavailable'
-            : 'Starting Olaso…'}
-        </strong>
-        <span>
-          {localState === 'error'
-            ? 'Restart the app before taking orders.'
-            : 'Preparing the offline workspace.'}
-        </span>
+        <img className={styles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
+        {localState === 'error' ? <strong>Local data unavailable</strong> : <StartupDots />}
+        {localState === 'error' && (
+          <span>Restart the app before taking orders.</span>
+        )}
       </main>
     );
   }

@@ -93,8 +93,8 @@ evidence. Every implementation card receives real physical-tablet testing.
   physically verified; the café router administrator owns reserving/excluding
   the final configurable static address.
 - The transparent Operational Green startup wordmark is preserved at
-  assets/brand/olaso-wordmark-operational-green-transparent.png. It is not yet
-  connected to the Android launch screen.
+  assets/brand/olaso-wordmark-operational-green-transparent.png and is now the
+  one web/React cream-startup mark used after Android's plain-cream splash.
 
 ## Goal roadmap
 
@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 done, HARD-02 pending | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; HARD-02 verified, pending push | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -220,12 +220,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-NAV-01 and its owner-reported category-image correction are complete and pushed
-directly to `origin/main` as
-`4890e9f6055cbb1b52a2ab1402576bf4f14adf05`. The installed
-140-task Android beta preserves all nine original Coffee image elements through
-five online Coffee → Bakery → Reports → POS → Coffee cycles and the same
-offline cycle with zero image reconstruction. Focused checks, exact 1340 × 800
-viewport, product touch, clean app logs, and Graphify pass. Stop with no card
-in progress; when the owner requests the next card, activate only HARD-02 for
-the approved branded Android launch and app icon.
+HARD-02 physical verification is complete on the Galaxy Tab A9. Record the
+pushed SHA, mark HARD-02 done, and stop. Activate HARD-03 only when the owner
+asks.

@@ -34,8 +34,11 @@ tablet's local SQLite operational record.
   foreground visibility, and resume recheck; it does not synchronize
   application data.
 - `AppDataProvider.tsx` owns the local-database readiness gate and Convex client
-  lifetime. An immediate browser offline hint may close transport early, while
-  Android validated state remains authoritative for application behavior.
+  lifetime. Its cream surface with one green wordmark and bouncing dots matches
+  Android's plain-cream native splash and the static pre-React document without
+  delaying readiness. Normal loading never shows `Starting Olaso…`.
+  An immediate browser offline hint may close transport early, while Android
+  validated state remains authoritative for application behavior.
 - `reconnectContext.tsx` owns the authenticated single-flight outbox worker,
   cache refresh gate, and visible-hook completion revision.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail and

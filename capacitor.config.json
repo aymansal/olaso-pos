@@ -2,6 +2,7 @@
   "appId": "com.olaso.pos",
   "appName": "Olaso POS",
   "webDir": "dist",
+  "backgroundColor": "#F8F7EA",
   "loggingBehavior": "none",
   "plugins": {
     "SystemBars": {

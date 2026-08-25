@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; NAV-01 done, HARD-02 pending
+**Status:** active; HARD-02 verified, pending push closeout
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -161,7 +161,7 @@ that polished product.
 | DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | done | `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main`; official Android research, schema-19 migration, immutable history, local/cloud deletion, stale-copy and ordering root fixes, owner/cashier security, full regression/build, physical flight-mode/restart/exact-once reconnect, 1340 × 800 screens, clean logs, and Graphify pass |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | done | `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main`; official research, five physical cold/warm runs, 30 navigation samples, offline/history proof, native lifecycle root fix, full regression/build, clean tablet logs, and Graphify pass |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | done | `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix, installed 140-task beta, exact original physical online/offline sequence, five zero-rebuild repeats, focused regressions, clean logs, and Graphify pass |
-| HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
+| HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | done | Physical Galaxy Tab A9 proof: cream native splash, one green web OLASO + dots, white-on-sage launcher, no tile-memory errors, lock-ready medians cold 1911 ms / warm 574 ms |
 | HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | pending | Pre-bridge event error fixed early under mandatory bug rule; full startup orchestration/matrix remains |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
@@ -659,6 +659,13 @@ owner verification; every authorized screen remained usable without internet.
 
 ## Current checkpoint
 
+- HARD-02 is verified on the physical Galaxy Tab A9 SM-X115. Native launch is
+  plain cream; one green web OLASO plus bouncing dots follows; launcher remains
+  the accepted full white-on-sage mark. SplashScreen exit overlay releases on
+  Capacitor `onPageCommitVisible` or page failure. No Chromium tile-memory,
+  Capacitor, AndroidRuntime, or console errors. Five-run lock-ready medians:
+  cold 1,911 ms and warm 574 ms at exact 1340 × 800. Exact next action: commit
+  and push HARD-02 to `origin/main`, record the SHA, then stop before HARD-03.
 - NAV-01's verified category-image root fix is committed and pushed directly
   to `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   No card is in progress. Exact next action: stop and keep HARD-02 pending
@@ -773,6 +780,32 @@ owner verification; every authorized screen remained usable without internet.
   HARD-02 alone.
 
 ## Planning journal
+
+### 2026-08-25 — HARD-02 physical recording found pre-paint logo dropout
+
+- Initial 140-task beta builds and installs; the actual launcher shows the
+  approved full white-on-sage logo, and Android's cold-launch first frame
+  shows its exact green OLASO vector on the correct cream surface.
+- Recorded frames still expose the native splash dismissing before WebView
+  paint. Android documents `postVisualStateCallback` as the required DOM,
+  image, and CSS visual-readiness guarantee; the current Capacitor bridge
+  exposes a compatible page-loaded listener without new dependencies.
+- Root-fix this physical bug before running final HARD-02 launch measurements.
+
+### 2026-08-25 — HARD-02 activated with official native launch/icon research
+
+- Owner approved starting HARD-02 only. Android officially requires the
+  platform/compat splash theme, explicit post-launch theme, single-color
+  background, vector splash icon, and centered 66 × 66 adaptive-icon safe
+  region; Capacitor confirms Android's existing native splash support.
+- Existing exact black logo tracing, approved transparent green wordmark,
+  original supplied white-on-sage composition, and already-installed AndroidX
+  compatibility dependency are sufficient. No logo recreation, crop, extra
+  package/activity, artificial timing, GIF, video, or unapproved animation.
+- Keep native artwork/theme/window/WebView in Android and real readiness in
+  React/data. Require physical launcher-icon review, five cold/warm launches,
+  exact 1340 × 800 lock/POS, saved history, clean logs, and direct-main push.
+- Exact next action: implement and physically verify HARD-02 alone.
 
 ### 2026-08-25 — NAV-01 category correction pushed directly to main
 

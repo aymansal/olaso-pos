@@ -409,6 +409,22 @@ physical Galaxy Tab A9 proof are recorded before completion. Native code is
 required when Android owns the behavior; it is not added when an existing
 Capacitor plugin already exposes the correct native facility.
 
+Android startup uses the already-installed AndroidX system SplashScreen with a
+plain Cream Surface launch theme, post-launch theme, system bars, native
+layout, and Capacitor WebView background. The native splash icon is a cream
+blank drawable so Android never shows a second logo. The adaptive launcher and
+API-24 fallback retain the full owner-provided white-on-sage composition in
+the 66 by 66 safe region of Android's 108 by 108 icon canvas. The built HTML
+then shows one green startup wordmark plus three bouncing dots before React
+executes; the existing SQLite and terminal-lock gates reuse that same reserved
+artwork while genuine local readiness continues. MainActivity keeps the
+SplashScreen exit overlay until Capacitor's existing
+`WebViewListener.onPageCommitVisible` fires, or until a genuine page failure,
+then removes it. An earlier `postVisualStateCallback` path produced Chromium
+tile-memory warnings on the Galaxy Tab A9 and was rejected. No splash plugin,
+extra Activity, timer, GIF, video, network gate, replacement WebView client, or
+recreated logo is used.
+
 LOCAL-01 follows Android's offline-first local-source-of-truth and lazy-write
 model. `@capacitor-community/sqlite` is the one native Android SQLite boundary;
 the React data layer uses its explicit transaction API to save the domain change,

@@ -22,10 +22,45 @@ const bridgeLayout = readFileSync(
   'android/app/src/main/res/layout/capacitor_bridge_layout_main.xml',
   'utf8',
 );
+const launchTheme = readFileSync(
+  'android/app/src/main/res/values/styles.xml',
+  'utf8',
+);
+const launchColors = readFileSync(
+  'android/app/src/main/res/values/ic_launcher_background.xml',
+  'utf8',
+);
+const launchWordmark = readFileSync(
+  'android/app/src/main/res/drawable/olaso_launch_blank.xml',
+  'utf8',
+);
+const launcherWordmark = readFileSync(
+  'android/app/src/main/res/drawable/olaso_launcher_foreground.xml',
+  'utf8',
+);
+const adaptiveLauncher = readFileSync(
+  'android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml',
+  'utf8',
+);
+const adaptiveRoundLauncher = readFileSync(
+  'android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml',
+  'utf8',
+);
+const legacyLauncher = readFileSync(
+  'android/app/src/main/res/mipmap-anydpi-v24/ic_launcher.xml',
+  'utf8',
+);
+const exactBrandTrace = readFileSync(
+  'tools/wd8260-receipt-lab/assets/olaso-wordmark-black.svg',
+  'utf8',
+);
+const startupProvider = readFileSync('src/data/AppDataProvider.tsx', 'utf8');
+const application = readFileSync('src/App.tsx', 'utf8');
 const index = readFileSync('index.html', 'utf8');
 const main = readFileSync('src/main.tsx', 'utf8');
 
 assert.equal(capacitor.appId, 'com.olaso.pos');
+assert.equal(capacitor.backgroundColor, '#F8F7EA');
 assert.equal(capacitor.plugins.SystemBars.insetsHandling, 'disable');
 assert.match(appBuild, /namespace = "com\.olaso\.pos"/);
 assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
@@ -43,7 +78,54 @@ assert.match(
 assert.match(index, /content="width=1340,/);
 assert.match(index, /user-scalable=no/);
 assert.doesNotMatch(index, /initial-scale/);
+assert.match(index, /class="olaso-startup"/);
+assert.match(index, /data-olaso-startup="document"/);
+assert.match(index, /olaso-wordmark-operational-green-transparent\.png/);
+assert.match(index, /olaso_startup_first/);
+assert.doesNotMatch(index, /Starting Olaso…/);
 assert.doesNotMatch(main, /Capacitor|zoom|innerWidth|outerWidth|screen\.width/);
+assert.match(launchColors, /name="ic_launcher_background">#909F78/);
+assert.match(launchColors, /name="olaso_cream">#F8F7EA/);
+assert.match(launchColors, /name="olaso_operational_green">#006A2B/);
+assert.match(launchTheme, /parent="Theme\.SplashScreen"/);
+assert.match(launchTheme, /name="windowSplashScreenBackground">@color\/olaso_cream/);
+assert.match(
+  launchTheme,
+  /name="windowSplashScreenAnimatedIcon">@drawable\/olaso_launch_blank/,
+);
+assert.match(launchTheme, /name="postSplashScreenTheme">@style\/AppTheme\.NoActionBar/);
+assert.doesNotMatch(launchTheme, /@drawable\/splash/);
+assert.match(bridgeLayout, /android:background="@color\/olaso_cream"/);
+for (const launcher of [adaptiveLauncher, adaptiveRoundLauncher, legacyLauncher]) {
+  assert.match(launcher, /@color\/ic_launcher_background/);
+  assert.match(launcher, /@drawable\/olaso_launcher_foreground/);
+}
+const sourceBrandPaths = [...exactBrandTrace.matchAll(/<path\b([^>]*)\/?\s*>/g)]
+  .filter((match) => match[1].match(/opacity="([^"]+)"/)?.[1] === '1')
+  .map((match) => match[1].match(/\bd="([^"]+)"/)?.[1].trim());
+assert.equal(sourceBrandPaths.length, 5);
+assert.match(launchWordmark, /<solid android:color="@color\/olaso_cream"/);
+for (const drawable of [launcherWordmark]) {
+  assert.match(drawable, /android:viewportWidth="2087"/);
+  assert.match(drawable, /android:viewportHeight="2087"/);
+  assert.match(drawable, /android:scaleX="0\.61"/);
+  assert.match(drawable, /android:scaleY="0\.61"/);
+  assert.deepEqual(
+    [...drawable.matchAll(/android:pathData="([^"]+)"/g)].map((match) => match[1]),
+    sourceBrandPaths,
+  );
+}
+assert.match(launcherWordmark, /android:fillColor="#FFFFFF"/);
+assert.match(startupProvider, /<img className=\{styles\.logo\} src=\{olasoLogo\}/);
+assert.match(startupProvider, /data-olaso-startup="database"/);
+assert.match(startupProvider, /<StartupDots \/>/);
+assert.match(application, /<img className=\{startupStyles\.logo\} src=\{olasoLogo\}/);
+assert.match(application, /data-olaso-startup="access"/);
+assert.match(application, /<StartupDots \/>/);
+assert.match(
+  application,
+  /aria-label="Terminal recovery" role="alert">[\s\S]*?<img className=\{startupStyles\.logo\}/,
+);
 assert.match(webView, /extends CapacitorWebView/);
 assert.match(webView, /setUseWideViewPort\(true\)/);
 assert.match(webView, /setLoadWithOverviewMode\(true\)/);
@@ -75,6 +157,19 @@ const nativeLogo = readFileSync(
   'android/app/src/main/res/raw/olaso_nv_logo.bin',
 );
 assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
+assert.match(activity, /SplashScreen\.installSplashScreen\(this\)[\s\S]*?super\.onCreate/);
+assert.match(activity, /setOnExitAnimationListener\(splash ->/);
+assert.match(activity, /launchSplash = splash/);
+assert.match(activity, /launchSplash\.remove\(\)/);
+assert.doesNotMatch(activity, /setKeepOnScreenCondition/);
+assert.match(
+  activity,
+  /addWebViewListener\(new WebViewListener\(\)[\s\S]*?onPageCommitVisible\(WebView webView, String url\)[\s\S]*?finishLaunch\(\)/,
+);
+assert.doesNotMatch(activity, /postVisualStateCallback/);
+assert.match(activity, /onReceivedError\(WebView webView\)[\s\S]*?finishLaunch\(\)/);
+assert.match(activity, /onReceivedHttpError\(WebView webView\)[\s\S]*?finishLaunch\(\)/);
+assert.doesNotMatch(activity, /postDelayed|Thread\.sleep|setTimeout/);
 assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
 assert.match(activity, /onConfigurationChanged/);
 assert.match(activity, /getBridge\(\)\.getWebView\(\)\.invalidate\(\)/);

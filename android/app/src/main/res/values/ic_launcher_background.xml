@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="ic_launcher_background">#909F78</color>
+    <color name="olaso_cream">#F8F7EA</color>
+    <color name="olaso_operational_green">#006A2B</color>
 </resources>

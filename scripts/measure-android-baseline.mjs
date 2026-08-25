@@ -131,9 +131,8 @@ const installObserver = `(()=>{
   const record=window.__olasoBaseline={attachedAt:performance.now(),stages:[],calls:[],imagesAdded:0,imagesRemoved:0,longTasks:[]};
   const mark=name=>{if(!record.stages.some(stage=>stage.name===name))record.stages.push({name,at:Math.round(performance.now())})};
   const inspect=()=>{
-    const text=document.body?.innerText??'';
-    if(text.includes('Preparing the offline workspace'))mark('sqlite-opening');
-    if(text.includes('Checking terminal access'))mark('sqlite-ready');
+    if(visible('[data-olaso-startup="database"]'))mark('sqlite-opening');
+    if(visible('[data-olaso-startup="access"]'))mark('sqlite-ready');
     if(visible('input[type="password"]'))mark('lock-screen');
     if(visible('select')?.options.length)mark('lock-profiles-ready');
     if(visible('main[aria-label="Olaso point of sale"]')){

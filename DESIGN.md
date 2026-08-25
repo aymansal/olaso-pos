@@ -293,24 +293,21 @@ All primary touch targets are at least 44 by 44 pixels. Maintain at least 8 pixe
   mark, device shell, or unrelated loading card may appear between them.
 - Use approved Olaso artwork at its original proportions. Never type or
   reconstruct the wordmark for startup.
-- On the Cream Surface, use the verified transparent Operational Green asset at
-  `assets/brand/olaso-wordmark-operational-green-transparent.png`. Keep the
-  official white-on-sage square master for sage or dark brand placements; white
-  artwork is not visible enough on the cream launch surface.
-- A short `Starting Olaso…` status may appear while SQLite and the local lock
-  state initialize. It uses the operational type system, remains calm, and does
-  not imply that internet access is required.
+- The native Android splash is plain Cream Surface only. The one green OLASO
+  wordmark appears afterward in HTML/React using
+  `assets/brand/olaso-wordmark-operational-green-transparent.png`, with three
+  bouncing Operational Green dots beneath it. Do not show a native green logo,
+  a duplicate mark, or `Starting Olaso…` during normal loading. Real
+  error/recovery states may still show useful failure text.
+- Keep the official white-on-sage square master for sage or dark brand
+  placements; white artwork is not visible enough on the cream launch surface.
 - Startup artwork reserves its final size and stays visually stable while the
-  native-to-web transition completes. Do not hold the splash screen longer to
-  disguise slow initialization.
-- The immediate native frame is static. A single brief owner-approved light or
-  line reveal may continue in the web startup state only if measurements show
-  no startup regression; it animates transform/opacity, remains interruptible,
-  and is removed under `prefers-reduced-motion`.
-- Do not lock the animation to GIF, video, or another format before checking
-  APK size, decode cost, frame quality, and timing on the physical tablet.
-- The Android app icon requires a separately approved compact asset. Never crop
-  or squeeze the wide launch wordmark into the launcher-icon mask.
+  cream native-to-web handoff completes. Do not hold the splash screen longer
+  to disguise slow initialization, and do not add GIF, video, or a new package.
+- Until a separate approved compact icon arrives, the Android launcher keeps
+  the complete original white-on-sage OLASO artwork proportionally centered in
+  the adaptive-icon safe zone. It is an honest application derivative, not an
+  official compact master. Never crop or squeeze the wordmark into the mask.
 - If startup cannot safely expose the application, show the actionable startup
   failure state on the same cream surface rather than a blank viewport.
 

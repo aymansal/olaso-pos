@@ -22,6 +22,8 @@ import { StaffSessionProvider } from './data/sessionContext';
 import { ReconnectProvider } from './data/reconnectContext';
 import type { StaffSession } from './data/identitySession';
 import { hasPermission, type Permission } from './data/permissions';
+import olasoLogo from '../assets/brand/olaso-wordmark-operational-green-transparent.png';
+import { StartupDots } from './components/StartupDots/StartupDots';
 import startupStyles from './data/AppDataProvider.module.css';
 
 type AppScreen = NavigationPage | 'Settings';
@@ -115,12 +117,13 @@ export function App() {
     return (
       <main
         className={startupStyles.startup}
+        data-olaso-startup="access"
         aria-label="Loading Olaso"
         aria-busy="true"
         role="status"
       >
-        <strong>Starting Olaso…</strong>
-        <span>Checking terminal access.</span>
+        <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
+        <StartupDots />
       </main>
     );
   }
@@ -135,9 +138,10 @@ export function App() {
 
   if (startupError || !terminal) {
     return (
-      <main aria-label="Terminal recovery" role="alert">
-        <h1>Terminal locked</h1>
-        <p>{startupError ?? 'Terminal settings are unavailable. POS remains locked.'}</p>
+      <main className={startupStyles.startup} aria-label="Terminal recovery" role="alert">
+        <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
+        <strong>Terminal locked</strong>
+        <span>{startupError ?? 'Terminal settings are unavailable. POS remains locked.'}</span>
         <button type="button" onClick={() => void restoreTerminal()}>Retry terminal check</button>
       </main>
     );

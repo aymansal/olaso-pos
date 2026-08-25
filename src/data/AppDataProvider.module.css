@@ -1,14 +1,24 @@
-.startup {
+.startup,
+:global(.olaso-startup) {
   display: grid;
   min-height: 100vh;
   place-content: center;
-  gap: 8px;
-  color: var(--olaso-text);
+  justify-items: center;
+  gap: 18px;
+  color: var(--olaso-green);
   text-align: center;
   background: var(--olaso-canvas);
 }
 
-.startup strong {
+.logo,
+:global(.olaso-startup-logo) {
+  display: block;
+  width: 320px;
+  height: auto;
+}
+
+.startup strong,
+:global(.olaso-startup) strong {
   font-size: 18px;
 }
 
