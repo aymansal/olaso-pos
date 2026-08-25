@@ -87,11 +87,15 @@ The manager can do everything a cashier can do, plus:
 - Record one-time and recurring operating expenses.
 
 Archive keeps a record available for deliberate restoration; it is not a
-substitute for deletion everywhere. Managers and owners can permanently delete
-products, empty categories, unused modifier groups, and never-used ingredients.
-Archived records stay out of normal lists. Staff identities and completed
-sale, stock, purchase, expense, compensation, and correction history are never
-hard-deleted because the café's audit and financial reports depend on them.
+substitute for deleting live management records. Managers and owners can
+permanently delete products, categories, and ingredients. Deleting a category
+leaves its products uncategorized instead of requiring manual reassignment
+first. Deleting an ingredient removes its live recipe and choice links and
+identifies affected products for repair; it does not rewrite historical costs.
+The owner may remove staff profiles without losing saved staff names, roles, or
+sale history and can never remove the last owner. Archived records stay out of
+normal lists. Completed sales and stock, purchase, expense, compensation, and
+correction history remain immutable because reports depend on them.
 
 ### Owner
 
@@ -275,7 +279,8 @@ top-level groups:
 4. **Bakery & Savoury** — croissants, filled croissants, brioche, and savoury
    food.
 
-The owner can later rename, reorder, hide, add, or archive categories.
+The owner can later rename, reorder, hide, add, archive, or delete categories.
+Deleting a category never deletes its products; they become uncategorized.
 
 ### Product availability
 
@@ -286,12 +291,13 @@ A product may be:
 - Low stock.
 - Archived.
 
-Archiving is preferred to deletion because historical sales must keep their
-product references.
+Archiving is optional when the owner wants restoration. Permanent product
+deletion is also available because completed sales retain independent product,
+price, size, choice, recipe, and ingredient-cost snapshots.
 
 ### Sizes, options, and extras
 
-The supplied menu includes reusable modifiers such as:
+The supplied menu may include familiar choices such as:
 
 - Standard and plus sizes.
 - Whole, lactose-free, oat, coconut, almond, and other vegetal milks.
@@ -299,13 +305,23 @@ The supplied menu includes reusable modifiers such as:
 - Espresso shots, cold foam, ceremonial matcha, protein, honey, and cream.
 - Soft ice cream or Magnum additions for relevant bakery products.
 
-The owner must be able to set:
+Each product owns at least one size, each with an owner-chosen name, selling
+price, availability, and exact ingredient recipe. A single size does not create
+an unnecessary cashier selection. Multiple sizes can have completely different
+ingredient quantities and prices.
 
-- Which modifier groups apply to a product.
-- Whether a choice is required.
-- Minimum and maximum selections.
-- The price change caused by each option.
-- Whether an option changes ingredient consumption.
+The owner can create any number of product-owned choice sections with any
+useful name; there are no required global groups and no permanent four-option
+Size/Milk/Syrup/Extras template. Each choice can define required or optional
+selection, one or multiple values, defaults, minimum/maximum limits, size
+applicability, and price adjustments. A value may add an ingredient, replace
+one ingredient with another, set an exact quantity, remove an ingredient,
+change several ingredients together, or remain an instruction with no stock
+effect.
+
+`Copy choices from another product` is required. Copied choices remain
+independent: editing the destination product never edits the source product,
+while both still use the same actual stock ingredients.
 
 ## Recipes and fiche technique
 
@@ -326,13 +342,20 @@ to previous sales.
 
 ### Product ingredient cost
 
-- The current ingredient cost of a product is the sum of its recipe quantities
-  multiplied by the current weighted-average cost of each ingredient.
-- Product management shows selling price, ingredient cost, gross profit, and
-  gross-margin percentage.
-- Modifier ingredient effects contribute to the same calculation.
-- Cups, lids, packaging, and other directly consumed items can be ordinary
-  piece-based ingredients in a recipe.
+- The ingredient cost of a selected size and choices is the sum of its final
+  resolved ingredient quantities multiplied by current weighted-average costs.
+- Different valid sizes or choices can have different costs. Product management
+  may show a concise ingredient-cost range or an incomplete state, but never a
+  misleading single default cost or a detailed gross-profit/margin preview
+  inside Edit Product. The placement of deeper comparisons remains undecided.
+- Choice additions, replacements, exact quantities, and removals contribute to
+  the same exact calculation and stock deduction.
+- Product recipes contain drink or food ingredients only. Cups, lids, straws,
+  containers, and customer-facing packaging are excluded from product recipes,
+  ingredient cost, and per-sale stock deduction.
+- A house-made syrup is one ordinary ingredient whose total quantity and total
+  cost are entered directly. Nested ingredient recipes, production batches,
+  and manufacturing workflows are out of scope.
 - If any required ingredient lacks a usable cost, the product cost is marked
   incomplete and no complete margin is claimed.
 - Rent, compensation, utilities, and other overhead are not arbitrarily divided
@@ -364,8 +387,9 @@ The Costs report shows both but never adds both into the same profit subtotal.
 ### Exact deduction
 
 Completing a sale deducts the exact quantities defined by the active recipe.
-Examples include millilitres of milk, grams of matcha, grams of coffee, syrup
-quantities, packaging, or whole pieces.
+Examples include millilitres of the actually selected milk, grams of matcha,
+grams of coffee, syrup quantities, or whole food ingredients. Disposable cups,
+lids, and other customer-facing packaging are excluded.
 
 ### No theoretical waste model
 
@@ -445,7 +469,8 @@ The planned reports include:
 - Sales by service mode and payment method.
 - Ingredient consumption based on recipes.
 - Ingredient cost consumed and gross profit.
-- Current product ingredient cost, gross profit, and gross-margin percentage.
+- Current product ingredient-cost ranges and actual completed-sale gross profit;
+  any detailed product comparison location remains an owner decision.
 - Current stock and low-stock items.
 - Inventory purchases and current inventory value.
 - Stock additions, deductions, and manual adjustments.
@@ -869,12 +894,17 @@ The first production release is done when:
   synchronizes exactly once after reconnection with the same role checks and
   audit identity.
 - Every valid completed sale is recorded exactly once.
-- Stock deductions match the active recipe version.
+- Stock deductions match the actual selected size, independent product choices,
+  and immutable resolved ingredient recipe.
+- Managers can define arbitrary product-owned choices and independently copy
+  them from another product without changing the source product.
+- Product costing uses actual food/drink ingredients only; disposable packaging
+  and nested ingredient-manufacturing workflows are excluded.
 - Received stock preserves purchase cost and inventory valuation history.
 - Product and sale costs use checked recipe and weighted-average cost samples.
 - Monthly profitability separates purchases, inventory, ingredient cost,
   compensation, and other expenses without double counting.
-- The owner can edit menu and recipe data without code changes.
+- The owner can edit menu, sizes, choices, and recipe data without code changes.
 - Returning to any previously visited authorized screen restores its content,
   selection, filters, and scroll position without visible image reload or a
   repeated full-page loading state.

@@ -217,7 +217,8 @@ tablet-first rule as checkout:
 5. Update the ordinary screen and POS/menu/stock views immediately.
 6. Synchronize the committed operation later in dependency order.
 
-This covers categories, products, modifiers, recipe versions, ingredients,
+This covers categories, products, product-owned sizes and choices, exact
+size/choice recipe versions, ingredients,
 low-stock thresholds, inventory purchases and adjustments, operating expenses,
 compensation periods, staff profiles, and protected initial PIN setup. Archive
 and correction history remains append-only where the domain requires it.
@@ -411,23 +412,45 @@ must remain separate.
 
 ### `products`
 
-- Category reference.
+- Optional category reference; deleting a category leaves its products
+  uncategorized.
 - Name and receipt name.
-- Base price in integer centimes.
+- Backward-compatible base price in integer centimes until owned sizes are the
+  verified price source.
 - Active, unavailable, or archived state.
 - Image asset key.
 - Sort order.
-- Current recipe version reference.
+- Backward-compatible current recipe version reference until owned size recipes
+  are verified for every checkout, pending operation, and historical sale.
 - Revision/update metadata.
 
-### `modifierGroups` and `modifierOptions`
+### Product-owned sizes, choices, and ingredient effects
 
-- Product applicability.
-- Required/optional rules.
-- Selection limits.
-- Price change in integer centimes.
-- Ingredient effects when applicable.
-- Active or archived state.
+The existing beta uses shared `modifierGroups`/`modifierOptions` and a current
+product recipe. OPTIONS-01 through OPTIONS-04 replace that behavior safely with
+independent configuration owned by each product; legacy rows remain readable
+until migration, pending operations, checkout, receipts, and reporting are
+proved compatible.
+
+- Each product owns at least one size with a stable local/cloud mapping, name,
+  integer-centime price, availability, and exact size-specific recipe version.
+- Each product owns independent choice sections with names, display order,
+  required/default rules, selection limits, and size applicability.
+- Each selectable value owns its name, optional size-specific price changes,
+  allowed sizes, and zero or more explicit ingredient effects: add, replace,
+  set exact quantity, remove, or no stock change.
+- Copying another product's choices creates independent section/value/effect
+  records while preserving links to the same underlying stock ingredients.
+- Unknown size mappings require explicit resolution; copied choices never
+  silently assume incompatible quantities or alter the source product.
+- One small shared deterministic domain calculation resolves the selected
+  size, valid choices, integer price, final nonnegative base-unit ingredient
+  quantities, valuation, and cost completeness. SQLite checkout, cloud trust
+  validation, and reporting consume the same saved result.
+- Every schema change remains additive until existing records, queued writes,
+  offline sales, migrations, receipts, and historical snapshots pass on the
+  actual tablet. Do not add a second database, state library, generic rules
+  engine, background worker, or native plugin for these existing boundaries.
 
 ### `ingredients`
 
@@ -441,7 +464,8 @@ must remain separate.
 
 ### `recipeVersions` and `recipeItems`
 
-- Product and size applicability.
+- Product-owned size applicability and independent size-specific base recipes.
+- Product-owned choice effects applied deterministically after size selection.
 - Version number and activation time.
 - Ingredient reference.
 - Exact quantity in the ingredient's base unit.
@@ -466,9 +490,11 @@ must remain separate.
 - Sale reference.
 - Product reference when still available.
 - Product name and price snapshot.
+- Selected size and independent product-owned choice snapshots.
 - Quantity.
 - Modifier snapshot.
 - Recipe version reference.
+- Final selected ingredient quantities and valuation-revision snapshots.
 - Line total.
 - Ingredient-cost snapshot and completeness state.
 
@@ -565,7 +591,8 @@ Each ingredient has one base unit:
 
 - Millilitres for liquids.
 - Grams or milligrams for weighed ingredients.
-- Pieces for indivisible packaging or bakery items.
+- Pieces for indivisible food ingredients or bakery items; disposable customer
+  packaging is outside the approved product-recipe model.
 
 Recipe and stock quantities use integers in that base unit. Conversion for
 display happens at the edge of the application.
@@ -671,7 +698,8 @@ src/features/pos/
 - Product/recipe bulk editing uses one validated mutation rather than a client
   loop of mutations.
 - Patch only changed editable fields.
-- Archive referenced records instead of deleting them.
+- Preserve immutable historical snapshots; delete live management records only
+  through their validated, dependency-aware business operation.
 - Mutations are safe to retry.
 
 ### Actions
@@ -739,16 +767,24 @@ activation index only with the implemented query that uses it.
   mix archived rows into daily work.
 - Products may be hard-deleted after validation because completed sales own
   immutable product, price, modifier, recipe, cost, and receipt snapshots.
-- A category may be deleted only when empty; a modifier group only when no
-  product uses it; an ingredient only when no recipe, modifier effect, purchase,
-  stock movement, valuation, or pending operation references it.
+- Deleting a category clears the live category reference on its products; those
+  products remain usable and uncategorized. Deleting a product removes its live
+  owned sizes, choices, and recipes while saved sale snapshots remain intact.
+- Deleting an ingredient removes live recipe/choice references and records the
+  affected products for repair while retaining immutable purchase, stock,
+  valuation, and sale history snapshots. Pending operations are reconciled or
+  rejected explicitly; they are never silently orphaned.
+- Owner-only staff removal revokes live access and protected credentials while
+  preserving immutable sale/operation actor identity snapshots. Never remove
+  the final owner or corrupt another profile's pending authenticated work.
 - Allowed deletes are local-first, restart-safe, permission-checked, and
   idempotently synchronized like other management operations. Replacement-cache
   cleanup may remove stale unreferenced cloud copies absent from the current
   bounded snapshot.
-- Staff profiles/identities and sales, corrections, purchases, stock movements,
-  expenses, and compensation periods are never hard-deleted through ordinary
-  CRUD. Their archive or append-only correction preserves audit/financial truth.
+- Sales, corrections, purchases, stock movements, expenses, and compensation
+  periods are never hard-deleted through ordinary CRUD; immutable snapshots and
+  append-only correction preserve financial and audit truth after a related
+  live product, ingredient, or staff profile is removed.
 
 ## Quota and performance budget
 
@@ -893,10 +929,13 @@ consumed, gross profit, compensation, other operating expenses, operating
 profit, purchase cash spent, and closing inventory value. Purchases are never
 subtracted again after ingredient cost consumed.
 
-Product cost and margin use the active recipe and current weighted-average
-ingredient costs. Historical sale profitability uses immutable saved cost
-snapshots, never today's ingredient prices. Any missing ingredient cost makes
-the affected product, sale, and report explicitly incomplete.
+Current product ingredient cost uses the selected owned size, its exact base
+recipe, the resolved choice effects, and current weighted-average ingredient
+costs. Products with several valid configurations may expose only an honest
+bounded ingredient-cost range in their editor; a detailed gross-profit/margin
+preview there is excluded. Historical sale profitability uses immutable actual
+size/choice/ingredient cost snapshots, never today's ingredient prices. Missing
+recipe or ingredient valuation makes the affected cost explicitly incomplete.
 
 Do not introduce a general analytics pipeline until the stored summaries no
 longer answer the owner's confirmed reports.
@@ -1228,9 +1267,12 @@ The smallest runnable tests must cover:
 - Money totals and rounding.
 - Weighted-average receiving, inventory valuation, and deterministic cost
   allocation rounding.
-- Modifier prices.
-- Recipe expansion.
-- Product cost, margin, and incomplete-cost propagation.
+- Owned size and choice prices, required/default selection limits, and safe
+  cross-product choice-copy independence.
+- Exact size-specific recipe expansion, ingredient replacement, additions,
+  removals, multi-ingredient effects, and nonnegative final quantities.
+- Configuration-dependent ingredient-cost ranges, actual saved-sale
+  profitability, and incomplete-cost propagation.
 - Stock deduction.
 - Cancellation/refund reversal.
 - Sale cost snapshots and their cancellation/refund reversal.

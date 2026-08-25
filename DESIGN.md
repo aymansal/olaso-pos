@@ -522,6 +522,17 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Authorized management saves use the same immediate local feedback. A quiet
   `Waiting to sync` state may communicate pending cloud acknowledgement, but
   offline status never disables an otherwise valid management form.
+- Product editing shows the selected product's real sizes and owner-created
+  choices rather than four fixed Size/Milk/Syrup/Extras placeholder cards. A
+  product with one size does not force an unnecessary cashier size selection.
+- Product choice controls use concise owner-facing labels for Add, Replace,
+  Set amount, Remove, or No stock change. `Copy choices from another product`
+  is required; avoid global-group management screens, decorative icon clutter,
+  technical explanations, and hidden cross-product editing effects.
+- Edit Product may show a compact honest ingredient-cost range or incomplete
+  state. It does not show a gross-profit/margin panel, a detailed simulated
+  configuration preview, or packaging costs. Deeper comparison placement is
+  deferred until the owner chooses it.
 - Ordinary Products and Stock lists exclude archived records. Archived items
   appear only after the operator deliberately selects the existing Archived
   filter; restoration stays available there.

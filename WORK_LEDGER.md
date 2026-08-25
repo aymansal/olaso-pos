@@ -22,7 +22,11 @@ remaining goal and card sequence.
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
-| DELETE-01 — Safe permanent deletion and archived-cache cleanup | pending — discuss after LOCAL-04 |
+| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — next when the owner authorizes implementation |
+| OPTIONS-02 — Custom product choices and independent copying | pending |
+| OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
+| OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
+| DELETE-01 — Safe permanent category/product/ingredient/staff deletion | pending — after product-owned configuration |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
@@ -97,9 +101,26 @@ remaining goal and card sequence.
   retained smooth navigation, category/staff/lock completion, measured startup,
   recovery, signing, upgrade, security/quota, then the owner's final manual
   screen review, approved simplification, endurance, and acceptance.
+- [Goal 06 — Product Configuration Blueprint](goals/GOAL-06-PRODUCT-CONFIGURATION.md)
+  — approved product-owned sizes, freely named choices, exact ingredient
+  effects, mandatory independent copying, honest ingredient-only costing,
+  offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
 
+- The owner-approved product configuration blueprint is documented in
+  `goals/GOAL-06-PRODUCT-CONFIGURATION.md` and reflected in `PLAN.md`,
+  `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, and the Goal 06 task board.
+  Product-owned sizes and independently copied custom choices determine exact
+  selected ingredients, stock deductions, costs, and immutable order history.
+  Disposable packaging, nested ingredient recipes, and a detailed Edit Product
+  profitability preview are excluded. House-made syrup stays one manually
+  priced ordinary ingredient. OPTIONS-01 through OPTIONS-04 now precede
+  DELETE-01; final owner-led visual polish remains the last change phase.
+- No implementation card is currently in progress. Exact next action when the
+  owner authorizes work: activate only OPTIONS-01, research the official
+  Android/Capacitor offline-storage and migration guidance, then prepare the
+  backward-compatible product-owned configuration foundation.
 - LOCAL-04 is complete and pushed to `origin/main` as
   `7f240210c2a591649f7fabd3c3fe51fb9db72df3`.
   SQLite schema 18 stores new sale/correction actor profile IDs; every queued
@@ -128,17 +149,16 @@ remaining goal and card sequence.
   final unlocked POS is 1340 by 800 with zero focused Android failures. Full
   local/cloud/permission/identity/Android/TypeScript/build regression passes;
   Graphify is current at 3,241 nodes and 7,452 edges. No card is currently in
-  progress. Exact next action is stop for the owner's DELETE-01 discussion;
-  do not activate or implement it automatically.
-- Owner deletion decision: archive is not the universal answer. Products may be
-  permanently deleted because completed orders already own immutable product/
-  price/modifier/recipe snapshots. Categories may be deleted only when empty;
-  modifier groups only when unused; ingredients only when no recipe, purchase,
-  movement, valuation, or pending operation needs them. Staff identities,
-  sales, corrections, purchases, movements, expenses, and compensation remain
-  archived or append-only because removing them would falsify audit/cost data.
-  DELETE-01 remains a planned follow-up after LOCAL-04; normal lists exclude
-  archived rows and the existing Archived filters remain the deliberate view.
+  progress; the current exact next action is the OPTIONS-01 checkpoint above.
+- Updated owner deletion decision: archive is not the universal answer.
+  Products can be removed while completed orders keep immutable snapshots.
+  Deleting a category leaves its products uncategorized. Deleting an ingredient
+  removes live recipe/choice references and identifies affected products for
+  repair while preserving purchase, stock, valuation, and sale history. The
+  owner may remove live staff profiles while preserving historical actor names
+  and roles; the last owner cannot be removed. Completed sales, corrections,
+  purchases, movements, expenses, and compensation remain immutable or
+  append-only. DELETE-01 follows OPTIONS-01 through OPTIONS-04.
 - LOCK-01 is complete and pushed to `origin/main` as
   `4486a8921d893e3e5edce098b8a17a500cf0a537`. A shared profile menu gives every
   role `Lock / switch staff`; Settings remains owner-only. `App.tsx` owns the
@@ -948,6 +968,25 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — Product-owned choices and exact ingredient blueprint approved
+
+- The owner required product-owned sizes and freely named independent choices,
+  exact size/choice ingredient recipes, real milk substitution and stock
+  deduction, mandatory `Copy choices from another product`, offline operation,
+  historical snapshots, and honest configuration-dependent ingredient costs.
+- Explicit exclusions: disposable packaging as a recipe cost, nested
+  house-syrup recipes/manufacturing, permanently fixed Size/Milk/Syrup/Extras
+  cards, shared mutable groups, and a detailed Edit Product profitability
+  preview. House-made syrup remains one normally priced stock ingredient.
+- Added `goals/GOAL-06-PRODUCT-CONFIGURATION.md`; aligned `PLAN.md`,
+  `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, the Goal 06 plan, and this
+  ledger. OPTIONS-01 through OPTIONS-04 now run before DELETE-01; removal of
+  categories, products, ingredients, and staff preserves the relevant live
+  reassignment/repair rules and immutable historical snapshots.
+- Documentation only: no source, theme, native code, APK, or runtime behavior
+  changed. No implementation card was activated. Exact next action: wait for
+  owner direction, then activate only OPTIONS-01.
 
 ### 2026-08-24 — LOCAL-04 complete on origin/main
 

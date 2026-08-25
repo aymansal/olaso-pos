@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; no card in progress, DELETE-01 discussion next
+**Status:** active; no card in progress, OPTIONS-01 next
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -21,8 +21,11 @@ tablet and printer.
 
 Goal 06 is not one autonomous `/goal`; it proceeds one reviewed card at a time.
 Functional completion comes first: local-first management, staff/lock/category
-work, physical offline/reconnect closeout, navigation/startup performance,
-backup, release/update readiness, and security review.
+work, physical offline/reconnect closeout, product-owned sizes/choices/exact
+ingredient recipes, safe permanent deletion, navigation/startup performance,
+backup, release/update readiness, and security review. The full approved
+product blueprint and OPTIONS-01 through OPTIONS-04 contracts are documented in
+[Goal 06 Product Configuration](GOAL-06-PRODUCT-CONFIGURATION.md).
 
 POLISH-01 and POLISH-02 are deliberately last. Only after LOCAL-01 through
 HARD-07 are complete does the owner manually inspect every fully functional
@@ -39,9 +42,9 @@ polishing screens or data paths that later functional work would change.
 - `App.tsx` currently removes the old screen on every tab change. Returning to
   POS reconstructs its data hook and image elements; Dashboard/Reports can
   re-enter full loading and Reports explicitly clears its prior snapshot.
-- Products and Stock currently provide saved offline reads but deliberately
-  reject management writes without internet. This contradicts the confirmed
-  requirement that every authorized day-to-day café operation work offline.
+- LOCAL-01 through LOCAL-04 now provide verified local-first Product, Stock,
+  expense, compensation, and staff management. The approved independent
+  size/choice/ingredient model remains the next functional gap.
 - The local POS already works independently of Convex success, so network work
   must never gate usable startup.
 - The physical Galaxy Tab A9 and current WebView expose the approved full
@@ -56,8 +59,8 @@ polishing screens or data paths that later functional work would change.
 - Current Settings and hardware copy is technically explicit but may be too
   verbose for a small coffee-shop team. The owner will decide what to remove,
   shorten, hide, or retain after reviewing the complete application.
-- New POS categories scroll correctly, but no management-owned artwork selector
-  or neutral fallback exists for a category outside the initial four.
+- CATALOG-01 provides verified management-owned category artwork selection and
+  a neutral offline fallback for categories outside the initial four.
 - The wide launch wordmark is not an app icon. A compact icon and the owner's
   proposed minimal wordmark/light-reveal startup concept remain unapproved; no
   GIF, video, vector, or other motion format is selected yet.
@@ -70,6 +73,12 @@ polishing screens or data paths that later functional work would change.
 - Profile-driven bundle, image, decode, and synchronization scheduling work.
 - Local-first category, product, modifier, recipe, inventory, purchase,
   adjustment, expense, compensation, and protected staff/PIN management.
+- Product-owned sizes, freely named choices, exact size/choice ingredient
+  recipes, mandatory independent copying, actual selected-stock deduction,
+  honest ingredient-only costing, and immutable historical snapshots.
+- Safe deletion of live categories, products, ingredients, and staff while
+  preserving completed orders, stock movements, financial history, and the
+  last owner account.
 - Retained visited-screen state, saved-content-first refresh, immediate resume
   clock correction, and navigation/image reconstruction removal.
 - Export, backup, restore, corrupt-data stop, and support recovery rehearsal.
@@ -96,14 +105,17 @@ polishing screens or data paths that later functional work would change.
 - Multi-tablet merge/conflict machinery; the first release keeps one active POS
   tablet and surfaces an unexpected stale cloud revision instead of silently
   overwriting it.
-- New product features, reports, printer transports, speculative scaling,
-  Google Play distribution, or multi-branch support.
+- Unapproved product features, new reports, printer transports, speculative
+  scaling, Google Play distribution, or multi-branch support.
 - Runtime AI image generation, attempting to predict every possible category,
   or requiring a perfect artwork match before a category can be created.
 - Preselecting GIF, MP4, or another startup format without bundle/decode/startup
   measurements; decorative motion never extends the splash duration.
 - Removing required validation, failure recovery, printer setup, or safety
   actions merely to make a screen look simpler.
+- Disposable customer packaging in product recipes, nested ingredient recipes,
+  house-syrup manufacturing workflows, shared mutable product choices, and a
+  detailed profitability/configuration preview inside Edit Product.
 - Committing signing keys, credentials, production exports, device identifiers,
   or private owner recovery information.
 
@@ -146,7 +158,11 @@ polishing screens or data paths that later functional work would change.
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | done | `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main`; full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass |
-| DELETE-01 | Add safe permanent deletion and archived-cache cleanup | pending | Owner policy recorded; discuss after LOCAL-04 |
+| OPTIONS-01 | Add backward-compatible product-owned size, choice, and exact-recipe foundations | pending | Approved detailed blueprint linked above |
+| OPTIONS-02 | Add custom product choices, exact ingredient actions, and independent copying | pending | — |
+| OPTIONS-03 | Connect exact cashier selections to price, stock, immutable sales, and synchronization | pending | — |
+| OPTIONS-04 | Reconcile selected ingredient costs, reports, migration, and offline acceptance | pending | — |
+| DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | pending | Runs after independent product-owned configuration is complete |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
@@ -268,20 +284,38 @@ polishing screens or data paths that later functional work would change.
 - Repeat negative cashier/manager/owner checks offline and online, including
   sensitive compensation and protected credential material.
 
+### OPTIONS-01 through OPTIONS-04 — Product-owned configuration
+
+The complete product structure, choice rules, mandatory copying, exact milk
+replacement example, ingredient-only scope, house-syrup policy, honest costing,
+offline migration guarantees, individual card contracts, official references,
+and physical-tablet evidence requirements are maintained in
+[Goal 06 Product Configuration](GOAL-06-PRODUCT-CONFIGURATION.md).
+
+Implement the four cards in sequence. Each card independently preserves the
+currently installed menu, sales, protected staff, stock, pending operations,
+offline checkout, cloud acknowledgment, receipts, and physical tablet layout.
+Do not remove backward-compatible behavior until its replacement passes the
+real-device acceptance matrix.
+
 ### DELETE-01 — Safe deletion and archive cleanup
 
 - Give Products and Stock concise, explicit Archive/Restore/Delete choices
   without showing archived records in ordinary lists. Destructive confirmation
   names the record and consequence; no technical essay or icon clutter.
-- Product deletion removes current catalog/recipe/modifier links locally and in
-  Convex while immutable completed-order snapshots keep every historical name,
-  price, modifier, recipe, cost, and receipt. Category deletion is allowed only
-  when empty; modifier-group deletion only when no product uses it.
-- Ingredient deletion is allowed only when no recipe item, modifier effect,
-  purchase, movement, valuation, or pending operation refers to it. Otherwise
-  Archive remains the honest choice. Staff profiles, identities, sales,
-  corrections, purchases, stock movements, expenses, and compensation periods
-  never hard-delete through normal UI because they are audit/financial history.
+- Product deletion removes current owned sizes/choices/recipes locally and in
+  Convex while completed-order snapshots keep every historical name, size,
+  price, choice, recipe, cost, actor, and receipt. Category deletion is allowed
+  even when it contains products; those products become uncategorized.
+- Ingredient deletion removes live recipe/choice references, clearly identifies
+  affected products for repair, and preserves historical purchase, movement,
+  valuation, and sale snapshots. No financial history is silently rewritten.
+- Owner-only staff deletion revokes live access and protected credentials while
+  preserving saved actor names/roles and historical operations. Never remove
+  the final owner or strand another profile's pending authenticated work.
+- Completed sales, corrections, purchases, stock movements, expenses, and
+  compensation periods remain immutable or append-only historical records;
+  deleting a live profile or ingredient never deletes the business history.
 - Implement each allowed delete as a validated local transaction plus durable
   management operation, dependency ordering, retry-safe cloud mutation, and
   bounded acknowledgement. Prove offline, restart, reconnect, duplicate retry,
@@ -475,8 +509,8 @@ polishing screens or data paths that later functional work would change.
 ## Goal completion criteria
 
 - POLISH-01, POLISH-02, LOCK-01, LOCAL-01 through LOCAL-04, STAFF-01,
-  CATALOG-01, DELETE-01, NAV-01, and HARD-01 through HARD-08 are done, verified,
-  committed, pushed, and recorded.
+  CATALOG-01, OPTIONS-01 through OPTIONS-04, DELETE-01, NAV-01, and HARD-01
+  through HARD-08 are done, verified, committed, pushed, and recorded.
 - Every authorized management workflow saves and survives restart offline,
   appears immediately in the normal app, and synchronizes exactly once after
   reconnect with the correct actor and permission boundary.
@@ -500,9 +534,13 @@ polishing screens or data paths that later functional work would change.
   card is currently in progress.
 - LOCAL-01 through STAFF-01 implement local-first catalog, recipe, inventory,
   cost, compensation, and protected staff creation. LOCAL-04's full matrix and
-  mandatory root fixes pass; commit/push remains before acceptance.
+  mandatory root fixes pass and its implementation is pushed to `origin/main`.
   Top-level navigation still destroys/reconstructs screens, data hooks, and
   oversized product images; NAV-01 and HARD-04 own that measured work.
+- The owner approved independent product-owned sizes and choices, exact
+  ingredient actions, mandatory copying, ingredient-only costs, ordinary
+  manually priced house syrup, and preservation of immutable order history.
+  OPTIONS-01 through OPTIONS-04 implement that blueprint before DELETE-01.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
 - The pre-bridge lifecycle error is fixed early under the mandatory bug rule.
@@ -512,10 +550,25 @@ polishing screens or data paths that later functional work would change.
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
   deferred until every card through HARD-07 is complete.
-- Exact next action: stop for the owner's requested DELETE-01 discussion. Do
-  not activate another card.
+- Exact next action: wait for owner authorization, then activate only
+  OPTIONS-01 and research the existing Android/Capacitor migration boundary.
+  Do not implement later options, deletion, hardening, or visual polish early.
 
 ## Planning journal
+
+### 2026-08-25 — Approved product-owned configuration blueprint
+
+- The owner rejected shared mutable modifier groups, four fixed option cards,
+  packaging costs, nested syrup recipes, an Edit Product gross-profit preview,
+  and restrictive empty-category/never-used-ingredient deletion rules.
+- Added a standalone professional-POS blueprint for independent sizes, custom
+  product-owned choices, mandatory copying, exact choice-linked ingredients,
+  offline migrations, immutable sale snapshots, and truthful ingredient cost.
+- Inserted OPTIONS-01 through OPTIONS-04 before DELETE-01; deletion now retains
+  live product reassignment/recipe repair and historical actor/financial
+  snapshots. Final owner-led visual polish remains after HARD-07.
+- Documentation only; no application or Android code changed. No implementation
+  card is active. OPTIONS-01 is the next step when the owner authorizes it.
 
 ### 2026-08-24 — LOCAL-04 complete on origin/main
 
