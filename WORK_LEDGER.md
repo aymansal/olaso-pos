@@ -29,8 +29,8 @@ remaining goal and card sequence.
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
 | HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
-| HARD-06 — Signed release and upgrade | done — pending push SHA |
-| HARD-07 — Readiness review | pending |
+| HARD-06 — Signed release and upgrade | done — `87bc12f7480084b6703e16f59f317c63d32249fa` on `origin/main` |
+| HARD-07 — Readiness review | in progress |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
@@ -113,20 +113,10 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-06 signed release/upgrade is implemented and physically rehearsed on
-  Galaxy Tab A9 SM-X115: same `com.olaso.pos` cert, versionCode 3 → 4
-  install-over-upgrade kept `firstInstallTime=2026-08-25 19:34:46` while
-  `lastUpdateTime` advanced; APK `0.1.0-rc.2`. Debug→first release required
-  uninstall (expected cert change).
-- Artifacts: env-signed `android:release`, `.github/workflows/android-release.yml`,
-  `tools/release/README.md` custody, `AppUpdatePlugin` + Settings About
-  Check/Update/Later (HTTPS manifest; no GitHub token in APK), `check:release`.
-- Owner still needs: durable production keystore in CI secrets (rehearsal jks
-  is local `tmp/` only), HTTPS binary host URL via
-  `VITE_OLASO_UPDATE_MANIFEST_URL`, and Android developer package/signing
-  registration before worldwide sideload enforcement.
-- Checks: `check:release`, `check:android`, `check:settings`, `build`, Graphify
-  update. Exact next action: commit/push HARD-06, record SHA, activate HARD-07.
+- HARD-06 is done on `origin/main` as `87bc12f7480084b6703e16f59f317c63d32249fa`. Physical Tab A9 signed
+  install-over-upgrade 3→4 preserved firstInstallTime and signing cert.
+- HARD-07 is active. Exact next action: run the readiness review (secrets,
+  overrides, quotas, indexes, permissions, dependencies, logs, support).
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
