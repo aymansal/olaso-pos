@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; HARD-07 in progress
+**Status:** active; OPTIONS-01 next after HARD-07
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -166,7 +166,7 @@ that polished product.
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | done | `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main`; right-sized WebP; React.lazy secondary screens; post-paint reconnect; APK 26.3 MB; physical measure/visual pass |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | done | `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7` on `origin/main`; owner follow-up removed in-app export, fixed sync attribution/abandon, tablet Waiting sales 0 |
 | HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation | done | `87bc12f7480084b6703e16f59f317c63d32249fa` on `origin/main`; Tab A9 install-over-upgrade 3→4 same cert; firstInstallTime preserved; CI + custody docs + PackageInstaller About Update/Later |
-| HARD-07 | Complete security, privacy, dependency, quota, and support readiness review | in progress | — |
+| HARD-07 | Complete security, privacy, dependency, quota, and support readiness review | done | pending-push |
 | OPTIONS-01 | Add backward-compatible product-owned size, choice, and exact-recipe foundations | pending | Separate approved blueprint; follows original technical-hardening cards |
 | OPTIONS-02 | Add custom product choices, exact ingredient actions, and independent copying | pending | — |
 | OPTIONS-03 | Connect exact cashier selections to price, stock, immutable sales, and synchronization | pending | — |
@@ -659,10 +659,12 @@ owner verification; every authorized screen remained usable without internet.
 
 ## Current checkpoint
 
-- HARD-06 is on `origin/main` as `87bc12f7480084b6703e16f59f317c63d32249fa`. HARD-07 readiness review is active.
-  Exact next action: search for secrets, overrides, unbounded reads, missing
-  indexes, permission/privacy issues, stale deps, and record first-week
-  monitoring without speculative infrastructure.
+- HARD-07 readiness review is complete pending push (release non-debuggable,
+  monitoring notes, permission/sales/offline checks, Tab A9 About `Version 1.1`).
+  Exact next action after push: OPTIONS-01 when the owner continues.
+- HARD-06 follow-up remains on `origin/main` as
+  `f1f3168c927fae74c47d4d9353e556b7f8fe4870` (base
+  `87bc12f7480084b6703e16f59f317c63d32249fa`).
 - NAV-01's verified category-image root fix is committed and pushed directly
   to `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   No card is in progress. Exact next action: stop and keep HARD-02 pending

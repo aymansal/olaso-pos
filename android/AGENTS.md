@@ -28,10 +28,9 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   `fullBackupContent` exclude database, shared preferences, and related domains
   from cloud and device-to-device transfer.
 - Capacitor logging remains disabled because generic plugin-call logging can
-  expose protected values. Signed release builds set `debuggable true` so adb
-  WebView CDP works for physical QA on this manually distributed POS; that is
-  not a Play Store listing. Focused QA uses that WebView boundary plus filtered
-  Android runtime checks.
+  expose protected values. Signed release builds keep `debuggable false`.
+  Physical WebView CDP QA uses the debug beta APK, not the distributed
+  release. Focused QA also uses filtered Android runtime checks.
 - First in-app update on a tablet needs Android **Install unknown apps** allowed
   for Olaso POS; afterward Settings → About → Update uses PackageInstaller.
 - The same minimal native boundary reports Android-validated internet state and

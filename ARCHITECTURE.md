@@ -1351,6 +1351,29 @@ and to authorize the chosen download source for unknown-app installation.
   shop is a support/deployment step between Convex projects, not an in-app
   export/import product.
 
+### First production week monitoring
+
+No speculative monitoring stack. For the first café week, check these existing
+surfaces daily and after any incident:
+
+1. Convex dashboard: function errors, failed mutations, unusual bandwidth/DB
+   document growth, and free-plan limit warnings.
+2. Tablet Settings → Data & sync: pending/failed sale and management counts;
+   deliberate Manual Sync after any prolonged outage.
+3. Orders: local vs cloud sync badges on recent sales; reprint only from local
+   snapshots.
+4. Android logcat filtered to `com.olaso.pos` after update, unlock failures, or
+   printer issues — no PINs/session tokens in app logs.
+5. Printer: one Test printer write after network changes; paper confirmation
+   remains separate.
+6. Update channel: keep `olaso-pos-releases` private except the brief public
+   window used to publish; Confirm About shows only shop version names.
+
+Local SQLite remains unencrypted at rest on a single owned tablet; PINs and
+sessions stay in Android Keystore-backed protected storage; Auto Backup is off.
+SQLCipher remains available in the plugin for a later encryption decision.
+Release APKs stay non-debuggable; WebView CDP QA uses the debug beta.
+
 ## Testing strategy
 
 ### Pure calculation tests

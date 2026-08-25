@@ -30,9 +30,10 @@ android {
     }
     buildTypes {
         release {
-            // Manual tablet distribution: signed install-over-upgrade plus adb
-            // WebView CDP for physical QA (not a Play Store listing).
-            debuggable true
+            // Production-signed APKs are not debuggable. Physical WebView CDP
+            // QA uses the debug beta (`npm run android:beta`) or a temporary
+            // local override—not the distributed release.
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (System.getenv('OLASO_UPLOAD_STORE_FILE')) {

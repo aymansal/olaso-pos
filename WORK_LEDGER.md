@@ -30,8 +30,8 @@ remaining goal and card sequence.
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
 | HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
 | HARD-06 — Signed release and upgrade | done — follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870` on `origin/main` (base `87bc12f7480084b6703e16f59f317c63d32249fa`) |
-| HARD-07 — Readiness review | in progress |
-| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
+| HARD-07 — Readiness review | done — pending-push |
+| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — next after HARD-07 |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
@@ -113,13 +113,26 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- HARD-07 readiness review complete pending push. Official Android guidance:
+  release APKs stay non-debuggable; keep Keystore-backed PIN/session storage,
+  Auto Backup off, HTTPS update channel without embedded credentials; reject
+  Play Integrity / SSL-pinning for this manually distributed Capacitor POS.
+- Findings fixed: release `debuggable false` (was true for QA). Biometric
+  permissions already stripped via `tools:node="remove"`. No secrets or
+  deployment auth bypass in source. Convex reads stay bounded (no unbounded
+  `.collect()`). SQLCipher remains available but encryption stays an accepted
+  later decision for a single owned tablet.
+- Checks: permissions, staff, identity, settings, release, android, convex,
+  sales, offline, build. Physical Tab A9: non-DEBUGGABLE release 1.1 installed;
+  owner unlock; Settings → About shows `Version 1.1` only; Install unknown apps
+  Allowed.
+- First-week monitoring recorded in ARCHITECTURE.md. Patch package updates
+  available (Capacitor 8.5, Convex 1.45, etc.) but not bumped this card.
+- Exact next action after push: stop; OPTIONS-01 when the owner continues.
 - HARD-06 follow-up is on `origin/main` as
   `f1f3168c927fae74c47d4d9353e556b7f8fe4870`. Shop versions `1.0`/`1.1`
   (versionCode 7/8), About shows `Version 1.1` only, Tab A9 proved private/public
   update path and install-over with preserved firstInstallTime.
-- HARD-07 is active. Exact next action: readiness review (secrets, overrides,
-  quotas, indexes, permissions, dependencies, logs, support) with physical-
-  tablet evidence where applicable.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -3429,6 +3442,17 @@ remaining goal and card sequence.
 - Owner authorized push of HARD-06 follow-up then HARD-07. Exact next action:
   secrets/overrides/unbounded reads/index/permission/privacy/deps/Android/
   logs/support review with required checks and tablet smoke.
+
+### 2026-08-25 — HARD-07 readiness review complete
+
+- Research: Android production release should not be debuggable; Keystore for
+  credentials; no secrets in APK; PackageInstaller user confirmation already
+  used. Keep existing Capacitor/SQLite/Keystore boundary; no Play Integrity.
+- Fixed release `debuggable false`. Documented first-week monitoring in
+  ARCHITECTURE.md. Accepted: unencrypted SQLite on owned tablet; sql.js pin;
+  defer Cap/Convex patch bumps.
+- Physical: non-DEBUGGABLE 1.1 APK; About `Version 1.1`; unlock + Settings OK.
+- Exact next action after push: OPTIONS-01 when owner asks.
 
 ## Completed Goals
 

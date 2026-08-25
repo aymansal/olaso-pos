@@ -22,6 +22,7 @@ const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
 assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
 assert.match(appBuild, /versionCode 8/);
 assert.match(appBuild, /versionName "1\.1"/);
+assert.match(appBuild, /debuggable false/);
 assert.match(appUpdate, /No update available/);
 assert.match(appUpdate, /aymansal\/olaso-pos-releases/);
 assert.equal(
