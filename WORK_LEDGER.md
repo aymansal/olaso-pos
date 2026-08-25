@@ -115,6 +115,11 @@ remaining goal and card sequence.
 
 - HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
   Exact next action: stop; OPTIONS-01 when the owner continues.
+- Client ship gate (do not forget before café handoff): signed release with
+  `debuggable false`, durable upload key, shop `versionName`, higher
+  `versionCode` than installed tablets, publish update channel, physical About
+  update smoke. Recorded in `PLAN.md`, HARD-08, and `tools/release/README.md`.
+  Updates need versionCode/signing/channel — not debuggable.
 - HARD-06 follow-up is on `origin/main` as
   `f1f3168c927fae74c47d4d9353e556b7f8fe4870`. Shop versions `1.0`/`1.1`
   (versionCode 7/8), About shows `Version 1.1` only, Tab A9 proved private/public

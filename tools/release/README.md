@@ -3,6 +3,21 @@
 Development-only custody and release notes for HARD-06. Nothing here is
 imported by the React application or packaged in the APK.
 
+## Client ship gate
+
+Before handing an APK to the café client:
+
+- Release build must have `debuggable false` (`check:release` asserts this).
+- Use the durable upload keystore (same cert as every prior upgrade).
+- Bump `versionCode` above every installed tablet; set a clear shop
+  `versionName` (e.g. `1.2`). About shows that name only.
+- Publish APK + `update-manifest.json` on `olaso-pos-releases`, then return the
+  repo to private if that is the agreed ritual.
+- Confirm on a physical tablet: Settings → About → Check for update → Update.
+
+Debuggable flags do not enable or block updates. Higher `versionCode` + same
+signing certificate + reachable HTTPS manifest do.
+
 ## Signing-key custody
 
 - Create one upload keystore for `com.olaso.pos` and keep it forever for

@@ -69,6 +69,26 @@ No implementation card is done until all applicable evidence is recorded:
 9. The card commit is pushed directly to `origin/main` and its full SHA is
    recorded in WORK_LEDGER.md.
 
+## Client ship gate (HARD-08 / final handoff)
+
+Before any APK goes to the café client as the production tablet build, all of
+the following must be true. Temporary QA overrides never ship.
+
+1. `android/app/build.gradle` release `debuggable false` (enforced by
+   `npm run check:release`). A debuggable release is never the client APK.
+2. Same application ID `com.olaso.pos` and the durable upload signing key used
+   for every prior install-over-upgrade.
+3. Shop `versionName` (e.g. `1.1`) plus a higher `versionCode` than every
+   already-installed café tablet so Settings → About → Update can find it.
+4. Published through the HTTPS `olaso-pos-releases` channel (brief public window
+   if using the private-repo ritual), then channel closed again as agreed.
+5. Physical Tab A9 smoke: unlock, About shows the shop version only, Check for
+   update / Update path confirmed when publishing a newer build.
+
+`debuggable` does **not** control updates. Updates need the higher
+`versionCode`, same signing cert, and the public manifest/APK. Debug beta APKs
+(`npm run android:beta`) stay for developer QA only.
+
 Pure planning or documentation-only cards validate their links, facts, and
 assets but do not rebuild or reinstall an unchanged APK merely to manufacture
 evidence. Every implementation card receives real physical-tablet testing.

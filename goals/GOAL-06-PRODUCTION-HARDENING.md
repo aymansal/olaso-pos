@@ -634,6 +634,10 @@ owner verification; every authorized screen remained usable without internet.
 - Complete final browser and physical 1340 by 800 visual/touch/accessibility QA,
   real printer acceptance, owner workflow acceptance, documentation, Graphify,
   release tag, pushed SHAs, and clean worktree.
+- Client ship gate (mandatory): the APK handed to the café is a signed release
+  with `debuggable false`, the durable upload key, a shop `versionName`, and a
+  `versionCode` higher than installed tablets so GitHub channel updates still
+  work. Never ship a debug beta or a temporarily debuggable release.
 
 ## Goal completion criteria
 
