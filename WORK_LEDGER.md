@@ -22,7 +22,7 @@ remaining goal and card sequence.
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
-| DELETE-01 — Safe permanent category/product/ingredient/staff deletion | in progress — full local/cloud/physical offline-restart-reconnect QA passes; final checks, Graphify, and main push pending |
+| DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
@@ -111,7 +111,13 @@ remaining goal and card sequence.
 - The owner explicitly restored the original Goal 06 sequence: DELETE-01 first,
   then navigation/startup, recovery, release, and security; the separate
   OPTIONS-01 through OPTIONS-04 blueprint follows before final owner-led UI
-  polish and acceptance. DELETE-01 is the only card in progress.
+  polish and acceptance. DELETE-01 is complete; no card is in progress.
+- DELETE-01 is committed and pushed directly to `origin/main` as
+  `dc86855798041f1e772a7ca3d8729841549faa9d`. Its implementation,
+  official Android research, populated schema-19 migration, immutable history,
+  real deletion controls, archived-copy cleanup, protected access, full
+  regression, Android beta, physical offline/restart/reconnect sequence, exact
+  cloud effects, 1340 by 800 screens, clean logs, and Graphify all pass.
 - DELETE-01 official Android/Capacitor/Convex research is complete. Android's
   offline-first guidance requires SQLite to remain the screen-visible source
   of truth and deferred durable writes. Android SQLite warns foreign-key
@@ -205,10 +211,10 @@ remaining goal and card sequence.
   140-task Android beta, and `npm run build` pass. Prior real-cloud management,
   sales, inventory, identity, permissions, Orders, Dashboard, and Reports
   checks pass; Graphify is current at 3,287 nodes and 7,552 edges.
-- Exact next action: rerun final focused/build checks, refresh Graphify, update
-  the detailed card evidence, commit and push only DELETE-01 directly to main,
-  then record its pushed SHA and stop. HARD-01 remains pending until the owner
-  explicitly starts the next card.
+- Exact next action: stop with no card in progress. When the owner explicitly
+  starts the next card, research current official Android/Capacitor startup
+  profiling guidance and activate only HARD-01 for the measured physical
+  startup/navigation baseline.
 - The owner-approved product configuration blueprint is documented in
   `goals/GOAL-06-PRODUCT-CONFIGURATION.md` and reflected in `PLAN.md`,
   `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, and the Goal 06 task board.
@@ -224,8 +230,8 @@ remaining goal and card sequence.
   documents have valid internal links. The original documentation checkpoint
   was later superseded by the owner's explicit DELETE-01-first sequencing.
   No source or Android code changed, so no unchanged APK was rebuilt.
-- DELETE-01 is active; all separate product-configuration implementation cards
-  remain pending until the original technical plan is complete.
+- DELETE-01 is complete; HARD-01 and all separate product-configuration
+  implementation cards remain pending until individually authorized.
 - LOCAL-04 is complete and pushed to `origin/main` as
   `7f240210c2a591649f7fabd3c3fe51fb9db72df3`.
   SQLite schema 18 stores new sale/correction actor profile IDs; every queued
@@ -1074,6 +1080,20 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — DELETE-01 complete on origin/main
+
+- Pushed `DELETE-01: add safe permanent management deletion` directly to
+  `origin/main` as `dc86855798041f1e772a7ca3d8729841549faa9d` and
+  independently verified that the remote main reference resolves to that SHA.
+- Full schema/history/local/cloud/staff/printing/Android/build checks, the
+  deployed management/permissions/report suites, refreshed Graphify, exact
+  physical offline restart and cross-domain reconnect, preserved historical
+  names, protected profile isolation, 1340 × 800 screens, and clean runtime
+  logs all pass. No unrelated files, credentials, signing keys, generated
+  Android artifacts, or local hardware helpers were committed.
+- Goal 06 remains active without an in-progress card. HARD-01 is next and
+  remains pending until the owner explicitly asks to begin it.
 
 ### 2026-08-25 — DELETE-01 final physical offline/reconnect matrix passes
 

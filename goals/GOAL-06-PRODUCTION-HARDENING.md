@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; DELETE-01 in progress
+**Status:** active; DELETE-01 done, HARD-01 next
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -158,7 +158,7 @@ that polished product.
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | done | `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main`; full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass |
-| DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | in progress | Official research, schema-19 history migration, focused/live-cloud checks, protected staff/history, stale-copy root fixes, physical flight-mode restart/ordered reconnect, exact cloud effects, fitted screens, and clean logs pass; commit/push pending |
+| DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | done | `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main`; official Android research, schema-19 migration, immutable history, local/cloud deletion, stale-copy and ordering root fixes, owner/cashier security, full regression/build, physical flight-mode/restart/exact-once reconnect, 1340 × 800 screens, clean logs, and Graphify pass |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
@@ -530,8 +530,8 @@ real-device acceptance matrix.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04 are done and
-  DELETE-01 is the only card in progress.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04 and DELETE-01
+  are complete. No card is in progress; HARD-01 is the next pending card.
 - LOCAL-01 through STAFF-01 implement local-first catalog, recipe, inventory,
   cost, compensation, and protected staff creation. LOCAL-04's full matrix and
   mandatory root fixes pass and its implementation is pushed to `origin/main`.
@@ -564,11 +564,24 @@ real-device acceptance matrix.
   worker names; offline owner-only staff removal preserves protected pending
   access; stale archived copies are removed safely; and category/ingredient/
   product deletions synchronize in verified sale-dependent order.
-- Exact next action: finish final checks, refresh Graphify, commit and push
-  DELETE-01 directly to origin/main, record its SHA, and stop. HARD-01 remains
-  pending until the owner requests the next individual card.
+- DELETE-01 is pushed directly to `origin/main` as
+  `dc86855798041f1e772a7ca3d8729841549faa9d`; its required full
+  regression, Android build, physical tablet, clean logs, and Graphify pass.
+- Exact next action: stop. When the owner requests the next individual card,
+  research official Android/Capacitor startup profiling and activate only
+  HARD-01 for the measured physical baseline.
 
 ## Planning journal
+
+### 2026-08-25 — DELETE-01 complete on origin/main
+
+- Pushed the complete deletion implementation directly to `origin/main` as
+  `dc86855798041f1e772a7ca3d8729841549faa9d` and verified the remote
+  main SHA. All official research, focused/cloud suites, Android beta, physical
+  offline restart/reconnect, exact-once history, protected worker access,
+  current Graphify, 1340 × 800 viewport, and clean-log gates pass.
+- No card is in progress. HARD-01 remains pending until the owner explicitly
+  asks to begin the measured startup/navigation baseline.
 
 ### 2026-08-25 — DELETE-01 physical deletion and ordered reconnect verified
 

@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; DELETE-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; DELETE-01 done, HARD-01 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -124,10 +124,10 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 through 05 are complete. Goal 06 is active; LOCAL-04 is complete and
-DELETE-01 is in progress. Finish deletion and the original performance,
-startup, recovery, release, and security cards first; implement the separate
-approved product-owned configuration plan afterward and before final polish.
+Goals 03 through 05 are complete. Goal 06 is active; LOCAL-04 and DELETE-01
+are complete. Finish the original performance, startup, recovery, release,
+and security cards first; implement the separate approved product-owned
+configuration plan afterward and before final polish.
 
 ## Goal 04 — Costs and profitability
 
@@ -220,9 +220,9 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-DELETE-01 is the only active card. Research and use the existing Android
-offline-first SQLite transaction, protected staff authorization, and
-dependency-ordered synchronization boundaries to implement safe permanent
-category, product, ingredient, and staff removal. Finish the original
-hardening sequence next, implement the separate OPTIONS-01 through OPTIONS-04
-blueprint afterward, then perform the owner's final review and acceptance.
+DELETE-01 is complete and pushed to `origin/main`. No card is in progress.
+When the owner asks to continue, research current official Android and
+Capacitor startup/profiling guidance and activate only HARD-01 to measure the
+physical tablet's existing startup, navigation, package, and readiness
+baseline. Finish the original hardening sequence before the separate
+OPTIONS-01 through OPTIONS-04 blueprint and final owner-led polish.
