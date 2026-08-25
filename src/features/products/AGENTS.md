@@ -33,8 +33,9 @@ saved tablet presentation during an outage.
   the explicit selection and missing/future keys render the neutral fallback.
 - Every recipe save creates a new immutable version; never overwrite historical
   recipe meaning.
-- Archive and restore records that history may reference; do not expose
-  destructive deletion.
+- Archive/restore remains optional. Concise confirmed category/product Delete
+  actions permanently remove the live record while historical orders and
+  recipes stay intact; deleting a category leaves its products uncategorized.
 - Offline reads and authorized writes use the saved operational cache and must
   never remain on a live loading state. Cloud acknowledgement follows later in
   dependency order.

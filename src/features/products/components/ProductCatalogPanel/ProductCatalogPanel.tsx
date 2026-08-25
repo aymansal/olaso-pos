@@ -33,6 +33,7 @@ interface ProductCatalogPanelProps {
   onAddCategory: () => void;
   onRenameCategory: () => void;
   onSetCategoryArchived: () => void;
+  onDeleteCategory: () => void;
   onAddProduct: () => void;
 }
 
@@ -54,6 +55,7 @@ export function ProductCatalogPanel({
   onAddCategory,
   onRenameCategory,
   onSetCategoryArchived,
+  onDeleteCategory,
   onAddProduct,
 }: ProductCatalogPanelProps) {
   const selectedCategory = categories.find(
@@ -138,6 +140,7 @@ export function ProductCatalogPanel({
         onSelect={onSelectProduct}
         onRenameCategory={onRenameCategory}
         onSetCategoryArchived={onSetCategoryArchived}
+        onDeleteCategory={onDeleteCategory}
       />
     </section>
   );

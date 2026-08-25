@@ -110,6 +110,15 @@
   opacity: 0.4;
 }
 
+.headerActions .deleteAction {
+  width: auto;
+  padding: 0 10px;
+  border-radius: 17px;
+  color: var(--olaso-danger);
+  font-size: 9px;
+  font-weight: 700;
+}
+
 .identity {
   position: absolute;
   top: 76px;

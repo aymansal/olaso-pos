@@ -141,6 +141,13 @@ export function StockScreen({
           onSetArchived={async (ingredient, archived) => {
             await inventory.setIngredientArchived(ingredient, archived);
           }}
+          onDelete={async (ingredient) => {
+            const replacement = inventory.ingredients.find(
+              (item) => item.id !== ingredient.id && item.status === 'active',
+            );
+            await inventory.deleteIngredient(ingredient);
+            setSelectedIngredientId(replacement?.id);
+          }}
         />
       ) : null}
       {adjustment ? (

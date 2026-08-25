@@ -36,6 +36,9 @@ presentation.
 - Staff & access is owner-only. Its create dialog contains only name, role,
   six-digit PIN, PIN confirmation, Cancel, and Add staff; a successful offline
   save appears immediately as waiting to sync.
+- Owner-only confirmed staff deletion immediately removes the selectable
+  profile while preserving historical names/wages and earlier queued work;
+  the active profile and final owner cannot be removed.
 - While locked, a bounded server profile read may provide sign-in choices, but
   it is read-only: it never archives local profiles, clears protected access,
   or starts staff-authorized synchronization. After a successful online

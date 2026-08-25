@@ -18,6 +18,7 @@ type Services = {
   resolve: (recordType: string, localRecordId: string) => Promise<string>;
   saveIngredient: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
   archiveIngredient: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
+  deleteIngredient: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
   receivePurchase: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
   recordAdjustment: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
 };
@@ -63,6 +64,38 @@ export async function dispatchInventoryOperation(
     return {
       recordType: 'ingredient',
       cloudRecordId: String(result.id),
+      acknowledgedAt,
+    };
+  }
+  if (operation.operationType === 'management.ingredient.delete') {
+    const repairs = (Array.isArray(payload.repairs) ? payload.repairs : []) as
+      Array<{ productId: string; localRecipeId?: string }>;
+    const preparedRepairs = await Promise.all(repairs.map(async (repair) => ({
+      ...repair,
+      cloudProductId: await services.resolve('product', repair.productId),
+    })));
+    const result = await services.deleteIngredient({
+      ...services.sessionArgs,
+      id: await services.resolve('ingredient', operation.localRecordId),
+      expectedRevision: operation.expectedRevision!
+        + Number(payload.pendingSaleRevisionCount ?? 0),
+      repairProductIds: preparedRepairs.map((repair) => repair.cloudProductId),
+      clientMutationId: operation.operationId,
+    });
+    const acknowledgedRepairs = (Array.isArray(result.repairs) ? result.repairs : []) as
+      Array<{ productId: string; recipeVersionId: string }>;
+    return {
+      recordType: 'ingredient',
+      cloudRecordId: String(result.id),
+      relatedMappings: preparedRepairs.flatMap((repair) => {
+        const cloud = acknowledgedRepairs.find((item) =>
+          String(item.productId) === repair.cloudProductId);
+        return repair.localRecipeId && cloud ? [{
+          recordType: 'recipe-version',
+          localRecordId: repair.localRecipeId,
+          cloudRecordId: String(cloud.recipeVersionId),
+        }] : [];
+      }),
       acknowledgedAt,
     };
   }

@@ -27,7 +27,21 @@ export function StaffAccessPanel({ management }: { management: StaffManagement }
               <strong>{profile.name}</strong>
               <small>{roleLabel(profile.role)}</small>
             </span>
-            <b>{profile.pending ? 'Waiting to sync' : 'Ready'}</b>
+            <div className={styles.actions}>
+              <b>{profile.pending ? 'Waiting to sync' : 'Ready'}</b>
+              {profile.id !== management.currentStaffId ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(`Delete ${profile.name}? Past records will be preserved.`)) {
+                      void management.remove(profile).catch(() => undefined);
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+              ) : null}
+            </div>
           </article>
         ))}
       </div>

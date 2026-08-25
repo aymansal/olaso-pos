@@ -76,7 +76,7 @@ export function CostsPanel({
             <div className={styles.rows}>
               {saved.compensation.length ? saved.compensation.slice(0, 7).map((period) => (
                 <article key={period.id}>
-                  <span><strong>{saved.staff.find((profile) => profile.id === period.staffProfileId)?.name ?? 'Staff'}</strong><small>{period.effectiveStartMonth}{period.effectiveEndMonth ? ` – ${period.effectiveEndMonth}` : ' onward'}</small></span>
+                  <span><strong>{saved.staff.find((profile) => profile.id === period.staffProfileId)?.name ?? period.staffNameSnapshot ?? 'Staff'}</strong><small>{period.effectiveStartMonth}{period.effectiveEndMonth ? ` – ${period.effectiveEndMonth}` : ' onward'}</small></span>
                   <b>{formatMoney(period.monthlyAmountCentimes)}</b>
                 </article>
               )) : <p>No compensation saved.</p>}

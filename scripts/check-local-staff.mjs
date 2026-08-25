@@ -3,9 +3,11 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import {
   insertLocalStaffOperation,
+  deleteLocalStaff,
   validateStaffCreation,
 } from '../src/data/localStaff.ts';
 import { offlineCredentialKeys } from '../src/data/offlineCredentials.ts';
+import { loadLocalCostManagementFromDatabase } from '../src/data/localCostViews.ts';
 import { localMigrations } from '../src/data/schema.ts';
 
 const database = new DatabaseSync(':memory:');
@@ -93,6 +95,52 @@ await assert.rejects(
 assert.equal(database.prepare(
   `SELECT COUNT(*) count FROM staff_profiles WHERE id = 'staff:denied'`,
 ).get().count, 0);
+database.prepare(`INSERT INTO compensation_periods
+  (id, staff_profile_id, monthly_amount_centimes, effective_start_month,
+   revision, created_at)
+  VALUES ('manager-wages', 'manager-local', 450000, '2026-08', 1, 1)`).run();
+database.prepare(`INSERT INTO sales
+  (local_sale_id, device_id, actor_profile_id, receipt_number, status,
+   service_type, subtotal_centimes, tax_centimes, total_centimes, currency,
+   business_date, receipt_snapshot_json, sync_state, created_at)
+  VALUES ('manager-sale', 'tablet-local', 'manager-local', '0826-0101',
+    'completed', 'take-away', 1000, 0, 1000, 'MAD', '2026-08-25',
+    '{"lines":[]}', 'pending', 1)`).run();
+database.prepare(`INSERT INTO outbox
+  (operation_id, device_id, operation_type, local_record_id, state,
+   created_at, available_at)
+  VALUES ('manager-sale-operation', 'tablet-local', 'sale-completed',
+    'manager-sale', 'pending', 2, 0)`).run();
+await assert.rejects(
+  deleteLocalStaff(owner, { id: 'owner-local', revision: 1 }, transaction),
+  /profile you are using/,
+);
+await assert.rejects(
+  deleteLocalStaff(manager, { id: created.id, revision: 1 }, transaction),
+  /cannot make this change/,
+);
+const removed = await deleteLocalStaff(
+  owner, { id: 'manager-local', revision: 1 }, transaction,
+);
+assert.equal(database.prepare(
+  'SELECT COUNT(*) count FROM staff_profiles WHERE id = ?',
+).get('manager-local').count, 0);
+assert.deepEqual({ ...database.prepare(
+  `SELECT staff_name_snapshot, staff_role_snapshot,
+    monthly_amount_centimes FROM compensation_periods WHERE id = ?`,
+).get('manager-wages') }, {
+  staff_name_snapshot: 'Manager', staff_role_snapshot: 'manager',
+  monthly_amount_centimes: 450000,
+});
+assert.equal(database.prepare(
+  'SELECT depends_on_operation_id FROM outbox WHERE operation_id = ?',
+).get(removed.operationId).depends_on_operation_id, 'manager-sale-operation');
+const preservedCosts = await loadLocalCostManagementFromDatabase(
+  adapter, '2026-08', 'owner',
+);
+assert.equal(preservedCosts.compensation[0]?.staffNameSnapshot, 'Manager');
+assert.equal(preservedCosts.compensation[0]?.staffRoleSnapshot, 'manager');
+assert.equal(preservedCosts.profitability?.compensationCentimes, 450000);
 database.close();
 
 const keys = offlineCredentialKeys('staff:local-cashier');

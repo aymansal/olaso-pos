@@ -113,8 +113,15 @@
   margin-top: 22px;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .archive,
-.save {
+.save,
+.deleteAction {
   align-items: center;
   height: 44px;
   gap: 8px;
@@ -136,7 +143,14 @@
   background: var(--olaso-green);
 }
 
+.deleteAction {
+  border: 0;
+  color: var(--olaso-danger);
+  background: transparent;
+}
+
 .archive:disabled,
-.save:disabled {
+.save:disabled,
+.deleteAction:disabled {
   opacity: 0.45;
 }

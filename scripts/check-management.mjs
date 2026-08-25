@@ -267,6 +267,127 @@ async function verifyManagement() {
       'superseded',
     );
     assert.equal(recipeEditor.items[0]?.quantity, 20);
+
+    const removedCategory = await mutation(api.categories.remove, {
+      id: categoryCreated.id,
+      expectedRevision: categoryRestored.revision,
+      clientMutationId: mutationId('category-delete'),
+    });
+    assert.equal(removedCategory.deleted, true);
+    const uncategorized = (await query(api.products.list, {})).find(
+      (item) => item._id === productCreated.id,
+    );
+    assert.equal(uncategorized?.categoryId, undefined);
+    const uncategorizedSaved = await mutation(api.products.save, {
+      id: productCreated.id,
+      name: uncategorized.name,
+      receiptName: uncategorized.receiptName,
+      basePriceCentimes: uncategorized.basePriceCentimes,
+      status: 'active',
+      sortOrder: uncategorized.sortOrder,
+      modifierGroupIds: uncategorized.modifierGroupIds,
+      expectedRevision: uncategorized.revision,
+      clientMutationId: mutationId('product-uncategorized'),
+    });
+    const removedProduct = await mutation(api.products.remove, {
+      id: productCreated.id,
+      expectedRevision: uncategorizedSaved.revision,
+      clientMutationId: mutationId('product-delete'),
+    });
+    assert.equal(removedProduct.deleted, true);
+    assert.equal((await mutation(api.products.remove, {
+      id: productCreated.id,
+      expectedRevision: uncategorizedSaved.revision,
+      clientMutationId: mutationId('product-delete'),
+    })).deleted, true);
+    assert.equal((await query(api.products.list, {})).some(
+      (item) => item._id === productCreated.id,
+    ), false);
+
+    const disposable = await mutation(api.inventory.saveIngredient, {
+      key: 'app03-delete-ingredient',
+      name: 'APP-03 Delete ingredient',
+      baseUnit: 'gram',
+      lowStockThreshold: 0,
+      openingQuantity: 20,
+      businessDate: '2026-08-25',
+      clientMutationId: mutationId('ingredient-for-delete'),
+    });
+    const deleteGroup = await mutation(api.modifiers.saveGroup, {
+      key: 'app03-delete-group', name: 'APP-03 Delete choices', required: false,
+      minSelections: 0, maxSelections: 1, sortOrder: 91,
+      clientMutationId: mutationId('group-for-ingredient-delete'),
+      options: [{
+        key: 'app03-delete-option', name: 'APP-03 Delete option',
+        priceDeltaCentimes: 0, status: 'active', sortOrder: 10,
+        ingredientEffects: [{ ingredientId: disposable.id, quantityDelta: 2 }],
+      }],
+    });
+    const repairProduct = await mutation(api.products.save, {
+      key: 'app03-ingredient-repair-product',
+      categoryId: initialCategories[0]._id,
+      name: 'APP-03 Ingredient repair', receiptName: 'APP-03 Ingredient repair',
+      basePriceCentimes: 2800, status: 'active', sortOrder: 990,
+      modifierGroupIds: [deleteGroup.id],
+      clientMutationId: mutationId('product-for-ingredient-delete'),
+    });
+    const beforeRepair = await mutation(api.recipes.saveVersion, {
+      productId: repairProduct.id,
+      expectedProductRevision: repairProduct.revision,
+      clientMutationId: mutationId('recipe-for-ingredient-delete'),
+      items: [{ ingredientId: disposable.id, quantity: 5 },
+        { ingredientId: initialModifiers.ingredients[0]._id, quantity: 10 }],
+    });
+    const removalArgs = {
+      id: disposable.id,
+      expectedRevision: disposable.revision,
+      repairProductIds: [repairProduct.id],
+      clientMutationId: mutationId('ingredient-delete'),
+    };
+    const removedIngredient = await mutation(api.inventory.removeIngredient, removalArgs);
+    assert.equal(removedIngredient.deleted, true);
+    assert.equal(removedIngredient.repairs.length, 1);
+    assert.equal((await mutation(api.inventory.removeIngredient, removalArgs))
+      .repairs[0]?.recipeVersionId, removedIngredient.repairs[0].recipeVersionId);
+    const repaired = (await query(api.products.list, {})).find(
+      (item) => item._id === repairProduct.id,
+    );
+    assert.equal(repaired?.status, 'unavailable');
+    assert.equal(repaired?.revision, beforeRepair.productRevision + 1);
+    const repairedRecipe = await query(api.recipes.getEditorData, {
+      productId: repairProduct.id,
+    });
+    assert.equal(repairedRecipe.items.length, 1);
+    assert.equal(repairedRecipe.items[0].ingredientId,
+      initialModifiers.ingredients[0]._id);
+    const strippedOption = (await query(api.modifiers.list, {})).options.find(
+      (option) => option.groupId === deleteGroup.id,
+    );
+    assert.deepEqual(strippedOption?.ingredientEffects, []);
+
+    const temporaryStaff = await mutation(api.staff.save, {
+      name: 'APP-03 Deletable cashier', role: 'cashier',
+      clientMutationId: mutationId('staff-for-delete'),
+    });
+    await mutation(api.staff.addCompensationPeriod, {
+      staffProfileId: temporaryStaff.id,
+      monthlyAmountCentimes: 400000,
+      effectiveStartMonth: '2026-08',
+      clientMutationId: mutationId('staff-compensation-for-delete'),
+    });
+    const removedStaff = await mutation(api.staff.remove, {
+      id: temporaryStaff.id, expectedRevision: temporaryStaff.revision,
+      clientMutationId: mutationId('staff-delete'),
+    });
+    assert.equal(removedStaff.deleted, true);
+    assert.equal((await query(api.staff.list, {})).some(
+      (member) => member.id === temporaryStaff.id,
+    ), false);
+    const retainedWages = (await query(api.staff.listAllCompensation, {})).find(
+      (period) => period.staffProfileId === temporaryStaff.id,
+    );
+    assert.equal(retainedWages?.staffNameSnapshot, 'APP-03 Deletable cashier');
+    assert.equal(retainedWages?.staffRoleSnapshot, 'cashier');
   } finally {
     await reseed();
   }

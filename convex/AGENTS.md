@@ -45,7 +45,11 @@ data, reporting summaries, and development seeding.
 - Report snapshots read at most 32 indexed daily summaries per current/prior
   range, accept no more than 31 days, and cap each detail aggregate at 20.
 - Store money as integer centimes and stock in integer ingredient base units.
-- Archive records referenced by history and keep stock movements append-only.
+- Keep sales, corrections, stock movements, purchases, immutable recipes, and
+  compensation append-only or historical. Live categories, products,
+  ingredients, and owner-managed staff may be permanently deleted only after
+  their independent historical names/facts and earlier queued effects are
+  preserved; category removal leaves products uncategorized.
 - One synchronized sale is one retry-safe mutation keyed by
   `deviceId + localSaleId`.
 - The sale mutation re-reads current products, revisions, recipes, modifiers,

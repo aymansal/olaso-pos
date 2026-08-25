@@ -127,3 +127,37 @@ export const setArchived = mutation({
     return { id: category._id, revision: category.revision + 1 };
   },
 });
+
+export const remove = mutation({
+  args: {
+    ...sessionArgs,
+    id: v.id('categories'),
+    expectedRevision: v.number(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const updatedBy = await requireManagement(ctx, args);
+    const clientMutationId = mutationId(args.clientMutationId);
+    const category = await ctx.db.get(args.id);
+    if (!category) return { id: args.id, deleted: true as const };
+    expectRevision(args.expectedRevision, category.revision);
+    const products = await ctx.db.query('products')
+      .withIndex('by_category', (index) => index.eq('categoryId', category._id))
+      .take(201);
+    if (products.length > 200) {
+      throw new Error('Too many products belong to this category.');
+    }
+    const updatedAt = Date.now();
+    for (const product of products) {
+      await ctx.db.patch(product._id, {
+        categoryId: undefined,
+        revision: product.revision + 1,
+        updatedAt,
+        updatedBy,
+        lastMutationId: clientMutationId,
+      });
+    }
+    await ctx.db.delete(category._id);
+    return { id: args.id, deleted: true as const };
+  },
+});

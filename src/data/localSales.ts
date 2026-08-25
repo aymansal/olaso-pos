@@ -484,12 +484,15 @@ export async function commitLocalSale(
     false,
   );
   for (const line of receipt.lines) {
+    const product = menu.products.find((item) => item.id === line.productId);
+    const category = menu.categories.find((item) => item.id === product?.categoryId);
     await database.run(
       `INSERT INTO sale_items
          (id, local_sale_id, product_id, quantity, product_name_snapshot,
          unit_price_centimes, modifier_snapshot_json, recipe_snapshot_json,
-         line_total_centimes, ingredient_cost_centimes, cost_status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         line_total_centimes, ingredient_cost_centimes, cost_status,
+         category_id_snapshot, category_name_snapshot)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         idFactory(),
         localSaleId,
@@ -502,6 +505,8 @@ export async function commitLocalSale(
         line.lineTotalCentimes,
         line.ingredientCostCentimes ?? null,
         line.costStatus,
+        category?.id ?? '',
+        category?.name ?? '',
       ],
       false,
     );
@@ -509,6 +514,7 @@ export async function commitLocalSale(
   for (const [ingredientId, quantity] of prepared.stockUsage) {
     if (quantity === 0) continue;
     const ingredientCostCentimes = prepared.ingredientCosts.get(ingredientId);
+    const ingredient = menu.ingredients.find((item) => item.id === ingredientId);
     await database.run(
       `UPDATE ingredients
        SET local_stock_delta = local_stock_delta - ?,
@@ -520,12 +526,16 @@ export async function commitLocalSale(
     );
     await database.run(
         `INSERT INTO stock_movements
-        (id, ingredient_id, local_sale_id, quantity_delta, movement_type,
-         reason, actor_label, business_date, created_at, cost_delta_centimes)
-       VALUES (?, ?, ?, ?, 'sale', ?, ?, ?, ?, ?)`,
+        (id, ingredient_id, ingredient_name_snapshot,
+         ingredient_base_unit_snapshot, local_sale_id, quantity_delta,
+         movement_type, reason, actor_label, business_date, created_at,
+         cost_delta_centimes)
+       VALUES (?, ?, ?, ?, ?, ?, 'sale', ?, ?, ?, ?, ?)`,
       [
         idFactory(),
         ingredientId,
+        ingredient?.name ?? '',
+        ingredient?.baseUnit ?? '',
         localSaleId,
         -quantity,
         `Recipe deduction for ${receipt.receiptNumber}`,
@@ -611,7 +621,8 @@ export async function cancelLocalSale(
   );
   if (previous.values?.[0]) throw new Error('This order already has a correction.');
   const movements = await database.query(
-    `SELECT ingredient_id, quantity_delta, cost_delta_centimes
+    `SELECT ingredient_id, ingredient_name_snapshot,
+      ingredient_base_unit_snapshot, quantity_delta, cost_delta_centimes
      FROM stock_movements
      WHERE local_sale_id = ? AND movement_type = 'sale'
      ORDER BY id LIMIT 101`,
@@ -644,12 +655,16 @@ export async function cancelLocalSale(
     );
     await database.run(
       `INSERT INTO stock_movements
-       (id, ingredient_id, local_sale_id, quantity_delta, movement_type,
-        reason, actor_label, business_date, created_at, cost_delta_centimes)
-       VALUES (?, ?, ?, ?, 'cancellation', ?, ?, ?, ?, ?)`,
+       (id, ingredient_id, ingredient_name_snapshot,
+        ingredient_base_unit_snapshot, local_sale_id, quantity_delta,
+        movement_type, reason, actor_label, business_date, created_at,
+        cost_delta_centimes)
+       VALUES (?, ?, ?, ?, ?, ?, 'cancellation', ?, ?, ?, ?, ?)`,
       [
         idFactory(),
         String(movement.ingredient_id),
+        String(movement.ingredient_name_snapshot),
+        String(movement.ingredient_base_unit_snapshot),
         originalLocalSaleId,
         -quantityDelta,
         `Cancellation: ${cleanedReason}`,

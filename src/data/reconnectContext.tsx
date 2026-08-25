@@ -43,7 +43,10 @@ import {
   resolveCloudRecordId,
 } from './localManagement';
 import { hasPermission, isStaffRole } from './permissions';
-import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation';
+import {
+  OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+  STAFF_MANAGEMENT_OPERATION_TYPES,
+} from './managementOperation';
 import {
   replaceSavedCompensation,
   replaceSavedExpenses,
@@ -134,18 +137,22 @@ export function ReconnectProvider({
   const cancelMutation = useMutation(api.sales.cancel);
   const saveCategoryMutation = useMutation(api.categories.save);
   const archiveCategoryMutation = useMutation(api.categories.setArchived);
+  const deleteCategoryMutation = useMutation(api.categories.remove);
   const saveProductMutation = useMutation(api.products.save);
   const setProductStatusMutation = useMutation(api.products.setStatus);
+  const deleteProductMutation = useMutation(api.products.remove);
   const saveModifierMutation = useMutation(api.modifiers.saveGroup);
   const archiveModifierMutation = useMutation(api.modifiers.setGroupArchived);
   const saveRecipeMutation = useMutation(api.recipes.saveVersion);
   const saveIngredientMutation = useMutation(api.inventory.saveIngredient);
   const archiveIngredientMutation = useMutation(api.inventory.setIngredientArchived);
+  const deleteIngredientMutation = useMutation(api.inventory.removeIngredient);
   const receivePurchaseMutation = useMutation(api.inventory.receivePurchase);
   const recordAdjustmentMutation = useMutation(api.inventory.recordAdjustment);
   const addExpenseMutation = useMutation(api.expenses.add);
   const correctExpenseMutation = useMutation(api.expenses.correct);
   const addCompensationMutation = useMutation(api.staff.addCompensationPeriod);
+  const deleteStaffMutation = useMutation(api.staff.remove);
   const checkSession = useAction(api.identity.checkSession);
   const createStaffAction = useAction(api.identity.createStaff);
   const inFlight = useRef<Promise<ReconnectResult> | undefined>(undefined);
@@ -197,37 +204,11 @@ export function ReconnectProvider({
               requiredPermission: operation.requiredPermission,
             }),
             createStaff: (args) => createStaffAction(args as any) as any,
+            deleteStaff: (args) => deleteStaffMutation(args as any),
+            resolve: resolveCloudRecordId,
           }));
         synced += staffResult.synced;
         failed += staffResult.failed;
-        if (staffResult.failed > 0 || staffResult.processed < 10) break;
-        await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
-      }
-      await cleanupAcknowledgedStaffProvisioning();
-
-      const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
-        deviceId: session.deviceId,
-      });
-      const activeProfiles = remoteProfiles.flatMap((profile) =>
-        isStaffRole(profile.role)
-          ? [{
-              id: String(profile.id),
-              name: profile.name,
-              role: profile.role,
-              revision: Number(profile.revision),
-              identityRevision: Number(profile.identityRevision),
-            }]
-          : [],
-      );
-      const invalidatedProfileIds = await reconcileAuthenticatedStaffProfiles(
-        activeProfiles,
-        session.staffProfileId,
-      );
-      for (const profileId of invalidatedProfileIds) {
-        await clearStaffSession(profileId);
-      }
-
-      for (let batch = 0; batch < 10; batch += 1) {
         const catalog = await syncPendingCatalogOperations(async (operation) => {
           const payload = operation.payload as Record<string, any>;
           const acknowledgedAt = Date.now();
@@ -261,6 +242,15 @@ export function ReconnectProvider({
             });
             return { recordType: 'category', cloudRecordId: String(result.id), acknowledgedAt };
           }
+          if (operation.operationType === 'management.category.delete') {
+            const result = await deleteCategoryMutation({
+              ...actorSessionArgs,
+              id: await resolveCloudRecordId('category', operation.localRecordId) as Id<'categories'>,
+              expectedRevision: operation.expectedRevision!,
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'category', cloudRecordId: String(result.id), acknowledgedAt };
+          }
           if (operation.operationType === 'management.product.save') {
             const result = await saveProductMutation({
               ...actorSessionArgs,
@@ -270,7 +260,11 @@ export function ReconnectProvider({
                     id: await resolveCloudRecordId('product', operation.localRecordId) as Id<'products'>,
                     expectedRevision: operation.expectedRevision,
                   }),
-              categoryId: await resolveCloudRecordId('category', String(payload.categoryId)) as Id<'categories'>,
+              ...(payload.categoryId ? {
+                categoryId: await resolveCloudRecordId(
+                  'category', String(payload.categoryId),
+                ) as Id<'categories'>,
+              } : {}),
               name: String(payload.name), receiptName: String(payload.receiptName),
               basePriceCentimes: Number(payload.basePriceCentimes),
               status: payload.status, sortOrder: Number(payload.sortOrder),
@@ -286,6 +280,15 @@ export function ReconnectProvider({
               ...actorSessionArgs,
               id: await resolveCloudRecordId('product', operation.localRecordId) as Id<'products'>,
               status: payload.status, expectedRevision: operation.expectedRevision!,
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'product', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.product.delete') {
+            const result = await deleteProductMutation({
+              ...actorSessionArgs,
+              id: await resolveCloudRecordId('product', operation.localRecordId) as Id<'products'>,
+              expectedRevision: operation.expectedRevision!,
               clientMutationId: operation.operationId,
             });
             return { recordType: 'product', cloudRecordId: String(result.id), acknowledgedAt };
@@ -371,12 +374,13 @@ export function ReconnectProvider({
             resolve: resolveCloudRecordId,
             saveIngredient: (args) => saveIngredientMutation(args as any),
             archiveIngredient: (args) => archiveIngredientMutation(args as any),
+            deleteIngredient: (args) => deleteIngredientMutation(args as any),
             receivePurchase: (args) => receivePurchaseMutation(args as any),
             recordAdjustment: (args) => recordAdjustmentMutation(args as any),
           }));
         synced += inventory.synced;
         failed += inventory.failed;
-        if (catalog.processed + inventory.processed > 0) {
+        if (staffResult.processed + catalog.processed + inventory.processed > 0) {
           await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
           continue;
         }
@@ -440,10 +444,34 @@ export function ReconnectProvider({
         await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
       }
 
+      await cleanupAcknowledgedStaffProvisioning();
+      const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
+        deviceId: session.deviceId,
+      });
+      const activeProfiles = remoteProfiles.flatMap((profile) =>
+        isStaffRole(profile.role)
+          ? [{
+              id: String(profile.id),
+              name: profile.name,
+              role: profile.role,
+              revision: Number(profile.revision),
+              identityRevision: Number(profile.identityRevision),
+            }]
+          : [],
+      );
+      const invalidatedProfileIds = await reconcileAuthenticatedStaffProfiles(
+        activeProfiles,
+        session.staffProfileId,
+      );
+      for (const profileId of invalidatedProfileIds) {
+        await clearStaffSession(profileId);
+      }
+
       const settings = await loadTerminalSettings();
       let refreshed = false;
       if (!await hasPendingManagementOperations(
-        OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+        [...OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+          ...STAFF_MANAGEMENT_OPERATION_TYPES],
       )) {
         const cloud = await convex.query(api.sync.getOperationalSnapshot, {
           sessionToken: session.token,
@@ -498,7 +526,16 @@ export function ReconnectProvider({
       }
       throw new Error(message);
     }
-  }, [acceptMutation, addCompensationMutation, addExpenseMutation, archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation, available, cancelMutation, checkSession, convex, correctExpenseMutation, createStaffAction, foreground, onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation, saveCategoryMutation, saveIngredientMutation, saveModifierMutation, saveProductMutation, saveRecipeMutation, session.deviceId, session.name, session.provisioningState, session.role, session.staffProfileId, session.token, setProductStatusMutation]);
+  }, [acceptMutation, addCompensationMutation, addExpenseMutation,
+    archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation,
+    available, cancelMutation, checkSession, convex, correctExpenseMutation,
+    createStaffAction, deleteCategoryMutation, deleteIngredientMutation,
+    deleteProductMutation, deleteStaffMutation, foreground,
+    onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation,
+    saveCategoryMutation, saveIngredientMutation, saveModifierMutation,
+    saveProductMutation, saveRecipeMutation, session.deviceId, session.name,
+    session.provisioningState, session.role, session.staffProfileId,
+    session.token, setProductStatusMutation]);
 
   const run = useCallback((mode: ReconnectMode = 'automatic') => {
     requestedMode.current = mode === 'manual' || requestedMode.current === 'manual'

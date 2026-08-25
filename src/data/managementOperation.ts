@@ -41,8 +41,10 @@ export type PendingLocalManagementOperation = LocalManagementOperation & {
 export const CATALOG_MANAGEMENT_OPERATION_TYPES = [
   'management.category.save',
   'management.category.archive',
+  'management.category.delete',
   'management.product.save',
   'management.product.status',
+  'management.product.delete',
   'management.modifier.save',
   'management.modifier.archive',
   'management.recipe.save',
@@ -51,6 +53,7 @@ export const CATALOG_MANAGEMENT_OPERATION_TYPES = [
 export const INVENTORY_MANAGEMENT_OPERATION_TYPES = [
   'management.ingredient.save',
   'management.ingredient.archive',
+  'management.ingredient.delete',
   'management.inventory.purchase',
   'management.inventory.adjust',
 ] as const;
@@ -76,6 +79,7 @@ export const FINANCE_MANAGEMENT_OPERATION_TYPES = [
 
 export const STAFF_MANAGEMENT_OPERATION_TYPES = [
   'management.staff.create',
+  'management.staff.delete',
 ] as const;
 
 const permissions = new Set<ManagementPermission>([

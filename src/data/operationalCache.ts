@@ -113,23 +113,20 @@ function assertBounded(snapshot: OperationalCacheSnapshot) {
 
 export async function pruneStaleOperationalCatalog(
   database: Pick<SQLiteDBConnection, 'run'>,
-  snapshotUpdatedAt: number,
+  _snapshotUpdatedAt: number,
 ) {
   await database.run(
-    `DELETE FROM recipe_items WHERE recipe_version_id IN (
-       SELECT rv.id FROM recipe_versions rv
-       JOIN products p ON p.id = rv.product_id
-       WHERE p.status = 'archived' AND p.updated_at <> ?
-     )`,
-    [snapshotUpdatedAt],
-    false,
-  );
-  await database.run(
-    `DELETE FROM recipe_versions WHERE product_id IN (
+    `UPDATE recipe_versions SET is_active = 0,
+       product_name_snapshot = COALESCE(
+         NULLIF(product_name_snapshot, ''),
+         (SELECT name FROM products WHERE id = recipe_versions.product_id),
+         ''
+       )
+     WHERE product_id IN (
        SELECT id FROM products
-       WHERE status = 'archived' AND updated_at <> ?
+       WHERE status = 'archived'
      )`,
-    [snapshotUpdatedAt],
+    [],
     false,
   );
   for (const table of [
@@ -139,11 +136,43 @@ export async function pruneStaleOperationalCatalog(
     'categories',
   ]) {
     await database.run(
-      `DELETE FROM ${table} WHERE status = 'archived' AND updated_at <> ?`,
-      [snapshotUpdatedAt],
+      `DELETE FROM ${table} WHERE status = 'archived'`,
+      [],
       false,
     );
   }
+  await database.run(
+    `DELETE FROM ingredients
+     WHERE status = 'archived'
+       AND NOT EXISTS (
+         SELECT 1 FROM outbox pending
+         JOIN stock_movements movement
+           ON movement.local_sale_id = pending.local_record_id
+         WHERE movement.ingredient_id = ingredients.id
+           AND pending.operation_type IN ('sale-completed', 'sale-cancelled')
+       )`,
+    [],
+    false,
+  );
+  await database.run(
+    `DELETE FROM staff_profiles
+     WHERE status = 'archived'
+       AND NOT EXISTS (
+         SELECT 1 FROM outbox pending
+         LEFT JOIN management_operations management
+           ON management.operation_id = pending.operation_id
+         LEFT JOIN sales sale
+           ON sale.local_sale_id = pending.local_record_id
+         LEFT JOIN sale_corrections correction
+           ON correction.local_correction_id = pending.local_record_id
+         WHERE pending.local_record_id = staff_profiles.id
+           OR management.actor_profile_id = staff_profiles.id
+           OR sale.actor_profile_id = staff_profiles.id
+           OR correction.actor_profile_id = staff_profiles.id
+       )`,
+    [],
+    false,
+  );
 }
 
 export async function replaceOperationalCache(
@@ -262,7 +291,7 @@ export async function replaceOperationalCache(
            updated_at = excluded.updated_at`,
         [
           product.id,
-          product.categoryId,
+          product.categoryId || null,
           product.name,
           product.receiptName,
           product.priceCentimes,
@@ -411,10 +440,14 @@ export async function replaceOperationalCache(
     for (const version of snapshot.recipeVersions) {
       await database.run(
         `INSERT INTO recipe_versions
-          (id, product_id, version, is_active, created_at)
-         VALUES (?, ?, ?, 1, ?)
-         ON CONFLICT(id) DO UPDATE SET is_active = 1`,
-        [version.id, version.productId, version.version, version.createdAt],
+          (id, product_id, product_name_snapshot, version, is_active, created_at)
+         VALUES (?, ?, COALESCE((SELECT name FROM products WHERE id = ?), ''),
+           ?, 1, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           is_active = 1,
+           product_name_snapshot = excluded.product_name_snapshot`,
+        [version.id, version.productId, version.productId, version.version,
+          version.createdAt],
         false,
       );
     }
@@ -428,11 +461,16 @@ export async function replaceOperationalCache(
     for (const item of snapshot.recipeItems) {
       await database.run(
         `INSERT INTO recipe_items
-          (recipe_version_id, ingredient_id, quantity)
-         VALUES (?, ?, ?)
+          (recipe_version_id, ingredient_id, ingredient_name_snapshot,
+           ingredient_base_unit_snapshot, quantity)
+         VALUES (?, ?, COALESCE((SELECT name FROM ingredients WHERE id = ?), ''),
+           COALESCE((SELECT base_unit FROM ingredients WHERE id = ?), ''), ?)
          ON CONFLICT(recipe_version_id, ingredient_id) DO UPDATE SET
+           ingredient_name_snapshot = excluded.ingredient_name_snapshot,
+           ingredient_base_unit_snapshot = excluded.ingredient_base_unit_snapshot,
            quantity = excluded.quantity`,
-        [item.recipeVersionId, item.ingredientId, item.quantity],
+        [item.recipeVersionId, item.ingredientId, item.ingredientId,
+          item.ingredientId, item.quantity],
         false,
       );
     }
@@ -501,31 +539,65 @@ export async function reconcileAuthenticatedStaffProfiles(
   }
   const updatedAt = Date.now();
   return withLocalTransaction(async (database) => {
-    const [previous, pending] = await Promise.all([
+    const [previous, pending, pendingActors] = await Promise.all([
       database.query(
-        "SELECT id, identity_revision FROM staff_profiles WHERE status = 'active'",
+        'SELECT id, identity_revision FROM staff_profiles LIMIT 1001',
       ),
       database.query(
-        `SELECT local_record_id FROM outbox
-         WHERE operation_type = 'management.staff.create' LIMIT 101`,
+        `SELECT outbox.local_record_id, outbox.operation_type,
+           mapping.cloud_record_id
+         FROM outbox
+         LEFT JOIN local_cloud_mappings mapping
+           ON mapping.record_type = 'staff-profile'
+          AND mapping.local_record_id = outbox.local_record_id
+         WHERE outbox.operation_type IN
+           ('management.staff.create', 'management.staff.delete')
+         LIMIT 101`,
+      ),
+      database.query(
+        `SELECT management.actor_profile_id AS profile_id
+         FROM outbox pending
+         JOIN management_operations management
+           ON management.operation_id = pending.operation_id
+         UNION
+         SELECT sale.actor_profile_id AS profile_id
+         FROM outbox pending
+         JOIN sales sale ON sale.local_sale_id = pending.local_record_id
+         UNION
+         SELECT correction.actor_profile_id AS profile_id
+         FROM outbox pending
+         JOIN sale_corrections correction
+           ON correction.local_correction_id = pending.local_record_id
+         LIMIT 101`,
       ),
     ]);
-    if ((pending.values?.length ?? 0) > 100) {
+    if ((pending.values?.length ?? 0) > 100
+        || (pendingActors.values?.length ?? 0) > 100
+        || (previous.values?.length ?? 0) > 1000) {
       throw new Error('Pending staff exceeds the local directory limit.');
     }
-    const pendingIds = new Set(
-      (pending.values ?? []).map((row) => String(row.local_record_id)),
-    );
-    const activeById = new Map(profiles.map((profile) => [profile.id, profile]));
+    const pendingIds = new Set((pending.values ?? [])
+      .filter((row) => row.operation_type === 'management.staff.create')
+      .map((row) => String(row.local_record_id)));
+    const deletedIds = new Set((pending.values ?? [])
+      .filter((row) => row.operation_type === 'management.staff.delete')
+      .flatMap((row) => [String(row.local_record_id),
+        ...(row.cloud_record_id ? [String(row.cloud_record_id)] : [])]));
+    const acceptedProfiles = profiles.filter((profile) => !deletedIds.has(profile.id));
+    const activeById = new Map(acceptedProfiles.map((profile) => [profile.id, profile]));
+    const retainedActorIds = new Set((pendingActors.values ?? [])
+      .filter((row) => row.profile_id)
+      .map((row) => String(row.profile_id)));
     const invalidatedProfileIds = (previous.values ?? []).flatMap((row) => {
       const current = activeById.get(String(row.id));
       return !pendingIds.has(String(row.id))
+        && !retainedActorIds.has(String(row.id))
         && (!current || current.identityRevision !== Number(row.identity_revision))
         ? [String(row.id)]
         : [];
     });
     await database.run("UPDATE staff_profiles SET status = 'archived'", [], false);
-    for (const profile of profiles) {
+    for (const profile of acceptedProfiles) {
       await database.run(
         `INSERT INTO staff_profiles
           (id, name, role, status, revision, updated_at, identity_revision)
@@ -684,7 +756,7 @@ export async function loadOperationalCache(
     products: (products.values ?? []).map((row) => ({
       id: String(row.id),
       key: String(row.key),
-      categoryId: String(row.category_id),
+      categoryId: row.category_id ? String(row.category_id) : '',
       name: String(row.name),
       receiptName: String(row.receipt_name),
       priceCentimes: Number(row.price_centimes),

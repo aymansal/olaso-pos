@@ -33,7 +33,7 @@ const TAX_POLICY_LABEL = 'No tax';
 
 type PreparedLine = {
   product: Doc<'products'>;
-  category: Doc<'categories'>;
+  category?: Doc<'categories'>;
   recipe?: Doc<'recipeVersions'>;
   quantity: number;
   unitPriceCentimes: number;
@@ -217,9 +217,9 @@ export const accept = mutation({
       const [selectedOptions, groups, category] = await Promise.all([
         Promise.all(selectedIds.map((id) => ctx.db.get(id))),
         Promise.all(product.modifierGroupIds.map((id) => ctx.db.get(id))),
-        ctx.db.get(product.categoryId),
+        product.categoryId ? ctx.db.get(product.categoryId) : Promise.resolve(null),
       ]);
-      if (!category || category.status !== 'active') {
+      if (product.categoryId && (!category || category.status !== 'active')) {
         return conflict(`${product.name}'s category is unavailable.`);
       }
       if (groups.some((group) => !group || group.status !== 'active')) {
@@ -338,7 +338,7 @@ export const accept = mutation({
       }
       preparedLines.push({
         product,
-        category,
+        ...(category ? { category } : {}),
         ...(recipe ? { recipe } : {}),
         quantity,
         unitPriceCentimes,
@@ -502,7 +502,7 @@ export const accept = mutation({
       await ctx.db.insert('saleItems', {
         saleId,
         productId: line.product._id,
-        categoryId: line.category._id,
+        ...(line.category ? { categoryId: line.category._id } : {}),
         productName: line.product.name,
         receiptName: line.product.receiptName,
         unitPriceCentimes: line.unitPriceCentimes,
@@ -548,6 +548,8 @@ export const accept = mutation({
       });
       await ctx.db.insert('stockMovements', {
         ingredientId,
+        ingredientNameSnapshot: ingredient.name,
+        ingredientBaseUnitSnapshot: ingredient.baseUnit,
         quantityDelta: -amount,
         movementType: 'sale',
         relatedSaleId: saleId,
@@ -648,31 +650,33 @@ export const accept = mutation({
         (row) => row.productId === line.product._id,
       );
       if (productTotal) {
-        productTotal.categoryName ??= line.category.name;
+        if (line.category) productTotal.categoryName ??= line.category.name;
         productTotal.quantity += line.quantity;
         productTotal.totalCentimes += line.lineTotalCentimes;
       } else {
         productTotals.push({
           productId: line.product._id,
           productName: line.product.name,
-          categoryName: line.category.name,
+          ...(line.category ? { categoryName: line.category.name } : {}),
           quantity: line.quantity,
           totalCentimes: line.lineTotalCentimes,
         });
       }
-      const categoryTotal = categoryTotals.find(
-        (row) => row.categoryId === line.category._id,
-      );
-      if (categoryTotal) {
-        categoryTotal.quantity += line.quantity;
-        categoryTotal.totalCentimes += line.lineTotalCentimes;
-      } else {
-        categoryTotals.push({
-          categoryId: line.category._id,
-          categoryName: line.category.name,
-          quantity: line.quantity,
-          totalCentimes: line.lineTotalCentimes,
-        });
+      if (line.category) {
+        const categoryTotal = categoryTotals.find(
+          (row) => row.categoryId === line.category!._id,
+        );
+        if (categoryTotal) {
+          categoryTotal.quantity += line.quantity;
+          categoryTotal.totalCentimes += line.lineTotalCentimes;
+        } else {
+          categoryTotals.push({
+            categoryId: line.category._id,
+            categoryName: line.category.name,
+            quantity: line.quantity,
+            totalCentimes: line.lineTotalCentimes,
+          });
+        }
       }
     }
     let ingredientUsageEventCount =
@@ -815,14 +819,34 @@ export const cancel = mutation({
         return conflict('Saved stock history is invalid.');
       }
       const ingredient = await ctx.db.get(movement.ingredientId);
-      if (!ingredient) return conflict('A saved correction ingredient is missing.');
-      ingredients.set(ingredient._id, ingredient);
+      if (ingredient) ingredients.set(ingredient._id, ingredient);
     }
     for (const movement of movements) {
       const ingredient = ingredients.get(movement.ingredientId);
-      if (!ingredient) return conflict('A saved correction ingredient is missing.');
       const restoredQuantity = -movement.quantityDelta;
       const restoredCost = movement.costDeltaCentimes === undefined ? undefined : -movement.costDeltaCentimes;
+      if (!ingredient) {
+        await ctx.db.insert('stockMovements', {
+          ingredientId: movement.ingredientId,
+          ...(movement.ingredientNameSnapshot
+            ? { ingredientNameSnapshot: movement.ingredientNameSnapshot }
+            : {}),
+          ...(movement.ingredientBaseUnitSnapshot
+            ? { ingredientBaseUnitSnapshot: movement.ingredientBaseUnitSnapshot }
+            : {}),
+          quantityDelta: restoredQuantity,
+          movementType: 'cancellation',
+          relatedSaleId: original._id,
+          reason: `Cancellation of ${original.receiptNumber}: ${reason}`,
+          deviceId,
+          actorLabel: actor,
+          businessDate: original.businessDate,
+          createdAt: correctedAt,
+          clientMutationId: `${deviceId}:${localCorrectionId}:${movement.ingredientId}`,
+          ...(restoredCost === undefined ? {} : { costDeltaCentimes: restoredCost }),
+        });
+        continue;
+      }
       const complete = ingredient.costStatus === 'complete'
         && ingredient.inventoryValueCentimes !== undefined
         && restoredCost !== undefined;
@@ -842,6 +866,8 @@ export const cancel = mutation({
       });
       await ctx.db.insert('stockMovements', {
         ingredientId: ingredient._id,
+        ingredientNameSnapshot: ingredient.name,
+        ingredientBaseUnitSnapshot: ingredient.baseUnit,
         quantityDelta: restoredQuantity,
         movementType: 'cancellation',
         relatedSaleId: original._id,
@@ -879,9 +905,13 @@ export const cancel = mutation({
         ? categoryTotals.filter((row) => row.categoryId === item.categoryId)
         : categoryTotals.filter((row) => row.categoryName === product.categoryName);
       const category = categoryMatches.length === 1 ? categoryMatches[0] : undefined;
-      if (!category) return conflict('Saved category summary is incomplete.');
-      category.quantity = subtractMetric(category.quantity, item.quantity, 'category quantity');
-      category.totalCentimes = subtractMetric(category.totalCentimes, item.lineTotalCentimes, 'category total');
+      if (!category && (item.categoryId || product.categoryName)) {
+        return conflict('Saved category summary is incomplete.');
+      }
+      if (category) {
+        category.quantity = subtractMetric(category.quantity, item.quantity, 'category quantity');
+        category.totalCentimes = subtractMetric(category.totalCentimes, item.lineTotalCentimes, 'category total');
+      }
     }
     const ingredientTotals = (metric.ingredientTotals ?? []).map((row) => ({ ...row }));
     for (const movement of movements) {

@@ -148,7 +148,7 @@ export function ProductsScreen({
     const result = await management.saveProduct(input);
     setCreating(false);
     setSelectedProductId(result.id);
-    setSelectedCategoryId(input.categoryId);
+    setSelectedCategoryId(input.categoryId || 'all');
   }
 
   async function setProductStatus(
@@ -202,6 +202,19 @@ export function ProductsScreen({
           selectedCategory && setCategoryEditor(selectedCategory)
         }
         onSetCategoryArchived={setCategoryArchived}
+        onDeleteCategory={async () => {
+          if (!selectedCategory || !window.confirm(
+            `Delete ${selectedCategory.name}? Its products will remain uncategorized.`,
+          )) return;
+          try {
+            await management.deleteCategory(selectedCategory);
+            setSelectedCategoryId('all');
+          } catch (caught) {
+            window.alert(caught instanceof Error
+              ? caught.message
+              : 'Category could not be deleted.');
+          }
+        }}
         onAddProduct={() => {
           setCreating(true);
           setSelectedProductId(undefined);
@@ -224,6 +237,11 @@ export function ProductsScreen({
         cost={management.cost}
         onSave={saveProduct}
         onSetStatus={setProductStatus}
+        onDelete={async (product) => {
+          await management.deleteProduct(product);
+          setSelectedProductId(undefined);
+          setCreating(false);
+        }}
         onSaveModifierGroup={saveModifierGroup}
         onSetModifierGroupArchived={async (group, archived) => {
           if (!group.id || group.revision === undefined) return;

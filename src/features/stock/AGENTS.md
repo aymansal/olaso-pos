@@ -13,7 +13,7 @@ history.
 - `StockInventoryPanel` and `StockTable` own stock discovery and rows.
 - `StockDetailPanel` owns the selected ingredient detail.
 - `StockIcon` owns stock item icon presentation.
-- `IngredientDialog` owns create/edit/archive/restore interaction.
+- `IngredientDialog` owns create/edit/archive/restore/delete interaction.
 - `StockAdjustmentDialog` owns receive and physical-count interaction.
 - `stockManagementTypes.ts` defines plain feature records and actions;
   `stockPresentation.ts` formats exact quantities at the display edge.
@@ -30,12 +30,15 @@ history.
   updates the balance atomically through the data hook.
 - Components stay prop-driven and never import Convex.
 - Archived ingredients remain available to history and can be restored.
+- Confirmed ingredient deletion preserves purchase, movement, recipe, and
+  report history; removes active recipe/choice references; and marks affected
+  products unavailable until their recipe is repaired.
 - Do not add theoretical-waste or inventory-valuation claims without confirmed
   product contracts and source data.
 - Offline reads use saved ingredients plus bounded local movement, purchase,
   and recipe-link detail instead of waiting for Convex.
 - Internet state never disables a valid ingredient, threshold, purchase,
-  archive/restore, or stock-adjustment form.
+  archive/restore/delete, or stock-adjustment form.
 - All stock levels means all active ingredients; archived ingredients appear
   only when the operator deliberately selects the Archived filter.
 

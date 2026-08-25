@@ -195,15 +195,18 @@ export function saveLocalRecipeVersion(
     const now = Date.now();
     await database.run('UPDATE recipe_versions SET is_active = 0 WHERE product_id = ?', [product.id], false);
     await database.run(
-      `INSERT INTO recipe_versions (id, product_id, version, is_active, created_at)
-       VALUES (?, ?, ?, 1, ?)`,
-      [recipeId, product.id, version, now], false,
+      `INSERT INTO recipe_versions
+        (id, product_id, product_name_snapshot, version, is_active, created_at)
+       VALUES (?, ?, ?, ?, 1, ?)`,
+      [recipeId, product.id, String(savedProduct.name), version, now], false,
     );
     for (const item of items) {
       await database.run(
-        `INSERT INTO recipe_items (recipe_version_id, ingredient_id, quantity)
-         VALUES (?, ?, ?)`,
-        [recipeId, item.ingredientId, item.quantity], false,
+        `INSERT INTO recipe_items
+          (recipe_version_id, ingredient_id, ingredient_name_snapshot,
+           ingredient_base_unit_snapshot, quantity)
+         SELECT ?, id, name, base_unit, ? FROM ingredients WHERE id = ?`,
+        [recipeId, item.quantity, item.ingredientId], false,
       );
     }
     await database.run(

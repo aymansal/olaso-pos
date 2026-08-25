@@ -41,6 +41,68 @@ export async function latestPendingManagementOperationIdFromDatabase(
     : undefined;
 }
 
+export async function latestPendingSaleForRecordFromDatabase(
+  database: ManagementDatabase,
+  recordType: 'category' | 'product' | 'ingredient',
+  recordId: string,
+  dependentOperationTypes?: readonly string[],
+) {
+  const relation = recordType === 'ingredient'
+    ? 'JOIN stock_movements history ON history.local_sale_id = sale.local_sale_id'
+    : `JOIN sale_items history ON history.local_sale_id = sale.local_sale_id
+       ${recordType === 'category'
+    ? 'JOIN products product ON product.id = history.product_id'
+    : ''}`;
+  const target = recordType === 'ingredient'
+    ? 'history.ingredient_id'
+    : recordType === 'category'
+      ? 'product.category_id'
+      : 'history.product_id';
+  const result = await database.query(
+    `SELECT outbox.operation_id FROM outbox
+     LEFT JOIN sale_corrections correction
+       ON outbox.operation_type = 'sale-cancelled'
+      AND correction.local_correction_id = outbox.local_record_id
+     JOIN sales sale ON sale.local_sale_id = CASE
+       WHEN outbox.operation_type = 'sale-completed'
+         THEN outbox.local_record_id
+       ELSE correction.original_local_sale_id
+     END
+     ${relation}
+     WHERE outbox.operation_type IN ('sale-completed', 'sale-cancelled')
+       AND ${target} = ?
+     ORDER BY outbox.rowid DESC LIMIT 1`,
+    [managementIdentifier(recordId, 'Local record ID')],
+  );
+  if (!result.values?.[0]) return undefined;
+  const saleOperationId = managementIdentifier(
+    String(result.values[0].operation_id),
+    'Operation ID',
+  );
+  if (!dependentOperationTypes?.length) return saleOperationId;
+
+  const types = dependentOperationTypes.map(managementOperationType);
+  if (types.length > 20) {
+    throw new Error('Management operation types are invalid.');
+  }
+  const dependent = await database.query(
+    `WITH RECURSIVE chain(operation_id) AS (
+       SELECT operation_id FROM outbox WHERE operation_id = ?
+       UNION
+       SELECT outbox.operation_id FROM outbox
+       JOIN chain ON outbox.depends_on_operation_id = chain.operation_id
+       WHERE outbox.operation_type IN (${types.map(() => '?').join(', ')})
+     )
+     SELECT outbox.operation_id FROM outbox
+     JOIN chain ON chain.operation_id = outbox.operation_id
+     ORDER BY outbox.rowid DESC LIMIT 1`,
+    [saleOperationId, ...types],
+  );
+  return dependent.values?.[0]
+    ? managementIdentifier(String(dependent.values[0].operation_id), 'Operation ID')
+    : saleOperationId;
+}
+
 export async function hasPendingManagementOperationsFromDatabase(
   database: ManagementDatabase,
   operationTypes?: readonly string[],

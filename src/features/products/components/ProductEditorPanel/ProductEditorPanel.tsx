@@ -37,6 +37,7 @@ interface ProductEditorPanelProps {
     product: ManagedProduct,
     status: ManagedProduct['status'],
   ) => Promise<void>;
+  onDelete: (product: ManagedProduct) => Promise<void>;
   onSaveModifierGroup: (group: ManagedModifierGroup) => Promise<void>;
   onSetModifierGroupArchived: (
     group: ManagedModifierGroup,
@@ -69,6 +70,7 @@ export function ProductEditorPanel({
   cost,
   onSave,
   onSetStatus,
+  onDelete,
   onSaveModifierGroup,
   onSetModifierGroupArchived,
   onSaveRecipe,
@@ -207,6 +209,31 @@ export function ProductEditorPanel({
           >
             <DotsThree size={16} weight="regular" aria-hidden="true" />
           </button>
+          {product ? (
+            <button
+              type="button"
+              className={styles.deleteAction}
+              disabled={saving}
+              onClick={async () => {
+                if (!window.confirm(
+                  `Delete ${product.name}? Past orders will be preserved.`,
+                )) return;
+                setSaving(true);
+                setMessage('');
+                try {
+                  await onDelete(product);
+                } catch (caught) {
+                  setMessage(caught instanceof Error
+                    ? caught.message
+                    : 'Product could not be deleted.');
+                } finally {
+                  setSaving(false);
+                }
+              }}
+            >
+              Delete
+            </button>
+          ) : null}
         </span>
       </header>
 
@@ -219,7 +246,7 @@ export function ProductEditorPanel({
             <strong>{name || 'New product'}</strong>
             <small>
               {(product?.key ?? 'NEW').toUpperCase()} ·{' '}
-              {category?.name ?? 'Choose category'}
+              {category?.name ?? 'Uncategorized'}
             </small>
           </span>
         </span>
@@ -268,6 +295,7 @@ export function ProductEditorPanel({
           disabled={archived}
           onChange={(event) => setCategoryId(event.target.value)}
         >
+          <option value="">Uncategorized</option>
           {categories.map((candidate) => (
             <option
               value={candidate.id}
@@ -387,7 +415,6 @@ export function ProductEditorPanel({
           saving ||
           archived ||
           !name.trim() ||
-          !categoryId ||
           !Number.isFinite(Number(priceMad)) ||
           Number(priceMad) < 0
         }

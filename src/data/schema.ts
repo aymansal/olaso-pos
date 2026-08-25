@@ -534,6 +534,233 @@ export const localMigrations = [
       `ALTER TABLE sale_corrections ADD COLUMN actor_profile_id TEXT`,
     ],
   },
+  {
+    toVersion: 19,
+    statements: [
+      `ALTER TABLE sale_items
+        ADD COLUMN category_id_snapshot TEXT NOT NULL DEFAULT ''`,
+      `ALTER TABLE sale_items
+        ADD COLUMN category_name_snapshot TEXT NOT NULL DEFAULT ''`,
+      `UPDATE sale_items
+       SET category_id_snapshot = COALESCE((
+         SELECT product.category_id FROM products product
+         WHERE product.id = sale_items.product_id
+       ), ''),
+       category_name_snapshot = COALESCE((
+         SELECT category.name FROM products product
+         JOIN categories category ON category.id = product.category_id
+         WHERE product.id = sale_items.product_id
+       ), '')`,
+      `CREATE TABLE delete_19_recipe_items AS
+       SELECT item.recipe_version_id, item.ingredient_id, item.quantity,
+         COALESCE(ingredient.name, '') AS ingredient_name_snapshot,
+         COALESCE(ingredient.base_unit, '') AS ingredient_base_unit_snapshot
+       FROM recipe_items item
+       LEFT JOIN ingredients ingredient ON ingredient.id = item.ingredient_id`,
+      `DROP TABLE recipe_items`,
+      `CREATE TABLE delete_19_recipe_versions (
+        id TEXT PRIMARY KEY NOT NULL,
+        product_id TEXT NOT NULL,
+        product_name_snapshot TEXT NOT NULL DEFAULT '',
+        version INTEGER NOT NULL CHECK (version > 0),
+        is_active INTEGER NOT NULL CHECK (is_active IN (0, 1)),
+        created_at INTEGER NOT NULL,
+        UNIQUE (product_id, version)
+      )`,
+      `INSERT INTO delete_19_recipe_versions
+        (id, product_id, product_name_snapshot, version, is_active, created_at)
+       SELECT version.id, version.product_id, COALESCE(product.name, ''),
+         version.version, version.is_active, version.created_at
+       FROM recipe_versions version
+       LEFT JOIN products product ON product.id = version.product_id`,
+      `DROP TABLE recipe_versions`,
+      `ALTER TABLE delete_19_recipe_versions RENAME TO recipe_versions`,
+      `CREATE INDEX recipe_versions_by_product
+        ON recipe_versions(product_id, is_active, version)`,
+      `CREATE TABLE recipe_items (
+        recipe_version_id TEXT NOT NULL
+          REFERENCES recipe_versions(id) ON DELETE CASCADE,
+        ingredient_id TEXT NOT NULL,
+        ingredient_name_snapshot TEXT NOT NULL DEFAULT '',
+        ingredient_base_unit_snapshot TEXT NOT NULL DEFAULT '',
+        quantity INTEGER NOT NULL CHECK (quantity > 0),
+        PRIMARY KEY (recipe_version_id, ingredient_id)
+      )`,
+      `INSERT INTO recipe_items
+        (recipe_version_id, ingredient_id, ingredient_name_snapshot,
+         ingredient_base_unit_snapshot, quantity)
+       SELECT recipe_version_id, ingredient_id, ingredient_name_snapshot,
+         ingredient_base_unit_snapshot, quantity
+       FROM delete_19_recipe_items`,
+      `DROP TABLE delete_19_recipe_items`,
+      `CREATE INDEX recipe_items_by_ingredient ON recipe_items(ingredient_id)`,
+      `CREATE TABLE delete_19_product_links AS
+        SELECT product_id, modifier_group_id, sort_order
+        FROM product_modifier_groups`,
+      `DELETE FROM product_modifier_groups`,
+      `CREATE TABLE delete_19_products (
+        id TEXT PRIMARY KEY NOT NULL,
+        category_id TEXT REFERENCES categories(id) ON DELETE SET NULL,
+        name TEXT NOT NULL,
+        receipt_name TEXT NOT NULL,
+        price_centimes INTEGER NOT NULL CHECK (price_centimes >= 0),
+        status TEXT NOT NULL CHECK (
+          status IN ('active', 'unavailable', 'archived')
+        ),
+        image_asset_key TEXT,
+        sort_order INTEGER NOT NULL,
+        current_recipe_version_id TEXT,
+        revision INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        key TEXT NOT NULL DEFAULT ''
+      )`,
+      `INSERT INTO delete_19_products
+        (id, category_id, name, receipt_name, price_centimes, status,
+         image_asset_key, sort_order, current_recipe_version_id, revision,
+         updated_at, key)
+       SELECT id, category_id, name, receipt_name, price_centimes, status,
+         image_asset_key, sort_order, current_recipe_version_id, revision,
+         updated_at, key
+       FROM products`,
+      `DROP TABLE products`,
+      `ALTER TABLE delete_19_products RENAME TO products`,
+      `CREATE INDEX products_by_category
+        ON products(category_id, status, sort_order)`,
+      `INSERT INTO product_modifier_groups
+        (product_id, modifier_group_id, sort_order)
+       SELECT product_id, modifier_group_id, sort_order
+       FROM delete_19_product_links`,
+      `DROP TABLE delete_19_product_links`,
+      `CREATE TABLE delete_19_inventory_purchases AS
+       SELECT purchase.*,
+         COALESCE(ingredient.name, '') AS ingredient_name_snapshot,
+         COALESCE(ingredient.base_unit, '') AS ingredient_base_unit_snapshot
+       FROM inventory_purchases purchase
+       LEFT JOIN ingredients ingredient ON ingredient.id = purchase.ingredient_id`,
+      `DROP TABLE inventory_purchases`,
+      `CREATE TABLE delete_19_stock_movements (
+        id TEXT PRIMARY KEY NOT NULL,
+        ingredient_id TEXT NOT NULL,
+        ingredient_name_snapshot TEXT NOT NULL DEFAULT '',
+        ingredient_base_unit_snapshot TEXT NOT NULL DEFAULT '',
+        local_sale_id TEXT REFERENCES sales(local_sale_id),
+        quantity_delta INTEGER NOT NULL CHECK (quantity_delta <> 0),
+        movement_type TEXT NOT NULL,
+        reason TEXT NOT NULL,
+        actor_label TEXT,
+        business_date TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        cost_delta_centimes INTEGER,
+        inventory_value_after_centimes INTEGER
+          CHECK (inventory_value_after_centimes >= 0),
+        valuation_revision INTEGER CHECK (valuation_revision >= 0),
+        client_mutation_id TEXT
+      )`,
+      `INSERT INTO delete_19_stock_movements
+        (id, ingredient_id, ingredient_name_snapshot,
+         ingredient_base_unit_snapshot, local_sale_id, quantity_delta,
+         movement_type, reason, actor_label, business_date, created_at,
+         cost_delta_centimes, inventory_value_after_centimes,
+         valuation_revision, client_mutation_id)
+       SELECT movement.id, movement.ingredient_id,
+         COALESCE(ingredient.name, ''), COALESCE(ingredient.base_unit, ''),
+         movement.local_sale_id, movement.quantity_delta,
+         movement.movement_type, movement.reason, movement.actor_label,
+         movement.business_date, movement.created_at,
+         movement.cost_delta_centimes, movement.inventory_value_after_centimes,
+         movement.valuation_revision, movement.client_mutation_id
+       FROM stock_movements movement
+       LEFT JOIN ingredients ingredient ON ingredient.id = movement.ingredient_id`,
+      `DROP TABLE stock_movements`,
+      `ALTER TABLE delete_19_stock_movements RENAME TO stock_movements`,
+      `CREATE INDEX stock_movements_by_ingredient
+        ON stock_movements(ingredient_id, created_at DESC)`,
+      `CREATE UNIQUE INDEX stock_movements_by_client_mutation
+        ON stock_movements(ingredient_id, client_mutation_id)
+        WHERE client_mutation_id IS NOT NULL`,
+      `CREATE TABLE inventory_purchases (
+        id TEXT PRIMARY KEY NOT NULL,
+        ingredient_id TEXT NOT NULL,
+        ingredient_name_snapshot TEXT NOT NULL DEFAULT '',
+        ingredient_base_unit_snapshot TEXT NOT NULL DEFAULT '',
+        stock_movement_id TEXT NOT NULL REFERENCES stock_movements(id),
+        package_label TEXT NOT NULL,
+        package_count INTEGER NOT NULL CHECK (package_count > 0),
+        quantity_per_package INTEGER NOT NULL CHECK (quantity_per_package > 0),
+        total_quantity INTEGER NOT NULL CHECK (total_quantity > 0),
+        package_price_centimes INTEGER NOT NULL CHECK (package_price_centimes >= 0),
+        total_cost_centimes INTEGER NOT NULL CHECK (total_cost_centimes >= 0),
+        received_at INTEGER NOT NULL,
+        business_date TEXT NOT NULL,
+        supplier_label TEXT,
+        note TEXT,
+        correction_of_purchase_id TEXT REFERENCES inventory_purchases(id),
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        client_mutation_id TEXT NOT NULL UNIQUE,
+        transaction_type TEXT NOT NULL DEFAULT 'received'
+          CHECK (transaction_type IN ('received', 'reversal')),
+        actor_label TEXT
+      )`,
+      `INSERT INTO inventory_purchases
+        (id, ingredient_id, ingredient_name_snapshot,
+         ingredient_base_unit_snapshot, stock_movement_id, package_label,
+         package_count, quantity_per_package, total_quantity,
+         package_price_centimes, total_cost_centimes, received_at,
+         business_date, supplier_label, note, correction_of_purchase_id,
+         revision, client_mutation_id, transaction_type, actor_label)
+       SELECT purchase.id, purchase.ingredient_id,
+         purchase.ingredient_name_snapshot,
+         purchase.ingredient_base_unit_snapshot,
+         purchase.stock_movement_id, purchase.package_label,
+         purchase.package_count, purchase.quantity_per_package,
+         purchase.total_quantity, purchase.package_price_centimes,
+         purchase.total_cost_centimes, purchase.received_at,
+         purchase.business_date, purchase.supplier_label, purchase.note,
+         purchase.correction_of_purchase_id, purchase.revision,
+         purchase.client_mutation_id, purchase.transaction_type,
+         purchase.actor_label
+       FROM delete_19_inventory_purchases purchase`,
+      `DROP TABLE delete_19_inventory_purchases`,
+      `CREATE INDEX inventory_purchases_by_ingredient_date
+        ON inventory_purchases(ingredient_id, received_at DESC)`,
+      `CREATE INDEX inventory_purchases_by_business_date
+        ON inventory_purchases(business_date, received_at DESC)`,
+      `CREATE INDEX inventory_purchases_by_correction
+        ON inventory_purchases(correction_of_purchase_id, received_at DESC)`,
+      `CREATE TABLE delete_19_compensation_periods (
+        id TEXT PRIMARY KEY NOT NULL,
+        staff_profile_id TEXT NOT NULL,
+        staff_name_snapshot TEXT NOT NULL DEFAULT '',
+        staff_role_snapshot TEXT NOT NULL DEFAULT '',
+        monthly_amount_centimes INTEGER NOT NULL
+          CHECK (monthly_amount_centimes >= 0),
+        effective_start_month TEXT NOT NULL,
+        effective_end_month TEXT,
+        revision INTEGER NOT NULL CHECK (revision > 0),
+        created_at INTEGER NOT NULL,
+        updated_by TEXT,
+        client_mutation_id TEXT
+      )`,
+      `INSERT INTO delete_19_compensation_periods
+        (id, staff_profile_id, staff_name_snapshot, staff_role_snapshot,
+         monthly_amount_centimes, effective_start_month, effective_end_month,
+         revision, created_at, updated_by, client_mutation_id)
+       SELECT period.id, period.staff_profile_id, COALESCE(staff.name, ''),
+         COALESCE(staff.role, ''), period.monthly_amount_centimes,
+         period.effective_start_month, period.effective_end_month,
+         period.revision, period.created_at, period.updated_by,
+         period.client_mutation_id
+       FROM compensation_periods period
+       LEFT JOIN staff_profiles staff ON staff.id = period.staff_profile_id`,
+      `DROP TABLE compensation_periods`,
+      `ALTER TABLE delete_19_compensation_periods RENAME TO compensation_periods`,
+      `CREATE INDEX compensation_periods_by_staff_month
+        ON compensation_periods(staff_profile_id, effective_start_month)`,
+      `CREATE UNIQUE INDEX compensation_periods_by_client_mutation
+        ON compensation_periods(client_mutation_id)
+        WHERE client_mutation_id IS NOT NULL`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

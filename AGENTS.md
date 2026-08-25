@@ -128,6 +128,11 @@ decision changes.
   writes with the originating profile's protected session, prunes stale
   replacement-cache rows while preserving pending/history rows, and requires
   both WebView visibility and window focus before cloud work.
+- DELETE-01 adds SQLite schema 19 and real category, product, ingredient, and
+  owner-authorized staff deletion. Immutable sale, recipe, ingredient, and
+  compensation snapshots preserve historical names and facts; category removal
+  leaves products uncategorized, ingredient removal repairs affected recipes,
+  and earlier queued sales/staff work synchronize before live cloud deletion.
 
 ### Visual baseline
 

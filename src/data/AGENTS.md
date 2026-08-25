@@ -44,9 +44,10 @@ tablet's local SQLite operational record.
   sign-in; it also promotes an offline-created profile's protected verifier and
   returned cloud session without retaining the raw PIN. It never exposes those
   values through ordinary local data contracts.
-- `localStaff.ts` owns owner-only local profile creation plus its PIN-free
-  management operation; `staffSync.ts` owns protected credential provisioning,
-  cloud acknowledgement, and local/cloud profile-session promotion.
+- `localStaff.ts` owns owner-only local profile creation/deletion plus its
+  PIN-free management operations; `staffSync.ts` owns protected credential
+  provisioning, cloud acknowledgement, local/cloud profile-session promotion,
+  and protected cleanup only after earlier actor-owned work has synchronized.
 - `orderHistory.ts` owns the keyset SQLite sale reader, saved receipt/print-state
   parsing, sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
@@ -83,6 +84,13 @@ tablet's local SQLite operational record.
   and outbox entry in one serialized transaction. A dependency remains blocked
   while its parent outbox row exists; acknowledgement deletes only the parent
   outbox row and preserves its audit/mapping record.
+- Category, product, ingredient, and staff deletion removes the live record
+  immediately without deleting immutable sale, recipe, movement, purchase, or
+  compensation history. Earlier dependent sales/corrections synchronize first;
+  later destructive operations depend on the latest pending operational
+  descendant of that sale so category/ingredient/product revisions stay ordered.
+  Historical category, product, ingredient, and staff names are owned by their
+  saved records rather than a removable live foreign key.
 - Management operation types use the `management.` prefix. Enforce the local
   actor's cumulative role permission before commit and let Convex enforce it
   again during synchronization. Never store a raw PIN or session secret in a
@@ -120,9 +128,10 @@ tablet's local SQLite operational record.
   a visible and focused foreground activity. A visible document behind the
   Samsung keyguard/notification shade is still hidden operationally and must
   not open or retry a WebSocket.
-- Complete cloud replacement snapshots prune cloud-owned catalog, expense, and
-  compensation rows absent from the new bounded snapshot. Pending local
-  operations and stock/sale/audit history remain untouched.
+- Complete cloud replacement snapshots prune absent catalog, ingredient, staff,
+  expense, and compensation copies by actual snapshot membership, never by a
+  shared timestamp. Pending local operations, actor access, immutable recipes,
+  and stock/sale/wage/audit history remain untouched.
 - Automatic sync reads only pending rows, releases only classified connection
   failures after a real reconnect, and retains business failures. Manual Sync
   is the deliberate all-failure recovery action.
@@ -149,6 +158,7 @@ tablet's local SQLite operational record.
 ## Verification
 
 - Run `npm run check:local`, `npm run check:local-management`,
+  `npm run check:local-catalog`,
   `npm run check:local-inventory-costs`,
   `npm run check:local-staff`,
   `npm run check:sales`, `npm run check:settings`,

@@ -56,6 +56,19 @@ assert.deepEqual(aggregate.paymentTotals, [{
   totalCentimes: 1000,
   orderCount: 1,
 }]);
+const preservedCategory = aggregateOfflineSales([{
+  ...rows[0],
+  receipt: {
+    ...rows[0].receipt,
+    lines: [{
+      ...rows[0].receipt.lines[0],
+      categoryIdSnapshot: 'deleted-coffee',
+      categoryNameSnapshot: 'Deleted coffee',
+    }],
+  },
+}], new Map());
+assert.deepEqual(preservedCategory.categoryTotals.map((row) => row.categoryName),
+  ['Deleted coffee']);
 
 const products = readFileSync('src/data/useProductManagement.ts', 'utf8');
 const stock = readFileSync('src/data/useInventoryManagement.ts', 'utf8');

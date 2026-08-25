@@ -126,6 +126,12 @@ export async function loadLocalCostManagementFromDatabase(
   const compensation = (periodRows.values ?? []).map((row) => ({
     id: String(row.id),
     staffProfileId: String(row.staff_profile_id),
+    ...(row.staff_name_snapshot
+      ? { staffNameSnapshot: String(row.staff_name_snapshot) }
+      : {}),
+    ...(row.staff_role_snapshot
+      ? { staffRoleSnapshot: row.staff_role_snapshot as StaffRole }
+      : {}),
     monthlyAmountCentimes: Number(row.monthly_amount_centimes),
     effectiveStartMonth: String(row.effective_start_month),
     ...(row.effective_end_month
@@ -283,6 +289,8 @@ export function replaceSavedCompensation(
   rows: Array<{
     id: string;
     staffProfileId: string;
+    staffNameSnapshot?: string;
+    staffRoleSnapshot?: StaffRole;
     monthlyAmountCentimes: number;
     effectiveStartMonth: string;
     effectiveEndMonth?: string;
@@ -295,15 +303,25 @@ export function replaceSavedCompensation(
     for (const row of rows) {
       await database.run(
         `INSERT INTO compensation_periods
-          (id, staff_profile_id, monthly_amount_centimes,
+          (id, staff_profile_id, staff_name_snapshot, staff_role_snapshot,
+           monthly_amount_centimes,
            effective_start_month, effective_end_month, revision, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
+           staff_name_snapshot = CASE
+             WHEN excluded.staff_name_snapshot <> ''
+             THEN excluded.staff_name_snapshot
+             ELSE compensation_periods.staff_name_snapshot END,
+           staff_role_snapshot = CASE
+             WHEN excluded.staff_role_snapshot <> ''
+             THEN excluded.staff_role_snapshot
+             ELSE compensation_periods.staff_role_snapshot END,
            monthly_amount_centimes = excluded.monthly_amount_centimes,
            effective_start_month = excluded.effective_start_month,
            effective_end_month = excluded.effective_end_month,
            revision = excluded.revision`,
-        [row.id, row.staffProfileId, row.monthlyAmountCentimes,
+        [row.id, row.staffProfileId, row.staffNameSnapshot ?? '',
+          row.staffRoleSnapshot ?? '', row.monthlyAmountCentimes,
           row.effectiveStartMonth, row.effectiveEndMonth ?? null,
           row.revision, now],
         false,

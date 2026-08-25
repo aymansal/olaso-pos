@@ -388,6 +388,150 @@ export const setIngredientArchived = mutation({
   },
 });
 
+export const removeIngredient = mutation({
+  args: {
+    ...sessionArgs,
+    id: v.id('ingredients'),
+    expectedRevision: v.number(),
+    repairProductIds: v.array(v.id('products')),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const updatedBy = await requireManagement(ctx, args);
+    const clientMutationId = mutationId(args.clientMutationId);
+    if (args.repairProductIds.length > 200) {
+      return invalid('Too many products need recipe updates.');
+    }
+    const ingredient = await ctx.db.get(args.id);
+    if (!ingredient) {
+      const restored = await Promise.all(args.repairProductIds.map(async (productId) => {
+        const version = await ctx.db.query('recipeVersions')
+          .withIndex('by_product_client_mutation', (index) =>
+            index.eq('productId', productId).eq('clientMutationId', clientMutationId))
+          .unique();
+        return version ? [{ productId, recipeVersionId: version._id }] : [];
+      }));
+      return { id: args.id, deleted: true as const, repairs: restored.flat() };
+    }
+    expectRevision(args.expectedRevision, ingredient.revision);
+    const [items, movements, purchases, options, products] = await Promise.all([
+      ctx.db.query('recipeItems')
+        .withIndex('by_ingredient_created_at', (index) =>
+          index.eq('ingredientId', ingredient._id))
+        .take(501),
+      ctx.db.query('stockMovements')
+        .withIndex('by_ingredient_created_at', (index) =>
+          index.eq('ingredientId', ingredient._id))
+        .take(1001),
+      ctx.db.query('inventoryPurchases')
+        .withIndex('by_ingredient_received_at', (index) =>
+          index.eq('ingredientId', ingredient._id))
+        .take(501),
+      ctx.db.query('modifierOptions').withIndex('by_updated_at').take(1001),
+      ctx.db.query('products').withIndex('by_updated_at').take(501),
+    ]);
+    if (items.length > 500 || movements.length > 1000 || purchases.length > 500
+        || options.length > 1000 || products.length > 500) {
+      throw new Error('Ingredient history exceeds its safe deletion limit.');
+    }
+    const snapshot = {
+      ingredientNameSnapshot: ingredient.name,
+      ingredientBaseUnitSnapshot: ingredient.baseUnit,
+    };
+    for (const row of [...items, ...movements, ...purchases]) {
+      await ctx.db.patch(row._id, snapshot);
+    }
+    const affected = new Set<string>();
+    const repairs: Array<{
+      productId: typeof products[number]['_id'];
+      recipeVersionId: typeof items[number]['recipeVersionId'];
+    }> = [];
+    const now = Date.now();
+    for (const item of items) {
+      const previous = await ctx.db.get(item.recipeVersionId);
+      if (!previous || previous.status !== 'active') continue;
+      const product = await ctx.db.get(previous.productId);
+      if (!product || product.currentRecipeVersionId !== previous._id
+          || affected.has(String(product._id))) continue;
+      affected.add(String(product._id));
+      const previousItems = await ctx.db.query('recipeItems')
+        .withIndex('by_recipe_version', (index) =>
+          index.eq('recipeVersionId', previous._id))
+        .take(101);
+      if (previousItems.length > 100) throw new Error('Product recipe is too large.');
+      const remaining = previousItems.filter((entry) => entry.ingredientId !== ingredient._id);
+      await ctx.db.patch(previous._id, {
+        status: 'superseded',
+        productNameSnapshot: product.name,
+        updatedAt: now,
+        updatedBy,
+      });
+      let recipeVersionId: typeof previous._id | undefined;
+      if (remaining.length) {
+        const latest = await ctx.db.query('recipeVersions')
+          .withIndex('by_product_version', (index) => index.eq('productId', product._id))
+          .order('desc').first();
+        recipeVersionId = await ctx.db.insert('recipeVersions', {
+          productId: product._id,
+          productNameSnapshot: product.name,
+          versionNumber: (latest?.versionNumber ?? 0) + 1,
+          status: 'active',
+          activationAt: now,
+          clientMutationId,
+          createdAt: now,
+          updatedAt: now,
+          updatedBy,
+        });
+        for (const remainingItem of remaining) {
+          const remainingIngredient = await ctx.db.get(remainingItem.ingredientId);
+          await ctx.db.insert('recipeItems', {
+            recipeVersionId,
+            ingredientId: remainingItem.ingredientId,
+            ...(remainingIngredient ? {
+              ingredientNameSnapshot: remainingIngredient.name,
+              ingredientBaseUnitSnapshot: remainingIngredient.baseUnit,
+            } : {}),
+            quantity: remainingItem.quantity,
+            createdAt: now,
+          });
+        }
+        repairs.push({ productId: product._id, recipeVersionId });
+      }
+      await ctx.db.patch(product._id, {
+        currentRecipeVersionId: recipeVersionId,
+        status: product.status === 'archived' ? 'archived' : 'unavailable',
+        revision: product.revision + 1,
+        updatedAt: now,
+        updatedBy,
+      });
+    }
+    for (const option of options) {
+      const remaining = option.ingredientEffects
+        .filter((effect) => effect.ingredientId !== ingredient._id);
+      if (remaining.length === option.ingredientEffects.length) continue;
+      await ctx.db.patch(option._id, {
+        ingredientEffects: remaining,
+        revision: option.revision + 1,
+        updatedAt: now,
+        updatedBy,
+      });
+      for (const product of products) {
+        if (!product.modifierGroupIds.includes(option.groupId)
+            || affected.has(String(product._id))) continue;
+        affected.add(String(product._id));
+        await ctx.db.patch(product._id, {
+          status: product.status === 'archived' ? 'archived' : 'unavailable',
+          revision: product.revision + 1,
+          updatedAt: now,
+          updatedBy,
+        });
+      }
+    }
+    await ctx.db.delete(ingredient._id);
+    return { id: args.id, deleted: true as const, repairs };
+  },
+});
+
 export const receivePurchase = mutation({
   args: {
     ...sessionArgs,

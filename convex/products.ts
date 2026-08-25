@@ -42,12 +42,14 @@ export const list = query({
 
 async function validateRelations(
   ctx: MutationCtx,
-  categoryId: Id<'categories'>,
+  categoryId: Id<'categories'> | undefined,
   modifierGroupIds: Id<'modifierGroups'>[],
 ) {
-  const category = await ctx.db.get(categoryId);
-  if (!category || category.status !== 'active') {
-    return invalid('Select an active category.');
+  if (categoryId) {
+    const category = await ctx.db.get(categoryId);
+    if (!category || category.status !== 'active') {
+      return invalid('Select an active category.');
+    }
   }
   if (modifierGroupIds.length > 20) {
     return invalid('A product can use at most 20 modifier groups.');
@@ -68,7 +70,7 @@ export const save = mutation({
     ...sessionArgs,
     id: v.optional(v.id('products')),
     key: v.optional(v.string()),
-    categoryId: v.id('categories'),
+    categoryId: v.optional(v.id('categories')),
     name: v.string(),
     receiptName: v.string(),
     basePriceCentimes: v.number(),
@@ -157,6 +159,36 @@ export const save = mutation({
       lastMutationId: clientMutationId,
     });
     return { id, revision: 1, created: true };
+  },
+});
+
+export const remove = mutation({
+  args: {
+    ...sessionArgs,
+    id: v.id('products'),
+    expectedRevision: v.number(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const updatedBy = await requireManagement(ctx, args);
+    mutationId(args.clientMutationId);
+    const product = await ctx.db.get(args.id);
+    if (!product) return { id: args.id, deleted: true as const };
+    expectRevision(args.expectedRevision, product.revision);
+    const recipes = await ctx.db.query('recipeVersions')
+      .withIndex('by_product_version', (index) => index.eq('productId', product._id))
+      .take(101);
+    if (recipes.length > 100) throw new Error('Product recipe history is too large.');
+    for (const recipe of recipes) {
+      await ctx.db.patch(recipe._id, {
+        productNameSnapshot: product.name,
+        ...(recipe.status === 'active'
+          ? { status: 'superseded' as const, updatedAt: Date.now(), updatedBy }
+          : {}),
+      });
+    }
+    await ctx.db.delete(product._id);
+    return { id: args.id, deleted: true as const };
   },
 });
 

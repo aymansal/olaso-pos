@@ -22,14 +22,14 @@ remaining goal and card sequence.
 | CATALOG-01 — Offline category artwork | done — `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main` |
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
-| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — next when the owner authorizes implementation |
-| OPTIONS-02 — Custom product choices and independent copying | pending |
-| OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
-| OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
-| DELETE-01 — Safe permanent category/product/ingredient/staff deletion | pending — after product-owned configuration |
+| DELETE-01 — Safe permanent category/product/ingredient/staff deletion | in progress — full local/cloud/physical offline-restart-reconnect QA passes; final checks, Graphify, and main push pending |
 | HARD-01 — Physical startup/navigation baseline | pending |
 | NAV-01 — Retained smooth navigation | pending |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
+| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
+| OPTIONS-02 — Custom product choices and independent copying | pending |
+| OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
+| OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending |
 | HARD-08 — Final endurance and acceptance | pending |
 
@@ -108,6 +108,107 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- The owner explicitly restored the original Goal 06 sequence: DELETE-01 first,
+  then navigation/startup, recovery, release, and security; the separate
+  OPTIONS-01 through OPTIONS-04 blueprint follows before final owner-led UI
+  polish and acceptance. DELETE-01 is the only card in progress.
+- DELETE-01 official Android/Capacitor/Convex research is complete. Android's
+  offline-first guidance requires SQLite to remain the screen-visible source
+  of truth and deferred durable writes. Android SQLite warns foreign-key
+  cascades do not execute unless enforcement is enabled. The existing
+  Capacitor SQLite plugin supports explicit transactions, rollback, and bound
+  DELETE operations; Convex mutations provide transactional indexed deletion.
+  Reuse the existing native SQLite, protected session, management outbox,
+  actor-aware foreground sync, and Convex domain boundaries. Do not add Room,
+  WorkManager, native code, a state library, or direct UI-to-network writes.
+- DELETE-01 caller tracing is complete. SQLite currently prevents live deletion
+  through category/product/ingredient/staff foreign keys; pending sales still
+  need their original live cloud records until acknowledged; offline ingredient
+  reports currently lose names when their live row disappears; and protected
+  staff credentials must remain available only until that person's already-
+  queued authenticated work has synchronized. The fix is one additive ordered
+  migration with independent immutable history snapshots, nullable category
+  ownership, dependency-ordered delete operations, bounded owner/manager cloud
+  mutations, immediate local UI updates, and delayed protected cleanup.
+- SQLite schema 19 now upgrades existing records without disabling foreign-key
+  enforcement. Categories can release their products, immutable recipes survive
+  product removal, and stock/purchase/recipe/compensation history owns its
+  ingredient/product/staff name snapshots independently. The first attempted
+  parent-table replacement exposed a real deferred-foreign-key commit failure;
+  its root cause was fixed by rebuilding dependent tables before their parents.
+  Existing local migration, catalog, inventory/cost, and staff checks all pass.
+- Permanent category, product, ingredient, and staff deletion is now wired
+  through authorized atomic SQLite writes, pending-order dependencies, bounded
+  Convex mutations, actor-scoped reconnect, and short confirmation controls.
+  Category removal leaves products uncategorized and sellable; product removal
+  retains immutable recipe/order history; ingredient removal retains
+  purchase/movement/report snapshots, removes choice effects, keeps remaining
+  ingredients in a new immutable recipe version, and marks affected drinks
+  unavailable; owner-only staff removal preserves wages and earlier queued
+  actor access until cloud revocation. Historical sale items now snapshot
+  category identity, and same-day cancellation remains possible after an
+  ingredient or category disappears.
+- Populated schema-upgrade, category/product deletion, uncategorized editing,
+  ingredient recipe/choice repair, purchase and wage retention, staff role
+  protection, pending-sale parent order, historical category-report, TypeScript,
+  Convex code-generation, and production-build checks pass. One initial sale
+  regression lacked its explicitly required test PIN; rerun protected live
+  checks with the owner-authorized PIN after deploying the current functions.
+- The deployed Convex management check now also proves true category/product/
+  ingredient/staff deletion, uncategorized editing, immutable recipe repair,
+  removed modifier effects, retry-safe acknowledgement, and preserved worker
+  compensation. A real historical-report bug was found before tablet QA:
+  deleted workers' wages retained the amount but displayed generic `Staff`.
+  Local creation, cloud replacement, saved reads, and the Costs screen now
+  preserve/use the worker's immutable name and role; the existing staff check
+  reproduces the deleted-worker report and passes.
+- First physical installation upgraded the existing tablet from schema 18 to
+  19 without losing its 11 sales or seven pre-existing failed historical
+  queue rows. Device inspection exposed 678 stale archived ingredients and 44
+  obsolete archived profiles left by earlier cloud replacements. The shared
+  replacement boundary now deletes absent archived ingredient/staff copies,
+  retains any copy required by pending actor/sale work, preserves independent
+  recipe/movement/wage history, and returns obsolete profile IDs for protected
+  credential cleanup. The expanded populated local-catalog regression proves
+  both safe removal and pending-record retention with foreign keys enforced.
+- The first cleanup APK exposed one more root cause: 420 obsolete ingredients
+  shared the deterministic current snapshot timestamp, so timestamp comparison
+  falsely preserved stale rows. Complete replacement now uses actual received
+  live-record membership instead; focused checks reproduce stale rows with the
+  exact same timestamp while preserving historical and pending records.
+- Physical flight-mode QA created one real category, product, ingredient,
+  immutable recipe, completed sale, and protected cashier; deleting each live
+  record preserved the order, stock history, repaired recipe, owner/Samira
+  access, and every pending operation across a forced app restart. Reconnect
+  exposed a genuine cross-domain ordering bug: category, ingredient, and
+  product deletions all depended on the same sale, so catalog sync could
+  remove the product before inventory sync updated its revision. Destructive
+  operations now follow the latest already-queued descendant of their required
+  sale, preserving both the sale parent and the true category/ingredient/
+  product sequence. The existing populated catalog check reproduces and guards
+  that ordering; catalog, inventory, management, and TypeScript checks pass.
+- The final Galaxy Tab A9 beta repeats the complete category/product/ingredient/
+  recipe/sale/deletion sequence in flight mode. Its persisted dependency chain
+  is category save → product save → ingredient save → recipe save → completed
+  sale → category deletion → ingredient deletion → product deletion; automatic
+  reconnect acknowledges every operation without conflict and the exact cloud
+  sale count is one. The owner and Samira remain usable, the disposable
+  cashier is permanently absent, deleted product/category/ingredient names
+  still appear in Orders and Reports, 13 local sales and all historical stock
+  effects remain intact, no PIN occurs in queued staff payloads, foreign-key
+  checks are empty, all touched screens fit 1340 by 800, and focused Android
+  error logs are empty. Repeated reconnect changes no sale or live record.
+- Final `check:local`, `check:local-management`, `check:local-catalog`,
+  `check:local-inventory-costs`, `check:local-staff`, `check:offline`,
+  `check:reconnect`, `check:pos`, `check:settings`, `check:lock-switch`,
+  `check:android`, `check:printing`, `check:convex`, TypeScript, the
+  140-task Android beta, and `npm run build` pass. Prior real-cloud management,
+  sales, inventory, identity, permissions, Orders, Dashboard, and Reports
+  checks pass; Graphify is current at 3,287 nodes and 7,552 edges.
+- Exact next action: rerun final focused/build checks, refresh Graphify, update
+  the detailed card evidence, commit and push only DELETE-01 directly to main,
+  then record its pushed SHA and stop. HARD-01 remains pending until the owner
+  explicitly starts the next card.
 - The owner-approved product configuration blueprint is documented in
   `goals/GOAL-06-PRODUCT-CONFIGURATION.md` and reflected in `PLAN.md`,
   `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, and the Goal 06 task board.
@@ -115,17 +216,16 @@ remaining goal and card sequence.
   selected ingredients, stock deductions, costs, and immutable order history.
   Disposable packaging, nested ingredient recipes, and a detailed Edit Product
   profitability preview are excluded. House-made syrup stays one manually
-  priced ordinary ingredient. OPTIONS-01 through OPTIONS-04 now precede
-  DELETE-01; final owner-led visual polish remains the last change phase.
+  priced ordinary ingredient. This separate OPTIONS-01 through OPTIONS-04 plan
+  follows the original technical sequence; final owner-led visual polish
+  remains the last change phase.
 - The documentation-only blueprint commit is pushed directly to `origin/main`
   as `b68aa8c11a01229cc2f7f0fdf176f324e046cd24`. All seven local Markdown
-  documents have valid internal links; all three task boards independently
-  verify `OPTIONS-01 → OPTIONS-02 → OPTIONS-03 → OPTIONS-04 → DELETE-01`.
+  documents have valid internal links. The original documentation checkpoint
+  was later superseded by the owner's explicit DELETE-01-first sequencing.
   No source or Android code changed, so no unchanged APK was rebuilt.
-- No implementation card is currently in progress. Exact next action when the
-  owner authorizes work: activate only OPTIONS-01, research the official
-  Android/Capacitor offline-storage and migration guidance, then prepare the
-  backward-compatible product-owned configuration foundation.
+- DELETE-01 is active; all separate product-configuration implementation cards
+  remain pending until the original technical plan is complete.
 - LOCAL-04 is complete and pushed to `origin/main` as
   `7f240210c2a591649f7fabd3c3fe51fb9db72df3`.
   SQLite schema 18 stores new sale/correction actor profile IDs; every queued
@@ -153,8 +253,8 @@ remaining goal and card sequence.
   plus window focus. Two exact hidden wake cycles produce zero WebView errors;
   final unlocked POS is 1340 by 800 with zero focused Android failures. Full
   local/cloud/permission/identity/Android/TypeScript/build regression passes;
-  Graphify is current at 3,241 nodes and 7,452 edges. No card is currently in
-  progress; the current exact next action is the OPTIONS-01 checkpoint above.
+  Graphify is current at 3,241 nodes and 7,452 edges. The current active card
+  and exact next action are the DELETE-01 checkpoint above.
 - Updated owner deletion decision: archive is not the universal answer.
   Products can be removed while completed orders keep immutable snapshots.
   Deleting a category leaves its products uncategorized. Deleting an ingredient
@@ -163,7 +263,8 @@ remaining goal and card sequence.
   owner may remove live staff profiles while preserving historical actor names
   and roles; the last owner cannot be removed. Completed sales, corrections,
   purchases, movements, expenses, and compensation remain immutable or
-  append-only. DELETE-01 follows OPTIONS-01 through OPTIONS-04.
+  append-only. DELETE-01 implements these approved rules now, before the
+  separate OPTIONS-01 through OPTIONS-04 plan.
 - LOCK-01 is complete and pushed to `origin/main` as
   `4486a8921d893e3e5edce098b8a17a500cf0a537`. A shared profile menu gives every
   role `Lock / switch staff`; Settings remains owner-only. `App.tsx` owns the
@@ -973,6 +1074,172 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — DELETE-01 final physical offline/reconnect matrix passes
+
+- Galaxy Tab A9 upgraded schema 18 → 19 without clearing its 11 original sales
+  or seven pre-existing unrelated failed historical rows. In flight mode,
+  created a category, product, priced recipe with two ingredients, completed
+  sale, and protected cashier; the cashier unlocked offline with only cashier
+  screens, then owner access permanently removed the cashier while preserving
+  Owner/Samira. Category removal left the drink uncategorized, ingredient
+  removal created immutable repaired recipe version 2 and made the product
+  unavailable, and product removal preserved its order and both recipes.
+- A forced offline app restart retained every pending change and historical
+  name while exposing only the two legitimate profiles. The first reconnect
+  exposed a real product revision conflict because independent deletion
+  operations shared the same sale parent. Root-fixed the shared SQLite
+  dependency lookup to follow the latest operational descendant of that
+  parent; expanded populated catalog and inventory checks to reproduce exact
+  category → ingredient → product ordering before rebuilding the Android app.
+- Repeated the entire real offline recipe/sale/deletion sequence on the fixed
+  beta. Every queued change acknowledged automatically in order, the cloud
+  contains exactly one sale and zero deleted products/categories/ingredients/
+  staff, and a second reconnect remains unchanged. Orders and Reports retain
+  the exact deleted names and amounts; Costs retains saved worker names;
+  SQL foreign-key violations and staff-PIN payload exposure are zero.
+- Products, Stock, Orders, Reports/Costs, Settings/Staff, Lock, and POS fit
+  exactly 1340 × 800 without overflow. Focused Android console/error logs are
+  empty. Archived staff copies fell from 44 to zero; only 11 archived
+  ingredients needed by seven pre-existing failed historical rows remain.
+- Exact next action: run final regression/build checks, refresh Graphify,
+  commit/push DELETE-01 directly to origin/main, record its SHA, and stop with
+  HARD-01 pending for the owner's next instruction.
+- Final regression/build checks pass and Graphify refreshed successfully to
+  3,287 nodes, 7,552 edges, and 162 communities; direct main commit/push and
+  SHA evidence are the only remaining closeout actions.
+
+### 2026-08-25 — DELETE-01 physical migration exposes archived-copy accumulation
+
+- Installed the first deletion APK over the connected Galaxy Tab A9 without
+  clearing data. Its real SQLite database upgraded 18 → 19 with 11 sales, four
+  categories, 15 products, 14 active ingredients, two active staff, seven
+  unchanged old failed sale/correction rows, and zero foreign-key violations.
+- Direct tablet inspection reproduced the owner's original archive complaint:
+  678 obsolete archived ingredient copies and 44 archived profile copies were
+  still stored even though ordinary screens hid them. Existing catalog cleanup
+  also deleted immutable recipe versions when removing a stale product copy.
+- Root-fixed the shared complete-snapshot boundary: preserve inactive recipe
+  history and its independent names, delete absent archived ingredients/staff,
+  retain any ingredient or actor required by queued sale/correction/management
+  work, populate recipe snapshots during fresh cloud replacement, and clear
+  obsolete protected staff credentials after authenticated reconciliation.
+- The first physical cleanup removed many stale records but retained 420
+  ingredients and seven staff copies with the exact same deterministic
+  timestamp as current records. Replaced timestamp-based pruning with actual
+  complete-snapshot membership and expanded the regression to reproduce that
+  exact equal-timestamp failure.
+- Expanded the existing local-catalog check with archived ingredient/product/
+  profile history, saved wage/movement/recipe names, pending staff/ingredient
+  retention, and `foreign_key_check`; catalog, staff, reconnect, and
+  TypeScript checks pass. Exact next action: rebuild/reinstall the root-fixed
+  APK, unlock the physical tablet, and complete full offline deletion QA.
+
+### 2026-08-25 — DELETE-01 deployed checks and worker-history root fix
+
+- Deployed the current Convex functions and passed the expanded live
+  `npm run check:management` matrix: deleting a category releases its product,
+  uncategorized editing works, product deletion retries safely, ingredient
+  deletion preserves/rebuilds immutable recipes and removes choice effects,
+  and staff deletion preserves compensation history.
+- Found and root-fixed a remaining user-visible bug: the deleted worker's
+  compensation appeared as `Staff` because its historical name never crossed
+  the local compensation read/replacement boundary. New wage saves, cloud
+  replacement, local reports, and the owner-only Costs row now carry the
+  independent name/role snapshot. The existing physical-data-style staff
+  regression now proves the deleted worker remains named and the monthly total
+  is unchanged.
+- Reread and updated the governing root, data, Products, Stock, POS, Settings,
+  Reports, Convex, and architecture contracts so they no longer describe
+  archive-only behavior. Exact next action: finish protected full cloud/local
+  regression, build/install without erasing tablet data, and run the physical
+  offline/restart/reconnect/history/role/layout/log matrix.
+
+### 2026-08-25 — DELETE-01 local, cloud, UI, and history checks implemented
+
+- Expanded the schema-19 migration check with populated menu choices, sale
+  items, ingredient movements/purchases, immutable recipes, and staff wages.
+  Existing orders now own historical category snapshots; deleting each live
+  record preserves every independent historical row with foreign keys on.
+- Implemented the four atomic local delete operations and actor-authorized
+  cloud deletions. Earlier pending sales/corrections block dependent removals;
+  removed ingredients retain names/base units, strip active choice effects,
+  create an immutable repaired recipe when other ingredients remain, and mark
+  affected products unavailable. Staff removal protects the active/final owner,
+  retains old actor credentials only until queued work is acknowledged, then
+  revokes protected/cloud access without deleting compensation history.
+- Added short category/product/ingredient/staff delete controls, uncategorized
+  product editing/POS browsing, historical offline category/ingredient reports,
+  and cancellation after a category/ingredient is gone. Strengthened the
+  existing focused catalog, inventory/cost, staff, migration, and offline
+  checks instead of adding a new dependency or test framework.
+- `npm run check:local`, `npm run check:local-catalog`,
+  `npm run check:local-inventory-costs`, `npm run check:local-staff`,
+  `npm run check:offline`, `npx tsc -b`, `npm run check:convex`, and
+  `npm run build` pass. Exact next action: protected live regression/deploy,
+  then physical-tablet offline/reconnect/history/permission/layout evidence.
+
+### 2026-08-25 — DELETE-01 schema-19 history migration passes
+
+- Added one new ordered SQLite migration without rewriting any released
+  migration. Products can now lose their category; historical recipe versions
+  no longer require a live product; recipe items, stock movements, purchases,
+  and compensation retain independent ingredient/product/staff snapshots.
+- The first migration ordering reproduced a real `FOREIGN KEY constraint
+  failed` at transaction commit even though `foreign_key_check` was empty.
+  Deferred SQLite parent-drop accounting was the root cause; rebuilt children
+  before parents instead of disabling foreign keys or bypassing the check.
+- `npm run check:local`, `npm run check:local-catalog`,
+  `npm run check:local-inventory-costs`, and `npm run check:local-staff` all
+  pass with schema 19. No tablet data was modified. Exact next action: add
+  populated-history migration regressions, then local/cloud/UI deletion.
+
+### 2026-08-25 — DELETE-01 dependency and history tracing complete
+
+- Reread the complete root/source/data/Products/Stock/Settings/Convex DOX chain,
+  all 2,675 current ledger lines, the canonical plan, and the active card after
+  context compaction. Graphify traced local transactions, management operations,
+  reconnect dispatch, protected staff sessions, product/category screens,
+  ingredient reports, immutable sale snapshots, and cloud authority paths.
+- Confirmed the root issue: SQLite foreign keys currently forbid deleting a
+  category with products, a product with recipe versions, an ingredient with
+  recipe/movement/purchase history, or a staff member with compensation.
+  Historical receipts already contain independent immutable names, prices,
+  ingredient effects, and actor labels, but offline ingredient reports still
+  join the removable live ingredient and require their own saved snapshot.
+- Confirmed pending-sale ordering cannot be bypassed: a deletion after an
+  offline order must wait for that saved sale to synchronize before removing
+  its live cloud product/category/ingredient. A removed staff member's
+  protected credential must remain usable only for that person's pre-existing
+  queued writes, then be removed after owner-authorized cloud revocation.
+- Chosen implementation: one additive schema-19 migration preserving current
+  records and foreign-key validity; nullable product category ownership;
+  history-owned product/ingredient/staff snapshots; four bounded, authorized,
+  retry-safe local/cloud delete operations; clear confirmation actions; and
+  focused migration, dependency, historical-report, and role regressions.
+  Exact next action: implement schema 19 and domain operations before device
+  installation or completion claims.
+
+### 2026-08-25 — Original plan order restored and DELETE-01 activated
+
+- The owner explicitly rejected starting the new separate product-options
+  plan immediately. Restored DELETE-01, the original navigation/startup,
+  recovery, release, and security work first; OPTIONS-01 through OPTIONS-04
+  follow before the final owner-led visual review and acceptance.
+- Activated only DELETE-01. Graphify traced the existing SQLite, Convex,
+  Products, Stock, identity, and offline-view boundaries. Current official
+  Android offline-first/SQLiteDatabase, installed Capacitor SQLite
+  transaction/API, and Convex writing/indexing guidance were researched.
+- Decision: retain the existing native Android SQLite local source of truth,
+  bound transactional local deletes, protected role/session checks, immutable
+  snapshots, existing management outbox/original-actor retry, and bounded
+  transactional Convex mutations. Android foreign-key behavior will be checked
+  explicitly. No Room, WorkManager, new plugin, state library, network-bound
+  deletion button, or destruction of sales/financial history is permitted.
+- Updated `PLAN.md`, both Goal 06 documents, and this ledger to preserve the
+  owner's revised sequence. Exact next action: read the applicable child DOX
+  chain and inspect every delete/archive/reference/snapshot/identity/sync/UI
+  caller before implementing DELETE-01.
 
 ### 2026-08-25 — Product-owned choices and exact ingredient blueprint approved
 

@@ -16,6 +16,7 @@ interface IngredientDialogProps {
     ingredient: ManagedIngredient,
     archived: boolean,
   ) => Promise<void>;
+  onDelete: (ingredient: ManagedIngredient) => Promise<void>;
 }
 
 const units: StockBaseUnit[] = [
@@ -30,6 +31,7 @@ export function IngredientDialog({
   onClose,
   onSave,
   onSetArchived,
+  onDelete,
 }: IngredientDialogProps) {
   const [name, setName] = useState(ingredient?.name ?? '');
   const [baseUnit, setBaseUnit] = useState<StockBaseUnit>(
@@ -151,6 +153,7 @@ export function IngredientDialog({
 
         <footer>
           {ingredient ? (
+            <div className={styles.actions}>
             <button
               type="button"
               className={styles.archive}
@@ -173,8 +176,33 @@ export function IngredientDialog({
               }}
             >
               <Archive size={15} aria-hidden="true" />
-              {archived ? 'Restore ingredient' : 'Archive ingredient'}
+              {archived ? 'Restore' : 'Archive'}
             </button>
+            <button
+              type="button"
+              className={styles.deleteAction}
+              disabled={saving}
+              onClick={async () => {
+                if (!window.confirm(
+                  `Delete ${ingredient.name}? Drinks using it will need updating.`,
+                )) return;
+                setSaving(true);
+                setError('');
+                try {
+                  await onDelete(ingredient);
+                  onClose();
+                } catch (caught) {
+                  setError(caught instanceof Error
+                    ? caught.message
+                    : 'Ingredient could not be deleted.');
+                } finally {
+                  setSaving(false);
+                }
+              }}
+            >
+              Delete
+            </button>
+            </div>
           ) : (
             <span />
           )}
@@ -185,7 +213,7 @@ export function IngredientDialog({
             disabled={saving || archived || !name.trim() || invalidNumber}
           >
             <FloppyDisk size={16} aria-hidden="true" />
-            {saving ? 'Saving…' : 'Save ingredient'}
+            {saving ? 'Saving…' : 'Save'}
           </button>
         </footer>
       </section>

@@ -21,6 +21,7 @@ interface ProductListProps {
   onSelect: (productId: string) => void;
   onRenameCategory: () => void;
   onSetCategoryArchived: () => void;
+  onDeleteCategory: () => void;
 }
 
 function formatMad(centimes: number) {
@@ -41,6 +42,7 @@ export function ProductList({
   onSelect,
   onRenameCategory,
   onSetCategoryArchived,
+  onDeleteCategory,
 }: ProductListProps) {
   return (
     <section className={styles.list} aria-labelledby="category-products-title">
@@ -62,6 +64,9 @@ export function ProductList({
               </button>
               <button type="button" onClick={onSetCategoryArchived}>
                 {category.status === 'archived' ? 'Restore' : 'Archive'}
+              </button>
+              <button type="button" onClick={onDeleteCategory}>
+                Delete
               </button>
             </span>
           </details>

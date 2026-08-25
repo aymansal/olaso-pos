@@ -10,6 +10,7 @@ import { localBusinessDate } from '../lib/date.ts';
 import {
   receiveLocalPurchase,
   recordLocalStockAdjustment,
+  deleteLocalIngredient,
   saveLocalIngredient,
   setLocalIngredientArchived,
 } from './localInventory.ts';
@@ -82,10 +83,14 @@ export function useInventoryManagement(selectedIngredientId?: string) {
 
   const save = async <T,>(operation: Promise<T>) => {
     const result = await operation;
-    await reload();
-    if (selectedIngredientId) {
+    const current = await reload();
+    if (selectedIngredientId && current.ingredients.some(
+      (ingredient) => ingredient.id === selectedIngredientId,
+    )) {
       const savedDetail = await loadOfflineIngredientDetail(selectedIngredientId);
       setDetail(savedDetail as ManagedIngredientDetail);
+    } else if (selectedIngredientId) {
+      setDetail(undefined);
     }
     void reconnect.run('automatic').catch(() => undefined);
     return result;
@@ -105,6 +110,8 @@ export function useInventoryManagement(selectedIngredientId?: string) {
       ingredient: ManagedIngredient,
       archived: boolean,
     ) => save(setLocalIngredientArchived(context, ingredient, archived)),
+    deleteIngredient: (ingredient: ManagedIngredient) =>
+      save(deleteLocalIngredient(context, ingredient)),
     recordAdjustment: (
       ingredient: ManagedIngredient,
       mode: StockAdjustmentMode,

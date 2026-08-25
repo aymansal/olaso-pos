@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   createLocalStaff,
+  deleteLocalStaff,
   loadLocalStaffProfiles,
   type StaffCreationInput,
   type SavedStaffProfile,
@@ -48,11 +49,36 @@ export function useStaffManagement() {
       throw caught;
     }
   };
+  const remove = async (profile: SavedStaffProfile) => {
+    setError('');
+    setMessage('');
+    try {
+      const result = await deleteLocalStaff({
+        deviceId: session.deviceId,
+        actor: {
+          staffProfileId: session.staffProfileId,
+          name: session.name,
+          role: session.role,
+        },
+      }, profile);
+      await reload();
+      setMessage('Staff member deleted.');
+      void reconnect.run('automatic').catch(() => undefined);
+      return result;
+    } catch (caught) {
+      setError(caught instanceof Error
+        ? caught.message
+        : 'Staff member could not be deleted.');
+      throw caught;
+    }
+  };
   return {
     staff: staff ?? [],
     isLoading: !staff && !error,
     error: error || undefined,
     message,
+    currentStaffId: session.staffProfileId,
     create,
+    remove,
   };
 }

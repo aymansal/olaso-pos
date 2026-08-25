@@ -4,7 +4,15 @@ import {
   receiveLocalPurchase,
   recordLocalStockAdjustment,
   saveLocalIngredient,
+  deleteLocalIngredient,
 } from '../src/data/localInventory.ts';
+import {
+  deleteLocalCategory,
+  deleteLocalProduct,
+  saveLocalCategory,
+  saveLocalProduct,
+} from '../src/data/localCatalog.ts';
+import { saveLocalModifierGroup, saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
 import {
   addLocalCompensationPeriod,
   addLocalExpense,
@@ -228,6 +236,96 @@ assert.equal(database.prepare(
 assert.equal(database.prepare(
   'SELECT COUNT(*) count FROM compensation_periods',
 ).get().count, 1);
+const category = await saveLocalCategory(manager, {
+  name: 'Delete test', artworkKey: 'coffee', sortOrder: 10,
+}, transaction);
+const remainingIngredient = await saveLocalIngredient(manager, {
+  name: 'Remaining cocoa', baseUnit: 'gram', lowStockThreshold: 0,
+  openingQuantity: 0,
+}, '2026-08-20', transaction);
+const modifiers = await saveLocalModifierGroup(manager, {
+  name: 'Milk choice', required: false, minSelections: 0, maxSelections: 1,
+  status: 'active', sortOrder: 10, options: [{
+    key: 'milk', name: 'Milk', priceDeltaCentimes: 0,
+    ingredientEffects: [{ ingredientId: ingredient.id, quantityDelta: 10 }],
+    status: 'active', sortOrder: 10,
+  }],
+}, transaction);
+const product = await saveLocalProduct(manager, {
+  name: 'Delete test drink', categoryId: category.id, basePriceCentimes: 2500,
+  status: 'active', sortOrder: 10, modifierGroupIds: [modifiers.id],
+}, transaction);
+const recipe = await saveLocalRecipeVersion(manager, {
+  id: product.id, key: product.id, categoryId: category.id,
+  name: 'Delete test drink', receiptName: 'Delete test drink',
+  basePriceCentimes: 2500, status: 'active', sortOrder: 10,
+  modifierGroupIds: [modifiers.id], revision: product.revision, updatedAt: 1,
+}, [{ ingredientId: ingredient.id, quantity: 20 },
+  { ingredientId: remainingIngredient.id, quantity: 5 }], transaction);
+database.prepare(`INSERT INTO stock_movements
+  (id, ingredient_id, ingredient_name_snapshot,
+   ingredient_base_unit_snapshot, local_sale_id, quantity_delta,
+   movement_type, reason, business_date, created_at)
+  VALUES ('sale-milk', ?, 'Offline milk', 'millilitre', 'sale-cost',
+    -20, 'sale', 'Saved recipe', '2026-08-20', 3)`).run(ingredient.id);
+database.prepare(`INSERT INTO sale_items
+  (id, local_sale_id, product_id, quantity, product_name_snapshot,
+   unit_price_centimes, modifier_snapshot_json, recipe_snapshot_json,
+   line_total_centimes, category_id_snapshot, category_name_snapshot)
+  VALUES ('delete-sale-item', 'sale-cost', ?, 1, 'Delete test drink', 2500,
+    '[]', '[]', 2500, ?, 'Delete test')`).run(product.id, category.id);
+const removedCategory = await deleteLocalCategory(
+  manager, { id: category.id, revision: category.revision }, transaction,
+);
+assert.equal(database.prepare(
+  'SELECT depends_on_operation_id FROM outbox WHERE operation_id = ?',
+).get(removedCategory.operationId).depends_on_operation_id, 'independent-sale');
+const removedIngredient = await deleteLocalIngredient(
+  manager, { id: ingredient.id, revision: savedIngredient.revision }, transaction,
+);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM ingredients WHERE id = ?')
+  .get(ingredient.id).count, 0);
+assert.equal(database.prepare('SELECT ingredient_name_snapshot FROM inventory_purchases')
+  .get().ingredient_name_snapshot, 'Offline milk');
+assert.equal(database.prepare('SELECT COUNT(*) count FROM stock_movements WHERE ingredient_id = ?')
+  .get(ingredient.id).count, 3);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM recipe_items WHERE ingredient_id = ?')
+  .get(ingredient.id).count, 1);
+const repairedProduct = database.prepare(
+  'SELECT current_recipe_version_id, status, revision FROM products WHERE id = ?',
+).get(product.id);
+assert.equal(repairedProduct.status, 'unavailable');
+assert.notEqual(repairedProduct.current_recipe_version_id, recipe.id);
+assert.deepEqual(database.prepare(
+  'SELECT ingredient_id FROM recipe_items WHERE recipe_version_id = ?',
+).all(repairedProduct.current_recipe_version_id).map((row) => row.ingredient_id),
+[remainingIngredient.id]);
+assert.deepEqual(JSON.parse(database.prepare(
+  'SELECT ingredient_effects_json FROM modifier_options LIMIT 1',
+).get().ingredient_effects_json), []);
+assert.equal(database.prepare(
+  'SELECT depends_on_operation_id FROM outbox WHERE operation_id = ?',
+).get(removedIngredient.operationId).depends_on_operation_id,
+removedCategory.operationId,
+'Ingredient deletion must wait for earlier category removal after the same sale.');
+assert.equal(JSON.parse(database.prepare(
+  'SELECT payload_json FROM management_operations WHERE operation_id = ?',
+).get(removedIngredient.operationId).payload_json).pendingSaleRevisionCount, 1);
+const removedProduct = await deleteLocalProduct(manager, {
+  id: product.id,
+  revision: repairedProduct.revision,
+}, transaction);
+assert.equal(database.prepare(
+  'SELECT depends_on_operation_id FROM outbox WHERE operation_id = ?',
+).get(removedProduct.operationId).depends_on_operation_id,
+removedIngredient.operationId,
+'Product deletion must wait for the earlier ingredient repair and its revision.');
+assert.equal(database.prepare(
+  'SELECT product_name_snapshot FROM sale_items WHERE id = ?',
+).get('delete-sale-item').product_name_snapshot, 'Delete test drink');
+assert.equal((await loadLocalCostManagementFromDatabase(
+  adapter, '2026-08', 'owner',
+)).purchaseCashCentimes, 4_000);
 database.close();
 
 console.log('Local-first inventory, expense, compensation, and dependency checks passed.');

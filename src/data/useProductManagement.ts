@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ManagedCategory, ManagedIngredient, ManagedModifierGroup, ManagedProduct, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
-import { saveLocalCategory, saveLocalProduct, setLocalCategoryArchived, setLocalProductStatus } from './localCatalog.ts';
+import {
+  deleteLocalCategory,
+  deleteLocalProduct,
+  saveLocalCategory,
+  saveLocalProduct,
+  setLocalCategoryArchived,
+  setLocalProductStatus,
+} from './localCatalog.ts';
 import { saveLocalModifierGroup, saveLocalRecipeVersion, setLocalModifierGroupArchived } from './localRecipes.ts';
 import { loadOperationalCache, type OperationalCacheSnapshot } from './operationalCache.ts';
 import { useReconnect } from './reconnectContext.tsx';
@@ -90,8 +97,12 @@ export function useProductManagement(selectedProductId?: string) {
     isLoading: !cache && !error, isRecipeLoading: false, error: error || undefined,
     saveCategory: (input: Parameters<typeof saveLocalCategory>[1]) => save(saveLocalCategory(context, input)),
     setCategoryArchived: (id: string, archived: boolean, revision: number) => save(setLocalCategoryArchived(context, id, archived, revision)),
+    deleteCategory: (category: Pick<ManagedCategory, 'id' | 'revision'>) =>
+      save(deleteLocalCategory(context, category)),
     saveProduct: (input: ProductSaveInput) => save(saveLocalProduct(context, input)),
     setProductStatus: (id: string, status: ManagedProduct['status'], revision: number) => save(setLocalProductStatus(context, { id, revision }, status)),
+    deleteProduct: (product: Pick<ManagedProduct, 'id' | 'revision'>) =>
+      save(deleteLocalProduct(context, product)),
     saveModifierGroup: (group: ManagedModifierGroup) => save(saveLocalModifierGroup(context, group)),
     setModifierGroupArchived: (id: string, archived: boolean, revision: number) => save(setLocalModifierGroupArchived(context, id, archived, revision)),
     saveRecipeVersion: (product: ManagedProduct, items: { ingredientId: string; quantity: number }[]) => save(saveLocalRecipeVersion(context, product, items)),

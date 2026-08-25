@@ -15,6 +15,7 @@ import {
 } from './identitySession.ts';
 
 type Database = Pick<SQLiteDBConnection, 'query' | 'run'>;
+type Transaction = <T>(operation: (database: Database) => Promise<T>) => Promise<T>;
 type Context = { deviceId: string; actor: LocalManagementActor };
 
 export type StaffCreationInput = {
@@ -124,6 +125,77 @@ export async function createLocalStaff(
     await clearStaffSession(localId).catch(() => undefined);
     throw error;
   }
+}
+
+export function deleteLocalStaff(
+  context: Context,
+  profile: Pick<SavedStaffProfile, 'id' | 'revision'>,
+  transact: Transaction = withLocalTransaction,
+) {
+  return transact(async (database) => {
+    if (context.actor.staffProfileId === profile.id) {
+      throw new Error('You cannot delete the profile you are using.');
+    }
+    const result = await database.query(
+      'SELECT id, name, role, revision FROM staff_profiles WHERE id = ? LIMIT 1',
+      [profile.id],
+    );
+    const saved = result.values?.[0];
+    if (!saved || Number(saved.revision) !== profile.revision) {
+      throw new Error('Staff member changed. Refresh before deleting.');
+    }
+    if (saved.role === 'owner') {
+      const owners = await database.query(
+        `SELECT COUNT(*) AS count FROM staff_profiles
+         WHERE role = 'owner' AND status = 'active'`,
+      );
+      if (Number(owners.values?.[0]?.count ?? 0) < 2) {
+        throw new Error('The last owner cannot be deleted.');
+      }
+    }
+    const pending = await database.query(
+      `SELECT outbox.operation_id FROM outbox
+       LEFT JOIN management_operations management
+         ON management.operation_id = outbox.operation_id
+       LEFT JOIN sales sale
+         ON outbox.operation_type = 'sale-completed'
+        AND sale.local_sale_id = outbox.local_record_id
+       LEFT JOIN sale_corrections correction
+         ON outbox.operation_type = 'sale-cancelled'
+        AND correction.local_correction_id = outbox.local_record_id
+       WHERE management.actor_profile_id = ?
+          OR management.local_record_id = ?
+          OR json_extract(management.payload_json, '$.staffProfileId') = ?
+          OR sale.actor_profile_id = ?
+          OR correction.actor_profile_id = ?
+       ORDER BY outbox.rowid DESC LIMIT 1`,
+      [profile.id, profile.id, profile.id, profile.id, profile.id],
+    );
+    const now = Date.now();
+    await database.run(
+      `UPDATE compensation_periods SET staff_name_snapshot = ?,
+        staff_role_snapshot = ? WHERE staff_profile_id = ?`,
+      [String(saved.name), String(saved.role), profile.id],
+      false,
+    );
+    await database.run('DELETE FROM staff_profiles WHERE id = ?', [profile.id], false);
+    const operation = await enqueueManagementOperation(database, {
+      deviceId: context.deviceId,
+      operationType: 'management.staff.delete',
+      localRecordId: profile.id,
+      dependsOnOperationId: pending.values?.[0]
+        ? String(pending.values[0].operation_id)
+        : await latestPendingManagementOperationIdFromDatabase(
+          database, STAFF_MANAGEMENT_OPERATION_TYPES,
+        ),
+      requiredPermission: 'staff',
+      actor: context.actor,
+      expectedRevision: profile.revision,
+      payload: { name: String(saved.name), role: String(saved.role) },
+      createdAt: now,
+    });
+    return { id: profile.id, operationId: operation.operationId };
+  });
 }
 
 export async function loadLocalStaffProfiles(): Promise<SavedStaffProfile[]> {

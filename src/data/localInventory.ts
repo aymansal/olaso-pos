@@ -14,6 +14,7 @@ import { withLocalTransaction } from './localDatabase.ts';
 import {
   enqueueManagementOperation,
   latestPendingManagementOperationIdFromDatabase,
+  latestPendingSaleForRecordFromDatabase,
 } from './localManagement.ts';
 import {
   OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
@@ -247,6 +248,184 @@ export function setLocalIngredientArchived(
       createdAt: now,
     });
     return { id: input.id, revision: input.revision + 1, operationId: operation.operationId };
+  });
+}
+
+export function deleteLocalIngredient(
+  context: Context,
+  input: Pick<ManagedIngredient, 'id' | 'revision'>,
+  transact: Transaction = withLocalTransaction,
+) {
+  return transact(async (database) => {
+    const saved = await ingredient(database, input.id);
+    if (!saved || Number(saved.revision) !== input.revision) {
+      throw new Error('Ingredient changed. Refresh it before deleting.');
+    }
+    const saleDependency = await latestPendingSaleForRecordFromDatabase(
+      database, 'ingredient', input.id, OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+    );
+    const pendingSaleRevisions = await database.query(
+      `SELECT COUNT(DISTINCT outbox.operation_id) AS count FROM outbox
+       LEFT JOIN sale_corrections correction
+         ON outbox.operation_type = 'sale-cancelled'
+        AND correction.local_correction_id = outbox.local_record_id
+       JOIN stock_movements movement
+         ON movement.local_sale_id = CASE
+           WHEN outbox.operation_type = 'sale-completed'
+             THEN outbox.local_record_id
+           ELSE correction.original_local_sale_id
+         END
+       WHERE outbox.operation_type IN ('sale-completed', 'sale-cancelled')
+         AND movement.movement_type = 'sale'
+         AND movement.ingredient_id = ?`,
+      [input.id],
+    );
+    const now = Date.now();
+    const recipes = await database.query(
+      `SELECT product.id, product.name, product.current_recipe_version_id
+       FROM products product
+       JOIN recipe_items item
+         ON item.recipe_version_id = product.current_recipe_version_id
+       WHERE item.ingredient_id = ? LIMIT 201`,
+      [input.id],
+    );
+    if ((recipes.values?.length ?? 0) > 200) {
+      throw new Error('Too many products use this ingredient.');
+    }
+    const options = await database.query(
+      `SELECT id, modifier_group_id, ingredient_effects_json
+       FROM modifier_options LIMIT 1001`,
+    );
+    if ((options.values?.length ?? 0) > 1_000) {
+      throw new Error('Too many product choices are saved.');
+    }
+    const affectedProducts = new Set<string>();
+    const repairs: Array<{ productId: string; localRecipeId?: string }> = [];
+    for (const product of recipes.values ?? []) {
+      const productId = String(product.id);
+      const previousRecipeId = String(product.current_recipe_version_id);
+      const remaining = await database.query(
+        `SELECT item.ingredient_id, item.quantity,
+          COALESCE(ingredient.name, item.ingredient_name_snapshot) AS name,
+          COALESCE(ingredient.base_unit,
+            item.ingredient_base_unit_snapshot) AS base_unit
+         FROM recipe_items item
+         LEFT JOIN ingredients ingredient ON ingredient.id = item.ingredient_id
+         WHERE item.recipe_version_id = ? AND item.ingredient_id <> ?
+         LIMIT 101`,
+        [previousRecipeId, input.id],
+      );
+      if ((remaining.values?.length ?? 0) > 100) {
+        throw new Error('Product recipe exceeds its supported size.');
+      }
+      await database.run(
+        'UPDATE recipe_versions SET is_active = 0 WHERE product_id = ?',
+        [productId],
+        false,
+      );
+      let recipeId: string | undefined;
+      if (remaining.values?.length) {
+        const latest = await database.query(
+          `SELECT COALESCE(MAX(version), 0) AS version
+           FROM recipe_versions WHERE product_id = ?`,
+          [productId],
+        );
+        recipeId = id('recipe');
+        await database.run(
+          `INSERT INTO recipe_versions
+            (id, product_id, product_name_snapshot, version, is_active, created_at)
+           VALUES (?, ?, ?, ?, 1, ?)`,
+          [recipeId, productId, String(product.name),
+            Number(latest.values?.[0]?.version ?? 0) + 1, now],
+          false,
+        );
+        for (const item of remaining.values) {
+          await database.run(
+            `INSERT INTO recipe_items
+              (recipe_version_id, ingredient_id, ingredient_name_snapshot,
+               ingredient_base_unit_snapshot, quantity)
+             VALUES (?, ?, ?, ?, ?)`,
+            [recipeId, String(item.ingredient_id), String(item.name),
+              String(item.base_unit), Number(item.quantity)],
+            false,
+          );
+        }
+      }
+      await database.run(
+        `UPDATE products SET current_recipe_version_id = ?,
+          status = CASE WHEN status = 'archived'
+            THEN 'archived' ELSE 'unavailable' END,
+          revision = revision + 1, updated_at = ? WHERE id = ?`,
+        [recipeId ?? null, now, productId],
+        false,
+      );
+      affectedProducts.add(productId);
+      repairs.push({ productId, ...(recipeId ? { localRecipeId: recipeId } : {}) });
+    }
+    for (const option of options.values ?? []) {
+      const effects = JSON.parse(String(option.ingredient_effects_json)) as
+        Array<{ ingredientId: string; quantityDelta: number }>;
+      const remaining = effects.filter((effect) => effect.ingredientId !== input.id);
+      if (remaining.length === effects.length) continue;
+      await database.run(
+        `UPDATE modifier_options SET ingredient_effects_json = ?,
+          revision = revision + 1, updated_at = ? WHERE id = ?`,
+        [JSON.stringify(remaining), now, String(option.id)],
+        false,
+      );
+      const products = await database.query(
+        `SELECT product_id FROM product_modifier_groups
+         WHERE modifier_group_id = ? LIMIT 201`,
+        [String(option.modifier_group_id)],
+      );
+      if ((products.values?.length ?? 0) > 200) {
+        throw new Error('Too many products use this choice.');
+      }
+      for (const product of products.values ?? []) {
+        const productId = String(product.product_id);
+        if (affectedProducts.has(productId)) continue;
+        await database.run(
+          `UPDATE products SET status = CASE WHEN status = 'archived'
+             THEN 'archived' ELSE 'unavailable' END,
+           revision = revision + 1, updated_at = ? WHERE id = ?`,
+          [now, productId],
+          false,
+        );
+        affectedProducts.add(productId);
+      }
+    }
+    for (const table of ['recipe_items', 'stock_movements', 'inventory_purchases']) {
+      await database.run(
+        `UPDATE ${table} SET ingredient_name_snapshot = ?,
+          ingredient_base_unit_snapshot = ? WHERE ingredient_id = ?`,
+        [String(saved.name), String(saved.base_unit), input.id],
+        false,
+      );
+    }
+    await database.run('DELETE FROM ingredients WHERE id = ?', [input.id], false);
+    const operation = await enqueueManagementOperation(database, {
+      deviceId: context.deviceId,
+      operationType: 'management.ingredient.delete',
+      localRecordId: input.id,
+      dependsOnOperationId: saleDependency ?? await dependency(database),
+      requiredPermission: 'stock',
+      actor: context.actor,
+      expectedRevision: input.revision,
+      payload: {
+        name: String(saved.name),
+        baseUnit: String(saved.base_unit),
+        pendingSaleRevisionCount: Number(
+          pendingSaleRevisions.values?.[0]?.count ?? 0,
+        ),
+        repairs,
+      },
+      createdAt: now,
+    });
+    return {
+      id: input.id,
+      affectedProductIds: [...affectedProducts],
+      operationId: operation.operationId,
+    };
   });
 }
 

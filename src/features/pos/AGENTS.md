@@ -30,6 +30,8 @@ owns the shared Header and TopNavigation currently used across the application.
 - Product and category assets are content; do not recreate them with UI icons.
 - All interface icons come from Phosphor.
 - Search, category, and cart behavior must stay local during service.
+- Products released by category deletion remain sellable under a neutral
+  `Uncategorized` category while any such active product exists.
 - A deliberate staff switch confirms only a non-empty cart and preserves it for
   the next verified staff member; checkout records the staff member who
   completes the sale.

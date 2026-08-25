@@ -36,6 +36,8 @@ export type SavedExpense = ExpenseInput & {
 export type SavedCompensationPeriod = {
   id: string;
   staffProfileId: string;
+  staffNameSnapshot?: string;
+  staffRoleSnapshot?: StaffRole;
   monthlyAmountCentimes: number;
   effectiveStartMonth: string;
   effectiveEndMonth?: string;
@@ -277,10 +279,12 @@ export function addLocalCompensationPeriod(
   transact: Transaction = withLocalTransaction,
 ) {
   return transact(async (database) => {
-    if (!(await database.query(
-      `SELECT id FROM staff_profiles WHERE id = ? AND status = 'active' LIMIT 1`,
+    const profile = (await database.query(
+      `SELECT id, name, role FROM staff_profiles
+       WHERE id = ? AND status = 'active' LIMIT 1`,
       [input.staffProfileId],
-    )).values?.[0]) {
+    )).values?.[0];
+    if (!profile) {
       throw new Error('Staff profile is unavailable.');
     }
     const effectiveStartMonth = month(input.effectiveStartMonth, 'Effective start month');
@@ -312,11 +316,13 @@ export function addLocalCompensationPeriod(
     const operationId = crypto.randomUUID();
     await database.run(
       `INSERT INTO compensation_periods
-        (id, staff_profile_id, monthly_amount_centimes, effective_start_month,
+        (id, staff_profile_id, staff_name_snapshot, staff_role_snapshot,
+         monthly_amount_centimes, effective_start_month,
          effective_end_month, revision, created_at, updated_by,
          client_mutation_id)
-       VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)`,
-      [periodId, input.staffProfileId, monthlyAmountCentimes,
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)`,
+      [periodId, input.staffProfileId, String(profile.name), String(profile.role),
+        monthlyAmountCentimes,
         effectiveStartMonth, effectiveEndMonth ?? null, now,
         context.actor.name, operationId],
       false,

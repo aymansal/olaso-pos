@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete exact product configuration, safe deletion, smooth retained navigation, production hardening, final owner-led UI polish, and acceptance | active; LOCAL-04 done, OPTIONS-01 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; DELETE-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -124,9 +124,10 @@ reprinted without duplicating the sale or stock movement.
 | PRINT-07 | Add Orders reprint and recovery across printer/router disconnects, app restarts, tablet restarts, timeouts, and paper replacement. |
 | PRINT-08 | Run full receipt, checkout, sync, recovery, endurance, browser, Android, tablet, printer, documentation, and push closeout. |
 
-Goals 03 through 05 are complete. Goal 06 is active; LOCAL-04 is complete.
-The approved product-owned configuration sequence OPTIONS-01 through OPTIONS-04
-comes before DELETE-01 and the remaining hardening work.
+Goals 03 through 05 are complete. Goal 06 is active; LOCAL-04 is complete and
+DELETE-01 is in progress. Finish deletion and the original performance,
+startup, recovery, release, and security cards first; implement the separate
+approved product-owned configuration plan afterward and before final polish.
 
 ## Goal 04 — Costs and profitability
 
@@ -182,10 +183,6 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 | CATALOG-01 | Add an offline category-artwork gallery, category-management selection, and a neutral fallback for any custom category. |
 | LOCK-01 | Give every staff role a direct Lock / Switch staff action without exposing owner Settings. |
 | LOCAL-04 | Prove all authorized management through flight mode, restart, ordered reconnect, duplicate retry, failure recovery, and role isolation. |
-| OPTIONS-01 | Add backward-compatible product-owned sizes, choices, exact ingredient recipes, and safe offline migration foundations. |
-| OPTIONS-02 | Add freely named product choices, size-specific recipes, safe ingredient actions, and mandatory independent copying from another product. |
-| OPTIONS-03 | Connect actual cashier selections to exact prices, stock deductions, ingredient costs, immutable sales, and retry-safe synchronization. |
-| OPTIONS-04 | Verify honest ingredient-cost ranges, actual-sale profitability, independent copying, historical safety, and full offline/tablet reconciliation. |
 | DELETE-01 | Add permanent category/product/ingredient/staff deletion, safe reassignment or recipe repair, historical-snapshot preservation, and stale-cache cleanup. |
 | HARD-01 | Establish repeatable five-run cold/warm startup, navigation, APK, WebView, bundle, and readiness baselines after functional work is stable. |
 | NAV-01 | Preserve each visited authorized screen, keep saved content visible during refresh, and eliminate repeat page/image reconstruction. |
@@ -195,6 +192,10 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 | HARD-05 | Implement and rehearse documented export, backup, corrupt-data stop, restore, and support recovery paths. |
 | HARD-06 | Add protected production signing, release automation, guided remote tablet updates, install-over-upgrade, rollback, and signing-key custody documentation. |
 | HARD-07 | Complete security, privacy, secret, dependency, Convex quota/index, performance, and operational-support review. |
+| OPTIONS-01 | Add backward-compatible product-owned sizes, choices, exact ingredient recipes, and safe offline migration foundations. |
+| OPTIONS-02 | Add freely named product choices, size-specific recipes, safe ingredient actions, and mandatory independent copying from another product. |
+| OPTIONS-03 | Connect actual cashier selections to exact prices, stock deductions, ingredient costs, immutable sales, and retry-safe synchronization. |
+| OPTIONS-04 | Verify honest ingredient-cost ranges, actual-sale profitability, independent copying, historical safety, and full offline/tablet reconciliation. |
 | POLISH-01 | Walk through the now fully functional app with the owner and record every disliked, verbose, redundant, or “AI-ish” element. |
 | POLISH-02 | Apply and verify the owner's final changes one screen at a time before moving to the next screen. |
 | HARD-08 | Run realistic service endurance, offline/reconnect, printer, upgrade, recovery, final owner acceptance, documentation, and release closeout. |
@@ -219,9 +220,9 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-LOCAL-04 is complete and the owner-approved product configuration blueprint is
-documented. No implementation card is active. When the owner authorizes work,
-begin only OPTIONS-01: research the existing Android/Capacitor boundary and
-add the backward-compatible product-owned configuration foundation. OPTIONS-02
-through OPTIONS-04, DELETE-01, hardening, and final owner-led polish remain
-pending in that order.
+DELETE-01 is the only active card. Research and use the existing Android
+offline-first SQLite transaction, protected staff authorization, and
+dependency-ordered synchronization boundaries to implement safe permanent
+category, product, ingredient, and staff removal. Finish the original
+hardening sequence next, implement the separate OPTIONS-01 through OPTIONS-04
+blueprint afterward, then perform the owner's final review and acceptance.

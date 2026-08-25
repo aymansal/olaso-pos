@@ -104,6 +104,16 @@ function seedRepresentativeRecords(database) {
       'pending',
       now,
     );
+  database.prepare(
+    `INSERT INTO sale_items
+      (id, local_sale_id, product_id, quantity, product_name_snapshot,
+       unit_price_centimes, modifier_snapshot_json, recipe_snapshot_json,
+       line_total_centimes)
+     VALUES ('sale-item-espresso', 'local-sale-1', 'product-espresso', 1,
+       'Espresso', 1000, '[]',
+       '[{"ingredientId":"ingredient-coffee","ingredientName":"Coffee beans","quantity":18}]',
+       1000)`,
+  ).run();
   database
     .prepare(
       `INSERT INTO outbox
@@ -144,6 +154,53 @@ try {
     1,
     1_785_255_600_000,
   );
+  database.prepare(
+    `INSERT INTO modifier_groups
+      (id, name, minimum_selections, maximum_selections, status, revision,
+       updated_at)
+     VALUES ('modifier-milk', 'Milk', 0, 1, 'active', 1, 1)`,
+  ).run();
+  database.prepare(
+    `INSERT INTO product_modifier_groups
+      (product_id, modifier_group_id, sort_order)
+     VALUES ('product-espresso', 'modifier-milk', 10)`,
+  ).run();
+  database.prepare(
+    `INSERT INTO stock_movements
+      (id, ingredient_id, local_sale_id, quantity_delta, movement_type,
+       reason, actor_label, business_date, created_at)
+     VALUES ('movement-coffee', 'ingredient-coffee', 'local-sale-1', -18,
+       'sale', 'Recipe deduction', 'Owner', '2026-07-28', 1)`,
+  ).run();
+  database.prepare(
+    `INSERT INTO stock_movements
+      (id, ingredient_id, quantity_delta, movement_type, reason,
+       actor_label, business_date, created_at)
+     VALUES ('movement-purchase', 'ingredient-coffee', 1000, 'purchase',
+       'Coffee purchase', 'Owner', '2026-07-28', 2)`,
+  ).run();
+  database.prepare(
+    `INSERT INTO inventory_purchases
+      (id, ingredient_id, stock_movement_id, package_label, package_count,
+       quantity_per_package, total_quantity, package_price_centimes,
+       total_cost_centimes, received_at, business_date, revision,
+       client_mutation_id)
+     VALUES ('purchase-coffee', 'ingredient-coffee', 'movement-purchase',
+       'Bag', 1, 1000, 1000, 4000, 4000, 2, '2026-07-28', 1,
+       'purchase-coffee-mutation')`,
+  ).run();
+  database.prepare(
+    `INSERT INTO staff_profiles
+      (id, name, role, status, revision, updated_at, identity_revision)
+     VALUES ('staff-manager', 'Samira', 'manager', 'active', 1, 1, 1)`,
+  ).run();
+  database.prepare(
+    `INSERT INTO compensation_periods
+      (id, staff_profile_id, monthly_amount_centimes, effective_start_month,
+       revision, created_at)
+     VALUES ('compensation-manager', 'staff-manager', 250000, '2026-07',
+       1, 1)`,
+  ).run();
   database.close();
 
   database = new DatabaseSync(databasePath);
@@ -159,6 +216,80 @@ try {
     database.prepare('SELECT total_centimes FROM sales').get().total_centimes,
     1000,
   );
+  assert.equal(
+    database.prepare('SELECT COUNT(*) AS count FROM product_modifier_groups')
+      .get().count,
+    1,
+  );
+  assert.equal(
+    database.prepare(
+      'SELECT product_name_snapshot FROM recipe_versions WHERE id = ?',
+    ).get('recipe-espresso-1').product_name_snapshot,
+    'Espresso',
+  );
+  assert.deepEqual(
+    { ...database.prepare(
+      `SELECT ingredient_name_snapshot, ingredient_base_unit_snapshot
+       FROM stock_movements WHERE id = ?`,
+    ).get('movement-coffee') },
+    {
+      ingredient_name_snapshot: 'Coffee beans',
+      ingredient_base_unit_snapshot: 'gram',
+    },
+  );
+  assert.equal(
+    database.prepare(
+      'SELECT ingredient_name_snapshot FROM inventory_purchases WHERE id = ?',
+    ).get('purchase-coffee').ingredient_name_snapshot,
+    'Coffee beans',
+  );
+  assert.deepEqual(
+    { ...database.prepare(
+      `SELECT staff_name_snapshot, staff_role_snapshot
+       FROM compensation_periods WHERE id = ?`,
+    ).get('compensation-manager') },
+    { staff_name_snapshot: 'Samira', staff_role_snapshot: 'manager' },
+  );
+  assert.deepEqual(database.prepare('PRAGMA foreign_key_check').all(), []);
+  database.exec('SAVEPOINT delete_category');
+  database.prepare('DELETE FROM categories WHERE id = ?').run('category-coffee');
+  assert.equal(
+    database.prepare('SELECT category_id FROM products WHERE id = ?')
+      .get('product-espresso').category_id,
+    null,
+  );
+  database.exec('ROLLBACK TO delete_category; RELEASE delete_category');
+  database.exec('SAVEPOINT delete_product');
+  database.prepare('DELETE FROM products WHERE id = ?').run('product-espresso');
+  assert.equal(database.prepare('SELECT COUNT(*) AS count FROM recipe_versions')
+    .get().count, 1);
+  assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_items')
+    .get().count, 1);
+  assert.deepEqual(
+    { ...database.prepare(
+      `SELECT category_id_snapshot, category_name_snapshot
+       FROM sale_items WHERE id = ?`,
+    ).get('sale-item-espresso') },
+    {
+      category_id_snapshot: 'category-coffee',
+      category_name_snapshot: 'Coffee',
+    },
+  );
+  database.exec('ROLLBACK TO delete_product; RELEASE delete_product');
+  database.exec('SAVEPOINT delete_ingredient');
+  database.prepare('DELETE FROM ingredients WHERE id = ?').run('ingredient-coffee');
+  assert.equal(database.prepare('SELECT COUNT(*) AS count FROM recipe_items')
+    .get().count, 1);
+  assert.equal(database.prepare('SELECT COUNT(*) AS count FROM stock_movements')
+    .get().count, 2);
+  assert.equal(database.prepare('SELECT COUNT(*) AS count FROM inventory_purchases')
+    .get().count, 1);
+  database.exec('ROLLBACK TO delete_ingredient; RELEASE delete_ingredient');
+  database.exec('SAVEPOINT delete_staff');
+  database.prepare('DELETE FROM staff_profiles WHERE id = ?').run('staff-manager');
+  assert.equal(database.prepare('SELECT COUNT(*) AS count FROM compensation_periods')
+    .get().count, 1);
+  database.exec('ROLLBACK TO delete_staff; RELEASE delete_staff');
   const printState = database.prepare(
     `SELECT print_state, print_attempt_count, last_print_attempt_at,
       last_print_error_code, last_print_error_message,

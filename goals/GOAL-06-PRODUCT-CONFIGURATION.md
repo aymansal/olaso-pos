@@ -158,6 +158,11 @@ size and choices sold.
 
 ## Card order
 
+This separate configuration sequence begins only after the existing DELETE-01,
+navigation, startup, recovery, release, and security cards are complete. It
+must finish before the owner's final manual visual review and release
+acceptance.
+
 ### OPTIONS-01 — Product-owned sizes and recipe foundation
 
 - Record current official Android/Capacitor research and inspect all existing
@@ -224,15 +229,13 @@ size and choices sold.
   reconnect, permissions, copy-independence, stock, cost, cancellation, receipt,
   migration, clean-log, and regression matrix.
 
-### Following card — DELETE-01
+### Earlier dependency — DELETE-01
 
-Only after the product-owned configuration is complete, implement approved
-permanent removal of live categories, products, ingredients, and staff while
-preserving immutable sales and financial history. Deleting a non-empty category
-leaves its products uncategorized; deleting an ingredient removes it from live
-recipes/choices and identifies affected products; deleting a staff profile
-preserves saved actor history and cannot remove the last owner. The detailed
-deletion contract remains in the main Goal 06 plan.
+The owner directed completing permanent removal in the existing original plan
+before this separate product-configuration sequence. The later OPTIONS cards
+must preserve category reassignment, ingredient repair, staff access removal,
+immutable sales and financial history, and the final-owner protection delivered
+by DELETE-01. The detailed deletion contract remains in the main Goal 06 plan.
 
 ## Official professional references
 

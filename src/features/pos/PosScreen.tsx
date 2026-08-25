@@ -90,7 +90,7 @@ export function PosScreen({
   );
   const categories: Category[] = useMemo(
     () =>
-      (menu?.categories ?? []).filter(
+      [...(menu?.categories ?? []).filter(
         (category) => category.status !== 'archived',
       ).map((category) => ({
         id: category.key,
@@ -101,10 +101,22 @@ export function PosScreen({
               product.categoryId === category.id
               && product.status === 'active',
           ).length ?? 0,
-        status: 'Available',
-        variant: 'default',
+        status: 'Available' as const,
+        variant: 'default' as const,
         image: categoryArtworkUrl(category.artworkKey),
-      })),
+      })), ...(() => {
+        const count = (menu?.products ?? []).filter(
+          (product) => !product.categoryId && product.status === 'active',
+        ).length;
+        return count ? [{
+          id: 'uncategorized',
+          name: 'Uncategorized',
+          count,
+          status: 'Available' as const,
+          variant: 'default' as const,
+          image: categoryArtworkUrl(),
+        }] : [];
+      })()],
     [menu],
   );
   const products: Product[] = useMemo(
@@ -112,7 +124,8 @@ export function PosScreen({
       (menu?.products ?? [])
         .filter((product) => product.status === 'active')
         .map((product) => {
-          const categoryKey = categoryKeyById.get(product.categoryId) ?? '';
+          const categoryKey = categoryKeyById.get(product.categoryId)
+            ?? 'uncategorized';
           const categoryArtworkKey = categoryArtworkKeyById.get(product.categoryId);
           return {
             id: product.id,

@@ -8,6 +8,7 @@ import {
   mutationId,
   notFound,
   requireOwner,
+  requirePermission,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
 
@@ -138,6 +139,64 @@ export const listCompensation = query({
   },
 });
 
+export const remove = mutation({
+  args: {
+    ...sessionArgs,
+    id: v.id('staffProfiles'),
+    expectedRevision: v.number(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const actor = await requirePermission(ctx, args, 'staff');
+    mutationId(args.clientMutationId);
+    const profile = await ctx.db.get(args.id);
+    if (!profile) return { id: args.id, deleted: true as const };
+    if (actor.staffProfileId === String(profile._id)) {
+      return conflict('You cannot delete the profile you are using.');
+    }
+    expectRevision(args.expectedRevision, profile.revision);
+    if (profile.role === 'owner') {
+      const active = await ctx.db.query('staffProfiles')
+        .withIndex('by_status_name', (index) => index.eq('status', 'active'))
+        .take(101);
+      if (active.length > 100) throw new Error('Staff list is too large.');
+      if (active.filter((member) => member.role === 'owner').length < 2) {
+        return conflict('The last owner cannot be deleted.');
+      }
+    }
+    const [identities, sessions, attempts, compensation] = await Promise.all([
+      ctx.db.query('staffIdentities')
+        .withIndex('by_staff_profile', (index) => index.eq('staffProfileId', profile._id))
+        .take(2),
+      ctx.db.query('staffSessions')
+        .withIndex('by_staff_profile', (index) => index.eq('staffProfileId', profile._id))
+        .take(101),
+      ctx.db.query('staffPinAttempts')
+        .withIndex('by_staff_device', (index) => index.eq('staffProfileId', profile._id))
+        .take(101),
+      ctx.db.query('compensationPeriods')
+        .withIndex('by_staff_start_month', (index) =>
+          index.eq('staffProfileId', profile._id))
+        .take(101),
+    ]);
+    if (identities.length > 1 || sessions.length > 100 || attempts.length > 100
+        || compensation.length > 100) {
+      throw new Error('Staff history exceeds its safe deletion limit.');
+    }
+    for (const period of compensation) {
+      await ctx.db.patch(period._id, {
+        staffNameSnapshot: profile.name,
+        staffRoleSnapshot: profile.role,
+      });
+    }
+    for (const row of [...identities, ...sessions, ...attempts]) {
+      await ctx.db.delete(row._id);
+    }
+    await ctx.db.delete(profile._id);
+    return { id: args.id, deleted: true as const };
+  },
+});
+
 export const listAllCompensation = query({
   args: { ...sessionArgs },
   handler: async (ctx, args) => {
@@ -149,6 +208,8 @@ export const listAllCompensation = query({
     return rows.map((row) => ({
       id: row._id,
       staffProfileId: row.staffProfileId,
+      ...(row.staffNameSnapshot ? { staffNameSnapshot: row.staffNameSnapshot } : {}),
+      ...(row.staffRoleSnapshot ? { staffRoleSnapshot: row.staffRoleSnapshot } : {}),
       monthlyAmountCentimes: row.monthlyAmountCentimes,
       effectiveStartMonth: row.effectiveStartMonth,
       ...(row.effectiveEndMonth ? { effectiveEndMonth: row.effectiveEndMonth } : {}),
@@ -196,6 +257,8 @@ export const addCompensationPeriod = mutation({
     }
     const id = await ctx.db.insert('compensationPeriods', {
       staffProfileId: profile._id,
+      staffNameSnapshot: profile.name,
+      staffRoleSnapshot: profile.role,
       monthlyAmountCentimes: boundedInteger(args.monthlyAmountCentimes, 'Monthly compensation', 0, 100_000_000),
       effectiveStartMonth,
       ...(effectiveEndMonth ? { effectiveEndMonth } : {}),

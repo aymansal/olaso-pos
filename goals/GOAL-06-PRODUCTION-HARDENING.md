@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; no card in progress, OPTIONS-01 next
+**Status:** active; DELETE-01 in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -21,17 +21,17 @@ tablet and printer.
 
 Goal 06 is not one autonomous `/goal`; it proceeds one reviewed card at a time.
 Functional completion comes first: local-first management, staff/lock/category
-work, physical offline/reconnect closeout, product-owned sizes/choices/exact
-ingredient recipes, safe permanent deletion, navigation/startup performance,
-backup, release/update readiness, and security review. The full approved
-product blueprint and OPTIONS-01 through OPTIONS-04 contracts are documented in
+work, physical offline/reconnect closeout, safe permanent deletion,
+navigation/startup performance, backup, release/update readiness, and security
+review. The separately approved product-owned size/choice/ingredient cards
+then complete before the owner's final visual review. Their full contracts live in
 [Goal 06 Product Configuration](GOAL-06-PRODUCT-CONFIGURATION.md).
 
 POLISH-01 and POLISH-02 are deliberately last. Only after LOCAL-01 through
-HARD-07 are complete does the owner manually inspect every fully functional
-screen, prompt the desired UI changes, and approve each result. HARD-08 then
-runs final endurance and acceptance against that polished product. This avoids
-polishing screens or data paths that later functional work would change.
+HARD-07 and OPTIONS-01 through OPTIONS-04 are complete does the owner manually
+inspect every fully functional screen, prompt the desired UI changes, and
+approve each result. HARD-08 then runs final endurance and acceptance against
+that polished product.
 
 ## Verified starting leads
 
@@ -158,11 +158,7 @@ polishing screens or data paths that later functional work would change.
 | CATALOG-01 | Add offline category artwork selection and a neutral custom-category fallback | done | `43c9e4a3ed169ae7a07344f9587a51f65051e203` on `origin/main`; six optimized assets, neutral resolver, picker, schema 17, full local/cloud path, automated/Convex/Android, migration/offline/restart/reconnect/cleanup, exact UI, lifecycle/network/console, Graphify, authority, and DOX evidence pass |
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | done | `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main`; full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass |
-| OPTIONS-01 | Add backward-compatible product-owned size, choice, and exact-recipe foundations | pending | Approved detailed blueprint linked above |
-| OPTIONS-02 | Add custom product choices, exact ingredient actions, and independent copying | pending | — |
-| OPTIONS-03 | Connect exact cashier selections to price, stock, immutable sales, and synchronization | pending | — |
-| OPTIONS-04 | Reconcile selected ingredient costs, reports, migration, and offline acceptance | pending | — |
-| DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | pending | Runs after independent product-owned configuration is complete |
+| DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | in progress | Official research, schema-19 history migration, focused/live-cloud checks, protected staff/history, stale-copy root fixes, physical flight-mode restart/ordered reconnect, exact cloud effects, fitted screens, and clean logs pass; commit/push pending |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | pending | — |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
@@ -171,6 +167,10 @@ polishing screens or data paths that later functional work would change.
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
 | HARD-06 | Add protected production signing, release, upgrade, and rollback workflow | pending | — |
 | HARD-07 | Complete security, privacy, dependency, quota, and support readiness review | pending | — |
+| OPTIONS-01 | Add backward-compatible product-owned size, choice, and exact-recipe foundations | pending | Separate approved blueprint; follows original technical-hardening cards |
+| OPTIONS-02 | Add custom product choices, exact ingredient actions, and independent copying | pending | — |
+| OPTIONS-03 | Connect exact cashier selections to price, stock, immutable sales, and synchronization | pending | — |
+| OPTIONS-04 | Reconcile selected ingredient costs, reports, migration, and offline acceptance | pending | — |
 | POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | — |
 | POLISH-02 | Apply and verify the owner's final changes one screen at a time | pending | — |
 | HARD-08 | Run service endurance, final owner acceptance, and release closeout | pending | — |
@@ -530,8 +530,8 @@ real-device acceptance matrix.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04 are done and no
-  card is currently in progress.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04 are done and
+  DELETE-01 is the only card in progress.
 - LOCAL-01 through STAFF-01 implement local-first catalog, recipe, inventory,
   cost, compensation, and protected staff creation. LOCAL-04's full matrix and
   mandatory root fixes pass and its implementation is pushed to `origin/main`.
@@ -540,7 +540,8 @@ real-device acceptance matrix.
 - The owner approved independent product-owned sizes and choices, exact
   ingredient actions, mandatory copying, ingredient-only costs, ordinary
   manually priced house syrup, and preservation of immutable order history.
-  OPTIONS-01 through OPTIONS-04 implement that blueprint before DELETE-01.
+  OPTIONS-01 through OPTIONS-04 implement that separate blueprint after the
+  original technical-hardening sequence and before final owner-led polish.
 - The startup wordmark asset exists but is intentionally not consumed before
   HARD-02.
 - The pre-bridge lifecycle error is fixed early under the mandatory bug rule.
@@ -549,12 +550,66 @@ real-device acceptance matrix.
   zero `triggerEvent`/uncaught errors. HARD-03 still owns the complete startup,
   long-sleep, connection, and empty-rendering acceptance matrix.
 - The owner's manual screen-by-screen review and UI prompting are intentionally
-  deferred until every card through HARD-07 is complete.
-- Exact next action: wait for owner authorization, then activate only
-  OPTIONS-01 and research the existing Android/Capacitor migration boundary.
-  Do not implement later options, deletion, hardening, or visual polish early.
+  deferred until HARD-07 and the separate OPTIONS-01 through OPTIONS-04 cards
+  are complete.
+- Official Android guidance requires the local database as the visible source
+  of truth and deferred durable writes. The existing Capacitor SQLite plugin
+  supports explicit transaction/rollback and parameterized deletes; Android
+  warns foreign-key cascades are inactive unless constraints are enabled.
+  Convex mutations support transactional indexed deletion. Reuse the current
+  native SQLite/protected-session/outbox boundary; add no Room, WorkManager,
+  native plugin, state library, or direct UI-to-cloud write.
+- DELETE-01 implementation and the final physical-tablet acceptance matrix now
+  pass. Immutable history retains deleted category, drink, ingredient, and
+  worker names; offline owner-only staff removal preserves protected pending
+  access; stale archived copies are removed safely; and category/ingredient/
+  product deletions synchronize in verified sale-dependent order.
+- Exact next action: finish final checks, refresh Graphify, commit and push
+  DELETE-01 directly to origin/main, record its SHA, and stop. HARD-01 remains
+  pending until the owner requests the next individual card.
 
 ## Planning journal
+
+### 2026-08-25 — DELETE-01 physical deletion and ordered reconnect verified
+
+- Implemented schema 19, nullable product categories, immutable independent
+  category/product/ingredient/staff history, owner-only protected staff
+  deletion, ingredient recipe/choice repair, actor-aware cloud removals, and
+  true live Delete controls through the existing Android SQLite boundary.
+- Root-fixed stale archived ingredients/staff, missing historical wage names,
+  equal-timestamp cache replacement, and cross-domain deletion ordering. The
+  focused migration/catalog/inventory/staff/cloud checks reproduce each issue.
+- Physical Galaxy Tab A9 proves offline category/product/ingredient/cashier
+  creation, protected cashier unlock, completed sale, deletion, app restart,
+  owner/Samira safety, exact historical Orders/Reports/Costs, automatic ordered
+  reconnect, one cloud sale, repeated reconnect, no secret payload exposure,
+  exact 1340 × 800 screens, and clean Android runtime logs.
+- Full focused/local/cloud/printing/Android/build checks pass and Graphify is
+  current at 3,287 nodes, 7,552 edges, and 162 communities. Direct main
+  commit/push and its recorded SHA are the only remaining closeout actions;
+  do not begin HARD-01 without the owner's next instruction.
+
+### 2026-08-25 — Owner restored original order and activated DELETE-01
+
+- The product-configuration blueprint remains separate. The owner explicitly
+  directed finishing the existing deletion, navigation/startup, recovery,
+  release, and security cards before OPTIONS-01 through OPTIONS-04. Final
+  owner-led polish and release acceptance still follow all functional work.
+- Activated only DELETE-01. Current official Android offline-first and
+  SQLiteDatabase guidance requires one local source of truth, durable queued
+  writes, and explicit attention to foreign-key enforcement. The installed
+  Capacitor SQLite transaction/API documentation already provides safe
+  begin/commit/rollback and bound DELETE operations. Official Convex writing
+  and indexing guidance confirms transactional mutation deletes and bounded
+  indexed dependent-record reads.
+- Selected boundary: native SQLite plus the existing protected staff session,
+  serialized transaction, management outbox, foreground retry, actor session,
+  and Convex mutation. Keep UI in React and domain validation/data changes in
+  their owning layers. Reject Room, WorkManager, a new plugin, direct network
+  form writes, unbounded scans, and destructive changes to immutable history.
+- Exact next action: read every applicable subtree instruction chain and trace
+  all category/product/ingredient/staff, archive/delete, recipe, stock/sale
+  snapshot, identity, synchronization, and existing regression callers.
 
 ### 2026-08-25 — Approved product-owned configuration blueprint
 

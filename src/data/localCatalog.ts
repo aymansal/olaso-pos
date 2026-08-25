@@ -8,6 +8,7 @@ import { withLocalTransaction } from './localDatabase.ts';
 import {
   enqueueManagementOperation,
   latestPendingManagementOperationIdFromDatabase,
+  latestPendingSaleForRecordFromDatabase,
 } from './localManagement.ts';
 import type { LocalManagementActor } from './managementOperation.ts';
 import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
@@ -148,6 +149,42 @@ export function setLocalCategoryArchived(
   });
 }
 
+export function deleteLocalCategory(
+  context: CatalogContext,
+  category: { id: string; revision: number },
+  transact: CatalogTransaction = withLocalTransaction,
+) {
+  return transact(async (database) => {
+    const existing = await row(database, 'categories', category.id);
+    if (!existing || Number(existing.revision) !== category.revision) {
+      throw new Error('Category changed. Refresh it before deleting.');
+    }
+    const saleDependency = await latestPendingSaleForRecordFromDatabase(
+      database, 'category', category.id, OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+    );
+    const now = Date.now();
+    await database.run(
+      `UPDATE products SET category_id = NULL, revision = revision + 1,
+       updated_at = ? WHERE category_id = ?`,
+      [now, category.id],
+      false,
+    );
+    await database.run('DELETE FROM categories WHERE id = ?', [category.id], false);
+    const operation = await enqueueManagementOperation(database, {
+      deviceId: context.deviceId,
+      operationType: 'management.category.delete',
+      localRecordId: category.id,
+      dependsOnOperationId: saleDependency ?? await dependency(database),
+      requiredPermission: 'products',
+      actor: context.actor,
+      expectedRevision: category.revision,
+      payload: { name: String(existing.name) },
+      createdAt: now,
+    });
+    return { id: category.id, operationId: operation.operationId };
+  });
+}
+
 export function saveLocalProduct(context: CatalogContext, input: ProductSaveInput, transact: CatalogTransaction = withLocalTransaction) {
   return transact(async (database) => {
     const now = Date.now();
@@ -156,8 +193,12 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
         || new Set(input.modifierGroupIds).size !== input.modifierGroupIds.length) {
       throw new Error('Product settings are invalid.');
     }
-    const category = await row(database, 'categories', input.categoryId);
-    if (!category || category.status !== 'active') throw new Error('Category is unavailable.');
+    if (input.categoryId) {
+      const category = await row(database, 'categories', input.categoryId);
+      if (!category || category.status !== 'active') {
+        throw new Error('Category is unavailable.');
+      }
+    }
     const existing = input.id ? await row(database, 'products', input.id) : undefined;
     if (input.id && !existing) throw new Error('Product is unavailable.');
     if (existing && Number(existing.revision) !== input.expectedRevision) {
@@ -184,7 +225,7 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
          sort_order = excluded.sort_order, revision = excluded.revision,
          updated_at = excluded.updated_at, key = excluded.key`,
       [
-        localId, input.categoryId, name, name,
+        localId, input.categoryId || null, name, name,
         integer(input.basePriceCentimes, 'Product price', 0, 10_000_000),
         input.status, integer(input.sortOrder, 'Sort order', 0, 100_000),
         revision, now, key,
@@ -249,6 +290,41 @@ export function setLocalProductStatus(
       createdAt: now,
     });
     return { id: product.id, revision, operationId: operation.operationId };
+  });
+}
+
+export function deleteLocalProduct(
+  context: CatalogContext,
+  product: Pick<ManagedProduct, 'id' | 'revision'>,
+  transact: CatalogTransaction = withLocalTransaction,
+) {
+  return transact(async (database) => {
+    const existing = await row(database, 'products', product.id);
+    if (!existing || Number(existing.revision) !== product.revision) {
+      throw new Error('Product changed. Refresh it before deleting.');
+    }
+    const saleDependency = await latestPendingSaleForRecordFromDatabase(
+      database, 'product', product.id, OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
+    );
+    const now = Date.now();
+    await database.run(
+      'UPDATE recipe_versions SET is_active = 0 WHERE product_id = ?',
+      [product.id],
+      false,
+    );
+    await database.run('DELETE FROM products WHERE id = ?', [product.id], false);
+    const operation = await enqueueManagementOperation(database, {
+      deviceId: context.deviceId,
+      operationType: 'management.product.delete',
+      localRecordId: product.id,
+      dependsOnOperationId: saleDependency ?? await dependency(database),
+      requiredPermission: 'products',
+      actor: context.actor,
+      expectedRevision: product.revision,
+      payload: { name: String(existing.name) },
+      createdAt: now,
+    });
+    return { id: product.id, operationId: operation.operationId };
   });
 }
 

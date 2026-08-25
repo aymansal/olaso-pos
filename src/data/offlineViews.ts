@@ -7,6 +7,8 @@ type SavedLine = {
   productName: string;
   quantity: number;
   lineTotalCentimes: number;
+  categoryIdSnapshot?: string;
+  categoryNameSnapshot?: string;
 };
 
 type SavedReceipt = {
@@ -25,7 +27,7 @@ function receipt(value: unknown): SavedReceipt {
 
 async function localSales(fromDate: string, toDate: string) {
   const database = await openLocalDatabase();
-  const result = await database.query(
+  const [result, savedCategories] = await Promise.all([database.query(
     `SELECT local_sale_id, receipt_number, status, service_type,
       total_centimes, business_date, receipt_snapshot_json, created_at
      FROM sales
@@ -33,11 +35,28 @@ async function localSales(fromDate: string, toDate: string) {
      ORDER BY created_at DESC
      LIMIT 1001`,
     [fromDate, toDate],
-  );
+  ), database.query(
+    `SELECT item.local_sale_id, item.product_id, item.category_id_snapshot,
+      item.category_name_snapshot
+     FROM sale_items item
+     JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+     WHERE sale.business_date BETWEEN ? AND ?
+     LIMIT 5001`,
+    [fromDate, toDate],
+  )]);
   if ((result.values?.length ?? 0) > 1_000) {
     throw new Error('Saved tablet sales exceed the offline report limit.');
   }
-  return (result.values ?? []).map((row) => ({
+  if ((savedCategories.values?.length ?? 0) > 5_000) {
+    throw new Error('Saved tablet sale items exceed the offline report limit.');
+  }
+  const categoryBySaleProduct = new Map((savedCategories.values ?? []).map((row) => [
+    `${String(row.local_sale_id)}:${String(row.product_id)}`,
+    { id: String(row.category_id_snapshot), name: String(row.category_name_snapshot) },
+  ]));
+  return (result.values ?? []).map((row) => {
+    const savedReceipt = receipt(row.receipt_snapshot_json);
+    return {
     id: String(row.local_sale_id),
     receiptNumber: String(row.receipt_number),
     status: String(row.status) as 'completed' | 'cancelled' | 'refunded',
@@ -49,8 +68,23 @@ async function localSales(fromDate: string, toDate: string) {
     totalCentimes: Number(row.total_centimes),
     businessDate: String(row.business_date),
     createdAt: Number(row.created_at),
-    receipt: receipt(row.receipt_snapshot_json),
-  }));
+    receipt: {
+      ...savedReceipt,
+      lines: savedReceipt.lines.map((line) => {
+        const category = categoryBySaleProduct.get(
+          `${String(row.local_sale_id)}:${line.productId}`,
+        );
+        return {
+          ...line,
+          ...(category?.id && category.name ? {
+            categoryIdSnapshot: category.id,
+            categoryNameSnapshot: category.name,
+          } : {}),
+        };
+      }),
+    },
+    };
+  });
 }
 
 export function aggregateOfflineSales(
@@ -91,7 +125,9 @@ export function aggregateOfflineSales(
     payments.set(paymentMethod, payment);
     for (const line of row.receipt.lines) {
       itemCount += line.quantity;
-      const category = categoryByProduct.get(line.productId);
+      const category = line.categoryIdSnapshot && line.categoryNameSnapshot
+        ? { id: line.categoryIdSnapshot, name: line.categoryNameSnapshot }
+        : categoryByProduct.get(line.productId);
       const product = products.get(line.productId) ?? {
         productId: line.productId,
         productName: line.productName,
@@ -135,16 +171,21 @@ export function aggregateOfflineSales(
 async function ingredientUsage(fromDate: string, toDate: string) {
   const database = await openLocalDatabase();
   const result = await database.query(
-    `SELECT m.ingredient_id, i.name, i.base_unit,
+    `SELECT m.ingredient_id,
+      COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')) AS name,
+      COALESCE(i.base_unit,
+        NULLIF(m.ingredient_base_unit_snapshot, '')) AS base_unit,
       SUM(-m.quantity_delta) AS quantity
      FROM stock_movements m
-     JOIN ingredients i ON i.id = m.ingredient_id
+     LEFT JOIN ingredients i ON i.id = m.ingredient_id
      JOIN sales s ON s.local_sale_id = m.local_sale_id
      WHERE m.business_date BETWEEN ? AND ?
        AND m.movement_type = 'sale'
        AND s.status = 'completed'
-     GROUP BY m.ingredient_id, i.name, i.base_unit
-     ORDER BY i.name
+     GROUP BY m.ingredient_id,
+       COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')),
+       COALESCE(i.base_unit, NULLIF(m.ingredient_base_unit_snapshot, ''))
+     ORDER BY name
      LIMIT 21`,
     [fromDate, toDate],
   );

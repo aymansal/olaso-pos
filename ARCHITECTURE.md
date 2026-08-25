@@ -220,8 +220,25 @@ tablet-first rule as checkout:
 This covers categories, products, product-owned sizes and choices, exact
 size/choice recipe versions, ingredients,
 low-stock thresholds, inventory purchases and adjustments, operating expenses,
-compensation periods, staff profiles, and protected initial PIN setup. Archive
-and correction history remains append-only where the domain requires it.
+compensation periods, staff profiles, protected initial PIN setup, and
+authorized permanent category/product/ingredient/staff deletion. Completed
+sales, corrections, purchases, stock movements, and compensation remain
+historical or append-only; removing their live management record never removes
+or rewrites that history.
+
+SQLite schema 19 makes product category ownership nullable and gives immutable
+sale lines, recipe versions/items, ingredient movements/purchases, and worker
+compensation their own category/product/ingredient/staff name snapshots. A
+deleted category releases its products; a deleted ingredient produces a new
+immutable repaired recipe, removes affected choice ingredients, and makes the
+affected product unavailable. A deletion waits for earlier sales/corrections
+that still require the live cloud record and follows the latest queued
+catalog/inventory descendant of that sale, so category changes, ingredient
+repairs, and product revision checks synchronize in their actual order.
+Removed staff retain protected actor-scoped credentials only until their
+earlier queued work and the owner's authorized cloud deletion finish, after
+which their cloud/local access is revoked. Existing historical rows are
+migrated with foreign keys enforced.
 
 Catalog and inventory operations share one dependency chain because a sale may
 use a newly saved product, recipe, ingredient, or valuation. Expense and
@@ -295,11 +312,13 @@ corrections so cross-staff reconnect preserves cashier/correction attribution.
 Legacy label-only rows may synchronize only when the active profile name
 matches, otherwise they remain failed rather than receiving a false actor.
 
-Successful bounded replacement snapshots remove cloud-owned catalog rows and
-saved finance rows absent from the new snapshot. Operational refresh remains
-blocked by pending local catalog/inventory work, and finance cleanup explicitly
-preserves pending expense/correction/compensation rows. Immutable sale/receipt
-snapshots and referenced stock history are not pruned.
+Successful bounded replacement snapshots remove cloud-owned catalog,
+ingredient, staff, and finance rows absent from the new snapshot using actual
+record membership rather than non-unique timestamps. Operational refresh
+remains blocked by pending local catalog/inventory work, and cleanup retains
+every record still required by pending sales, corrections, staff access, or
+finance operations. Immutable recipes, sale/receipt snapshots, worker wage
+names, and referenced stock history are not pruned.
 
 ### Idempotency
 
@@ -320,8 +339,9 @@ management record/effect.
 
 - The first successful setup downloads the complete active operational menu.
 - Later syncs request records changed after the saved cursor.
-- Deleted operational records are represented by archived/tombstone state so
-  the tablet can remove them from active views.
+- Archived operational records remain restorable. Permanently deleted records
+  disappear from bounded replacement snapshots; local pending deletions remain
+  authoritative until their ordered cloud acknowledgement.
 - Product images and the curated category-art gallery are versioned APK assets
   for the initial release. Categories persist an artwork key and resolve an
   unknown/missing key to one neutral bundled fallback. Dynamic owner-uploaded
@@ -1030,10 +1050,11 @@ staff PIN
   bounded active server profile list for sign-in choices, but that read never
   archives local profiles or clears protected credentials. After a successful
   online sign-in, the app may apply that complete bounded list as an
-  authenticated staff-directory refresh: stale local rows are archived, active
-  rows are upserted, and stale profile-scoped plus legacy protected records are
-  removed. If the bounded list was unavailable, only the authenticated profile
-  is upserted and every other local profile remains unchanged.
+  authenticated staff-directory refresh: active rows are upserted, absent rows
+  and their protected records are removed only when no queued work still
+  requires that actor, and independent historical wages preserve the saved
+  worker name. If the bounded list was unavailable, only the authenticated
+  profile is upserted and every other local profile remains unchanged.
 - **Lock and switch:** lock clears active in-memory identity but not protected
   credentials. A deliberate switch asks for confirmation only when the
   App-owned POS cart has lines and preserves that cart in memory for the next

@@ -31,6 +31,8 @@ performance, ingredient usage, and bounded period controls.
   tablet receipts and movements and never remain on a cloud loading state.
 - Expense and compensation saves appear immediately from SQLite. Compensation
   and profitability are never rendered for a non-owner role.
+- Historical ingredient/category reports and worker compensation keep their
+  saved names after the corresponding live record is permanently deleted.
 
 ## Work Guidance
 

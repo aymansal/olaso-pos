@@ -1,11 +1,13 @@
 import {
   loadPendingStaffCredential,
+  clearStaffSession,
   saveProvisionedStaffSession,
 } from './identitySession.ts';
 import type { PendingLocalManagementOperation } from './managementOperation.ts';
 import { STAFF_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 import { isStaffRole } from './permissions.ts';
 import { saveAuthenticatedStaffProfile } from './operationalCache.ts';
+import { withLocalTransaction } from './localDatabase.ts';
 import { syncPendingManagementOperations } from './catalogSync.ts';
 
 type Result = {
@@ -17,12 +19,37 @@ type Result = {
 type Services = {
   sessionArgs: { sessionToken: string; deviceId: string };
   createStaff: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
+  deleteStaff: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
+  resolve: (recordType: string, localRecordId: string) => Promise<string>;
 };
 
 export async function dispatchStaffOperation(
   operation: PendingLocalManagementOperation,
   services: Services,
 ): Promise<Result> {
+  if (operation.operationType === 'management.staff.delete') {
+    const cloudId = await services.resolve('staff-profile', operation.localRecordId);
+    const removed = await services.deleteStaff({
+      ...services.sessionArgs,
+      id: cloudId,
+      expectedRevision: operation.expectedRevision,
+      clientMutationId: operation.operationId,
+    });
+    await withLocalTransaction(async (database) => {
+      await database.run(
+        'DELETE FROM staff_profiles WHERE id = ? OR id = ?',
+        [operation.localRecordId, cloudId],
+        false,
+      );
+    });
+    await clearStaffSession(operation.localRecordId);
+    if (cloudId !== operation.localRecordId) await clearStaffSession(cloudId);
+    return {
+      recordType: 'staff-profile',
+      cloudRecordId: String(removed.id),
+      acknowledgedAt: Date.now(),
+    };
+  }
   if (operation.operationType !== 'management.staff.create') {
     throw new Error('Staff synchronization operation is unsupported.');
   }

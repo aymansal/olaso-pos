@@ -81,7 +81,7 @@ export default defineSchema({
 
   products: defineTable({
     key: v.string(),
-    categoryId: v.id('categories'),
+    categoryId: v.optional(v.id('categories')),
     name: v.string(),
     receiptName: v.string(),
     basePriceCentimes: v.number(),
@@ -96,6 +96,7 @@ export default defineSchema({
     lastMutationId: v.optional(v.string()),
   })
     .index('by_key', ['key'])
+    .index('by_category', ['categoryId'])
     .index('by_updated_at', ['updatedAt']),
 
   modifierGroups: defineTable({
@@ -157,6 +158,7 @@ export default defineSchema({
 
   recipeVersions: defineTable({
     productId: v.id('products'),
+    productNameSnapshot: v.optional(v.string()),
     sizeKey: v.optional(v.string()),
     versionNumber: v.number(),
     status: recipeStatus,
@@ -176,6 +178,8 @@ export default defineSchema({
   recipeItems: defineTable({
     recipeVersionId: v.id('recipeVersions'),
     ingredientId: v.id('ingredients'),
+    ingredientNameSnapshot: v.optional(v.string()),
+    ingredientBaseUnitSnapshot: v.optional(baseUnit),
     quantity: v.number(),
     createdAt: v.number(),
   })
@@ -253,6 +257,8 @@ export default defineSchema({
 
   stockMovements: defineTable({
     ingredientId: v.id('ingredients'),
+    ingredientNameSnapshot: v.optional(v.string()),
+    ingredientBaseUnitSnapshot: v.optional(baseUnit),
     quantityDelta: v.number(),
     movementType: stockMovementType,
     relatedSaleId: v.optional(v.id('sales')),
@@ -276,6 +282,8 @@ export default defineSchema({
 
   inventoryPurchases: defineTable({
     ingredientId: v.id('ingredients'),
+    ingredientNameSnapshot: v.optional(v.string()),
+    ingredientBaseUnitSnapshot: v.optional(baseUnit),
     stockMovementId: v.id('stockMovements'),
     packageLabel: v.string(),
     packageCount: v.number(),
@@ -345,6 +353,8 @@ export default defineSchema({
 
   compensationPeriods: defineTable({
     staffProfileId: v.id('staffProfiles'),
+    staffNameSnapshot: v.optional(v.string()),
+    staffRoleSnapshot: v.optional(staffRole),
     monthlyAmountCentimes: v.number(),
     effectiveStartMonth: v.string(),
     effectiveEndMonth: v.optional(v.string()),
