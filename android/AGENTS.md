@@ -44,6 +44,12 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   `window.Capacitor.triggerEvent` exists. This prevents pre-bridge pause/resume
   errors during screen-off or notification-shade launch while leaving ordinary
   bridge scripts and later lifecycle events unchanged.
+- `MainActivity.onDestroy()` queues rollback of any unfinished `olaso_pos`
+  transaction and then connection cleanup on its existing Capacitor plugin
+  thread before the bridge's safe shutdown. Do not close from the Android UI
+  thread or close before rollback: an unfinished transaction keeps the SQLite
+  pool locked. The installed plugin has no destroy cleanup; removing ordered
+  rollback/close blocks the next same-process Android warm launch.
 - Android 16 ignores ordinary orientation restrictions for API-36-targeted
   large-screen apps. This manually distributed fixed-landscape POS therefore
   compiles with SDK 36 but targets API 35. Preserve the activity-level

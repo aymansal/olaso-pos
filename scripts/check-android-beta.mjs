@@ -78,6 +78,13 @@ assert.match(activity, /WindowInsetsCompat\.Type\.systemBars\(\)/);
 assert.match(activity, /BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE/);
 assert.match(activity, /onConfigurationChanged/);
 assert.match(activity, /getBridge\(\)\.getWebView\(\)\.invalidate\(\)/);
+assert.match(activity, /public void onDestroy\(\)/);
+assert.match(activity, /getBridge\(\)\.getPlugin\("CapacitorSQLite"\)/);
+assert.match(activity, /options\.put\("database", "olaso_pos"\)/);
+assert.match(
+  activity,
+  /getBridge\(\)\.execute\(\(\) ->[\s\S]*?rollbackTransaction\(closeCall\)[\s\S]*?closeConnection\(closeCall\)[\s\S]*?super\.onDestroy\(\)/,
+);
 assert.match(activity, /registerPlugin\(EscPosPrinterPlugin\.class\)/);
 assert.match(activity, /registerPlugin\(SecureSessionPlugin\.class\)/);
 assert.match(rootBuild, /com\.android\.tools\.build:gradle:8\.13\.2/);

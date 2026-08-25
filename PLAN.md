@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; DELETE-01 done, HARD-01 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; HARD-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -220,9 +220,10 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-DELETE-01 is complete and pushed to `origin/main`. No card is in progress.
-When the owner asks to continue, research current official Android and
-Capacitor startup/profiling guidance and activate only HARD-01 to measure the
-physical tablet's existing startup, navigation, package, and readiness
-baseline. Finish the original hardening sequence before the separate
-OPTIONS-01 through OPTIONS-04 blueprint and final owner-led polish.
+HARD-01 is the only card in progress. Its official Android research, physical
+five-run cold/warm/navigation baseline, offline/history proof, and mandatory
+warm-lifecycle root fix pass; focused regression/build checks and Graphify are
+complete. Commit/push directly to `origin/main`, record the implementation SHA,
+and stop
+before activating NAV-01. Finish the original hardening sequence before the
+separate OPTIONS-01 through OPTIONS-04 blueprint and final owner-led polish.

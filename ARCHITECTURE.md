@@ -836,6 +836,14 @@ Rules:
 - SQLite and terminal-lock restoration may gate cashier access, but they must
   share one visible startup flow. Do not create successive blank or visually
   unrelated loading phases.
+- The native Activity schedules rollback of an unfinished SQLite transaction
+  and then closes its connection on the existing Capacitor plugin thread
+  before safely destroying that bridge.
+  Android may recreate the Activity inside a surviving process; the installed
+  SQLite plugin does not release its old native connection automatically, and
+  leaving it open blocks the replacement connection's next write transaction.
+  Never close from the UI thread or before rollback while earlier queued
+  SQLite writes still hold the connection.
 - Keep the critical startup module graph small. The POS shell and the minimum
   lock/startup path may load eagerly; screens not required for the initial
   destination load on demand through the existing React/Vite stack.

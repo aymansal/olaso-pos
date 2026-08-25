@@ -9,6 +9,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.JSObject;
+import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginHandle;
+import com.getcapacitor.community.database.sqlite.CapacitorSQLitePlugin;
 
 public class MainActivity extends BridgeActivity {
     @Override
@@ -33,6 +37,40 @@ public class MainActivity extends BridgeActivity {
         if (getBridge() != null && getBridge().getWebView() != null) {
             getBridge().getWebView().invalidate();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (getBridge() != null) {
+            PluginHandle handle = getBridge().getPlugin("CapacitorSQLite");
+            if (handle != null) {
+                JSObject options = new JSObject();
+                options.put("database", "olaso_pos");
+                options.put("readonly", false);
+                PluginCall closeCall = new PluginCall(
+                    null,
+                    "CapacitorSQLite",
+                    PluginCall.CALLBACK_ID_DANGLING,
+                    "closeConnection",
+                    options
+                ) {
+                    @Override
+                    public void resolve() {}
+
+                    @Override
+                    public void resolve(JSObject result) {}
+
+                    @Override
+                    public void reject(String message, String code, Exception error, JSObject data) {}
+                };
+                getBridge().execute(() -> {
+                    CapacitorSQLitePlugin sqlite = (CapacitorSQLitePlugin) handle.getInstance();
+                    sqlite.rollbackTransaction(closeCall);
+                    sqlite.closeConnection(closeCall);
+                });
+            }
+        }
+        super.onDestroy();
     }
 
     private void hideSystemBars() {

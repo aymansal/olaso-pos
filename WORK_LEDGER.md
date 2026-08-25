@@ -23,7 +23,7 @@ remaining goal and card sequence.
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
 | DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
-| HARD-01 — Physical startup/navigation baseline | pending |
+| HARD-01 — Physical startup/navigation baseline | in progress — physical five-run baseline and warm-lifecycle root fix verified; awaiting final checks and push |
 | NAV-01 — Retained smooth navigation | pending |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
@@ -108,10 +108,95 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- HARD-01's complete physical Galaxy Tab A9 baseline passes: five true cold
+  Android first-frame runs are 1,047/1,072/1,081/1,098/1,148 ms
+  (median 1,081); usable Lock/profile is 1,888–1,934 ms (median 1,912); owner
+  tap to cached POS is 805–916 ms (median 885). Five true warm Activity
+  recreations display in 184–236 ms (median 191), expose Lock in 495–570 ms
+  (median 515), and reach local POS in 709–830 ms (median 766).
+- Five passes through all six screens prove 30 repeat reconstructions. POS
+  returns take median 180 ms, issue 15–30 SQLite calls, and recreate all 14
+  images; Products issues 10–24 local calls, Stock 15–34, Reports 5–20, and
+  Orders 2–14. Nine 1,408 by 768 PNG drinks render at only 72 by 92; the
+  current 31,626,309-byte debug APK includes 4,276,415 bytes of PNG assets,
+  925,371 bytes of eager JavaScript, 265,782 bytes of CSS, 652,953 bytes of
+  browser-only SQLite WASM, and 19,414,484 bytes of four-architecture native
+  SQLite libraries. Exact figures and boundaries live in Goal 06's HARD-01
+  baseline section.
+- Physical flight mode independently proves cold/warm Lock at 1,815/563 ms,
+  offline owner unlock to POS at 410/422 ms, and all six screens. An explicit
+  native unfinished SQLite transaction followed by warm recreation now rolls
+  back safely; owner unlock remains successful and all original 13 sales,
+  seven existing historical outbox rows, and two active profiles are intact.
+  Online state is restored; normal cold/warm tablet logs are clean.
+- Final automated checks pass: Android identity/native lifecycle, local SQLite,
+  local management/catalog/inventory/compensation/staff, lock switching,
+  settings, protected identity, reconnect, offline screens, POS cart/money,
+  exact costs, receipt bytes, TypeScript, and the full production web build.
+- Graphify is refreshed to 3,320 nodes and 7,602 edges. Final tablet inspection
+  confirms the exact 1340 by 800 body, restored internet, and no focused
+  Android/WebView runtime errors.
+- Exact current next action: commit and push verified HARD-01 directly to
+  `origin/main`, record its implementation SHA, and stop with NAV-01 pending.
+- The true same-process warm-launch database bug is root-fixed. Activity
+  teardown now schedules rollback of any incomplete transaction followed by
+  connection close on that bridge's existing plugin thread before its safe
+  shutdown. Closing from the UI thread, or closing without rollback, was
+  physically disproven: SQLite retained an in-use connection and remained
+  locked. The existing Android beta check now requires ordered rollback then
+  close before bridge destruction; the rebuilt/reinstalled 140-task beta
+  reproduces the original warm `LaunchState: WARM` plus successful owner
+  sign-in, local POS, and all six screens without the former SQLite failure.
+- A one-run physical harness smoke now passes: cold Android frame 1,144 ms,
+  Lock ready 2,081 ms, post-PIN menu 928 ms; warm frame 282 ms, Lock ready
+  568 ms, post-PIN menu 840 ms. One sales-screen return performs 29 SQLite
+  calls, destroys/recreates 14 images, and confirms the later NAV-01 target.
+- Exact current next action: run the complete five-cold/five-warm/six-screen
+  physical baseline, prove offline/retained-history and clean runtime logs,
+  record exact package/image/readiness statistics, refresh Graphify, and push
+  only HARD-01 directly to origin/main.
+- HARD-01's first real Android `LaunchState: WARM` recreation reproduced a
+  release-blocking bug: a successful online owner sign-in then fails with
+  `BeginTransaction: ... database is locked (code 5)`. The installed
+  Capacitor SQLite plugin creates an activity-owned native connection but has
+  no `handleOnDestroy` cleanup; its first bridge leaves that connection alive
+  when Android recreates the Activity inside the same process. The fresh
+  bridge opens a second connection and cannot start the required identity
+  transaction. Repeated unlock attempts fail; restarting the whole process is
+  not an acceptable workaround.
+- Mandatory bug-rule override: release the existing native SQLite connection
+  at the real Android Activity-destruction boundary before the bridge is torn
+  down; preserve atomic rollback/history, add a runnable native-lifecycle
+  regression guard, reinstall, and repeat the original warm recreation plus
+  owner unlock on the physical tablet before resuming HARD-01 measurements.
+- Additional official sources:
+  https://developer.android.com/guide/components/activities/activity-lifecycle;
+  https://github.com/capacitor-community/sqlite/blob/master/docs/APIConnection.md.
+- HARD-01 is the only active card. Official Android startup guidance confirms
+  that cold, warm, and hot launches differ and that the first activity frame is
+  not equivalent to a usable local application. Android's benchmark guidance
+  requires repeated median/minimum/maximum evidence on real hardware and a
+  release-like profileable build for its full Macrobenchmark framework.
+- Reuse the connected Galaxy Tab A9, Android `am start -W`/system timing, and
+  the existing development-only debuggable Capacitor WebView. Measure SQLite,
+  lock, POS/menu readiness, repeat screen work, APK/bundle/image weight, and
+  offline behavior at their actual native and React/data boundaries. Do not
+  add a benchmark module, native plugin, package, permanent telemetry,
+  production debugging, extra listeners, or secret logging.
+- Official references:
+  https://developer.android.com/topic/performance/vitals/launch-time;
+  https://developer.android.com/topic/performance/benchmarking/macrobenchmark-metrics;
+  https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview;
+  https://developer.chrome.com/docs/devtools/remote-debugging/webviews;
+  https://capacitorjs.com/docs/apis/app.
+- Exact current next action: inspect the existing startup/navigation and
+  packaging paths, rebuild/install the current beta, then record at least five
+  force-stopped cold and five warm physical launches plus repeated screen/image
+  and application-readiness evidence. Keep NAV-01 and all later cards pending.
 - The owner explicitly restored the original Goal 06 sequence: DELETE-01 first,
   then navigation/startup, recovery, release, and security; the separate
   OPTIONS-01 through OPTIONS-04 blueprint follows before final owner-led UI
-  polish and acceptance. DELETE-01 is complete; no card is in progress.
+  polish and acceptance. DELETE-01 is complete; HARD-01 is now in progress.
 - DELETE-01 is committed and pushed directly to `origin/main` as
   `dc86855798041f1e772a7ca3d8729841549faa9d`. Its implementation,
   official Android research, populated schema-19 migration, immutable history,
@@ -1080,6 +1165,99 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — Five-run tablet startup and navigation baseline verified
+
+- Final physical device: `SM-X115`, Android 16/API 36, Google WebView
+  `151.0.7922.199`, debug APK, exact 1340 × 800 viewport. Five forced-process
+  cold samples give median Android-display/Lock-ready/post-PIN-menu
+  1,081/1,912/885 ms. Five Android-confirmed same-process warm Activity
+  recreations give 191/515/766 ms. Lock-ready includes conservative host ADB
+  inspection overhead; manual PIN entry is never included or persisted.
+- SQLite/Lock/profile ready marks, local query counts, image insertion/removal,
+  network resource entries, long tasks, exact APK/assets, Android/WebView
+  identity, and all 30 authorized screen transitions are captured by the small
+  standard-library-only `npm run measure:android` host command.
+- POS reconstruction is confirmed rather than inferred: every repeat adds 14
+  images and performs 15–30 SQLite requests. Nine 1,408 × 768 source images
+  display at 72 × 92. The APK contains 31,626,309 bytes, initial JS 925,371,
+  CSS 265,782, browser SQLite WASM 652,953, and PNG artwork 4,276,415 bytes.
+  The generic white/blue native splash remains an explicit HARD-02 task.
+- Flight mode proves cold/warm unlock and all six screens. The regression
+  deliberately leaves a real native SQLite transaction open, recreates the
+  Activity without killing its process, successfully unlocks the owner, and
+  verifies all 13 sales, seven unchanged historical outbox rows, and two
+  active staff remain intact. Reconnected normal cold/warm logs are clean.
+- Focused Android, SQLite, local management/catalog/inventory/staff, lock,
+  settings, identity, reconnect, offline, POS, costs, printing, TypeScript,
+  and build checks pass. Graphify is refreshed to 3,320 nodes/7,602 edges;
+  final physical viewport and focused Android runtime logs remain clean.
+- Exact next action: commit/push verified HARD-01 directly to `origin/main`,
+  record the implementation SHA, then stop with NAV-01 pending.
+
+### 2026-08-25 — HARD-01 warm-recreation database lock root-fixed
+
+- The first direct native close interrupted queued SQLite work; the second
+  queued close still left an unfinished transaction checked out in Android's
+  SQLite pool. Physical retry reproduced the original locked-database failure
+  after both incomplete attempts, preventing a cosmetic or unverified fix.
+- `MainActivity.onDestroy()` now queues rollback of any unfinished SQLite
+  transaction and then closes the exact `olaso_pos` connection on its own
+  existing Capacitor plugin thread before safe bridge shutdown. Committed
+  history remains intact; interrupted uncommitted work rolls back atomically.
+- The existing runnable Android check now rejects missing cleanup, UI-thread
+  cleanup, close-before-rollback, or bridge destruction before ordered queue
+  registration. Full 140-task Android beta plus install-over-upgrade pass.
+- The physical original failure now passes: cold launch/owner unlock, actual
+  Android-reported warm Activity recreation, second owner unlock, live local
+  menu, and all six-screen navigation. No SQLite lock workaround, process
+  restart, data reset, extra dependency, or diagnostic secret was introduced.
+- The new standard-library-only physical harness records Android display,
+  WebView/SQLite/Lock/menu readiness, per-screen SQLite calls, removed/added
+  images, asset dimensions, and package weight. Exact next action: complete
+  five-run measurements, offline/history/log proof, docs, Graphify, and push.
+
+### 2026-08-25 — HARD-01 exposes reproducible warm-recreation database lock
+
+- Rebuilt and installed the unchanged 140-task Android beta on the connected
+  SM-X115. The first controlled cold launch displayed in 1,403 ms, reached
+  its usable Lock screen in 2,310 ms, and loaded the local POS 733 ms after
+  the accepted owner PIN.
+- The first true same-process Android `LaunchState: WARM` recreated the
+  Activity, then online owner authentication succeeded server-side but local
+  reconciliation failed with `database is locked (code 5)`. Direct debug-only
+  Capacitor boundary inspection confirmed `CapacitorSQLite.beginTransaction`
+  as the failing call without exposing the session or PIN.
+- Inspected the installed plugin and Android lifecycle sources: each Activity
+  constructs a new plugin/native database dictionary; the plugin never closes
+  its old connection during bridge destruction. Android documents releasing
+  Activity-owned resources, and the installed plugin exposes explicit
+  connection close.
+- The mandatory root-bug gate supersedes the remaining measurements. Exact
+  next action: close the existing native connection before Activity/bridge
+  destruction, add a focused native check, rebuild/reinstall, and reproduce
+  repeated real warm recreation plus owner unlock on the physical tablet.
+
+### 2026-08-25 — HARD-01 activated after official Android research
+
+- Read the root/Android/source/data/feature/Lock/POS instruction chains,
+  PLAN.md, WORK_LEDGER.md, Goal 06's exact card contract, and the current
+  architecture/design startup and navigation authorities. Graphify mapped the
+  existing native Activity, WebView, Android checks, and startup boundary.
+- Current official Android startup, Macrobenchmark, Chrome WebView, and
+  Capacitor App documentation establishes first-frame versus fully-usable
+  timing, cold/warm process semantics, repeated median/minimum/maximum device
+  measurements, release/profileable benchmark limitations, and real Android
+  activity lifecycle.
+- Chosen boundary: Android owns physical process/activity timing and the
+  existing debug-only WebView inspection; React/data owns local SQLite, lock,
+  POS/menu readiness, and repeat-navigation evidence. Reject permanent
+  telemetry, native plugins, new benchmark modules/dependencies, a fake
+  release baseline, hidden waits, and optimizations before measurement.
+- HARD-01 alone is in progress. Exact next action: inspect existing launch and
+  packaging ownership, rebuild/install the unchanged current beta, and measure
+  five physical cold/warm launches, navigation, images, assets, local
+  readiness, and clean logs.
 
 ### 2026-08-25 — DELETE-01 complete on origin/main
 

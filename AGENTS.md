@@ -133,6 +133,10 @@ decision changes.
   compensation snapshots preserve historical names and facts; category removal
   leaves products uncategorized, ingredient removal repairs affected recipes,
   and earlier queued sales/staff work synchronize before live cloud deletion.
+- HARD-01 native lifecycle protection rolls back any unfinished Activity-owned
+  SQLite transaction and closes its connection in plugin-thread order before
+  destroying the Capacitor bridge, preventing same-process warm recreation
+  from permanently locking the operational database.
 
 ### Visual baseline
 

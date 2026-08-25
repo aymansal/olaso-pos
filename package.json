@@ -31,6 +31,7 @@
     "check:offline": "node scripts/check-offline-views.mjs",
     "check:permissions": "node scripts/check-permissions.mjs",
     "check:android": "node scripts/check-android-beta.mjs",
+    "measure:android": "node scripts/measure-android-baseline.mjs",
     "check:printing": "node scripts/check-printing.mjs",
     "check:printing-endurance": "node --disable-warning=ExperimentalWarning scripts/check-printing-endurance.mjs",
     "check:receipt-lab": "npm --prefix tools/wd8260-receipt-lab run check",
