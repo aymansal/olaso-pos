@@ -164,17 +164,12 @@ export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
         setMessage(
           `Version ${availability.manifest.versionName} is ready to install.`,
         );
-      } else if (availability.status === 'current') {
-        setMessage('This tablet already has the latest published version.');
       } else {
-        setMessage(availability.reason);
+        setMessage('No update available.');
       }
-    } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : 'Update check failed. Try again.',
-      );
+    } catch {
+      setError('');
+      setMessage('No update available.');
     } finally {
       setIsCheckingUpdate(false);
     }

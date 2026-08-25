@@ -50,20 +50,27 @@ npm run android:release
 
 Tablet-reachable host:
 [`aymansal/olaso-pos-releases`](https://github.com/aymansal/olaso-pos-releases)
-(public, binaries only).
+(binaries only; keep **private** most of the time).
 
 Default manifest URL baked into the app:
 
 `https://raw.githubusercontent.com/aymansal/olaso-pos-releases/main/update-manifest.json`
 
-Release loop (not every source push):
+When the releases repo is private (or the network fails), **Check for update**
+shows **No update available.** — never a GitHub/auth error.
 
-```powershell
-npm run android:release
-npm run release:publish -- android/app/build/outputs/apk/release/app-release.apk "Short notes"
-```
+### Owner release window
 
-That creates/replaces the GitHub Release asset and updates `update-manifest.json`.
+1. Fix and push the private source repo as usual (no APK on every push).
+2. Build: `npm run android:release`
+3. Make `olaso-pos-releases` **public** for the update window:
+   `gh repo edit aymansal/olaso-pos-releases --visibility public`
+4. Publish:  
+   `npm run release:publish -- android/app/build/outputs/apk/release/app-release.apk "Short notes"`
+5. Tell the shop to open Settings → About → Check for update → Update.
+6. After they confirm the fix, make the repo **private** again:  
+   `gh repo edit aymansal/olaso-pos-releases --visibility private`
+
 Optional override: `VITE_OLASO_UPDATE_MANIFEST_URL` at build time.
 
 Manifest shape:

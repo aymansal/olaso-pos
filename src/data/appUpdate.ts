@@ -125,22 +125,51 @@ export async function checkForAppUpdate(): Promise<UpdateAvailability> {
   if (!url.startsWith('https://')) {
     return {
       status: 'unavailable',
-      reason: 'No HTTPS update channel is configured for this build.',
+      reason: 'No update available.',
     };
   }
   if (!Capacitor.isNativePlatform()) {
     return {
       status: 'unavailable',
-      reason: 'Updates install only on the Android tablet.',
+      reason: 'No update available.',
     };
   }
 
-  const installed = await nativeUpdate.getInstalledInfo();
-  const response = await fetch(url, { cache: 'no-store' });
-  if (!response.ok) {
-    throw new Error(`Update check failed (${response.status}).`);
+  let installed: InstalledAppInfo;
+  try {
+    installed = await nativeUpdate.getInstalledInfo();
+  } catch {
+    return {
+      status: 'unavailable',
+      reason: 'No update available.',
+    };
   }
-  const manifest = parseManifest(await response.json());
+
+  let response: Response;
+  try {
+    response = await fetch(url, { cache: 'no-store' });
+  } catch {
+    // Private channel, offline, or blocked host — never alarm the operator.
+    return { status: 'current', installed };
+  }
+  if (!response.ok) {
+    return { status: 'current', installed };
+  }
+
+  let raw: unknown;
+  try {
+    raw = await response.json();
+  } catch {
+    return { status: 'current', installed };
+  }
+
+  let manifest: UpdateManifest;
+  try {
+    manifest = parseManifest(raw);
+  } catch {
+    return { status: 'current', installed };
+  }
+
   if (manifest.versionCode <= installed.versionCode) {
     return { status: 'current', installed };
   }
@@ -182,6 +211,12 @@ export async function installAvailableUpdate(
     sha256: manifest.sha256,
   });
   if (!downloaded.ok) {
+    if (
+      downloaded.code === 'DOWNLOAD' ||
+      downloaded.code === 'CONFIGURATION'
+    ) {
+      throw new Error('No update available.');
+    }
     throw new Error(downloaded.message);
   }
 

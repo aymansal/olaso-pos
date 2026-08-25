@@ -314,7 +314,7 @@ export function SettingsContentPanel({
   if (section === 'about') {
     const versionLabel = installedApp
       ? `${installedApp.versionName} (${installedApp.versionCode})`
-      : '0.1.0-rc.3';
+      : '0.1.0-rc.4';
     return (
       <section className={styles.panel} aria-labelledby="about-heading">
         <div className={styles.header}>
@@ -333,7 +333,7 @@ export function SettingsContentPanel({
         <div className={styles.updateBlock}>
           <p>
             {updateChannelConfigured
-              ? 'Check for a signed update over HTTPS, then choose Update or Later. Android confirms installation. An open order blocks Update.'
+              ? 'You can check anytime. If nothing is published for the shop, Olaso simply says no update is available. When a release is open, choose Update or Later. Android confirms installation. An open order blocks Update.'
               : 'This build has no HTTPS update channel configured. Signed releases still install with the same application ID and signing key.'}
           </p>
           <div className={styles.updateActions}>
