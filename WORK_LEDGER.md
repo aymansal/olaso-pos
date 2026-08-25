@@ -28,7 +28,7 @@ remaining goal and card sequence.
 | HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
-| HARD-05 — Backup and recovery | done — pending push SHA |
+| HARD-05 — Backup and recovery | done — `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7` on `origin/main` |
 | HARD-06 through HARD-07 — Release and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -112,8 +112,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-05 is complete pending push. Official Android Auto Backup / backup
-  security guidance requires excluding sensitive app data from cloud and
+- HARD-05 is done and pushed to `origin/main` as
+  `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`. Official Android Auto Backup /
+  backup security guidance requires excluding sensitive app data from cloud and
   device-to-device transfer; Capacitor SQLite guidance matches
   `allowBackup=false` plus `data-extraction-rules` excludes for database and
   shared preferences. Owner export uses Android SAF
@@ -136,8 +137,7 @@ remaining goal and card sequence.
   https://developer.android.com/training/data-storage/shared/documents-files ;
   https://capacitorjs.com/docs/plugins/android ;
   Capacitor community SQLite Android quirks for backup exclusion.
-- Exact next action: commit/push HARD-05 to `origin/main`, record SHA, stop
-  before HARD-06.
+- Exact next action: stop; activate HARD-06 only when the owner asks.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1247,6 +1247,12 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-05 pushed to origin/main
+
+- Published `HARD-05: add SAF operational backup export and recovery` as
+  `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7` on `origin/main`. No card in
+  progress; HARD-06 waits for an explicit owner request.
 
 ### 2026-08-25 — HARD-05 backup/export/verify rehearsed
 
