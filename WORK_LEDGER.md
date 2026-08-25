@@ -26,7 +26,8 @@ remaining goal and card sequence.
 | HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
 | NAV-01 — Retained smooth navigation | done — `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix physically verified |
 | HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
-| HARD-03 through HARD-07 — Startup, performance, recovery, release, and readiness | pending |
+| HARD-03 — Safe startup gating and lifecycle readiness | done — pending SHA after push |
+| HARD-04 through HARD-07 — Performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
@@ -109,12 +110,19 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-02 is done and pushed to `origin/main` as
-  `632dc101258ac3226eb24f1041afe7faed2aa78c`. Physical Galaxy Tab A9 proof
-  covered cream native splash, one green web OLASO + dots, white-on-sage
-  launcher, clean logs, and lock-ready medians cold 1,911 ms / warm 574 ms.
-- No card is in progress. Exact next action: stop. Activate HARD-03 only when
-  the owner asks.
+- HARD-03 is physically verified on Galaxy Tab A9 SM-X115. Kept the existing
+  `OlasoWebView` pre-bridge `triggerEvent` guard and SecureSession
+  `networkStatus` / NetworkCallback boundary. Branded the staff-session gap
+  with the same cream/green wordmark surface as other startup states.
+- Physical matrix (cold, notification-shade, screen-off, background/foreground,
+  long sleep/resume): every scenario `triggerEvent=0`, Capacitor/uncaught/
+  AndroidRuntime error counts zero, viewport 1340×800, native
+  `networkStatus.available=true` when foregrounded after resume.
+- Android beta checks, TypeScript build, sync, forced APK rebuild/install, and
+  cashier/owner unlock all pass. Final owner POS has empty cart and validated
+  internet. No PIN values recorded.
+- Exact next action: commit/push HARD-03, record SHA, then stop. Activate
+  HARD-04 only when the owner asks.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1224,6 +1232,27 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-03 physical matrix and branded staff-session gap
+
+- Kept OlasoWebView pre-bridge triggerEvent guard; branded App staff-session
+  recovery with the shared cream/green wordmark surface; android-beta assertion
+  added. Physical Galaxy Tab A9 matrix (cold, shade, screen-off, bg/fg, long
+  sleep) all clean with zero triggerEvent/Capacitor/uncaught/AndroidRuntime
+  errors, 1340×800 viewport, and validated native online after resume.
+- Cashier unlock verified after offline recreate; final owner POS empty cart
+  with internet. Graphify code-only refresh: 2,450 nodes / 4,632 edges.
+  Exact next action: commit/push and stop before HARD-04.
+
+### 2026-08-25 — HARD-03 activated after owner unlock and cashier reset
+
+- Owner unlocked on the tablet; Samira was deleted and recreated offline so a
+  known cashier PIN exists for later role checks. No PIN values were written to
+  the ledger or source tree.
+- HARD-03 research selects the existing OlasoWebView pre-bridge triggerEvent
+  guard plus SecureSession networkStatus/NetworkCallback boundary. Exact next
+  action: remove the unbranded staff-session intermediate and run the physical
+  lifecycle matrix.
 
 ### 2026-08-25 — HARD-02 pushed to origin/main
 

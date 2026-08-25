@@ -124,6 +124,10 @@ assert.match(application, /data-olaso-startup="access"/);
 assert.match(application, /<StartupDots \/>/);
 assert.match(
   application,
+  /aria-label="Terminal locked" role="alert">[\s\S]*?<img className=\{startupStyles\.logo\}[\s\S]*?Staff session is unavailable/,
+);
+assert.match(
+  application,
   /aria-label="Terminal recovery" role="alert">[\s\S]*?<img className=\{startupStyles\.logo\}/,
 );
 assert.match(webView, /extends CapacitorWebView/);

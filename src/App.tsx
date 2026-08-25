@@ -161,7 +161,14 @@ export function App() {
   }
 
   if (!staffSession) {
-    return <main aria-label="Terminal locked" role="alert">Staff session is unavailable. Lock and sign in again.</main>;
+    return (
+      <main className={startupStyles.startup} aria-label="Terminal locked" role="alert">
+        <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
+        <strong>Terminal locked</strong>
+        <span>Staff session is unavailable. Lock and sign in again.</span>
+        <button type="button" onClick={() => void lock()}>Lock terminal</button>
+      </main>
+    );
   }
 
   const activeScreen = hasPermission(staffSession.role, screenPermission[screen])
