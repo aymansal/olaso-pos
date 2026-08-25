@@ -23,7 +23,7 @@ remaining goal and card sequence.
 | LOCK-01 — Role-safe Lock / Switch staff | done — `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main` |
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
 | DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
-| HARD-01 — Physical startup/navigation baseline | in progress — physical five-run baseline and warm-lifecycle root fix verified; awaiting final checks and push |
+| HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
 | NAV-01 — Retained smooth navigation | pending |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
@@ -108,6 +108,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- HARD-01 is complete and pushed directly to `origin/main` as
+  `0e0042aeb2da5f9df534fa0f5184d176965d3f8d`. No card is in progress;
+  NAV-01 remains pending until the owner explicitly asks to continue.
 - HARD-01's complete physical Galaxy Tab A9 baseline passes: five true cold
   Android first-frame runs are 1,047/1,072/1,081/1,098/1,148 ms
   (median 1,081); usable Lock/profile is 1,888–1,934 ms (median 1,912); owner
@@ -136,8 +139,9 @@ remaining goal and card sequence.
 - Graphify is refreshed to 3,320 nodes and 7,602 edges. Final tablet inspection
   confirms the exact 1340 by 800 body, restored internet, and no focused
   Android/WebView runtime errors.
-- Exact current next action: commit and push verified HARD-01 directly to
-  `origin/main`, record its implementation SHA, and stop with NAV-01 pending.
+- Exact current next action: stop. When the owner requests the next card,
+  research the official Android/Capacitor/React guidance and activate only
+  NAV-01 to retain already-visited role-authorized screens.
 - The true same-process warm-launch database bug is root-fixed. Activity
   teardown now schedules rollback of any incomplete transaction followed by
   connection close on that bridge's existing plugin thread before its safe
@@ -147,32 +151,10 @@ remaining goal and card sequence.
   close before bridge destruction; the rebuilt/reinstalled 140-task beta
   reproduces the original warm `LaunchState: WARM` plus successful owner
   sign-in, local POS, and all six screens without the former SQLite failure.
-- A one-run physical harness smoke now passes: cold Android frame 1,144 ms,
-  Lock ready 2,081 ms, post-PIN menu 928 ms; warm frame 282 ms, Lock ready
-  568 ms, post-PIN menu 840 ms. One sales-screen return performs 29 SQLite
-  calls, destroys/recreates 14 images, and confirms the later NAV-01 target.
-- Exact current next action: run the complete five-cold/five-warm/six-screen
-  physical baseline, prove offline/retained-history and clean runtime logs,
-  record exact package/image/readiness statistics, refresh Graphify, and push
-  only HARD-01 directly to origin/main.
-- HARD-01's first real Android `LaunchState: WARM` recreation reproduced a
-  release-blocking bug: a successful online owner sign-in then fails with
-  `BeginTransaction: ... database is locked (code 5)`. The installed
-  Capacitor SQLite plugin creates an activity-owned native connection but has
-  no `handleOnDestroy` cleanup; its first bridge leaves that connection alive
-  when Android recreates the Activity inside the same process. The fresh
-  bridge opens a second connection and cannot start the required identity
-  transaction. Repeated unlock attempts fail; restarting the whole process is
-  not an acceptable workaround.
-- Mandatory bug-rule override: release the existing native SQLite connection
-  at the real Android Activity-destruction boundary before the bridge is torn
-  down; preserve atomic rollback/history, add a runnable native-lifecycle
-  regression guard, reinstall, and repeat the original warm recreation plus
-  owner unlock on the physical tablet before resuming HARD-01 measurements.
 - Additional official sources:
   https://developer.android.com/guide/components/activities/activity-lifecycle;
   https://github.com/capacitor-community/sqlite/blob/master/docs/APIConnection.md.
-- HARD-01 is the only active card. Official Android startup guidance confirms
+- HARD-01's official Android startup guidance confirms
   that cold, warm, and hot launches differ and that the first activity frame is
   not equivalent to a usable local application. Android's benchmark guidance
   requires repeated median/minimum/maximum evidence on real hardware and a
@@ -189,14 +171,10 @@ remaining goal and card sequence.
   https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview;
   https://developer.chrome.com/docs/devtools/remote-debugging/webviews;
   https://capacitorjs.com/docs/apis/app.
-- Exact current next action: inspect the existing startup/navigation and
-  packaging paths, rebuild/install the current beta, then record at least five
-  force-stopped cold and five warm physical launches plus repeated screen/image
-  and application-readiness evidence. Keep NAV-01 and all later cards pending.
 - The owner explicitly restored the original Goal 06 sequence: DELETE-01 first,
   then navigation/startup, recovery, release, and security; the separate
   OPTIONS-01 through OPTIONS-04 blueprint follows before final owner-led UI
-  polish and acceptance. DELETE-01 is complete; HARD-01 is now in progress.
+  polish and acceptance. DELETE-01 and HARD-01 are complete; NAV-01 is next.
 - DELETE-01 is committed and pushed directly to `origin/main` as
   `dc86855798041f1e772a7ca3d8729841549faa9d`. Its implementation,
   official Android research, populated schema-19 migration, immutable history,
@@ -1165,6 +1143,18 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-01 complete and pushed; NAV-01 pending
+
+- Committed and pushed the verified HARD-01 implementation directly to
+  `origin/main` as `0e0042aeb2da5f9df534fa0f5184d176965d3f8d`; local and
+  remote SHAs match.
+- Five cold/five warm physical launches, five rounds across all six screens,
+  flight mode, preserved sales/outbox/staff history, the ordered native SQLite
+  rollback/close root fix, focused Android/local/identity/receipt/build
+  checks, exact viewport, clean logs, and refreshed Graphify all pass.
+- Exact next action: stop with NAV-01 pending; activate it only when the owner
+  asks to continue, after its required official platform research.
 
 ### 2026-08-25 — Five-run tablet startup and navigation baseline verified
 

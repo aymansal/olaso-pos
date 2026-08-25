@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; HARD-01 in progress
+**Status:** active; HARD-01 done, NAV-01 pending
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -159,7 +159,7 @@ that polished product.
 | LOCK-01 | Add a direct role-safe Lock / Switch staff action outside owner Settings | done | `4486a8921d893e3e5edce098b8a17a500cf0a537` on `origin/main`; approved cart handoff, protected access, full regression/build, repeated 140-task beta, final APK, owner/cashier online/offline/restart matrix, exact viewport, clean logs, redundant-Settings root fix, and Graphify pass |
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | done | `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main`; full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass |
 | DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | done | `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main`; official Android research, schema-19 migration, immutable history, local/cloud deletion, stale-copy and ordering root fixes, owner/cashier security, full regression/build, physical flight-mode/restart/exact-once reconnect, 1340 × 800 screens, clean logs, and Graphify pass |
-| HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | in progress | Official research, five-run physical baseline, offline/history proof, and warm-lifecycle root fix pass; final checks/push pending |
+| HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | done | `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main`; official research, five physical cold/warm runs, 30 navigation samples, offline/history proof, native lifecycle root fix, full regression/build, clean tablet logs, and Graphify pass |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | pending | — |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
 | HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | pending | Pre-bridge event error fixed early under mandatory bug rule; full startup orchestration/matrix remains |
@@ -601,8 +601,10 @@ owner verification; every authorized screen remained usable without internet.
 
 ## Current checkpoint
 
-- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04 and DELETE-01
-  are complete. HARD-01 is the only card in progress.
+- Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04, DELETE-01,
+  and HARD-01 are complete. HARD-01 is pushed to `origin/main` as
+  `0e0042aeb2da5f9df534fa0f5184d176965d3f8d`. No card is in progress;
+  NAV-01 remains pending until the owner requests it.
 - HARD-01 physical warm-recreation testing exposed an existing release blocker:
   the installed SQLite plugin does not release its Activity-owned database
   connection when the Capacitor bridge is destroyed. The recreated Activity
@@ -664,10 +666,22 @@ owner verification; every authorized screen remained usable without internet.
 - Focused Android, local management, identity, offline/reconnect, POS, costs,
   printing, TypeScript, and build regressions pass; Graphify is refreshed to
   3,320 nodes/7,602 edges and final physical 1340 by 800/runtime checks pass.
-- Exact next action: commit and push HARD-01 directly to `origin/main`, record
-  its implementation SHA, and stop before activating NAV-01.
+- Exact next action: stop with NAV-01 pending. When the owner asks to continue,
+  research the current official Android/Capacitor/React guidance, then activate
+  NAV-01 alone and retain only previously visited role-authorized screens.
 
 ## Planning journal
+
+### 2026-08-25 — HARD-01 implementation pushed; NAV-01 remains pending
+
+- Published HARD-01 directly to `origin/main` as
+  `0e0042aeb2da5f9df534fa0f5184d176965d3f8d`; local and remote SHA match.
+- Official Android research, five cold/five true warm physical launches,
+  30 navigation measurements, exact assets/readiness, offline/history safety,
+  unfinished-transaction rollback/close regression, Android/local/build
+  checks, clean physical logs, and refreshed Graphify are verified.
+- No next card is activated. Resume with NAV-01 only when the owner requests
+  retained, instant screen navigation.
 
 ### 2026-08-25 — HARD-01 complete physical baseline captured
 
