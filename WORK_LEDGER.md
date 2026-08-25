@@ -26,7 +26,7 @@ remaining goal and card sequence.
 | HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
 | NAV-01 — Retained smooth navigation | done — `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix physically verified |
 | HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
-| HARD-03 — Safe startup gating and lifecycle readiness | done — pending SHA after push |
+| HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 through HARD-07 — Performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -110,19 +110,13 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-03 is physically verified on Galaxy Tab A9 SM-X115. Kept the existing
-  `OlasoWebView` pre-bridge `triggerEvent` guard and SecureSession
-  `networkStatus` / NetworkCallback boundary. Branded the staff-session gap
-  with the same cream/green wordmark surface as other startup states.
-- Physical matrix (cold, notification-shade, screen-off, background/foreground,
-  long sleep/resume): every scenario `triggerEvent=0`, Capacitor/uncaught/
-  AndroidRuntime error counts zero, viewport 1340×800, native
-  `networkStatus.available=true` when foregrounded after resume.
-- Android beta checks, TypeScript build, sync, forced APK rebuild/install, and
-  cashier/owner unlock all pass. Final owner POS has empty cart and validated
-  internet. No PIN values recorded.
-- Exact next action: commit/push HARD-03, record SHA, then stop. Activate
-  HARD-04 only when the owner asks.
+- HARD-03 is done and pushed to `origin/main` as
+  `590c9cecfe485cd7debb28abd08d3310cd0079aa`. Physical Galaxy Tab A9 matrix
+  covered cold, notification-shade, screen-off, background/foreground, and
+  long sleep/resume with zero triggerEvent/Capacitor/uncaught/AndroidRuntime
+  errors; branded staff-session gap; viewport 1340×800.
+- No card is in progress. Exact next action: stop. Activate HARD-04 only when
+  the owner asks.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1232,6 +1226,12 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-03 pushed to origin/main
+
+- Published `HARD-03: brand staff-session gate and revalidate lifecycle` as
+  `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main`. No card in
+  progress; HARD-04 waits for an explicit owner request.
 
 ### 2026-08-25 — HARD-03 physical matrix and branded staff-session gap
 
