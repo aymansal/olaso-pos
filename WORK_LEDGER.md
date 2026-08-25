@@ -28,7 +28,7 @@ remaining goal and card sequence.
 | HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
-| HARD-05 — Backup and recovery | done — `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7` on `origin/main`; owner follow-up removed in-app export and fixed sync attribution/abandon on tablet |
+| HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
 | HARD-06 — Signed release and upgrade | in progress |
 | HARD-07 — Readiness review | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
@@ -1242,6 +1242,14 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-05 closeout pushed; HARD-06 activated
+
+- Published `HARD-05: drop export UI and clear irreparable sync queue` as
+  `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main`. HARD-06
+  research recorded: durable keystore secrets, versionCode bump, same cert
+  upgrades, HTTPS APK+manifest, PackageInstaller confirm. Exact next action:
+  implement HARD-06.
 
 ### 2026-08-25 — HARD-05 owner closeout: drop export, fix sync queue
 
