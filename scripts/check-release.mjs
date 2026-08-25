@@ -20,8 +20,8 @@ const workflow = readFileSync('.github/workflows/android-release.yml', 'utf8');
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
 
 assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
-assert.match(appBuild, /versionCode 6/);
-assert.match(appBuild, /versionName "0\.1\.0-rc\.4"/);
+assert.match(appBuild, /versionCode 8/);
+assert.match(appBuild, /versionName "1\.1"/);
 assert.match(appUpdate, /No update available/);
 assert.match(appUpdate, /aymansal\/olaso-pos-releases/);
 assert.equal(

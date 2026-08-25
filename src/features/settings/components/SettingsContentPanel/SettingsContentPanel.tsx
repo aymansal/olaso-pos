@@ -312,9 +312,7 @@ export function SettingsContentPanel({
   }
 
   if (section === 'about') {
-    const versionLabel = installedApp
-      ? `${installedApp.versionName} (${installedApp.versionCode})`
-      : '0.1.0-rc.4';
+    const versionLabel = installedApp?.versionName ?? '1.1';
     return (
       <section className={styles.panel} aria-labelledby="about-heading">
         <div className={styles.header}>
@@ -327,7 +325,7 @@ export function SettingsContentPanel({
           <span className={styles.olasoMark}>O</span>
           <div>
             <strong>Olaso POS</strong>
-            <span>Release candidate · {versionLabel}</span>
+            <span>Version {versionLabel}</span>
           </div>
         </div>
         <div className={styles.updateBlock}>

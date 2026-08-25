@@ -64,8 +64,8 @@ assert.equal(capacitor.backgroundColor, '#F8F7EA');
 assert.equal(capacitor.plugins.SystemBars.insetsHandling, 'disable');
 assert.match(appBuild, /namespace = "com\.olaso\.pos"/);
 assert.match(appBuild, /applicationId "com\.olaso\.pos"/);
-assert.match(appBuild, /versionCode 6/);
-assert.match(appBuild, /versionName "0\.1\.0-rc\.4"/);
+assert.match(appBuild, /versionCode 8/);
+assert.match(appBuild, /versionName "1\.1"/);
 assert.match(variables, /compileSdkVersion = 36/);
 assert.match(variables, /targetSdkVersion = 35/);
 assert.match(manifest, /android\.permission\.INTERNET/);
@@ -187,6 +187,7 @@ assert.match(
 assert.match(activity, /registerPlugin\(EscPosPrinterPlugin\.class\)/);
 assert.match(activity, /registerPlugin\(SecureSessionPlugin\.class\)/);
 assert.match(activity, /registerPlugin\(AppUpdatePlugin\.class\)/);
+assert.match(activity, /WebView\.setWebContentsDebuggingEnabled\(true\)/);
 assert.match(rootBuild, /com\.android\.tools\.build:gradle:8\.13\.2/);
 assert.match(rootBuild, /kotlin-gradle-plugin:2\.3\.21/);
 assert.match(appBuildScript, /org\.jetbrains\.kotlin\.android/);

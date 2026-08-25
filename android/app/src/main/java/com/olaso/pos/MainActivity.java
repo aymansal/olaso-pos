@@ -32,6 +32,9 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(EscPosPrinterPlugin.class);
         registerPlugin(SecureSessionPlugin.class);
         registerPlugin(AppUpdatePlugin.class);
+        // Physical QA and support attach over adb; keep debugging on for this
+        // manually distributed POS build (not Play Store).
+        WebView.setWebContentsDebuggingEnabled(true);
         super.onCreate(savedInstanceState);
         getBridge().addWebViewListener(new WebViewListener() {
             @Override

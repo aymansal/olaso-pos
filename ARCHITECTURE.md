@@ -1239,7 +1239,7 @@ The reproducible development beta is built with `npm run android:beta` using
 Java 21 and Android SDK 36. It compiles with API 36 but targets API 35 so the
 manually distributed fixed-landscape POS remains enforceable on Android 16
 large screens. It retains application ID `com.olaso.pos`,
-uses version code/name `6`/`0.1.0-rc.4`, and writes only the ignored debug
+uses version code/name `8`/`1.1`, and writes only the ignored debug
 APK at `android/app/build/outputs/apk/debug/app-debug.apk`. Its merged manifest
 contains no printer, Bluetooth, USB, biometric, or fingerprint permission.
 Signed release builds use the same application ID, an increased version code,

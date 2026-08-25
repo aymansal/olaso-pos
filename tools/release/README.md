@@ -78,9 +78,9 @@ Manifest shape:
 ```json
 {
   "packageId": "com.olaso.pos",
-  "versionCode": 5,
-  "versionName": "0.1.0-rc.3",
-  "apkUrl": "https://github.com/aymansal/olaso-pos-releases/releases/download/v0.1.0-rc.3/olaso-pos-5.apk",
+  "versionCode": 8,
+  "versionName": "1.1",
+  "apkUrl": "https://github.com/aymansal/olaso-pos-releases/releases/download/v1.1/olaso-pos-8.apk",
   "sha256": "<lowercase hex>",
   "notes": "Optional short operator notes."
 }
@@ -89,7 +89,7 @@ Manifest shape:
 Generate a local preview manifest with:
 
 ```powershell
-node scripts/write-release-manifest.mjs path/to/app-release.apk https://github.com/aymansal/olaso-pos-releases/releases/download/v0.1.0-rc.3/olaso-pos-5.apk
+node scripts/write-release-manifest.mjs path/to/app-release.apk https://github.com/aymansal/olaso-pos-releases/releases/download/v1.1/olaso-pos-8.apk
 ```
 
 ## Operator update flow
