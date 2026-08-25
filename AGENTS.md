@@ -137,6 +137,10 @@ decision changes.
   SQLite transaction and closes its connection in plugin-thread order before
   destroying the Capacitor bridge, preventing same-process warm recreation
   from permanently locking the operational database.
+- NAV-01 retains only visited, role-authorized screen trees using installed
+  React Activity boundaries. Hidden effects stop; unchanged screen returns do
+  not reload SQLite/cloud data or recreate images; lock/staff switching clears
+  prior-role screen state while preserving the approved App-owned draft cart.
 
 ### Visual baseline
 

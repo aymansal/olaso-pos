@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ManagedCategory, ManagedIngredient, ManagedModifierGroup, ManagedProduct, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
 import {
   deleteLocalCategory,
@@ -17,12 +17,18 @@ export function useProductManagement(selectedProductId?: string) {
   const session = useStaffSession();
   const reconnect = useReconnect();
   const [cache, setCache] = useState<OperationalCacheSnapshot>();
+  const loadedRevision = useRef<number | undefined>(undefined);
   const [error, setError] = useState('');
   const reload = useCallback(async () => {
     const snapshot = await loadOperationalCache();
     setCache(snapshot); setError(''); return snapshot;
   }, []);
-  useEffect(() => { void reload().catch(() => setError('Saved products are unavailable on this tablet.')); }, [reconnect.revision, reload]);
+  useEffect(() => {
+    if (loadedRevision.current === reconnect.revision) return;
+    void reload().then(() => {
+      loadedRevision.current = reconnect.revision;
+    }).catch(() => setError('Saved products are unavailable on this tablet.'));
+  }, [reconnect.revision, reload]);
   const context = { deviceId: session.deviceId, actor: { staffProfileId: session.staffProfileId, name: session.name, role: session.role } };
   const products: ManagedProduct[] = (cache?.products ?? []).map((product) => ({
     id: product.id, key: product.key, categoryId: product.categoryId,

@@ -36,7 +36,7 @@ assert.match(switchFlow, /await lock\(\)/);
 assert.doesNotMatch(switchFlow, /setPosSession/);
 assert.equal(
   [...app.matchAll(/onSwitchStaff=\{requestStaffSwitch\}/g)].length,
-  7,
+  6,
 );
 assert.match(header, /<ProfileControl/);
 assert.match(header, /Boolean\(onOpenSettings\)/);

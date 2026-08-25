@@ -8,7 +8,8 @@ tablet's local SQLite operational record.
 ## Ownership
 
 - `usePosData.ts` hydrates the POS from the local operational cache and asks
-  the shared worker to synchronize after a committed sale.
+  the shared worker to synchronize after a committed sale. Receipt language
+  comes from the App-owned saved terminal preferences, not another POS read.
 - `useOrdersData.ts` renders the bounded local history page before remote work
   settles, requests cloud pages only while Orders is mounted, merges rows by
   the sale idempotency key while preserving tablet-local print state, and
@@ -113,6 +114,11 @@ tablet's local SQLite operational record.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry, with a one-to-31-day saved-tablet fallback offline; tab
   switches remain local and never start another query.
+- Retained visible-screen hooks reload only for their first safe snapshot,
+  an actual authenticated reconnect revision, changed request inputs, or a
+  deliberate user action. Showing an already-loaded React Activity never
+  starts another SQLite/cloud request; hidden effects are cleaned up and
+  previous safe Dashboard/Reports/Orders content remains visible on refresh.
 - Never refresh cloud catalog data over pending local management work. Pending
   or failed sales keep their immutable snapshots and stock deltas but must not
   freeze category/product/modifier/recipe refreshes indefinitely.

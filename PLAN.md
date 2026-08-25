@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; HARD-01 done, NAV-01 pending | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -220,12 +220,11 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-HARD-01 is complete and pushed to `origin/main` as
-`0e0042aeb2da5f9df534fa0f5184d176965d3f8d`; its official research, five-run physical
-baseline, offline/history evidence, warm-lifecycle root fix, focused regression,
-build, and Graphify are verified. Stop with no card in progress. When the owner
-asks to continue, activate NAV-01 only: research the current official Android,
-Capacitor, and React guidance, then retain already-visited authorized screens
-without adding a router, state library, or speculative caching framework.
-Finish the original hardening sequence before the separate OPTIONS-01 through
-OPTIONS-04 blueprint and final owner-led polish.
+NAV-01 is the only card in progress. Its official Android, Capacitor, and React
+research, role-safe React Activity implementation, five-run Android build,
+30 zero-query/zero-image physical switches, offline Owner/Samira handoff,
+foreground clock, exact viewport, clean logs, focused checks, and Graphify
+refresh now pass. Commit and push NAV-01 directly to `origin/main`, record its
+implementation SHA, and stop with HARD-02 pending. Finish the original
+hardening sequence before the separate OPTIONS-01 through OPTIONS-04 blueprint
+and final owner-led polish.

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   addLocalCompensationPeriod,
   addLocalExpense,
@@ -16,6 +16,7 @@ export function useCostManagement(month: string) {
   const reconnect = useReconnect();
   const [saved, setSaved] = useState<SavedCostManagement>();
   const [error, setError] = useState('');
+  const loadedKey = useRef<string | undefined>(undefined);
   const context = {
     deviceId: session.deviceId,
     actor: {
@@ -31,8 +32,11 @@ export function useCostManagement(month: string) {
     return result;
   }, [month, session.role]);
   useEffect(() => {
-    void reload().catch(() =>
-      setError('Saved costs are unavailable on this tablet.'));
+    const currentKey = `${session.role}:${month}:${reconnect.revision}`;
+    if (loadedKey.current === currentKey) return;
+    void reload().then(() => {
+      loadedKey.current = currentKey;
+    }).catch(() => setError('Saved costs are unavailable on this tablet.'));
   }, [reconnect.revision, reload]);
   const save = async <T,>(operation: Promise<T>) => {
     const result = await operation;

@@ -8,7 +8,7 @@ import {
 import { ReceiptPreviewDialog } from '../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { usePosData } from '../../data/usePosData';
 import { useConnectionStatus } from '../../data/connectionContext';
-import type { ClockFormat } from '../../data/terminalSettings';
+import type { ClockFormat, ReceiptLanguage } from '../../data/terminalSettings';
 import type { SavedReceipt } from '../../data/localSales.ts';
 import { categoryArtworkUrl } from '../../lib/categoryArtwork.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
@@ -42,6 +42,7 @@ interface PosScreenProps {
   session: PosSession;
   onSessionChange: Dispatch<SetStateAction<PosSession>>;
   clockFormat: ClockFormat;
+  receiptLanguage: ReceiptLanguage;
   onNavigate?: (page: NavigationPage) => void;
   onOpenSettings?: () => void;
   onSwitchStaff: () => Promise<boolean>;
@@ -58,6 +59,7 @@ export function PosScreen({
   session,
   onSessionChange,
   clockFormat,
+  receiptLanguage,
   onNavigate,
   onOpenSettings,
   onSwitchStaff,
@@ -67,7 +69,6 @@ export function PosScreen({
     menu,
     completeOrder,
     printFeedback,
-    receiptLanguage,
     isLoading,
     error: dataWarning,
   } = usePosData();
@@ -200,11 +201,13 @@ export function PosScreen({
   }
   const tax = taxCentimes(subtotal);
   const total = totalCentimes(subtotal, tax);
-  const validation = validatePosSession(
-    session,
-    products,
-    menu?.modifierOptions ?? [],
-  );
+  const validation = isLoading
+    ? { kind: 'empty' as const, message: 'Loading the saved menu…' }
+    : validatePosSession(
+      session,
+      products,
+      menu?.modifierOptions ?? [],
+    );
   const checkoutFeedback: {
     kind: 'neutral' | 'error' | 'success';
     message: string;

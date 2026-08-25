@@ -1,6 +1,6 @@
 import { useConvex } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../convex/_generated/api';
 import { localBusinessDate } from '../lib/date';
 import { useConnectionStatus } from './connectionContext';
@@ -21,11 +21,15 @@ export function useDashboardData() {
   const [snapshot, setSnapshot] = useState<DashboardSnapshot>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const loadedKey = useRef<string | undefined>(undefined);
+  const hasSnapshot = useRef(false);
 
   useEffect(() => {
     if (available === undefined || !foreground) return;
+    const requestKey = `${session.staffProfileId}:${available}:${businessDate}:${reconnect.revision}:${reload}`;
+    if (loadedKey.current === requestKey) return;
     let cancelled = false;
-    setIsLoading(true);
+    if (!hasSnapshot.current) setIsLoading(true);
     setError('');
     const request = available
       ? convex.query(api.dashboard.getSnapshot, {
@@ -36,7 +40,11 @@ export function useDashboardData() {
       : loadOfflineDashboard(businessDate) as Promise<DashboardSnapshot>;
     void request
       .then((result) => {
-        if (!cancelled) setSnapshot(result);
+        if (!cancelled) {
+          setSnapshot(result);
+          hasSnapshot.current = true;
+          loadedKey.current = requestKey;
+        }
       })
       .catch(() => {
         if (!cancelled) {

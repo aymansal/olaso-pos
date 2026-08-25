@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   completeLocalSale,
   type CompleteSaleInput,
@@ -10,7 +10,6 @@ import {
 } from './operationalCache.ts';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
-import { loadTerminalSettings, type ReceiptLanguage } from './terminalSettings';
 
 export function usePosData() {
   const session = useStaffSession();
@@ -21,7 +20,7 @@ export function usePosData() {
     kind: 'neutral' | 'error' | 'success';
     message: string;
   }>();
-  const [receiptLanguage, setReceiptLanguage] = useState<ReceiptLanguage>('en');
+  const loadedRevision = useRef<number | undefined>(undefined);
   const reloadLocal = useCallback(async () => {
     const cached = await loadOperationalCache();
     setMenu(cached);
@@ -29,18 +28,15 @@ export function usePosData() {
   }, []);
 
   useEffect(() => {
-    reloadLocal().catch((error: unknown) =>
+    if (loadedRevision.current === reconnect.revision) return;
+    void reloadLocal().then(() => {
+      loadedRevision.current = reconnect.revision;
+    }).catch((error: unknown) =>
       setLocalError(
         error instanceof Error ? error.message : 'Local menu loading failed.',
       ),
     );
   }, [reconnect.revision, reloadLocal]);
-
-  useEffect(() => {
-    loadTerminalSettings()
-      .then((settings) => setReceiptLanguage(settings.receiptLanguage))
-      .catch(() => undefined);
-  }, []);
 
   const completeOrder = useCallback(
     async (input: Omit<CompleteSaleInput, 'cashierName' | 'cashierProfileId'>) => {
@@ -78,6 +74,5 @@ export function usePosData() {
     printFeedback,
     isLoading: !menu,
     error: localError || undefined,
-    receiptLanguage,
   };
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   createLocalStaff,
   deleteLocalStaff,
@@ -15,6 +15,7 @@ export function useStaffManagement() {
   const [staff, setStaff] = useState<SavedStaffProfile[]>();
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const loadedRevision = useRef<number | undefined>(undefined);
   const reload = useCallback(async () => {
     const saved = await loadLocalStaffProfiles();
     setStaff(saved);
@@ -22,8 +23,10 @@ export function useStaffManagement() {
     return saved;
   }, []);
   useEffect(() => {
-    void reload().catch(() =>
-      setError('Saved staff is unavailable on this tablet.'));
+    if (loadedRevision.current === reconnect.revision) return;
+    void reload().then(() => {
+      loadedRevision.current = reconnect.revision;
+    }).catch(() => setError('Saved staff is unavailable on this tablet.'));
   }, [reconnect.revision, reload]);
   const create = async (input: StaffCreationInput) => {
     setError('');

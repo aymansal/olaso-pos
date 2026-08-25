@@ -127,17 +127,18 @@ class WebViewSession {
 
 const installObserver = `(()=>{
   if(window.__olasoBaseline)return true;
+  const visible=selector=>[...document.querySelectorAll(selector)].find(node=>node.getClientRects().length);
   const record=window.__olasoBaseline={attachedAt:performance.now(),stages:[],calls:[],imagesAdded:0,imagesRemoved:0,longTasks:[]};
   const mark=name=>{if(!record.stages.some(stage=>stage.name===name))record.stages.push({name,at:Math.round(performance.now())})};
   const inspect=()=>{
     const text=document.body?.innerText??'';
     if(text.includes('Preparing the offline workspace'))mark('sqlite-opening');
     if(text.includes('Checking terminal access'))mark('sqlite-ready');
-    if(document.querySelector('input[type="password"]'))mark('lock-screen');
-    if(document.querySelector('select')?.options.length)mark('lock-profiles-ready');
-    if(document.querySelector('main[aria-label="Olaso point of sale"]')){
+    if(visible('input[type="password"]'))mark('lock-screen');
+    if(visible('select')?.options.length)mark('lock-profiles-ready');
+    if(visible('main[aria-label="Olaso point of sale"]')){
       mark('pos-shell');
-      if(document.querySelector('[aria-label^="Add "]'))mark('cached-menu-ready');
+      if(visible('[aria-label^="Add "]'))mark('cached-menu-ready');
     }
   };
   new MutationObserver(records=>{
@@ -164,11 +165,11 @@ const snapshot = `(()=>({
   now:Math.round(performance.now()),
   viewport:[innerWidth,innerHeight],
   online:navigator.onLine,
-  active:document.querySelector('[aria-current="page"]')?.textContent.trim()??null,
+  active:[...document.querySelectorAll('[aria-current="page"]')].find(node=>node.getClientRects().length)?.textContent.trim()??null,
   navigation:performance.getEntriesByType('navigation').map(entry=>({domInteractive:Math.round(entry.domInteractive),contentLoaded:Math.round(entry.domContentLoadedEventEnd),loadEnd:Math.round(entry.loadEventEnd)}))[0]??null,
   paint:performance.getEntriesByType('paint').map(entry=>({name:entry.name,at:Math.round(entry.startTime)})),
   resources:performance.getEntriesByType('resource').map(entry=>({name:entry.name.split('/').pop(),type:entry.initiatorType,duration:Math.round(entry.duration)})),
-  images:[...document.images].map(image=>({name:image.currentSrc.split('/').pop(),natural:[image.naturalWidth,image.naturalHeight],display:[Math.round(image.getBoundingClientRect().width),Math.round(image.getBoundingClientRect().height)],complete:image.complete})),
+  images:[...document.images].filter(image=>image.getClientRects().length).map(image=>({name:image.currentSrc.split('/').pop(),natural:[image.naturalWidth,image.naturalHeight],display:[Math.round(image.getBoundingClientRect().width),Math.round(image.getBoundingClientRect().height)],complete:image.complete})),
   stages:window.__olasoBaseline?.stages??[],
   sqliteCalls:window.__olasoBaseline?.calls??[],
   imagesAdded:window.__olasoBaseline?.imagesAdded??0,
@@ -226,8 +227,8 @@ async function measureNavigation(session) {
       const before = await session.evaluate(snapshot);
       if (before.active === screen) continue;
       const started = performance.now();
-      await session.evaluate(`(()=>{const button=[...document.querySelectorAll('nav[aria-label="Primary navigation"] button')].find(item=>item.innerText.trim()===${JSON.stringify(screen)});if(!button)throw Error('Navigation is unavailable');button.click();return true})()`);
-      await session.waitFor(`(()=>{const active=document.querySelector('[aria-current="page"]')?.textContent.trim();if(active!==${JSON.stringify(screen)})return false;const text=document.querySelector('main')?.innerText??'';return /Loading (?:the saved menu|saved costs|products|ingredients|orders|report|dashboard)/i.test(text)?false:true})()`);
+      await session.evaluate(`(()=>{const button=[...document.querySelectorAll('nav[aria-label="Primary navigation"] button')].find(item=>item.getClientRects().length&&item.innerText.trim()===${JSON.stringify(screen)});if(!button)throw Error('Navigation is unavailable');button.click();return true})()`);
+      await session.waitFor(`(()=>{const active=[...document.querySelectorAll('[aria-current="page"]')].find(node=>node.getClientRects().length)?.textContent.trim();if(active!==${JSON.stringify(screen)})return false;const text=[...document.querySelectorAll('main')].find(node=>node.getClientRects().length)?.innerText??'';return /Loading (?:the saved menu|saved costs|products|ingredients|orders|report|dashboard)/i.test(text)?false:true})()`);
       await sleep(80);
       const after = await session.evaluate(snapshot);
       measurements.push({

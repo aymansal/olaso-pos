@@ -366,6 +366,30 @@ are reconciled after acknowledgement. Creating or editing an authorized
 management record is a local SQLite operation plus outbox entry, not a direct
 React-to-Convex mutation and not an online-only alternate path.
 
+### Retained role-safe navigation
+
+`App.tsx` owns the current destination and the list of screens the authenticated
+staff member has actually visited. Each permitted visited screen uses the
+installed React 19 `Activity` boundary: visible screens run their normal
+effects; hidden screens preserve existing DOM, loaded images, user input,
+selection, filters, report period, and scroll while React cleans up their
+effects and subscriptions. Unvisited or role-forbidden screens never mount.
+
+Each saved-data hook remembers its last successful authenticated revision and
+request inputs. Revealing an unchanged screen issues no SQLite or cloud read;
+an actual reconnect revision, changed report period, changed connection,
+deliberate retry, or authorized local change still refreshes the trusted saved
+record. Dashboard, Reports, and Orders retain their last valid snapshot during
+that bounded refresh. App-owned terminal preferences update the POS receipt
+language immediately without an extra screen-reveal settings query.
+
+Lock and staff switching destroy every retained screen before a different role
+can be authenticated; only the explicitly approved App-owned unfinished cart
+survives. Every visible Header and the Lock clock refresh immediately when the
+existing native foreground boundary resumes. No Android Jetpack navigation,
+state library, custom screen cache, duplicated lifecycle listener, or
+permanently active CSS-hidden page is introduced.
+
 ### Current scaling limit
 
 This synchronization model is optimized for one active POS tablet.

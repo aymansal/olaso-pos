@@ -1,6 +1,6 @@
 import { useConvex } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../convex/_generated/api';
 import { useConnectionStatus } from './connectionContext';
 import { loadOfflineReport } from './offlineViews';
@@ -19,13 +19,16 @@ export function useReportsData(fromDate: string, toDate: string) {
   const [snapshot, setSnapshot] = useState<ReportsSnapshot>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const loadedKey = useRef<string | undefined>(undefined);
+  const hasSnapshot = useRef(false);
 
   useEffect(() => {
     if (available === undefined || !foreground) return;
+    const requestKey = `${session.staffProfileId}:${available}:${fromDate}:${toDate}:${reconnect.revision}:${reload}`;
+    if (loadedKey.current === requestKey) return;
     let cancelled = false;
-    setIsLoading(true);
+    if (!hasSnapshot.current) setIsLoading(true);
     setError('');
-    setSnapshot(undefined);
     const request = available
       ? convex.query(api.reports.getSummary, {
           fromDate,
@@ -36,7 +39,11 @@ export function useReportsData(fromDate: string, toDate: string) {
       : loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
     void request
       .then((result) => {
-        if (!cancelled) setSnapshot(result);
+        if (!cancelled) {
+          setSnapshot(result);
+          hasSnapshot.current = true;
+          loadedKey.current = requestKey;
+        }
       })
       .catch(() => {
         if (!cancelled) {

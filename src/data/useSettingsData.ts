@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useReconnect } from './reconnectContext';
 import {
   loadTerminalSettings,
@@ -17,6 +17,7 @@ import { installResidentLogo } from '../printing/printerTransport.ts';
 export function useSettingsData() {
   const reconnect = useReconnect();
   const [settings, setSettings] = useState<TerminalSettings>();
+  const loaded = useRef(false);
   const [isTestingPrinter, setIsTestingPrinter] = useState(false);
   const [isInstallingPrinterLogo, setIsInstallingPrinterLogo] = useState(false);
   const [message, setMessage] = useState('');
@@ -29,7 +30,8 @@ export function useSettingsData() {
   }, []);
 
   useEffect(() => {
-    refresh().catch((caught: unknown) =>
+    if (loaded.current) return;
+    void refresh().then(() => { loaded.current = true; }).catch((caught: unknown) =>
       setError(
         caught instanceof Error
           ? caught.message

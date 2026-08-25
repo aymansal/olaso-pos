@@ -17,14 +17,14 @@ interface SettingsScreenProps {
   clockFormat: ClockFormat;
   onNavigate: (page: NavigationPage) => void;
   onLock: () => Promise<boolean>;
-  onClockFormatChange: (clockFormat: ClockFormat) => void;
+  onPreferencesChange: (preferences: TerminalPreferences) => void;
 }
 
 export function SettingsScreen({
   clockFormat,
   onNavigate,
   onLock,
-  onClockFormatChange,
+  onPreferencesChange,
 }: SettingsScreenProps) {
   const data = useSettingsData();
   const staff = useStaffManagement();
@@ -49,7 +49,7 @@ export function SettingsScreen({
 
   async function savePreferences(input: TerminalPreferences) {
     await data.save(input);
-    onClockFormatChange(input.clockFormat);
+    onPreferencesChange(input);
   }
 
   return (

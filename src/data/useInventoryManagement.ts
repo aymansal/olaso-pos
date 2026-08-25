@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
   IngredientSaveInput,
   InventoryMetrics,
@@ -36,6 +36,8 @@ export function useInventoryManagement(selectedIngredientId?: string) {
   const [detail, setDetail] = useState<ManagedIngredientDetail>();
   const [error, setError] = useState('');
   const [detailLoading, setDetailLoading] = useState(false);
+  const loadedRevision = useRef<number | undefined>(undefined);
+  const loadedDetail = useRef<string | undefined>(undefined);
   const businessDate = localBusinessDate();
   const context = {
     deviceId: session.deviceId,
@@ -54,21 +56,29 @@ export function useInventoryManagement(selectedIngredientId?: string) {
   }, []);
 
   useEffect(() => {
-    void reload().catch(() =>
-      setError('Saved stock is unavailable on this tablet.'));
+    if (loadedRevision.current === reconnect.revision) return;
+    void reload().then(() => {
+      loadedRevision.current = reconnect.revision;
+    }).catch(() => setError('Saved stock is unavailable on this tablet.'));
   }, [reconnect.revision, reload]);
 
   useEffect(() => {
     if (!selectedIngredientId) {
       setDetail(undefined);
       setDetailLoading(false);
+      loadedDetail.current = undefined;
       return;
     }
+    const detailKey = `${reconnect.revision}:${selectedIngredientId}`;
+    if (loadedDetail.current === detailKey) return;
     let active = true;
-    setDetailLoading(true);
+    if (!detail) setDetailLoading(true);
     void loadOfflineIngredientDetail(selectedIngredientId).then(
       (saved) => {
-        if (active) setDetail(saved as ManagedIngredientDetail);
+        if (active) {
+          setDetail(saved as ManagedIngredientDetail);
+          loadedDetail.current = detailKey;
+        }
       },
       () => {
         if (active) {

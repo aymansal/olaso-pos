@@ -86,9 +86,13 @@ export function StockScreen({
   const selectedIngredient = inventory.ingredients.find(
     (ingredient) => ingredient.id === selectedIngredientId,
   );
+  const filterKey = `${levelFilter}\u0000${search}\u0000${unitGroup}`;
+  const previousFilters = useRef(filterKey);
   useEffect(() => {
+    if (previousFilters.current === filterKey) return;
+    previousFilters.current = filterKey;
     setPage(0);
-  }, [levelFilter, search, unitGroup]);
+  }, [filterKey]);
 
   async function saveIngredient(input: IngredientSaveInput) {
     const result = await inventory.saveIngredient(input);

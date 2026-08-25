@@ -15,6 +15,7 @@
     "check:local-inventory-costs": "node --disable-warning=ExperimentalWarning scripts/check-local-inventory-costs.mjs",
     "check:local-staff": "node --disable-warning=ExperimentalWarning scripts/check-local-staff.mjs",
     "check:lock-switch": "node --disable-warning=ExperimentalWarning scripts/check-lock-switch.mjs",
+    "check:navigation": "node scripts/check-navigation.mjs",
     "check:inventory": "node scripts/check-inventory.mjs",
     "check:costs": "node scripts/check-costs.mjs",
     "check:staff": "node scripts/check-staff.mjs",

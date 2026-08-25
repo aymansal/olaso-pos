@@ -7,6 +7,7 @@ import {
 } from '../TopNavigation/TopNavigation';
 import styles from './Header.module.css';
 import { useStaffSession } from '../../../../data/sessionContext';
+import { useConnectionStatus } from '../../../../data/connectionContext';
 import { hasPermission } from '../../../../data/permissions';
 import type { ClockFormat } from '../../../../data/terminalSettings';
 import olasoLogo from '../../../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
@@ -29,13 +30,16 @@ export function Header({
 }: HeaderProps) {
   const [now, setNow] = useState(new Date());
   const staff = useStaffSession();
+  const { foreground } = useConnectionStatus();
   const canOpenSettings = Boolean(onOpenSettings)
     && hasPermission(staff.role, 'settings');
   const canViewReports = hasPermission(staff.role, 'reports');
   useEffect(() => {
+    if (!foreground) return;
+    setNow(new Date());
     const clock = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(clock);
-  }, []);
+  }, [foreground]);
   const date = new Intl.DateTimeFormat('en-GB', {
     weekday: 'long',
     day: 'numeric',

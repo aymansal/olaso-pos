@@ -96,9 +96,11 @@ export function useOrdersData() {
   const cloudCursor = useRef<string | undefined>(undefined);
   const localDone = useRef(false);
   const cloudDone = useRef(false);
+  const loadedKey = useRef<string | undefined>(undefined);
+  const hasOrdersSnapshot = useRef(false);
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
+    if (!hasOrdersSnapshot.current) setIsLoading(true);
     setMessage('');
     localCursor.current = undefined;
     cloudCursor.current = undefined;
@@ -134,6 +136,7 @@ export function useOrdersData() {
       }
     }
     setOrders(mergeOrders([], firstOrders));
+    hasOrdersSnapshot.current = true;
     setMessage(errors[0] ?? '');
     setIsLoading(false);
 
@@ -163,7 +166,10 @@ export function useOrdersData() {
 
   useEffect(() => {
     mounted.current = true;
-    void refresh();
+    const requestKey = `${session.staffProfileId}:${available}:${foreground}:${reconnect.revision}`;
+    if (loadedKey.current !== requestKey) {
+      void refresh().then(() => { loadedKey.current = requestKey; });
+    }
     return () => {
       mounted.current = false;
     };

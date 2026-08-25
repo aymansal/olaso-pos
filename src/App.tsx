@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { Activity, useEffect, useState } from 'react';
 import {
   loadTerminalSettings,
   setTerminalLocked,
+  type TerminalPreferences,
   type TerminalSettings,
 } from './data/terminalSettings';
 import { DashboardScreen } from './features/dashboard/DashboardScreen';
@@ -37,6 +38,7 @@ const screenPermission: Record<AppScreen, Permission> = {
 
 export function App() {
   const [screen, setScreen] = useState<AppScreen>('POS');
+  const [visitedScreens, setVisitedScreens] = useState<AppScreen[]>(['POS']);
   const [posSession, setPosSession] = useState(createInitialPosSession);
   const [terminal, setTerminal] = useState<TerminalSettings>();
   const [sessionReady, setSessionReady] = useState(false);
@@ -45,6 +47,9 @@ export function App() {
 
   function navigate(page: NavigationPage) {
     if (staffSession && hasPermission(staffSession.role, screenPermission[page])) {
+      setVisitedScreens((visited) =>
+        visited.includes(page) ? visited : [...visited, page],
+      );
       setScreen(page);
     }
   }
@@ -84,6 +89,7 @@ export function App() {
 
   async function lock() {
     await setTerminalLocked(true);
+    setVisitedScreens(['POS']);
     setTerminal((current) =>
       current ? { ...current, isLocked: true } : current,
     );
@@ -97,11 +103,12 @@ export function App() {
     setTerminal((current) =>
       current ? { ...current, isLocked: false } : current,
     );
+    setVisitedScreens(['POS']);
     setScreen('POS');
   }
 
-  function updateClockFormat(clockFormat: TerminalSettings['clockFormat']) {
-    setTerminal((current) => current ? { ...current, clockFormat } : current);
+  function updatePreferences(preferences: TerminalPreferences) {
+    setTerminal((current) => current ? { ...current, ...preferences } : current);
   }
 
   if (!sessionReady) {
@@ -138,6 +145,9 @@ export function App() {
 
   function openSettings() {
     if (staffSession && hasPermission(staffSession.role, 'settings')) {
+      setVisitedScreens((visited) =>
+        visited.includes('Settings') ? visited : [...visited, 'Settings'],
+      );
       setScreen('Settings');
     }
   }
@@ -150,70 +160,75 @@ export function App() {
     return <main aria-label="Terminal locked" role="alert">Staff session is unavailable. Lock and sign in again.</main>;
   }
 
+  const activeScreen = hasPermission(staffSession.role, screenPermission[screen])
+    ? screen
+    : 'POS';
+
   return (
     <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
       <ReconnectProvider onSessionUnavailable={lock}>
-      {!hasPermission(staffSession.role, screenPermission[screen]) ? (
-      <PosScreen
-        session={posSession}
-        onSessionChange={setPosSession}
-        clockFormat={terminal.clockFormat}
-        onNavigate={navigate}
-        onOpenSettings={openSettings}
-        onSwitchStaff={requestStaffSwitch}
-      />
-      ) : screen === 'Settings' ? (
-      <SettingsScreen
-        clockFormat={terminal.clockFormat}
-        onNavigate={navigate}
-        onLock={requestStaffSwitch}
-        onClockFormatChange={updateClockFormat}
-      />
-      ) : screen === 'Dashboard' ? (
-      <DashboardScreen
-        clockFormat={terminal.clockFormat}
-        onNavigate={navigate}
-        onOpenSettings={openSettings}
-        onSwitchStaff={requestStaffSwitch}
-      />
-      ) : screen === 'Orders' ? (
-      <OrdersScreen
-        clockFormat={terminal.clockFormat}
-        onNavigate={navigate}
-        onOpenSettings={openSettings}
-        onSwitchStaff={requestStaffSwitch}
-      />
-      ) : screen === 'Products' ? (
-      <ProductsScreen
-        clockFormat={terminal.clockFormat}
-        onNavigate={navigate}
-        onOpenSettings={openSettings}
-        onSwitchStaff={requestStaffSwitch}
-      />
-      ) : screen === 'Stock' ? (
-      <StockScreen
-        clockFormat={terminal.clockFormat}
-        onNavigate={navigate}
-        onOpenSettings={openSettings}
-        onSwitchStaff={requestStaffSwitch}
-      />
-      ) : screen === 'Reports' ? (
-      <ReportsScreen
-        clockFormat={terminal.clockFormat}
-        onNavigate={navigate}
-        onOpenSettings={openSettings}
-        onSwitchStaff={requestStaffSwitch}
-      />
-      ) : (
-      <PosScreen
-      session={posSession}
-      onSessionChange={setPosSession}
-      clockFormat={terminal.clockFormat}
-      onNavigate={navigate}
-      onOpenSettings={openSettings}
-      onSwitchStaff={requestStaffSwitch}
-      />
-      )}
+        {visitedScreens.map((visited) =>
+          !hasPermission(staffSession.role, screenPermission[visited]) ? null : (
+            <Activity
+              key={visited}
+              mode={visited === activeScreen ? 'visible' : 'hidden'}
+            >
+              {visited === 'Settings' ? (
+                <SettingsScreen
+                  clockFormat={terminal.clockFormat}
+                  onNavigate={navigate}
+                  onLock={requestStaffSwitch}
+                  onPreferencesChange={updatePreferences}
+                />
+              ) : visited === 'Dashboard' ? (
+                <DashboardScreen
+                  clockFormat={terminal.clockFormat}
+                  onNavigate={navigate}
+                  onOpenSettings={openSettings}
+                  onSwitchStaff={requestStaffSwitch}
+                />
+              ) : visited === 'Orders' ? (
+                <OrdersScreen
+                  clockFormat={terminal.clockFormat}
+                  onNavigate={navigate}
+                  onOpenSettings={openSettings}
+                  onSwitchStaff={requestStaffSwitch}
+                />
+              ) : visited === 'Products' ? (
+                <ProductsScreen
+                  clockFormat={terminal.clockFormat}
+                  onNavigate={navigate}
+                  onOpenSettings={openSettings}
+                  onSwitchStaff={requestStaffSwitch}
+                />
+              ) : visited === 'Stock' ? (
+                <StockScreen
+                  clockFormat={terminal.clockFormat}
+                  onNavigate={navigate}
+                  onOpenSettings={openSettings}
+                  onSwitchStaff={requestStaffSwitch}
+                />
+              ) : visited === 'Reports' ? (
+                <ReportsScreen
+                  clockFormat={terminal.clockFormat}
+                  onNavigate={navigate}
+                  onOpenSettings={openSettings}
+                  onSwitchStaff={requestStaffSwitch}
+                />
+              ) : (
+                <PosScreen
+                  session={posSession}
+                  onSessionChange={setPosSession}
+                  clockFormat={terminal.clockFormat}
+                  receiptLanguage={terminal.receiptLanguage}
+                  onNavigate={navigate}
+                  onOpenSettings={openSettings}
+                  onSwitchStaff={requestStaffSwitch}
+                />
+              )}
+            </Activity>
+          ),
+        )}
       </ReconnectProvider>
     </StaffSessionProvider>
   );

@@ -65,9 +65,11 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
   const convex = useConvex();
 
   useEffect(() => {
+    if (!foreground) return;
+    setNow(new Date());
     const clock = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(clock);
-  }, []);
+  }, [foreground]);
 
   useEffect(() => {
     let active = true;
