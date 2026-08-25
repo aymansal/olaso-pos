@@ -1,33 +1,27 @@
 # Olaso support recovery (development tooling)
 
 This folder is excluded from the Android APK. It documents owner/support
-recovery steps that must not live only in chat history.
+recovery notes that must not live only in chat history.
 
 ## What Convex does and does not keep
 
 - Convex stores synchronized operational data after successful acknowledgement.
 - Free-plan Convex limits (re-check before production): monthly function calls,
   database storage, and database I/O caps. Hard stop on Free when exceeded.
-- Convex is **not** a substitute for unsynced tablet sales still waiting in
-  SQLite/outbox.
+- Unsynced tablet sales remain local until the reconnect worker or Sync now
+  acknowledges them.
 
-## Owner tablet export
+## Second shop / new Convex project
 
-1. Sign in as owner on the physical tablet.
-2. Open Settings → Data & sync → **Export backup**.
-3. Choose a location with Android's system Save dialog (SAF).
-4. Keep the JSON file off-device (USB, owner drive). It contains sales,
-   products, recipes, stock movements, purchases, expenses, compensation, and
-   staff profile names/roles — never PINs or session tokens.
-5. **Verify backup** opens that file and reports counts without changing the
-   tablet.
+- Each live coffee shop should use its own Convex deployment.
+- Menu seeding for a sister shop is a support/deployment copy between projects
+  (or a future deliberate tooling step), not an operator Settings export.
 
 ## Corrupt or unrecoverable local data
 
 - The app fails closed: no POS/checkout while SQLite cannot open.
 - Restart once. If it still fails, do not force orders.
-- Prefer restoring from the last successful owner export plus Convex sync for
-  already-acknowledged cloud data.
+- Prefer Convex sync for already-acknowledged cloud data after a clean install.
 - Signing keys, keystore passwords, and private recovery media paths stay
   outside this repository.
 

@@ -12,9 +12,8 @@ presentation.
 - Device ID is visible and immutable. Terminal label and clock format are
   non-secret local preferences.
 - Manual synchronization calls the data hook once per deliberate action and
-  reports pending, success, offline, and error states.
-- Owner Data & sync also exposes Export backup (SAF save) and Verify backup
-  (SAF open + count report). Export never includes credentials.
+  reports pending, success, offline, and error states. Online tablets also
+  synchronize automatically while the app is open and connected.
 - Every role reaches the same local Lock / Switch staff action from the Header;
   this does not grant Settings access. A deliberate non-empty-cart switch asks
   for confirmation and preserves that order while the app process remains
@@ -49,8 +48,7 @@ presentation.
 
 ## Verification
 
-- Run `npm run check:settings`, `npm run check:local-staff`,
-  `npm run check:recovery`, and `npm run build`.
+- Run `npm run check:settings`, `npm run check:local-staff`, and
+  `npm run build`.
 - Inspect Settings and Lock at 1340 × 800, including persistence, manual sync,
-  backup export/verify feedback, offline/error feedback, unlock, focus,
-  clipping, overflow, and console state.
+  offline/error feedback, unlock, focus, clipping, overflow, and console state.

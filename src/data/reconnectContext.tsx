@@ -84,11 +84,12 @@ const ReconnectContext = createContext<ReconnectState | undefined>(undefined);
 
 async function toConvexSaleArgs({
   actorProfileId: _actorProfileId,
-  actorName: _actorName,
+  actorName,
   ...input
 }: SaleSyncPayload) {
   return {
     ...input,
+    cashierName: actorName,
     lines: await Promise.all(input.lines.map(async ({ recipeVersionId, ...line }) => ({
       ...line,
       productId: await resolveCloudRecordId('product', line.productId) as Id<'products'>,

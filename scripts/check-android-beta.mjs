@@ -268,10 +268,6 @@ assert.match(
   /requestIdleCallback\(start, \{ timeout: 750 \}\)/,
 );
 assert.match(manifest, /android:allowBackup="false"/);
-assert.match(manifest, /DocumentExport|dataExtractionRules/);
-assert.match(
-  readFileSync('android/app/src/main/java/com/olaso/pos/MainActivity.java', 'utf8'),
-  /DocumentExportPlugin/,
-);
+assert.match(manifest, /dataExtractionRules|fullBackupContent/);
 
 console.log('Android beta identity, version, permission, and artifact checks passed.');

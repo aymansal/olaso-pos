@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; HARD-05 done on origin/main | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; HARD-06 in progress | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -220,4 +220,5 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-No card in progress. Activate HARD-06 only when the owner asks.
+HARD-06 is active. Finish HARD-05 follow-up push if needed, then implement
+signed release, upgrade, and operator update path per the Goal 06 contract.

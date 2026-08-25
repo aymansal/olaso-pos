@@ -32,8 +32,6 @@ interface SettingsContentPanelProps {
   isSyncing: boolean;
   isTestingPrinter: boolean;
   isInstallingPrinterLogo: boolean;
-  isExportingBackup: boolean;
-  isVerifyingBackup: boolean;
   online: boolean;
   message: string;
   error: string;
@@ -41,8 +39,6 @@ interface SettingsContentPanelProps {
   onSync: () => Promise<void>;
   onTestPrinter: (input: PrinterPreferences) => Promise<void>;
   onInstallPrinterLogo: (input: PrinterPreferences) => Promise<void>;
-  onExportBackup: () => Promise<void>;
-  onVerifyBackup: () => Promise<void>;
 }
 
 export function SettingsContentPanel({
@@ -52,8 +48,6 @@ export function SettingsContentPanel({
   isSyncing,
   isTestingPrinter,
   isInstallingPrinterLogo,
-  isExportingBackup,
-  isVerifyingBackup,
   online,
   message,
   error,
@@ -61,8 +55,6 @@ export function SettingsContentPanel({
   onSync,
   onTestPrinter,
   onInstallPrinterLogo,
-  onExportBackup,
-  onVerifyBackup,
 }: SettingsContentPanelProps) {
   const [terminalName, setTerminalName] = useState('');
   const [clockFormat, setClockFormat] =
@@ -220,27 +212,9 @@ export function SettingsContentPanel({
         <div className={styles.header}>
           <div>
             <h2 id="sync-heading">Data & sync</h2>
-            <p>Review local work, synchronize, and export a tablet backup</p>
+            <p>Review local work and synchronize with the cloud</p>
           </div>
           <div className={styles.headerActions}>
-            <button
-              className={`${styles.primary} ${styles.secondary}`}
-              type="button"
-              disabled={isExportingBackup || isVerifyingBackup || isLoading}
-              onClick={() => void onVerifyBackup()}
-            >
-              <CheckCircle size={17} aria-hidden="true" />
-              <span>{isVerifyingBackup ? 'Checking…' : 'Verify backup'}</span>
-            </button>
-            <button
-              className={`${styles.primary} ${styles.secondary}`}
-              type="button"
-              disabled={isExportingBackup || isVerifyingBackup || isLoading}
-              onClick={() => void onExportBackup()}
-            >
-              <Database size={17} aria-hidden="true" />
-              <span>{isExportingBackup ? 'Exporting…' : 'Export backup'}</span>
-            </button>
             <button
               className={styles.primary}
               type="button"
@@ -305,12 +279,10 @@ export function SettingsContentPanel({
         <div className={styles.notice}>
           <Info size={18} aria-hidden="true" />
           <p>
-            Sync processes at most 10 saved sales per click without duplicating
-            orders. Export backup is read-only JSON for sales, catalog, recipes,
-            stock, purchases, expenses, and compensation — never PINs or session
-            secrets. Verify backup opens a saved file and reports counts without
-            changing this tablet. Convex keeps synchronized cloud copies only;
-            unsynced sales need the tablet backup.
+            Online tablets synchronize saved work automatically while the app is
+            open. Sync now retries failed rows and processes at most 10 saved
+            sales per click without duplicating orders. Convex keeps the
+            synchronized cloud copy for this shop.
           </p>
         </div>
 

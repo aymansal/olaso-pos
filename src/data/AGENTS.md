@@ -27,9 +27,6 @@ tablet's local SQLite operational record.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
   safe failure copy.
-- `operationalExport.ts` builds the documented owner backup JSON from bounded
-  SQLite reads; `documentExport.ts` wraps the Android SAF save/open plugin.
-  Neither stores credentials.
 - `secureSession.ts` owns the Android-only protected-storage wrapper for opaque
   session tokens and offline PIN verifiers; ordinary SQLite settings never hold
   credentials.
@@ -72,9 +69,9 @@ tablet's local SQLite operational record.
 - `managementOperation.ts` owns the plain operation envelope, bounded payload
   and protected-field validation, actor/role permission validation, saved-row
   parsing, and safe operator-facing sync-failure classification.
-- `operationSession.ts` resolves each queued operation's original local/cloud
-  profile and returns that profile's protected session arguments; the staff
-  member who happens to reconnect never replaces the saved actor.
+- `operationSession.ts` prefers each queued operation's original protected
+  session; if that session is missing, the currently signed-in profile may
+  authorize sync when it still holds the required permission.
 - `printState.ts` owns persisted pending/printed/failed sale print attempts;
   `receiptPrinting.ts` coordinates one post-commit attempt and never calls sale
   or stock creation logic.
@@ -104,9 +101,10 @@ tablet's local SQLite operational record.
   actor's cumulative role permission before commit and let Convex enforce it
   again during synchronization. Never store a raw PIN or session secret in a
   management payload.
-- New sales and corrections persist their originating profile ID. Management,
-  sales, and corrections synchronize with that profile's protected session;
-  legacy label-only rows may use the active session only when its name matches.
+- New sales and corrections persist their originating profile ID. Sync prefers
+  that profile's protected session; if it is unavailable, the active signed-in
+  profile may authorize the transport when it has the required permission.
+  Sale cashier names stay on the local receipt and are sent to Convex.
 - Serialize transactions on the shared SQLite connection; callers may start
   concurrently but `BEGIN`/`COMMIT` boundaries may not overlap.
 - Re-read trusted product, modifier, recipe, and ingredient data inside the

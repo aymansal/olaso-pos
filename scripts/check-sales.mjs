@@ -43,6 +43,16 @@ assert.equal(
   'This saved order needs receipt-number support before it can synchronize.',
 );
 assert.equal(
+  describeSaleSyncFailure(
+    {
+      data: { code: 'CONFLICT', message: 'A sale product is no longer available.' },
+      message: 'ConvexError',
+    },
+    'Sale synchronization failed.',
+  ),
+  'A sale product is no longer available.',
+);
+assert.equal(
   describeSaleSyncFailure(new Error('Uncaught ConvexError: secret server detail'), 'Sale synchronization failed.'),
   'Sale synchronization failed.',
 );

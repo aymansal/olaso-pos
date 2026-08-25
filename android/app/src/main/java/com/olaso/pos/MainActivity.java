@@ -31,7 +31,6 @@ public class MainActivity extends BridgeActivity {
         });
         registerPlugin(EscPosPrinterPlugin.class);
         registerPlugin(SecureSessionPlugin.class);
-        registerPlugin(DocumentExportPlugin.class);
         super.onCreate(savedInstanceState);
         getBridge().addWebViewListener(new WebViewListener() {
             @Override

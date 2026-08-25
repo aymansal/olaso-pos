@@ -24,9 +24,6 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   identity-session tokens and offline PIN verifiers. It stores encrypted values
   only; plaintext credentials never enter SharedPreferences, logs, or plugin
   return values beyond an explicit read to the authenticated web runtime.
-- `DocumentExportPlugin.kt` owns Android SAF `ACTION_CREATE_DOCUMENT` /
-  `ACTION_OPEN_DOCUMENT` for owner backup JSON. It writes/reads only the
-  provided text and never claims paper or cloud backup success.
 - Application Auto Backup is disabled; `data_extraction_rules` and
   `fullBackupContent` exclude database, shared preferences, and related domains
   from cloud and device-to-device transfer.

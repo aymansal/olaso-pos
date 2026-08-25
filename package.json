@@ -27,7 +27,6 @@
     "check:dashboard": "node scripts/check-dashboard.mjs",
     "check:reports": "node scripts/check-reports.mjs",
     "check:settings": "node scripts/check-settings.mjs",
-    "check:recovery": "node --disable-warning=ExperimentalWarning scripts/check-recovery.mjs",
     "check:identity": "node scripts/check-identity.mjs",
     "check:reconnect": "node --disable-warning=ExperimentalWarning scripts/check-reconnect.mjs",
     "check:offline": "node scripts/check-offline-views.mjs",

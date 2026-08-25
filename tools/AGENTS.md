@@ -16,8 +16,8 @@ Android APK.
   and reports only observable connection/write facts. Paper remains a separate
   physical verification.
 - Keep `tools/wd8260-receipt-lab/` and `tools/recovery/` self-contained.
-  Recovery docs are for owner/support rehearsal and are never imported by the
-  React application or packaged in the Android APK.
+  Recovery notes are for support and are never imported by the React
+  application or packaged in the Android APK.
 - Keep `node_modules/` and regenerated `out/` files untracked. Version generated
   bytes only when they are intentional reviewed fixtures under `fixtures/`.
 - Supply Windows printer queue names at execution time; never version a local

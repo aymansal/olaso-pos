@@ -34,14 +34,31 @@ export async function operationSessionArgs(
   } else if (actor.name.trim() === active.name) {
     savedSession = active;
   }
-  if (!savedSession || savedSession.provisioningState === 'pending') {
-    throw new Error('The original staff session is unavailable for synchronization.');
+
+  if (savedSession && savedSession.provisioningState !== 'pending') {
+    if (!hasPermission(savedSession.role, actor.requiredPermission)) {
+      throw new Error('The original staff profile can no longer make this change.');
+    }
+    return {
+      sessionToken: savedSession.token,
+      deviceId: active.deviceId,
+    };
   }
-  if (!hasPermission(savedSession.role, actor.requiredPermission)) {
-    throw new Error('The original staff profile can no longer make this change.');
+
+  // Original protected session missing (legacy sales, deleted staff, another
+  // unlock). Let the currently signed-in profile authorize sync when it still
+  // has the required permission. Sale cashier names stay on the local receipt
+  // and are sent explicitly to Convex — the active session only unlocks the
+  // transport.
+  if (
+    active.provisioningState !== 'pending'
+    && hasPermission(active.role, actor.requiredPermission)
+  ) {
+    return {
+      sessionToken: active.token,
+      deviceId: active.deviceId,
+    };
   }
-  return {
-    sessionToken: savedSession.token,
-    deviceId: active.deviceId,
-  };
+
+  throw new Error('The original staff session is unavailable for synchronization.');
 }

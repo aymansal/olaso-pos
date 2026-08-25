@@ -43,12 +43,12 @@ assert.deepEqual(
   }, activeSession, sessionServices),
   { sessionToken: 'owner-session-token', deviceId: 'reconnect-device' },
 );
-await assert.rejects(
-  operationSessionArgs({
+assert.deepEqual(
+  await operationSessionArgs({
     name: 'Another cashier',
     requiredPermission: 'pos',
   }, activeSession, sessionServices),
-  /original staff session is unavailable/i,
+  { sessionToken: 'owner-session-token', deviceId: 'reconnect-device' },
 );
 await assert.rejects(
   operationSessionArgs({

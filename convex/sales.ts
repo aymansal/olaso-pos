@@ -120,6 +120,7 @@ export const accept = mutation({
     deviceId: v.string(),
     localSaleId: v.string(),
     receiptNumber: v.string(),
+    cashierName: v.optional(v.string()),
     serviceMode,
     paymentMethod,
     receiptLanguage,
@@ -131,6 +132,9 @@ export const accept = mutation({
   },
   handler: async (ctx, args) => {
     const actor = await requireOperationalAccess(ctx, args);
+    const cashierName = args.cashierName === undefined
+      ? actor
+      : cleanText(args.cashierName, 'Cashier name', 80);
     const deviceId = identifier(args.deviceId, 'Device ID');
     const localSaleId = identifier(args.localSaleId, 'Local sale ID');
     const existing = await ctx.db
@@ -462,7 +466,7 @@ export const accept = mutation({
       deviceId,
       localSaleId,
       receiptNumber,
-      cashierName: actor,
+      cashierName,
       serviceMode: args.serviceMode,
       subtotalCentimes,
       discountCentimes: 0,

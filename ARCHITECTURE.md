@@ -304,13 +304,15 @@ snapshots back into SQLite without returning compensation or profitability to
 a manager. Expense-correction retries return the saved reversal/replacement
 pair instead of appending another pair.
 
-Every queued management operation uses its saved originating profile's
-profile-scoped protected session when Convex validates and records the write;
-the currently unlocked person only starts the worker and never replaces the
-actor. Local schema 18 also stores the originating profile ID on new sales and
-corrections so cross-staff reconnect preserves cashier/correction attribution.
-Legacy label-only rows may synchronize only when the active profile name
-matches, otherwise they remain failed rather than receiving a false actor.
+Every queued management operation prefers its saved originating profile's
+profile-scoped protected session when Convex validates and records the write.
+If that protected session is missing (legacy rows, deleted staff, or another
+person unlocking later), the currently signed-in profile may authorize the
+sync when it still holds the required permission. Local schema 18 still stores
+the originating profile ID on new sales and corrections for attribution.
+Sale sync sends the immutable cashier name from the tablet receipt to Convex;
+the active session only unlocks transport and never invents a different
+cashier on the cloud sale.
 
 Successful bounded replacement snapshots remove cloud-owned catalog,
 ingredient, staff, and finance rows absent from the new snapshot using actual
@@ -1323,23 +1325,21 @@ and to authorize the chosen download source for unknown-app installation.
 
 ## Backup and recovery
 
-- Convex is the synchronized cloud record, not the only copy of unsynced sales.
-- SQLite persists unsynced work across restarts.
-- The owner can export sales, products, recipes, stock movements, purchases,
-  compensation periods, and operating expenses as documented JSON through
-  Settings → Data & sync. Export is read-only and never includes PINs, session
-  tokens, or Keystore material. Verify backup opens a saved file and reports
-  counts without writing local data.
+- Convex is the synchronized cloud record for each shop deployment.
+- SQLite persists unsynced work across restarts; the reconnect worker syncs
+  automatically while the tablet is online and in the foreground. Manual Sync
+  retries failed rows.
 - Android Auto Backup is disabled; database and shared preferences are excluded
   from cloud backup and device-to-device transfer via
   `data_extraction_rules` / `fullBackupContent`.
 - Corrupt or unrecoverable local open fails closed: checkout stays locked.
-- A backup/export process must be tested before production.
 - Free-plan Convex backup/storage/I/O limitations must be reviewed before the
   client depends on the cloud alone for retention. Re-check
   https://docs.convex.dev/production/state/limits before launch.
-- Recovery instructions for support live in `tools/recovery/` (not packaged).
-  Signing-key storage locations remain outside the source repository.
+- Support notes live in `tools/recovery/` (not packaged). Signing-key storage
+  locations remain outside the source repository. Menu seeding for a second
+  shop is a support/deployment step between Convex projects, not an in-app
+  export/import product.
 
 ## Testing strategy
 

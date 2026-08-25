@@ -857,21 +857,114 @@ async function acknowledgeSaleCancellation(
   });
 }
 
+function convexFailureMessage(caught: unknown): string {
+  if (caught && typeof caught === 'object' && 'data' in caught) {
+    const data = (caught as { data?: unknown }).data;
+    if (
+      data
+      && typeof data === 'object'
+      && data !== null
+      && 'message' in data
+      && typeof (data as { message: unknown }).message === 'string'
+    ) {
+      return (data as { message: string }).message.trim();
+    }
+  }
+  const message = caught instanceof Error ? caught.message : String(caught ?? '');
+  const embedded = message.match(/ConvexError:\s*(\{[\s\S]*\})\s*$/);
+  if (embedded) {
+    try {
+      const parsed = JSON.parse(embedded[1]) as { message?: unknown };
+      if (typeof parsed.message === 'string' && parsed.message.trim()) {
+        return parsed.message.trim();
+      }
+    } catch {
+      /* keep raw message */
+    }
+  }
+  return message.trim();
+}
+
+const PERMANENT_SALE_SYNC_FAILURE =
+  /no longer available|changed after it was added|has a newer recipe|cost no longer matches|modifier setup is unavailable|selected modifier .* is unavailable|category is unavailable|receipt-number support|Receipt number must use/i;
+
 export function describeSaleSyncFailure(caught: unknown, fallback: string) {
-  const message = caught instanceof Error ? caught.message : '';
+  const message = convexFailureMessage(caught);
   if (/original sale has not synchronized|original order must synchronize/i.test(message)) {
     return 'The original order must synchronize before its correction.';
   }
-  if (/receipt number/i.test(message)) {
+  if (/receipt number|Receipt number must use/i.test(message)) {
     return 'This saved order needs receipt-number support before it can synchronize.';
   }
-  if (/unauthenticated|sign-in is required|session/i.test(message)) {
+  if (/unauthenticated|sign-in is required|staff session is unavailable/i.test(message)) {
     return 'Synchronization access is unavailable. Restore terminal access and try again.';
   }
   if (/network|failed to fetch|offline/i.test(message)) {
     return CONNECTION_SYNC_FAILURE;
   }
+  if (PERMANENT_SALE_SYNC_FAILURE.test(message)) {
+    return message.length <= 180 ? message : fallback;
+  }
   return fallback;
+}
+
+export function isPermanentSaleSyncFailure(message: string) {
+  return PERMANENT_SALE_SYNC_FAILURE.test(message)
+    || /receipt-number support/i.test(message);
+}
+
+async function abandonSale(
+  operationId: string,
+  localSaleId: string,
+  error: string,
+) {
+  return withLocalTransaction(async (database) => {
+    await database.run(
+      `UPDATE sales
+       SET sync_state = 'failed'
+       WHERE local_sale_id = ?
+         AND EXISTS (
+           SELECT 1 FROM outbox
+           WHERE operation_id = ? AND local_record_id = ?
+         )`,
+      [localSaleId, operationId, localSaleId],
+      false,
+    );
+    await database.run(
+      `DELETE FROM outbox WHERE operation_id = ? AND local_record_id = ?`,
+      [operationId, localSaleId],
+      false,
+    );
+    await database.run(
+      `UPDATE sync_state SET last_error = ? WHERE id = 1`,
+      [error],
+      false,
+    );
+  });
+}
+
+async function abandonSaleCancellation(
+  operationId: string,
+  localCorrectionId: string,
+  error: string,
+) {
+  return withLocalTransaction(async (database) => {
+    await database.run(
+      `UPDATE sale_corrections SET sync_state = 'failed' WHERE local_correction_id = ?`,
+      [localCorrectionId],
+      false,
+    );
+    await database.run(
+      `DELETE FROM outbox WHERE operation_id = ? AND local_record_id = ?`,
+      [operationId, localCorrectionId],
+      false,
+    );
+    await database.run(
+      `UPDATE sync_state SET last_error = ? WHERE id = 1`,
+      [error],
+      false,
+    );
+  });
 }
 
 async function failSale(
@@ -881,6 +974,9 @@ async function failSale(
   caught: unknown,
 ) {
   const error = describeSaleSyncFailure(caught, 'Sale synchronization failed.');
+  if (isPermanentSaleSyncFailure(error)) {
+    return abandonSale(operationId, localSaleId, error);
+  }
   const retryAt =
     Date.now() + Math.min(60_000, 1_000 * 2 ** Math.min(attemptCount, 6));
   return withLocalTransaction(async (database) => {
@@ -923,6 +1019,29 @@ async function failSaleCancellation(
   caught: unknown,
 ) {
   const error = describeSaleSyncFailure(caught, 'Correction synchronization failed.');
+  if (
+    isPermanentSaleSyncFailure(error)
+    || /original order must synchronize/i.test(error)
+  ) {
+    // If the original can never sync (or is already gone from the outbox),
+    // keep retrying the correction only while the parent sale-completed row
+    // still exists.
+    if (!/original order must synchronize/i.test(error)) {
+      return abandonSaleCancellation(operationId, localCorrectionId, error);
+    }
+    const parentPending = await listPendingOutbox(Date.now(), 100, ['sale-completed']);
+    const correction = await loadSaleCancellationPayload(localCorrectionId);
+    const parentStillQueued = parentPending.some(
+      (entry) => entry.localRecordId === correction.originalLocalSaleId,
+    );
+    if (!parentStillQueued) {
+      return abandonSaleCancellation(
+        operationId,
+        localCorrectionId,
+        'The original order can no longer synchronize, so this correction was dropped from the sync queue.',
+      );
+    }
+  }
   const retryAt = Date.now() + Math.min(60_000, 1_000 * 2 ** Math.min(attemptCount, 6));
   return withLocalTransaction(async (database) => {
     await database.run(
@@ -965,6 +1084,24 @@ export async function syncPendingSales(
   for (const entry of entries) {
     if (entry.operationType === 'sale-completed') {
       try {
+        const database = await openLocalDatabase();
+        const existing = await database.query(
+          `SELECT cloud_sale_id FROM sales WHERE local_sale_id = ? LIMIT 1`,
+          [entry.localRecordId],
+        );
+        const cloudSaleId = existing.values?.[0]?.cloud_sale_id
+          ? String(existing.values[0].cloud_sale_id)
+          : '';
+        if (cloudSaleId) {
+          await acknowledgeSale(
+            entry.operationId,
+            entry.localRecordId,
+            cloudSaleId,
+            Date.now(),
+          );
+          synced += 1;
+          continue;
+        }
         const result = await acceptSale(await loadSaleSyncPayload(entry.localRecordId));
         await acknowledgeSale(entry.operationId, entry.localRecordId, result.saleId, result.acknowledgedAt);
         synced += 1;

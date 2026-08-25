@@ -28,8 +28,9 @@ remaining goal and card sequence.
 | HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
 | HARD-03 — Safe startup gating and lifecycle readiness | done — `590c9cecfe485cd7debb28abd08d3310cd0079aa` on `origin/main` |
 | HARD-04 — Measured performance (assets, modules, sync scheduling) | done — `cce0ebf73143b6feff72bcd33534a96804fb8512` on `origin/main` |
-| HARD-05 — Backup and recovery | done — `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7` on `origin/main` |
-| HARD-06 through HARD-07 — Release and readiness | pending |
+| HARD-05 — Backup and recovery | done — `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7` on `origin/main`; owner follow-up removed in-app export and fixed sync attribution/abandon on tablet |
+| HARD-06 — Signed release and upgrade | in progress |
+| HARD-07 — Readiness review | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
@@ -112,32 +113,26 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-05 is done and pushed to `origin/main` as
-  `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`. Official Android Auto Backup /
-  backup security guidance requires excluding sensitive app data from cloud and
-  device-to-device transfer; Capacitor SQLite guidance matches
-  `allowBackup=false` plus `data-extraction-rules` excludes for database and
-  shared preferences. Owner export uses Android SAF
-  `ACTION_CREATE_DOCUMENT` / `ACTION_OPEN_DOCUMENT` through one minimal
-  `DocumentExport` plugin—no Filesystem plugin, no whole-DB `exportToJson`.
-  Documented JSON export from bounded SQLite reads never includes PIN, session
-  tokens, or Keystore material. Corrupt open fails closed. Recovery runbook
-  lives under `tools/recovery/` (not in the APK).
-- Physical Galaxy Tab A9 SM-X115: owner Export backup wrote
-  `olaso-backup-2026-08-25 (1).json` (108,164 bytes,
-  format `olaso-operational-backup` v1, 13 sales / 15 products / recipes /
-  stock / purchases / compensation / staff; zero secret keys in `data`);
-  Waiting sales stayed **7** through export; Verify backup reported
-  `13 sales (6 unsynced), 15 products` for the same device ID; merged
-  manifest `allowBackup=false`. Focused `check:recovery`, `check:android`,
-  TypeScript, and production build pass. Graphify code-only: 2,500 nodes /
-  4,700 edges.
-- Sources: https://developer.android.com/identity/data/autobackup ;
-  https://developer.android.com/privacy-and-security/risks/backup-best-practices ;
-  https://developer.android.com/training/data-storage/shared/documents-files ;
-  https://capacitorjs.com/docs/plugins/android ;
-  Capacitor community SQLite Android quirks for backup exclusion.
-- Exact next action: stop; activate HARD-06 only when the owner asks.
+- HARD-05 closeout follow-up is ready to push: owner removed in-app
+  Export/Verify; sync prefers original staff session then falls back to the
+  active signed-in profile; irreparable catalog/receipt failures leave the
+  outbox; Settings Sync now reports from real pending count. Physical Tab A9
+  verified Waiting sales **0** / Up to date. Auto Backup exclusion remains.
+- HARD-06 is activated next after this push. Research decision (Android +
+  Capacitor): keep `com.olaso.pos`; production release uses a durable upload
+  keystore in protected secrets (never in git); bump `versionCode`/
+  `versionName` per release; same signing cert required for install-over-
+  upgrade; publish signed APK + checksum/manifest over HTTPS (private source
+  repo must not embed GitHub credentials in the APK); operator Update uses
+  Android `PackageInstaller` / user confirmation, not silent install. Prefer
+  Capacitor/`gradle` signed release APK in CI with keystore secrets.
+- Sources: https://developer.android.com/studio/publish/versioning ;
+  https://developer.android.com/studio/publish/app-signing ;
+  https://developer.android.com/reference/android/content/pm/PackageInstaller ;
+  https://capacitorjs.com/docs/cli/commands/build ;
+  https://capacitorjs.com/docs/basics/workflow .
+- Exact next action: commit/push HARD-05 follow-up, then implement HARD-06
+  release/signing/update path.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1247,6 +1242,15 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-05 owner closeout: drop export, fix sync queue
+
+- Removed Settings Export/Verify and DocumentExport; kept Auto Backup off.
+- Sync may use active owner/cashier session when original protected session is
+  missing; sale cashierName stays on the receipt sent to Convex.
+- Irreparable catalog/receipt outbox rows are abandoned; already-clouded sales
+  acknowledge without re-accept. Physical verify: Waiting sales 0 / Up to date.
+- Exact next action: push this closeout, then HARD-06.
 
 ### 2026-08-25 — HARD-05 pushed to origin/main
 
