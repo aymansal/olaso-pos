@@ -48,31 +48,41 @@ npm run android:release
 
 ## Version channel (no GitHub token in the APK)
 
-1. Tag and build the signed APK in the private source repository.
-2. Attach the APK to the private GitHub Release as the release record.
-3. Publish `olaso-pos-<versionCode>.apk` and `update-manifest.json` to a
-   tablet-reachable HTTPS host (preferred: a dedicated public binary-only
-   repository). Never put a GitHub PAT in the APK.
-4. Point the tablet build at that manifest with
-   `VITE_OLASO_UPDATE_MANIFEST_URL` at build time.
+Tablet-reachable host:
+[`aymansal/olaso-pos-releases`](https://github.com/aymansal/olaso-pos-releases)
+(public, binaries only).
+
+Default manifest URL baked into the app:
+
+`https://raw.githubusercontent.com/aymansal/olaso-pos-releases/main/update-manifest.json`
+
+Release loop (not every source push):
+
+```powershell
+npm run android:release
+npm run release:publish -- android/app/build/outputs/apk/release/app-release.apk "Short notes"
+```
+
+That creates/replaces the GitHub Release asset and updates `update-manifest.json`.
+Optional override: `VITE_OLASO_UPDATE_MANIFEST_URL` at build time.
 
 Manifest shape:
 
 ```json
 {
   "packageId": "com.olaso.pos",
-  "versionCode": 3,
-  "versionName": "0.1.0-rc.1",
-  "apkUrl": "https://example.invalid/releases/olaso-pos-3.apk",
+  "versionCode": 5,
+  "versionName": "0.1.0-rc.3",
+  "apkUrl": "https://github.com/aymansal/olaso-pos-releases/releases/download/v0.1.0-rc.3/olaso-pos-5.apk",
   "sha256": "<lowercase hex>",
   "notes": "Optional short operator notes."
 }
 ```
 
-Generate checksum and manifest locally with:
+Generate a local preview manifest with:
 
 ```powershell
-node scripts/write-release-manifest.mjs path/to/app-release.apk https://example.invalid/releases/olaso-pos-3.apk
+node scripts/write-release-manifest.mjs path/to/app-release.apk https://github.com/aymansal/olaso-pos-releases/releases/download/v0.1.0-rc.3/olaso-pos-5.apk
 ```
 
 ## Operator update flow

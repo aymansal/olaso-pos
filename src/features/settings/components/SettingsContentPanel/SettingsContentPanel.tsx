@@ -314,7 +314,7 @@ export function SettingsContentPanel({
   if (section === 'about') {
     const versionLabel = installedApp
       ? `${installedApp.versionName} (${installedApp.versionCode})`
-      : '0.1.0-rc.2';
+      : '0.1.0-rc.3';
     return (
       <section className={styles.panel} aria-labelledby="about-heading">
         <div className={styles.header}>

@@ -58,6 +58,8 @@ const nativeUpdate = registerPlugin<AppUpdatePlugin>('AppUpdate');
 
 const PACKAGE_ID = 'com.olaso.pos';
 const SHA256_HEX = /^[a-f0-9]{64}$/;
+const DEFAULT_UPDATE_MANIFEST_URL =
+  'https://raw.githubusercontent.com/aymansal/olaso-pos-releases/main/update-manifest.json';
 
 function unavailable(message: string): never {
   throw Object.assign(new Error(message), { code: 'UNAVAILABLE' });
@@ -65,7 +67,10 @@ function unavailable(message: string): never {
 
 function manifestUrl(): string {
   const value = import.meta.env.VITE_OLASO_UPDATE_MANIFEST_URL;
-  return typeof value === 'string' ? value.trim() : '';
+  if (typeof value === 'string' && value.trim().startsWith('https://')) {
+    return value.trim();
+  }
+  return DEFAULT_UPDATE_MANIFEST_URL;
 }
 
 export function isUpdateChannelConfigured() {

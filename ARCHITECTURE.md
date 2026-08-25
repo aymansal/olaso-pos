@@ -1239,14 +1239,16 @@ The reproducible development beta is built with `npm run android:beta` using
 Java 21 and Android SDK 36. It compiles with API 36 but targets API 35 so the
 manually distributed fixed-landscape POS remains enforceable on Android 16
 large screens. It retains application ID `com.olaso.pos`,
-uses version code/name `4`/`0.1.0-rc.2`, and writes only the ignored debug
+uses version code/name `5`/`0.1.0-rc.3`, and writes only the ignored debug
 APK at `android/app/build/outputs/apk/debug/app-debug.apk`. Its merged manifest
 contains no printer, Bluetooth, USB, biometric, or fingerprint permission.
 Signed release builds use the same application ID, an increased version code,
 and the protected upload keystore documented in `tools/release/README.md`.
-Operator updates read a tablet-reachable HTTPS manifest (never a GitHub token),
-verify SHA-256 / package ID / signing certificate / higher version code, then
-enter Android PackageInstaller confirmation from Settings → About.
+Operator updates read the public HTTPS manifest at
+`https://raw.githubusercontent.com/aymansal/olaso-pos-releases/main/update-manifest.json`
+(override with `VITE_OLASO_UPDATE_MANIFEST_URL` if needed), verify SHA-256 /
+package ID / signing certificate / higher version code, then enter Android
+PackageInstaller confirmation from Settings → About.
 
 APP-11 verified install-over-upgrade from schema version 2 to 4, preserved
 terminal settings, cached offline startup and checkout, process-restart
