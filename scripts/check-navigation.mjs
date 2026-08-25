@@ -40,6 +40,11 @@ const reports = readFileSync('src/data/useReportsData.ts', 'utf8');
 assert.doesNotMatch(reports, /setSnapshot\(undefined\)/);
 const pos = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
 assert.match(pos, /const validation = isLoading[\s\S]*?Loading the saved menu[\s\S]*?: validatePosSession/);
+assert.match(pos, /const \[visitedCategoryIds, setVisitedCategoryIds\] = useState<string\[\]>\(/);
+assert.match(pos, /new Set\(\[\.\.\.visitedCategoryIds, session\.selectedCategoryId\]\)[\s\S]*?categories\.some\(\(category\) => category\.id === categoryId\)/);
+assert.match(pos, /setVisitedCategoryIds\(\(current\) =>[\s\S]*?current\.includes\(selectedCategoryId\)/);
+assert.match(pos, /retainedCategoryIds\.map\(\(categoryId\) =>[\s\S]*?<Activity[\s\S]*?key=\{categoryId\}[\s\S]*?mode=\{categoryId === session\.selectedCategoryId \? 'visible' : 'hidden'\}/);
+assert.match(pos, /products=\{filterProducts\(products, categoryId, session\.query\)\}/);
 
 for (const file of [
   'src/features/pos/components/Header/Header.tsx',
@@ -50,4 +55,4 @@ for (const file of [
   assert.match(source, /\}, \[foreground\]\)/);
 }
 
-console.log('Role-safe retained screens, revision-aware reloads, saved snapshots, and foreground clocks passed.');
+console.log('Role-safe retained screens/categories, revision-aware reloads, saved snapshots, and foreground clocks passed.');

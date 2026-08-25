@@ -24,7 +24,7 @@ remaining goal and card sequence.
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
 | DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
 | HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
-| NAV-01 — Retained smooth navigation | done — `0e79396d56215f193d80dafd3405518f1e26f2d3` on `origin/main` |
+| NAV-01 — Retained smooth navigation | in progress — category-image root fix physically verified; awaiting direct main commit/push and SHA record |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -108,6 +108,33 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- NAV-01's reopened category-image root fix is complete on the physical Galaxy
+  Tab A9. Coffee → Bakery → Reports → POS → Coffee preserves all nine original
+  Coffee image objects; the first Bakery visit adds only its two new images,
+  and later Bakery/Coffee switches remove/add zero images. Five repeated
+  complete cycles and the same flight-mode cycle all pass with zero rebuilt
+  images, exactly one visible category grid, no visible alerts, and exact
+  1340 by 800 viewport. HARD-02 stays pending.
+- Official React Activity guidance explicitly preserves hidden component DOM
+  and state while cleaning up hidden effects; Android's current rendering
+  guidance warns against redundant bitmap uploads and repeated view work.
+  Capacitor already hosts this React content in the existing native WebView.
+  Keep the fix in the existing POS presentation boundary, reuse installed
+  React Activity for previously visited categories only, prune unavailable
+  categories, and reject a native plugin, image-cache package, or eager
+  rendering of categories the cashier has not visited.
+- Sources: https://react.dev/reference/react/Activity;
+  https://developer.android.com/topic/performance/vitals/render;
+  https://capacitorjs.com/docs.
+- The existing regression now guards visited-only live-category React Activity
+  retention and unavailable-category pruning. Navigation, POS cart/money,
+  lock/staff switching, offline screens, local catalog, TypeScript, production
+  build, and the complete 140-task Android beta all pass. The updated beta is
+  installed; Bakery product add/remove works; internet and the empty Coffee
+  cart are restored; focused Capacitor/chromium/Android app errors are absent.
+- Graphify is refreshed to 3,338 nodes, 7,629 edges, and 161 communities.
+- Exact next action: commit/push the verified NAV-01 follow-up directly to
+  `origin/main`, record its pushed SHA, and leave HARD-02 pending.
 - NAV-01 is complete and pushed directly to `origin/main` as
   `0e79396d56215f193d80dafd3405518f1e26f2d3`. No card is in progress;
   HARD-02 remains pending until the owner explicitly asks to continue.
@@ -1184,6 +1211,36 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — NAV-01 category-image root fix verified on the tablet
+
+- Reused installed React Activity for previously visited live POS categories;
+  unvisited grids never mount and removed category grids are not retained.
+- Built and installed the complete 140-task Android beta. Original physical
+  Coffee → Bakery → Reports → POS → Coffee now retains the same nine Coffee
+  image nodes with zero additions/removals; five repeated cycles and an
+  offline flight-mode cycle pass identically. First Bakery access loads only
+  its two genuine new products. Exactly one category grid stays visible.
+- Physical Bakery add/remove, empty-cart restoration, restored internet, exact
+  1340 by 800 geometry, no alerts, and focused clean Android/WebView logs pass.
+  Navigation, POS, lock, offline, catalog, TypeScript, web build, Android
+  checks/build, and the 3,338-node/7,629-edge Graphify refresh pass.
+- Exact next action: push the implementation directly to `origin/main`, record
+  its full SHA, then stop with HARD-02 pending.
+
+### 2026-08-25 — NAV-01 reopened for reproduced POS category image bug
+
+- The owner identified intermittent Coffee image reconstruction after selecting
+  Bakery, leaving POS for Reports, returning to POS, and selecting Coffee.
+- Physical WebView observation proved the previous screen-retention fix works:
+  returning to POS creates no images. However, selecting Bakery removes nine
+  Coffee images and selecting Coffee recreates those same nine DOM elements.
+- Current official React, Android rendering, and Capacitor guidance supports
+  retaining only visited category grids with the already installed React
+  Activity boundary. No additional Android plugin, dependency, global cache,
+  or eager unvisited-category rendering is justified.
+- Reopened NAV-01 under PLAN.md's mandatory bug rule. HARD-02 remains pending;
+  the exact next action is the focused root fix plus physical regression proof.
 
 ### 2026-08-25 — NAV-01 complete and pushed; HARD-02 pending
 

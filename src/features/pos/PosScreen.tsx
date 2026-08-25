@@ -1,4 +1,5 @@
 import {
+  Activity,
   useEffect,
   useMemo,
   useState,
@@ -75,6 +76,9 @@ export function PosScreen({
   const [configuringProductId, setConfiguringProductId] = useState<string>();
   const [receiptPreview, setReceiptPreview] = useState<SavedReceipt>();
   const [checkoutError, setCheckoutError] = useState('');
+  const [visitedCategoryIds, setVisitedCategoryIds] = useState<string[]>(
+    () => [session.selectedCategoryId],
+  );
 
   function editSession(edit: (current: PosSession) => PosSession) {
     setCheckoutError('');
@@ -160,10 +164,11 @@ export function PosScreen({
     }
   }, [categories, onSessionChange, session.selectedCategoryId]);
 
-  const visibleProducts = filterProducts(
-    products,
-    session.selectedCategoryId,
-    session.query,
+  const retainedCategoryIds = [
+    ...new Set([...visitedCategoryIds, session.selectedCategoryId]),
+  ].filter((categoryId) =>
+    categoryId === session.selectedCategoryId
+    || categories.some((category) => category.id === categoryId),
   );
   const receiptLines = session.cart.flatMap((line) => {
     const product = productById.get(line.productId);
@@ -318,20 +323,33 @@ export function PosScreen({
         <CategoryRow
           categories={categories}
           selectedCategoryId={session.selectedCategoryId}
-          onSelect={(selectedCategoryId) =>
-            editSession((current) => ({ ...current, selectedCategoryId }))}
+          onSelect={(selectedCategoryId) => {
+            setVisitedCategoryIds((current) =>
+              current.includes(selectedCategoryId)
+                ? current
+                : [...current, selectedCategoryId],
+            );
+            editSession((current) => ({ ...current, selectedCategoryId }));
+          }}
         />
-        <ProductGrid
-          products={visibleProducts}
-          emptyMessage={
-            isLoading
-              ? 'Loading the saved menu…'
-              : dataWarning && products.length === 0
-                ? dataWarning
-                : 'No products match this category and search.'
-          }
-          onAdd={beginAdd}
-        />
+        {retainedCategoryIds.map((categoryId) => (
+          <Activity
+            key={categoryId}
+            mode={categoryId === session.selectedCategoryId ? 'visible' : 'hidden'}
+          >
+            <ProductGrid
+              products={filterProducts(products, categoryId, session.query)}
+              emptyMessage={
+                isLoading
+                  ? 'Loading the saved menu…'
+                  : dataWarning && products.length === 0
+                    ? dataWarning
+                    : 'No products match this category and search.'
+              }
+              onAdd={beginAdd}
+            />
+          </Activity>
+        ))}
       </section>
       <ReceiptRail
         lines={receiptLines}

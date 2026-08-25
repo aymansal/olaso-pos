@@ -374,6 +374,9 @@ installed React 19 `Activity` boundary: visible screens run their normal
 effects; hidden screens preserve existing DOM, loaded images, user input,
 selection, filters, report period, and scroll while React cleans up their
 effects and subscriptions. Unvisited or role-forbidden screens never mount.
+POS applies the same installed boundary to its already visited live product
+categories, preserving their existing image elements across category changes
+without eagerly mounting unvisited categories or retaining deleted ones.
 
 Each saved-data hook remembers its last successful authenticated revision and
 request inputs. Revealing an unchanged screen issues no SQLite or cloud read;

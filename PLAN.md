@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 done, HARD-02 pending | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 follow-up in progress, HARD-02 pending | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -220,13 +220,10 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-NAV-01 is complete and pushed directly to `origin/main` as
-`0e79396d56215f193d80dafd3405518f1e26f2d3`. Its official research, retained
-role-safe screens, 30 zero-query/zero-image physical switches, offline staff
-handoff, foreground clock, exact viewport, clean logs, Android build, focused
-checks, and Graphify pass. Stop with no card in progress. When the owner asks
-to continue, activate only HARD-02: research official Android and Capacitor
-splash/icon guidance, then replace the generic startup with the approved
-continuous cream/green OLASO launch and an appropriate app icon. Finish the
-original hardening sequence before OPTIONS-01 through OPTIONS-04 and final
-owner-led polish.
+NAV-01 is reopened for its owner-reproduced category-image reconstruction bug.
+The installed 140-task Android beta now preserves the same nine Coffee image
+elements through Coffee → Bakery → Reports → POS → Coffee, five repeat cycles,
+and the identical offline cycle with zero added/removed images. Focused
+regressions, exact 1340 × 800 geometry, product touch actions, clean app logs,
+and Graphify pass. Commit/push the verified correction and record its SHA;
+HARD-02 remains pending until the owner requests the next card.

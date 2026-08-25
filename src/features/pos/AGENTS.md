@@ -30,6 +30,9 @@ owns the shared Header and TopNavigation currently used across the application.
 - Product and category assets are content; do not recreate them with UI icons.
 - All interface icons come from Phosphor.
 - Search, category, and cart behavior must stay local during service.
+- Preserve already visited live category grids and their prepared product
+  images using the installed React Activity boundary; do not eagerly mount
+  unvisited categories or retain a removed category's product grid.
 - Products released by category deletion remain sellable under a neutral
   `Uncategorized` category while any such active product exists.
 - A deliberate staff switch confirms only a non-empty cart and preserves it for
