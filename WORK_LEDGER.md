@@ -25,7 +25,7 @@ remaining goal and card sequence.
 | DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
 | HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
 | NAV-01 — Retained smooth navigation | done — `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix physically verified |
-| HARD-02 — Branded Android launch and approved-artwork app icon | done — pending SHA after push |
+| HARD-02 — Branded Android launch and approved-artwork app icon | done — `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main` |
 | HARD-03 through HARD-07 — Startup, performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -109,16 +109,12 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- HARD-02 is physically verified on Galaxy Tab A9 SM-X115. Approved sequence
-  works: plain cream native splash, then one green web OLASO with bouncing
-  dots, then Lock. No `Starting Olaso…`, no duplicate logo, no white frame,
-  no Chromium tile-memory / Capacitor / AndroidRuntime / console errors.
-  Launcher remains full white-on-sage. Exact viewport 1340 × 800. Five-run
-  lock-ready medians: cold 1,911 ms (budget ≤ 2,000), warm 574 ms (budget ≤
-  1,000). Splash handoff uses SplashScreen exit overlay + Capacitor
-  `onPageCommitVisible`. Exact next action: Graphify refresh, commit/push to
-  `origin/main`, record the full SHA, leave owner POS ready, stop before
-  HARD-03.
+- HARD-02 is done and pushed to `origin/main` as
+  `632dc101258ac3226eb24f1041afe7faed2aa78c`. Physical Galaxy Tab A9 proof
+  covered cream native splash, one green web OLASO + dots, white-on-sage
+  launcher, clean logs, and lock-ready medians cold 1,911 ms / warm 574 ms.
+- No card is in progress. Exact next action: stop. Activate HARD-03 only when
+  the owner asks.
 - NAV-01's category-image correction is committed and pushed directly to
   `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   The physical online/offline original sequence, five repeat cycles, focused
@@ -1228,6 +1224,12 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — HARD-02 pushed to origin/main
+
+- Published `HARD-02: brand cream launch and white-on-sage icon` as
+  `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main`.
+- Card complete. HARD-03 stays pending until the owner asks.
 
 ### 2026-08-25 — HARD-02 physical launch continuity verified
 

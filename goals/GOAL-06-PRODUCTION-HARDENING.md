@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; HARD-02 verified, pending push closeout
+**Status:** active; HARD-02 done on origin/main; no card in progress
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -161,7 +161,7 @@ that polished product.
 | DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | done | `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main`; official Android research, schema-19 migration, immutable history, local/cloud deletion, stale-copy and ordering root fixes, owner/cashier security, full regression/build, physical flight-mode/restart/exact-once reconnect, 1340 × 800 screens, clean logs, and Graphify pass |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | done | `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main`; official research, five physical cold/warm runs, 30 navigation samples, offline/history proof, native lifecycle root fix, full regression/build, clean tablet logs, and Graphify pass |
 | NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | done | `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix, installed 140-task beta, exact original physical online/offline sequence, five zero-rebuild repeats, focused regressions, clean logs, and Graphify pass |
-| HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | done | Physical Galaxy Tab A9 proof: cream native splash, one green web OLASO + dots, white-on-sage launcher, no tile-memory errors, lock-ready medians cold 1911 ms / warm 574 ms |
+| HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | done | `632dc101258ac3226eb24f1041afe7faed2aa78c` on `origin/main`; cream native splash, one green web OLASO + dots, white-on-sage launcher, no tile-memory errors, lock-ready medians cold 1911 ms / warm 574 ms |
 | HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | pending | Pre-bridge event error fixed early under mandatory bug rule; full startup orchestration/matrix remains |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
 | HARD-05 | Implement and rehearse export, backup, restore, and corrupt-data recovery | pending | — |
@@ -659,13 +659,9 @@ owner verification; every authorized screen remained usable without internet.
 
 ## Current checkpoint
 
-- HARD-02 is verified on the physical Galaxy Tab A9 SM-X115. Native launch is
-  plain cream; one green web OLASO plus bouncing dots follows; launcher remains
-  the accepted full white-on-sage mark. SplashScreen exit overlay releases on
-  Capacitor `onPageCommitVisible` or page failure. No Chromium tile-memory,
-  Capacitor, AndroidRuntime, or console errors. Five-run lock-ready medians:
-  cold 1,911 ms and warm 574 ms at exact 1340 × 800. Exact next action: commit
-  and push HARD-02 to `origin/main`, record the SHA, then stop before HARD-03.
+- HARD-02 is done and pushed to `origin/main` as
+  `632dc101258ac3226eb24f1041afe7faed2aa78c`. Exact next action: stop. Activate
+  HARD-03 only when the owner requests startup orchestration.
 - NAV-01's verified category-image root fix is committed and pushed directly
   to `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
   No card is in progress. Exact next action: stop and keep HARD-02 pending
