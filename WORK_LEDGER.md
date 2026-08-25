@@ -24,7 +24,7 @@ remaining goal and card sequence.
 | LOCAL-04 — Offline management closeout | done — `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main` |
 | DELETE-01 — Safe permanent category/product/ingredient/staff deletion | done — `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main` |
 | HARD-01 — Physical startup/navigation baseline | done — `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main` |
-| NAV-01 — Retained smooth navigation | in progress — category-image root fix physically verified; awaiting direct main commit/push and SHA record |
+| NAV-01 — Retained smooth navigation | done — `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix physically verified |
 | HARD-02 through HARD-07 — Launch, performance, recovery, release, and readiness | pending |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — after the original technical-hardening sequence |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
@@ -108,6 +108,12 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- NAV-01's category-image correction is committed and pushed directly to
+  `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
+  The physical online/offline original sequence, five repeat cycles, focused
+  checks, installed Android beta, clean app logs, and Graphify all pass. No
+  card is in progress. Exact next action: stop; activate HARD-02 only when the
+  owner asks to continue.
 - NAV-01's reopened category-image root fix is complete on the physical Galaxy
   Tab A9. Coffee → Bakery → Reports → POS → Coffee preserves all nine original
   Coffee image objects; the first Bakery visit adds only its two new images,
@@ -133,8 +139,8 @@ remaining goal and card sequence.
   installed; Bakery product add/remove works; internet and the empty Coffee
   cart are restored; focused Capacitor/chromium/Android app errors are absent.
 - Graphify is refreshed to 3,338 nodes, 7,629 edges, and 161 communities.
-- Exact next action: commit/push the verified NAV-01 follow-up directly to
-  `origin/main`, record its pushed SHA, and leave HARD-02 pending.
+- NAV-01 implementation push and SHA recording are complete; HARD-02 remains
+  pending until the owner explicitly requests the next card.
 - NAV-01 is complete and pushed directly to `origin/main` as
   `0e79396d56215f193d80dafd3405518f1e26f2d3`. No card is in progress;
   HARD-02 remains pending until the owner explicitly asks to continue.
@@ -1211,6 +1217,18 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-25 — NAV-01 category-image correction pushed to main
+
+- Committed and pushed the complete physically verified category-retention
+  correction directly to `origin/main` as
+  `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
+- Five original online loops and one flight-mode loop rebuild/remove zero
+  Coffee images; all nine original objects survive. The 140-task installed
+  Android beta, focused regressions, touch behavior, exact viewport, restored
+  internet/empty cart, clean app logs, and refreshed Graphify all pass.
+- Exact next action: stop with no card in progress. HARD-02 remains the next
+  card, pending the owner's explicit instruction.
 
 ### 2026-08-25 — NAV-01 category-image root fix verified on the tablet
 

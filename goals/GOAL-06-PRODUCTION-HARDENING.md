@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; NAV-01 category-image follow-up in progress, HARD-02 pending
+**Status:** active; NAV-01 done, HARD-02 pending
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -160,7 +160,7 @@ that polished product.
 | LOCAL-04 | Close out flight-mode/restart/reconnect/exact-once management behavior | done | `7f240210c2a591649f7fabd3c3fe51fb9db72df3` on `origin/main`; full automated/physical matrix, schema 18 actor attribution, ordered/repeat sync, role isolation, stale-cache cleanup, hidden-wake focus fix, exact viewport, clean logs, Graphify, and QA cleanup pass |
 | DELETE-01 | Add safe permanent category, product, ingredient, and staff deletion | done | `dc86855798041f1e772a7ca3d8729841549faa9d` on `origin/main`; official Android research, schema-19 migration, immutable history, local/cloud deletion, stale-copy and ordering root fixes, owner/cashier security, full regression/build, physical flight-mode/restart/exact-once reconnect, 1340 × 800 screens, clean logs, and Graphify pass |
 | HARD-01 | Establish controlled startup, APK, WebView, bundle, and readiness baselines | done | `0e0042aeb2da5f9df534fa0f5184d176965d3f8d` on `origin/main`; official research, five physical cold/warm runs, 30 navigation samples, offline/history proof, native lifecycle root fix, full regression/build, clean tablet logs, and Graphify pass |
-| NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | in progress | Category-image root fix passes focused regressions, installed 140-task beta, exact original physical online/offline sequence, five zero-rebuild repeats, clean logs, and Graphify; awaiting direct-main implementation push and SHA record |
+| NAV-01 | Retain visited screens and remove repeated page/data/image reconstruction | done | `4890e9f6055cbb1b52a2ab1402576bf4f14adf05` on `origin/main`; owner-reported category-image root fix, installed 140-task beta, exact original physical online/offline sequence, five zero-rebuild repeats, focused regressions, clean logs, and Graphify pass |
 | HARD-02 | Finalize the app icon and continuous branded launch with optional measured motion | pending | — |
 | HARD-03 | Consolidate safe startup gating and revalidate lifecycle readiness | pending | Pre-bridge event error fixed early under mandatory bug rule; full startup orchestration/matrix remains |
 | HARD-04 | Optimize only measured modules, assets, decoding, and sync scheduling | pending | — |
@@ -659,6 +659,10 @@ owner verification; every authorized screen remained usable without internet.
 
 ## Current checkpoint
 
+- NAV-01's verified category-image root fix is committed and pushed directly
+  to `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
+  No card is in progress. Exact next action: stop and keep HARD-02 pending
+  until the owner requests its approved branded launch/app-icon work.
 - NAV-01's reopened POS category bug is root-fixed and physically verified.
   Coffee → Bakery → Reports → POS → Coffee retains all nine original Coffee
   image elements; five repeat cycles and the same offline flight-mode sequence
@@ -676,8 +680,7 @@ owner verification; every authorized screen remained usable without internet.
   production build, complete installed 140-task Android beta, Bakery
   add/remove, restored empty cart/internet, clean app logs, and Graphify
   (3,338 nodes/7,629 edges) all pass.
-- Exact next action: commit/push the verified NAV-01 follow-up directly to
-  `origin/main`, record its SHA, and stop with HARD-02 pending.
+- The implementation push and SHA record are complete; HARD-02 stays pending.
 - Goal 06 remains active on `main`; LOCAL-01 through LOCAL-04, DELETE-01,
   HARD-01, and NAV-01 are complete. NAV-01 is pushed to `origin/main` as
   `0e79396d56215f193d80dafd3405518f1e26f2d3`. No card is in progress;
@@ -770,6 +773,16 @@ owner verification; every authorized screen remained usable without internet.
   HARD-02 alone.
 
 ## Planning journal
+
+### 2026-08-25 — NAV-01 category correction pushed directly to main
+
+- Pushed the physically verified category-image root fix directly to
+  `origin/main` as `4890e9f6055cbb1b52a2ab1402576bf4f14adf05`.
+- The original Coffee → Bakery → Reports → POS → Coffee sequence, five
+  repeated cycles, and physical flight-mode reproduction preserve all nine
+  original Coffee images with zero reconstruction. Focused checks, exact
+  viewport, installed 140-task beta, clean app logs, and Graphify pass.
+- No card is active. HARD-02 remains pending until the owner asks to continue.
 
 ### 2026-08-25 — NAV-01 category retention physically verified
 

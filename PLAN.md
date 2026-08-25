@@ -105,7 +105,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 follow-up in progress, HARD-02 pending | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; NAV-01 done, HARD-02 pending | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -220,10 +220,12 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-NAV-01 is reopened for its owner-reproduced category-image reconstruction bug.
-The installed 140-task Android beta now preserves the same nine Coffee image
-elements through Coffee → Bakery → Reports → POS → Coffee, five repeat cycles,
-and the identical offline cycle with zero added/removed images. Focused
-regressions, exact 1340 × 800 geometry, product touch actions, clean app logs,
-and Graphify pass. Commit/push the verified correction and record its SHA;
-HARD-02 remains pending until the owner requests the next card.
+NAV-01 and its owner-reported category-image correction are complete and pushed
+directly to `origin/main` as
+`4890e9f6055cbb1b52a2ab1402576bf4f14adf05`. The installed
+140-task Android beta preserves all nine original Coffee image elements through
+five online Coffee → Bakery → Reports → POS → Coffee cycles and the same
+offline cycle with zero image reconstruction. Focused checks, exact 1340 × 800
+viewport, product touch, clean app logs, and Graphify pass. Stop with no card
+in progress; when the owner requests the next card, activate only HARD-02 for
+the approved branded Android launch and app icon.
