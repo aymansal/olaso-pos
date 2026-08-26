@@ -13,6 +13,7 @@ import type {
   ManagedIngredient,
   ManagedModifierGroup,
   ManagedProduct,
+  ManagedProductCost,
   ManagedRecipeData,
   ManagedProductSize,
   ManagedChoiceSection,
@@ -36,6 +37,7 @@ interface ProductEditorPanelProps {
   choiceSections: ManagedChoiceSection[];
   products: ManagedProduct[];
   recipeData?: ManagedRecipeData;
+  productCost?: ManagedProductCost;
   isRecipeLoading: boolean;
   onSave: (input: ProductSaveInput) => Promise<void>;
   onSetStatus: (
@@ -80,6 +82,7 @@ export function ProductEditorPanel({
   choiceSections,
   products,
   recipeData,
+  productCost,
   isRecipeLoading,
   onSave,
   onSetStatus,
@@ -97,7 +100,6 @@ export function ProductEditorPanel({
   const [categoryId, setCategoryId] = useState('');
   const [priceMad, setPriceMad] = useState('0');
   const [available, setAvailable] = useState(true);
-  const [modifierGroupIds, setModifierGroupIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [showRecipe, setShowRecipe] = useState(false);
@@ -118,7 +120,6 @@ export function ProductEditorPanel({
     );
     setPriceMad(String((product?.basePriceCentimes ?? 0) / 100));
     setAvailable(product?.status !== 'unavailable');
-    setModifierGroupIds(product?.modifierGroupIds ?? []);
   }, [creating, defaultCategoryId, product?.id, product?.revision]);
 
   useEffect(() => {
@@ -148,7 +149,7 @@ export function ProductEditorPanel({
         basePriceCentimes: Math.round(Number(priceMad) * 100),
         status: available ? 'active' : 'unavailable',
         sortOrder: product?.sortOrder ?? nextSortOrder,
-        modifierGroupIds,
+        modifierGroupIds: [],
         expectedRevision: product?.revision,
       });
       setMessage('Changes saved.');
@@ -350,8 +351,12 @@ export function ProductEditorPanel({
         {choiceSections.map((section) => <span className={styles.option} key={section.id}><strong>{section.name}</strong><small>{section.values.length} choices</small></span>)}
         {!sizes.length && !choiceSections.length ? <small className={styles.emptyOptions}>No sizes or product choices yet.</small> : null}
       </div>
-      <p className={styles.legacyNote}>POS still uses legacy shared groups until the next update.</p>
-      <button type="button" className={styles.legacyGroups} onClick={() => setShowModifiers(true)}><SlidersHorizontal size={12} />Legacy POS groups</button>
+      {!sizes.length ? (
+        <>
+          <p className={styles.legacyNote}>Add sizes before selling. Legacy shared groups remain for older checkout rows only.</p>
+          <button type="button" className={styles.legacyGroups} onClick={() => setShowModifiers(true)}><SlidersHorizontal size={12} />Legacy POS groups</button>
+        </>
+      ) : null}
 
       <div className={`${styles.divider} ${styles.optionsDivider}`} />
       <div className={styles.recipeHeader}>
@@ -398,6 +403,17 @@ export function ProductEditorPanel({
           <ArrowRight size={11} weight="regular" aria-hidden="true" />
         </button>
       </div>
+      {productCost?.hasRecipe ? (
+        <p className={styles.costLine}>
+          {productCost.complete
+            && productCost.minimumCostCentimes !== undefined
+            && productCost.maximumCostCentimes !== undefined
+            ? productCost.minimumCostCentimes === productCost.maximumCostCentimes
+              ? `Ingredient cost ${formatMad(productCost.minimumCostCentimes)}`
+              : `Ingredient cost ${formatMad(productCost.minimumCostCentimes)}–${formatMad(productCost.maximumCostCentimes)}`
+            : 'Ingredient cost incomplete'}
+        </p>
+      ) : null}
       {message ? <p className={styles.notice}>{message}</p> : null}
       <button
         type="button"

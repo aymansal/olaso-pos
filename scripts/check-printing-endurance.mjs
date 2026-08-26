@@ -80,8 +80,7 @@ function seed(now) {
     INSERT INTO recipe_items
       (recipe_version_id, ingredient_id, quantity)
     VALUES
-      ('recipe-endurance-1', 'ingredient-coffee', 18),
-      ('recipe-endurance-1', 'ingredient-cup', 1);
+      ('recipe-endurance-1', 'ingredient-coffee', 18);
 
     INSERT INTO recipe_size_quantities
       (recipe_version_id, ingredient_id, product_size_id, size_name_snapshot,
@@ -89,12 +88,8 @@ function seed(now) {
     VALUES
       ('recipe-endurance-1', 'ingredient-coffee', 'size-endurance-reg',
        'Regular', 18),
-      ('recipe-endurance-1', 'ingredient-cup', 'size-endurance-reg',
-       'Regular', 1),
       ('recipe-endurance-1', 'ingredient-coffee', 'size-endurance-large',
-       'Large', 24),
-      ('recipe-endurance-1', 'ingredient-cup', 'size-endurance-large',
-       'Large', 1);
+       'Large', 24);
 
     INSERT INTO device_settings (key, value, updated_at)
     VALUES
@@ -149,7 +144,6 @@ function printOperations({ fail = false } = {}) {
 
 const startedAt = Date.parse('2026-08-21T20:00:00.000Z');
 const saleIds = [];
-let totalQuantity = 0;
 let coffeeUsed = 0;
 
 try {
@@ -190,7 +184,6 @@ try {
     );
     database.exec('COMMIT');
     saleIds.push(sale.localSaleId);
-    totalQuantity += quantity;
     coffeeUsed += quantity * (large ? 24 : 18);
 
     const firstAttempt = await attemptSaleReceiptPrint(
@@ -239,7 +232,7 @@ try {
   ).get();
   assert.equal(counts.sales, 20);
   assert.equal(counts.items, 20);
-  assert.equal(counts.movements, 40);
+  assert.equal(counts.movements, 20);
   assert.equal(counts.outbox, 20);
   assert.equal(counts.receipts, 20);
   assert.equal(counts.print_attempts, 26);
@@ -252,7 +245,7 @@ try {
     ).all().map((row) => [row.id, row.balance]),
   );
   assert.equal(balances['ingredient-coffee'], 100000 - coffeeUsed);
-  assert.equal(balances['ingredient-cup'], 10000 - totalQuantity);
+  assert.equal(balances['ingredient-cup'], 10000);
 
   console.log(JSON.stringify({
     sales: counts.sales,

@@ -236,6 +236,7 @@ export function ProductsScreen({
         choiceSections={management.choiceSections}
         products={management.products}
         recipeData={management.recipeData}
+        productCost={management.productCost}
         isRecipeLoading={management.isRecipeLoading}
         onSave={saveProduct}
         onSetStatus={setProductStatus}

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { execFileSync, execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
@@ -19,6 +19,7 @@ import {
 } from '../src/data/printState.ts';
 import { addProduct } from '../src/features/pos/posSession.ts';
 import { localMigrations } from '../src/data/schema.ts';
+import { ownerSession } from './owner-session.mjs';
 
 const database = new DatabaseSync(':memory:');
 database.exec('PRAGMA foreign_keys = ON');
@@ -107,8 +108,7 @@ database.exec(`
     (recipe_version_id, ingredient_id, quantity)
   VALUES
     ('recipe-cappuccino-1', 'ingredient-coffee', 18),
-    ('recipe-cappuccino-1', 'ingredient-whole', 200),
-    ('recipe-cappuccino-1', 'ingredient-cup', 1);
+    ('recipe-cappuccino-1', 'ingredient-whole', 200);
 
   INSERT INTO product_sizes
     (id, product_id, key, name, price_centimes, sort_order, is_default,
@@ -182,14 +182,14 @@ database.exec('COMMIT');
 assert.equal(completed.receipt.totalCentimes, 2100);
 assert.equal(completed.receipt.cashierName, 'Test cashier');
 assert.equal(completed.receipt.costStatus, 'complete');
-assert.equal(completed.receipt.ingredientCostCentimes, 219);
-assert.equal(completed.receipt.lines[0].ingredientCostCentimes, 219);
+assert.equal(completed.receipt.ingredientCostCentimes, 218);
+assert.equal(completed.receipt.lines[0].ingredientCostCentimes, 218);
 const persistedCost = database.prepare(
   `SELECT actor_profile_id, ingredient_cost_centimes, cost_status FROM sales
    WHERE local_sale_id = 'local-sale-check'`,
 ).get();
 assert.equal(persistedCost.actor_profile_id, 'profile-test-cashier');
-assert.equal(persistedCost.ingredient_cost_centimes, 219);
+assert.equal(persistedCost.ingredient_cost_centimes, 218);
 assert.equal(persistedCost.cost_status, 'complete');
 const incompleteMenu = await loadOperationalCache(adapter);
 const incomplete = prepareSale(
@@ -236,16 +236,16 @@ assert.equal(
 );
 assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count,
-  3,
+  2,
 );
 assert.equal(
   database.prepare(
     "SELECT COUNT(*) AS count FROM stock_movements WHERE actor_label = 'Test cashier'",
   ).get().count,
-  3,
+  2,
 );
 
-const correctionIds = ['local-correction-check', 'cancellation-operation-check', 'cancellation-movement-1', 'cancellation-movement-2', 'cancellation-movement-3'];
+const correctionIds = ['local-correction-check', 'cancellation-operation-check', 'cancellation-movement-1', 'cancellation-movement-2'];
 let correctionId = 0;
 database.exec('BEGIN IMMEDIATE');
 const localCorrection = await cancelLocalSale(
@@ -269,7 +269,7 @@ assert.equal(
   database.prepare('SELECT actor_profile_id FROM sale_corrections').get().actor_profile_id,
   'profile-test-cashier',
 );
-assert.equal(database.prepare("SELECT COUNT(*) AS count FROM stock_movements WHERE movement_type = 'cancellation'").get().count, 3);
+assert.equal(database.prepare("SELECT COUNT(*) AS count FROM stock_movements WHERE movement_type = 'cancellation'").get().count, 2);
 assert.equal(database.prepare("SELECT local_stock_delta FROM ingredients WHERE id = 'ingredient-oat'").get().local_stock_delta, 0);
 await assert.rejects(
   cancelLocalSale(adapter, {
@@ -346,7 +346,7 @@ assert.equal(printedState.last_print_bytes_written, 941);
 assert.equal(printedState.last_print_total_ms, 12);
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sales').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM sale_items').get().count, 1);
-assert.equal(database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count, 6);
+assert.equal(database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count, 4);
 assert.equal(database.prepare('SELECT COUNT(*) AS count FROM outbox').get().count, 2);
 
 const cachedMenu = {
@@ -427,7 +427,6 @@ const rollbackIds = [
   'rollback-item',
   'rollback-movement-1',
   'rollback-movement-2',
-  'rollback-movement-3',
 ];
 let rollbackId = 0;
 database.exec('BEGIN IMMEDIATE');
@@ -447,7 +446,7 @@ assert.equal(
 );
 assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get().count,
-  6,
+  4,
 );
 assert.equal(
   database
@@ -469,19 +468,9 @@ const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8')
 const convexUrl = localEnv.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
 assert(convexUrl, 'VITE_CONVEX_URL is missing from .env.local');
 const client = new ConvexHttpClient(convexUrl);
-const ownerPin = process.env.OLASO_OWNER_PIN;
-assert(/^\d{6}$/.test(ownerPin ?? ''), 'OLASO_OWNER_PIN must be a six-digit test restore PIN');
-const seeded = JSON.parse(execSync('npx convex run seed:verify', {
-  cwd: projectRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
-}));
-const owner = await client.action(api.identity.signIn, {
-  staffProfileId: seeded.ownerProfileId,
-  pin: ownerPin,
-  deviceId: 'device-app06-check',
-});
-const sessionArgs = { sessionToken: owner.token, deviceId: 'device-app06-check' };
+const sessionArgs = await ownerSession(client, projectRoot, 'device-app06-check');
 await client.action(api.identity.validateSession, {
-  token: owner.token,
+  token: sessionArgs.sessionToken,
   deviceId: sessionArgs.deviceId,
 });
 {
@@ -619,8 +608,8 @@ await client.action(api.identity.validateSession, {
   assert.equal(verification.costStatus, 'complete');
   assert.equal(verification.ingredientCostCentimes, ingredientCostCentimes);
   assert.equal(verification.lineCount, 1);
-  assert.equal(verification.movementCount, 3);
-  assert.deepEqual(verification.movementDeltas, [-200, -18, -1]);
+  assert.equal(verification.movementCount, 2);
+  assert.deepEqual(verification.movementDeltas, [-200, -18]);
   const orders = await client.query(api.sales.listOrders, {
     ...sessionArgs,
     limit: 20,
@@ -644,7 +633,7 @@ await client.action(api.identity.validateSession, {
   assert.equal(balance(after, 'Coffee beans'), balance(before, 'Coffee beans') - 18);
   assert.equal(balance(after, 'Whole milk'), balance(before, 'Whole milk'));
   assert.equal(balance(after, 'Oat milk'), balance(before, 'Oat milk') - 200);
-  assert.equal(balance(after, 'Paper cups'), balance(before, 'Paper cups') - 1);
+  assert.equal(balance(after, 'Paper cups'), balance(before, 'Paper cups'));
   const reportQuantity = (report, name) =>
     report.current.ingredientTotals.find(
       (ingredient) => ingredient.ingredientName === name,
@@ -663,7 +652,7 @@ await client.action(api.identity.validateSession, {
   );
   assert.equal(
     afterReport.current.ingredientUsageEventCount,
-    beforeReport.current.ingredientUsageEventCount + 3,
+    beforeReport.current.ingredientUsageEventCount + 2,
   );
   assert.equal(
     reportQuantity(afterReport, 'Coffee beans'),
@@ -675,7 +664,7 @@ await client.action(api.identity.validateSession, {
   );
   assert.equal(
     reportQuantity(afterReport, 'Paper cups'),
-    reportQuantity(beforeReport, 'Paper cups') + 1,
+    reportQuantity(beforeReport, 'Paper cups'),
   );
   assert.equal(
     reportQuantity(afterReport, 'Whole milk'),

@@ -245,5 +245,4 @@ and the owner accepts the production workflow.
 ## Exact next action
 
 OPTIONS-02 owner editor and independent copying is complete on closeout.
-Exact next action: OPTIONS-04 ingredient-cost reconciliation and offline
-closeout when the owner continues.
+Exact next action: POLISH-01 owner-led UI review when the owner continues.

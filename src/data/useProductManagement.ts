@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ManagedCategory, ManagedChoiceSection, ManagedIngredient, ManagedModifierGroup, ManagedProduct, ManagedProductSize, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
+import type { ManagedCategory, ManagedChoiceSection, ManagedIngredient, ManagedModifierGroup, ManagedProduct, ManagedProductCost, ManagedProductSize, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
 import {
   deleteLocalCategory,
   deleteLocalProduct,
@@ -17,6 +17,7 @@ import {
   saveLocalProductSize,
 } from './localProductConfiguration.ts';
 import { loadOperationalCache, type OperationalCacheSnapshot } from './operationalCache.ts';
+import { computeProductCostRange } from '../lib/productCostRange.ts';
 import { useReconnect } from './reconnectContext.tsx';
 import { useStaffSession } from './sessionContext.tsx';
 
@@ -109,11 +110,58 @@ export function useProductManagement(selectedProductId?: string) {
           })),
       })),
   }));
+  const productCost: ManagedProductCost | undefined = selectedProductId && cache
+    ? (() => {
+      const currentId = products.find((product) => product.id === selectedProductId)
+        ?.currentRecipeVersionId;
+      if (!currentId) return { complete: false, hasRecipe: false };
+      const sections = (cache.productChoiceSections ?? []).filter(
+        (section) => section.productId === selectedProductId,
+      );
+      const sectionIds = new Set(sections.map((section) => section.id));
+      const values = (cache.productChoiceValues ?? []).filter((value) =>
+        sectionIds.has(value.sectionId),
+      );
+      const valueIds = new Set(values.map((value) => value.id));
+      const effects = (cache.productChoiceValueEffects ?? []).filter((effect) =>
+        valueIds.has(effect.valueId),
+      );
+      const effectIds = new Set(effects.map((effect) => effect.id));
+      return computeProductCostRange({
+        sizes: (cache.productSizes ?? []).filter(
+          (size) => size.productId === selectedProductId,
+        ),
+        recipeItems: (cache.recipeItems ?? [])
+          .filter((item) => item.recipeVersionId === currentId)
+          .map((item) => ({
+            ingredientId: item.ingredientId,
+            quantity: item.quantity,
+          })),
+        sizeQuantities: (cache.recipeSizeQuantities ?? []).filter(
+          (row) => row.recipeVersionId === currentId,
+        ),
+        sections,
+        sectionSizeIds: (cache.productChoiceSectionSizes ?? []).filter((link) =>
+          sectionIds.has(link.sectionId),
+        ),
+        values,
+        valueSizes: (cache.productChoiceValueSizes ?? []).filter((row) =>
+          valueIds.has(row.valueId),
+        ),
+        effects,
+        effectSizes: (cache.productChoiceValueEffectSizes ?? []).filter((row) =>
+          effectIds.has(row.effectId),
+        ),
+        ingredients: cache.ingredients,
+      });
+    })()
+    : undefined;
   const save = async <T,>(operation: Promise<T>) => {
     const result = await operation; await reload(); void reconnect.run('automatic').catch(() => undefined); return result;
   };
   return {
     categories, products, modifierGroups, ingredients, recipeData, productSizes, choiceSections,
+    productCost,
     isLoading: !cache && !error, isRecipeLoading: false, error: error || undefined,
     saveCategory: (input: Parameters<typeof saveLocalCategory>[1]) => save(saveLocalCategory(context, input)),
     setCategoryArchived: (id: string, archived: boolean, revision: number) => save(setLocalCategoryArchived(context, id, archived, revision)),

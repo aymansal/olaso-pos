@@ -413,7 +413,6 @@ const productSeeds: readonly ProductSeed[] = [
     modifierGroupKeys: coffeeModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -427,7 +426,6 @@ const productSeeds: readonly ProductSeed[] = [
     modifierGroupKeys: coffeeModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -442,7 +440,6 @@ const productSeeds: readonly ProductSeed[] = [
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -457,7 +454,6 @@ const productSeeds: readonly ProductSeed[] = [
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -473,7 +469,6 @@ const productSeeds: readonly ProductSeed[] = [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
       { ingredientKey: 'cocoa-powder', quantity: 12 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -488,7 +483,6 @@ const productSeeds: readonly ProductSeed[] = [
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -502,7 +496,6 @@ const productSeeds: readonly ProductSeed[] = [
     modifierGroupKeys: coffeeModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 20 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -517,7 +510,6 @@ const productSeeds: readonly ProductSeed[] = [
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -533,7 +525,6 @@ const productSeeds: readonly ProductSeed[] = [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
       { ingredientKey: 'caramel-syrup', quantity: 20 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -547,7 +538,6 @@ const productSeeds: readonly ProductSeed[] = [
     recipe: [
       { ingredientKey: 'matcha-powder', quantity: 4 },
       { ingredientKey: 'whole-milk', quantity: 200 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -561,7 +551,6 @@ const productSeeds: readonly ProductSeed[] = [
     recipe: [
       { ingredientKey: 'hojicha-powder', quantity: 5 },
       { ingredientKey: 'whole-milk', quantity: 200 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -575,7 +564,6 @@ const productSeeds: readonly ProductSeed[] = [
     recipe: [
       { ingredientKey: 'lemon-juice', quantity: 80 },
       { ingredientKey: 'sparkling-water', quantity: 250 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -588,7 +576,6 @@ const productSeeds: readonly ProductSeed[] = [
     modifierGroupKeys: [],
     recipe: [
       { ingredientKey: 'soft-ice-cream', quantity: 1 },
-      { ingredientKey: 'paper-cup', quantity: 1 },
     ],
   },
   {
@@ -1602,9 +1589,9 @@ export const verify = internalQuery({
 
     if (
       !cappuccinoRecipe ||
-      cappuccinoRecipeItems.length !== 3 ||
+      cappuccinoRecipeItems.length !== 2 ||
       sampleSaleItems.length !== 2 ||
-      sampleMovements.length !== 3 ||
+      sampleMovements.length !== 2 ||
       !sampleMetric ||
       sampleMetric.orderCount < 2 ||
       seededStaff.length !== 2 ||

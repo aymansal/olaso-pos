@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { resolveProductConfiguration } from '../src/lib/productConfiguration.ts';
+import { computeProductCostRange } from '../src/lib/productCostRange.ts';
 
 const sizeRegular = {
   id: 'size-regular',
@@ -511,3 +512,98 @@ assert.throws(
 );
 
 console.log('Product configuration resolver checks passed.');
+
+const valued = [
+  {
+    id: 'coffee',
+    currentStockQuantity: 1000,
+    inventoryValueCentimes: 50_000,
+    costStatus: 'complete',
+  },
+  {
+    id: 'water',
+    currentStockQuantity: 10_000,
+    inventoryValueCentimes: 1_000,
+    costStatus: 'complete',
+  },
+  {
+    id: 'cup',
+    currentStockQuantity: 500,
+    inventoryValueCentimes: 25_000,
+    costStatus: 'complete',
+  },
+  {
+    id: 'oat',
+    currentStockQuantity: 5_000,
+    inventoryValueCentimes: 40_000,
+    costStatus: 'complete',
+  },
+];
+
+// Cost range across size + optional oat replace.
+{
+  const cost = computeProductCostRange({
+    sizes: [sizeRegular, sizeLarge],
+    recipeItems,
+    sizeQuantities: [
+      { ingredientId: 'coffee', productSizeId: sizeLarge.id, quantity: 24 },
+    ],
+    sections: [milkSection],
+    sectionSizeIds: [],
+    values: [oat, whole],
+    valueSizes: [],
+    effects: effects.filter((effect) => effect.id === 'effect-replace-oat'),
+    effectSizes: [],
+    ingredients: valued,
+  });
+  assert.equal(cost.hasRecipe, true);
+  assert.equal(cost.complete, true);
+  assert.ok(cost.minimumCostCentimes !== undefined);
+  assert.ok(cost.maximumCostCentimes !== undefined);
+  assert.ok(cost.minimumCostCentimes <= cost.maximumCostCentimes);
+  // Base regular (coffee+water+cup) vs oat replace (coffee+oat+cup) and large coffee.
+  assert.notEqual(cost.minimumCostCentimes, cost.maximumCostCentimes);
+}
+
+// Incomplete valuation marks the product cost incomplete.
+{
+  const cost = computeProductCostRange({
+    sizes: [sizeRegular],
+    recipeItems,
+    sizeQuantities: [],
+    sections: [],
+    sectionSizeIds: [],
+    values: [],
+    valueSizes: [],
+    effects: [],
+    effectSizes: [],
+    ingredients: valued.map((ingredient) =>
+      ingredient.id === 'coffee'
+        ? { ...ingredient, costStatus: 'incomplete', inventoryValueCentimes: undefined }
+        : ingredient
+    ),
+  });
+  assert.equal(cost.hasRecipe, true);
+  assert.equal(cost.complete, false);
+  assert.deepEqual(cost.missingIngredientIds, ['coffee']);
+}
+
+// No recipe / sizes → hasRecipe false.
+{
+  const cost = computeProductCostRange({
+    sizes: [],
+    recipeItems,
+    sizeQuantities: [],
+    sections: [],
+    sectionSizeIds: [],
+    values: [],
+    valueSizes: [],
+    effects: [],
+    effectSizes: [],
+    ingredients: valued,
+  });
+  assert.equal(cost.hasRecipe, false);
+  assert.equal(cost.complete, false);
+}
+
+console.log('Product cost range checks passed.');

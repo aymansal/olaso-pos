@@ -34,7 +34,7 @@ remaining goal and card sequence.
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | done — `ebd3ac0a349ad69c8242f5f8718d3bae63652318` on `origin/main` |
 | OPTIONS-02 — Custom product choices and independent copying | done — `6f072c64074b85ad958e4a1227fd14854e5afcc9` on `origin/main` |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | done — `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962` on `origin/main` |
-| OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
+| OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | done — pending SHA on push |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending |
 | HARD-08 — Final endurance and acceptance | pending |
 
@@ -113,8 +113,15 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- OPTIONS-04 is complete pending commit/push SHA recording. Honest product
+  cost range via `computeProductCostRange` (cap 64 combos); paper-cup out of
+  recipes; unused `recipes.getCost` removed; ProductEditor saves empty
+  modifierGroupIds. Tab A9: ingredient cost line, online/offline sale,
+  restart/Orders, cashier nav, 1340×800, clean console. Temporary signed
+  debuggable release used for CDP only; source `debuggable false` restored.
+  Exact next action: commit `OPTIONS-04: …`, push `origin/main`, record SHA,
+  stop (OPTIONS sequence complete; POLISH-01 only when owner asks).
 - OPTIONS-03 is on `origin/main` as `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962`.
-  Exact next action: stop; ask before OPTIONS-04.
 - OPTIONS-02 is on `origin/main` as `6f072c64074b85ad958e4a1227fd14854e5afcc9`.
 - OPTIONS-01 is on `origin/main` as `ebd3ac0a349ad69c8242f5f8718d3bae63652318`.
 - HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
@@ -1236,6 +1243,17 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-26 — OPTIONS-04 honest costs and packaging closeout
+
+- Android research: cost stays in JS (`costs.ts` + `productCostRange.ts`);
+  Capacitor SQLite transactions only; no native cost engine.
+- `ManagedProductCost` range (≤64 combos) in Product editor; no GP/margin.
+- Removed paper-cup from seed/sale recipes; kept purchasable ingredient.
+- Deleted unused `recipes.getCost`; editor stops linking modifier groups;
+  operational modifier snapshot kept for legacy/pending checkout.
+- Tab A9: cost line, offline/online sale, restart, cashier nav, 1340×800.
+- Exact next action: commit/push; OPTIONS sequence done; ask before POLISH-01.
 
 ### 2026-08-26 — OPTIONS-03 cashier selection closeout
 

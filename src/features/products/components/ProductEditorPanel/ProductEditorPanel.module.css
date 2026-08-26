@@ -517,9 +517,21 @@
   opacity: 0.42;
 }
 
+.costLine {
+  position: absolute;
+  top: 586px;
+  left: 22px;
+  width: 396px;
+  margin: 0;
+  color: var(--olaso-text-meta);
+  text-align: center;
+  font-size: 8px;
+  font-weight: 600;
+}
+
 .notice {
   position: absolute;
-  top: 588px;
+  top: 600px;
   left: 22px;
   width: 396px;
   margin: 0;
