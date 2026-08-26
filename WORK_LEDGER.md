@@ -33,7 +33,7 @@ remaining goal and card sequence.
 | HARD-07 — Readiness review | done — `bb9279350c95779b1503964bb8dd80d4322c2a3c` on `origin/main` |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | done — `ebd3ac0a349ad69c8242f5f8718d3bae63652318` on `origin/main` |
 | OPTIONS-02 — Custom product choices and independent copying | done — `6f072c64074b85ad958e4a1227fd14854e5afcc9` on `origin/main` |
-| OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | done — pending SHA on push |
+| OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | done — `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962` on `origin/main` |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending |
 | HARD-08 — Final endurance and acceptance | pending |
@@ -113,15 +113,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- OPTIONS-03 is complete pending commit/push SHA recording. CartLine uses
-  `sizeId` + `choiceValueIds`; selection dialog covers sizes and product-owned
-  sections; `prepareSale` / `sales.accept` call `resolveProductConfiguration`;
-  migration 21 size snapshots; cloud receiptSnapshot now includes `sizeName`.
-  Tab A9: Large+Extra cream cart and Orders detail, offline sale, restart,
-  reconnect, cashier nav POS+Orders only, 1340×800. Temporary signed
-  debuggable release used for CDP only; source `debuggable false` restored.
-  Exact next action: commit `OPTIONS-03: …`, push `origin/main`, record SHA,
-  stop and ask before OPTIONS-04.
+- OPTIONS-03 is on `origin/main` as `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962`.
+  Exact next action: stop; ask before OPTIONS-04.
 - OPTIONS-02 is on `origin/main` as `6f072c64074b85ad958e4a1227fd14854e5afcc9`.
 - OPTIONS-01 is on `origin/main` as `ebd3ac0a349ad69c8242f5f8718d3bae63652318`.
 - HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
