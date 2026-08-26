@@ -31,7 +31,7 @@ remaining goal and card sequence.
 | HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
 | HARD-06 — Signed release and upgrade | done — follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870` on `origin/main` (base `87bc12f7480084b6703e16f59f317c63d32249fa`) |
 | HARD-07 — Readiness review | done — `bb9279350c95779b1503964bb8dd80d4322c2a3c` on `origin/main` |
-| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | done — pending push |
+| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | done — `ebd3ac0a349ad69c8242f5f8718d3bae63652318` on `origin/main` |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
@@ -113,10 +113,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- OPTIONS-01 ready to push. Tab A9: install-over signed build, owner unlock,
-  Products/POS via tablet-session, cashier recreated with env PIN and cannot
-  open Products. `check:product-configuration` and `check:local` pass. Exact
-  next action: commit/push OPTIONS-01, then OPTIONS-02.
+- OPTIONS-01 is on `origin/main` as `ebd3ac0a349ad69c8242f5f8718d3bae63652318`.
+  Exact next action: OPTIONS-02 owner editor and independent copying.
 - HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
 - Client ship gate (do not forget before café handoff): signed release with
   `debuggable false`, durable upload key, shop `versionName`, higher
