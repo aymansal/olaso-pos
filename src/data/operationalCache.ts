@@ -69,6 +69,75 @@ export type OperationalCacheSnapshot = {
     ingredientId: string;
     quantity: number;
   }>;
+  productSizes: Array<{
+    id: string;
+    productId: string;
+    key: string;
+    name: string;
+    priceCentimes: number;
+    sortOrder: number;
+    isDefault: boolean;
+    status: 'active' | 'unavailable' | 'archived';
+    revision: number;
+    updatedAt: number;
+  }>;
+  recipeSizeQuantities: Array<{
+    recipeVersionId: string;
+    ingredientId: string;
+    productSizeId: string;
+    sizeNameSnapshot: string;
+    quantity: number;
+  }>;
+  productChoiceSections: Array<{
+    id: string;
+    productId: string;
+    key: string;
+    name: string;
+    selectionMode: 'single' | 'multiple';
+    required: boolean;
+    minimumSelections: number;
+    maximumSelections: number;
+    sortOrder: number;
+    status: 'active' | 'archived';
+    revision: number;
+    updatedAt: number;
+  }>;
+  productChoiceSectionSizes: Array<{
+    sectionId: string;
+    productSizeId: string;
+  }>;
+  productChoiceValues: Array<{
+    id: string;
+    sectionId: string;
+    key: string;
+    name: string;
+    priceDeltaCentimes: number;
+    isDefaultSelected: boolean;
+    sortOrder: number;
+    status: 'active' | 'archived';
+    revision: number;
+    updatedAt: number;
+  }>;
+  productChoiceValueSizes: Array<{
+    valueId: string;
+    productSizeId: string;
+    available: boolean;
+    priceDeltaCentimes: number | null;
+  }>;
+  productChoiceValueEffects: Array<{
+    id: string;
+    valueId: string;
+    effectType: 'add' | 'replace' | 'set-exact' | 'remove';
+    ingredientId: string;
+    replacementIngredientId?: string;
+    quantity: number;
+    sortOrder: number;
+  }>;
+  productChoiceValueEffectSizes: Array<{
+    effectId: string;
+    productSizeId: string;
+    quantity: number;
+  }>;
   ingredients: Array<{
     id: string;
     name: string;
@@ -97,6 +166,14 @@ const LIMITS = {
   productModifierGroups: 1_000,
   recipeVersions: 500,
   recipeItems: 5_000,
+  productSizes: 4_000,
+  recipeSizeQuantities: 8_000,
+  productChoiceSections: 2_000,
+  productChoiceSectionSizes: 4_000,
+  productChoiceValues: 4_000,
+  productChoiceValueSizes: 8_000,
+  productChoiceValueEffects: 4_000,
+  productChoiceValueEffectSizes: 8_000,
   ingredients: 1_000,
   staffProfiles: 100,
 } as const;
@@ -134,6 +211,9 @@ export async function pruneStaleOperationalCatalog(
     'products',
     'modifier_groups',
     'categories',
+    'product_sizes',
+    'product_choice_sections',
+    'product_choice_values',
   ]) {
     await database.run(
       `DELETE FROM ${table} WHERE status = 'archived'`,
@@ -205,12 +285,23 @@ export async function replaceOperationalCache(
        UPDATE modifier_options SET status = 'archived';
        UPDATE ingredients SET status = 'archived';
        UPDATE staff_profiles SET status = 'archived';
+       UPDATE product_sizes SET status = 'archived';
+       UPDATE product_choice_sections SET status = 'archived';
+       UPDATE product_choice_values SET status = 'archived';
        UPDATE recipe_versions SET is_active = 0;
-       DELETE FROM product_modifier_groups;`,
+       DELETE FROM product_modifier_groups;
+       DELETE FROM product_choice_section_sizes;
+       DELETE FROM product_choice_value_sizes;
+       DELETE FROM product_choice_value_effects;
+       DELETE FROM product_choice_value_effect_sizes;`,
       false,
     );
     await database.execute(
       `DELETE FROM recipe_items WHERE recipe_version_id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'recipe-version' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM recipe_size_quantities WHERE recipe_version_id IN (
          SELECT local_record_id FROM local_cloud_mappings
          WHERE record_type = 'recipe-version' AND local_record_id <> cloud_record_id
        );
@@ -224,6 +315,23 @@ export async function replaceOperationalCache(
        DELETE FROM modifier_options WHERE id IN (
          SELECT local_record_id FROM local_cloud_mappings
          WHERE record_type = 'modifier-option' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM product_choice_value_effects WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'choice-value-effect'
+           AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM product_choice_values WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'choice-value' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM product_choice_sections WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'choice-section' AND local_record_id <> cloud_record_id
+       );
+       DELETE FROM product_sizes WHERE id IN (
+         SELECT local_record_id FROM local_cloud_mappings
+         WHERE record_type = 'product-size' AND local_record_id <> cloud_record_id
        );
        DELETE FROM recipe_versions WHERE id IN (
          SELECT local_record_id FROM local_cloud_mappings
@@ -455,6 +563,10 @@ export async function replaceOperationalCache(
       `DELETE FROM recipe_items
        WHERE recipe_version_id IN (
          SELECT id FROM recipe_versions WHERE is_active = 1
+       );
+       DELETE FROM recipe_size_quantities
+       WHERE recipe_version_id IN (
+         SELECT id FROM recipe_versions WHERE is_active = 1
        )`,
       false,
     );
@@ -471,6 +583,180 @@ export async function replaceOperationalCache(
            quantity = excluded.quantity`,
         [item.recipeVersionId, item.ingredientId, item.ingredientId,
           item.ingredientId, item.quantity],
+        false,
+      );
+    }
+    for (const size of snapshot.productSizes) {
+      await database.run(
+        `INSERT INTO product_sizes
+          (id, product_id, key, name, price_centimes, sort_order, is_default,
+           status, revision, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           product_id = excluded.product_id,
+           key = excluded.key,
+           name = excluded.name,
+           price_centimes = excluded.price_centimes,
+           sort_order = excluded.sort_order,
+           is_default = excluded.is_default,
+           status = excluded.status,
+           revision = excluded.revision,
+           updated_at = excluded.updated_at`,
+        [
+          size.id,
+          size.productId,
+          size.key,
+          size.name,
+          size.priceCentimes,
+          size.sortOrder,
+          size.isDefault ? 1 : 0,
+          size.status,
+          size.revision,
+          size.updatedAt,
+        ],
+        false,
+      );
+    }
+    for (const row of snapshot.recipeSizeQuantities) {
+      await database.run(
+        `INSERT INTO recipe_size_quantities
+          (recipe_version_id, ingredient_id, product_size_id, size_name_snapshot,
+           quantity)
+         VALUES (?, ?, ?, ?, ?)
+         ON CONFLICT(recipe_version_id, ingredient_id, product_size_id)
+         DO UPDATE SET
+           size_name_snapshot = excluded.size_name_snapshot,
+           quantity = excluded.quantity`,
+        [
+          row.recipeVersionId,
+          row.ingredientId,
+          row.productSizeId,
+          row.sizeNameSnapshot,
+          row.quantity,
+        ],
+        false,
+      );
+    }
+    for (const section of snapshot.productChoiceSections) {
+      await database.run(
+        `INSERT INTO product_choice_sections
+          (id, product_id, key, name, selection_mode, is_required,
+           minimum_selections, maximum_selections, sort_order, status, revision,
+           updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           product_id = excluded.product_id,
+           key = excluded.key,
+           name = excluded.name,
+           selection_mode = excluded.selection_mode,
+           is_required = excluded.is_required,
+           minimum_selections = excluded.minimum_selections,
+           maximum_selections = excluded.maximum_selections,
+           sort_order = excluded.sort_order,
+           status = excluded.status,
+           revision = excluded.revision,
+           updated_at = excluded.updated_at`,
+        [
+          section.id,
+          section.productId,
+          section.key,
+          section.name,
+          section.selectionMode,
+          section.required ? 1 : 0,
+          section.minimumSelections,
+          section.maximumSelections,
+          section.sortOrder,
+          section.status,
+          section.revision,
+          section.updatedAt,
+        ],
+        false,
+      );
+    }
+    for (const link of snapshot.productChoiceSectionSizes) {
+      await database.run(
+        `INSERT INTO product_choice_section_sizes (section_id, product_size_id)
+         VALUES (?, ?)`,
+        [link.sectionId, link.productSizeId],
+        false,
+      );
+    }
+    for (const value of snapshot.productChoiceValues) {
+      await database.run(
+        `INSERT INTO product_choice_values
+          (id, section_id, key, name, price_delta_centimes, is_default_selected,
+           sort_order, status, revision, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           section_id = excluded.section_id,
+           key = excluded.key,
+           name = excluded.name,
+           price_delta_centimes = excluded.price_delta_centimes,
+           is_default_selected = excluded.is_default_selected,
+           sort_order = excluded.sort_order,
+           status = excluded.status,
+           revision = excluded.revision,
+           updated_at = excluded.updated_at`,
+        [
+          value.id,
+          value.sectionId,
+          value.key,
+          value.name,
+          value.priceDeltaCentimes,
+          value.isDefaultSelected ? 1 : 0,
+          value.sortOrder,
+          value.status,
+          value.revision,
+          value.updatedAt,
+        ],
+        false,
+      );
+    }
+    for (const link of snapshot.productChoiceValueSizes) {
+      await database.run(
+        `INSERT INTO product_choice_value_sizes
+          (value_id, product_size_id, available, price_delta_centimes)
+         VALUES (?, ?, ?, ?)`,
+        [
+          link.valueId,
+          link.productSizeId,
+          link.available ? 1 : 0,
+          link.priceDeltaCentimes,
+        ],
+        false,
+      );
+    }
+    for (const effect of snapshot.productChoiceValueEffects) {
+      await database.run(
+        `INSERT INTO product_choice_value_effects
+          (id, value_id, effect_type, ingredient_id, replacement_ingredient_id,
+           quantity, sort_order)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           value_id = excluded.value_id,
+           effect_type = excluded.effect_type,
+           ingredient_id = excluded.ingredient_id,
+           replacement_ingredient_id = excluded.replacement_ingredient_id,
+           quantity = excluded.quantity,
+           sort_order = excluded.sort_order`,
+        [
+          effect.id,
+          effect.valueId,
+          effect.effectType,
+          effect.ingredientId,
+          effect.replacementIngredientId ?? null,
+          effect.quantity,
+          effect.sortOrder,
+        ],
+        false,
+      );
+    }
+    for (const link of snapshot.productChoiceValueEffectSizes) {
+      await database.run(
+        `INSERT INTO product_choice_value_effect_sizes
+          (effect_id, product_size_id, quantity)
+         VALUES (?, ?, ?)`,
+        [link.effectId, link.productSizeId, link.quantity],
         false,
       );
     }
@@ -663,6 +949,14 @@ export async function loadOperationalCache(
     productModifierGroups,
     recipeVersions,
     recipeItems,
+    productSizes,
+    recipeSizeQuantities,
+    productChoiceSections,
+    productChoiceSectionSizes,
+    productChoiceValues,
+    productChoiceValueSizes,
+    productChoiceValueEffects,
+    productChoiceValueEffectSizes,
     ingredients,
     staffProfiles,
     cacheState,
@@ -718,6 +1012,59 @@ export async function loadOperationalCache(
          JOIN recipe_versions rv ON rv.id = ri.recipe_version_id
          ORDER BY rv.is_active DESC, rv.created_at DESC
          LIMIT ${LIMITS.recipeItems}`,
+      ),
+      database.query(
+        `SELECT id, product_id, key, name, price_centimes, sort_order, is_default,
+          status, revision, updated_at
+         FROM product_sizes
+         ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
+           product_id, sort_order
+         LIMIT ${LIMITS.productSizes}`,
+      ),
+      database.query(
+        `SELECT recipe_version_id, ingredient_id, product_size_id,
+          size_name_snapshot, quantity
+         FROM recipe_size_quantities
+         LIMIT ${LIMITS.recipeSizeQuantities}`,
+      ),
+      database.query(
+        `SELECT id, product_id, key, name, selection_mode, is_required,
+          minimum_selections, maximum_selections, sort_order, status, revision,
+          updated_at
+         FROM product_choice_sections
+         ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
+           product_id, sort_order
+         LIMIT ${LIMITS.productChoiceSections}`,
+      ),
+      database.query(
+        `SELECT section_id, product_size_id
+         FROM product_choice_section_sizes
+         LIMIT ${LIMITS.productChoiceSectionSizes}`,
+      ),
+      database.query(
+        `SELECT id, section_id, key, name, price_delta_centimes,
+          is_default_selected, sort_order, status, revision, updated_at
+         FROM product_choice_values
+         ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
+           section_id, sort_order
+         LIMIT ${LIMITS.productChoiceValues}`,
+      ),
+      database.query(
+        `SELECT value_id, product_size_id, available, price_delta_centimes
+         FROM product_choice_value_sizes
+         LIMIT ${LIMITS.productChoiceValueSizes}`,
+      ),
+      database.query(
+        `SELECT id, value_id, effect_type, ingredient_id,
+          replacement_ingredient_id, quantity, sort_order
+         FROM product_choice_value_effects
+         ORDER BY value_id, sort_order
+         LIMIT ${LIMITS.productChoiceValueEffects}`,
+      ),
+      database.query(
+        `SELECT effect_id, product_size_id, quantity
+         FROM product_choice_value_effect_sizes
+         LIMIT ${LIMITS.productChoiceValueEffectSizes}`,
       ),
       database.query(
         `SELECT id, name, base_unit,
@@ -808,6 +1155,91 @@ export async function loadOperationalCache(
     recipeItems: (recipeItems.values ?? []).map((row) => ({
       recipeVersionId: String(row.recipe_version_id),
       ingredientId: String(row.ingredient_id),
+      quantity: Number(row.quantity),
+    })),
+    productSizes: (productSizes.values ?? []).map((row) => ({
+      id: String(row.id),
+      productId: String(row.product_id),
+      key: String(row.key),
+      name: String(row.name),
+      priceCentimes: Number(row.price_centimes),
+      sortOrder: Number(row.sort_order),
+      isDefault: Number(row.is_default) === 1,
+      status: ['active', 'unavailable', 'archived'].includes(String(row.status))
+        ? row.status as 'active' | 'unavailable' | 'archived'
+        : 'unavailable',
+      revision: Number(row.revision),
+      updatedAt: Number(row.updated_at),
+    })),
+    recipeSizeQuantities: (recipeSizeQuantities.values ?? []).map((row) => ({
+      recipeVersionId: String(row.recipe_version_id),
+      ingredientId: String(row.ingredient_id),
+      productSizeId: String(row.product_size_id),
+      sizeNameSnapshot: String(row.size_name_snapshot ?? ''),
+      quantity: Number(row.quantity),
+    })),
+    productChoiceSections: (productChoiceSections.values ?? []).map((row) => ({
+      id: String(row.id),
+      productId: String(row.product_id),
+      key: String(row.key),
+      name: String(row.name),
+      selectionMode: row.selection_mode === 'multiple' ? 'multiple' : 'single',
+      required: Number(row.is_required) === 1,
+      minimumSelections: Number(row.minimum_selections),
+      maximumSelections: Number(row.maximum_selections),
+      sortOrder: Number(row.sort_order),
+      status: row.status === 'archived' ? 'archived' : 'active',
+      revision: Number(row.revision),
+      updatedAt: Number(row.updated_at),
+    })),
+    productChoiceSectionSizes: (productChoiceSectionSizes.values ?? []).map(
+      (row) => ({
+        sectionId: String(row.section_id),
+        productSizeId: String(row.product_size_id),
+      }),
+    ),
+    productChoiceValues: (productChoiceValues.values ?? []).map((row) => ({
+      id: String(row.id),
+      sectionId: String(row.section_id),
+      key: String(row.key),
+      name: String(row.name),
+      priceDeltaCentimes: Number(row.price_delta_centimes),
+      isDefaultSelected: Number(row.is_default_selected) === 1,
+      sortOrder: Number(row.sort_order),
+      status: row.status === 'archived' ? 'archived' : 'active',
+      revision: Number(row.revision),
+      updatedAt: Number(row.updated_at),
+    })),
+    productChoiceValueSizes: (productChoiceValueSizes.values ?? []).map((row) => ({
+      valueId: String(row.value_id),
+      productSizeId: String(row.product_size_id),
+      available: Number(row.available) === 1,
+      priceDeltaCentimes: row.price_delta_centimes === null
+        || row.price_delta_centimes === undefined
+        ? null
+        : Number(row.price_delta_centimes),
+    })),
+    productChoiceValueEffects: (productChoiceValueEffects.values ?? []).map(
+      (row) => ({
+        id: String(row.id),
+        valueId: String(row.value_id),
+        effectType: row.effect_type as
+          'add' | 'replace' | 'set-exact' | 'remove',
+        ingredientId: String(row.ingredient_id),
+        ...(row.replacement_ingredient_id
+          ? {
+              replacementIngredientId: String(row.replacement_ingredient_id),
+            }
+          : {}),
+        quantity: Number(row.quantity),
+        sortOrder: Number(row.sort_order),
+      }),
+    ),
+    productChoiceValueEffectSizes: (
+      productChoiceValueEffectSizes.values ?? []
+    ).map((row) => ({
+      effectId: String(row.effect_id),
+      productSizeId: String(row.product_size_id),
       quantity: Number(row.quantity),
     })),
     ingredients: (ingredients.values ?? []).map((row) => ({

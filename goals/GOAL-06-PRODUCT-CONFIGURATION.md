@@ -28,11 +28,16 @@ A size contains:
 - An owner-chosen name.
 - Its selling price in integer centimes.
 - Its availability.
-- Its own exact ingredient quantities and recipe version.
+- Per-size quantity overrides of the product's shared base recipe.
+
+The product owns one immutable recipe version at a time. That version lists
+which ingredients the product uses. Each size then says how much of each
+ingredient to consume. A size may override a quantity to zero to exclude an
+ingredient. Changing size can change price and those quantities; it does not
+create a second recipe version.
 
 When a product has only one size, the cashier is not forced to make a pointless
 size selection. With multiple sizes, the cashier selects one valid size.
-Changing size can change price and the entire base ingredient recipe.
 
 The owner may leave a recipe incomplete while preparing the menu. The existing
 valid ordering behavior remains available, but costs must be identified as
@@ -168,8 +173,8 @@ acceptance.
 - Record current official Android/Capacitor research and inspect all existing
   catalog, checkout, sync, migration, permissions, and historical callers.
 - Add the smallest backward-compatible local/cloud model for product-owned
-  sizes, exact size recipes, owned choice sections, selectable values, and
-  typed ingredient effects.
+  sizes, a shared base recipe with per-size quantity overrides, owned choice
+  sections, selectable values, and typed ingredient effects.
 - Give each existing product one safe default size and preserve current shared
   choice behavior until the owner editor and checkout can consume the new
   independent records.
@@ -251,3 +256,12 @@ by DELETE-01. The detailed deletion contract remains in the main Goal 06 plan.
   https://developer.android.com/topic/architecture/data-layer/offline-first
 - Existing Capacitor SQLite transaction guidance:
   https://github.com/capacitor-community/sqlite/blob/master/docs/SQLiteTransaction.md
+
+## Executable specs
+
+- [Working protocol](options/PROTOCOL.md)
+- [OPTIONS-01](options/OPTIONS-01-SPEC.md)
+- [OPTIONS-02](options/OPTIONS-02-SPEC.md)
+- [OPTIONS-03](options/OPTIONS-03-SPEC.md)
+- [OPTIONS-04](options/OPTIONS-04-SPEC.md)
+- [Tablet testing](options/TABLET-TESTING.md)

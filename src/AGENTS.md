@@ -27,8 +27,8 @@ application, global tokens, and the feature screens under `features/`.
   saved-snapshot receipt model, and deterministic WD8260 byte encoding; React
   components receive only plain settings, actions, and feedback.
 - `components/` and `lib/` hold only proven cross-feature UI and formatting
-  contracts; the shared receipt preview, money formatter, and stock-quantity
-  formatter are the current examples.
+  contracts; the shared receipt preview, money formatter, stock-quantity
+  formatter, and product-configuration resolver are the current examples.
 - `globals.css` owns only font/reset imports, semantic root variables, body
   defaults, and the full-viewport baseline.
 - `features/` owns screen-specific composition, temporary fixtures where still

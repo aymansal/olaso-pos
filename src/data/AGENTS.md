@@ -79,7 +79,10 @@ tablet's local SQLite operational record.
   `receiptPrinting.ts` coordinates one post-commit attempt and never calls sale
   or stock creation logic.
 - `operationalCache.ts` owns the bounded cloud-to-local menu, category artwork
-  key, modifier, recipe, and stock snapshot.
+  key, modifier, recipe, product-owned size/choice, and stock snapshot.
+- `src/lib/productConfiguration.ts` owns the pure size/choice/recipe resolver.
+  Checkout and trusted cloud validation must call the same resolution; React
+  components never compute stock or price from choices.
 
 ## Local Contracts
 
@@ -176,6 +179,7 @@ tablet's local SQLite operational record.
   `npm run check:local-catalog`,
   `npm run check:local-inventory-costs`,
   `npm run check:local-staff`,
+  `npm run check:product-configuration`,
   `npm run check:sales`, `npm run check:settings`,
   `npm run check:reconnect`, `npm run check:offline`, `npx tsc -b`, and
   `npm run build`.

@@ -92,7 +92,8 @@ fast and keeps the cafe working offline.
 
 It stores the minimum data needed for service:
 
-- Active categories, products, modifiers, recipes, and ingredients.
+- Active categories, products, product-owned sizes and choices, modifiers,
+  recipes with per-size quantities, and ingredients.
 - Current local stock quantities.
 - Current ingredient valuation state and cost-completeness metadata.
 - Sales and sale lines created on the tablet.

@@ -31,7 +31,7 @@ remaining goal and card sequence.
 | HARD-05 — Backup and recovery | done — `625ed2bc115b82c6606f318e3b7400a94b22d7d6` on `origin/main` (export removed + sync queue fix; original export SHA `7698fa52cc6dbfc8df608b70c36a4d9dec9a39a7`) |
 | HARD-06 — Signed release and upgrade | done — follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870` on `origin/main` (base `87bc12f7480084b6703e16f59f317c63d32249fa`) |
 | HARD-07 — Readiness review | done — `bb9279350c95779b1503964bb8dd80d4322c2a3c` on `origin/main` |
-| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | pending — next after HARD-07 |
+| OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | done — pending push |
 | OPTIONS-02 — Custom product choices and independent copying | pending |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
@@ -113,8 +113,11 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- OPTIONS-01 ready to push. Tab A9: install-over signed build, owner unlock,
+  Products/POS via tablet-session, cashier recreated with env PIN and cannot
+  open Products. `check:product-configuration` and `check:local` pass. Exact
+  next action: commit/push OPTIONS-01, then OPTIONS-02.
 - HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
-  Exact next action: stop; OPTIONS-01 when the owner continues.
 - Client ship gate (do not forget before café handoff): signed release with
   `debuggable false`, durable upload key, shop `versionName`, higher
   `versionCode` than installed tablets, publish update channel, physical About
@@ -1233,6 +1236,22 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-26 — OPTIONS-01 foundation ready to push
+
+- Research: offline-first SQLite SSOT; Capacitor additive `user_version`
+  upgrades; serialized plugin transactions; WebView CDP. Keep Capacitor
+  SQLite; reject Room/second DB/native catalog rewrite.
+- Schema 20 + eight Convex tables; Regular size backfill; seed Regular sizes;
+  additive sync/cache; pure `productConfiguration` resolver unwired to
+  checkout; ingredient delete repairs choice effects + size quantities;
+  `check:product-configuration` / local DB 19→20; tablet-session helper;
+  recovery ADB handoff doc.
+- Device: signed install-over (debug APK signature mismatch with installed
+  release). Owner 1340×800, Products/POS clicks. Cashier recreated through
+  Staff & access with env PIN; Products hidden for cashier. Stale Convex
+  sign-in errors cleared after restart.
+- Exact next action: commit/push, then OPTIONS-02.
 
 ### 2026-08-25 — HARD-05 closeout pushed; HARD-06 activated
 

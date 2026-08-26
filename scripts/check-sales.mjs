@@ -345,6 +345,14 @@ const cachedMenu = {
   recipeVersions: [],
   recipeItems: [],
   ingredients: [],
+  productSizes: [],
+  recipeSizeQuantities: [],
+  productChoiceSections: [],
+  productChoiceSectionSizes: [],
+  productChoiceValues: [],
+  productChoiceValueSizes: [],
+  productChoiceValueEffects: [],
+  productChoiceValueEffectSizes: [],
 };
 assert.throws(
   () =>

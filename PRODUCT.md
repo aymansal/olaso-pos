@@ -306,9 +306,11 @@ The supplied menu may include familiar choices such as:
 - Soft ice cream or Magnum additions for relevant bakery products.
 
 Each product owns at least one size, each with an owner-chosen name, selling
-price, availability, and exact ingredient recipe. A single size does not create
-an unnecessary cashier selection. Multiple sizes can have completely different
-ingredient quantities and prices.
+price, and availability. One shared base recipe lists which ingredients the
+product uses. Each size records how much of each ingredient it consumes.
+A single size does not create an unnecessary cashier selection. Multiple sizes
+can have different quantities and prices, including a quantity of zero to
+exclude an ingredient from that size.
 
 The owner can create any number of product-owned choice sections with any
 useful name; there are no required global groups and no permanent four-option
@@ -331,10 +333,10 @@ work with an incomplete menu first and allow recipes to be added later.
 For each sellable product, the owner can define:
 
 - Ingredients.
-- Exact quantity of each ingredient.
+- A base quantity of each ingredient.
 - Measurement unit.
-- Size-specific quantities.
-- Modifier-specific additions or substitutions.
+- Size-specific quantity overrides of those same ingredients.
+- Choice-specific additions, replacements, exact quantities, or removals.
 - The date or version from which the recipe becomes active.
 
 Editing a recipe creates a new version. It does not rewrite the recipe attached

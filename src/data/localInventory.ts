@@ -350,6 +350,32 @@ export function deleteLocalIngredient(
             false,
           );
         }
+        const sizeQuantities = await database.query(
+          `SELECT ingredient_id, product_size_id, size_name_snapshot, quantity
+           FROM recipe_size_quantities
+           WHERE recipe_version_id = ? AND ingredient_id <> ?
+           LIMIT 8001`,
+          [previousRecipeId, input.id],
+        );
+        if ((sizeQuantities.values?.length ?? 0) > 8_000) {
+          throw new Error('Product size quantities exceed their supported size.');
+        }
+        for (const row of sizeQuantities.values ?? []) {
+          await database.run(
+            `INSERT INTO recipe_size_quantities
+              (recipe_version_id, ingredient_id, product_size_id,
+               size_name_snapshot, quantity)
+             VALUES (?, ?, ?, ?, ?)`,
+            [
+              recipeId,
+              String(row.ingredient_id),
+              String(row.product_size_id),
+              String(row.size_name_snapshot ?? ''),
+              Number(row.quantity),
+            ],
+            false,
+          );
+        }
       }
       await database.run(
         `UPDATE products SET current_recipe_version_id = ?,
@@ -393,6 +419,36 @@ export function deleteLocalIngredient(
         );
         affectedProducts.add(productId);
       }
+    }
+    const choiceEffects = await database.query(
+      `SELECT effect.id, section.product_id
+       FROM product_choice_value_effects effect
+       JOIN product_choice_values value ON value.id = effect.value_id
+       JOIN product_choice_sections section ON section.id = value.section_id
+       WHERE effect.ingredient_id = ?
+          OR effect.replacement_ingredient_id = ?
+       LIMIT 4001`,
+      [input.id, input.id],
+    );
+    if ((choiceEffects.values?.length ?? 0) > 4_000) {
+      throw new Error('Too many product choice effects use this ingredient.');
+    }
+    for (const row of choiceEffects.values ?? []) {
+      await database.run(
+        'DELETE FROM product_choice_value_effects WHERE id = ?',
+        [String(row.id)],
+        false,
+      );
+      const productId = String(row.product_id);
+      if (affectedProducts.has(productId)) continue;
+      await database.run(
+        `UPDATE products SET status = CASE WHEN status = 'archived'
+           THEN 'archived' ELSE 'unavailable' END,
+         revision = revision + 1, updated_at = ? WHERE id = ?`,
+        [now, productId],
+        false,
+      );
+      affectedProducts.add(productId);
     }
     for (const table of ['recipe_items', 'stock_movements', 'inventory_purchases']) {
       await database.run(

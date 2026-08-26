@@ -84,6 +84,9 @@ the following must be true. Temporary QA overrides never ship.
    if using the private-repo ritual), then channel closed again as agreed.
 5. Physical Tab A9 smoke: unlock, About shows the shop version only, Check for
    update / Update path confirmed when publishing a newer build.
+6. Development test PINs used during OPTIONS work (`OLASO_OWNER_PIN` /
+   `OLASO_CASHIER_PIN`) are replaced with real café-owner-chosen PINs before
+   the tablet is handed over. Never ship known development credentials.
 
 `debuggable` does **not** control updates. Updates need the higher
 `versionCode`, same signing cert, and the public manifest/APK. Debug beta APKs
@@ -223,6 +226,7 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 The complete approved product, size, choice, recipe, stock, ingredient-cost,
 copying, migration, and verification blueprint lives in
 [Goal 06 Product Configuration](goals/GOAL-06-PRODUCT-CONFIGURATION.md).
+Executable per-card specs live in [goals/options/](goals/options/).
 
 ## First-production-release exit
 
@@ -240,4 +244,5 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-HARD-07 readiness review is active.
+OPTIONS-01 storage foundation is complete on closeout. Exact next action:
+OPTIONS-02 owner editor and independent copying when continuing.

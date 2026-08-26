@@ -206,15 +206,43 @@ try {
   database = new DatabaseSync(databasePath);
   database.exec('PRAGMA foreign_keys = ON');
   assert.equal(migrate(database), LOCAL_SCHEMA_VERSION);
+  assert.equal(LOCAL_SCHEMA_VERSION, 20);
+  assert.equal(schemaVersion(database), 20);
   assert.equal(
     database.prepare('SELECT name FROM products WHERE id = ?').get(
       'product-espresso',
     ).name,
     'Espresso',
   );
+  assert.deepEqual(
+    { ...database.prepare(
+      `SELECT id, key, name, is_default, price_centimes
+       FROM product_sizes WHERE product_id = ?`,
+    ).get('product-espresso') },
+    {
+      id: 'product-espresso:size:regular',
+      key: 'regular',
+      name: 'Regular',
+      is_default: 1,
+      price_centimes: 1000,
+    },
+  );
+  assert.ok(
+    database.prepare('SELECT COUNT(*) AS count FROM product_sizes').get().count
+      >= 1,
+  );
   assert.equal(
     database.prepare('SELECT total_centimes FROM sales').get().total_centimes,
     1000,
+  );
+  assert.equal(
+    database.prepare('SELECT COUNT(*) AS count FROM sales').get().count,
+    1,
+  );
+  assert.equal(
+    database.prepare('SELECT COUNT(*) AS count FROM stock_movements').get()
+      .count,
+    2,
   );
   assert.equal(
     database.prepare('SELECT COUNT(*) AS count FROM product_modifier_groups')

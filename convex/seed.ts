@@ -22,6 +22,14 @@ const resetOrder = [
   'compensationPeriods',
   'operatingExpenses',
   'staffProfiles',
+  'productChoiceValueEffectSizes',
+  'productChoiceValueEffects',
+  'productChoiceValueSizes',
+  'productChoiceValues',
+  'productChoiceSectionSizes',
+  'productChoiceSections',
+  'recipeSizeQuantities',
+  'productSizes',
   'recipeItems',
   'recipeVersions',
   'products',
@@ -1053,6 +1061,23 @@ export const resetAndSeed = internalMutation({
       productIds.set(product.key, id);
       products.set(product.key, product);
       counts.products += 1;
+    }
+
+    for (const product of productSeeds) {
+      if (product.status === 'archived') continue;
+      const productId = mustGet(productIds, product.key, 'size product');
+      await ctx.db.insert('productSizes', {
+        productId,
+        key: 'regular',
+        name: 'Regular',
+        priceCentimes: product.basePriceCentimes,
+        sortOrder: 10,
+        isDefault: true,
+        status: product.status === 'unavailable' ? 'unavailable' : 'active',
+        revision: 1,
+        updatedAt: SEED_AT,
+      });
+      counts.productSizes += 1;
     }
 
     const recipeVersionIds = new Map<string, Id<'recipeVersions'>>();

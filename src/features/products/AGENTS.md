@@ -2,8 +2,8 @@
 
 ## Purpose
 
-Provides owner-facing category, product, modifier, and recipe management with
-saved tablet presentation during an outage.
+Provides owner-facing category, product, size, product-owned choice, and
+recipe management with saved tablet presentation during an outage.
 
 ## Ownership
 
@@ -11,8 +11,9 @@ saved tablet presentation during an outage.
   editor, and category dialog.
 - `ProductCatalogPanel`, `CategorySidebar`, and `ProductList` own catalog
   browsing.
-- `ProductEditorPanel` owns product editing and opens the modifier and recipe
-  dialogs.
+- `ProductEditorPanel` owns product editing and opens the size, product-owned
+  choice, and recipe dialogs. Shared global modifier-group chips are the
+  OPTIONS-01 compatibility bridge only.
 - `CategoryArtworkPicker` owns the compact six-choice bundled artwork selector
   inside the existing category dialog.
 - `productManagementTypes.ts` owns the plain feature contracts passed to child
@@ -32,7 +33,15 @@ saved tablet presentation during an outage.
 - Category names and artwork keys are independent; every create/edit persists
   the explicit selection and missing/future keys render the neutral fallback.
 - Every recipe save creates a new immutable version; never overwrite historical
-  recipe meaning.
+  recipe meaning. The version lists which ingredients the product uses; each
+  size stores how much of each ingredient it consumes.
+- Product-owned choice sections belong only to the selected product. Editing
+  them must never change another product. Choice values use typed ingredient
+  effects (add, replace, set-exact, remove) with one default quantity and an
+  optional per-size override.
+- Do not present a single default-recipe cost, gross profit, or margin inside
+  Edit Product. Show only a concise ingredient-cost range or an explicit
+  incomplete state.
 - Archive/restore remains optional. Concise confirmed category/product Delete
   actions permanently remove the live record while historical orders and
   recipes stay intact; deleting a category leaves its products uncategorized.

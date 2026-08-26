@@ -7,7 +7,9 @@ data, reporting summaries, and development seeding.
 
 ## Ownership
 
-- `schema.ts` owns table shapes and indexes.
+- `schema.ts` owns table shapes and indexes, including additive product-owned
+  sizes, choice sections, values, typed ingredient effects, and per-size
+  quantity overrides. Legacy shared modifier groups remain until OPTIONS-04.
 - `_generated/` is produced by the Convex CLI and committed.
 - Business functions live in domain files such as `categories.ts`,
   `products.ts`, `modifiers.ts`, `recipes.ts`, `ingredients.ts`,
@@ -53,8 +55,9 @@ data, reporting summaries, and development seeding.
 - One synchronized sale is one retry-safe mutation keyed by
   `deviceId + localSaleId`.
 - The sale mutation re-reads current products, revisions, recipes, modifiers,
-  and ingredients and computes trusted totals and deductions before writing any
-  effect.
+  product-owned sizes and choices, and ingredients and computes trusted totals
+  and deductions before writing any effect. Size/choice resolution must match
+  `src/lib/productConfiguration.ts`.
 - Seed/reset work is internal, development-only, deterministic, and runnable
   through the CLI.
 - Do not add actions for ordinary database work or import backend clients into

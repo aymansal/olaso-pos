@@ -38,8 +38,10 @@ owns the shared Header and TopNavigation currently used across the application.
 - A deliberate staff switch confirms only a non-empty cart and preserves it for
   the next verified staff member; checkout records the staff member who
   completes the sale.
-- Required modifier groups are explicit cashier choices; never silently select
-  an option.
+- Required modifier groups and later product-owned choice sections are
+  explicit cashier choices; never silently select an option. A product with
+  one size must not force a size selection. Cart identity includes the selected
+  size once OPTIONS-03 activates product-owned checkout.
 - Clear the cart only after the local sale transaction commits.
 - Saved receipts support on-screen preview and plain post-commit print feedback.
   Do not expose printer settings, permissions, bytes, or transport from this

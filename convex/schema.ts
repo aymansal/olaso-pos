@@ -186,6 +186,110 @@ export default defineSchema({
     .index('by_recipe_version', ['recipeVersionId'])
     .index('by_ingredient_created_at', ['ingredientId', 'createdAt']),
 
+  productSizes: defineTable({
+    productId: v.id('products'),
+    key: v.string(),
+    name: v.string(),
+    priceCentimes: v.number(),
+    sortOrder: v.number(),
+    isDefault: v.boolean(),
+    status: productStatus,
+    revision: v.number(),
+    updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
+  })
+    .index('by_product', ['productId'])
+    .index('by_product_key', ['productId', 'key'])
+    .index('by_updated_at', ['updatedAt']),
+
+  recipeSizeQuantities: defineTable({
+    recipeVersionId: v.id('recipeVersions'),
+    ingredientId: v.id('ingredients'),
+    productSizeId: v.string(),
+    sizeNameSnapshot: v.string(),
+    quantity: v.number(),
+  })
+    .index('by_recipe_version', ['recipeVersionId'])
+    .index('by_size', ['productSizeId']),
+
+  productChoiceSections: defineTable({
+    productId: v.id('products'),
+    key: v.string(),
+    name: v.string(),
+    selectionMode: v.union(v.literal('single'), v.literal('multiple')),
+    required: v.boolean(),
+    minSelections: v.number(),
+    maxSelections: v.number(),
+    sortOrder: v.number(),
+    status: activeStatus,
+    revision: v.number(),
+    updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
+  })
+    .index('by_product', ['productId'])
+    .index('by_product_key', ['productId', 'key'])
+    .index('by_updated_at', ['updatedAt']),
+
+  productChoiceSectionSizes: defineTable({
+    sectionId: v.id('productChoiceSections'),
+    productSizeId: v.string(),
+  })
+    .index('by_section', ['sectionId'])
+    .index('by_size', ['productSizeId']),
+
+  productChoiceValues: defineTable({
+    sectionId: v.id('productChoiceSections'),
+    key: v.string(),
+    name: v.string(),
+    priceDeltaCentimes: v.number(),
+    isDefaultSelected: v.boolean(),
+    sortOrder: v.number(),
+    status: activeStatus,
+    revision: v.number(),
+    updatedAt: v.number(),
+    updatedBy: v.optional(v.string()),
+    lastMutationId: v.optional(v.string()),
+  })
+    .index('by_section', ['sectionId'])
+    .index('by_section_key', ['sectionId', 'key'])
+    .index('by_updated_at', ['updatedAt']),
+
+  productChoiceValueSizes: defineTable({
+    valueId: v.id('productChoiceValues'),
+    productSizeId: v.string(),
+    available: v.boolean(),
+    priceDeltaCentimes: v.optional(v.number()),
+  })
+    .index('by_value', ['valueId'])
+    .index('by_size', ['productSizeId']),
+
+  productChoiceValueEffects: defineTable({
+    valueId: v.id('productChoiceValues'),
+    effectType: v.union(
+      v.literal('add'),
+      v.literal('replace'),
+      v.literal('set-exact'),
+      v.literal('remove'),
+    ),
+    ingredientId: v.id('ingredients'),
+    replacementIngredientId: v.optional(v.id('ingredients')),
+    quantity: v.number(),
+    sortOrder: v.number(),
+  })
+    .index('by_value', ['valueId'])
+    .index('by_ingredient', ['ingredientId'])
+    .index('by_replacement', ['replacementIngredientId']),
+
+  productChoiceValueEffectSizes: defineTable({
+    effectId: v.id('productChoiceValueEffects'),
+    productSizeId: v.string(),
+    quantity: v.number(),
+  })
+    .index('by_effect', ['effectId'])
+    .index('by_size', ['productSizeId']),
+
   sales: defineTable({
     deviceId: v.string(),
     localSaleId: v.string(),

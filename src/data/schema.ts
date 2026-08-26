@@ -761,6 +761,126 @@ export const localMigrations = [
         WHERE client_mutation_id IS NOT NULL`,
     ],
   },
+  {
+    toVersion: 20,
+    statements: [
+      `CREATE TABLE product_sizes (
+        id TEXT PRIMARY KEY NOT NULL,
+        product_id TEXT NOT NULL,
+        key TEXT NOT NULL,
+        name TEXT NOT NULL,
+        price_centimes INTEGER NOT NULL CHECK (price_centimes >= 0),
+        sort_order INTEGER NOT NULL,
+        is_default INTEGER NOT NULL CHECK (is_default IN (0, 1)),
+        status TEXT NOT NULL CHECK (
+          status IN ('active', 'unavailable', 'archived')
+        ),
+        revision INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE (product_id, key)
+      )`,
+      `CREATE INDEX product_sizes_by_product
+        ON product_sizes(product_id, status, sort_order)`,
+      `CREATE TABLE recipe_size_quantities (
+        recipe_version_id TEXT NOT NULL
+          REFERENCES recipe_versions(id) ON DELETE CASCADE,
+        ingredient_id TEXT NOT NULL,
+        product_size_id TEXT NOT NULL,
+        size_name_snapshot TEXT NOT NULL DEFAULT '',
+        quantity INTEGER NOT NULL CHECK (quantity >= 0),
+        PRIMARY KEY (recipe_version_id, ingredient_id, product_size_id)
+      )`,
+      `CREATE INDEX recipe_size_quantities_by_size
+        ON recipe_size_quantities(product_size_id)`,
+      `CREATE TABLE product_choice_sections (
+        id TEXT PRIMARY KEY NOT NULL,
+        product_id TEXT NOT NULL,
+        key TEXT NOT NULL,
+        name TEXT NOT NULL,
+        selection_mode TEXT NOT NULL CHECK (
+          selection_mode IN ('single', 'multiple')
+        ),
+        is_required INTEGER NOT NULL CHECK (is_required IN (0, 1)),
+        minimum_selections INTEGER NOT NULL CHECK (minimum_selections >= 0),
+        maximum_selections INTEGER NOT NULL CHECK (
+          maximum_selections >= minimum_selections
+        ),
+        sort_order INTEGER NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('active', 'archived')),
+        revision INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE (product_id, key)
+      )`,
+      `CREATE INDEX product_choice_sections_by_product
+        ON product_choice_sections(product_id, status, sort_order)`,
+      `CREATE TABLE product_choice_section_sizes (
+        section_id TEXT NOT NULL
+          REFERENCES product_choice_sections(id) ON DELETE CASCADE,
+        product_size_id TEXT NOT NULL,
+        PRIMARY KEY (section_id, product_size_id)
+      )`,
+      `CREATE TABLE product_choice_values (
+        id TEXT PRIMARY KEY NOT NULL,
+        section_id TEXT NOT NULL
+          REFERENCES product_choice_sections(id) ON DELETE CASCADE,
+        key TEXT NOT NULL,
+        name TEXT NOT NULL,
+        price_delta_centimes INTEGER NOT NULL,
+        is_default_selected INTEGER NOT NULL CHECK (
+          is_default_selected IN (0, 1)
+        ),
+        sort_order INTEGER NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('active', 'archived')),
+        revision INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE (section_id, key)
+      )`,
+      `CREATE INDEX product_choice_values_by_section
+        ON product_choice_values(section_id, status, sort_order)`,
+      `CREATE TABLE product_choice_value_sizes (
+        value_id TEXT NOT NULL
+          REFERENCES product_choice_values(id) ON DELETE CASCADE,
+        product_size_id TEXT NOT NULL,
+        available INTEGER NOT NULL CHECK (available IN (0, 1)),
+        price_delta_centimes INTEGER,
+        PRIMARY KEY (value_id, product_size_id)
+      )`,
+      `CREATE TABLE product_choice_value_effects (
+        id TEXT PRIMARY KEY NOT NULL,
+        value_id TEXT NOT NULL
+          REFERENCES product_choice_values(id) ON DELETE CASCADE,
+        effect_type TEXT NOT NULL CHECK (
+          effect_type IN ('add', 'replace', 'set-exact', 'remove')
+        ),
+        ingredient_id TEXT NOT NULL,
+        replacement_ingredient_id TEXT,
+        quantity INTEGER NOT NULL CHECK (quantity >= 0),
+        sort_order INTEGER NOT NULL
+      )`,
+      `CREATE INDEX product_choice_value_effects_by_value
+        ON product_choice_value_effects(value_id, sort_order)`,
+      `CREATE INDEX product_choice_value_effects_by_ingredient
+        ON product_choice_value_effects(ingredient_id)`,
+      `CREATE INDEX product_choice_value_effects_by_replacement
+        ON product_choice_value_effects(replacement_ingredient_id)`,
+      `CREATE TABLE product_choice_value_effect_sizes (
+        effect_id TEXT NOT NULL
+          REFERENCES product_choice_value_effects(id) ON DELETE CASCADE,
+        product_size_id TEXT NOT NULL,
+        quantity INTEGER NOT NULL CHECK (quantity >= 0),
+        PRIMARY KEY (effect_id, product_size_id)
+      )`,
+      `INSERT INTO product_sizes
+        (id, product_id, key, name, price_centimes, sort_order, is_default,
+         status, revision, updated_at)
+       SELECT id || ':size:regular', id, 'regular', 'Regular', price_centimes,
+         10, 1,
+         CASE status WHEN 'unavailable' THEN 'unavailable' ELSE 'active' END,
+         1, updated_at
+       FROM products
+       WHERE status <> 'archived'`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

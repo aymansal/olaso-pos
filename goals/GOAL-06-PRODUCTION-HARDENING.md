@@ -296,7 +296,13 @@ Implement the four cards in sequence. Each card independently preserves the
 currently installed menu, sales, protected staff, stock, pending operations,
 offline checkout, cloud acknowledgment, receipts, and physical tablet layout.
 Do not remove backward-compatible behavior until its replacement passes the
-real-device acceptance matrix.
+real-device acceptance matrix. Executable specs live in
+[options/PROTOCOL.md](options/PROTOCOL.md),
+[options/OPTIONS-01-SPEC.md](options/OPTIONS-01-SPEC.md),
+[options/OPTIONS-02-SPEC.md](options/OPTIONS-02-SPEC.md),
+[options/OPTIONS-03-SPEC.md](options/OPTIONS-03-SPEC.md),
+[options/OPTIONS-04-SPEC.md](options/OPTIONS-04-SPEC.md), and
+[options/TABLET-TESTING.md](options/TABLET-TESTING.md).
 
 ### DELETE-01 — Safe deletion and archive cleanup
 
