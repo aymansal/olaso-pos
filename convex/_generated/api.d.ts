@@ -19,6 +19,7 @@ import type * as lib_operational from "../lib/operational.js";
 import type * as lib_permissions from "../lib/permissions.js";
 import type * as lib_session from "../lib/session.js";
 import type * as modifiers from "../modifiers.js";
+import type * as productConfiguration from "../productConfiguration.js";
 import type * as products from "../products.js";
 import type * as recipes from "../recipes.js";
 import type * as reports from "../reports.js";
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   "lib/permissions": typeof lib_permissions;
   "lib/session": typeof lib_session;
   modifiers: typeof modifiers;
+  productConfiguration: typeof productConfiguration;
   products: typeof products;
   recipes: typeof recipes;
   reports: typeof reports;

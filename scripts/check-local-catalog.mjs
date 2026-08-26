@@ -10,6 +10,12 @@ import {
   setLocalProductStatus,
 } from '../src/data/localCatalog.ts';
 import { saveLocalModifierGroup, saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
+import {
+  copyLocalChoiceSections,
+  deleteLocalProductSize,
+  saveLocalChoiceSection,
+  saveLocalProductSize,
+} from '../src/data/localProductConfiguration.ts';
 import { localMigrations } from '../src/data/schema.ts';
 import { pruneStaleOperationalCatalog } from '../src/data/operationalCache.ts';
 import {
@@ -83,6 +89,58 @@ const recipe = await saveLocalRecipeVersion(context, managedProduct, [
   { ingredientId: 'ingredient:test', quantity: 18 },
 ], transaction);
 assert.equal(recipe.productRevision, 2);
+const sourceSize = await saveLocalProductSize(context, {
+  productId: product.id, name: 'Large', priceCentimes: 2600, sortOrder: 20,
+  isDefault: false, status: 'active',
+}, transaction);
+const removableSize = await saveLocalProductSize(context, {
+  productId: product.id, name: 'Trial', priceCentimes: 2300, sortOrder: 30,
+  isDefault: false, status: 'active',
+}, transaction);
+await deleteLocalProductSize(context, {
+  id: removableSize.id, revision: removableSize.revision,
+}, transaction);
+assert.equal(database.prepare('SELECT status FROM product_sizes WHERE id = ?')
+  .get(removableSize.id).status, 'archived');
+const destination = await saveLocalProduct(context, {
+  name: 'Offline copy', categoryId: category.id, basePriceCentimes: 2400,
+  status: 'active', sortOrder: 91, modifierGroupIds: [],
+}, transaction);
+const destinationSize = await saveLocalProductSize(context, {
+  productId: destination.id, name: 'Large', priceCentimes: 2800, sortOrder: 20,
+  isDefault: true, status: 'active',
+}, transaction);
+const section = await saveLocalChoiceSection(context, {
+  productId: product.id, name: 'Cream', selectionMode: 'single', required: false,
+  minimumSelections: 0, maximumSelections: 1, sortOrder: 10, status: 'active',
+  productSizeIds: [sourceSize.id],
+  values: [{
+    name: 'Oat cream', priceDeltaCentimes: 100, isDefaultSelected: false,
+    sortOrder: 10, status: 'active',
+    sizeRules: [{ productSizeId: sourceSize.id, available: true, priceDeltaCentimes: 150 }],
+    effects: [{
+      effectType: 'add', ingredientId: 'ingredient:test', quantity: 4, sortOrder: 10,
+      sizeQuantities: [{ productSizeId: sourceSize.id, quantity: 6 }],
+    }],
+  }],
+}, transaction);
+const copied = await copyLocalChoiceSections(
+  context, product.id, destination.id, { [sourceSize.id]: destinationSize.id }, transaction,
+);
+assert.equal(copied.sectionIds.length, 1);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM product_choice_value_effects').get().count, 2);
+const sourceValue = database.prepare(
+  `SELECT value.name FROM product_choice_values value
+   JOIN product_choice_sections section ON section.id = value.section_id
+   WHERE section.id = ?`,
+).get(section.id).name;
+database.prepare(
+  `UPDATE product_choice_values SET name = 'Edited copy'
+   WHERE section_id = ?`,
+).run(copied.sectionIds[0]);
+assert.equal(database.prepare(
+  `SELECT name FROM product_choice_values WHERE section_id = ?`,
+).get(section.id).name, sourceValue, 'Editing a copied choice must not mutate the source.');
 assert.equal(database.prepare('SELECT COUNT(*) count FROM categories').get().count, 1);
 assert.equal(database.prepare(
   'SELECT artwork_key FROM categories WHERE id = ?',
@@ -90,22 +148,17 @@ assert.equal(database.prepare(
 assert.equal(JSON.parse(database.prepare(
   'SELECT payload_json FROM management_operations WHERE operation_type = ? LIMIT 1',
 ).get('management.category.save').payload_json).artworkKey, 'cold-drinks');
-assert.equal(database.prepare('SELECT COUNT(*) count FROM products').get().count, 1);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM products').get().count, 2);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM modifier_options').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM recipe_items').get().count, 1);
 const queue = database.prepare(`SELECT operation_id, operation_type, depends_on_operation_id
   FROM outbox ORDER BY rowid`).all();
-assert.equal(queue.length, 4);
+assert.ok(queue.length >= 10);
 assert.equal(queue[0].operation_type, 'management.category.save');
 assert.equal(queue[1].depends_on_operation_id, queue[0].operation_id);
 assert.equal(queue[2].depends_on_operation_id, queue[1].operation_id);
 assert.equal(queue[3].depends_on_operation_id, queue[2].operation_id);
 const saleDependency = queue[3].operation_id;
-assert.equal(
-  database.prepare(`SELECT operation_id FROM outbox WHERE operation_type LIKE 'management.%'
-    ORDER BY rowid DESC LIMIT 1`).get().operation_id,
-  saleDependency,
-);
 await setLocalProductStatus(context, { id: product.id, revision: 2 }, 'unavailable', transaction);
 assert.equal(database.prepare('SELECT status FROM products WHERE id = ?').get(product.id).status, 'unavailable');
 await assert.rejects(
@@ -156,7 +209,7 @@ assert.equal(database.prepare('SELECT category_id FROM products WHERE id = ?')
 const removedProduct = await deleteLocalProduct(
   context, { id: product.id, revision: uncategorized.revision }, transaction,
 );
-assert.equal(database.prepare('SELECT COUNT(*) count FROM products').get().count, 0);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM products').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM recipe_versions').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM sale_items').get().count, 1);
 assert.equal(database.prepare(

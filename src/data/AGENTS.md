@@ -65,6 +65,8 @@ tablet's local SQLite operational record.
   persistence: atomic outbox enqueue, optional parent dependency, cloud
   acknowledgement plus local/cloud record mappings, and safe retry/failure
   updates. Domain cards still own their business validation and record changes.
+- `localProductConfiguration.ts` owns local-first product-size and choice-section
+  replacement, safe size deletion, and independent choice copying.
 - `localInventory.ts` owns ingredient, purchase, valuation, and stock-
   adjustment transactions. `localCosts.ts` owns expense/compensation writes;
   `localCostViews.ts` owns bounded role-scoped reads and cloud snapshot merging.

@@ -73,8 +73,8 @@
 }
 
 .item {
-  display: grid;
-  grid-template-columns: 1fr 170px 44px;
+  display: flex;
+  flex-wrap: wrap;
   align-items: end;
   gap: 12px;
   padding: 10px 0;
@@ -87,6 +87,18 @@
   color: var(--olaso-copy);
   font-size: 9px;
   font-weight: 600;
+}
+
+.item > label:first-child {
+  flex: 1 1 230px;
+}
+
+.sizeQuantity {
+  flex: 0 0 74px;
+}
+
+.sizeQuantity input {
+  width: 74px;
 }
 
 .item select,

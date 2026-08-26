@@ -169,9 +169,20 @@ export function saveLocalRecipeVersion(
   context: Context,
   product: ManagedProduct,
   items: { ingredientId: string; quantity: number }[],
+  sizeQuantitiesOrTransaction: Array<{
+    ingredientId: string;
+    productSizeId: string;
+    quantity: number;
+  }> | Transaction = [],
   transact: Transaction = withLocalTransaction,
 ) {
-  return transact(async (database) => {
+  const sizeQuantities = typeof sizeQuantitiesOrTransaction === 'function'
+    ? []
+    : sizeQuantitiesOrTransaction;
+  const transaction = typeof sizeQuantitiesOrTransaction === 'function'
+    ? sizeQuantitiesOrTransaction
+    : transact;
+  return transaction(async (database) => {
     const savedProduct = await one(database, 'products', product.id);
     if (!savedProduct || Number(savedProduct.revision) !== product.revision) {
       throw new Error('Product changed. Refresh it before saving the recipe.');
@@ -184,6 +195,20 @@ export function saveLocalRecipeVersion(
       if (!Number.isSafeInteger(item.quantity) || item.quantity <= 0
           || !(await one(database, 'ingredients', item.ingredientId))) {
         throw new Error('Recipe ingredient is invalid.');
+      }
+    }
+    if (new Set(sizeQuantities.map(
+      (item) => `${item.ingredientId}:${item.productSizeId}`,
+    )).size !== sizeQuantities.length) {
+      throw new Error('Recipe size quantities are invalid.');
+    }
+    for (const item of sizeQuantities) {
+      const size = await one(database, 'product_sizes', item.productSizeId);
+      if (!items.some((recipeItem) => recipeItem.ingredientId === item.ingredientId)
+          || !size || String(size.product_id) !== product.id
+          || size.status === 'archived'
+          || !Number.isSafeInteger(item.quantity) || item.quantity < 0) {
+        throw new Error('Recipe size quantity is invalid.');
       }
     }
     const latest = await database.query(
@@ -209,6 +234,15 @@ export function saveLocalRecipeVersion(
         [recipeId, item.quantity, item.ingredientId], false,
       );
     }
+    for (const item of sizeQuantities) {
+      await database.run(
+        `INSERT INTO recipe_size_quantities
+          (recipe_version_id, ingredient_id, product_size_id, size_name_snapshot, quantity)
+         SELECT ?, ?, id, name, ? FROM product_sizes WHERE id = ?`,
+        [recipeId, item.ingredientId, item.quantity, item.productSizeId],
+        false,
+      );
+    }
     await database.run(
       `UPDATE products SET current_recipe_version_id = ?, revision = ?, updated_at = ? WHERE id = ?`,
       [recipeId, product.revision + 1, now, product.id], false,
@@ -223,7 +257,7 @@ export function saveLocalRecipeVersion(
       ),
       requiredPermission: 'products', actor: context.actor,
       expectedRevision: product.revision,
-      payload: { productId: product.id, items }, createdAt: now,
+      payload: { productId: product.id, items, sizeQuantities }, createdAt: now,
     });
     return { id: recipeId, versionNumber: version,
       productRevision: product.revision + 1, operationId: operation.operationId };

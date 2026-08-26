@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ManagedCategory, ManagedIngredient, ManagedModifierGroup, ManagedProduct, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
+import type { ManagedCategory, ManagedChoiceSection, ManagedIngredient, ManagedModifierGroup, ManagedProduct, ManagedProductSize, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
 import {
   deleteLocalCategory,
   deleteLocalProduct,
@@ -9,6 +9,13 @@ import {
   setLocalProductStatus,
 } from './localCatalog.ts';
 import { saveLocalModifierGroup, saveLocalRecipeVersion, setLocalModifierGroupArchived } from './localRecipes.ts';
+import {
+  copyLocalChoiceSections,
+  deleteLocalChoiceSection,
+  deleteLocalProductSize,
+  saveLocalChoiceSection,
+  saveLocalProductSize,
+} from './localProductConfiguration.ts';
 import { loadOperationalCache, type OperationalCacheSnapshot } from './operationalCache.ts';
 import { useReconnect } from './reconnectContext.tsx';
 import { useStaffSession } from './sessionContext.tsx';
@@ -63,43 +70,50 @@ export function useProductManagement(selectedProductId?: string) {
       items: (cache?.recipeItems ?? []).filter((item) => item.recipeVersionId === currentId).map((item) => {
         const ingredient = cache?.ingredients.find((row) => row.id === item.ingredientId);
         return { ingredientId: item.ingredientId, ingredientName: ingredient?.name ?? 'Unknown ingredient', baseUnit: ingredient?.baseUnit ?? 'piece', quantity: item.quantity };
-      }), ingredients,
+      }),
+      sizeQuantities: (cache?.recipeSizeQuantities ?? [])
+        .filter((item) => item.recipeVersionId === currentId)
+        .map((item) => ({
+          ingredientId: item.ingredientId,
+          productSizeId: item.productSizeId,
+          quantity: item.quantity,
+        })),
+      ingredients,
     };
   })() : undefined;
-  const cost = (() => {
-    if (!selectedProductId) return undefined;
-    const product = products.find((row) => row.id === selectedProductId);
-    if (!product?.currentRecipeVersionId) {
-      return { complete: false, hasRecipe: false, missingIngredientIds: [] };
-    }
-    const items = (cache?.recipeItems ?? []).filter(
-      (item) => item.recipeVersionId === product.currentRecipeVersionId,
-    );
-    const missing: string[] = [];
-    let costCentimes = 0;
-    for (const item of items) {
-      const ingredient = cache?.ingredients.find((row) => row.id === item.ingredientId);
-      if (!ingredient || ingredient.costStatus !== 'complete'
-          || ingredient.inventoryValueCentimes === undefined
-          || ingredient.currentStockQuantity <= 0) {
-        missing.push(item.ingredientId);
-        continue;
-      }
-      costCentimes += Number(
-        (BigInt(ingredient.inventoryValueCentimes) * BigInt(item.quantity)
-          + BigInt(ingredient.currentStockQuantity) / 2n)
-        / BigInt(ingredient.currentStockQuantity),
-      );
-    }
-    return missing.length
-      ? { complete: false, hasRecipe: true, missingIngredientIds: missing }
-      : { complete: true, hasRecipe: true, costCentimes, missingIngredientIds: [] };
-  })();
+  const productSizes: ManagedProductSize[] = (cache?.productSizes ?? []).map((size) => ({ ...size }));
+  const choiceSections: ManagedChoiceSection[] = (cache?.productChoiceSections ?? [])
+    .filter((section) => section.productId === selectedProductId)
+    .map((section) => ({
+    id: section.id, productId: section.productId, key: section.key, name: section.name,
+    selectionMode: section.selectionMode, required: section.required,
+    minimumSelections: section.minimumSelections, maximumSelections: section.maximumSelections,
+    sortOrder: section.sortOrder, status: section.status, revision: section.revision,
+    productSizeIds: (cache?.productChoiceSectionSizes ?? []).filter((link) => link.sectionId === section.id)
+      .map((link) => link.productSizeId),
+    values: (cache?.productChoiceValues ?? []).filter((value) => value.sectionId === section.id)
+      .map((value) => ({
+        id: value.id, key: value.key, name: value.name, priceDeltaCentimes: value.priceDeltaCentimes,
+        isDefaultSelected: value.isDefaultSelected, sortOrder: value.sortOrder, status: value.status,
+        sizeRules: (cache?.productChoiceValueSizes ?? []).filter((rule) => rule.valueId === value.id)
+          .map((rule) => ({ productSizeId: rule.productSizeId, available: rule.available,
+            ...(rule.priceDeltaCentimes === null ? {} : { priceDeltaCentimes: rule.priceDeltaCentimes }) })),
+        effects: (cache?.productChoiceValueEffects ?? []).filter((effect) => effect.valueId === value.id)
+          .map((effect) => ({
+            id: effect.id, effectType: effect.effectType, ingredientId: effect.ingredientId,
+            replacementIngredientId: effect.replacementIngredientId, quantity: effect.quantity,
+            sortOrder: effect.sortOrder,
+            sizeQuantities: (cache?.productChoiceValueEffectSizes ?? [])
+              .filter((row) => row.effectId === effect.id)
+              .map((row) => ({ productSizeId: row.productSizeId, quantity: row.quantity })),
+          })),
+      })),
+  }));
   const save = async <T,>(operation: Promise<T>) => {
     const result = await operation; await reload(); void reconnect.run('automatic').catch(() => undefined); return result;
   };
   return {
-    categories, products, modifierGroups, ingredients, recipeData, cost,
+    categories, products, modifierGroups, ingredients, recipeData, productSizes, choiceSections,
     isLoading: !cache && !error, isRecipeLoading: false, error: error || undefined,
     saveCategory: (input: Parameters<typeof saveLocalCategory>[1]) => save(saveLocalCategory(context, input)),
     setCategoryArchived: (id: string, archived: boolean, revision: number) => save(setLocalCategoryArchived(context, id, archived, revision)),
@@ -111,6 +125,17 @@ export function useProductManagement(selectedProductId?: string) {
       save(deleteLocalProduct(context, product)),
     saveModifierGroup: (group: ManagedModifierGroup) => save(saveLocalModifierGroup(context, group)),
     setModifierGroupArchived: (id: string, archived: boolean, revision: number) => save(setLocalModifierGroupArchived(context, id, archived, revision)),
-    saveRecipeVersion: (product: ManagedProduct, items: { ingredientId: string; quantity: number }[]) => save(saveLocalRecipeVersion(context, product, items)),
+    saveRecipeVersion: (product: ManagedProduct, items: { ingredientId: string; quantity: number }[],
+      sizeQuantities?: Array<{ ingredientId: string; productSizeId: string; quantity: number }>) =>
+      save(saveLocalRecipeVersion(context, product, items, sizeQuantities)),
+    saveProductSize: (input: ManagedProductSize) => save(saveLocalProductSize(context, input)),
+    deleteProductSize: (size: Required<Pick<ManagedProductSize, 'id' | 'revision'>>) =>
+      save(deleteLocalProductSize(context, size)),
+    saveChoiceSection: (section: ManagedChoiceSection) => save(saveLocalChoiceSection(context, section)),
+    deleteChoiceSection: (section: Required<Pick<ManagedChoiceSection, 'id' | 'revision'>>) =>
+      save(deleteLocalChoiceSection(context, section)),
+    copyChoiceSections: (sourceProductId: string, destinationProductId: string,
+      sizeNameMap?: Record<string, string>) =>
+      save(copyLocalChoiceSections(context, sourceProductId, destinationProductId, sizeNameMap)),
   };
 }

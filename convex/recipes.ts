@@ -139,6 +139,11 @@ export const saveVersion = mutation({
         quantity: v.number(),
       }),
     ),
+    sizeQuantities: v.optional(v.array(v.object({
+      ingredientId: v.id('ingredients'),
+      productSizeId: v.string(),
+      quantity: v.number(),
+    }))),
   },
   handler: async (ctx, args) => {
     const updatedBy = await requireManagement(ctx, args);
@@ -192,6 +197,23 @@ export const saveVersion = mutation({
     if (ingredients.some((ingredient) => !ingredient || ingredient.status !== 'active')) {
       return invalid('Recipes can use only active ingredients.');
     }
+    const sizeQuantities = args.sizeQuantities ?? [];
+    if (new Set(sizeQuantities.map(
+      (item) => `${item.ingredientId}:${item.productSizeId}`,
+    )).size !== sizeQuantities.length) {
+      return invalid('Recipe size quantities must be unique.');
+    }
+    const sizes = await Promise.all(sizeQuantities.map(
+      async (item) => await ctx.db.get(item.productSizeId as Id<'productSizes'>),
+    ));
+    if (sizeQuantities.some((item, index) =>
+      !items.some((recipe) => recipe.ingredientId === item.ingredientId)
+      || !sizes[index] || sizes[index]!.productId !== product._id
+      || sizes[index]!.status === 'archived'
+      || !Number.isSafeInteger(item.quantity) || item.quantity < 0,
+    )) {
+      return invalid('Recipe size quantity is invalid.');
+    }
     const sizeKey = cleanOptionalText(args.sizeKey, 'Recipe size key', 80);
     if (
       args.activationAt !== undefined &&
@@ -225,6 +247,14 @@ export const saveVersion = mutation({
         ingredientId: item.ingredientId,
         quantity: item.quantity,
         createdAt: now,
+      });
+    }
+    for (const [index, item] of sizeQuantities.entries()) {
+      const size = sizes[index]!;
+      await ctx.db.insert('recipeSizeQuantities', {
+        recipeVersionId: id, ingredientId: item.ingredientId,
+        productSizeId: item.productSizeId, sizeNameSnapshot: size.name,
+        quantity: item.quantity,
       });
     }
     if (product.currentRecipeVersionId) {

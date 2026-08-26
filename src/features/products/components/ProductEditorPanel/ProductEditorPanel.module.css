@@ -350,6 +350,11 @@
   font-weight: 700;
 }
 
+.optionsHeader > span {
+  display: flex;
+  gap: 5px;
+}
+
 .options {
   position: absolute;
   top: 394px;
@@ -375,6 +380,11 @@
   text-align: left;
 }
 
+.emptyOptions {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+}
+
 .optionSelected {
   border-color: var(--olaso-green);
   background: var(--olaso-green-icon);
@@ -395,11 +405,37 @@
   font-weight: 500;
 }
 
-.optionsDivider { top: 458px; }
+.legacyNote {
+  position: absolute;
+  top: 438px;
+  left: 22px;
+  width: 260px;
+  margin: 0;
+  color: var(--olaso-text-meta);
+  font-size: 7px;
+}
+
+.legacyGroups {
+  position: absolute;
+  top: 436px;
+  right: 22px;
+  display: flex;
+  align-items: center;
+  height: 22px;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.optionsDivider { top: 468px; }
 
 .recipeHeader {
   position: absolute;
-  top: 480px;
+  top: 490px;
   left: 22px;
   justify-content: space-between;
   width: 396px;
@@ -429,7 +465,7 @@
 
 .recipeEmpty {
   position: absolute;
-  top: 508px;
+  top: 518px;
   left: 22px;
   width: 396px;
   height: 62px;
@@ -483,7 +519,7 @@
 
 .notice {
   position: absolute;
-  top: 586px;
+  top: 588px;
   left: 22px;
   width: 396px;
   margin: 0;
@@ -492,8 +528,6 @@
   font-size: 8px;
   font-weight: 600;
 }
-
-.cost { position:absolute; top:578px; left:22px; width:396px; margin:0; color:var(--olaso-danger-ink); font-size:8px; font-weight:600; text-align:center; }.costComplete { color:var(--olaso-green); }
 
 .save {
   position: absolute;

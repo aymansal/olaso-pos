@@ -32,7 +32,7 @@ remaining goal and card sequence.
 | HARD-06 — Signed release and upgrade | done — follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870` on `origin/main` (base `87bc12f7480084b6703e16f59f317c63d32249fa`) |
 | HARD-07 — Readiness review | done — `bb9279350c95779b1503964bb8dd80d4322c2a3c` on `origin/main` |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | done — `ebd3ac0a349ad69c8242f5f8718d3bae63652318` on `origin/main` |
-| OPTIONS-02 — Custom product choices and independent copying | pending |
+| OPTIONS-02 — Custom product choices and independent copying | done — pending SHA on push |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending |
@@ -113,8 +113,17 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- OPTIONS-02 is complete pending commit/push SHA recording. Local-first sizes,
+  choice sections, copy, per-size recipe columns, Convex mutations, and owner
+  Products dialogs shipped. Raised management operation-type query cap from 20
+  to 32 so OPERATIONAL+STAFF pending checks no longer block Sync now after the
+  new OPTIONS types. Tab A9: Regular+Large on Ceremonial Matcha, Cream with two
+  values, independent copy to Hojicha (edit left source Extra cream unchanged),
+  restart kept sizes/choices, cashier nav is POS+Orders only (no Products),
+  viewport 1340×800, focused logcat clean. `debuggable false` restored in
+  source. Exact next action: commit/push OPTIONS-02, then stop and ask before
+  OPTIONS-03.
 - OPTIONS-01 is on `origin/main` as `ebd3ac0a349ad69c8242f5f8718d3bae63652318`.
-  Exact next action: OPTIONS-02 owner editor and independent copying.
 - HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
 - Client ship gate (do not forget before café handoff): signed release with
   `debuggable false`, durable upload key, shop `versionName`, higher
@@ -1234,6 +1243,43 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-26 — OPTIONS-02 tablet closeout
+
+- Fixed Sync now failure `Management operation types are invalid` by raising
+  the bounded operation-type list cap in `localManagement.ts` from 20 to 32.
+- Tab A9 evidence: owner sizes/choices/copy independence, process restart
+  persistence, cashier Products hidden, 1340×800, clean console on Products
+  reopen. Temporary signed debuggable release used for CDP only; source
+  `debuggable false` restored.
+- Checks: `check:local-catalog`, `check:local-management`,
+  `check:permissions`, `build`, Graphify update.
+- Exact next action: commit `OPTIONS-02: …`, push `origin/main`, record SHA,
+  stop and ask before OPTIONS-03.
+
+### 2026-08-26 — OPTIONS-02 write paths implemented
+
+- Added local product-size and choice-section write operations, archive/delete
+  protection, independent copied section IDs with explicit size mapping, and
+  immutable recipe size quantities. Reconnect maps local/cloud IDs and sends
+  the new retry-safe `productConfiguration` mutations after product parents.
+- Research decision remains Capacitor SQLite plus the management outbox:
+  https://capacitorjs.com/docs/guides/storage and
+  https://developer.android.com/topic/architecture/data-layer/offline-first.
+  No native catalog boundary is needed.
+- Focused local checks, product-configuration resolver, management checks,
+  TypeScript, production build, Convex dev deployment, and Graphify pass. UI
+  dialogs and physical tablet evidence remain before the card can close.
+
+### 2026-08-26 — OPTIONS-02 owner editor implemented
+
+- Added bounded Sizes and product-scoped Choices dialogs, including explicit
+  unmapped-size selection before independent copying. Recipe versions now edit
+  per-active-size ingredient quantities; Products no longer shows unsupported
+  direct-cost, gross-profit, or margin claims. Legacy shared groups remain
+  accessible only as the documented POS bridge.
+- `npx tsc -b`, focused lint, and Graphify update passed. Physical Tab A9
+  offline/reconnect evidence remains before card close.
 
 ### 2026-08-26 — OPTIONS-01 foundation ready to push
 

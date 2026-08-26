@@ -48,6 +48,11 @@ export const CATALOG_MANAGEMENT_OPERATION_TYPES = [
   'management.modifier.save',
   'management.modifier.archive',
   'management.recipe.save',
+  'management.product-size.save',
+  'management.product-size.delete',
+  'management.choice-section.save',
+  'management.choice-section.delete',
+  'management.choice-copy',
 ] as const;
 
 export const INVENTORY_MANAGEMENT_OPERATION_TYPES = [

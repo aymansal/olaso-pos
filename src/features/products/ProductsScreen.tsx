@@ -232,9 +232,11 @@ export function ProductsScreen({
         categories={management.categories}
         modifierGroups={management.modifierGroups}
         ingredients={management.ingredients}
+        productSizes={management.productSizes}
+        choiceSections={management.choiceSections}
+        products={management.products}
         recipeData={management.recipeData}
         isRecipeLoading={management.isRecipeLoading}
-        cost={management.cost}
         onSave={saveProduct}
         onSetStatus={setProductStatus}
         onDelete={async (product) => {
@@ -251,9 +253,14 @@ export function ProductsScreen({
             group.revision,
           );
         }}
-        onSaveRecipe={async (product, items) => {
-          await management.saveRecipeVersion(product, items);
+        onSaveRecipe={async (product, items, sizeQuantities) => {
+          await management.saveRecipeVersion(product, items, sizeQuantities);
         }}
+        onSaveSize={management.saveProductSize}
+        onDeleteSize={management.deleteProductSize}
+        onSaveChoiceSection={management.saveChoiceSection}
+        onDeleteChoiceSection={management.deleteChoiceSection}
+        onCopyChoiceSections={management.copyChoiceSections}
       />
       {categoryEditor ? (
         <CategoryDialog

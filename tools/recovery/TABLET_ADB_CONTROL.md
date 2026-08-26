@@ -43,6 +43,163 @@ Then use the Android WebView debug bridge for app-level actions:
 This is more stable than guessing coordinates, because labels survive small
 layout shifts while coordinates do not.
 
+## The control rhythm
+
+Do not wait two minutes after an install or launch unless a command is still
+running. The tablet should be driven like a person testing it:
+
+1. Run one action.
+2. Immediately inspect what the tablet shows.
+3. Decide the next action from the visible screen.
+4. If nothing changed after 5 to 10 seconds, collect `dump`, screenshot, and
+   focused logcat.
+5. Fix the cause or report the exact blocker.
+
+A slow agent usually fails because it treats the tablet like a black box. This
+tablet is not a black box. Use ADB and the WebView bridge to ask it what is on
+screen after every important step.
+
+## Golden step-by-step flow
+
+Use this exact flow for ordinary APK testing.
+
+```powershell
+cd D:\Olaso
+$adb = 'D:\Olaso\tmp\android-toolchain\android-sdk\platform-tools\adb.exe'
+$env:JAVA_HOME = 'D:\Olaso\tmp\android-toolchain\jdk\jdk-21.0.11+10'
+$env:Path = 'D:\Olaso\tmp\android-toolchain\jdk\jdk-21.0.11+10\bin;' + $env:Path
+```
+
+1. Confirm the tablet is connected.
+
+```powershell
+& $adb devices
+& $adb shell getprop ro.product.model
+```
+
+There must be one authorized device. If it says `unauthorized`, stop and unlock
+the tablet so the USB debugging prompt can be accepted.
+
+2. Build and install.
+
+```powershell
+npm run android:beta
+& $adb install -r 'D:\Olaso\android\app\build\outputs\apk\debug\app-debug.apk'
+```
+
+As soon as `Success` appears, continue. Do not wait.
+
+3. Start from a clean app process.
+
+```powershell
+& $adb logcat -c
+node scripts/tablet-session.mjs restart
+node scripts/tablet-session.mjs dump
+```
+
+Read the `dump` output. It should show the viewport and visible app text. If the
+lock screen is visible, unlock next. If the POS is already visible, continue
+testing the target screen.
+
+4. Unlock the intended profile.
+
+Set the PIN only in the current terminal. Do not write it into files.
+
+```powershell
+$env:OLASO_OWNER_PIN = '<six digits>'
+node scripts/tablet-session.mjs unlock owner
+node scripts/tablet-session.mjs dump
+```
+
+For cashier testing:
+
+```powershell
+$env:OLASO_CASHIER_PIN = '<six digits>'
+node scripts/tablet-session.mjs unlock cashier
+node scripts/tablet-session.mjs dump
+```
+
+The helper selects the profile, fills the PIN, presses `Unlock POS`, and waits
+until the app screen is ready. It is faster and safer than manual taps.
+
+5. Move through screens by label.
+
+```powershell
+node scripts/tablet-session.mjs click POS
+node scripts/tablet-session.mjs dump
+node scripts/tablet-session.mjs click Products
+node scripts/tablet-session.mjs dump
+node scripts/tablet-session.mjs click Stock
+node scripts/tablet-session.mjs dump
+node scripts/tablet-session.mjs click Reports
+node scripts/tablet-session.mjs dump
+```
+
+Each click must be followed by a `dump`. The dump proves where the tablet is,
+what text is visible, whether the viewport is still `1340 x 800`, and whether
+console/logcat errors appeared.
+
+6. Use screenshots for visual proof.
+
+```powershell
+& $adb shell screencap -p /sdcard/olaso-screen.png
+& $adb pull /sdcard/olaso-screen.png 'D:\Olaso\tmp\olaso-screen.png'
+```
+
+Screenshots are for layout, clipping, and visual bugs. For simple state checks,
+`dump` is faster.
+
+7. Read focused errors after the tested action.
+
+```powershell
+& $adb logcat -d -s 'Capacitor/Console:E' 'Capacitor:E' 'chromium:E' 'AndroidRuntime:E'
+```
+
+If this shows real errors, the test is not clean.
+
+## When the app is on the lock screen
+
+The lock screen is expected after a fresh launch, after locking, or after some
+profile/session changes. Do not guess coordinates.
+
+Use:
+
+```powershell
+node scripts/tablet-session.mjs dump
+```
+
+Then:
+
+- if owner access is needed, set `OLASO_OWNER_PIN` and run
+  `node scripts/tablet-session.mjs unlock owner`
+- if cashier access is needed, set `OLASO_CASHIER_PIN` and run
+  `node scripts/tablet-session.mjs unlock cashier`
+- if the expected profile is missing, record that as the bug; do not bypass it
+- after unlock, run `node scripts/tablet-session.mjs dump` again
+
+The good loop is: inspect lock screen, unlock profile, inspect destination.
+
+## When the app seems slow
+
+Do not sit and wait silently.
+
+At 5 seconds:
+
+```powershell
+node scripts/tablet-session.mjs dump
+```
+
+At 10 seconds:
+
+```powershell
+& $adb shell screencap -p /sdcard/olaso-slow.png
+& $adb pull /sdcard/olaso-slow.png 'D:\Olaso\tmp\olaso-slow.png'
+& $adb logcat -d -s 'Capacitor/Console:E' 'Capacitor:E' 'chromium:E' 'AndroidRuntime:E'
+```
+
+If the app is still blank or stuck, investigate the logs and the app state. Do
+not call it installed, working, or loaded until the visible screen proves it.
+
 ## First checks
 
 Run these from `D:\Olaso` in PowerShell.
@@ -275,5 +432,12 @@ terminal only. Never run adb uninstall com.olaso.pos unless Ayman explicitly
 approves deleting the tablet's local data. Use adb install -r for normal APK
 updates. Clear logcat before the tested action, then read focused errors after.
 Use screenshots or screen recordings before making visual claims.
-```
 
+Work in a tight loop. After install success, immediately launch or restart the
+app. After launch, immediately run `node scripts/tablet-session.mjs dump`. If
+the lock screen is shown, unlock the intended profile with the helper, then dump
+again. Navigate by labels with `node scripts/tablet-session.mjs click <label>`,
+then dump again. Do not wait minutes without checking state. If nothing changes
+after 5 to 10 seconds, collect dump, screenshot, and focused logcat, then state
+the exact blocker.
+```

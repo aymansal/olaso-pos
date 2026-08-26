@@ -25,7 +25,7 @@ export async function latestPendingManagementOperationIdFromDatabase(
   operationTypes?: readonly string[],
 ) {
   const types = operationTypes?.map(managementOperationType);
-  if (types && (types.length < 1 || types.length > 20)) {
+  if (types && (types.length < 1 || types.length > 32)) {
     throw new Error('Management operation types are invalid.');
   }
   const result = await database.query(
@@ -82,7 +82,7 @@ export async function latestPendingSaleForRecordFromDatabase(
   if (!dependentOperationTypes?.length) return saleOperationId;
 
   const types = dependentOperationTypes.map(managementOperationType);
-  if (types.length > 20) {
+  if (types.length > 32) {
     throw new Error('Management operation types are invalid.');
   }
   const dependent = await database.query(
@@ -108,7 +108,7 @@ export async function hasPendingManagementOperationsFromDatabase(
   operationTypes?: readonly string[],
 ) {
   const types = operationTypes?.map(managementOperationType);
-  if (types && (types.length < 1 || types.length > 20)) {
+  if (types && (types.length < 1 || types.length > 32)) {
     throw new Error('Management operation types are invalid.');
   }
   const result = await database.query(

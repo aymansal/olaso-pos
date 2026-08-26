@@ -12,7 +12,7 @@ data, reporting summaries, and development seeding.
   quantity overrides. Legacy shared modifier groups remain until OPTIONS-04.
 - `_generated/` is produced by the Convex CLI and committed.
 - Business functions live in domain files such as `categories.ts`,
-  `products.ts`, `modifiers.ts`, `recipes.ts`, `ingredients.ts`,
+  `products.ts`, `modifiers.ts`, `recipes.ts`, `productConfiguration.ts`, `ingredients.ts`,
   `inventory.ts`, `sales.ts`, and `reports.ts`.
 - `sync.ts` owns the bounded operational snapshot consumed by the tablet cache.
   An optional validated request ID lets deliberate manual sync bypass a stale

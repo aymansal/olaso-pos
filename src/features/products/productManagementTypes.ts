@@ -67,6 +67,60 @@ export type ManagedRecipeItem = {
   quantity: number;
 };
 
+export type ManagedProductSize = {
+  id?: string;
+  productId: string;
+  key?: string;
+  name: string;
+  priceCentimes: number;
+  sortOrder: number;
+  isDefault: boolean;
+  status: 'active' | 'unavailable' | 'archived';
+  revision?: number;
+};
+
+export type ManagedChoiceEffect = {
+  id?: string;
+  effectType: 'add' | 'replace' | 'set-exact' | 'remove';
+  ingredientId: string;
+  replacementIngredientId?: string;
+  quantity: number;
+  sortOrder: number;
+  sizeQuantities: Array<{ productSizeId: string; quantity: number }>;
+};
+
+export type ManagedChoiceValue = {
+  id?: string;
+  key?: string;
+  name: string;
+  priceDeltaCentimes: number;
+  isDefaultSelected: boolean;
+  sortOrder: number;
+  status: 'active' | 'archived';
+  sizeRules: Array<{
+    productSizeId: string;
+    available: boolean;
+    priceDeltaCentimes?: number;
+  }>;
+  effects: ManagedChoiceEffect[];
+};
+
+export type ManagedChoiceSection = {
+  id?: string;
+  productId: string;
+  key?: string;
+  name: string;
+  selectionMode: 'single' | 'multiple';
+  required: boolean;
+  minimumSelections: number;
+  maximumSelections: number;
+  sortOrder: number;
+  status: 'active' | 'archived';
+  revision?: number;
+  productSizeIds: string[];
+  values: ManagedChoiceValue[];
+};
+
 export type ManagedRecipeData = {
   versionNumber?: number;
   versions: {
@@ -75,14 +129,12 @@ export type ManagedRecipeData = {
     status: 'draft' | 'active' | 'superseded';
   }[];
   items: ManagedRecipeItem[];
+  sizeQuantities: Array<{
+    ingredientId: string;
+    productSizeId: string;
+    quantity: number;
+  }>;
   ingredients: ManagedIngredient[];
-};
-
-export type ManagedProductCost = {
-  complete: boolean;
-  hasRecipe: boolean;
-  costCentimes?: number;
-  missingIngredientIds?: string[];
 };
 
 export type ProductSaveInput = {

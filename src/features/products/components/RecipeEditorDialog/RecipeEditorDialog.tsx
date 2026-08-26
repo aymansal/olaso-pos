@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type {
   ManagedProduct,
   ManagedRecipeData,
+  ManagedProductSize,
 } from '../../productManagementTypes';
 import styles from './RecipeEditorDialog.module.css';
 
@@ -14,17 +15,23 @@ type RecipeDraftItem = {
 interface RecipeEditorDialogProps {
   product: ManagedProduct;
   data: ManagedRecipeData;
+  sizes: ManagedProductSize[];
   onClose: () => void;
-  onSave: (items: RecipeDraftItem[]) => Promise<void>;
+  onSave: (
+    items: RecipeDraftItem[],
+    sizeQuantities: Array<{ ingredientId: string; productSizeId: string; quantity: number }>,
+  ) => Promise<void>;
 }
 
 export function RecipeEditorDialog({
   product,
   data,
+  sizes,
   onClose,
   onSave,
 }: RecipeEditorDialogProps) {
   const [items, setItems] = useState<RecipeDraftItem[]>([]);
+  const [sizeQuantities, setSizeQuantities] = useState(data.sizeQuantities);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -39,6 +46,7 @@ export function RecipeEditorDialog({
           ? [{ ingredientId: data.ingredients[0].id, quantity: 1 }]
           : [],
     );
+    setSizeQuantities(data.sizeQuantities);
     setError('');
   }, [data.versionNumber, product.id]);
 
@@ -70,7 +78,7 @@ export function RecipeEditorDialog({
     setSaving(true);
     setError('');
     try {
-      await onSave(items);
+      await onSave(items, sizeQuantities);
       onClose();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Recipe save failed.');
@@ -78,6 +86,10 @@ export function RecipeEditorDialog({
       setSaving(false);
     }
   }
+
+  const activeSizes = sizes.filter((size) => size.status === 'active');
+  const quantityFor = (ingredientId: string, sizeId: string, baseQuantity: number) =>
+    sizeQuantities.find((item) => item.ingredientId === ingredientId && item.productSizeId === sizeId)?.quantity ?? baseQuantity;
 
   return (
     <div className={styles.overlay} role="presentation">
@@ -151,6 +163,26 @@ export function RecipeEditorDialog({
                 >
                   <Trash size={16} aria-hidden="true" />
                 </button>
+                {activeSizes.map((size) => (
+                  <label className={styles.sizeQuantity} key={size.id}>
+                    <span>{size.name}</span>
+                    <input
+                      aria-label={`${size.name} quantity`}
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={quantityFor(item.ingredientId, size.id!, item.quantity)}
+                      onChange={(event) => {
+                        const quantity = Number(event.target.value);
+                        setSizeQuantities((current) => [
+                          ...current.filter((row) =>
+                            row.ingredientId !== item.ingredientId || row.productSizeId !== size.id),
+                          { ingredientId: item.ingredientId, productSizeId: size.id!, quantity },
+                        ]);
+                      }}
+                    />
+                  </label>
+                ))}
               </div>
             );
           })}

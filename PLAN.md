@@ -244,5 +244,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-OPTIONS-01 storage foundation is complete on closeout. Exact next action:
-OPTIONS-02 owner editor and independent copying when continuing.
+OPTIONS-02 owner editor and independent copying is complete on closeout.
+Exact next action: OPTIONS-03 exact cashier selection, stock, and sale
+snapshots when the owner continues.

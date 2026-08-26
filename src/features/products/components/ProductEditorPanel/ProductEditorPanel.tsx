@@ -14,11 +14,14 @@ import type {
   ManagedModifierGroup,
   ManagedProduct,
   ManagedRecipeData,
-  ManagedProductCost,
+  ManagedProductSize,
+  ManagedChoiceSection,
   ProductSaveInput,
 } from '../../productManagementTypes';
 import { ModifierGroupDialog } from '../ModifierGroupDialog/ModifierGroupDialog';
+import { ProductChoiceSectionDialog } from '../ProductChoiceSectionDialog/ProductChoiceSectionDialog';
 import { RecipeEditorDialog } from '../RecipeEditorDialog/RecipeEditorDialog';
+import { SizesEditorDialog } from '../SizesEditorDialog/SizesEditorDialog';
 import styles from './ProductEditorPanel.module.css';
 
 interface ProductEditorPanelProps {
@@ -29,9 +32,11 @@ interface ProductEditorPanelProps {
   categories: ManagedCategory[];
   modifierGroups: ManagedModifierGroup[];
   ingredients: ManagedIngredient[];
+  productSizes: ManagedProductSize[];
+  choiceSections: ManagedChoiceSection[];
+  products: ManagedProduct[];
   recipeData?: ManagedRecipeData;
   isRecipeLoading: boolean;
-  cost?: ManagedProductCost;
   onSave: (input: ProductSaveInput) => Promise<void>;
   onSetStatus: (
     product: ManagedProduct,
@@ -46,7 +51,13 @@ interface ProductEditorPanelProps {
   onSaveRecipe: (
     product: ManagedProduct,
     items: { ingredientId: string; quantity: number }[],
+    sizeQuantities: Array<{ ingredientId: string; productSizeId: string; quantity: number }>,
   ) => Promise<void>;
+  onSaveSize: (size: ManagedProductSize) => Promise<unknown>;
+  onDeleteSize: (size: Required<Pick<ManagedProductSize, 'id' | 'revision'>>) => Promise<unknown>;
+  onSaveChoiceSection: (section: ManagedChoiceSection) => Promise<unknown>;
+  onDeleteChoiceSection: (section: Required<Pick<ManagedChoiceSection, 'id' | 'revision'>>) => Promise<unknown>;
+  onCopyChoiceSections: (sourceProductId: string, destinationProductId: string, sizeNameMap?: Record<string, string>) => Promise<unknown>;
 }
 
 function formatMad(centimes: number) {
@@ -65,15 +76,22 @@ export function ProductEditorPanel({
   categories,
   modifierGroups,
   ingredients,
+  productSizes,
+  choiceSections,
+  products,
   recipeData,
   isRecipeLoading,
-  cost,
   onSave,
   onSetStatus,
   onDelete,
   onSaveModifierGroup,
   onSetModifierGroupArchived,
   onSaveRecipe,
+  onSaveSize,
+  onDeleteSize,
+  onSaveChoiceSection,
+  onDeleteChoiceSection,
+  onCopyChoiceSections,
 }: ProductEditorPanelProps) {
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState('');
@@ -84,6 +102,8 @@ export function ProductEditorPanel({
   const [message, setMessage] = useState('');
   const [showRecipe, setShowRecipe] = useState(false);
   const [showModifiers, setShowModifiers] = useState(false);
+  const [showSizes, setShowSizes] = useState(false);
+  const [showChoices, setShowChoices] = useState(false);
 
   useEffect(() => {
     setName(product?.name ?? '');
@@ -109,17 +129,13 @@ export function ProductEditorPanel({
     (candidate) => candidate.id === categoryId,
   );
   const archived = product?.status === 'archived';
-  const activeModifierGroups = modifierGroups.filter(
-    (group) => group.status === 'active' || modifierGroupIds.includes(group.id ?? ''),
-  );
   const statusLabel = archived
     ? 'Archived'
     : available
       ? 'Active'
       : 'Unavailable';
   const priceCentimes = Math.round(Number(priceMad) * 100);
-  const grossProfit = cost?.complete && cost.costCentimes !== undefined ? priceCentimes - cost.costCentimes : undefined;
-  const margin = grossProfit === undefined || priceCentimes <= 0 ? undefined : Math.round(grossProfit * 10000 / priceCentimes) / 100;
+  const sizes = productSizes.filter((size) => size.productId === product?.id && size.status !== 'archived');
 
   async function save() {
     setSaving(true);
@@ -324,38 +340,18 @@ export function ProductEditorPanel({
       <div className={`${styles.divider} ${styles.infoDivider}`} />
       <div className={styles.optionsHeader}>
         <strong>Sizes &amp; options</strong>
-        <button type="button" onClick={() => setShowModifiers(true)}>
-          <SlidersHorizontal size={12} aria-hidden="true" />
-          Manage
-        </button>
+        <span>
+          <button type="button" disabled={!product || archived} onClick={() => setShowSizes(true)}>Sizes</button>
+          <button type="button" disabled={!product || archived} onClick={() => setShowChoices(true)}>Choices</button>
+        </span>
       </div>
       <div className={styles.options}>
-        {activeModifierGroups.map((group) => {
-          const selected = Boolean(group.id && modifierGroupIds.includes(group.id));
-          return (
-            <button
-              type="button"
-              className={`${styles.option} ${selected ? styles.optionSelected : ''}`}
-              aria-pressed={selected}
-              disabled={archived}
-              onClick={() =>
-                group.id &&
-                setModifierGroupIds((current) =>
-                  current.includes(group.id!)
-                    ? current.filter((id) => id !== group.id)
-                    : [...current, group.id!],
-                )
-              }
-              key={group.id}
-            >
-              <span>
-                <strong>{group.name}</strong>
-                <small>{group.options.filter((option) => option.status === 'active').length} choices</small>
-              </span>
-            </button>
-          );
-        })}
+        {sizes.map((size) => <span className={styles.option} key={size.id}><strong>{size.name}</strong><small>{formatMad(size.priceCentimes)} · {size.status}</small></span>)}
+        {choiceSections.map((section) => <span className={styles.option} key={section.id}><strong>{section.name}</strong><small>{section.values.length} choices</small></span>)}
+        {!sizes.length && !choiceSections.length ? <small className={styles.emptyOptions}>No sizes or product choices yet.</small> : null}
       </div>
+      <p className={styles.legacyNote}>POS still uses legacy shared groups until the next update.</p>
+      <button type="button" className={styles.legacyGroups} onClick={() => setShowModifiers(true)}><SlidersHorizontal size={12} />Legacy POS groups</button>
 
       <div className={`${styles.divider} ${styles.optionsDivider}`} />
       <div className={styles.recipeHeader}>
@@ -402,10 +398,6 @@ export function ProductEditorPanel({
           <ArrowRight size={11} weight="regular" aria-hidden="true" />
         </button>
       </div>
-      <p className={`${styles.cost} ${cost?.complete ? styles.costComplete : ''}`}>
-        {cost?.complete && cost.costCentimes !== undefined ? `Direct cost ${formatMad(cost.costCentimes)} · gross profit ${formatMad(grossProfit ?? 0)} · margin ${margin}%` : cost?.hasRecipe ? `Cost incomplete: ${cost.missingIngredientIds?.length ?? 0} ingredient cost${(cost.missingIngredientIds?.length ?? 0) === 1 ? '' : 's'} missing.` : 'Cost incomplete: add a recipe first.'}
-      </p>
-
       {message ? <p className={styles.notice}>{message}</p> : null}
       <button
         type="button"
@@ -436,10 +428,13 @@ export function ProductEditorPanel({
         <RecipeEditorDialog
           product={product}
           data={recipeData}
+          sizes={sizes}
           onClose={() => setShowRecipe(false)}
-          onSave={(items) => onSaveRecipe(product, items)}
+          onSave={(items, sizeQuantities) => onSaveRecipe(product, items, sizeQuantities)}
         />
       ) : null}
+      {showSizes && product ? <SizesEditorDialog product={product} sizes={sizes} onClose={() => setShowSizes(false)} onSave={onSaveSize} onDelete={onDeleteSize} /> : null}
+      {showChoices && product ? <ProductChoiceSectionDialog product={product} products={products} sizes={productSizes} ingredients={ingredients} sections={choiceSections} onClose={() => setShowChoices(false)} onSave={onSaveChoiceSection} onDelete={onDeleteChoiceSection} onCopy={onCopyChoiceSections} /> : null}
     </aside>
   );
 }

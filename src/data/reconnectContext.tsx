@@ -145,6 +145,11 @@ export function ReconnectProvider({
   const saveModifierMutation = useMutation(api.modifiers.saveGroup);
   const archiveModifierMutation = useMutation(api.modifiers.setGroupArchived);
   const saveRecipeMutation = useMutation(api.recipes.saveVersion);
+  const saveProductSizeMutation = useMutation(api.productConfiguration.saveSize);
+  const deleteProductSizeMutation = useMutation(api.productConfiguration.removeSize);
+  const saveChoiceSectionMutation = useMutation(api.productConfiguration.saveSection);
+  const deleteChoiceSectionMutation = useMutation(api.productConfiguration.removeSection);
+  const copyChoiceSectionsMutation = useMutation(api.productConfiguration.copySections);
   const saveIngredientMutation = useMutation(api.inventory.saveIngredient);
   const archiveIngredientMutation = useMutation(api.inventory.setIngredientArchived);
   const deleteIngredientMutation = useMutation(api.inventory.removeIngredient);
@@ -358,8 +363,112 @@ export function ReconnectProvider({
                 ingredientId: await resolveCloudRecordId('ingredient', String(item.ingredientId)) as Id<'ingredients'>,
                 quantity: Number(item.quantity),
               }))),
+              sizeQuantities: await Promise.all(((payload.sizeQuantities ?? []) as Array<Record<string, any>>).map(async (item) => ({
+                ingredientId: await resolveCloudRecordId('ingredient', String(item.ingredientId)) as Id<'ingredients'>,
+                productSizeId: await resolveCloudRecordId('product-size', String(item.productSizeId)),
+                quantity: Number(item.quantity),
+              }))),
             });
             return { recordType: 'recipe-version', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.product-size.save') {
+            const result = await saveProductSizeMutation({
+              ...actorSessionArgs,
+              ...(operation.expectedRevision === undefined
+                ? {}
+                : { id: await resolveCloudRecordId('product-size', operation.localRecordId) as Id<'productSizes'>,
+                  expectedRevision: operation.expectedRevision }),
+              productId: await resolveCloudRecordId('product', String(payload.productId)) as Id<'products'>,
+              key: String(payload.key), name: String(payload.name),
+              priceCentimes: Number(payload.priceCentimes), sortOrder: Number(payload.sortOrder),
+              isDefault: Boolean(payload.isDefault), status: payload.status,
+              clientMutationId: operation.operationId,
+            });
+            return { recordType: 'product-size', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.product-size.delete') {
+            const result = await deleteProductSizeMutation({
+              ...actorSessionArgs,
+              id: await resolveCloudRecordId('product-size', operation.localRecordId) as Id<'productSizes'>,
+              expectedRevision: operation.expectedRevision!, clientMutationId: operation.operationId,
+            });
+            return { recordType: 'product-size', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.choice-section.delete') {
+            const result = await deleteChoiceSectionMutation({
+              ...actorSessionArgs,
+              id: await resolveCloudRecordId('choice-section', operation.localRecordId) as Id<'productChoiceSections'>,
+              expectedRevision: operation.expectedRevision!, clientMutationId: operation.operationId,
+            });
+            return { recordType: 'choice-section', cloudRecordId: String(result.id), acknowledgedAt };
+          }
+          if (operation.operationType === 'management.choice-section.save') {
+            const values = payload.values as Array<Record<string, any>>;
+            const result = await saveChoiceSectionMutation({
+              ...actorSessionArgs,
+              ...(operation.expectedRevision === undefined
+                ? {}
+                : { id: await resolveCloudRecordId('choice-section', operation.localRecordId) as Id<'productChoiceSections'>,
+                  expectedRevision: operation.expectedRevision }),
+              productId: await resolveCloudRecordId('product', String(payload.productId)) as Id<'products'>,
+              key: String(payload.key), name: String(payload.name), selectionMode: payload.selectionMode,
+              required: Boolean(payload.required), minimumSelections: Number(payload.minimumSelections),
+              maximumSelections: Number(payload.maximumSelections), sortOrder: Number(payload.sortOrder),
+              status: payload.status,
+              productSizeIds: await Promise.all((payload.productSizeIds as string[]).map(
+                async (id) => await resolveCloudRecordId('product-size', id),
+              )),
+              values: await Promise.all(values.map(async (value) => ({
+                localId: String(value.id), key: String(value.key), name: String(value.name),
+                priceDeltaCentimes: Number(value.priceDeltaCentimes), isDefaultSelected: Boolean(value.isDefaultSelected),
+                sortOrder: Number(value.sortOrder), status: value.status,
+                sizeRules: await Promise.all((value.sizeRules as Array<Record<string, any>>).map(async (rule) => ({
+                  productSizeId: await resolveCloudRecordId('product-size', String(rule.productSizeId)),
+                  available: Boolean(rule.available),
+                  ...(rule.priceDeltaCentimes === undefined ? {} : { priceDeltaCentimes: Number(rule.priceDeltaCentimes) }),
+                }))),
+                effects: await Promise.all((value.effects as Array<Record<string, any>>).map(async (effect) => ({
+                  localId: String(effect.id), effectType: effect.effectType,
+                  ingredientId: await resolveCloudRecordId('ingredient', String(effect.ingredientId)) as Id<'ingredients'>,
+                  ...(effect.replacementIngredientId ? { replacementIngredientId: await resolveCloudRecordId('ingredient', String(effect.replacementIngredientId)) as Id<'ingredients'> } : {}),
+                  quantity: Number(effect.quantity), sortOrder: Number(effect.sortOrder),
+                  sizeQuantities: await Promise.all((effect.sizeQuantities as Array<Record<string, any>>).map(async (row) => ({
+                    productSizeId: await resolveCloudRecordId('product-size', String(row.productSizeId)),
+                    quantity: Number(row.quantity),
+                  }))),
+                }))),
+              }))),
+              clientMutationId: operation.operationId,
+            });
+            return {
+              recordType: 'choice-section', cloudRecordId: String(result.id), acknowledgedAt,
+              relatedMappings: result.valueMappings.flatMap((value) => [
+                { recordType: 'choice-value', localRecordId: value.localId, cloudRecordId: String(value.id) },
+                ...value.effects.map((effect) => ({
+                  recordType: 'choice-effect', localRecordId: effect.localId, cloudRecordId: String(effect.id),
+                })),
+              ]),
+            };
+          }
+          if (operation.operationType === 'management.choice-copy') {
+            const sizeNameMap = payload.sizeNameMap as Record<string, string>;
+            const result = await copyChoiceSectionsMutation({
+              ...actorSessionArgs,
+              sourceProductId: await resolveCloudRecordId('product', String(payload.sourceProductId)) as Id<'products'>,
+              destinationProductId: await resolveCloudRecordId('product', String(payload.destinationProductId)) as Id<'products'>,
+              sizeIdMap: Object.fromEntries(await Promise.all(Object.entries(sizeNameMap).map(async ([source, destination]) => [
+                await resolveCloudRecordId('product-size', source),
+                await resolveCloudRecordId('product-size', destination),
+              ]))),
+              localSectionIds: payload.copiedSectionIds as string[], clientMutationId: operation.operationId,
+            });
+            return {
+              recordType: 'product', cloudRecordId: await resolveCloudRecordId('product', String(payload.destinationProductId)),
+              acknowledgedAt,
+              relatedMappings: result.copied.map((section) => ({
+                recordType: 'choice-section', localRecordId: section.localId, cloudRecordId: String(section.id),
+              })),
+            };
           }
           throw new Error('Catalog synchronization operation is unsupported.');
         });
@@ -520,6 +629,7 @@ export function ReconnectProvider({
         refreshed,
       };
     } catch (caught) {
+      console.error('Reconnect synchronization failed', caught);
       const message = await recordSyncFailure(caught);
       setRevision((value) => value + 1);
       if (message.startsWith('Synchronization access is unavailable.')) {
