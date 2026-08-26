@@ -32,7 +32,7 @@ remaining goal and card sequence.
 | HARD-06 — Signed release and upgrade | done — follow-up `f1f3168c927fae74c47d4d9353e556b7f8fe4870` on `origin/main` (base `87bc12f7480084b6703e16f59f317c63d32249fa`) |
 | HARD-07 — Readiness review | done — `bb9279350c95779b1503964bb8dd80d4322c2a3c` on `origin/main` |
 | OPTIONS-01 — Product-owned size, choice, and exact-recipe foundation | done — `ebd3ac0a349ad69c8242f5f8718d3bae63652318` on `origin/main` |
-| OPTIONS-02 — Custom product choices and independent copying | done — pending SHA on push |
+| OPTIONS-02 — Custom product choices and independent copying | done — `6f072c64074b85ad958e4a1227fd14854e5afcc9` on `origin/main` |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | pending |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending |
@@ -113,16 +113,8 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- OPTIONS-02 is complete pending commit/push SHA recording. Local-first sizes,
-  choice sections, copy, per-size recipe columns, Convex mutations, and owner
-  Products dialogs shipped. Raised management operation-type query cap from 20
-  to 32 so OPERATIONAL+STAFF pending checks no longer block Sync now after the
-  new OPTIONS types. Tab A9: Regular+Large on Ceremonial Matcha, Cream with two
-  values, independent copy to Hojicha (edit left source Extra cream unchanged),
-  restart kept sizes/choices, cashier nav is POS+Orders only (no Products),
-  viewport 1340×800, focused logcat clean. `debuggable false` restored in
-  source. Exact next action: commit/push OPTIONS-02, then stop and ask before
-  OPTIONS-03.
+- OPTIONS-02 is on `origin/main` as `6f072c64074b85ad958e4a1227fd14854e5afcc9`.
+  Exact next action: stop; ask before OPTIONS-03.
 - OPTIONS-01 is on `origin/main` as `ebd3ac0a349ad69c8242f5f8718d3bae63652318`.
 - HARD-07 is on `origin/main` as `bb9279350c95779b1503964bb8dd80d4322c2a3c`.
 - Client ship gate (do not forget before café handoff): signed release with
