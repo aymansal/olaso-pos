@@ -10,7 +10,7 @@ const empty = createInitialPosSession();
 assert.equal(hasUnfinishedCart(empty), false);
 assert.equal(hasUnfinishedCart({
   ...empty,
-  cart: addProduct(empty.cart, 'espresso'),
+  cart: addProduct(empty.cart, 'espresso', 'espresso-reg'),
 }), true);
 
 const app = readFileSync('src/App.tsx', 'utf8');

@@ -110,6 +110,35 @@ database.exec(`
     ('recipe-cappuccino-1', 'ingredient-whole', 200),
     ('recipe-cappuccino-1', 'ingredient-cup', 1);
 
+  INSERT INTO product_sizes
+    (id, product_id, key, name, price_centimes, sort_order, is_default,
+     status, revision, updated_at)
+  VALUES
+    ('size-cappuccino-regular', 'product-cappuccino', 'regular', 'Regular',
+     1700, 10, 1, 'active', 1, ${now});
+
+  INSERT INTO product_choice_sections
+    (id, product_id, key, name, selection_mode, is_required,
+     minimum_selections, maximum_selections, sort_order, status, revision,
+     updated_at)
+  VALUES
+    ('section-cappuccino-milk', 'product-cappuccino', 'milk', 'Milk',
+     'single', 1, 1, 1, 10, 'active', 1, ${now});
+
+  INSERT INTO product_choice_values
+    (id, section_id, key, name, price_delta_centimes, is_default_selected,
+     sort_order, status, revision, updated_at)
+  VALUES
+    ('value-cappuccino-oat', 'section-cappuccino-milk', 'oat', 'Oat milk',
+     400, 0, 10, 'active', 1, ${now});
+
+  INSERT INTO product_choice_value_effects
+    (id, value_id, effect_type, ingredient_id, replacement_ingredient_id,
+     quantity, sort_order)
+  VALUES
+    ('effect-cappuccino-oat', 'value-cappuccino-oat', 'replace',
+     'ingredient-whole', 'ingredient-oat', 200, 10);
+
   INSERT INTO device_settings (key, value, updated_at)
   VALUES
     ('device_id', 'device-app06-check', ${now}),
@@ -129,7 +158,8 @@ const input = {
   cart: addProduct(
     [],
     'product-cappuccino',
-    ['option-standard', 'option-oat'],
+    'size-cappuccino-regular',
+    ['value-cappuccino-oat'],
   ),
   cashierProfileId: 'profile-test-cashier',
   cashierName: 'Test cashier',
@@ -181,10 +211,20 @@ assert.equal(completed.receipt.paymentMethod, 'Card');
 assert.equal(completed.receipt.receiptLanguage, 'fr');
 assert.equal(completed.receipt.lines[0].productRevision, 3);
 assert.equal(completed.receipt.lines[0].recipeVersionId, 'recipe-cappuccino-1');
+assert.equal(completed.receipt.lines[0].sizeId, 'size-cappuccino-regular');
+assert.equal(completed.receipt.lines[0].sizeName, 'Regular');
+assert.deepEqual(completed.receipt.lines[0].choiceValueIds, ['value-cappuccino-oat']);
 assert(
   completed.receipt.lines[0].modifiers.some(
     (modifier) => modifier.optionName === 'Oat milk',
   ),
+);
+assert.equal(
+  database.prepare(
+    `SELECT size_id_snapshot, size_name_snapshot FROM sale_items
+     WHERE local_sale_id = 'local-sale-check'`,
+  ).get().size_id_snapshot,
+  'size-cappuccino-regular',
 );
 assert.equal(
   database.prepare('SELECT COUNT(*) AS count FROM sales').get().count,
@@ -342,7 +382,14 @@ const cachedMenu = {
       sortOrder: 10,
     },
   ],
-  recipeVersions: [],
+  recipeVersions: [
+    {
+      id: 'recipe-cappuccino-1',
+      productId: 'product-cappuccino',
+      version: 1,
+      createdAt: now,
+    },
+  ],
   recipeItems: [],
   ingredients: [],
   productSizes: [],
@@ -360,7 +407,14 @@ assert.throws(
       cachedMenu,
       {
         ...input,
-        cart: addProduct([], 'product-cappuccino'),
+        cart: [{
+          id: 'legacy-missing-size-choice',
+          productId: 'product-cappuccino',
+          sizeId: '',
+          quantity: 1,
+          choiceValueIds: [],
+          modifierOptionIds: [],
+        }],
       },
       'invalid-sale',
     ),

@@ -11,6 +11,7 @@ export type ReceiptSnapshotForPrint = {
     quantity: number;
     unitPriceCentimes: number;
     lineTotalCentimes: number;
+    sizeName?: string;
     modifiers: Array<{
       groupName?: string;
       optionName: string;
@@ -112,8 +113,13 @@ export function createReceiptModel(
       quantity: lineQuantity,
       unitPriceCentimes,
       lineTotalCentimes,
-      modifiers: line.modifiers.map((modifier) =>
-        text(modifier.optionName, 'modifier', 80)),
+      modifiers: [
+        ...(typeof line.sizeName === 'string' && line.sizeName.trim()
+          ? [text(line.sizeName.trim(), 'size', 80)]
+          : []),
+        ...line.modifiers.map((modifier) =>
+          text(modifier.optionName, 'modifier', 80)),
+      ],
     };
   });
 

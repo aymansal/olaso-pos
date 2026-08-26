@@ -155,9 +155,10 @@ export function OrderDetailPanel({
 
       <div className={styles.items}>
         {order.receipt.lines.map((item, index) => {
-          const options = item.modifiers
-            .map((modifier) => modifier.optionName)
-            .join(', ');
+          const options = [
+            item.sizeName,
+            ...item.modifiers.map((modifier) => modifier.optionName),
+          ].filter(Boolean).join(', ');
           return (
             <article className={styles.item} key={`${item.productName}-${index}`}>
               <span className={`${styles.itemIcon} ${index === 0 ? styles.itemIconActive : ''}`}>

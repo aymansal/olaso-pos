@@ -11,12 +11,14 @@ import { usePosData } from '../../data/usePosData';
 import { useConnectionStatus } from '../../data/connectionContext';
 import type { ClockFormat, ReceiptLanguage } from '../../data/terminalSettings';
 import type { SavedReceipt } from '../../data/localSales.ts';
+import type { OperationalCacheSnapshot } from '../../data/operationalCache.ts';
 import { categoryArtworkUrl } from '../../lib/categoryArtwork.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
 import { Header } from './components/Header/Header';
 import {
   ModifierSelectionDialog,
-  type PosModifierGroup,
+  type PosChoiceSection,
+  type PosProductSize,
 } from './components/ModifierSelectionDialog/ModifierSelectionDialog';
 import { ProductGrid } from './components/ProductGrid/ProductGrid';
 import { ReceiptRail } from './components/ReceiptRail/ReceiptRail';
@@ -54,6 +56,108 @@ function localServiceType(
 ): 'dine-in' | 'take-away' {
   if (serviceMode === 'Dine In') return 'dine-in';
   return 'take-away';
+}
+
+function activeSizesForProduct(
+  menu: OperationalCacheSnapshot,
+  productId: string,
+): PosProductSize[] {
+  return menu.productSizes
+    .filter((size) => size.productId === productId && size.status === 'active')
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+    .map((size) => ({
+      id: size.id,
+      name: size.name,
+      priceCentimes: size.priceCentimes,
+      isDefault: size.isDefault,
+    }));
+}
+
+function choiceSectionsForProduct(
+  menu: OperationalCacheSnapshot,
+  productId: string,
+): PosChoiceSection[] {
+  return menu.productChoiceSections
+    .filter((section) =>
+      section.productId === productId && section.status === 'active',
+    )
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+    .map((section) => ({
+      id: section.id,
+      name: section.name,
+      required: section.required,
+      min: section.minimumSelections,
+      max: section.maximumSelections,
+      selectionMode: section.selectionMode,
+      applicableSizeIds: menu.productChoiceSectionSizes
+        .filter((link) => link.sectionId === section.id)
+        .map((link) => link.productSizeId),
+      values: menu.productChoiceValues
+        .filter((value) =>
+          value.sectionId === section.id && value.status === 'active',
+        )
+        .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+        .map((value) => ({
+          id: value.id,
+          name: value.name,
+          priceDeltaCentimes: value.priceDeltaCentimes,
+          isDefaultSelected: value.isDefaultSelected,
+          sizeRules: menu.productChoiceValueSizes
+            .filter((rule) => rule.valueId === value.id)
+            .map((rule) => ({
+              sizeId: rule.productSizeId,
+              available: rule.available,
+              priceDeltaCentimes: rule.priceDeltaCentimes,
+            })),
+        })),
+    }));
+}
+
+function sectionAppliesToSize(
+  section: PosChoiceSection,
+  sizeId: string,
+) {
+  return (
+    section.applicableSizeIds.length === 0
+    || section.applicableSizeIds.includes(sizeId)
+  );
+}
+
+function defaultChoiceValueIds(
+  sizeId: string,
+  sections: PosChoiceSection[],
+) {
+  const selected: string[] = [];
+  for (const section of sections.filter((row) =>
+    sectionAppliesToSize(row, sizeId),
+  )) {
+    const defaults = section.values.filter((value) => {
+      if (!value.isDefaultSelected) return false;
+      const rule = value.sizeRules.find((row) => row.sizeId === sizeId);
+      return !rule || rule.available;
+    });
+    if (section.max === 1) {
+      if (defaults[0]) selected.push(defaults[0].id);
+    } else {
+      for (const value of defaults.slice(0, section.max)) {
+        selected.push(value.id);
+      }
+    }
+  }
+  return selected;
+}
+
+function choiceDeltaForSize(
+  menu: OperationalCacheSnapshot,
+  valueId: string,
+  sizeId: string,
+) {
+  const value = menu.productChoiceValues.find((row) => row.id === valueId);
+  if (!value) return undefined;
+  const rule = menu.productChoiceValueSizes.find(
+    (row) => row.valueId === valueId && row.productSizeId === sizeId,
+  );
+  return rule?.priceDeltaCentimes ?? value.priceDeltaCentimes;
 }
 
 export function PosScreen({
@@ -146,10 +250,34 @@ export function PosScreen({
     () => new Map(products.map((product) => [product.id, product])),
     [products],
   );
-  const optionById = useMemo(
-    () => new Map(menu?.modifierOptions.map((option) => [option.id, option])),
+  const sizeById = useMemo(
+    () => new Map((menu?.productSizes ?? []).map((size) => [size.id, size])),
     [menu],
   );
+  const valueById = useMemo(
+    () => new Map(
+      (menu?.productChoiceValues ?? []).map((value) => [value.id, value]),
+    ),
+    [menu],
+  );
+  const pricedSizes = useMemo(
+    () => (menu?.productSizes ?? []).map((size) => ({
+      id: size.id,
+      priceCentimes: size.priceCentimes,
+    })),
+    [menu],
+  );
+  const pricedChoiceValues = useMemo(() => {
+    if (!menu) return [];
+    return session.cart.flatMap((line) =>
+      line.choiceValueIds.flatMap((valueId) => {
+        const delta = choiceDeltaForSize(menu, valueId, line.sizeId);
+        return delta === undefined
+          ? []
+          : [{ id: valueId, sizeId: line.sizeId, priceDeltaCentimes: delta }];
+      }),
+    );
+  }, [menu, session.cart]);
 
   useEffect(() => {
     if (
@@ -172,34 +300,40 @@ export function PosScreen({
   );
   const receiptLines = session.cart.flatMap((line) => {
     const product = productById.get(line.productId);
-    if (!product) return [];
-    const selectedOptions = line.modifierOptionIds.flatMap((id) => {
-      const option = optionById.get(id);
-      return option ? [option] : [];
+    const size = sizeById.get(line.sizeId);
+    if (!product || !size || !menu) return [];
+    const selectedValues = line.choiceValueIds.flatMap((id) => {
+      const value = valueById.get(id);
+      if (!value) return [];
+      const delta = choiceDeltaForSize(menu, id, line.sizeId);
+      if (delta === undefined) return [];
+      return [{ ...value, priceDeltaCentimes: delta }];
     });
+    const meta = [
+      size.name,
+      ...selectedValues.map((value) => value.name),
+    ].filter(Boolean).join(', ');
     return [{
       id: line.id,
       product: {
         ...product,
         priceCentimes:
-          product.priceCentimes
-          + selectedOptions.reduce(
-            (sum, option) => sum + option.priceDeltaCentimes,
+          size.priceCentimes
+          + selectedValues.reduce(
+            (sum, value) => sum + value.priceDeltaCentimes,
             0,
           ),
       },
       quantity: line.quantity,
-      modifierSummary: selectedOptions
-        .map((option) => option.name)
-        .join(', '),
+      modifierSummary: meta,
     }];
   });
   let subtotal = 0;
   try {
     subtotal = subtotalCentimes(
       session.cart,
-      products,
-      menu?.modifierOptions ?? [],
+      pricedSizes,
+      pricedChoiceValues,
     );
   } catch {
     subtotal = 0;
@@ -210,8 +344,8 @@ export function PosScreen({
     ? { kind: 'empty' as const, message: 'Loading the saved menu…' }
     : validatePosSession(
       session,
-      products,
-      menu?.modifierOptions ?? [],
+      pricedSizes,
+      pricedChoiceValues,
     );
   const checkoutFeedback: {
     kind: 'neutral' | 'error' | 'success';
@@ -236,45 +370,40 @@ export function PosScreen({
   const configuringProduct = configuringProductId
     ? productById.get(configuringProductId)
     : undefined;
-  const configuringGroups: PosModifierGroup[] = useMemo(() => {
-    if (!menu || !configuringProductId) return [];
-    return menu.productModifierGroups
-      .filter((link) => link.productId === configuringProductId)
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .flatMap((link) => {
-        const group = menu.modifierGroups.find(
-          (candidate) => candidate.id === link.modifierGroupId,
-        );
-        return group
-          ? [{
-              id: group.id,
-              name: group.name,
-              minimumSelections: group.minimumSelections,
-              maximumSelections: group.maximumSelections,
-              options: menu.modifierOptions
-                .filter((option) => option.modifierGroupId === group.id)
-                .sort((a, b) => a.sortOrder - b.sortOrder)
-                .map((option) => ({
-                  id: option.id,
-                  name: option.name,
-                  priceDeltaCentimes: option.priceDeltaCentimes,
-                })),
-            }]
-          : [];
-      });
-  }, [configuringProductId, menu]);
+  const configuringSizes = useMemo(
+    () =>
+      menu && configuringProductId
+        ? activeSizesForProduct(menu, configuringProductId)
+        : [],
+    [configuringProductId, menu],
+  );
+  const configuringSections = useMemo(
+    () =>
+      menu && configuringProductId
+        ? choiceSectionsForProduct(menu, configuringProductId)
+        : [],
+    [configuringProductId, menu],
+  );
 
   function beginAdd(productId: string) {
-    const hasModifiers = menu?.productModifierGroups.some(
-      (link) => link.productId === productId,
-    );
-    if (hasModifiers) {
+    if (!menu) return;
+    const sizes = activeSizesForProduct(menu, productId);
+    if (sizes.length === 0) return;
+    const sections = choiceSectionsForProduct(menu, productId);
+    const needsDialog =
+      sizes.length > 1
+      || sections.some((section) =>
+        sizes.some((size) => sectionAppliesToSize(section, size.id)),
+      );
+    if (needsDialog) {
       setConfiguringProductId(productId);
       return;
     }
+    const sizeId = sizes.find((size) => size.isDefault)?.id ?? sizes[0].id;
+    const choiceValueIds = defaultChoiceValueIds(sizeId, sections);
     editSession((current) => ({
       ...current,
-      cart: addProduct(current.cart, productId),
+      cart: addProduct(current.cart, productId, sizeId, choiceValueIds),
     }));
   }
 
@@ -384,19 +513,20 @@ export function PosScreen({
           editSession((current) => ({ ...current, paymentMethod }))}
         onPlaceOrder={placeOrder}
       />
-      {configuringProduct ? (
+      {configuringProduct && configuringSizes.length > 0 ? (
         <ModifierSelectionDialog
           productName={configuringProduct.name}
-          basePriceCentimes={configuringProduct.priceCentimes}
-          groups={configuringGroups}
+          sizes={configuringSizes}
+          sections={configuringSections}
           onClose={() => setConfiguringProductId(undefined)}
-          onAdd={(modifierOptionIds) => {
+          onAdd={({ sizeId, choiceValueIds }) => {
             editSession((current) => ({
               ...current,
               cart: addProduct(
                 current.cart,
                 configuringProduct.id,
-                modifierOptionIds,
+                sizeId,
+                choiceValueIds,
               ),
             }));
             setConfiguringProductId(undefined);

@@ -881,6 +881,13 @@ export const localMigrations = [
        WHERE status <> 'archived'`,
     ],
   },
+  {
+    toVersion: 21,
+    statements: [
+      `ALTER TABLE sale_items ADD COLUMN size_id_snapshot TEXT`,
+      `ALTER TABLE sale_items ADD COLUMN size_name_snapshot TEXT`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

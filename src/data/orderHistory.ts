@@ -19,6 +19,7 @@ export type OrderReceipt = {
     quantity: number;
     unitPriceCentimes: number;
     lineTotalCentimes: number;
+    sizeName?: string;
     modifiers: Array<{
       groupName: string;
       optionName: string;
@@ -120,6 +121,9 @@ function parseReceipt(raw: unknown): OrderReceipt {
         quantity: positiveInteger(line.quantity, 'quantity'),
         unitPriceCentimes: money(line.unitPriceCentimes, 'unit price'),
         lineTotalCentimes: money(line.lineTotalCentimes, 'line total'),
+        ...(typeof line.sizeName === 'string' && line.sizeName.trim()
+          ? { sizeName: line.sizeName.trim() }
+          : {}),
         modifiers: modifiers.map((rawModifier) => {
           const modifier = rawModifier as Record<string, unknown>;
           return {

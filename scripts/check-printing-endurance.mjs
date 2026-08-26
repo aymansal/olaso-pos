@@ -57,30 +57,21 @@ function seed(now) {
        'Endurance Americano Original', 'Endurance Americano', 1300, 'active',
        10, 'recipe-endurance-1', 1, ${now});
 
-    INSERT INTO modifier_groups
-      (id, name, minimum_selections, maximum_selections, status, revision,
-       updated_at)
-    VALUES ('group-syrup', 'Syrup', 0, 1, 'active', 1, ${now});
+    INSERT INTO product_sizes
+      (id, product_id, key, name, price_centimes, sort_order, is_default,
+       status, revision, updated_at)
+    VALUES
+      ('size-endurance-reg', 'product-endurance', 'regular', 'Regular', 1300,
+       10, 1, 'active', 1, ${now}),
+      ('size-endurance-large', 'product-endurance', 'large', 'Large', 1600,
+       20, 0, 'active', 1, ${now});
 
     INSERT INTO ingredients
       (id, name, base_unit, current_stock_quantity, low_stock_threshold, status,
        revision, updated_at)
     VALUES
       ('ingredient-coffee', 'Coffee beans', 'gram', 100000, 100, 'active', 1, ${now}),
-      ('ingredient-cup', 'Paper cup', 'piece', 10000, 10, 'active', 1, ${now}),
-      ('ingredient-vanilla', 'Vanilla syrup', 'millilitre', 100000, 100, 'active', 1, ${now});
-
-    INSERT INTO modifier_options
-      (id, modifier_group_id, name, price_delta_centimes, status,
-       ingredient_effects_json, sort_order, revision, updated_at)
-    VALUES
-      ('option-vanilla', 'group-syrup', 'Vanilla', 300, 'active',
-       '[{"ingredientId":"ingredient-vanilla","quantityDelta":20}]',
-       10, 1, ${now});
-
-    INSERT INTO product_modifier_groups
-      (product_id, modifier_group_id, sort_order)
-    VALUES ('product-endurance', 'group-syrup', 10);
+      ('ingredient-cup', 'Paper cup', 'piece', 10000, 10, 'active', 1, ${now});
 
     INSERT INTO recipe_versions
       (id, product_id, version, is_active, created_at)
@@ -91,6 +82,19 @@ function seed(now) {
     VALUES
       ('recipe-endurance-1', 'ingredient-coffee', 18),
       ('recipe-endurance-1', 'ingredient-cup', 1);
+
+    INSERT INTO recipe_size_quantities
+      (recipe_version_id, ingredient_id, product_size_id, size_name_snapshot,
+       quantity)
+    VALUES
+      ('recipe-endurance-1', 'ingredient-coffee', 'size-endurance-reg',
+       'Regular', 18),
+      ('recipe-endurance-1', 'ingredient-cup', 'size-endurance-reg',
+       'Regular', 1),
+      ('recipe-endurance-1', 'ingredient-coffee', 'size-endurance-large',
+       'Large', 24),
+      ('recipe-endurance-1', 'ingredient-cup', 'size-endurance-large',
+       'Large', 1);
 
     INSERT INTO device_settings (key, value, updated_at)
     VALUES
@@ -146,7 +150,7 @@ function printOperations({ fail = false } = {}) {
 const startedAt = Date.parse('2026-08-21T20:00:00.000Z');
 const saleIds = [];
 let totalQuantity = 0;
-let vanillaQuantity = 0;
+let coffeeUsed = 0;
 
 try {
   database = openDatabase();
@@ -154,19 +158,12 @@ try {
   seed(startedAt);
 
   for (let index = 0; index < 20; index += 1) {
-    const withVanilla = index % 3 === 0;
+    const large = index % 3 === 0;
+    const sizeId = large ? 'size-endurance-large' : 'size-endurance-reg';
     const quantity = index % 2 === 0 ? 2 : 1;
-    let cart = addProduct(
-      [],
-      'product-endurance',
-      withVanilla ? ['option-vanilla'] : [],
-    );
+    let cart = addProduct([], 'product-endurance', sizeId);
     if (quantity === 2) {
-      cart = addProduct(
-        cart,
-        'product-endurance',
-        withVanilla ? ['option-vanilla'] : [],
-      );
+      cart = addProduct(cart, 'product-endurance', sizeId);
     }
     const serviceType = index % 3 === 0
       ? 'dine-in'
@@ -180,6 +177,7 @@ try {
       adapter(),
       {
         cart,
+        cashierProfileId: 'profile-endurance-cashier',
         cashierName: 'Endurance cashier',
         serviceType,
         paymentMethod: 'Cash',
@@ -193,7 +191,7 @@ try {
     database.exec('COMMIT');
     saleIds.push(sale.localSaleId);
     totalQuantity += quantity;
-    if (withVanilla) vanillaQuantity += quantity;
+    coffeeUsed += quantity * (large ? 24 : 18);
 
     const firstAttempt = await attemptSaleReceiptPrint(
       sale,
@@ -241,7 +239,7 @@ try {
   ).get();
   assert.equal(counts.sales, 20);
   assert.equal(counts.items, 20);
-  assert.equal(counts.movements, 47);
+  assert.equal(counts.movements, 40);
   assert.equal(counts.outbox, 20);
   assert.equal(counts.receipts, 20);
   assert.equal(counts.print_attempts, 26);
@@ -253,9 +251,8 @@ try {
        FROM ingredients`,
     ).all().map((row) => [row.id, row.balance]),
   );
-  assert.equal(balances['ingredient-coffee'], 100000 - totalQuantity * 18);
+  assert.equal(balances['ingredient-coffee'], 100000 - coffeeUsed);
   assert.equal(balances['ingredient-cup'], 10000 - totalQuantity);
-  assert.equal(balances['ingredient-vanilla'], 100000 - vanillaQuantity * 20);
 
   console.log(JSON.stringify({
     sales: counts.sales,

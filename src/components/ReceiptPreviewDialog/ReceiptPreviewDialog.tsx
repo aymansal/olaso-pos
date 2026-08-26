@@ -15,6 +15,7 @@ export type ReceiptPreviewValue = {
     quantity: number;
     unitPriceCentimes: number;
     lineTotalCentimes: number;
+    sizeName?: string;
     modifiers: Array<{ optionName: string }>;
   }>;
   subtotalCentimes: number;
@@ -75,11 +76,13 @@ export function ReceiptPreviewDialog({
             <article key={`${line.productName}-${index}`}>
               <span>
                 <strong>{line.receiptName ?? line.productName}</strong>
-                {line.modifiers.length > 0 ? (
-                  <small>
-                    {line.modifiers.map((modifier) => modifier.optionName).join(', ')}
-                  </small>
-                ) : null}
+                {(() => {
+                  const options = [
+                    line.sizeName,
+                    ...line.modifiers.map((modifier) => modifier.optionName),
+                  ].filter(Boolean).join(', ');
+                  return options ? <small>{options}</small> : null;
+                })()}
               </span>
               <span>{line.quantity} × {formatMoney(line.unitPriceCentimes)}</span>
               <strong>{formatMoney(line.lineTotalCentimes)}</strong>

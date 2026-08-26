@@ -206,8 +206,8 @@ try {
   database = new DatabaseSync(databasePath);
   database.exec('PRAGMA foreign_keys = ON');
   assert.equal(migrate(database), LOCAL_SCHEMA_VERSION);
-  assert.equal(LOCAL_SCHEMA_VERSION, 20);
-  assert.equal(schemaVersion(database), 20);
+  assert.equal(LOCAL_SCHEMA_VERSION, 21);
+  assert.equal(schemaVersion(database), 21);
   assert.equal(
     database.prepare('SELECT name FROM products WHERE id = ?').get(
       'product-espresso',
@@ -415,6 +415,16 @@ try {
     database
       .prepare("SELECT name FROM pragma_table_info('sales') WHERE name = ?")
       .get('actor_profile_id'),
+  );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('sale_items') WHERE name = ?")
+      .get('size_id_snapshot'),
+  );
+  assert.ok(
+    database
+      .prepare("SELECT name FROM pragma_table_info('sale_items') WHERE name = ?")
+      .get('size_name_snapshot'),
   );
   assert.ok(
     database

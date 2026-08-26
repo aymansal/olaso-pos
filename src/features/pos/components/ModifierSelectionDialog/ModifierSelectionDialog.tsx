@@ -3,67 +3,136 @@ import { useState } from 'react';
 import { formatMoney } from '../../../../lib/money';
 import styles from './ModifierSelectionDialog.module.css';
 
-export type PosModifierGroup = {
+export type PosProductSize = {
   id: string;
   name: string;
-  minimumSelections: number;
-  maximumSelections: number;
-  options: Array<{
-    id: string;
-    name: string;
-    priceDeltaCentimes: number;
+  priceCentimes: number;
+  isDefault?: boolean;
+};
+
+export type PosChoiceValue = {
+  id: string;
+  name: string;
+  priceDeltaCentimes: number;
+  isDefaultSelected: boolean;
+  sizeRules: Array<{
+    sizeId: string;
+    available: boolean;
+    priceDeltaCentimes: number | null;
   }>;
+};
+
+export type PosChoiceSection = {
+  id: string;
+  name: string;
+  required: boolean;
+  min: number;
+  max: number;
+  selectionMode: 'single' | 'multiple';
+  /** Empty means every size. */
+  applicableSizeIds: string[];
+  values: PosChoiceValue[];
 };
 
 type ModifierSelectionDialogProps = {
   productName: string;
-  basePriceCentimes: number;
-  groups: PosModifierGroup[];
+  sizes: PosProductSize[];
+  sections: PosChoiceSection[];
   onClose: () => void;
-  onAdd: (modifierOptionIds: string[]) => void;
+  onAdd: (selection: { sizeId: string; choiceValueIds: string[] }) => void;
 };
+
+function sectionApplies(section: PosChoiceSection, sizeId: string) {
+  return (
+    section.applicableSizeIds.length === 0
+    || section.applicableSizeIds.includes(sizeId)
+  );
+}
+
+function valueAvailable(value: PosChoiceValue, sizeId: string) {
+  const rule = value.sizeRules.find((row) => row.sizeId === sizeId);
+  return !rule || rule.available;
+}
+
+function valueDelta(value: PosChoiceValue, sizeId: string) {
+  const rule = value.sizeRules.find((row) => row.sizeId === sizeId);
+  return rule?.priceDeltaCentimes ?? value.priceDeltaCentimes;
+}
+
+function defaultSizeId(sizes: PosProductSize[]) {
+  return sizes.find((size) => size.isDefault)?.id ?? sizes[0]?.id ?? '';
+}
+
+function defaultChoiceIds(sizeId: string, sections: PosChoiceSection[]) {
+  const selected: string[] = [];
+  for (const section of sections.filter((row) => sectionApplies(row, sizeId))) {
+    const defaults = section.values.filter(
+      (value) => value.isDefaultSelected && valueAvailable(value, sizeId),
+    );
+    if (section.max === 1) {
+      if (defaults[0]) selected.push(defaults[0].id);
+    } else {
+      for (const value of defaults.slice(0, section.max)) {
+        selected.push(value.id);
+      }
+    }
+  }
+  return selected;
+}
 
 export function ModifierSelectionDialog({
   productName,
-  basePriceCentimes,
-  groups,
+  sizes,
+  sections,
   onClose,
   onAdd,
 }: ModifierSelectionDialogProps) {
-  const [selected, setSelected] = useState<string[]>([]);
-  const valid = groups.every((group) => {
-    const count = group.options.filter((option) =>
-      selected.includes(option.id),
-    ).length;
-    return (
-      count >= group.minimumSelections
-      && count <= group.maximumSelections
-    );
-  });
-  const priceCentimes =
-    basePriceCentimes
-    + groups
-      .flatMap((group) => group.options)
-      .filter((option) => selected.includes(option.id))
-      .reduce((sum, option) => sum + option.priceDeltaCentimes, 0);
+  const [sizeId, setSizeId] = useState(() => defaultSizeId(sizes));
+  const [selected, setSelected] = useState(() =>
+    defaultChoiceIds(defaultSizeId(sizes), sections),
+  );
 
-  function toggle(group: PosModifierGroup, optionId: string) {
-    const groupOptionIds = group.options.map((option) => option.id);
+  const applicableSections = sections.filter((section) =>
+    sectionApplies(section, sizeId),
+  );
+  const size = sizes.find((candidate) => candidate.id === sizeId);
+  const valid = Boolean(size) && applicableSections.every((section) => {
+    const count = section.values.filter((value) =>
+      selected.includes(value.id),
+    ).length;
+    if (section.required && count < 1) return false;
+    return count >= section.min && count <= section.max;
+  });
+  const priceCentimes = size
+    ? size.priceCentimes
+      + applicableSections
+        .flatMap((section) => section.values)
+        .filter((value) => selected.includes(value.id))
+        .reduce((sum, value) => sum + valueDelta(value, sizeId), 0)
+    : 0;
+
+  function selectSize(nextSizeId: string) {
+    setSizeId(nextSizeId);
+    setSelected(defaultChoiceIds(nextSizeId, sections));
+  }
+
+  function toggle(section: PosChoiceSection, valueId: string) {
+    const sectionValueIds = section.values.map((value) => value.id);
     setSelected((current) => {
-      if (group.maximumSelections === 1) {
+      if (section.max === 1) {
         return [
-          ...current.filter((id) => !groupOptionIds.includes(id)),
-          optionId,
+          ...current.filter((id) => !sectionValueIds.includes(id)),
+          valueId,
         ];
       }
-      if (current.includes(optionId)) {
-        return current.filter((id) => id !== optionId);
+      if (current.includes(valueId)) {
+        return current.filter((id) => id !== valueId);
       }
       const groupCount = current.filter((id) =>
-        groupOptionIds.includes(id),
+        sectionValueIds.includes(id),
       ).length;
-      return groupCount < group.maximumSelections
-        ? [...current, optionId]
+      return groupCount < section.max
+        ? [...current, valueId]
         : current;
     });
   }
@@ -81,43 +150,73 @@ export function ModifierSelectionDialog({
             <small>CUSTOMIZE ORDER</small>
             <h2 id="modifier-selection-title">{productName}</h2>
           </span>
-          <button type="button" onClick={onClose} aria-label="Close modifiers">
+          <button type="button" onClick={onClose} aria-label="Close selection">
             <X size={18} aria-hidden="true" />
           </button>
         </header>
         <div className={styles.groups}>
-          {groups.map((group) => (
-            <fieldset key={group.id}>
+          {sizes.length > 1 ? (
+            <fieldset>
               <legend>
-                <strong>{group.name}</strong>
-                <span>
-                  {group.minimumSelections > 0 ? 'Required' : 'Optional'}
-                  {' · '}
-                  up to {group.maximumSelections}
-                </span>
+                <strong>Size</strong>
+                <span>Required · pick one</span>
               </legend>
               <div className={styles.options}>
-                {group.options.map((option) => (
-                  <label key={option.id}>
+                {sizes.map((candidate) => (
+                  <label key={candidate.id}>
                     <input
-                      type={
-                        group.maximumSelections === 1 ? 'radio' : 'checkbox'
-                      }
-                      name={`modifier-${group.id}`}
-                      checked={selected.includes(option.id)}
-                      onChange={() => toggle(group, option.id)}
+                      type="radio"
+                      name="product-size"
+                      checked={sizeId === candidate.id}
+                      onChange={() => selectSize(candidate.id)}
                     />
-                    <span>{option.name}</span>
-                    <strong>
-                      {option.priceDeltaCentimes === 0
-                        ? 'Included'
-                        : `+ ${formatMoney(option.priceDeltaCentimes)}`}
-                    </strong>
+                    <span>{candidate.name}</span>
+                    <strong>{formatMoney(candidate.priceCentimes)}</strong>
                   </label>
                 ))}
               </div>
             </fieldset>
-          ))}
+          ) : null}
+          {applicableSections.map((section) => {
+            const visibleValues = section.values.filter((value) =>
+              valueAvailable(value, sizeId),
+            );
+            return (
+              <fieldset key={section.id}>
+                <legend>
+                  <strong>{section.name}</strong>
+                  <span>
+                    {section.required || section.min > 0
+                      ? 'Required'
+                      : 'Optional'}
+                    {' · '}
+                    up to {section.max}
+                  </span>
+                </legend>
+                <div className={styles.options}>
+                  {visibleValues.map((value) => {
+                    const delta = valueDelta(value, sizeId);
+                    return (
+                      <label key={value.id}>
+                        <input
+                          type={section.max === 1 ? 'radio' : 'checkbox'}
+                          name={`choice-${section.id}`}
+                          checked={selected.includes(value.id)}
+                          onChange={() => toggle(section, value.id)}
+                        />
+                        <span>{value.name}</span>
+                        <strong>
+                          {delta === 0
+                            ? 'Included'
+                            : `+ ${formatMoney(delta)}`}
+                        </strong>
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            );
+          })}
         </div>
         <footer>
           <button type="button" className={styles.cancel} onClick={onClose}>
@@ -127,7 +226,15 @@ export function ModifierSelectionDialog({
             type="button"
             className={styles.add}
             disabled={!valid}
-            onClick={() => onAdd(selected)}
+            onClick={() =>
+              onAdd({
+                sizeId,
+                choiceValueIds: selected.filter((id) =>
+                  applicableSections.some((section) =>
+                    section.values.some((value) => value.id === id),
+                  )
+                ),
+              })}
           >
             <Plus size={16} aria-hidden="true" />
             Add to order · {formatMoney(priceCentimes)}

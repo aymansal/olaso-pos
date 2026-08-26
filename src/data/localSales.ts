@@ -15,6 +15,7 @@ import {
 } from './managementOperation.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import { allocateCentimes } from '../lib/costs.ts';
+import { resolveProductConfiguration } from '../lib/productConfiguration.ts';
 
 export type LocalServiceType = 'dine-in' | 'take-away' | 'order-online';
 export type PaymentMethod = 'Cash' | 'Card';
@@ -39,6 +40,9 @@ export type SavedReceipt = {
     ingredientCostCentimes?: number;
     costStatus: 'complete' | 'incomplete';
     valuationRevisions: Array<{ ingredientId: string; revision: number }>;
+    sizeId?: string;
+    sizeName?: string;
+    choiceValueIds?: string[];
     modifierOptionIds: string[];
     modifiers: Array<{
       groupName: string;
@@ -85,6 +89,8 @@ export type SaleSyncPayload = {
     productRevision: number;
     recipeVersionId?: string;
     quantity: number;
+    sizeId?: string;
+    choiceValueIds?: string[];
     modifierOptionIds: string[];
     ingredientCostCentimes?: number;
     costStatus: 'complete' | 'incomplete';
@@ -258,46 +264,6 @@ export function prepareSale(
     if (!product || product.status !== 'active') {
       throw new Error('The order contains an unavailable product.');
     }
-    const selectedIds = [...new Set(cartLine.modifierOptionIds)];
-    if (
-      selectedIds.length !== cartLine.modifierOptionIds.length
-      || selectedIds.length > 20
-    ) {
-      throw new Error(`Invalid modifiers for ${product.name}.`);
-    }
-    const linkedGroupIds = groupLinks.get(product.id) ?? [];
-    const selectedOptions = selectedIds.map((id) => {
-      const option = options.get(id);
-      if (!option || !linkedGroupIds.includes(option.modifierGroupId)) {
-        throw new Error(`Invalid modifiers for ${product.name}.`);
-      }
-      return option;
-    });
-    for (const groupId of linkedGroupIds) {
-      const group = groups.get(groupId);
-      if (!group) throw new Error(`Modifier data is missing for ${product.name}.`);
-      const count = selectedOptions.filter(
-        (option) => option.modifierGroupId === groupId,
-      ).length;
-      if (
-        count < group.minimumSelections
-        || count > group.maximumSelections
-      ) {
-        throw new Error(
-          `${group.name} requires ${group.minimumSelections} to ${group.maximumSelections} choices.`,
-        );
-      }
-    }
-
-    const unitPriceCentimes =
-      product.priceCentimes
-      + selectedOptions.reduce(
-        (sum, option) => sum + option.priceDeltaCentimes,
-        0,
-      );
-    if (!Number.isSafeInteger(unitPriceCentimes) || unitPriceCentimes < 0) {
-      throw new Error(`The saved price for ${product.name} is invalid.`);
-    }
 
     const versionId = product.currentRecipeVersionId;
     const version = versionId ? versions.get(versionId) : undefined;
@@ -305,27 +271,198 @@ export function prepareSale(
       throw new Error(`The saved recipe for ${product.name} is unavailable.`);
     }
     const baseRecipe = versionId ? recipeItems.get(versionId) ?? [] : [];
-    const lineUsage = new Map<string, number>();
-    for (const item of baseRecipe) {
-      if (!ingredients.has(item.ingredientId) || item.quantity < 1) {
-        throw new Error(`The saved recipe for ${product.name} is invalid.`);
+
+    let unitPriceCentimes: number;
+    let lineUsage: Map<string, number>;
+    let modifierOptionIds: string[];
+    let modifiers: SavedReceipt['lines'][number]['modifiers'];
+    let recipe: SavedReceipt['lines'][number]['recipe'];
+    let sizeId: string | undefined;
+    let sizeName: string | undefined;
+    let choiceValueIds: string[] | undefined;
+
+    if (cartLine.sizeId) {
+      const selectedChoiceIds = [...new Set(cartLine.choiceValueIds ?? [])];
+      if (
+        selectedChoiceIds.length !== (cartLine.choiceValueIds ?? []).length
+        || selectedChoiceIds.length > 40
+      ) {
+        throw new Error(`Invalid choices for ${product.name}.`);
       }
-      lineUsage.set(
-        item.ingredientId,
-        (lineUsage.get(item.ingredientId) ?? 0) + item.quantity,
+      const productSizes = menu.productSizes.filter(
+        (size) => size.productId === product.id,
       );
-    }
-    for (const option of selectedOptions) {
-      for (const effect of option.ingredientEffects) {
-        if (!ingredients.has(effect.ingredientId)) {
-          throw new Error(`The saved modifiers for ${product.name} are invalid.`);
-        }
-        lineUsage.set(
-          effect.ingredientId,
-          (lineUsage.get(effect.ingredientId) ?? 0) + effect.quantityDelta,
+      const sections = menu.productChoiceSections.filter(
+        (section) => section.productId === product.id,
+      );
+      const sectionIds = new Set(sections.map((section) => section.id));
+      const values = menu.productChoiceValues.filter((value) =>
+        sectionIds.has(value.sectionId),
+      );
+      const valueIds = new Set(values.map((value) => value.id));
+      const effects = menu.productChoiceValueEffects.filter((effect) =>
+        valueIds.has(effect.valueId),
+      );
+      const effectIds = new Set(effects.map((effect) => effect.id));
+      let resolved;
+      try {
+        resolved = resolveProductConfiguration({
+          sizeId: cartLine.sizeId,
+          choiceValueIds: selectedChoiceIds,
+          sizes: productSizes,
+          recipeItems: baseRecipe.map((item) => ({
+            ingredientId: item.ingredientId,
+            quantity: item.quantity,
+          })),
+          sizeQuantities: menu.recipeSizeQuantities.filter(
+            (row) => row.recipeVersionId === versionId,
+          ),
+          sections,
+          sectionSizeIds: menu.productChoiceSectionSizes.filter((link) =>
+            sectionIds.has(link.sectionId),
+          ),
+          values,
+          valueSizes: menu.productChoiceValueSizes.filter((row) =>
+            valueIds.has(row.valueId),
+          ),
+          effects,
+          effectSizes: menu.productChoiceValueEffectSizes.filter((row) =>
+            effectIds.has(row.effectId),
+          ),
+        });
+      } catch (error) {
+        throw new Error(
+          error instanceof Error
+            ? error.message
+            : `Invalid configuration for ${product.name}.`,
         );
       }
+      const size = productSizes.find((row) => row.id === cartLine.sizeId);
+      if (!size) throw new Error(`Invalid size for ${product.name}.`);
+      unitPriceCentimes = resolved.unitPriceCentimes;
+      lineUsage = resolved.ingredients;
+      for (const ingredientId of lineUsage.keys()) {
+        if (!ingredients.has(ingredientId)) {
+          throw new Error(`The saved recipe for ${product.name} is invalid.`);
+        }
+      }
+      sizeId = size.id;
+      sizeName = size.name;
+      choiceValueIds = selectedChoiceIds;
+      modifierOptionIds = [];
+      modifiers = selectedChoiceIds.map((id) => {
+        const value = values.find((row) => row.id === id);
+        const section = value
+          ? sections.find((row) => row.id === value.sectionId)
+          : undefined;
+        if (!value || !section) {
+          throw new Error(`Invalid choices for ${product.name}.`);
+        }
+        const sizeRule = menu.productChoiceValueSizes.find(
+          (row) => row.valueId === value.id && row.productSizeId === size.id,
+        );
+        const priceDeltaCentimes =
+          sizeRule?.priceDeltaCentimes ?? value.priceDeltaCentimes;
+        return {
+          groupName: section.name,
+          optionName: value.name,
+          priceDeltaCentimes,
+          ingredientEffects: [],
+        };
+      });
+      recipe = [...lineUsage.entries()].map(([ingredientId, quantity]) => ({
+        ingredientId,
+        ingredientName:
+          ingredients.get(ingredientId)?.name ?? 'Unknown ingredient',
+        quantity,
+      }));
+    } else {
+      const selectedIds = [...new Set(cartLine.modifierOptionIds)];
+      if (
+        selectedIds.length !== cartLine.modifierOptionIds.length
+        || selectedIds.length > 20
+      ) {
+        throw new Error(`Invalid modifiers for ${product.name}.`);
+      }
+      const linkedGroupIds = groupLinks.get(product.id) ?? [];
+      const selectedOptions = selectedIds.map((id) => {
+        const option = options.get(id);
+        if (!option || !linkedGroupIds.includes(option.modifierGroupId)) {
+          throw new Error(`Invalid modifiers for ${product.name}.`);
+        }
+        return option;
+      });
+      for (const groupId of linkedGroupIds) {
+        const group = groups.get(groupId);
+        if (!group) throw new Error(`Modifier data is missing for ${product.name}.`);
+        const count = selectedOptions.filter(
+          (option) => option.modifierGroupId === groupId,
+        ).length;
+        if (
+          count < group.minimumSelections
+          || count > group.maximumSelections
+        ) {
+          throw new Error(
+            `${group.name} requires ${group.minimumSelections} to ${group.maximumSelections} choices.`,
+          );
+        }
+      }
+
+      unitPriceCentimes =
+        product.priceCentimes
+        + selectedOptions.reduce(
+          (sum, option) => sum + option.priceDeltaCentimes,
+          0,
+        );
+      lineUsage = new Map<string, number>();
+      for (const item of baseRecipe) {
+        if (!ingredients.has(item.ingredientId) || item.quantity < 1) {
+          throw new Error(`The saved recipe for ${product.name} is invalid.`);
+        }
+        lineUsage.set(
+          item.ingredientId,
+          (lineUsage.get(item.ingredientId) ?? 0) + item.quantity,
+        );
+      }
+      for (const option of selectedOptions) {
+        for (const effect of option.ingredientEffects) {
+          if (!ingredients.has(effect.ingredientId)) {
+            throw new Error(`The saved modifiers for ${product.name} are invalid.`);
+          }
+          lineUsage.set(
+            effect.ingredientId,
+            (lineUsage.get(effect.ingredientId) ?? 0) + effect.quantityDelta,
+          );
+        }
+      }
+      modifierOptionIds = selectedIds;
+      modifiers = selectedOptions.map((option) => {
+        const group = groups.get(option.modifierGroupId);
+        if (!group) throw new Error('Modifier group is unavailable.');
+        return {
+          groupName: group.name,
+          optionName: option.name,
+          priceDeltaCentimes: option.priceDeltaCentimes,
+          ingredientEffects: option.ingredientEffects.map((effect) => ({
+            ingredientId: effect.ingredientId,
+            ingredientName:
+              ingredients.get(effect.ingredientId)?.name ?? 'Unknown ingredient',
+            quantityDelta: effect.quantityDelta,
+          })),
+        };
+      });
+      recipe = baseRecipe.map((item) => ({
+        ingredientId: item.ingredientId,
+        ingredientName:
+          ingredients.get(item.ingredientId)?.name ?? 'Unknown ingredient',
+        quantity: item.quantity,
+      }));
     }
+
+    if (!Number.isSafeInteger(unitPriceCentimes) || unitPriceCentimes < 0) {
+      throw new Error(`The saved price for ${product.name} is invalid.`);
+    }
+
     const valuationRevisions = [...lineUsage.keys()].sort().map((ingredientId) => ({
       ingredientId,
       revision: ingredients.get(ingredientId)?.valuationRevision ?? 0,
@@ -369,28 +506,10 @@ export function prepareSale(
       ...(completeCost ? { ingredientCostCentimes } : {}),
       costStatus: completeCost ? 'complete' as const : 'incomplete' as const,
       valuationRevisions,
-      modifierOptionIds: selectedIds,
-      modifiers: selectedOptions.map((option) => {
-        const group = groups.get(option.modifierGroupId);
-        if (!group) throw new Error('Modifier group is unavailable.');
-        return {
-          groupName: group.name,
-          optionName: option.name,
-          priceDeltaCentimes: option.priceDeltaCentimes,
-          ingredientEffects: option.ingredientEffects.map((effect) => ({
-            ingredientId: effect.ingredientId,
-            ingredientName:
-              ingredients.get(effect.ingredientId)?.name ?? 'Unknown ingredient',
-            quantityDelta: effect.quantityDelta,
-          })),
-        };
-      }),
-      recipe: baseRecipe.map((item) => ({
-        ingredientId: item.ingredientId,
-        ingredientName:
-          ingredients.get(item.ingredientId)?.name ?? 'Unknown ingredient',
-        quantity: item.quantity,
-      })),
+      ...(sizeId ? { sizeId, sizeName, choiceValueIds } : {}),
+      modifierOptionIds,
+      modifiers,
+      recipe,
     };
   });
   const subtotalCentimes = lines.reduce(
@@ -491,8 +610,9 @@ export async function commitLocalSale(
          (id, local_sale_id, product_id, quantity, product_name_snapshot,
          unit_price_centimes, modifier_snapshot_json, recipe_snapshot_json,
          line_total_centimes, ingredient_cost_centimes, cost_status,
-         category_id_snapshot, category_name_snapshot)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         category_id_snapshot, category_name_snapshot,
+         size_id_snapshot, size_name_snapshot)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         idFactory(),
         localSaleId,
@@ -507,6 +627,8 @@ export async function commitLocalSale(
         line.costStatus,
         category?.id ?? '',
         category?.name ?? '',
+        line.sizeId ?? null,
+        line.sizeName ?? null,
       ],
       false,
     );
@@ -764,6 +886,12 @@ async function loadSaleSyncPayload(
         ? { recipeVersionId: line.recipeVersionId }
         : {}),
       quantity: line.quantity,
+      ...(line.sizeId
+        ? {
+            sizeId: line.sizeId,
+            choiceValueIds: line.choiceValueIds ?? [],
+          }
+        : {}),
       modifierOptionIds: line.modifierOptionIds,
       ...(line.ingredientCostCentimes === undefined
         ? {}

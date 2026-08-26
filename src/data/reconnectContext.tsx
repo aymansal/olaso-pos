@@ -90,7 +90,7 @@ async function toConvexSaleArgs({
   return {
     ...input,
     cashierName: actorName,
-    lines: await Promise.all(input.lines.map(async ({ recipeVersionId, ...line }) => ({
+    lines: await Promise.all(input.lines.map(async ({ recipeVersionId, sizeId, choiceValueIds, ...line }) => ({
       ...line,
       productId: await resolveCloudRecordId('product', line.productId) as Id<'products'>,
       ...(recipeVersionId
@@ -99,6 +99,20 @@ async function toConvexSaleArgs({
               'recipe-version',
               recipeVersionId,
             ) as Id<'recipeVersions'>,
+          }
+        : {}),
+      ...(sizeId
+        ? {
+            sizeId: await resolveCloudRecordId(
+              'product-size',
+              sizeId,
+            ) as Id<'productSizes'>,
+            choiceValueIds: await Promise.all((choiceValueIds ?? []).map(
+              async (id) => await resolveCloudRecordId(
+                'choice-value',
+                id,
+              ) as Id<'productChoiceValues'>,
+            )),
           }
         : {}),
       modifierOptionIds: await Promise.all(line.modifierOptionIds.map(

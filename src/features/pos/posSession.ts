@@ -6,7 +6,10 @@ export type PaymentMethod = 'Cash' | 'Card';
 export type CartLine = {
   id: string;
   productId: string;
+  sizeId: string;
   quantity: number;
+  choiceValueIds: string[];
+  /** Process-lifetime shim; new size/choice lines use []. */
   modifierOptionIds: string[];
 };
 
@@ -19,14 +22,16 @@ export type PosSession = {
   checkoutStatus: 'idle' | 'processing' | 'success';
 };
 
-type PricedProduct = {
+type PricedSize = {
   id: string;
   priceCentimes: number;
 };
 
-type PricedModifierOption = {
+type PricedChoiceValue = {
   id: string;
   priceDeltaCentimes: number;
+  /** When set, matches only that cart line size. */
+  sizeId?: string;
 };
 
 type FilterableProduct = {
@@ -52,10 +57,11 @@ export function hasUnfinishedCart(session: Pick<PosSession, 'cart'>) {
 export function addProduct(
   cart: CartLine[],
   productId: string,
-  modifierOptionIds: string[] = [],
+  sizeId: string,
+  choiceValueIds: string[] = [],
 ): CartLine[] {
-  const normalizedOptions = [...new Set(modifierOptionIds)].sort();
-  const id = JSON.stringify([productId, normalizedOptions]);
+  const normalizedChoices = [...new Set(choiceValueIds)].sort();
+  const id = JSON.stringify([productId, sizeId, normalizedChoices]);
   const existing = cart.find((line) => line.id === id);
 
   return existing
@@ -65,8 +71,10 @@ export function addProduct(
         {
           id,
           productId,
+          sizeId,
           quantity: 1,
-          modifierOptionIds: normalizedOptions,
+          choiceValueIds: normalizedChoices,
+          modifierOptionIds: [],
         },
       ];
 }
@@ -104,46 +112,49 @@ export function removeCartLine(cart: CartLine[], lineId: string): CartLine[] {
 
 export function subtotalCentimes(
   cart: CartLine[],
-  products: readonly PricedProduct[],
-  modifierOptions: readonly PricedModifierOption[] = [],
+  sizes: readonly PricedSize[],
+  choiceValues: readonly PricedChoiceValue[] = [],
 ): number {
-  const prices = new Map(products.map((product) => [product.id, product.priceCentimes]));
-  const optionPrices = new Map(
-    modifierOptions.map((option) => [option.id, option.priceDeltaCentimes]),
-  );
+  const sizePrices = new Map(sizes.map((size) => [size.id, size.priceCentimes]));
 
   return cart.reduce((subtotal, line) => {
-    const basePrice = prices.get(line.productId);
-    const modifierPrice = line.modifierOptionIds.reduce((sum, optionId) => {
-      const price = optionPrices.get(optionId);
-      if (price === undefined) throw new Error(`Invalid modifier: ${optionId}`);
+    const sizePrice = sizePrices.get(line.sizeId);
+    const choicePrice = line.choiceValueIds.reduce((sum, valueId) => {
+      const sized = choiceValues.find(
+        (value) => value.id === valueId && value.sizeId === line.sizeId,
+      );
+      const plain = choiceValues.find(
+        (value) => value.id === valueId && value.sizeId === undefined,
+      );
+      const price = sized?.priceDeltaCentimes ?? plain?.priceDeltaCentimes;
+      if (price === undefined) throw new Error(`Invalid choice: ${valueId}`);
       return sum + price;
     }, 0);
 
     if (
-      basePrice === undefined
+      sizePrice === undefined
       || !Number.isInteger(line.quantity)
       || line.quantity < 1
-      || basePrice + modifierPrice < 0
+      || sizePrice + choicePrice < 0
     ) {
       throw new Error(`Invalid cart line: ${line.productId}`);
     }
 
-    return subtotal + (basePrice + modifierPrice) * line.quantity;
+    return subtotal + (sizePrice + choicePrice) * line.quantity;
   }, 0);
 }
 
 export function validatePosSession(
   session: PosSession,
-  products: readonly PricedProduct[],
-  modifierOptions: readonly PricedModifierOption[] = [],
+  sizes: readonly PricedSize[],
+  choiceValues: readonly PricedChoiceValue[] = [],
 ): { kind: 'empty' | 'error' | 'valid'; message: string } {
   if (session.cart.length === 0) {
     return { kind: 'empty', message: 'Add a product to begin.' };
   }
 
   try {
-    subtotalCentimes(session.cart, products, modifierOptions);
+    subtotalCentimes(session.cart, sizes, choiceValues);
   } catch {
     return { kind: 'error', message: 'The order contains an invalid product or quantity.' };
   }
