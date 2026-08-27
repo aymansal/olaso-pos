@@ -242,7 +242,6 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         <div className={styles.dateTime}>
           <span>{date.toUpperCase()}</span>
           <strong>{time}</strong>
-          <small>{settings.terminalName} · local terminal</small>
         </div>
       </section>
 

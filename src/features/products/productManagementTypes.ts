@@ -19,7 +19,6 @@ export type ManagedProduct = {
   status: 'active' | 'unavailable' | 'archived';
   imageAssetKey?: string;
   sortOrder: number;
-  modifierGroupIds: string[];
   currentRecipeVersionId?: string;
   revision: number;
   updatedAt: number;
@@ -30,34 +29,6 @@ export type ManagedIngredient = {
   key: string;
   name: string;
   baseUnit: 'millilitre' | 'gram' | 'milligram' | 'piece';
-};
-
-export type ManagedIngredientEffect = {
-  ingredientId: string;
-  quantityDelta: number;
-};
-
-export type ManagedModifierOption = {
-  id?: string;
-  key: string;
-  name: string;
-  priceDeltaCentimes: number;
-  ingredientEffects: ManagedIngredientEffect[];
-  status: 'active' | 'archived';
-  sortOrder: number;
-};
-
-export type ManagedModifierGroup = {
-  id?: string;
-  key?: string;
-  name: string;
-  required: boolean;
-  minSelections: number;
-  maxSelections: number;
-  status: 'active' | 'archived';
-  sortOrder: number;
-  revision?: number;
-  options: ManagedModifierOption[];
 };
 
 export type ManagedRecipeItem = {
@@ -152,6 +123,5 @@ export type ProductSaveInput = {
   basePriceCentimes: number;
   status: 'active' | 'unavailable';
   sortOrder: number;
-  modifierGroupIds: string[];
   expectedRevision?: number;
 };

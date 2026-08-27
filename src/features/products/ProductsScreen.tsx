@@ -5,10 +5,10 @@ import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { CategoryDialog } from './components/CategoryDialog/CategoryDialog';
 import { ProductCatalogPanel } from './components/ProductCatalogPanel/ProductCatalogPanel';
+import { ProductDialog } from './components/ProductDialog/ProductDialog';
 import { ProductEditorPanel } from './components/ProductEditorPanel/ProductEditorPanel';
 import type {
   ManagedCategory,
-  ManagedModifierGroup,
   ManagedProduct,
   ProductSaveInput,
 } from './productManagementTypes';
@@ -32,17 +32,15 @@ export function ProductsScreen({
 }: ProductsScreenProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState<string>();
-  const [creating, setCreating] = useState(false);
   const [search, setSearch] = useState('');
   const [availability, setAvailability] =
     useState<AvailabilityFilter>('all');
   const [sort, setSort] = useState<ProductSort>('updated');
   const [categoryEditor, setCategoryEditor] =
     useState<'new' | ManagedCategory>();
+  const [productEditor, setProductEditor] = useState<'new'>();
   const initialized = useRef(false);
-  const management = useProductManagement(
-    creating ? undefined : selectedProductId,
-  );
+  const management = useProductManagement(selectedProductId);
 
   useEffect(() => {
     if (initialized.current || management.isLoading || management.error) return;
@@ -146,7 +144,6 @@ export function ProductsScreen({
 
   async function saveProduct(input: ProductSaveInput) {
     const result = await management.saveProduct(input);
-    setCreating(false);
     setSelectedProductId(result.id);
     setSelectedCategoryId(input.categoryId || 'all');
   }
@@ -156,10 +153,6 @@ export function ProductsScreen({
     status: ManagedProduct['status'],
   ) {
     await management.setProductStatus(product.id, status, product.revision);
-  }
-
-  async function saveModifierGroup(group: ManagedModifierGroup) {
-    await management.saveModifierGroup(group);
   }
 
   return (
@@ -185,7 +178,6 @@ export function ProductsScreen({
         onAvailabilityChange={setAvailability}
         onSortChange={setSort}
         onSelectCategory={(categoryId) => {
-          setCreating(false);
           setSelectedCategoryId(categoryId);
           const first = management.products.find(
             (product) =>
@@ -193,10 +185,7 @@ export function ProductsScreen({
           );
           setSelectedProductId(first?.id);
         }}
-        onSelectProduct={(productId) => {
-          setCreating(false);
-          setSelectedProductId(productId);
-        }}
+        onSelectProduct={setSelectedProductId}
         onAddCategory={() => setCategoryEditor('new')}
         onRenameCategory={() =>
           selectedCategory && setCategoryEditor(selectedCategory)
@@ -215,14 +204,10 @@ export function ProductsScreen({
               : 'Category could not be deleted.');
           }
         }}
-        onAddProduct={() => {
-          setCreating(true);
-          setSelectedProductId(undefined);
-        }}
+        onAddProduct={() => setProductEditor('new')}
       />
       <ProductEditorPanel
         product={selectedProduct}
-        creating={creating}
         defaultCategoryId={
           selectedCategory?.status === 'active' ? selectedCategory.id : undefined
         }
@@ -230,7 +215,6 @@ export function ProductsScreen({
           Math.max(0, ...management.products.map((item) => item.sortOrder)) + 10
         }
         categories={management.categories}
-        modifierGroups={management.modifierGroups}
         ingredients={management.ingredients}
         productSizes={management.productSizes}
         choiceSections={management.choiceSections}
@@ -243,16 +227,6 @@ export function ProductsScreen({
         onDelete={async (product) => {
           await management.deleteProduct(product);
           setSelectedProductId(undefined);
-          setCreating(false);
-        }}
-        onSaveModifierGroup={saveModifierGroup}
-        onSetModifierGroupArchived={async (group, archived) => {
-          if (!group.id || group.revision === undefined) return;
-          await management.setModifierGroupArchived(
-            group.id,
-            archived,
-            group.revision,
-          );
         }}
         onSaveRecipe={async (product, items, sizeQuantities) => {
           await management.saveRecipeVersion(product, items, sizeQuantities);
@@ -263,6 +237,19 @@ export function ProductsScreen({
         onDeleteChoiceSection={management.deleteChoiceSection}
         onCopyChoiceSections={management.copyChoiceSections}
       />
+      {productEditor ? (
+        <ProductDialog
+          categories={management.categories}
+          defaultCategoryId={
+            selectedCategory?.status === 'active' ? selectedCategory.id : undefined
+          }
+          nextSortOrder={
+            Math.max(0, ...management.products.map((item) => item.sortOrder)) + 10
+          }
+          onClose={() => setProductEditor(undefined)}
+          onSave={saveProduct}
+        />
+      ) : null}
       {categoryEditor ? (
         <CategoryDialog
           category={categoryEditor === 'new' ? undefined : categoryEditor}

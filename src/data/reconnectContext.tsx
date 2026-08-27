@@ -115,12 +115,7 @@ async function toConvexSaleArgs({
             )),
           }
         : {}),
-      modifierOptionIds: await Promise.all(line.modifierOptionIds.map(
-        async (id) => await resolveCloudRecordId(
-          'modifier-option',
-          id,
-        ) as Id<'modifierOptions'>,
-      )),
+      modifierOptionIds: [],
       valuationRevisions: await Promise.all(line.valuationRevisions.map(
         async (valuation) => ({
           ingredientId: await resolveCloudRecordId(
@@ -156,8 +151,6 @@ export function ReconnectProvider({
   const saveProductMutation = useMutation(api.products.save);
   const setProductStatusMutation = useMutation(api.products.setStatus);
   const deleteProductMutation = useMutation(api.products.remove);
-  const saveModifierMutation = useMutation(api.modifiers.saveGroup);
-  const archiveModifierMutation = useMutation(api.modifiers.setGroupArchived);
   const saveRecipeMutation = useMutation(api.recipes.saveVersion);
   const saveProductSizeMutation = useMutation(api.productConfiguration.saveSize);
   const deleteProductSizeMutation = useMutation(api.productConfiguration.removeSize);
@@ -288,9 +281,7 @@ export function ReconnectProvider({
               name: String(payload.name), receiptName: String(payload.receiptName),
               basePriceCentimes: Number(payload.basePriceCentimes),
               status: payload.status, sortOrder: Number(payload.sortOrder),
-              modifierGroupIds: await Promise.all((payload.modifierGroupIds as string[]).map(
-                async (id) => await resolveCloudRecordId('modifier-group', id) as Id<'modifierGroups'>,
-              )),
+              modifierGroupIds: [],
               clientMutationId: operation.operationId,
             });
             return { recordType: 'product', cloudRecordId: String(result.id), acknowledgedAt };
@@ -312,60 +303,6 @@ export function ReconnectProvider({
               clientMutationId: operation.operationId,
             });
             return { recordType: 'product', cloudRecordId: String(result.id), acknowledgedAt };
-          }
-          if (operation.operationType === 'management.modifier.archive') {
-            const result = await archiveModifierMutation({
-              ...actorSessionArgs,
-              id: await resolveCloudRecordId('modifier-group', operation.localRecordId) as Id<'modifierGroups'>,
-              archived: Boolean(payload.archived), expectedRevision: operation.expectedRevision!,
-              clientMutationId: operation.operationId,
-            });
-            return { recordType: 'modifier-group', cloudRecordId: String(result.id), acknowledgedAt };
-          }
-          if (operation.operationType === 'management.modifier.save') {
-            const options = payload.options as Array<Record<string, any>>;
-            const preparedOptions = await Promise.all(options.map(async (option) => {
-              const mappedId = await resolveCloudRecordId(
-                'modifier-option',
-                String(option.id),
-              );
-              return {
-                ...(mappedId !== String(option.id) || !String(option.id).includes(':')
-                  ? { id: mappedId as Id<'modifierOptions'> }
-                  : {}),
-                key: String(option.key), name: String(option.name),
-                priceDeltaCentimes: Number(option.priceDeltaCentimes), status: option.status,
-                sortOrder: Number(option.sortOrder),
-                ingredientEffects: await Promise.all((option.ingredientEffects as Array<Record<string, any>>).map(
-                  async (effect) => ({
-                    ingredientId: await resolveCloudRecordId('ingredient', String(effect.ingredientId)) as Id<'ingredients'>,
-                    quantityDelta: Number(effect.quantityDelta),
-                  }),
-                )),
-              };
-            }));
-            const result = await saveModifierMutation({
-              ...actorSessionArgs,
-              ...(operation.expectedRevision === undefined
-                ? { key: String(payload.key) }
-                : {
-                    id: await resolveCloudRecordId('modifier-group', operation.localRecordId) as Id<'modifierGroups'>,
-                    expectedRevision: operation.expectedRevision,
-                  }),
-              name: String(payload.name), required: Boolean(payload.required),
-              minSelections: Number(payload.minSelections), maxSelections: Number(payload.maxSelections),
-              sortOrder: Number(payload.sortOrder), clientMutationId: operation.operationId,
-              options: preparedOptions,
-            });
-            const latest = await convex.query(api.modifiers.list, actorSessionArgs);
-            const cloudOptions = latest.options.filter((option) => option.groupId === result.id);
-            return {
-              recordType: 'modifier-group', cloudRecordId: String(result.id), acknowledgedAt,
-              relatedMappings: options.flatMap((option) => {
-                const cloud = cloudOptions.find((candidate) => candidate.key === option.key);
-                return cloud ? [{ recordType: 'modifier-option', localRecordId: String(option.id), cloudRecordId: String(cloud._id) }] : [];
-              }),
-            };
           }
           if (operation.operationType === 'management.recipe.save') {
             const result = await saveRecipeMutation({
@@ -652,13 +589,15 @@ export function ReconnectProvider({
       throw new Error(message);
     }
   }, [acceptMutation, addCompensationMutation, addExpenseMutation,
-    archiveCategoryMutation, archiveIngredientMutation, archiveModifierMutation,
+    archiveCategoryMutation, archiveIngredientMutation,
     available, cancelMutation, checkSession, convex, correctExpenseMutation,
-    createStaffAction, deleteCategoryMutation, deleteIngredientMutation,
-    deleteProductMutation, deleteStaffMutation, foreground,
-    onSessionUnavailable, receivePurchaseMutation, recordAdjustmentMutation,
-    saveCategoryMutation, saveIngredientMutation, saveModifierMutation,
-    saveProductMutation, saveRecipeMutation, session.deviceId, session.name,
+    copyChoiceSectionsMutation, createStaffAction, deleteCategoryMutation,
+    deleteChoiceSectionMutation, deleteIngredientMutation,
+    deleteProductMutation, deleteProductSizeMutation, deleteStaffMutation,
+    foreground, onSessionUnavailable, receivePurchaseMutation,
+    recordAdjustmentMutation, saveCategoryMutation, saveChoiceSectionMutation,
+    saveIngredientMutation, saveProductMutation, saveProductSizeMutation,
+    saveRecipeMutation, session.deviceId, session.name,
     session.provisioningState, session.role, session.staffProfileId,
     session.token, setProductStatusMutation]);
 

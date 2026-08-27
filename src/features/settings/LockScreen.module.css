@@ -74,7 +74,6 @@
 .brandMessage p,
 .dateTime span,
 .dateTime strong,
-.dateTime small,
 .unlockSide h2,
 .subtitle,
 .identity strong,
@@ -140,12 +139,6 @@
   font-weight: 700;
   letter-spacing: -2px;
   line-height: 1;
-}
-
-.dateTime small {
-  color: var(--olaso-lock-meta);
-  font-size: 11px;
-  font-weight: 600;
 }
 
 .unlockSide {

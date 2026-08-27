@@ -413,12 +413,11 @@ assert.throws(
           sizeId: '',
           quantity: 1,
           choiceValueIds: [],
-          modifierOptionIds: [],
         }],
       },
       'invalid-sale',
     ),
-  /Size requires 1 to 1 choices/,
+  /Select a size/,
 );
 
 const rollbackIds = [
@@ -482,22 +481,15 @@ await client.action(api.identity.validateSession, {
   });
   const product = before.products.find((row) => row.name === 'Cappuccino');
   assert(product?.currentRecipeVersionId, 'Seeded Cappuccino is unavailable');
-  const sizeGroup = before.modifierGroups.find((row) => row.name === 'Size');
-  const milkGroup = before.modifierGroups.find((row) => row.name === 'Milk');
-  const standard = before.modifierOptions.find(
-    (row) =>
-      row.modifierGroupId === sizeGroup?.id && row.name === 'Standard',
+  const regular = before.productSizes.find(
+    (row) => row.productId === product.id && row.name === 'Regular',
   );
-  const oat = before.modifierOptions.find(
-    (row) => row.modifierGroupId === milkGroup?.id && row.name === 'Oat milk',
-  );
-  assert(standard && oat, 'Seeded modifier options are unavailable');
-  const valuationIngredientIds = new Set([
-    ...before.recipeItems
+  assert(regular, 'Seeded Cappuccino size is unavailable');
+  const valuationIngredientIds = new Set(
+    before.recipeItems
       .filter((item) => item.recipeVersionId === product.currentRecipeVersionId)
       .map((item) => item.ingredientId),
-    ...oat.ingredientEffects.map((effect) => effect.ingredientId),
-  ]);
+  );
   const valuationRevisions = before.ingredients
     .filter((ingredient) => valuationIngredientIds.has(ingredient.id))
     .map((ingredient) => ({
@@ -510,9 +502,6 @@ await client.action(api.identity.validateSession, {
     (item) => item.recipeVersionId === product.currentRecipeVersionId,
   )) {
     lineUsage.set(item.ingredientId, (lineUsage.get(item.ingredientId) ?? 0) + item.quantity);
-  }
-  for (const effect of oat.ingredientEffects) {
-    lineUsage.set(effect.ingredientId, (lineUsage.get(effect.ingredientId) ?? 0) + effect.quantityDelta);
   }
   const ingredientCostCentimes = [...lineUsage.entries()].reduce(
     (total, [ingredientId, quantity]) => {
@@ -543,7 +532,9 @@ await client.action(api.identity.validateSession, {
         productRevision: product.revision,
         recipeVersionId: product.currentRecipeVersionId,
         quantity: 1,
-        modifierOptionIds: [standard.id, oat.id],
+        sizeId: regular.id,
+        choiceValueIds: [],
+        modifierOptionIds: [],
         ingredientCostCentimes,
         costStatus: 'complete',
         valuationRevisions,
@@ -555,9 +546,9 @@ await client.action(api.identity.validateSession, {
       ...sessionArgs,
       ...cloudInput,
       localSaleId: 'app06-invalid-modifier-check',
-      lines: [{ ...cloudInput.lines[0], modifierOptionIds: [] }],
+      lines: [{ ...cloudInput.lines[0], sizeId: undefined, choiceValueIds: [] }],
     }),
-    /Size requires 1 to 1 choices/,
+    /Select a size/,
   );
   await assert.rejects(
     client.mutation(api.sales.accept, {
@@ -604,7 +595,7 @@ await client.action(api.identity.validateSession, {
     ),
   );
   assert.equal(verification.saleId, first.saleId);
-  assert.equal(verification.totalCentimes, 2100);
+  assert.equal(verification.totalCentimes, 1700);
   assert.equal(verification.costStatus, 'complete');
   assert.equal(verification.ingredientCostCentimes, ingredientCostCentimes);
   assert.equal(verification.lineCount, 1);
@@ -631,8 +622,8 @@ await client.action(api.identity.validateSession, {
     snapshot.ingredients.find((ingredient) => ingredient.name === name)
       ?.currentStockQuantity;
   assert.equal(balance(after, 'Coffee beans'), balance(before, 'Coffee beans') - 18);
-  assert.equal(balance(after, 'Whole milk'), balance(before, 'Whole milk'));
-  assert.equal(balance(after, 'Oat milk'), balance(before, 'Oat milk') - 200);
+  assert.equal(balance(after, 'Whole milk'), balance(before, 'Whole milk') - 200);
+  assert.equal(balance(after, 'Oat milk'), balance(before, 'Oat milk'));
   assert.equal(balance(after, 'Paper cups'), balance(before, 'Paper cups'));
   const reportQuantity = (report, name) =>
     report.current.ingredientTotals.find(
@@ -640,7 +631,7 @@ await client.action(api.identity.validateSession, {
     )?.quantity ?? 0;
   assert.equal(
     afterReport.current.netCentimes,
-    beforeReport.current.netCentimes + 2100,
+    beforeReport.current.netCentimes + 1700,
   );
   assert.equal(
     afterReport.current.orderCount,
@@ -659,16 +650,16 @@ await client.action(api.identity.validateSession, {
     reportQuantity(beforeReport, 'Coffee beans') + 18,
   );
   assert.equal(
-    reportQuantity(afterReport, 'Oat milk'),
-    reportQuantity(beforeReport, 'Oat milk') + 200,
+    reportQuantity(afterReport, 'Whole milk'),
+    reportQuantity(beforeReport, 'Whole milk') + 200,
   );
   assert.equal(
     reportQuantity(afterReport, 'Paper cups'),
     reportQuantity(beforeReport, 'Paper cups'),
   );
   assert.equal(
-    reportQuantity(afterReport, 'Whole milk'),
-    reportQuantity(beforeReport, 'Whole milk'),
+    reportQuantity(afterReport, 'Oat milk'),
+    reportQuantity(beforeReport, 'Oat milk'),
   );
 
   await assert.rejects(

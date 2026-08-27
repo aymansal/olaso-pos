@@ -9,8 +9,6 @@ export type CartLine = {
   sizeId: string;
   quantity: number;
   choiceValueIds: string[];
-  /** Process-lifetime shim; new size/choice lines use []. */
-  modifierOptionIds: string[];
 };
 
 export type PosSession = {
@@ -74,7 +72,6 @@ export function addProduct(
           sizeId,
           quantity: 1,
           choiceValueIds: normalizedChoices,
-          modifierOptionIds: [],
         },
       ];
 }

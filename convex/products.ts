@@ -43,25 +43,12 @@ export const list = query({
 async function validateRelations(
   ctx: MutationCtx,
   categoryId: Id<'categories'> | undefined,
-  modifierGroupIds: Id<'modifierGroups'>[],
 ) {
   if (categoryId) {
     const category = await ctx.db.get(categoryId);
     if (!category || category.status !== 'active') {
       return invalid('Select an active category.');
     }
-  }
-  if (modifierGroupIds.length > 20) {
-    return invalid('A product can use at most 20 modifier groups.');
-  }
-  if (new Set(modifierGroupIds).size !== modifierGroupIds.length) {
-    return invalid('Modifier groups must be unique.');
-  }
-  const groups = await Promise.all(
-    modifierGroupIds.map((groupId) => ctx.db.get(groupId)),
-  );
-  if (groups.some((group) => !group || group.status !== 'active')) {
-    return invalid('Select only active modifier groups.');
   }
 }
 
@@ -77,7 +64,7 @@ export const save = mutation({
     status: productStatus,
     imageAssetKey: v.optional(v.string()),
     sortOrder: v.number(),
-    modifierGroupIds: v.array(v.id('modifierGroups')),
+    modifierGroupIds: v.optional(v.array(v.id('modifierGroups'))),
     expectedRevision: v.optional(v.number()),
     clientMutationId: v.string(),
   },
@@ -98,7 +85,7 @@ export const save = mutation({
       10_000_000,
     );
     const sortOrder = boundedInteger(args.sortOrder, 'Sort order', 0, 100_000);
-    await validateRelations(ctx, args.categoryId, args.modifierGroupIds);
+    await validateRelations(ctx, args.categoryId);
     const updatedAt = Date.now();
 
     if (args.id) {
@@ -119,7 +106,7 @@ export const save = mutation({
         status: args.status,
         imageAssetKey,
         sortOrder,
-        modifierGroupIds: args.modifierGroupIds,
+        modifierGroupIds: [],
         revision: product.revision + 1,
         updatedAt,
         updatedBy,
@@ -152,7 +139,7 @@ export const save = mutation({
       status: args.status,
       imageAssetKey,
       sortOrder,
-      modifierGroupIds: args.modifierGroupIds,
+      modifierGroupIds: [],
       revision: 1,
       updatedAt,
       updatedBy,

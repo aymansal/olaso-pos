@@ -414,7 +414,7 @@ export const removeIngredient = mutation({
       return { id: args.id, deleted: true as const, repairs: restored.flat() };
     }
     expectRevision(args.expectedRevision, ingredient.revision);
-    const [items, movements, purchases, options, products] = await Promise.all([
+    const [items, movements, purchases, products] = await Promise.all([
       ctx.db.query('recipeItems')
         .withIndex('by_ingredient_created_at', (index) =>
           index.eq('ingredientId', ingredient._id))
@@ -427,11 +427,10 @@ export const removeIngredient = mutation({
         .withIndex('by_ingredient_received_at', (index) =>
           index.eq('ingredientId', ingredient._id))
         .take(501),
-      ctx.db.query('modifierOptions').withIndex('by_updated_at').take(1001),
       ctx.db.query('products').withIndex('by_updated_at').take(501),
     ]);
     if (items.length > 500 || movements.length > 1000 || purchases.length > 500
-        || options.length > 1000 || products.length > 500) {
+        || products.length > 500) {
       throw new Error('Ingredient history exceeds its safe deletion limit.');
     }
     const snapshot = {
@@ -504,28 +503,6 @@ export const removeIngredient = mutation({
         updatedAt: now,
         updatedBy,
       });
-    }
-    for (const option of options) {
-      const remaining = option.ingredientEffects
-        .filter((effect) => effect.ingredientId !== ingredient._id);
-      if (remaining.length === option.ingredientEffects.length) continue;
-      await ctx.db.patch(option._id, {
-        ingredientEffects: remaining,
-        revision: option.revision + 1,
-        updatedAt: now,
-        updatedBy,
-      });
-      for (const product of products) {
-        if (!product.modifierGroupIds.includes(option.groupId)
-            || affected.has(String(product._id))) continue;
-        affected.add(String(product._id));
-        await ctx.db.patch(product._id, {
-          status: product.status === 'archived' ? 'archived' : 'unavailable',
-          revision: product.revision + 1,
-          updatedAt: now,
-          updatedBy,
-        });
-      }
     }
     await ctx.db.delete(ingredient._id);
     return { id: args.id, deleted: true as const, repairs };

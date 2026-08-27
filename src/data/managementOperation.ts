@@ -45,8 +45,6 @@ export const CATALOG_MANAGEMENT_OPERATION_TYPES = [
   'management.product.save',
   'management.product.status',
   'management.product.delete',
-  'management.modifier.save',
-  'management.modifier.archive',
   'management.recipe.save',
   'management.product-size.save',
   'management.product-size.delete',

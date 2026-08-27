@@ -26,8 +26,10 @@ history.
 - Convex stores stock as integers in each ingredient's base unit; presentation
   helpers may scale those exact integers only for display.
 - Status always includes text or an icon; never rely on color alone.
-- Every receive, opening balance, and count correction appends a movement and
-  updates the balance atomically through the data hook.
+- Every receive, opening balance with paid price, and count correction appends
+  a movement and updates the balance atomically through the data hook.
+  Creating an ingredient with opening quantity requires the price paid; that
+  quantity is the first purchase. Empty-shelf create uses quantity 0.
 - Components stay prop-driven and never import Convex.
 - Archived ingredients remain available to history and can be restored.
 - Confirmed ingredient deletion preserves purchase, movement, recipe, and

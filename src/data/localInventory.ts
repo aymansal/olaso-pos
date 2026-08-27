@@ -131,6 +131,102 @@ async function dependency(database: Database) {
   );
 }
 
+type PurchaseInput = {
+  packageLabel: string;
+  packageCount: number;
+  quantityPerPackage: number;
+  packagePriceCentimes: number;
+  supplierLabel?: string;
+  note?: string;
+  receivedAt?: number;
+  businessDate: string;
+};
+
+async function receivePurchaseInDatabase(
+  database: Database,
+  context: Context,
+  savedIngredient: Pick<ManagedIngredient, 'id' | 'revision'>,
+  input: PurchaseInput,
+) {
+  const row = await ingredient(database, savedIngredient.id);
+  if (!row || Number(row.revision) !== savedIngredient.revision) {
+    throw new Error('Ingredient changed. Refresh it before receiving the purchase.');
+  }
+  if (row.status !== 'active') throw new Error('Restore this ingredient before receiving a purchase.');
+  const packageLabel = text(input.packageLabel, 'Package label', 40);
+  const packageCount = integer(input.packageCount, 'Package count', 1);
+  const quantityPerPackage = integer(input.quantityPerPackage, 'Quantity per package', 1);
+  const packagePriceCentimes = integer(input.packagePriceCentimes, 'Package price', 1, MAX_TIME);
+  const totalQuantity = multiplied(packageCount, quantityPerPackage, 'Total quantity');
+  const totalCostCentimes = multiplied(packageCount, packagePriceCentimes, 'Total purchase cost');
+  const receivedAt = integer(input.receivedAt ?? Date.now(), 'Received time', 0, MAX_TIME);
+  const current = valuation(row);
+  integer(current.quantity + totalQuantity, 'Resulting stock quantity');
+  const next = receiveValuation(current, totalQuantity, totalCostCentimes);
+  const valuationRevision = Number(row.valuation_revision) + 1;
+  const revision = Number(row.revision) + 1;
+  const operationId = crypto.randomUUID();
+  const movementId = id('movement');
+  const purchaseId = id('purchase');
+  await database.run(
+    `INSERT INTO stock_movements
+      (id, ingredient_id, quantity_delta, movement_type, reason, actor_label,
+       business_date, created_at, cost_delta_centimes,
+       inventory_value_after_centimes, valuation_revision, client_mutation_id)
+     VALUES (?, ?, ?, 'purchase', ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [movementId, savedIngredient.id, totalQuantity,
+      `Purchase receipt: ${packageCount} ${packageLabel}`, context.actor.name,
+      date(input.businessDate), receivedAt, totalCostCentimes,
+      next.inventoryValueCentimes ?? null, valuationRevision, operationId],
+    false,
+  );
+  await database.run(
+    `INSERT INTO inventory_purchases
+      (id, ingredient_id, stock_movement_id, package_label, package_count,
+       quantity_per_package, total_quantity, package_price_centimes,
+       total_cost_centimes, received_at, business_date, supplier_label, note,
+       transaction_type, revision, client_mutation_id, actor_label)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'received', 1, ?, ?)`,
+    [purchaseId, savedIngredient.id, movementId, packageLabel, packageCount,
+      quantityPerPackage, totalQuantity, packagePriceCentimes,
+      totalCostCentimes, receivedAt, date(input.businessDate),
+      optionalText(input.supplierLabel, 'Supplier label', 100) ?? null,
+      optionalText(input.note, 'Purchase note', 240) ?? null,
+      operationId, context.actor.name],
+    false,
+  );
+  await saveValuation(database, row, next, valuationRevision, revision, receivedAt);
+  const operation = await enqueueManagementOperation(database, {
+    deviceId: context.deviceId,
+    operationId,
+    operationType: 'management.inventory.purchase',
+    localRecordId: purchaseId,
+    dependsOnOperationId: await dependency(database),
+    requiredPermission: 'stock',
+    actor: context.actor,
+    expectedRevision: savedIngredient.revision,
+    payload: {
+      ingredientId: savedIngredient.id,
+      packageLabel,
+      packageCount,
+      quantityPerPackage,
+      packagePriceCentimes,
+      receivedAt,
+      businessDate: date(input.businessDate),
+      ...(optionalText(input.supplierLabel, 'Supplier label', 100)
+        ? { supplierLabel: optionalText(input.supplierLabel, 'Supplier label', 100) }
+        : {}),
+      ...(optionalText(input.note, 'Purchase note', 240)
+        ? { note: optionalText(input.note, 'Purchase note', 240) }
+        : {}),
+      localMovementId: movementId,
+    },
+    createdAt: receivedAt,
+  });
+  return { purchaseId, movementId, ingredientRevision: revision,
+    operationId: operation.operationId };
+}
+
 export function saveLocalIngredient(
   context: Context,
   input: IngredientSaveInput,
@@ -164,6 +260,15 @@ export function saveLocalIngredient(
       throw new Error('An ingredient with this name already exists.');
     }
     const openingQuantity = integer(input.openingQuantity ?? 0, 'Opening quantity');
+    const openingCostCentimes = input.openingCostCentimes === undefined
+      ? 0
+      : integer(input.openingCostCentimes, 'Opening price', 0, MAX_TIME);
+    if (openingQuantity > 0 && openingCostCentimes < 1) {
+      throw new Error('Enter the price paid for the opening quantity.');
+    }
+    if (openingQuantity === 0 && openingCostCentimes > 0) {
+      throw new Error('Opening price requires an opening quantity.');
+    }
     const revision = saved ? Number(saved.revision) + 1 : 1;
     const operationId = crypto.randomUUID();
     if (saved) {
@@ -180,22 +285,10 @@ export function saveLocalIngredient(
            low_stock_threshold, status, revision, updated_at,
            local_stock_delta, inventory_value_centimes, cost_status,
            valuation_revision, local_inventory_value_delta)
-         VALUES (?, ?, ?, ?, ?, ?, 'active', 1, ?, 0, NULL, 'incomplete', 0, 0)`,
-        [localId, key, name, input.baseUnit, openingQuantity,
-          lowStockThreshold, now],
+         VALUES (?, ?, ?, ?, 0, ?, 'active', 1, ?, 0, NULL, 'incomplete', 0, 0)`,
+        [localId, key, name, input.baseUnit, lowStockThreshold, now],
         false,
       );
-      if (openingQuantity > 0) {
-        await database.run(
-          `INSERT INTO stock_movements
-            (id, ingredient_id, quantity_delta, movement_type, reason,
-             actor_label, business_date, created_at, client_mutation_id)
-           VALUES (?, ?, ?, 'stock-addition', ?, ?, ?, ?, ?)`,
-          [id('movement'), localId, openingQuantity, `Opening stock for ${name}`,
-            context.actor.name, date(businessDate), now, operationId],
-          false,
-        );
-      }
     }
     const operation = await enqueueManagementOperation(database, {
       deviceId: context.deviceId,
@@ -207,7 +300,7 @@ export function saveLocalIngredient(
       actor: context.actor,
       expectedRevision: input.expectedRevision,
       payload: {
-        ...(saved ? {} : { key, openingQuantity }),
+        ...(saved ? {} : { key, openingQuantity: 0 }),
         name,
         baseUnit: input.baseUnit,
         lowStockThreshold,
@@ -215,7 +308,25 @@ export function saveLocalIngredient(
       },
       createdAt: now,
     });
-    return { id: localId, revision, operationId: operation.operationId };
+    if (saved || openingQuantity === 0) {
+      return { id: localId, revision, operationId: operation.operationId };
+    }
+    const purchase = await receivePurchaseInDatabase(database, context, {
+      id: localId,
+      revision: 1,
+    }, {
+      packageLabel: 'Opening stock',
+      packageCount: 1,
+      quantityPerPackage: openingQuantity,
+      packagePriceCentimes: openingCostCentimes,
+      receivedAt: now,
+      businessDate,
+    });
+    return {
+      id: localId,
+      revision: purchase.ingredientRevision,
+      operationId: purchase.operationId,
+    };
   });
 }
 
@@ -291,13 +402,6 @@ export function deleteLocalIngredient(
     );
     if ((recipes.values?.length ?? 0) > 200) {
       throw new Error('Too many products use this ingredient.');
-    }
-    const options = await database.query(
-      `SELECT id, modifier_group_id, ingredient_effects_json
-       FROM modifier_options LIMIT 1001`,
-    );
-    if ((options.values?.length ?? 0) > 1_000) {
-      throw new Error('Too many product choices are saved.');
     }
     const affectedProducts = new Set<string>();
     const repairs: Array<{ productId: string; localRecipeId?: string }> = [];
@@ -388,38 +492,6 @@ export function deleteLocalIngredient(
       affectedProducts.add(productId);
       repairs.push({ productId, ...(recipeId ? { localRecipeId: recipeId } : {}) });
     }
-    for (const option of options.values ?? []) {
-      const effects = JSON.parse(String(option.ingredient_effects_json)) as
-        Array<{ ingredientId: string; quantityDelta: number }>;
-      const remaining = effects.filter((effect) => effect.ingredientId !== input.id);
-      if (remaining.length === effects.length) continue;
-      await database.run(
-        `UPDATE modifier_options SET ingredient_effects_json = ?,
-          revision = revision + 1, updated_at = ? WHERE id = ?`,
-        [JSON.stringify(remaining), now, String(option.id)],
-        false,
-      );
-      const products = await database.query(
-        `SELECT product_id FROM product_modifier_groups
-         WHERE modifier_group_id = ? LIMIT 201`,
-        [String(option.modifier_group_id)],
-      );
-      if ((products.values?.length ?? 0) > 200) {
-        throw new Error('Too many products use this choice.');
-      }
-      for (const product of products.values ?? []) {
-        const productId = String(product.product_id);
-        if (affectedProducts.has(productId)) continue;
-        await database.run(
-          `UPDATE products SET status = CASE WHEN status = 'archived'
-             THEN 'archived' ELSE 'unavailable' END,
-           revision = revision + 1, updated_at = ? WHERE id = ?`,
-          [now, productId],
-          false,
-        );
-        affectedProducts.add(productId);
-      }
-    }
     const choiceEffects = await database.query(
       `SELECT effect.id, section.product_id
        FROM product_choice_value_effects effect
@@ -488,97 +560,11 @@ export function deleteLocalIngredient(
 export function receiveLocalPurchase(
   context: Context,
   savedIngredient: Pick<ManagedIngredient, 'id' | 'revision'>,
-  input: {
-    packageLabel: string;
-    packageCount: number;
-    quantityPerPackage: number;
-    packagePriceCentimes: number;
-    supplierLabel?: string;
-    note?: string;
-    receivedAt?: number;
-    businessDate: string;
-  },
+  input: PurchaseInput,
   transact: Transaction = withLocalTransaction,
 ) {
-  return transact(async (database) => {
-    const row = await ingredient(database, savedIngredient.id);
-    if (!row || Number(row.revision) !== savedIngredient.revision) {
-      throw new Error('Ingredient changed. Refresh it before receiving the purchase.');
-    }
-    if (row.status !== 'active') throw new Error('Restore this ingredient before receiving a purchase.');
-    const packageLabel = text(input.packageLabel, 'Package label', 40);
-    const packageCount = integer(input.packageCount, 'Package count', 1);
-    const quantityPerPackage = integer(input.quantityPerPackage, 'Quantity per package', 1);
-    const packagePriceCentimes = integer(input.packagePriceCentimes, 'Package price', 1, MAX_TIME);
-    const totalQuantity = multiplied(packageCount, quantityPerPackage, 'Total quantity');
-    const totalCostCentimes = multiplied(packageCount, packagePriceCentimes, 'Total purchase cost');
-    const receivedAt = integer(input.receivedAt ?? Date.now(), 'Received time', 0, MAX_TIME);
-    const current = valuation(row);
-    integer(current.quantity + totalQuantity, 'Resulting stock quantity');
-    const next = receiveValuation(current, totalQuantity, totalCostCentimes);
-    const valuationRevision = Number(row.valuation_revision) + 1;
-    const revision = Number(row.revision) + 1;
-    const operationId = crypto.randomUUID();
-    const movementId = id('movement');
-    const purchaseId = id('purchase');
-    await database.run(
-      `INSERT INTO stock_movements
-        (id, ingredient_id, quantity_delta, movement_type, reason, actor_label,
-         business_date, created_at, cost_delta_centimes,
-         inventory_value_after_centimes, valuation_revision, client_mutation_id)
-       VALUES (?, ?, ?, 'purchase', ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [movementId, savedIngredient.id, totalQuantity,
-        `Purchase receipt: ${packageCount} ${packageLabel}`, context.actor.name,
-        date(input.businessDate), receivedAt, totalCostCentimes,
-        next.inventoryValueCentimes ?? null, valuationRevision, operationId],
-      false,
-    );
-    await database.run(
-      `INSERT INTO inventory_purchases
-        (id, ingredient_id, stock_movement_id, package_label, package_count,
-         quantity_per_package, total_quantity, package_price_centimes,
-         total_cost_centimes, received_at, business_date, supplier_label, note,
-         transaction_type, revision, client_mutation_id, actor_label)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'received', 1, ?, ?)`,
-      [purchaseId, savedIngredient.id, movementId, packageLabel, packageCount,
-        quantityPerPackage, totalQuantity, packagePriceCentimes,
-        totalCostCentimes, receivedAt, date(input.businessDate),
-        optionalText(input.supplierLabel, 'Supplier label', 100) ?? null,
-        optionalText(input.note, 'Purchase note', 240) ?? null,
-        operationId, context.actor.name],
-      false,
-    );
-    await saveValuation(database, row, next, valuationRevision, revision, receivedAt);
-    const operation = await enqueueManagementOperation(database, {
-      deviceId: context.deviceId,
-      operationId,
-      operationType: 'management.inventory.purchase',
-      localRecordId: purchaseId,
-      dependsOnOperationId: await dependency(database),
-      requiredPermission: 'stock',
-      actor: context.actor,
-      expectedRevision: savedIngredient.revision,
-      payload: {
-        ingredientId: savedIngredient.id,
-        packageLabel,
-        packageCount,
-        quantityPerPackage,
-        packagePriceCentimes,
-        receivedAt,
-        businessDate: date(input.businessDate),
-        ...(optionalText(input.supplierLabel, 'Supplier label', 100)
-          ? { supplierLabel: optionalText(input.supplierLabel, 'Supplier label', 100) }
-          : {}),
-        ...(optionalText(input.note, 'Purchase note', 240)
-          ? { note: optionalText(input.note, 'Purchase note', 240) }
-          : {}),
-        localMovementId: movementId,
-      },
-      createdAt: receivedAt,
-    });
-    return { purchaseId, movementId, ingredientRevision: revision,
-      operationId: operation.operationId };
-  });
+  return transact((database) =>
+    receivePurchaseInDatabase(database, context, savedIngredient, input));
 }
 
 export function recordLocalStockAdjustment(

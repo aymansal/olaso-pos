@@ -68,9 +68,11 @@ tablet's local SQLite operational record.
 - `localProductConfiguration.ts` owns local-first product-size and choice-section
   replacement, safe size deletion, and independent choice copying.
 - `localInventory.ts` owns ingredient, purchase, valuation, and stock-
-  adjustment transactions. `localCosts.ts` owns expense/compensation writes;
-  `localCostViews.ts` owns bounded role-scoped reads and cloud snapshot merging.
-  `inventorySync.ts` and `costSync.ts` own their reconnect dispatch boundaries.
+  adjustment transactions. Opening quantity with a paid price is committed as
+  the first purchase in the same transaction. `localCosts.ts` owns
+  expense/compensation writes; `localCostViews.ts` owns bounded role-scoped
+  reads and cloud snapshot merging. `inventorySync.ts` and `costSync.ts` own
+  their reconnect dispatch boundaries.
 - `managementOperation.ts` owns the plain operation envelope, bounded payload
   and protected-field validation, actor/role permission validation, saved-row
   parsing, and safe operator-facing sync-failure classification.
@@ -81,7 +83,7 @@ tablet's local SQLite operational record.
   `receiptPrinting.ts` coordinates one post-commit attempt and never calls sale
   or stock creation logic.
 - `operationalCache.ts` owns the bounded cloud-to-local menu, category artwork
-  key, modifier, recipe, product-owned size/choice, and stock snapshot.
+  key, recipe, product-owned size/choice, and stock snapshot.
 - `src/lib/productConfiguration.ts` owns the pure size/choice/recipe resolver.
   Checkout and trusted cloud validation must call the same resolution; React
   components never compute stock or price from choices.
@@ -115,7 +117,7 @@ tablet's local SQLite operational record.
   Sale cashier names stay on the local receipt and are sent to Convex.
 - Serialize transactions on the shared SQLite connection; callers may start
   concurrently but `BEGIN`/`COMMIT` boundaries may not overlap.
-- Re-read trusted product, modifier, recipe, and ingredient data inside the
+- Re-read trusted product, recipe, choice, and ingredient data inside the
   local sale transaction; never persist UI-provided prices or deductions.
 - Represent offline sale usage as a signed local stock delta over the cached
   cloud balance so low stock never blocks a valid sale.
@@ -135,7 +137,7 @@ tablet's local SQLite operational record.
   previous safe Dashboard/Reports/Orders content remains visible on refresh.
 - Never refresh cloud catalog data over pending local management work. Pending
   or failed sales keep their immutable snapshots and stock deltas but must not
-  freeze category/product/modifier/recipe refreshes indefinitely.
+  freeze category/product/recipe/choice refreshes indefinitely.
 - Operational catalog/inventory dependencies are ordered separately from
   finance work. A failed expense or compensation never blocks an eligible sale
   or operational cache refresh; a sale still waits for catalog/inventory data

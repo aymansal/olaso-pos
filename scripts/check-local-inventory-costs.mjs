@@ -12,7 +12,7 @@ import {
   saveLocalCategory,
   saveLocalProduct,
 } from '../src/data/localCatalog.ts';
-import { saveLocalModifierGroup, saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
+import { saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
 import {
   addLocalCompensationPeriod,
   addLocalExpense,
@@ -189,6 +189,54 @@ const managerReport = await loadLocalCostManagementFromDatabase(
 assert.equal(managerReport.profitability, undefined);
 assert.deepEqual(managerReport.compensation, []);
 
+await assert.rejects(
+  saveLocalIngredient(manager, {
+    name: 'Priceless syrup',
+    baseUnit: 'millilitre',
+    lowStockThreshold: 0,
+    openingQuantity: 1000,
+  }, '2026-08-20', transaction),
+  /price paid/,
+);
+const valuedOpening = await saveLocalIngredient(manager, {
+  name: 'Vanilla syrup',
+  baseUnit: 'millilitre',
+  lowStockThreshold: 200,
+  openingQuantity: 1000,
+  openingCostCentimes: 10_000,
+}, '2026-08-20', transaction);
+const valuedRow = database.prepare(
+  `SELECT current_stock_quantity + local_stock_delta AS quantity,
+    inventory_value_centimes + local_inventory_value_delta AS value,
+    cost_status, valuation_revision, revision
+   FROM ingredients WHERE id = ?`,
+).get(valuedOpening.id);
+assert.deepEqual({ ...valuedRow }, {
+  quantity: 1000,
+  value: 10_000,
+  cost_status: 'complete',
+  valuation_revision: 1,
+  revision: 2,
+});
+assert.equal(database.prepare(
+  `SELECT package_label, total_quantity, total_cost_centimes, transaction_type
+   FROM inventory_purchases WHERE ingredient_id = ?`,
+).get(valuedOpening.id).package_label, 'Opening stock');
+assert.equal(database.prepare(
+  `SELECT depends_on_operation_id FROM outbox WHERE operation_id = ?`,
+).get(valuedOpening.operationId).depends_on_operation_id,
+  database.prepare(
+    `SELECT operation_id FROM outbox
+     WHERE local_record_id = ? AND operation_type = 'management.ingredient.save'`,
+  ).get(valuedOpening.id).operation_id,
+);
+const valuedReport = await loadLocalCostManagementFromDatabase(
+  adapter,
+  '2026-08',
+  'owner',
+);
+assert.equal(valuedReport.purchaseCashCentimes, 14_000);
+
 database.prepare(
   `UPDATE outbox SET state = 'failed' WHERE operation_id = ?`,
 ).run(expense.operationId);
@@ -243,23 +291,15 @@ const remainingIngredient = await saveLocalIngredient(manager, {
   name: 'Remaining cocoa', baseUnit: 'gram', lowStockThreshold: 0,
   openingQuantity: 0,
 }, '2026-08-20', transaction);
-const modifiers = await saveLocalModifierGroup(manager, {
-  name: 'Milk choice', required: false, minSelections: 0, maxSelections: 1,
-  status: 'active', sortOrder: 10, options: [{
-    key: 'milk', name: 'Milk', priceDeltaCentimes: 0,
-    ingredientEffects: [{ ingredientId: ingredient.id, quantityDelta: 10 }],
-    status: 'active', sortOrder: 10,
-  }],
-}, transaction);
 const product = await saveLocalProduct(manager, {
   name: 'Delete test drink', categoryId: category.id, basePriceCentimes: 2500,
-  status: 'active', sortOrder: 10, modifierGroupIds: [modifiers.id],
+  status: 'active', sortOrder: 10,
 }, transaction);
 const recipe = await saveLocalRecipeVersion(manager, {
   id: product.id, key: product.id, categoryId: category.id,
   name: 'Delete test drink', receiptName: 'Delete test drink',
   basePriceCentimes: 2500, status: 'active', sortOrder: 10,
-  modifierGroupIds: [modifiers.id], revision: product.revision, updatedAt: 1,
+  revision: product.revision, updatedAt: 1,
 }, [{ ingredientId: ingredient.id, quantity: 20 },
   { ingredientId: remainingIngredient.id, quantity: 5 }], transaction);
 database.prepare(`INSERT INTO stock_movements
@@ -300,9 +340,6 @@ assert.deepEqual(database.prepare(
   'SELECT ingredient_id FROM recipe_items WHERE recipe_version_id = ?',
 ).all(repairedProduct.current_recipe_version_id).map((row) => row.ingredient_id),
 [remainingIngredient.id]);
-assert.deepEqual(JSON.parse(database.prepare(
-  'SELECT ingredient_effects_json FROM modifier_options LIMIT 1',
-).get().ingredient_effects_json), []);
 assert.equal(database.prepare(
   'SELECT depends_on_operation_id FROM outbox WHERE operation_id = ?',
 ).get(removedIngredient.operationId).depends_on_operation_id,
@@ -325,7 +362,7 @@ assert.equal(database.prepare(
 ).get('delete-sale-item').product_name_snapshot, 'Delete test drink');
 assert.equal((await loadLocalCostManagementFromDatabase(
   adapter, '2026-08', 'owner',
-)).purchaseCashCentimes, 4_000);
+)).purchaseCashCentimes, 14_000);
 database.close();
 
 console.log('Local-first inventory, expense, compensation, and dependency checks passed.');

@@ -64,7 +64,6 @@ assert.deepEqual(cart, [
     sizeId: 'americano-reg',
     quantity: 2,
     choiceValueIds: [],
-    modifierOptionIds: [],
   },
 ]);
 
@@ -84,7 +83,6 @@ assert.deepEqual(cart, [
     sizeId: 'americano-reg',
     quantity: 1,
     choiceValueIds: [],
-    modifierOptionIds: [],
   },
   {
     id: '["latte","latte-reg",[]]',
@@ -92,7 +90,6 @@ assert.deepEqual(cart, [
     sizeId: 'latte-reg',
     quantity: 2,
     choiceValueIds: [],
-    modifierOptionIds: [],
   },
 ]);
 cart = removeCartLine(cart, '["latte","latte-reg",[]]');
@@ -118,7 +115,6 @@ assert.deepEqual(
     sizeId: 'latte-large',
     quantity: 1,
     choiceValueIds: ['oat', 'shot'],
-    modifierOptionIds: [],
   }],
 );
 

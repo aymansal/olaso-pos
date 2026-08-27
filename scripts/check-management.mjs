@@ -29,15 +29,15 @@ async function verifyManagement() {
   const query = (reference, args) => client.query(reference, { ...sessionArgs, ...args });
   const mutation = (reference, args) => client.mutation(reference, { ...sessionArgs, ...args });
   try {
-    const [initialCategories, initialProducts, initialModifiers] =
+    const [initialCategories, initialProducts, initialIngredients] =
       await Promise.all([
         query(api.categories.list, {}),
         query(api.products.list, {}),
-        query(api.modifiers.list, {}),
+        query(api.inventory.list, { businessDate: '2026-07-28' }),
       ]);
     assert.equal(initialCategories.length, 4);
     assert.equal(initialProducts.length, 15);
-    assert.equal(initialModifiers.groups.length, 4);
+    assert.ok(initialIngredients.ingredients.length > 1);
 
     const categoryCreateArgs = {
       key: 'app03-test-category',
@@ -91,81 +91,6 @@ async function verifyManagement() {
     );
     assert.equal(categoryRestored.revision, 4);
 
-    const modifierCreateArgs = {
-      key: 'app03-test-group',
-      name: 'APP-03 Test Group',
-      required: false,
-      minSelections: 0,
-      maxSelections: 1,
-      sortOrder: 90,
-      clientMutationId: mutationId('modifier-create'),
-      options: [
-        {
-          key: 'app03-test-option',
-          name: 'APP-03 Test Option',
-          priceDeltaCentimes: 250,
-          ingredientEffects: [],
-          status: 'active',
-          sortOrder: 10,
-        },
-      ],
-    };
-    const modifierCreated = await mutation(
-      api.modifiers.saveGroup,
-      modifierCreateArgs,
-    );
-    const modifierRetry = await mutation(
-      api.modifiers.saveGroup,
-      modifierCreateArgs,
-    );
-    assert.equal(modifierRetry.id, modifierCreated.id);
-    const modifiersAfterCreate = await query(api.modifiers.list, {});
-    const createdOption = modifiersAfterCreate.options.find(
-      (option) => option.groupId === modifierCreated.id,
-    );
-    assert(createdOption);
-
-    const modifierUpdated = await mutation(api.modifiers.saveGroup, {
-      id: modifierCreated.id,
-      name: 'APP-03 Updated Group',
-      required: true,
-      minSelections: 1,
-      maxSelections: 1,
-      sortOrder: 91,
-      expectedRevision: modifierCreated.revision,
-      clientMutationId: mutationId('modifier-update'),
-      options: [
-        {
-          id: createdOption._id,
-          key: createdOption.key,
-          name: 'APP-03 Updated Option',
-          priceDeltaCentimes: 300,
-          ingredientEffects: [],
-          status: 'active',
-          sortOrder: 10,
-        },
-      ],
-    });
-    const modifierArchived = await mutation(
-      api.modifiers.setGroupArchived,
-      {
-        id: modifierCreated.id,
-        archived: true,
-        expectedRevision: modifierUpdated.revision,
-        clientMutationId: mutationId('modifier-archive'),
-      },
-    );
-    const modifierRestored = await mutation(
-      api.modifiers.setGroupArchived,
-      {
-        id: modifierCreated.id,
-        archived: false,
-        expectedRevision: modifierArchived.revision,
-        clientMutationId: mutationId('modifier-restore'),
-      },
-    );
-    assert.equal(modifierRestored.revision, 4);
-
     const productCreateArgs = {
       key: 'app03-test-product',
       categoryId: categoryCreated.id,
@@ -174,7 +99,6 @@ async function verifyManagement() {
       basePriceCentimes: 2800,
       status: 'active',
       sortOrder: 990,
-      modifierGroupIds: [modifierCreated.id],
       clientMutationId: mutationId('product-create'),
     };
     const productCreated = await mutation(
@@ -195,7 +119,6 @@ async function verifyManagement() {
       basePriceCentimes: 3000,
       status: 'unavailable',
       sortOrder: 991,
-      modifierGroupIds: [modifierCreated.id],
       expectedRevision: productCreated.revision,
       clientMutationId: mutationId('product-update'),
     });
@@ -219,11 +142,11 @@ async function verifyManagement() {
       clientMutationId: mutationId('recipe-v1'),
       items: [
         {
-          ingredientId: initialModifiers.ingredients[0]._id,
+          ingredientId: initialIngredients.ingredients[0]._id,
           quantity: 18,
         },
         {
-          ingredientId: initialModifiers.ingredients[1]._id,
+          ingredientId: initialIngredients.ingredients[1]._id,
           quantity: 1,
         },
       ],
@@ -245,11 +168,11 @@ async function verifyManagement() {
       clientMutationId: mutationId('recipe-v2'),
       items: [
         {
-          ingredientId: initialModifiers.ingredients[0]._id,
+          ingredientId: initialIngredients.ingredients[0]._id,
           quantity: 20,
         },
         {
-          ingredientId: initialModifiers.ingredients[1]._id,
+          ingredientId: initialIngredients.ingredients[1]._id,
           quantity: 1,
         },
       ],
@@ -285,7 +208,6 @@ async function verifyManagement() {
       basePriceCentimes: uncategorized.basePriceCentimes,
       status: 'active',
       sortOrder: uncategorized.sortOrder,
-      modifierGroupIds: uncategorized.modifierGroupIds,
       expectedRevision: uncategorized.revision,
       clientMutationId: mutationId('product-uncategorized'),
     });
@@ -313,22 +235,11 @@ async function verifyManagement() {
       businessDate: '2026-08-25',
       clientMutationId: mutationId('ingredient-for-delete'),
     });
-    const deleteGroup = await mutation(api.modifiers.saveGroup, {
-      key: 'app03-delete-group', name: 'APP-03 Delete choices', required: false,
-      minSelections: 0, maxSelections: 1, sortOrder: 91,
-      clientMutationId: mutationId('group-for-ingredient-delete'),
-      options: [{
-        key: 'app03-delete-option', name: 'APP-03 Delete option',
-        priceDeltaCentimes: 0, status: 'active', sortOrder: 10,
-        ingredientEffects: [{ ingredientId: disposable.id, quantityDelta: 2 }],
-      }],
-    });
     const repairProduct = await mutation(api.products.save, {
       key: 'app03-ingredient-repair-product',
       categoryId: initialCategories[0]._id,
       name: 'APP-03 Ingredient repair', receiptName: 'APP-03 Ingredient repair',
       basePriceCentimes: 2800, status: 'active', sortOrder: 990,
-      modifierGroupIds: [deleteGroup.id],
       clientMutationId: mutationId('product-for-ingredient-delete'),
     });
     const beforeRepair = await mutation(api.recipes.saveVersion, {
@@ -336,7 +247,7 @@ async function verifyManagement() {
       expectedProductRevision: repairProduct.revision,
       clientMutationId: mutationId('recipe-for-ingredient-delete'),
       items: [{ ingredientId: disposable.id, quantity: 5 },
-        { ingredientId: initialModifiers.ingredients[0]._id, quantity: 10 }],
+        { ingredientId: initialIngredients.ingredients[0]._id, quantity: 10 }],
     });
     const removalArgs = {
       id: disposable.id,
@@ -359,11 +270,7 @@ async function verifyManagement() {
     });
     assert.equal(repairedRecipe.items.length, 1);
     assert.equal(repairedRecipe.items[0].ingredientId,
-      initialModifiers.ingredients[0]._id);
-    const strippedOption = (await query(api.modifiers.list, {})).options.find(
-      (option) => option.groupId === deleteGroup.id,
-    );
-    assert.deepEqual(strippedOption?.ingredientEffects, []);
+      initialIngredients.ingredients[0]._id);
 
     const temporaryStaff = await mutation(api.staff.save, {
       name: 'APP-03 Deletable cashier', role: 'cashier',

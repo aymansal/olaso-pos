@@ -9,13 +9,14 @@ import {
   saveLocalProduct,
   setLocalProductStatus,
 } from '../src/data/localCatalog.ts';
-import { saveLocalModifierGroup, saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
+import { saveLocalRecipeVersion } from '../src/data/localRecipes.ts';
 import {
   copyLocalChoiceSections,
   deleteLocalProductSize,
   saveLocalChoiceSection,
   saveLocalProductSize,
 } from '../src/data/localProductConfiguration.ts';
+import { queueProductSizeSaves } from '../src/features/products/queueProductSizeSaves.ts';
 import { localMigrations } from '../src/data/schema.ts';
 import { pruneStaleOperationalCatalog } from '../src/data/operationalCache.ts';
 import {
@@ -69,20 +70,14 @@ const context = { deviceId: 'tablet-test', actor: { staffProfileId: 'manager-tes
 const category = await saveLocalCategory(context, {
   name: 'Offline category', artworkKey: 'cold-drinks', sortOrder: 90,
 }, transaction);
-const modifier = await saveLocalModifierGroup(context, {
-  name: 'Offline options', required: false, minSelections: 0, maxSelections: 1,
-  status: 'active', sortOrder: 90, options: [{ key: 'extra', name: 'Extra',
-    priceDeltaCentimes: 200, ingredientEffects: [{ ingredientId: 'ingredient:test', quantityDelta: 5 }],
-    status: 'active', sortOrder: 10 }],
-}, transaction);
 const product = await saveLocalProduct(context, {
   name: 'Offline drink', categoryId: category.id, basePriceCentimes: 2200,
-  status: 'active', sortOrder: 90, modifierGroupIds: [modifier.id],
+  status: 'active', sortOrder: 90,
 }, transaction);
 const managedProduct = {
   id: product.id, key: product.id, categoryId: category.id, name: 'Offline drink',
   receiptName: 'Offline drink', basePriceCentimes: 2200, status: 'active',
-  sortOrder: 90, modifierGroupIds: [modifier.id], revision: product.revision,
+  sortOrder: 90, revision: product.revision,
   updatedAt: 1,
 };
 const recipe = await saveLocalRecipeVersion(context, managedProduct, [
@@ -104,7 +99,7 @@ assert.equal(database.prepare('SELECT status FROM product_sizes WHERE id = ?')
   .get(removableSize.id).status, 'archived');
 const destination = await saveLocalProduct(context, {
   name: 'Offline copy', categoryId: category.id, basePriceCentimes: 2400,
-  status: 'active', sortOrder: 91, modifierGroupIds: [],
+  status: 'active', sortOrder: 91,
 }, transaction);
 const destinationSize = await saveLocalProductSize(context, {
   productId: destination.id, name: 'Large', priceCentimes: 2800, sortOrder: 20,
@@ -149,21 +144,18 @@ assert.equal(JSON.parse(database.prepare(
   'SELECT payload_json FROM management_operations WHERE operation_type = ? LIMIT 1',
 ).get('management.category.save').payload_json).artworkKey, 'cold-drinks');
 assert.equal(database.prepare('SELECT COUNT(*) count FROM products').get().count, 2);
-assert.equal(database.prepare('SELECT COUNT(*) count FROM modifier_options').get().count, 1);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM recipe_items').get().count, 1);
 const queue = database.prepare(`SELECT operation_id, operation_type, depends_on_operation_id
   FROM outbox ORDER BY rowid`).all();
-assert.ok(queue.length >= 10);
+assert.ok(queue.length >= 9);
 assert.equal(queue[0].operation_type, 'management.category.save');
 assert.equal(queue[1].depends_on_operation_id, queue[0].operation_id);
 assert.equal(queue[2].depends_on_operation_id, queue[1].operation_id);
-assert.equal(queue[3].depends_on_operation_id, queue[2].operation_id);
-const saleDependency = queue[3].operation_id;
 await setLocalProductStatus(context, { id: product.id, revision: 2 }, 'unavailable', transaction);
 assert.equal(database.prepare('SELECT status FROM products WHERE id = ?').get(product.id).status, 'unavailable');
 await assert.rejects(
   saveLocalProduct(context, { name: 'Broken', categoryId: 'missing', basePriceCentimes: 1,
-    status: 'active', sortOrder: 1, modifierGroupIds: [] }, transaction),
+    status: 'active', sortOrder: 1 }, transaction),
   /Category is unavailable/,
 );
 assert.equal(database.prepare("SELECT COUNT(*) count FROM products WHERE name = 'Broken'").get().count, 0);
@@ -340,11 +332,12 @@ assert.ok(
 );
 assert.match(reconnectSource, /resolveCloudRecordId\('product'/);
 assert.match(reconnectSource, /resolveCloudRecordId\(\s*'recipe-version'/);
-assert.match(reconnectSource, /resolveCloudRecordId\(\s*'modifier-option'/);
+assert.match(reconnectSource, /resolveCloudRecordId\(\s*'choice-value'/);
 assert.doesNotMatch(productHookSource, /useMutation|useQuery_experimental/);
 assert.match(productHookSource, /saveLocalCategory/);
 assert.match(productHookSource, /saveLocalProduct/);
-assert.match(productHookSource, /saveLocalModifierGroup/);
+assert.match(productHookSource, /saveLocalChoiceSection/);
+assert.match(productHookSource, /saveLocalProductSize/);
 assert.match(productHookSource, /saveLocalRecipeVersion/);
 const productScreenSource = readFileSync(
   'src/features/products/ProductsScreen.tsx',
@@ -365,4 +358,27 @@ const modifierMapping = operationalCacheSource.match(
 )?.[0] ?? '';
 assert.match(categoryMapping, /artworkKey: String\(row\.artwork_key/);
 assert.doesNotMatch(modifierMapping, /artworkKey/);
+const savedSizes = [
+  { id: 'size:small', productId: 'product:1', name: 'Small', priceCentimes: 1600,
+    sortOrder: 10, isDefault: true, status: 'active', revision: 1 },
+  { id: 'size:medium', productId: 'product:1', name: 'Medium', priceCentimes: 1800,
+    sortOrder: 20, isDefault: false, status: 'active', revision: 1 },
+];
+assert.deepEqual(
+  queueProductSizeSaves([
+    ...savedSizes,
+    { productId: 'product:1', name: 'Large', priceCentimes: 2200, sortOrder: 30,
+      isDefault: false, status: 'active' },
+  ], savedSizes).map((size) => size.name),
+  ['Large'],
+  'Adding a size must not rewrite already saved sizes.',
+);
+assert.deepEqual(
+  queueProductSizeSaves([
+    { ...savedSizes[0], isDefault: false },
+    { ...savedSizes[1], isDefault: true },
+  ], savedSizes).map((size) => size.name),
+  ['Small', 'Medium'],
+  'A moved default must save after the size it replaces.',
+);
 console.log('Local-first catalog and recipe transaction checks passed.');

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ManagedCategory, ManagedChoiceSection, ManagedIngredient, ManagedModifierGroup, ManagedProduct, ManagedProductCost, ManagedProductSize, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
+import type { ManagedCategory, ManagedChoiceSection, ManagedIngredient, ManagedProduct, ManagedProductCost, ManagedProductSize, ManagedRecipeData, ProductSaveInput } from '../features/products/productManagementTypes.ts';
 import {
   deleteLocalCategory,
   deleteLocalProduct,
@@ -8,7 +8,7 @@ import {
   setLocalCategoryArchived,
   setLocalProductStatus,
 } from './localCatalog.ts';
-import { saveLocalModifierGroup, saveLocalRecipeVersion, setLocalModifierGroupArchived } from './localRecipes.ts';
+import { saveLocalRecipeVersion } from './localRecipes.ts';
 import {
   copyLocalChoiceSections,
   deleteLocalChoiceSection,
@@ -42,7 +42,6 @@ export function useProductManagement(selectedProductId?: string) {
     id: product.id, key: product.key, categoryId: product.categoryId,
     name: product.name, receiptName: product.receiptName, basePriceCentimes: product.priceCentimes,
     status: product.status, imageAssetKey: product.imageAssetKey, sortOrder: product.sortOrder,
-    modifierGroupIds: (cache?.productModifierGroups ?? []).filter((link) => link.productId === product.id).map((link) => link.modifierGroupId),
     currentRecipeVersionId: product.currentRecipeVersionId, revision: product.revision, updatedAt: product.updatedAt,
   }));
   const categories: ManagedCategory[] = (cache?.categories ?? []).map((category) => ({
@@ -52,15 +51,6 @@ export function useProductManagement(selectedProductId?: string) {
     productCount: products.filter((product) => product.categoryId === category.id).length,
   }));
   const ingredients: ManagedIngredient[] = (cache?.ingredients ?? []).map((ingredient) => ({ id: ingredient.id, key: ingredient.id, name: ingredient.name, baseUnit: ingredient.baseUnit }));
-  const modifierGroups: ManagedModifierGroup[] = (cache?.modifierGroups ?? []).map((group, index) => ({
-    id: group.id, key: group.key, name: group.name, required: group.minimumSelections > 0,
-    minSelections: group.minimumSelections, maxSelections: group.maximumSelections,
-    status: group.status ?? 'active', sortOrder: group.sortOrder ?? index * 10 + 10, revision: group.revision,
-    options: (cache?.modifierOptions ?? []).filter((option) => option.modifierGroupId === group.id).map((option) => ({
-      id: option.id, key: option.key, name: option.name, priceDeltaCentimes: option.priceDeltaCentimes,
-      ingredientEffects: option.ingredientEffects, status: option.status ?? 'active', sortOrder: option.sortOrder,
-    })),
-  }));
   const recipeData: ManagedRecipeData | undefined = selectedProductId ? (() => {
     const versions = (cache?.recipeVersions ?? []).filter((version) => version.productId === selectedProductId);
     const currentId = products.find((product) => product.id === selectedProductId)?.currentRecipeVersionId;
@@ -160,7 +150,7 @@ export function useProductManagement(selectedProductId?: string) {
     const result = await operation; await reload(); void reconnect.run('automatic').catch(() => undefined); return result;
   };
   return {
-    categories, products, modifierGroups, ingredients, recipeData, productSizes, choiceSections,
+    categories, products, ingredients, recipeData, productSizes, choiceSections,
     productCost,
     isLoading: !cache && !error, isRecipeLoading: false, error: error || undefined,
     saveCategory: (input: Parameters<typeof saveLocalCategory>[1]) => save(saveLocalCategory(context, input)),
@@ -171,8 +161,6 @@ export function useProductManagement(selectedProductId?: string) {
     setProductStatus: (id: string, status: ManagedProduct['status'], revision: number) => save(setLocalProductStatus(context, { id, revision }, status)),
     deleteProduct: (product: Pick<ManagedProduct, 'id' | 'revision'>) =>
       save(deleteLocalProduct(context, product)),
-    saveModifierGroup: (group: ManagedModifierGroup) => save(saveLocalModifierGroup(context, group)),
-    setModifierGroupArchived: (id: string, archived: boolean, revision: number) => save(setLocalModifierGroupArchived(context, id, archived, revision)),
     saveRecipeVersion: (product: ManagedProduct, items: { ingredientId: string; quantity: number }[],
       sizeQuantities?: Array<{ ingredientId: string; productSizeId: string; quantity: number }>) =>
       save(saveLocalRecipeVersion(context, product, items, sizeQuantities)),

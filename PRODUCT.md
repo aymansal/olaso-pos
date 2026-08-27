@@ -378,10 +378,13 @@ A receipt records:
 - Received date, actor, and optional note or supplier label.
 
 For example, ten one-litre milk cartons at 20 MAD each add 10,000 millilitres
-and 200 MAD of inventory value. New purchases update the ingredient's perpetual
-weighted-average cost. Physical-count losses reduce inventory value using that
-cost; a count increase uses the last known cost and is flagged if no cost is
-available.
+and 200 MAD of inventory value. Creating an ingredient with an opening quantity
+requires the price paid for that quantity; that first quantity is recorded as a
+purchase so stock, valuation, and purchase cash match. Leave opening quantity at
+0 when the shelf is empty. Later deliveries use Receive purchase. New purchases
+update the ingredient's perpetual weighted-average cost. Physical-count losses
+reduce inventory value using that cost; a count increase uses the last known
+cost and is flagged if no cost is available.
 
 Purchase cash spending and ingredient cost consumed are different measures.
 The Costs report shows both but never adds both into the same profit subtotal.

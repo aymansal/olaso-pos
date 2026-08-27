@@ -9,10 +9,10 @@ data, reporting summaries, and development seeding.
 
 - `schema.ts` owns table shapes and indexes, including additive product-owned
   sizes, choice sections, values, typed ingredient effects, and per-size
-  quantity overrides. Legacy shared modifier groups remain until OPTIONS-04.
+  quantity overrides. Live shared modifier groups are not used.
 - `_generated/` is produced by the Convex CLI and committed.
 - Business functions live in domain files such as `categories.ts`,
-  `products.ts`, `modifiers.ts`, `recipes.ts`, `productConfiguration.ts`, `ingredients.ts`,
+  `products.ts`, `recipes.ts`, `productConfiguration.ts`, `ingredients.ts`,
   `inventory.ts`, `sales.ts`, and `reports.ts`.
 - `sync.ts` owns the bounded operational snapshot consumed by the tablet cache.
   An optional validated request ID lets deliberate manual sync bypass a stale

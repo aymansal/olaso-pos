@@ -113,6 +113,13 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Committing the uncommitted tablet pile to `origin/main`: leftover shared-modifier UI removal, add-product modal + CSS leak fix, opening-stock first purchase, dirty-only size saves, and lock-screen terminal-line removal. SHA after push.
+
+- Opening-quantity price is installed-over on the Tab A9 (`R8YX91AKWXJ`). Add ingredient now requires price paid when quantity is greater than 0; that quantity is the first purchase. Café SQLite was preserved.
+- Sizes save fix is installed-over on the Tab A9. Adding a third size no longer rewrites the first two. Café SQLite was preserved.
+- Add product now opens a modal like Add ingredient / Add category. Prior inline right-rail create looked like a no-op. Uncommitted.
+- Add product now opens a modal like Add ingredient / Add category. Prior inline right-rail create looked like a no-op. Uncommitted; needs signed install-over.
+- Add product tap miss: Choices dialog CSS leaked a global `header > button { width: 38px }`, crushing the catalog pill to the icon. Scoped under `.dialog`. Uncommitted; tablet still needs a rebuilt debug APK to pick it up.
 - OPTIONS-04 is on `origin/main` as `ca7c9540dc29f7778f63d3f73bd19ffc7d6c5f00`.
   Exact next action: stop; OPTIONS sequence complete; ask before POLISH-01.
 - OPTIONS-03 is on `origin/main` as `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962`.

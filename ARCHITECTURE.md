@@ -963,6 +963,7 @@ limits must be checked again before production launch:
 | Open report period | One summary query plus paginated detail on demand |
 | Save related recipe changes | One local transaction; later one batched idempotent sync mutation |
 | Receive purchased stock | One local transaction; later one mutation for purchase, movement, balance, and valuation |
+| Create ingredient with opening quantity | One local transaction: ingredient save plus first purchase when quantity is paid |
 | Save compensation or expense | One local transaction; later one validated retry-safe mutation |
 | Open monthly Costs report | One bounded summary query plus paginated purchase/expense detail on demand |
 

@@ -1,6 +1,5 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import type {
-  ManagedModifierGroup,
   ManagedProduct,
   ProductSaveInput,
 } from '../features/products/productManagementTypes.ts';
@@ -189,8 +188,7 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
   return transact(async (database) => {
     const now = Date.now();
     const name = text(input.name, 'Product name', 100);
-    if (!['active', 'unavailable'].includes(input.status)
-        || new Set(input.modifierGroupIds).size !== input.modifierGroupIds.length) {
+    if (!['active', 'unavailable'].includes(input.status)) {
       throw new Error('Product settings are invalid.');
     }
     if (input.categoryId) {
@@ -203,10 +201,6 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
     if (input.id && !existing) throw new Error('Product is unavailable.');
     if (existing && Number(existing.revision) !== input.expectedRevision) {
       throw new Error('Product changed. Refresh it before saving.');
-    }
-    for (const groupId of input.modifierGroupIds) {
-      const group = await row(database, 'modifier_groups', groupId);
-      if (!group || group.status !== 'active') throw new Error('Modifier group is unavailable.');
     }
     const localId = input.id ?? id('product');
     const key = existing ? String(existing.key) : keyFromName(name, localId);
@@ -232,15 +226,6 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
       ],
       false,
     );
-    await database.run('DELETE FROM product_modifier_groups WHERE product_id = ?', [localId], false);
-    for (const [index, groupId] of input.modifierGroupIds.entries()) {
-      await database.run(
-        `INSERT INTO product_modifier_groups
-          (product_id, modifier_group_id, sort_order) VALUES (?, ?, ?)`,
-        [localId, groupId, index * 10 + 10],
-        false,
-      );
-    }
     const operation = await enqueueManagementOperation(database, {
       deviceId: context.deviceId,
       operationType: 'management.product.save',
@@ -252,7 +237,7 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
       payload: {
         key, categoryId: input.categoryId, name, receiptName: name,
         basePriceCentimes: input.basePriceCentimes, status: input.status,
-        sortOrder: input.sortOrder, modifierGroupIds: input.modifierGroupIds,
+        sortOrder: input.sortOrder,
       },
       createdAt: now,
     });
@@ -327,5 +312,3 @@ export function deleteLocalProduct(
     return { id: product.id, operationId: operation.operationId };
   });
 }
-
-export type LocalModifierInput = ManagedModifierGroup;

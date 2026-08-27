@@ -1,9 +1,9 @@
 .overlay { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; background: rgb(28 33 27 / 38%); }
 .dialog { width: 760px; max-height: 650px; padding: 24px; overflow: hidden; border: 1px solid var(--olaso-panel-border); border-radius: 28px; background: var(--olaso-white); }
-.dialog header, .dialog header > span, .row, .row label, footer { display: flex; }
-.dialog header, footer { align-items: center; justify-content: space-between; }
+.dialog header, .dialog header > span, .row, .row label, .dialog footer { display: flex; }
+.dialog header, .dialog footer { align-items: center; justify-content: space-between; }
 .dialog header > span, .row label { flex-direction: column; }
-.dialog header small, .row label, footer { color: var(--olaso-copy); font-size: 9px; font-weight: 600; }
+.dialog header small, .row label, .dialog footer { color: var(--olaso-copy); font-size: 9px; font-weight: 600; }
 .dialog h2 { margin: 3px 0 0; color: var(--olaso-text); font-size: 18px; }
 .dialog header button, .row > button { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--olaso-divider); border-radius: 50%; color: var(--olaso-danger); background: transparent; }
 .rows { max-height: 430px; margin-top: 18px; overflow-y: auto; }
@@ -17,6 +17,6 @@
 .add, .save { display: flex; align-items: center; gap: 7px; font-size: 9px; font-weight: 700; }
 .add { height: 38px; margin-top: 10px; padding: 0 13px; border: 1px solid var(--olaso-category-border); border-radius: 19px; color: var(--olaso-green); background: transparent; }
 .error { margin: 8px 0 0; color: var(--olaso-danger); font-size: 9px; }
-footer { margin-top: 14px; }
+.dialog footer { margin-top: 14px; }
 .save { height: 44px; padding: 0 18px; border: 0; border-radius: 22px; color: var(--olaso-white); background: var(--olaso-green); }
 .add:disabled, .save:disabled { opacity: .45; }

@@ -41,9 +41,12 @@ export function IngredientDialog({
     String(ingredient?.lowStockThreshold ?? 0),
   );
   const [openingQuantity, setOpeningQuantity] = useState('0');
+  const [openingPriceMad, setOpeningPriceMad] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const archived = ingredient?.status === 'archived';
+  const openingCount = Number(openingQuantity);
+  const openingCostCentimes = Math.round(Number(openingPriceMad) * 100);
 
   async function submit() {
     setSaving(true);
@@ -54,7 +57,10 @@ export function IngredientDialog({
         name,
         baseUnit,
         lowStockThreshold: Number(threshold),
-        openingQuantity: ingredient ? undefined : Number(openingQuantity),
+        openingQuantity: ingredient ? undefined : openingCount,
+        ...(ingredient || openingCount === 0
+          ? {}
+          : { openingCostCentimes }),
         expectedRevision: ingredient?.revision,
       });
       onClose();
@@ -71,8 +77,11 @@ export function IngredientDialog({
     !Number.isSafeInteger(Number(threshold)) ||
     Number(threshold) < 0 ||
     (!ingredient &&
-      (!Number.isSafeInteger(Number(openingQuantity)) ||
-        Number(openingQuantity) < 0));
+      (!Number.isSafeInteger(openingCount) ||
+        openingCount < 0 ||
+        (openingCount > 0 &&
+          (!Number.isSafeInteger(openingCostCentimes) ||
+            openingCostCentimes < 1))));
 
   return (
     <div className={styles.overlay} role="presentation">
@@ -132,22 +141,37 @@ export function IngredientDialog({
             />
           </label>
           {!ingredient ? (
-            <label>
-              <span>Opening quantity</span>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                value={openingQuantity}
-                onChange={(event) => setOpeningQuantity(event.target.value)}
-              />
-            </label>
+            <>
+              <label>
+                <span>Opening quantity</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={openingQuantity}
+                  onChange={(event) => setOpeningQuantity(event.target.value)}
+                />
+              </label>
+              <label>
+                <span>Price paid · MAD</span>
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={openingPriceMad}
+                  disabled={openingCount === 0}
+                  onChange={(event) => setOpeningPriceMad(event.target.value)}
+                />
+              </label>
+            </>
           ) : null}
         </div>
 
         <p className={styles.helper}>
           Quantities stay as whole {baseUnitLabel(baseUnit).toLowerCase()}.
-          Base units cannot change after creation.
+          If the shelf already has stock, enter quantity and what you paid.
+          Leave quantity at 0 when the shelf is empty. Base units cannot change
+          after creation.
         </p>
         {error ? <p className={styles.error}>{error}</p> : null}
 

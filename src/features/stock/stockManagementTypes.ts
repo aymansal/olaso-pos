@@ -75,6 +75,7 @@ export type IngredientSaveInput = {
   baseUnit: StockBaseUnit;
   lowStockThreshold: number;
   openingQuantity?: number;
+  openingCostCentimes?: number;
   expectedRevision?: number;
 };
 

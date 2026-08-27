@@ -405,32 +405,6 @@
   font-weight: 500;
 }
 
-.legacyNote {
-  position: absolute;
-  top: 438px;
-  left: 22px;
-  width: 260px;
-  margin: 0;
-  color: var(--olaso-text-meta);
-  font-size: 7px;
-}
-
-.legacyGroups {
-  position: absolute;
-  top: 436px;
-  right: 22px;
-  display: flex;
-  align-items: center;
-  height: 22px;
-  gap: 4px;
-  padding: 0;
-  border: 0;
-  color: var(--olaso-green);
-  background: transparent;
-  font-size: 7px;
-  font-weight: 700;
-}
-
 .optionsDivider { top: 468px; }
 
 .recipeHeader {

@@ -27,7 +27,7 @@ const saleLine = v.object({
   quantity: v.number(),
   sizeId: v.optional(v.id('productSizes')),
   choiceValueIds: v.optional(v.array(v.id('productChoiceValues'))),
-  modifierOptionIds: v.array(v.id('modifierOptions')),
+  modifierOptionIds: v.optional(v.array(v.id('modifierOptions'))),
   ingredientCostCentimes: v.optional(v.number()),
   costStatus: v.union(v.literal('complete'), v.literal('incomplete')),
   valuationRevisions: v.array(v.object({ ingredientId: v.string(), revision: v.number() })),
@@ -252,8 +252,11 @@ export const accept = mutation({
       let resolvedChoiceValueIds: Id<'productChoiceValues'>[] | undefined;
       const ingredientUsage = new Map<Id<'ingredients'>, number>();
 
-      if (line.sizeId) {
-        const choiceValueIds = line.choiceValueIds ?? [];
+      const sizeId = line.sizeId;
+      if (!sizeId) {
+        return invalid(`Select a size for ${product.name}.`);
+      }
+      const choiceValueIds = line.choiceValueIds ?? [];
         const selectedChoiceIds = [...new Set(choiceValueIds)];
         if (
           selectedChoiceIds.length !== choiceValueIds.length
@@ -261,7 +264,7 @@ export const accept = mutation({
         ) {
           return invalid(`Invalid choices for ${product.name}.`);
         }
-        const size = await ctx.db.get(line.sizeId);
+        const size = await ctx.db.get(sizeId);
         if (
           !size
           || size.productId !== product._id
@@ -439,98 +442,6 @@ export const accept = mutation({
         resolvedSizeId = size._id;
         resolvedSizeName = size.name;
         resolvedChoiceValueIds = selectedChoiceIds;
-      } else {
-        if (product.modifierGroupIds.length > 20) {
-          return invalid(`${product.name} has too many modifier groups.`);
-        }
-        const selectedIds = [...new Set(line.modifierOptionIds)];
-        if (
-          selectedIds.length !== line.modifierOptionIds.length
-          || selectedIds.length > 20
-        ) {
-          return invalid(`Invalid modifiers for ${product.name}.`);
-        }
-        const [selectedOptions, groups] = await Promise.all([
-          Promise.all(selectedIds.map((id) => ctx.db.get(id))),
-          Promise.all(product.modifierGroupIds.map((id) => ctx.db.get(id))),
-        ]);
-        if (groups.some((group) => !group || group.status !== 'active')) {
-          return conflict(`${product.name}'s modifier setup is unavailable.`);
-        }
-        if (
-          selectedOptions.some(
-            (option) =>
-              !option
-              || option.status !== 'active'
-              || !product.modifierGroupIds.includes(option.groupId),
-          )
-        ) {
-          return conflict(`A selected modifier for ${product.name} is unavailable.`);
-        }
-        for (const group of groups) {
-          if (!group) return conflict('A modifier group is missing.');
-          const count = selectedOptions.filter(
-            (option) => option?.groupId === group._id,
-          ).length;
-          if (count < group.minSelections || count > group.maxSelections) {
-            return invalid(
-              `${group.name} requires ${group.minSelections} to ${group.maxSelections} choices.`,
-            );
-          }
-        }
-
-        const options = selectedOptions.flatMap((option) => option ? [option] : []);
-        unitPriceCentimes = checkedTotal(
-          product.basePriceCentimes
-            + options.reduce(
-              (sum, option) => sum + option.priceDeltaCentimes,
-              0,
-            ),
-          `${product.name} price`,
-        );
-        for (const item of recipeItems) {
-          const amount = boundedInteger(
-            item.quantity,
-            'Recipe quantity',
-            1,
-            1_000_000,
-          );
-          ingredientUsage.set(
-            item.ingredientId,
-            (ingredientUsage.get(item.ingredientId) ?? 0) + amount,
-          );
-        }
-        for (const option of options) {
-          for (const effect of option.ingredientEffects) {
-            const amount = boundedInteger(
-              effect.quantityDelta,
-              'Modifier ingredient effect',
-              -1_000_000,
-              1_000_000,
-            );
-            ingredientUsage.set(
-              effect.ingredientId,
-              (ingredientUsage.get(effect.ingredientId) ?? 0) + amount,
-            );
-          }
-        }
-        for (const [ingredientId, amount] of ingredientUsage) {
-          if (!Number.isSafeInteger(amount) || amount < 0) {
-            return invalid(`Modifier effects make ${product.name}'s recipe invalid.`);
-          }
-          ingredientUsage.set(
-            ingredientId,
-            checkedTotal(amount * quantity, 'Ingredient usage'),
-          );
-        }
-        modifiers = options.map((option) => ({
-          groupName:
-            groups.find((group) => group?._id === option.groupId)?.name
-            ?? 'Modifier',
-          optionName: option.name,
-          priceDeltaCentimes: option.priceDeltaCentimes,
-        }));
-      }
 
       const lineTotalCentimes = checkedTotal(
         unitPriceCentimes * quantity,

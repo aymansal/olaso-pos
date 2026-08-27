@@ -5,13 +5,11 @@ import {
   Leaf,
   Link,
   LinkBreak,
-  SlidersHorizontal,
 } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import type {
   ManagedCategory,
   ManagedIngredient,
-  ManagedModifierGroup,
   ManagedProduct,
   ManagedProductCost,
   ManagedRecipeData,
@@ -19,7 +17,6 @@ import type {
   ManagedChoiceSection,
   ProductSaveInput,
 } from '../../productManagementTypes';
-import { ModifierGroupDialog } from '../ModifierGroupDialog/ModifierGroupDialog';
 import { ProductChoiceSectionDialog } from '../ProductChoiceSectionDialog/ProductChoiceSectionDialog';
 import { RecipeEditorDialog } from '../RecipeEditorDialog/RecipeEditorDialog';
 import { SizesEditorDialog } from '../SizesEditorDialog/SizesEditorDialog';
@@ -27,11 +24,9 @@ import styles from './ProductEditorPanel.module.css';
 
 interface ProductEditorPanelProps {
   product?: ManagedProduct;
-  creating: boolean;
   defaultCategoryId?: string;
   nextSortOrder: number;
   categories: ManagedCategory[];
-  modifierGroups: ManagedModifierGroup[];
   ingredients: ManagedIngredient[];
   productSizes: ManagedProductSize[];
   choiceSections: ManagedChoiceSection[];
@@ -45,11 +40,6 @@ interface ProductEditorPanelProps {
     status: ManagedProduct['status'],
   ) => Promise<void>;
   onDelete: (product: ManagedProduct) => Promise<void>;
-  onSaveModifierGroup: (group: ManagedModifierGroup) => Promise<void>;
-  onSetModifierGroupArchived: (
-    group: ManagedModifierGroup,
-    archived: boolean,
-  ) => Promise<void>;
   onSaveRecipe: (
     product: ManagedProduct,
     items: { ingredientId: string; quantity: number }[],
@@ -72,11 +62,9 @@ function formatMad(centimes: number) {
 
 export function ProductEditorPanel({
   product,
-  creating,
   defaultCategoryId,
   nextSortOrder,
   categories,
-  modifierGroups,
   ingredients,
   productSizes,
   choiceSections,
@@ -87,8 +75,6 @@ export function ProductEditorPanel({
   onSave,
   onSetStatus,
   onDelete,
-  onSaveModifierGroup,
-  onSetModifierGroupArchived,
   onSaveRecipe,
   onSaveSize,
   onDeleteSize,
@@ -103,7 +89,6 @@ export function ProductEditorPanel({
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [showRecipe, setShowRecipe] = useState(false);
-  const [showModifiers, setShowModifiers] = useState(false);
   const [showSizes, setShowSizes] = useState(false);
   const [showChoices, setShowChoices] = useState(false);
 
@@ -120,11 +105,11 @@ export function ProductEditorPanel({
     );
     setPriceMad(String((product?.basePriceCentimes ?? 0) / 100));
     setAvailable(product?.status !== 'unavailable');
-  }, [creating, defaultCategoryId, product?.id, product?.revision]);
+  }, [defaultCategoryId, product?.id, product?.revision]);
 
   useEffect(() => {
     setMessage('');
-  }, [creating, product?.id]);
+  }, [product?.id]);
 
   const category = categories.find(
     (candidate) => candidate.id === categoryId,
@@ -149,7 +134,6 @@ export function ProductEditorPanel({
         basePriceCentimes: Math.round(Number(priceMad) * 100),
         status: available ? 'active' : 'unavailable',
         sortOrder: product?.sortOrder ?? nextSortOrder,
-        modifierGroupIds: [],
         expectedRevision: product?.revision,
       });
       setMessage('Changes saved.');
@@ -160,7 +144,7 @@ export function ProductEditorPanel({
     }
   }
 
-  if (!product && !creating) {
+  if (!product) {
     return (
       <aside className={styles.panel} aria-labelledby="product-editor-title">
         <div className={styles.empty}>
@@ -178,7 +162,7 @@ export function ProductEditorPanel({
         <span className={styles.heading}>
           <small>PRODUCT DETAILS</small>
           <h2 id="product-editor-title">
-            {creating ? 'Add product' : 'Edit product'}
+            Edit product
           </h2>
         </span>
         <span className={styles.headerActions}>
@@ -349,14 +333,8 @@ export function ProductEditorPanel({
       <div className={styles.options}>
         {sizes.map((size) => <span className={styles.option} key={size.id}><strong>{size.name}</strong><small>{formatMad(size.priceCentimes)} · {size.status}</small></span>)}
         {choiceSections.map((section) => <span className={styles.option} key={section.id}><strong>{section.name}</strong><small>{section.values.length} choices</small></span>)}
-        {!sizes.length && !choiceSections.length ? <small className={styles.emptyOptions}>No sizes or product choices yet.</small> : null}
+        {!sizes.length && !choiceSections.length ? <small className={styles.emptyOptions}>Save the product, then add a size before it can be sold.</small> : null}
       </div>
-      {!sizes.length ? (
-        <>
-          <p className={styles.legacyNote}>Add sizes before selling. Legacy shared groups remain for older checkout rows only.</p>
-          <button type="button" className={styles.legacyGroups} onClick={() => setShowModifiers(true)}><SlidersHorizontal size={12} />Legacy POS groups</button>
-        </>
-      ) : null}
 
       <div className={`${styles.divider} ${styles.optionsDivider}`} />
       <div className={styles.recipeHeader}>
@@ -384,9 +362,7 @@ export function ProductEditorPanel({
           <strong>
             {recipeData?.versionNumber
               ? `${recipeData.items.length} linked ingredients`
-              : creating
-                ? 'Save product before recipe'
-                : 'Fiche technique not added'}
+              : 'Fiche technique not added'}
           </strong>
           <small>
             {recipeData?.versionNumber
@@ -431,15 +407,6 @@ export function ProductEditorPanel({
         <span>{saving ? 'Saving…' : 'Save changes'}</span>
       </button>
 
-      {showModifiers ? (
-        <ModifierGroupDialog
-          groups={modifierGroups}
-          ingredients={ingredients}
-          onClose={() => setShowModifiers(false)}
-          onSave={onSaveModifierGroup}
-          onSetArchived={onSetModifierGroupArchived}
-        />
-      ) : null}
       {showRecipe && product && recipeData ? (
         <RecipeEditorDialog
           product={product}

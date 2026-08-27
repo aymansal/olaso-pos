@@ -1,6 +1,7 @@
 import { FloppyDisk, Plus, Trash, X } from '@phosphor-icons/react';
 import { useState } from 'react';
 import type { ManagedProduct, ManagedProductSize } from '../../productManagementTypes';
+import { queueProductSizeSaves } from '../../queueProductSizeSaves';
 import styles from './SizesEditorDialog.module.css';
 
 interface SizesEditorDialogProps {
@@ -24,7 +25,7 @@ export function SizesEditorDialog({ product, sizes, onClose, onSave, onDelete }:
   async function save() {
     setSaving(true); setError('');
     try {
-      for (const size of drafts) await onSave(size);
+      for (const size of queueProductSizeSaves(drafts, sizes)) await onSave(size);
       onClose();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Size save failed.');

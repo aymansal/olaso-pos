@@ -70,7 +70,6 @@ type ProductSeed = {
   basePriceCentimes: number;
   status: 'active' | 'unavailable' | 'archived';
   imageAssetKey?: string;
-  modifierGroupKeys: readonly string[];
   recipe: readonly {
     ingredientKey: string;
     quantity: number;
@@ -398,9 +397,6 @@ const modifierOptionSeeds: readonly {
   },
 ];
 
-const drinkModifiers = ['size', 'milk', 'syrup', 'extras'] as const;
-const coffeeModifiers = ['size', 'syrup', 'extras'] as const;
-
 const productSeeds: readonly ProductSeed[] = [
   {
     key: 'espresso',
@@ -410,7 +406,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 1000,
     status: 'active',
     imageAssetKey: 'espresso',
-    modifierGroupKeys: coffeeModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
     ],
@@ -423,7 +418,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 1300,
     status: 'active',
     imageAssetKey: 'americano',
-    modifierGroupKeys: coffeeModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
     ],
@@ -436,7 +430,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 1700,
     status: 'active',
     imageAssetKey: 'cappuccino',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -450,7 +443,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 1800,
     status: 'active',
     imageAssetKey: 'latte',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -464,7 +456,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 2600,
     status: 'active',
     imageAssetKey: 'mocha',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -479,7 +470,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 2200,
     status: 'active',
     imageAssetKey: 'iced-coffee-milk',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -493,7 +483,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 1800,
     status: 'active',
     imageAssetKey: 'cold-brew',
-    modifierGroupKeys: coffeeModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 20 },
     ],
@@ -506,7 +495,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 1800,
     status: 'active',
     imageAssetKey: 'flat-white',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -520,7 +508,6 @@ const productSeeds: readonly ProductSeed[] = [
     basePriceCentimes: 2700,
     status: 'active',
     imageAssetKey: 'caramel-mac',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'coffee-beans', quantity: 18 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -534,7 +521,6 @@ const productSeeds: readonly ProductSeed[] = [
     receiptName: 'Matcha Latte',
     basePriceCentimes: 3000,
     status: 'active',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'matcha-powder', quantity: 4 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -547,7 +533,6 @@ const productSeeds: readonly ProductSeed[] = [
     receiptName: 'Hojicha Latte',
     basePriceCentimes: 3200,
     status: 'active',
-    modifierGroupKeys: drinkModifiers,
     recipe: [
       { ingredientKey: 'hojicha-powder', quantity: 5 },
       { ingredientKey: 'whole-milk', quantity: 200 },
@@ -560,7 +545,6 @@ const productSeeds: readonly ProductSeed[] = [
     receiptName: 'Lemonade',
     basePriceCentimes: 2500,
     status: 'active',
-    modifierGroupKeys: ['size', 'syrup'],
     recipe: [
       { ingredientKey: 'lemon-juice', quantity: 80 },
       { ingredientKey: 'sparkling-water', quantity: 250 },
@@ -573,7 +557,6 @@ const productSeeds: readonly ProductSeed[] = [
     receiptName: 'Soft Ice Cream',
     basePriceCentimes: 2500,
     status: 'unavailable',
-    modifierGroupKeys: [],
     recipe: [
       { ingredientKey: 'soft-ice-cream', quantity: 1 },
     ],
@@ -585,7 +568,6 @@ const productSeeds: readonly ProductSeed[] = [
     receiptName: 'Butter Croissant',
     basePriceCentimes: 1500,
     status: 'active',
-    modifierGroupKeys: [],
     recipe: [{ ingredientKey: 'croissant', quantity: 1 }],
   },
   {
@@ -595,7 +577,6 @@ const productSeeds: readonly ProductSeed[] = [
     receiptName: 'Brioche',
     basePriceCentimes: 1800,
     status: 'active',
-    modifierGroupKeys: [],
     recipe: [{ ingredientKey: 'brioche', quantity: 1 }],
   },
 ];
@@ -957,23 +938,9 @@ export const resetAndSeed = internalMutation({
       counts.ingredients += 1;
     }
 
-    const modifierGroupIds = new Map<string, Id<'modifierGroups'>>();
     const modifierGroupNames = new Map<string, string>();
     for (const group of modifierGroupSeeds) {
-      const id = await ctx.db.insert('modifierGroups', {
-        key: group.key,
-        name: group.name,
-        required: group.required,
-        minSelections: group.minSelections,
-        maxSelections: group.maxSelections,
-        status: 'active',
-        sortOrder: group.sortOrder,
-        revision: 1,
-        updatedAt: SEED_AT,
-      });
-      modifierGroupIds.set(group.key, id);
       modifierGroupNames.set(group.key, group.name);
-      counts.modifierGroups += 1;
     }
 
     const modifierOptions = new Map<
@@ -986,28 +953,6 @@ export const resetAndSeed = internalMutation({
       }
     >();
     for (const option of modifierOptionSeeds) {
-      await ctx.db.insert('modifierOptions', {
-        groupId: mustGet(
-          modifierGroupIds,
-          option.groupKey,
-          'modifier group',
-        ),
-        key: option.key,
-        name: option.name,
-        priceDeltaCentimes: option.priceDeltaCentimes,
-        ingredientEffects: option.ingredientEffects.map((effect) => ({
-          ingredientId: mustGet(
-            ingredientIds,
-            effect.ingredientKey,
-            'modifier ingredient',
-          ),
-          quantityDelta: effect.quantityDelta,
-        })),
-        status: 'active',
-        sortOrder: option.sortOrder,
-        revision: 1,
-        updatedAt: SEED_AT,
-      });
       modifierOptions.set(`${option.groupKey}:${option.key}`, {
         groupName: mustGet(
           modifierGroupNames,
@@ -1018,7 +963,6 @@ export const resetAndSeed = internalMutation({
         priceDeltaCentimes: option.priceDeltaCentimes,
         ingredientEffects: option.ingredientEffects,
       });
-      counts.modifierOptions += 1;
     }
 
     const productIds = new Map<string, Id<'products'>>();
@@ -1039,9 +983,7 @@ export const resetAndSeed = internalMutation({
           ? { imageAssetKey: product.imageAssetKey }
           : {}),
         sortOrder: (sortOrder + 1) * 10,
-        modifierGroupIds: product.modifierGroupKeys.map((key) =>
-          mustGet(modifierGroupIds, key, 'product modifier group'),
-        ),
+        modifierGroupIds: [],
         revision: 1,
         updatedAt: SEED_AT,
       });

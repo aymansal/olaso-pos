@@ -18,18 +18,13 @@ export const getOperationalSnapshot = query({
       throw new Error('Synchronization request ID must contain 1 to 64 characters.');
     }
     await requireOperationalAccess(ctx, args);
-    const [categories, allProducts, modifierGroups, allOptions, ingredients, staffProfiles] =
+    const [categories, allProducts, ingredients, staffProfiles] =
       await Promise.all([
         ctx.db
           .query('categories')
           .withIndex('by_status_sort_order', (q) => q.eq('status', 'active'))
           .take(101),
         ctx.db.query('products').withIndex('by_updated_at').take(501),
-        ctx.db
-          .query('modifierGroups')
-          .withIndex('by_status_sort_order', (q) => q.eq('status', 'active'))
-          .take(101),
-        ctx.db.query('modifierOptions').withIndex('by_updated_at').take(1001),
         ctx.db
           .query('ingredients')
           .withIndex('by_status_name', (q) => q.eq('status', 'active'))
@@ -41,8 +36,6 @@ export const getOperationalSnapshot = query({
       ]);
     withinLimit(categories, 100, 'Categories');
     withinLimit(allProducts, 500, 'Products');
-    withinLimit(modifierGroups, 100, 'Modifier groups');
-    withinLimit(allOptions, 1000, 'Modifier options');
     withinLimit(ingredients, 1000, 'Ingredients');
     withinLimit(staffProfiles, 100, 'Staff profiles');
     const staffIdentities = await Promise.all(
@@ -63,9 +56,6 @@ export const getOperationalSnapshot = query({
 
     const products = allProducts
       .filter((product) => product.status !== 'archived')
-      .sort((a, b) => a.sortOrder - b.sortOrder);
-    const modifierOptions = allOptions
-      .filter((option) => option.status === 'active')
       .sort((a, b) => a.sortOrder - b.sortOrder);
     const currentRecipeIds = [
       ...new Set(
@@ -219,8 +209,6 @@ export const getOperationalSnapshot = query({
       0,
       ...categories.map((row) => row.updatedAt),
       ...products.map((row) => row.updatedAt),
-      ...modifierGroups.map((row) => row.updatedAt),
-      ...modifierOptions.map((row) => row.updatedAt),
       ...ingredients.map((row) => row.updatedAt),
       ...staffProfiles.map((row) => row.updatedAt),
       ...recipeVersions.flatMap((row) => row ? [row.updatedAt] : []),
@@ -257,35 +245,9 @@ export const getOperationalSnapshot = query({
         revision: product.revision,
         updatedAt: product.updatedAt,
       })),
-      modifierGroups: modifierGroups.map((group) => ({
-        id: group._id,
-        key: group.key,
-        name: group.name,
-        minimumSelections: group.minSelections,
-        maximumSelections: group.maxSelections,
-        sortOrder: group.sortOrder,
-        revision: group.revision,
-      })),
-      modifierOptions: modifierOptions.map((option) => ({
-        id: option._id,
-        modifierGroupId: option.groupId,
-        key: option.key,
-        name: option.name,
-        priceDeltaCentimes: option.priceDeltaCentimes,
-        ingredientEffects: option.ingredientEffects.map((effect) => ({
-          ingredientId: effect.ingredientId,
-          quantityDelta: effect.quantityDelta,
-        })),
-        sortOrder: option.sortOrder,
-        revision: option.revision,
-      })),
-      productModifierGroups: products.flatMap((product) =>
-        product.modifierGroupIds.map((modifierGroupId, index) => ({
-          productId: product._id,
-          modifierGroupId,
-          sortOrder: index * 10 + 10,
-        })),
-      ),
+      modifierGroups: [],
+      modifierOptions: [],
+      productModifierGroups: [],
       recipeVersions: recipeVersions.flatMap((version) =>
         version
           ? [{
