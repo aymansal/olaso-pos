@@ -56,6 +56,35 @@ assert.deepEqual(aggregate.paymentTotals, [{
   totalCentimes: 1000,
   orderCount: 1,
 }]);
+const volumeVsRevenue = aggregateOfflineSales([
+  rows[0],
+  {
+    ...rows[0],
+    id: 'sale-3',
+    receiptNumber: '0826-0003',
+    totalCentimes: 8000,
+    createdAt: 3,
+    receipt: {
+      completedAt: 3,
+      paymentMethod: 'Cash',
+      lines: [{
+        productId: 'specialty',
+        productName: 'Specialty',
+        quantity: 1,
+        lineTotalCentimes: 8000,
+      }],
+    },
+  },
+], new Map([
+  ['espresso', { id: 'coffee', name: 'Coffee' }],
+  ['specialty', { id: 'coffee', name: 'Coffee' }],
+]));
+assert.equal(volumeVsRevenue.bestSeller?.productName, 'Espresso');
+assert.equal(volumeVsRevenue.bestSeller?.quantity, 2);
+assert.deepEqual(
+  volumeVsRevenue.productTotals.map((row) => row.productName),
+  ['Specialty', 'Espresso'],
+);
 const preservedCategory = aggregateOfflineSales([{
   ...rows[0],
   receipt: {
@@ -78,6 +107,7 @@ assert.match(products, /loadOperationalCache/);
 assert.match(stock, /loadOfflineInventory/);
 assert.match(stock, /loadOfflineIngredientDetail/);
 assert.match(dashboard, /loadOfflineDashboard/);
+assert.doesNotMatch(dashboard, /useState\(localBusinessDate\)/);
 assert.match(reports, /loadOfflineReport/);
 assert.doesNotMatch(products + stock, /useQuery_experimental|useMutation/);
 assert.match(stock, /saveLocalIngredient/);

@@ -50,8 +50,8 @@ export function SalesPulse({
     },
   ] as const;
   const comparison =
-    yesterday && yesterday.netCentimes > 0 && today
-      ? ((today.netCentimes - yesterday.netCentimes)
+    yesterday && yesterday.netCentimes > 0
+      ? (((today?.netCentimes ?? 0) - yesterday.netCentimes)
         / yesterday.netCentimes) * 100
       : undefined;
   const isPositive = comparison === undefined || comparison >= 0;

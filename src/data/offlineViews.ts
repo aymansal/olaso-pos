@@ -151,14 +151,22 @@ export function aggregateOfflineSales(
       }
     }
   }
+  const productList = [...products.values()];
   return {
     netCentimes,
     orderCount: completed.length,
     itemCount,
     ingredientUsageEventCount: 0,
-    productTotals: [...products.values()]
+    productTotals: productList
+      .slice()
       .sort((left, right) => right.totalCentimes - left.totalCentimes)
       .slice(0, 20),
+    bestSeller: productList.slice().sort(
+      (left, right) =>
+        right.quantity - left.quantity
+        || right.totalCentimes - left.totalCentimes
+        || left.productName.localeCompare(right.productName),
+    )[0],
     categoryTotals: [...categories.values()]
       .sort((left, right) => right.totalCentimes - left.totalCentimes)
       .slice(0, 20),
@@ -220,7 +228,7 @@ export async function loadOfflineDashboard(businessDate: string) {
     rows.filter((row) => row.businessDate === yesterdayDate),
     categoryByProduct,
   );
-  const bestSeller = today.productTotals[0];
+  const bestSeller = today.bestSeller;
   return {
     businessDate,
     updatedAt: Math.max(0, ...todayRows.map((row) => row.createdAt)),

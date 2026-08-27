@@ -23,6 +23,9 @@ recent orders.
   states without importing Convex.
 - Offline Dashboard uses bounded saved tablet sales and stock warnings; it does
   not claim the complete cloud-wide total.
+- Today’s best seller is the product with the most units sold, online and
+  offline. A quiet today still compares against yesterday when yesterday had
+  sales.
 - `View all` opens Orders; detailed stock and reporting work remains in its
   owning screen.
 

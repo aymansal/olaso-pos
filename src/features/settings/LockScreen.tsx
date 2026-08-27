@@ -1,4 +1,4 @@
-import { CheckCircle, LockKey, WifiHigh, WifiSlash } from '@phosphor-icons/react';
+import { WifiHigh, WifiSlash } from '@phosphor-icons/react';
 import { useAction, useConvex } from 'convex/react';
 import { useEffect, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
@@ -23,6 +23,7 @@ import type { TerminalSettings } from '../../data/terminalSettings';
 import { isStaffRole, type StaffRole } from '../../data/permissions';
 import olasoLogo from '../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
 import lockBackground from '../../../assets/brand/olaso-lock-drink-note.jpg';
+import { LockStaffSelect } from './components/LockStaffSelect/LockStaffSelect';
 import styles from './LockScreen.module.css';
 
 interface LockScreenProps {
@@ -246,36 +247,18 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       </section>
 
       <section className={styles.unlockSide} aria-labelledby="unlock-title">
-        <span className={styles.lockIcon}>
-          <LockKey size={22} aria-hidden="true" />
-        </span>
         <h2 id="unlock-title">Unlock Olaso</h2>
-        <p className={styles.subtitle}>
-          Choose your profile and enter your six-digit PIN.
-        </p>
 
-        <div className={styles.identity}>
-          <span className={styles.identityMark}>O</span>
-          <div>
-            <strong>{settings.terminalName}</strong>
-            <small>{settings.deviceId}</small>
-          </div>
-          <CheckCircle size={20} aria-hidden="true" />
+        <div className={styles.field}>
+          <span id="lock-staff-label">Staff member</span>
+          <LockStaffSelect
+            staff={staff}
+            value={staffProfileId}
+            disabled={unlocking}
+            labelledBy="lock-staff-label"
+            onChange={setStaffProfileId}
+          />
         </div>
-
-        <div className={styles.policy}>
-          <span>STAFF SIGN-IN</span>
-          <p>
-            Your staff identity is recorded with protected terminal access.
-          </p>
-        </div>
-
-        <label className={styles.field}>
-          <span>Staff member</span>
-          <select value={staffProfileId} onChange={(event) => setStaffProfileId(event.target.value)} disabled={unlocking}>
-            {staff.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}
-          </select>
-        </label>
         <label className={styles.field}>
           <span>PIN</span>
           <input value={pin} onChange={(event) => setPin(event.target.value.replace(/\D/g, '').slice(0, 6))} inputMode="numeric" type="password" autoComplete="current-password" disabled={unlocking} />
@@ -287,7 +270,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
           disabled={unlocking}
           onClick={unlock}
         >
-          {unlocking ? 'Unlocking…' : 'Unlock POS'}
+          {unlocking ? 'Unlocking…' : 'Unlock'}
         </button>
         {error ? <p className={styles.error} role="alert">{error}</p> : null}
       </section>

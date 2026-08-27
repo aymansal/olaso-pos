@@ -15,7 +15,8 @@ tablet's local SQLite operational record.
   the sale idempotency key while preserving tablet-local print state, and
   coordinates deliberate retry/reprint recovery through the shared worker.
 - `useDashboardData.ts` makes one saved-summary snapshot request only while
-  Dashboard is mounted and exposes explicit retry state.
+  Dashboard is mounted, uses the current local business date on each visible
+  load, and exposes explicit retry state.
 - `useReportsData.ts` makes one saved-summary range request only while Reports
   is mounted or its period changes, and exposes explicit retry state.
 - `useInventoryManagement.ts` and `useCostManagement.ts` render from SQLite,

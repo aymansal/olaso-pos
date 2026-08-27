@@ -113,7 +113,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- POLISH-01 tablet pile is on `origin/main` as `fb085cfc3495542681855637f9acc1963b7cfe6f`. Shared-modifier UI removed, add-product modal + CSS leak fix, opening-stock first purchase, dirty-only size saves, lock-screen terminal line removed. POLISH walkthrough continues from Lock.
+- POLISH-01 Lock + Dashboard: lock sign-in cleaned and scaled with in-app staff
+  list; Dashboard today follows the local date, quiet today vs yesterday shows
+  down, best seller is most units sold online and offline. Installing; push next.
 
 - Opening-quantity price is installed-over on the Tab A9 (`R8YX91AKWXJ`). Add ingredient now requires price paid when quantity is greater than 0; that quantity is the first purchase. Café SQLite was preserved.
 - Sizes save fix is installed-over on the Tab A9. Adding a third size no longer rewrites the first two. Café SQLite was preserved.

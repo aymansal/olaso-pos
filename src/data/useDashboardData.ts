@@ -16,7 +16,7 @@ export function useDashboardData() {
   const session = useStaffSession();
   const reconnect = useReconnect();
   const convex = useConvex();
-  const [businessDate] = useState(localBusinessDate);
+  const businessDate = localBusinessDate();
   const [reload, setReload] = useState(0);
   const [snapshot, setSnapshot] = useState<DashboardSnapshot>();
   const [isLoading, setIsLoading] = useState(true);

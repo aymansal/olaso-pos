@@ -28,7 +28,8 @@ presentation.
   confirm paper separately.
 - Unlock is the production staff-authentication boundary. Every owner, manager,
   and cashier uses a separate six-digit PIN; never add placeholder, shared, or
-  default credentials.
+  default credentials. Staff choice on Lock uses the in-app list, not the
+  Android native select.
 - About shows the installed version and, when an HTTPS update manifest URL is
   built in, Check for update / Update / Later. Update is blocked while a cart is
   unfinished and always requires Android installation confirmation.
