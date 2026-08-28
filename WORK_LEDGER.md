@@ -115,9 +115,10 @@ remaining goal and card sequence.
 
 - POLISH-01 tablet UI (Boxicons, sliding green pills on nav/filters/Products
   categories, shared App Header so the top pill can move, screen fade, POS
-  in-card category bloom, CSS Module scope guard) is ready to push. Product
-  grid does not animate. POLISH-01 remains pending until owner closeout.
-- Exact next action: commit/push this polish; owner continues POLISH-01 review.
+  in-card category bloom, CSS Module scope guard) is on `origin/main` as
+  `808ea0724f45f5c8df46e682faabeaee17d03dde`. Product grid does not animate.
+  POLISH-01 remains pending until owner closeout.
+- Exact next action: owner continues POLISH-01 review.
 
 - POLISH-01 POS search band: owner rejected variable-width priced chips (ragged
   row, ellipsized names, fourth chip clipped). Quick-add is now at most three
@@ -1288,7 +1289,7 @@ remaining goal and card sequence.
   screens fade without a cream flash. CSS Module scope guard added.
 - POS category cards keep a clipped in-card green bloom; a row-level sliding
   pill leaked into the 10px gaps and was rejected. Product grid stays still.
-- QuickAddRow is its own component folder. No barrels, no dumped CSS.
+- On `origin/main` as `808ea0724f45f5c8df46e682faabeaee17d03dde`.
 
 ### 2026-08-27 — POLISH-01 quick-add equal chips
 
