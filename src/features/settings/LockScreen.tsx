@@ -1,4 +1,4 @@
-import { WifiHigh, WifiSlash } from '@phosphor-icons/react';
+import { Wifi, WifiSlash } from '@boxicons/react';
 import { useAction, useConvex } from 'convex/react';
 import { useEffect, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
@@ -232,8 +232,8 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         </div>
         <div className={styles.connection}>
           {online
-            ? <WifiHigh size={14} aria-hidden="true" />
-            : <WifiSlash size={14} aria-hidden="true" />}
+            ? <Wifi width={14} height={14} aria-hidden="true" />
+            : <WifiSlash width={14} height={14} aria-hidden="true" />}
           <span>{available === undefined
             ? 'Checking connection…'
             : online

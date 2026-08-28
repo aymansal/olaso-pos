@@ -1,5 +1,8 @@
+import type { CSSProperties } from 'react';
 import type { PaymentMethod } from '../../posSession';
 import styles from './PaymentMethodControl.module.css';
+
+const methods: PaymentMethod[] = ['Cash', 'Card'];
 
 export function PaymentMethodControl({
   value,
@@ -9,8 +12,14 @@ export function PaymentMethodControl({
   onChange: (value: PaymentMethod) => void;
 }) {
   return (
-    <div className={styles.control} role="group" aria-label="Payment method">
-      {(['Cash', 'Card'] as const).map((method) => (
+    <div
+      className={styles.control}
+      style={{ '--count': methods.length, '--index': methods.indexOf(value) } as CSSProperties}
+      role="group"
+      aria-label="Payment method"
+    >
+      <span className={styles.indicator} aria-hidden="true" />
+      {methods.map((method) => (
         <button
           key={method}
           type="button"

@@ -1,25 +1,17 @@
-import {
-  Calculator,
-  CurrencyCircleDollar,
-  Drop,
-  Package,
-  Receipt,
-  ShoppingBag,
-  Stack,
-} from '@phosphor-icons/react';
+import { Calculator, DollarCircle, WaterDrop, Package, Receipt, ShoppingBag, Layers } from '@boxicons/react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import { formatMoney } from '../../../../lib/money';
 import type { ReportTab } from '../../reportTypes';
 import styles from './ReportsKpiStrip.module.css';
 
 const kpiIcons = {
-  currency: CurrencyCircleDollar,
+  currency: DollarCircle,
   receipt: Receipt,
   calculator: Calculator,
   bag: ShoppingBag,
   package: Package,
-  stock: Stack,
-  drop: Drop,
+  stock: Layers,
+  drop: WaterDrop,
 } as const;
 
 function change(
@@ -113,7 +105,7 @@ export function ReportsKpiStrip({
         return (
           <article className={styles.kpi} key={label}>
             {index > 0 ? <span className={styles.divider} aria-hidden="true" /> : null}
-            <span className={styles.icon}><Icon size={14} aria-hidden="true" /></span>
+            <span className={styles.icon}><Icon width={14} height={14} aria-hidden="true" /></span>
             <span className={styles.copy}>
               <strong>{value}</strong>
               <span>

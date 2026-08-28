@@ -1,4 +1,4 @@
-import { FloppyDisk, X } from '@phosphor-icons/react';
+import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
 import type { ManagedCategory, ProductSaveInput } from '../../productManagementTypes';
 import styles from './ProductDialog.module.css';
@@ -63,7 +63,7 @@ export function ProductDialog({
             <h2 id="product-dialog-title">Add product</h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close product editor">
-            <X size={18} aria-hidden="true" />
+            <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
 
@@ -122,7 +122,7 @@ export function ProductDialog({
             onClick={submit}
             disabled={saving || !name.trim() || invalidPrice}
           >
-            <FloppyDisk size={16} aria-hidden="true" />
+            <Save width={16} height={16} aria-hidden="true" />
             {saving ? 'Saving…' : 'Save product'}
           </button>
         </footer>

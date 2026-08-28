@@ -1,14 +1,4 @@
-import {
-  ArrowClockwise,
-  Calculator,
-  Coffee,
-  Lightning,
-  Pulse,
-  Receipt,
-  Star,
-  TrendDown,
-  TrendUp,
-} from '@phosphor-icons/react';
+import { RotateCw, Calculator, Coffee, Bolt, Pulse, Receipt, Star, TrendingDown, TrendingUp } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { formatMoney } from '../../../../lib/money';
 import styles from './SalesPulse.module.css';
@@ -55,7 +45,7 @@ export function SalesPulse({
         / yesterday.netCentimes) * 100
       : undefined;
   const isPositive = comparison === undefined || comparison >= 0;
-  const ComparisonIcon = isPositive ? TrendUp : TrendDown;
+  const ComparisonIcon = isPositive ? TrendingUp : TrendingDown;
   const changeLabel = comparison === undefined
     ? 'No comparison yet'
     : `${Math.abs(comparison).toFixed(1)}% ${
@@ -81,7 +71,7 @@ export function SalesPulse({
     <section className={styles.panel} aria-labelledby="sales-pulse-title">
       <header className={styles.panelHeader}>
         <div className={styles.title}>
-          <Pulse size={18} weight="regular" aria-hidden="true" />
+          <Pulse width={18} height={18} aria-hidden="true" />
           <h1 id="sales-pulse-title">Today’s pulse</h1>
         </div>
         <div className={styles.live}>
@@ -108,12 +98,12 @@ export function SalesPulse({
       </p>
       {error ? (
         <button type="button" className={styles.change} onClick={onRetry}>
-          <ArrowClockwise size={14} weight="regular" aria-hidden="true" />
+          <RotateCw width={14} height={14} aria-hidden="true" />
           <strong>Retry summary</strong>
         </button>
       ) : (
         <div className={styles.change}>
-          <ComparisonIcon size={14} weight="regular" aria-hidden="true" />
+          <ComparisonIcon width={14} height={14} aria-hidden="true" />
           <strong>{isLoading ? 'Loading saved summary' : changeLabel}</strong>
         </div>
       )}
@@ -124,7 +114,7 @@ export function SalesPulse({
           <div className={styles.metricSlot} key={label}>
             <div className={styles.metric}>
               <span className={styles.metricIcon}>
-                <Icon size={17} weight="regular" aria-hidden="true" />
+                <Icon width={17} height={17} aria-hidden="true" />
               </span>
               <span className={styles.metricCopy}>
                 <strong>{value}</strong>
@@ -143,7 +133,7 @@ export function SalesPulse({
           <small>Daily net sales</small>
         </span>
         <span className={styles.peak}>
-          <Lightning size={14} weight="regular" aria-hidden="true" />
+          <Bolt width={14} height={14} aria-hidden="true" />
           <strong>
             {peak?.netCentimes
               ? `Peak ${new Date(
@@ -194,7 +184,7 @@ export function SalesPulse({
       <div className={styles.bestSeller}>
         <div className={styles.bestProduct}>
           <span className={styles.bestIcon}>
-            <Star size={18} weight="regular" aria-hidden="true" />
+            <Star width={18} height={18} aria-hidden="true" />
           </span>
           <span className={styles.bestCopy}>
             <small>TODAY’S BEST SELLER</small>

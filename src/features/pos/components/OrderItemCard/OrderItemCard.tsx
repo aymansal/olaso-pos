@@ -1,4 +1,4 @@
-import { Trash } from '@phosphor-icons/react';
+import { Trash } from '@boxicons/react';
 import { formatMoney } from '../../../../lib/money';
 import type { Product } from '../../data/products';
 import { QuantityStepper } from '../QuantityStepper/QuantityStepper';
@@ -53,7 +53,7 @@ export function OrderItemCard({
         aria-label={`Remove ${product.name}`}
         onClick={onRemove}
       >
-        <Trash size={18} aria-hidden="true" />
+        <Trash width={18} height={18} aria-hidden="true" />
       </button>
     </article>
   );

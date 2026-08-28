@@ -1,0 +1,44 @@
+.row {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 330px;
+  right: 0;
+  align-items: center;
+  height: 50px;
+  gap: 10px;
+}
+
+.chip {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  /* Never grow past the three-across size, so one or two chips stay normal. */
+  max-width: calc((100% - 20px) / 3);
+  height: 50px;
+  padding: 0 18px;
+  border: 1.2px solid var(--olaso-border);
+  border-radius: 25px;
+  background: var(--olaso-white);
+}
+
+.chip strong {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: #151b16;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chip:active {
+  background: var(--olaso-soft);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}

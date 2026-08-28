@@ -1,4 +1,4 @@
-import { ArrowRight, Receipt } from '@phosphor-icons/react';
+import { ArrowRight, Receipt } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { formatMoney } from '../../../../lib/money';
 import styles from './RecentOrdersPanel.module.css';
@@ -29,7 +29,7 @@ export function RecentOrdersPanel({
         </span>
         <button type="button" className={styles.viewAll} onClick={onViewAll}>
           <span>View all</span>
-          <ArrowRight size={13} weight="regular" aria-hidden="true" />
+          <ArrowRight width={13} height={13} aria-hidden="true" />
         </button>
       </header>
 
@@ -45,7 +45,7 @@ export function RecentOrdersPanel({
         ) : orders.map((order, index) => (
           <article className={styles.row} key={order.id}>
             <span className={`${styles.icon} ${index === 0 ? styles.iconActive : ''}`}>
-              <Receipt size={17} weight="regular" aria-hidden="true" />
+              <Receipt width={17} height={17} aria-hidden="true" />
             </span>
             <strong className={styles.number}>
               {order.receiptNumber.replace(/^[A-Z]+-/, '#')}

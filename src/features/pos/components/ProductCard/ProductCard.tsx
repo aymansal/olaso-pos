@@ -1,5 +1,5 @@
 import { Card } from '@astryxdesign/core/Card';
-import { Plus } from '@phosphor-icons/react';
+import { Plus } from '@boxicons/react';
 import { formatMoney } from '../../../../lib/money';
 import type { Product } from '../../data/products';
 import styles from './ProductCard.module.css';
@@ -27,7 +27,7 @@ export function ProductCard({ name, priceCentimes, image, onAdd }: ProductCardPr
         aria-label={`Add ${name}`}
         onClick={onAdd}
       >
-        <Plus size={20} weight="regular" />
+        <Plus width={20} height={20} />
       </button>
     </Card>
   );

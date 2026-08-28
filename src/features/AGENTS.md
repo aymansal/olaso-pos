@@ -14,13 +14,16 @@ Each feature owns:
 - named subcomponents in individual folders;
 - temporary static data under `data/`.
 
-The POS feature currently also owns the Header and TopNavigation used by every
-screen; the shared profile control opens Settings.
+The POS feature currently also owns the Header and TopNavigation files;
+App mounts the single shared Header so selection can animate across screens.
+The shared profile control opens Settings.
 
 ## Local Contracts
 
-- Permanent-navigation screens receive `onNavigate` and identify their active
-  `NavigationPage`. Settings reuses the Header with no active top-level item.
+- Permanent-navigation screens no longer each mount Header. App owns the
+  shared Header and its `NavigationPage`. Dashboard still receives
+  `onNavigate` for View all. Settings reuses that Header with no active
+  top-level item.
 - A screen module places regions; child modules style child internals.
 - Keep any remaining static screen data in the feature's `data/` folder instead
   of embedding large arrays in JSX.

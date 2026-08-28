@@ -7,7 +7,7 @@ recent orders.
 
 ## Ownership
 
-- `DashboardScreen.tsx` composes the page and shared Header.
+- `DashboardScreen.tsx` composes the page. The shared Header lives in App.
 - `SalesPulse`, `StockAttentionPanel`, and `RecentOrdersPanel` own the three
   dashboard regions.
 - `useDashboardData` supplies one bounded saved-summary snapshot through the

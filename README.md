@@ -19,7 +19,7 @@ remain later work.
 - Capacitor Android with SQLite
 - Convex development backend
 - Astryx Design Core with the custom Olaso theme
-- Phosphor Icons
+- Boxicons
 - CSS Modules
 - Pencil source design and exported references
 

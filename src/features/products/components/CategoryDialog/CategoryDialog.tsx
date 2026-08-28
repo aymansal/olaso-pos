@@ -1,4 +1,4 @@
-import { FloppyDisk, X } from '@phosphor-icons/react';
+import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
 import type { ManagedCategory } from '../../productManagementTypes';
 import { CategoryArtworkPicker } from '../CategoryArtworkPicker/CategoryArtworkPicker.tsx';
@@ -51,7 +51,7 @@ export function CategoryDialog({
             <h2 id="category-dialog-title">{title}</h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close category editor">
-            <X size={18} aria-hidden="true" />
+            <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
 
@@ -83,7 +83,7 @@ export function CategoryDialog({
             onClick={submit}
             disabled={saving || !name.trim()}
           >
-            <FloppyDisk size={16} aria-hidden="true" />
+            <Save width={16} height={16} aria-hidden="true" />
             {saving ? 'Saving…' : 'Save category'}
           </button>
         </footer>

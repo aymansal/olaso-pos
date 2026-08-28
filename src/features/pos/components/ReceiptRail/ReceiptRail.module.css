@@ -12,24 +12,54 @@
 
 .orderSection {
   position: absolute;
-  top: 188px;
+  top: 130px;
   left: 12px;
   width: 296px;
-  height: 268px;
+  height: 326px;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
 }
 
 .sectionLabel {
-  display: block;
-  height: 12px;
   color: var(--olaso-muted);
   font-size: 10px;
   line-height: 12px;
 }
 
+.clearCart {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  color: var(--olaso-muted);
+  background: transparent;
+  place-items: center;
+}
+
+.clearCart:disabled {
+  opacity: 0.45;
+}
+
+.clearCart:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.clearCart:active:not(:disabled) {
+  color: var(--olaso-danger);
+}
+
 .orderList {
   display: flex;
   width: 296px;
-  height: 250px;
+  height: 276px;
   margin-top: 6px;
   flex-direction: column;
   gap: 8px;
@@ -39,7 +69,7 @@
 }
 
 .orderList > article:only-child {
-  min-height: 236px;
+  min-height: 262px;
 }
 
 .emptyOrder {

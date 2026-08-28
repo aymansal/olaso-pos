@@ -12,7 +12,7 @@ application, global tokens, and the feature screens under `features/`.
   data/Convex boundary so Android connection and foreground truth can prevent
   the cloud client from opening while hidden or offline; screens consume it
   rather than registering network listeners.
-- `App.tsx` selects the active top-level screen, retains only previously
+- `App.tsx` selects the active top-level screen, mounts the shared Header, retains only previously
   visited role-authorized React Activity trees, and restores non-secret local
   terminal-lock state before exposing the application.
 - `App.tsx` owns the single deliberate staff-switch action and the POS session;
@@ -31,15 +31,22 @@ application, global tokens, and the feature screens under `features/`.
   formatter, and product-configuration resolver are the current examples.
 - `globals.css` owns only font/reset imports, semantic root variables, body
   defaults, and the full-viewport baseline.
+- Every CSS Module selector must start with a hashed class. CSS Modules leave a
+  leading element selector global, so one lazily loaded screen chunk restyles
+  every other screen for the rest of the session. `check:css-scope` enforces it.
 - `features/` owns screen-specific composition, temporary fixtures where still
   required, components, plain feature types, and styles.
 
 ## Local Contracts
 
 - Keep `App.tsx` a thin screen selector until real routing is required.
+  The shared Header stays mounted there so top-nav selection can animate.
   POS and Lock stay eagerly imported; Dashboard, Orders, Products, Stock,
   Reports, and Settings load through `React.lazy` on first visit while
   previously visited authorized screens remain in React Activity boundaries.
+  First navigation keeps the current screen visible until the next chunk is
+  ready. Screen switches then crossfade: the outgoing page fades out while the
+  incoming page fades in. Never flash an empty cream fallback.
 - Preserve visited screen DOM/state with installed React Activity boundaries;
   hidden effects must stop and unvisited/unauthorized screens never mount.
   Do not replace this with a router, custom cache, or CSS-hidden live screens.

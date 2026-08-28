@@ -34,16 +34,15 @@ assert.match(switchFlow, /hasUnfinishedCart\(posSession\)/);
 assert.match(switchFlow, /The current order will stay for the next staff member/);
 assert.match(switchFlow, /await lock\(\)/);
 assert.doesNotMatch(switchFlow, /setPosSession/);
-assert.equal(
-  [...app.matchAll(/onSwitchStaff=\{requestStaffSwitch\}/g)].length,
-  6,
-);
 assert.match(header, /<ProfileControl/);
 assert.match(header, /Boolean\(onOpenSettings\)/);
 assert.match(profile, /canOpenSettings \? \(/);
 assert.match(profile, /Lock \/ switch staff/);
 assert.match(profile, /await onSwitchStaff\(\)/);
-assert.match(settings, /onSwitchStaff=\{lock\}/);
+assert.match(app, /<Header[\s\S]*?onSwitchStaff=\{requestStaffSwitch\}/);
+assert.match(app, /onOpenSettings=\{activeScreen === 'Settings' \? undefined : openSettings\}/);
+assert.match(settings, /onLock=\{lock\}/);
 assert.doesNotMatch(settings, /onOpenSettings=/);
+assert.doesNotMatch(settings, /<Header/);
 
 console.log('Role-safe lock, cart preservation, and shared profile-control checks passed.');

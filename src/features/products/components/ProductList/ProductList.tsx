@@ -1,10 +1,4 @@
-import {
-  Coffee,
-  DotsThree,
-  Leaf,
-  Link,
-  LinkBreak,
-} from '@phosphor-icons/react';
+import { Coffee, DotsHorizontalRounded, Leaf, Link, Unlink } from '@boxicons/react';
 import type {
   ManagedCategory,
   ManagedProduct,
@@ -56,7 +50,7 @@ export function ProductList({
         {category ? (
           <details className={styles.manage}>
             <summary aria-label={`Manage ${category.name}`}>
-              <DotsThree size={15} weight="regular" aria-hidden="true" />
+              <DotsHorizontalRounded width={15} height={15} aria-hidden="true" />
             </summary>
             <span>
               <button type="button" onClick={onRenameCategory}>
@@ -92,7 +86,7 @@ export function ProductList({
               const Icon = product.key.includes('matcha') ? Leaf : Coffee;
               const RecipeIcon = product.currentRecipeVersionId
                 ? Link
-                : LinkBreak;
+                : Unlink;
               return (
                 <button
                   type="button"
@@ -105,7 +99,7 @@ export function ProductList({
                   <span
                     className={`${styles.productIcon} ${selected ? styles.productIconActive : ''}`}
                   >
-                    <Icon size={17} weight="regular" aria-hidden="true" />
+                    <Icon width={17} height={17} aria-hidden="true" />
                   </span>
                   <span className={styles.productCopy}>
                     <strong>{product.name}</strong>
@@ -130,8 +124,8 @@ export function ProductList({
                     className={`${styles.recipe} ${product.currentRecipeVersionId ? styles.recipeLinked : ''}`}
                   >
                     <RecipeIcon
-                      size={11}
-                      weight="regular"
+                      width={11}
+                      height={11}
                       aria-hidden="true"
                     />
                     <strong>

@@ -1,4 +1,4 @@
-import { Plus, X } from '@phosphor-icons/react';
+import { Plus, X } from '@boxicons/react';
 import { useState } from 'react';
 import { formatMoney } from '../../../../lib/money';
 import styles from './ModifierSelectionDialog.module.css';
@@ -151,7 +151,7 @@ export function ModifierSelectionDialog({
             <h2 id="modifier-selection-title">{productName}</h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close selection">
-            <X size={18} aria-hidden="true" />
+            <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
         <div className={styles.groups}>
@@ -236,7 +236,7 @@ export function ModifierSelectionDialog({
                 ),
               })}
           >
-            <Plus size={16} aria-hidden="true" />
+            <Plus width={16} height={16} aria-hidden="true" />
             Add to order · {formatMoney(priceCentimes)}
           </button>
         </footer>

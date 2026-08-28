@@ -1,4 +1,4 @@
-import { CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { ChevronLeft, ChevronRight } from '@boxicons/react';
 import type { ManagedIngredient } from '../../stockManagementTypes';
 import {
   formatStockQuantity,
@@ -133,7 +133,7 @@ export function StockTable({
             disabled={page <= 0}
             onClick={() => onPageChange(page - 1)}
           >
-            <CaretLeft size={12} aria-hidden="true" />
+            <ChevronLeft width={12} height={12} aria-hidden="true" />
           </button>
           <strong>{pageCount ? page + 1 : 0} / {pageCount}</strong>
           <button
@@ -142,7 +142,7 @@ export function StockTable({
             disabled={page >= pageCount - 1}
             onClick={() => onPageChange(page + 1)}
           >
-            <CaretRight size={12} aria-hidden="true" />
+            <ChevronRight width={12} height={12} aria-hidden="true" />
           </button>
         </span>
       </footer>

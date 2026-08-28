@@ -1,6 +1,5 @@
-import { Bell, FileText } from '@phosphor-icons/react';
+import { File } from '@boxicons/react';
 import { useEffect, useState } from 'react';
-import { IconButton } from '../IconButton/IconButton';
 import {
   TopNavigation,
   type NavigationPage,
@@ -64,12 +63,8 @@ export function Header({
       <div className={styles.actions}>
         {canViewReports ? <button className={styles.report} type="button" onClick={() => onNavigate?.('Reports')}>
           <span>Report</span>
-          <FileText size={18} weight="regular" />
+          <File width={18} height={18} />
         </button> : null}
-        <div className={styles.notificationWrap}>
-          <IconButton label="Notifications" icon={<Bell size={18} />} />
-          <span className={styles.badge}>1</span>
-        </div>
         <ProfileControl
           name={staff.name}
           role={staff.role}

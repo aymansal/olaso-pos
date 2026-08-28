@@ -1,4 +1,4 @@
-import { X } from '@phosphor-icons/react';
+import { X } from '@boxicons/react';
 import { useState } from 'react';
 import { localBusinessDate } from '../../../../lib/date.ts';
 import type { SavedCostManagement } from '../../../../data/localCosts.ts';
@@ -52,7 +52,7 @@ export function CompensationDialog({
   return (
     <div className={styles.overlay} role="presentation">
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="compensation-title">
-        <header><h2 id="compensation-title">Add compensation</h2><button type="button" onClick={onClose} aria-label="Close compensation"><X size={18} /></button></header>
+        <header><h2 id="compensation-title">Add compensation</h2><button type="button" onClick={onClose} aria-label="Close compensation"><X width={18} height={18} /></button></header>
         <div className={styles.grid}>
           <label>Staff<select autoFocus value={staffProfileId} onChange={(event) => setStaffProfileId(event.target.value)}>{staff.map((profile) => <option value={profile.id} key={profile.id}>{profile.name}</option>)}</select></label>
           <label>Monthly amount · MAD<input type="number" min="0" step="0.01" value={amountMad} onChange={(event) => setAmountMad(event.target.value)} /></label>

@@ -37,6 +37,19 @@
   gap: 8px;
 }
 
+.indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--olaso-green);
+  transform: translateY(calc(var(--index, 0) * 52px));
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
 .category,
 .categoryActive,
 .addCategory {
@@ -48,21 +61,23 @@
 
 .category,
 .categoryActive {
+  position: relative;
+  z-index: 1;
   height: 44px;
   gap: 9px;
   padding: 0 10px;
   border: 0;
+  background: transparent;
   text-align: left;
+  transition: color 180ms ease;
 }
 
 .category {
-  color: var(--olaso-category-icon);
-  background: var(--olaso-table-head);
+  color: var(--olaso-text-dark-soft);
 }
 
 .categoryActive {
   color: var(--olaso-white);
-  background: var(--olaso-green);
 }
 
 .category > span,
@@ -80,7 +95,7 @@
 }
 
 .category strong {
-  color: var(--olaso-category-text);
+  color: var(--olaso-text-dark-soft);
 }
 
 .category small,
@@ -95,11 +110,18 @@
 
 .categoryActive strong {
   color: var(--olaso-white);
-  font-weight: 700;
 }
 
 .categoryActive small {
-  color: var(--olaso-category-selected-copy);
+  color: var(--olaso-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator,
+  .category,
+  .categoryActive {
+    transition: none;
+  }
 }
 
 .addCategory {

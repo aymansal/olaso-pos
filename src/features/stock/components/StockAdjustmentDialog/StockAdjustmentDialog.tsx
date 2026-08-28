@@ -1,4 +1,4 @@
-import { ArrowDown, FloppyDisk, SlidersHorizontal, X } from '@phosphor-icons/react';
+import { ArrowDown, Save, SliderAlt, X } from '@boxicons/react';
 import { useState } from 'react';
 import type {
   ManagedIngredient,
@@ -72,16 +72,16 @@ export function StockAdjustmentDialog({
             </h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close stock adjustment">
-            <X size={18} aria-hidden="true" />
+            <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
 
         <div className={styles.ingredient}>
           <span className={styles.icon}>
             {receiving ? (
-              <ArrowDown size={18} aria-hidden="true" />
+              <ArrowDown width={18} height={18} aria-hidden="true" />
             ) : (
-              <SlidersHorizontal size={18} aria-hidden="true" />
+              <SliderAlt width={18} height={18} aria-hidden="true" />
             )}
           </span>
           <span>
@@ -138,7 +138,7 @@ export function StockAdjustmentDialog({
               saving || invalidQuantity || !reason.trim()
             }
           >
-            <FloppyDisk size={16} aria-hidden="true" />
+            <Save width={16} height={16} aria-hidden="true" />
             {saving ? 'Saving…' : receiving ? 'Receive stock' : 'Save count'}
           </button>
         </footer>

@@ -87,6 +87,28 @@ async function localSales(fromDate: string, toDate: string) {
   });
 }
 
+const QUICK_ADD_DAYS = 7;
+const QUICK_ADD_LIMIT = 3;
+
+export async function topSellingProductIds() {
+  const toDate = localBusinessDate();
+  const fromDate = shiftBusinessDate(toDate, -(QUICK_ADD_DAYS - 1));
+  const database = await openLocalDatabase();
+  const result = await database.query(
+    `SELECT item.product_id AS product_id, SUM(item.quantity) AS quantity
+     FROM sale_items item
+     JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+     WHERE sale.business_date BETWEEN ? AND ?
+       AND sale.status = 'completed'
+       AND item.product_id IS NOT NULL
+     GROUP BY item.product_id
+     ORDER BY quantity DESC, item.product_id
+     LIMIT ${QUICK_ADD_LIMIT}`,
+    [fromDate, toDate],
+  );
+  return (result.values ?? []).map((row) => String(row.product_id));
+}
+
 export function aggregateOfflineSales(
   rows: Awaited<ReturnType<typeof localSales>>,
   categoryByProduct: Map<string, { id: string; name: string }>,

@@ -8,11 +8,13 @@ owns the shared Header and TopNavigation currently used across the application.
 
 ## Ownership
 
-- `PosScreen.tsx` composes Header, search, categories, product grid, and receipt
+- `PosScreen.tsx` composes search, categories, product grid, and receipt
   rail.
 - `components/` owns the named POS controls and regions.
+- `QuickAddRow` owns the best-seller chips beside the search field; the ranking
+ comes from the application data boundary, never from this feature.
 - `Header` and `TopNavigation` are cross-screen contracts despite their current
-  POS location.
+  POS location. App mounts one Header for every screen.
 - `ProfileControl` is the shared role-safe Header menu: every role can lock or
   switch staff, while only an owner outside the Settings screen can open
   Settings from it.
@@ -26,9 +28,16 @@ owns the shared Header and TopNavigation currently used across the application.
 ## Local Contracts
 
 - Preserve the documented 966-pixel menu column, 320-pixel receipt rail, narrow
-  product cards, embedded category art, and full-bleed cream viewport.
+ product cards, embedded category art, and full-bleed cream viewport.
+- The search field is a compact 320-pixel control. `QuickAddRow` fills the rest
+ of that band with at most three equal-width name-only best-seller chips and
+ renders nothing when the tablet has no saved sales. Chips reuse the same add
+ path as a product card, so a product needing a size or a required choice still
+ opens the dialog.
+- The Header carries no notification control; do not reintroduce a decorative
+ bell or a hardcoded badge count.
 - Product and category assets are content; do not recreate them with UI icons.
-- All interface icons come from Phosphor.
+- All interface icons come from Boxicons.
 - Search, category, and cart behavior must stay local during service.
 - Preserve already visited live category grids and their prepared product
   images using the installed React Activity boundary; do not eagerly mount
@@ -42,7 +51,9 @@ owns the shared Header and TopNavigation currently used across the application.
   explicit cashier choices; never silently select an option. A product with
   one size must not force a size selection. Cart identity includes the selected
   size once OPTIONS-03 activates product-owned checkout.
-- Clear the cart only after the local sale transaction commits.
+- Checkout clears the cart only after the local sale transaction commits. A
+  cashier may empty the current draft from the trash control on the order-list
+  heading; it is hidden while the cart is empty.
 - Saved receipts support on-screen preview and plain post-commit print feedback.
   Do not expose printer settings, permissions, bytes, or transport from this
   feature.

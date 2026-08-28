@@ -98,7 +98,7 @@ components:
     rounded: "{rounded.full}"
     padding: 20px
     height: 50px
-    width: 966px
+    width: 320px
   category-card-active:
     backgroundColor: "{colors.action}"
     textColor: "{colors.on-action}"
@@ -265,7 +265,10 @@ The landscape layout preserves the proportions of the 4:3 reference inside the w
 - Menu column: x 18, width 966.
 - Receipt rail: x 1002, y 90, width 320, height 688.
 - Gap between menu and receipt: 18.
-- Search field: y 90, height 50.
+- Search field: x 18, y 90, width 320, height 50.
+- Quick add row: y 90, height 50, from x 348 to x 984 with 10-pixel gaps. It
+  holds at most three equal-width name-only chips at 15px that fill the remaining
+  menu-column width, and disappears entirely when the tablet has no saved sales.
 - Category row: y 148, width 966, height 120; three fixed 234-pixel cards with 10-pixel gaps.
 - Product grid: y 276, width 966, height 502; five fixed 174-pixel columns distributed across each complete row. The final row stays left-aligned with 8-pixel gaps.
 
@@ -333,24 +336,24 @@ Do not invent intermediate radii. A new component must choose the closest existi
 
 ## Components
 
-Shared components are contracts, not duplicated screen-specific markup. The Pencil library contains the visual masters. The HTML catalog contains matching class implementations. The production implementation uses React, Vite, Astryx, and Phosphor Icons inside a Capacitor Android application.
+Shared components are contracts, not duplicated screen-specific markup. The Pencil library contains the visual masters. The HTML catalog contains matching class implementations. The production implementation uses React, Vite, Astryx, and Boxicons inside a Capacitor Android application.
 
 | Component | Required content | Variants and behavior |
 | --- | --- | --- |
 | `PosShell` | header, menu content, receipt rail | Full-bleed landscape application root at the target size; cream gutters may adapt on wider screens. |
-| `HeaderBar` | logo asset, live date/time, order count, report action, alerts, cashier | One horizontal line. Use the real OLASO asset; date and time never wrap and time follows the terminal clock-format preference. |
+| `HeaderBar` | logo asset, live date/time, report action, cashier | One horizontal line. Use the real OLASO asset; date and time never wrap and time follows the terminal clock-format preference. Carries no notification control until real alerts exist. |
 | `ProfileControl` | staff name, role, profile menu | Preserve the 178 by 50 Header control. Every role sees one 44-pixel `Lock / switch staff` action; only the owner sees Settings, and Settings is omitted when already open. |
-| `SearchField` | query, search action | 966 by 50 at the target viewport. Visible focus state. Never use placeholder text as the only accessible label. |
+| `SearchField` | query, search action | 320 by 50 at the target viewport. The magnifier and the input sit on one line in explicit grid columns. Visible focus state. Never use placeholder text as the only accessible label. |
+| `QuickAddRow` | best-seller chips | Up to three equal-width 50-pixel-tall chips carrying a product name only at 15px, filling the remaining width beside the search field. Chips come from saved tablet sales, never a fixed list, and the row renders nothing when there are none. An unusually long name may ellipsis. |
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
 | `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. |
-| `IconButton` | accessible label, icon | 44 by 44 minimum. Circle with a green hairline border. |
-| `SegmentedControl` | options, selected option | 266 by 50. Only one selected segment. Selection uses Operational Green plus text. |
+| `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. |
 | `LabeledField` | visible label, current value | Text and select variants. Control is 129 by 48. |
 | `OrderLine` | product, unit price, quantity, size, note, total | Keep the total right-aligned. A note is optional. |
 | `QuantityStepper` | decrement, quantity, increment | 116 by 44 so both actions retain independent 44-pixel targets. Disable decrement at the minimum and expose an accessible value. |
 | `PaymentSummary` | subtotal, total | Right-align values and emphasize only the total. Use tabular figures; the confirmed policy has no tax row. |
 | `PrimaryAction` | action label, order total | 266 by 50. One primary action per screen. Disable it while submitting. |
-| `ReceiptRail` | navigation, service mode, order, totals, primary action | 320 by 688 at the target viewport. The rail owns the final action and all order-editing controls; checkout stays uncluttered. |
+| `ReceiptRail` | service mode, payment method, order, clear cart, totals, primary action | 320 by 688 at the target viewport. No decorative receipt title. Dine In / Take Away and Cash / Card sit at the top; payment details and Place order stay at the bottom. Clear cart is a small trash control on the order-list heading and appears only when the cart has lines. |
 
 Use existing components before adding a new one. A visual difference that can be expressed as content or a documented variant is not a new component.
 
@@ -360,7 +363,7 @@ Use existing components before adding a new one. A visual difference that can be
 
 - React and Vite with TypeScript.
 - Astryx components and the local `Olasotheme-theme.ts` theme.
-- `@phosphor-icons/react` for interface icons. Use one consistent weight per visual layer and import icons directly.
+- `@boxicons/react` for interface icons. Use the basic pack consistently and import icons directly.
 - CSS Modules for Olaso-specific layout and appearance.
 - React state for the first POS screen. Add a state library only when shared cross-route state proves necessary.
 - Capacitor supplies the installable Android APK/AAB after the browser implementation matches the approved screen.
@@ -466,7 +469,7 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 
 - Use an Astryx primitive when it matches the required semantics and interaction behavior.
 - Olaso geometry and tokens override Astryx's default appearance. Align `Olasotheme-theme.ts` with this file before visual implementation.
-- Use Phosphor icons instead of emoji, Unicode symbols, improvised CSS icons, or icons from a second library.
+- Use Boxicons instead of emoji, Unicode symbols, improvised CSS icons, or icons from a second library.
 - Icon-only controls require an accessible name. Decorative icons use `aria-hidden="true"`.
 - Icons inherit `currentColor`; component CSS controls their color.
 
@@ -535,7 +538,7 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   filter; restoration stays available there.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
-Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate layout dimensions. Respect `prefers-reduced-motion`.
+Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate flex or grid layout dimensions. POS category selection blooms a clipped green fill inside the tapped card; it never travels the gap between cards. The product grid does not animate. Respect `prefers-reduced-motion`.
 
 ### Category artwork
 
@@ -574,7 +577,7 @@ A screen is complete only when all of the following are true:
 - Product cards remain 174 by 162 and category cards remain 234 by 120 at the reference viewport.
 - Every named component is in its own `.tsx` file and any component-specific CSS is colocated in its own `.module.css` file.
 - No React component imports a database client or contains persistence logic.
-- Astryx supplies applicable primitives, Phosphor supplies all interface icons, and the Olaso tokens control their appearance.
+- Astryx supplies applicable primitives, Boxicons supplies all interface icons, and the Olaso tokens control their appearance.
 - Keyboard focus, accessible names, touch targets, pressed feedback, empty state, loading state, and failure recovery are verified.
 - Product images reserve their dimensions and do not cause layout shift.
 - Native launch, WebView startup, and the first React frame use one continuous

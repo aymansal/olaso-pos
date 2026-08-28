@@ -29,7 +29,21 @@
 .active {
   border-color: var(--olaso-green) !important;
   color: white;
-  background: var(--olaso-green) !important;
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 22px;
+  background: var(--olaso-green);
+  transform: scale(0);
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.active .fill {
+  transform: scale(1);
 }
 
 .status,
@@ -89,6 +103,7 @@
 
 .illustration {
   position: absolute;
+  z-index: 1;
   top: 10px;
   left: 108px;
   width: 118px;
@@ -102,4 +117,10 @@
   width: 126px;
   opacity: 1;
   filter: brightness(0) invert(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
 }

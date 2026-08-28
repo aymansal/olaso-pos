@@ -9,21 +9,20 @@ import {
 import { ReceiptPreviewDialog } from '../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { usePosData } from '../../data/usePosData';
 import { useConnectionStatus } from '../../data/connectionContext';
-import type { ClockFormat, ReceiptLanguage } from '../../data/terminalSettings';
+import type { ReceiptLanguage } from '../../data/terminalSettings';
 import type { SavedReceipt } from '../../data/localSales.ts';
 import type { OperationalCacheSnapshot } from '../../data/operationalCache.ts';
 import { categoryArtworkUrl } from '../../lib/categoryArtwork.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
-import { Header } from './components/Header/Header';
+import { ProductGrid } from './components/ProductGrid/ProductGrid';
+import { QuickAddRow } from './components/QuickAddRow/QuickAddRow';
+import { ReceiptRail } from './components/ReceiptRail/ReceiptRail';
+import { SearchField } from './components/SearchField/SearchField';
 import {
   ModifierSelectionDialog,
   type PosChoiceSection,
   type PosProductSize,
 } from './components/ModifierSelectionDialog/ModifierSelectionDialog';
-import { ProductGrid } from './components/ProductGrid/ProductGrid';
-import { ReceiptRail } from './components/ReceiptRail/ReceiptRail';
-import { SearchField } from './components/SearchField/SearchField';
-import type { NavigationPage } from './components/TopNavigation/TopNavigation';
 import type { Category } from './data/categories';
 import { productImage, type Product } from './data/products';
 import {
@@ -44,11 +43,7 @@ import styles from './PosScreen.module.css';
 interface PosScreenProps {
   session: PosSession;
   onSessionChange: Dispatch<SetStateAction<PosSession>>;
-  clockFormat: ClockFormat;
   receiptLanguage: ReceiptLanguage;
-  onNavigate?: (page: NavigationPage) => void;
-  onOpenSettings?: () => void;
-  onSwitchStaff: () => Promise<boolean>;
 }
 
 function localServiceType(
@@ -163,15 +158,12 @@ function choiceDeltaForSize(
 export function PosScreen({
   session,
   onSessionChange,
-  clockFormat,
   receiptLanguage,
-  onNavigate,
-  onOpenSettings,
-  onSwitchStaff,
 }: PosScreenProps) {
   const { available } = useConnectionStatus();
   const {
     menu,
+    quickAddProductIds,
     completeOrder,
     printFeedback,
     isLoading,
@@ -249,6 +241,13 @@ export function PosScreen({
   const productById = useMemo(
     () => new Map(products.map((product) => [product.id, product])),
     [products],
+  );
+  const quickAddProducts = useMemo(
+    () => quickAddProductIds.flatMap((productId) => {
+      const product = productById.get(productId);
+      return product ? [product] : [];
+    }),
+    [productById, quickAddProductIds],
   );
   const sizeById = useMemo(
     () => new Map((menu?.productSizes ?? []).map((size) => [size.id, size])),
@@ -437,18 +436,12 @@ export function PosScreen({
 
   return (
     <main className={styles.screen} aria-label="Olaso point of sale">
-      <Header
-        activePage="POS"
-        clockFormat={clockFormat}
-        onNavigate={onNavigate}
-        onOpenSettings={onOpenSettings}
-        onSwitchStaff={onSwitchStaff}
-      />
       <section className={styles.menu} aria-label="Product menu">
         <SearchField
           value={session.query}
           onChange={(query) => editSession((current) => ({ ...current, query }))}
         />
+        <QuickAddRow products={quickAddProducts} onAdd={beginAdd} />
         <CategoryRow
           categories={categories}
           selectedCategoryId={session.selectedCategoryId}
@@ -507,6 +500,8 @@ export function PosScreen({
             ...current,
             cart: removeCartLine(current.cart, lineId),
           }))}
+        onClearCart={() =>
+          editSession((current) => ({ ...current, cart: [] }))}
         onServiceModeChange={(serviceMode) =>
           editSession((current) => ({ ...current, serviceMode }))}
         onPaymentMethodChange={(paymentMethod) =>

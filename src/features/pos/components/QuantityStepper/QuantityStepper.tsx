@@ -1,4 +1,4 @@
-import { Minus, Plus } from '@phosphor-icons/react';
+import { Minus, Plus } from '@boxicons/react';
 import styles from './QuantityStepper.module.css';
 
 type QuantityStepperProps = {
@@ -22,7 +22,7 @@ export function QuantityStepper({
         disabled={quantity === 1}
         onClick={onDecrement}
       >
-        <Minus size={16} />
+        <Minus width={16} height={16} />
       </button>
       <strong>{quantity}</strong>
       <button
@@ -30,7 +30,7 @@ export function QuantityStepper({
         aria-label={`Increase ${productName} quantity`}
         onClick={onIncrement}
       >
-        <Plus size={16} />
+        <Plus width={16} height={16} />
       </button>
     </div>
   );

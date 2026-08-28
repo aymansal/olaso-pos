@@ -1,16 +1,10 @@
-import {
-  Drop,
-  Flask,
-  Leaf,
-  Package,
-  Warning,
-} from '@phosphor-icons/react';
+import { WaterDrop, Flask, Leaf, Package, AlertTriangle } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { formatStockQuantity } from '../../../../lib/stock';
 import styles from './StockAttentionPanel.module.css';
 
 const icons = {
-  drop: Drop,
+  drop: WaterDrop,
   flask: Flask,
   leaf: Leaf,
   package: Package,
@@ -53,7 +47,7 @@ export function StockAttentionPanel({
           <small>Ingredients below their threshold</small>
         </span>
         <span className={styles.warning}>
-          <Warning size={14} weight="regular" aria-hidden="true" />
+          <AlertTriangle width={14} height={14} aria-hidden="true" />
           <strong>
             {isLoading ? 'Loading' : error ? 'Unavailable' : `${warnings.length} items`}
           </strong>
@@ -76,7 +70,7 @@ export function StockAttentionPanel({
           return (
             <article className={styles.row} key={warning.id}>
               <span className={`${styles.icon} ${styles[presentation.tone]}`}>
-                <Icon size={16} weight="regular" aria-hidden="true" />
+                <Icon width={16} height={16} aria-hidden="true" />
               </span>
               <span className={styles.copy}>
                 <strong>{warning.name}</strong>

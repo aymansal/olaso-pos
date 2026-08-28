@@ -1,4 +1,4 @@
-import { User } from '@phosphor-icons/react';
+import { User } from '@boxicons/react';
 import { useEffect, useRef, useState } from 'react';
 import type { StaffRole } from '../../../../data/permissions.ts';
 import styles from './ProfileControl.module.css';
@@ -62,7 +62,7 @@ export function ProfileControl({
           setOpen((current) => !current);
         }}
       >
-        <span className={styles.avatar}><User size={22} /></span>
+        <span className={styles.avatar}><User width={22} height={22} /></span>
         <span className={styles.profileCopy}>
           <strong>{name}</strong>
           <small>{role}</small>

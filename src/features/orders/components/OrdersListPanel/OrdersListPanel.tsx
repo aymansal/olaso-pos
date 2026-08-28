@@ -1,12 +1,5 @@
-import {
-  CalendarBlank,
-  CaretDown,
-  CaretLeft,
-  CaretRight,
-  MagnifyingGlass,
-  Receipt,
-} from '@phosphor-icons/react';
-import { useEffect, useMemo, useState } from 'react';
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Search, Receipt } from '@boxicons/react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type {
   OrderHistoryRecord,
   OrderStatus,
@@ -88,7 +81,7 @@ export function OrdersListPanel({
           <small>Track every sale from counter to completion</small>
         </span>
         <span className={styles.today}>
-          <Receipt size={14} weight="regular" aria-hidden="true" />
+          <Receipt width={14} height={14} aria-hidden="true" />
           <strong>
             {lastSuccessAt
               ? `Last sync ${new Date(lastSuccessAt).toLocaleTimeString(
@@ -102,7 +95,7 @@ export function OrdersListPanel({
 
       <div className={styles.toolbar}>
         <label className={styles.search}>
-          <MagnifyingGlass size={16} weight="regular" aria-hidden="true" />
+          <Search width={16} height={16} aria-hidden="true" />
           <input
             aria-label="Search orders"
             placeholder="Search order or customer"
@@ -111,7 +104,12 @@ export function OrdersListPanel({
           />
         </label>
 
-        <div className={styles.filters} aria-label="Order status">
+        <div
+          className={styles.filters}
+          style={{ '--count': filters.length, '--index': filters.indexOf(status) } as CSSProperties}
+          aria-label="Order status"
+        >
+          <span className={styles.indicator} aria-hidden="true" />
           {filters.map((filter) => (
             <button
               type="button"
@@ -132,9 +130,9 @@ export function OrdersListPanel({
             aria-expanded={dateOpen}
             onClick={() => setDateOpen((open) => !open)}
           >
-            <CalendarBlank size={15} weight="regular" aria-hidden="true" />
+            <Calendar width={15} height={15} aria-hidden="true" />
             <span>{businessDate || 'All dates'}</span>
-            <CaretDown size={13} weight="regular" aria-hidden="true" />
+            <ChevronDown width={13} height={13} aria-hidden="true" />
           </button>
           {dateOpen ? (
             <div className={styles.dateMenu} aria-label="Order date">
@@ -190,7 +188,7 @@ export function OrdersListPanel({
             disabled={page === 0}
             onClick={() => setPage((current) => Math.max(0, current - 1))}
           >
-            <CaretLeft size={14} weight="regular" aria-hidden="true" />
+            <ChevronLeft width={14} height={14} aria-hidden="true" />
           </button>
           <button type="button" className={styles.current} aria-current="page">
             {page + 1}
@@ -205,7 +203,7 @@ export function OrdersListPanel({
             }
             onClick={() => void nextPage()}
           >
-            <CaretRight size={14} weight="regular" aria-hidden="true" />
+            <ChevronRight width={14} height={14} aria-hidden="true" />
           </button>
         </nav>
       </footer>

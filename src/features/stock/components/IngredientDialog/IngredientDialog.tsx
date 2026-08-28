@@ -1,4 +1,4 @@
-import { Archive, FloppyDisk, X } from '@phosphor-icons/react';
+import { Archive, Save, X } from '@boxicons/react';
 import { useState } from 'react';
 import type {
   IngredientSaveInput,
@@ -99,7 +99,7 @@ export function IngredientDialog({
             </h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close ingredient editor">
-            <X size={18} aria-hidden="true" />
+            <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
 
@@ -199,7 +199,7 @@ export function IngredientDialog({
                 }
               }}
             >
-              <Archive size={15} aria-hidden="true" />
+              <Archive width={15} height={15} aria-hidden="true" />
               {archived ? 'Restore' : 'Archive'}
             </button>
             <button
@@ -236,7 +236,7 @@ export function IngredientDialog({
             onClick={submit}
             disabled={saving || archived || !name.trim() || invalidNumber}
           >
-            <FloppyDisk size={16} aria-hidden="true" />
+            <Save width={16} height={16} aria-hidden="true" />
             {saving ? 'Saving…' : 'Save'}
           </button>
         </footer>

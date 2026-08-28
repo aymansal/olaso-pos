@@ -6,6 +6,7 @@
   "scripts": {
     "theme:build": "astryx theme build Olasotheme-theme.ts",
     "check:pos": "node scripts/check-pos.mjs",
+    "check:css-scope": "node scripts/check-css-scope.mjs",
     "check:convex": "convex codegen --typecheck enable",
     "seed:dev": "convex run seed:resetAndSeed \"{\\\"confirm\\\":\\\"RESET_OLASO_DEV\\\"}\"",
     "check:seed": "convex run seed:verify",
@@ -24,7 +25,6 @@
     "check:local": "node --disable-warning=ExperimentalWarning scripts/check-local-database.mjs",
     "check:product-configuration": "node --disable-warning=ExperimentalWarning scripts/check-product-configuration.mjs",
     "check:sales": "node --disable-warning=ExperimentalWarning scripts/check-sales.mjs",
-
     "check:orders": "node --disable-warning=ExperimentalWarning scripts/check-orders.mjs",
     "check:dashboard": "node scripts/check-dashboard.mjs",
     "check:reports": "node scripts/check-reports.mjs",
@@ -50,11 +50,11 @@
   },
   "dependencies": {
     "@astryxdesign/core": "0.1.7",
+    "@boxicons/react": "^1.0.3",
     "@capacitor-community/sqlite": "8.1.0",
     "@capacitor/android": "8.4.2",
     "@capacitor/core": "8.4.2",
     "@fontsource/dm-sans": "^5.3.0",
-    "@phosphor-icons/react": "2.1.10",
     "convex": "^1.42.3",
     "react": "19.2.7",
     "react-dom": "19.2.7",

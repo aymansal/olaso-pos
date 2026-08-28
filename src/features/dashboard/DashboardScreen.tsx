@@ -1,6 +1,4 @@
 import { useDashboardData } from '../../data/useDashboardData';
-import type { ClockFormat } from '../../data/terminalSettings';
-import { Header } from '../pos/components/Header/Header';
 import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { RecentOrdersPanel } from './components/RecentOrdersPanel/RecentOrdersPanel';
 import { SalesPulse } from './components/SalesPulse/SalesPulse';
@@ -8,28 +6,13 @@ import { StockAttentionPanel } from './components/StockAttentionPanel/StockAtten
 import styles from './DashboardScreen.module.css';
 
 interface DashboardScreenProps {
-  clockFormat: ClockFormat;
   onNavigate?: (page: NavigationPage) => void;
-  onOpenSettings?: () => void;
-  onSwitchStaff: () => Promise<boolean>;
 }
 
-export function DashboardScreen({
-  clockFormat,
-  onNavigate,
-  onOpenSettings,
-  onSwitchStaff,
-}: DashboardScreenProps) {
+export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
   const data = useDashboardData();
   return (
     <main className={styles.screen} aria-label="Olaso operations dashboard">
-      <Header
-        activePage="Dashboard"
-        clockFormat={clockFormat}
-        onOpenSettings={onOpenSettings}
-        onNavigate={onNavigate}
-        onSwitchStaff={onSwitchStaff}
-      />
       <SalesPulse
         snapshot={data.snapshot}
         isLoading={data.isLoading}

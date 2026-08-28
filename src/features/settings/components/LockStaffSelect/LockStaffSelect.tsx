@@ -1,4 +1,4 @@
-import { CaretDown } from '@phosphor-icons/react';
+import { ChevronDown } from '@boxicons/react';
 import { useEffect, useId, useRef, useState } from 'react';
 import styles from './LockStaffSelect.module.css';
 
@@ -53,7 +53,7 @@ export function LockStaffSelect({
         onClick={() => setOpen((current) => !current)}
       >
         <span>{selected?.name ?? 'Select staff'}</span>
-        <CaretDown className={open ? styles.caretOpen : undefined} size={18} aria-hidden="true" />
+        <ChevronDown className={open ? styles.caretOpen : undefined} width={18} height={18} aria-hidden="true" />
       </button>
       {open ? (
         <ul className={styles.menu} id={listId} role="listbox">

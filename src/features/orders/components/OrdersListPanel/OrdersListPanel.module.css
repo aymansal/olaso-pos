@@ -97,34 +97,60 @@
 }
 
 .filters {
+  position: relative;
   display: flex;
   width: 362px;
   height: 42px;
+  overflow: hidden;
   padding: 4px;
   border-radius: 21px;
   background: var(--olaso-neutral-icon);
 }
 
+.indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / var(--count, 1));
+  height: 34px;
+  border-radius: 17px;
+  background: var(--olaso-green);
+  transform: translateX(calc(var(--index, 0) * 100%));
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
 .filter,
 .filterActive {
+  position: relative;
+  z-index: 1;
   flex: 1;
+  min-width: 0;
   height: 34px;
   padding: 0;
   border: 0;
   border-radius: 17px;
-  font-size: 8px;
+  background: transparent;
+  font-size: 10px;
   font-weight: 600;
+  white-space: nowrap;
+  transition: color 180ms ease;
 }
 
 .filter {
-  color: var(--olaso-copy);
-  background: transparent;
+  color: var(--olaso-text-dark-soft);
 }
 
 .filterActive {
   color: var(--olaso-white);
-  background: var(--olaso-green);
-  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator,
+  .filter,
+  .filterActive {
+    transition: none;
+  }
 }
 
 .dateWrap {

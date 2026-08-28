@@ -1,12 +1,5 @@
-import {
-  CalendarBlank,
-  CaretDown,
-  ChartLineUp,
-  Package,
-  Stack,
-  Wallet,
-} from '@phosphor-icons/react';
-import { useState } from 'react';
+import { Calendar, ChevronDown, ChartLine, Package, Layers, Wallet } from '@boxicons/react';
+import { useState, type CSSProperties } from 'react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import type { useCostManagement } from '../../../../data/useCostManagement';
 import { shiftBusinessDate } from '../../../../lib/date';
@@ -18,9 +11,9 @@ import { CostsPanel } from '../CostsPanel/CostsPanel';
 import styles from './ReportsAnalyticsPanel.module.css';
 
 const reportTabs = [
-  { value: 'sales', label: 'Sales', icon: ChartLineUp },
+  { value: 'sales', label: 'Sales', icon: ChartLine },
   { value: 'products', label: 'Products', icon: Package },
-  { value: 'stock', label: 'Stock usage', icon: Stack },
+  { value: 'stock', label: 'Stock usage', icon: Layers },
   { value: 'costs', label: 'Costs', icon: Wallet },
 ] as const;
 
@@ -77,6 +70,8 @@ export function ReportsAnalyticsPanel({
       ) / 86_400_000,
     ) + 1;
   const validDraft = draftDays >= 1 && draftDays <= 31;
+  const visibleTabs = reportTabs.filter((item) => item.value !== 'costs' || showCosts);
+  const tabIndex = Math.max(0, visibleTabs.findIndex((item) => item.value === tab));
 
   function setQuickPeriod(days: number) {
     const next = {
@@ -106,9 +101,9 @@ export function ReportsAnalyticsPanel({
             setDateOpen((open) => !open);
           }}
         >
-          <CalendarBlank size={15} aria-hidden="true" />
+          <Calendar width={15} height={15} aria-hidden="true" />
           <span>{dateRangeLabel(fromDate, toDate)}</span>
-          <CaretDown size={12} aria-hidden="true" />
+          <ChevronDown width={12} height={12} aria-hidden="true" />
         </button>
       </header>
 
@@ -158,8 +153,13 @@ export function ReportsAnalyticsPanel({
         </div>
       ) : null}
 
-      <nav className={styles.tabs} aria-label="Report type">
-        {reportTabs.filter((item) => item.value !== 'costs' || showCosts).map(({ value, label, icon: Icon }) => {
+      <nav
+        className={styles.tabs}
+        style={{ '--count': visibleTabs.length, '--index': tabIndex } as CSSProperties}
+        aria-label="Report type"
+      >
+        <span className={styles.indicator} aria-hidden="true" />
+        {visibleTabs.map(({ value, label, icon: Icon }) => {
           const active = value === tab;
           return (
           <button
@@ -169,7 +169,7 @@ export function ReportsAnalyticsPanel({
             onClick={() => onTabChange(value)}
             key={label}
           >
-            <Icon size={14} aria-hidden="true" />
+            <Icon width={14} height={14} aria-hidden="true" />
             <span>{label}</span>
           </button>
         )})}

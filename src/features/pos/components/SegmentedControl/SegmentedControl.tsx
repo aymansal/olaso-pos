@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { ServiceMode } from '../../posSession';
 import styles from './SegmentedControl.module.css';
 
@@ -9,8 +10,15 @@ type SegmentedControlProps = {
 };
 
 export function SegmentedControl({ value, onChange }: SegmentedControlProps) {
+  const index = options.indexOf(value);
   return (
-    <div className={styles.control} role="group" aria-label="Service type">
+    <div
+      className={styles.control}
+      style={{ '--count': options.length, '--index': index } as CSSProperties}
+      role="group"
+      aria-label="Service type"
+    >
+      <span className={styles.indicator} aria-hidden="true" />
       {options.map((option) => (
         <button
           key={option}

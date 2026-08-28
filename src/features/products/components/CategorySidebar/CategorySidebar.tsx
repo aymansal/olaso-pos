@@ -1,11 +1,5 @@
-import {
-  Coffee,
-  Leaf,
-  Package,
-  Plus,
-  Snowflake,
-  SquaresFour,
-} from '@phosphor-icons/react';
+import { Coffee, Leaf, Package, Plus, Snowflake, Grid } from '@boxicons/react';
+import type { CSSProperties } from 'react';
 import type { ManagedCategory } from '../../productManagementTypes';
 import styles from './CategorySidebar.module.css';
 
@@ -22,7 +16,7 @@ function iconForCategory(key: string) {
   if (key.includes('matcha') || key.includes('tea')) return Leaf;
   if (key.includes('cold') || key.includes('sweet')) return Snowflake;
   if (key.includes('bakery') || key.includes('savoury')) return Package;
-  return SquaresFour;
+  return Grid;
 }
 
 export function CategorySidebar({
@@ -48,12 +42,14 @@ export function CategorySidebar({
       status: category.status,
     })),
   ];
+  const index = Math.max(0, rows.findIndex((category) => category.id === selectedCategoryId));
 
   return (
     <aside className={styles.sidebar} aria-label="Product categories">
       <h2>Categories</h2>
       <p>{categories.filter((category) => category.status === 'active').length} menu groups</p>
-      <div className={styles.categories}>
+      <div className={styles.categories} style={{ '--index': index } as CSSProperties}>
+        <span className={styles.indicator} aria-hidden="true" />
         {rows.map((category) => {
           const Icon = iconForCategory(category.key);
           const active = category.id === selectedCategoryId;
@@ -66,7 +62,7 @@ export function CategorySidebar({
               onClick={() => onSelect(category.id)}
               key={category.id}
             >
-              <Icon size={15} weight="regular" aria-hidden="true" />
+              <Icon width={15} height={15} aria-hidden="true" />
               <span>
                 <strong>{category.name}</strong>
                 <small>
@@ -79,7 +75,7 @@ export function CategorySidebar({
         })}
       </div>
       <button type="button" className={styles.addCategory} onClick={onAdd}>
-        <Plus size={13} weight="regular" aria-hidden="true" />
+        <Plus width={13} height={13} aria-hidden="true" />
         <span>Add category</span>
       </button>
     </aside>

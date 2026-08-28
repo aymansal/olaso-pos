@@ -24,7 +24,7 @@ the system.
 | --- | --- |
 | Client | React 19, TypeScript, and Vite |
 | UI | Astryx Design Core with the static Olaso theme |
-| Icons | Phosphor Icons only |
+| Icons | Boxicons only |
 | Styling | Colocated CSS Modules |
 | Android | Capacitor packaging for a manually installed APK |
 | Primary device | Samsung Galaxy Tab A9 in landscape |

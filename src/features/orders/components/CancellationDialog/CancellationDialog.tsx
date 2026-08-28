@@ -1,4 +1,4 @@
-import { X } from '@phosphor-icons/react';
+import { X } from '@boxicons/react';
 import { useState } from 'react';
 import styles from './CancellationDialog.module.css';
 
@@ -33,7 +33,7 @@ export function CancellationDialog({
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="cancel-order-title">
         <header>
           <span><small>WHOLE-SALE CORRECTION</small><h2 id="cancel-order-title">Cancel {receiptNumber}</h2></span>
-          <button type="button" onClick={onClose} aria-label="Close cancellation"><X size={18} aria-hidden="true" /></button>
+          <button type="button" onClick={onClose} aria-label="Close cancellation"><X width={18} height={18} aria-hidden="true" /></button>
         </header>
         <p>This records the cancellation and restores the saved stock. Card payment reversals must be handled outside Olaso.</p>
         <label>

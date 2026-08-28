@@ -1,14 +1,4 @@
-import {
-  CalendarCheck,
-  Coffee,
-  Drop,
-  FileCsv,
-  FilePdf,
-  Minus,
-  Package,
-  TrendDown,
-  TrendUp,
-} from '@phosphor-icons/react';
+import { CalendarCheck, Coffee, WaterDrop, File, Minus, Package, TrendingDown, TrendingUp } from '@boxicons/react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import { formatMoney } from '../../../../lib/money';
 import { formatStockQuantity } from '../../../../lib/stock';
@@ -54,8 +44,8 @@ export function ReportSummaryPanel({
   const ComparisonIcon = difference === undefined
     ? Minus
     : difference >= 0
-      ? TrendUp
-      : TrendDown;
+      ? TrendingUp
+      : TrendingDown;
 
   return (
     <aside className={styles.panel} aria-labelledby="report-summary-title">
@@ -69,7 +59,7 @@ export function ReportSummaryPanel({
           </small>
         </span>
         <strong className={styles.period}>
-          <CalendarCheck size={12} aria-hidden="true" />
+          <CalendarCheck width={12} height={12} aria-hidden="true" />
           <span>{snapshot?.range.days ?? 0} days</span>
         </strong>
       </header>
@@ -92,7 +82,7 @@ export function ReportSummaryPanel({
               : ''
           }`}
         >
-          <ComparisonIcon size={12} aria-hidden="true" />
+          <ComparisonIcon width={12} height={12} aria-hidden="true" />
           <span>
             {difference === undefined
               ? 'No prior data'
@@ -197,7 +187,7 @@ export function ReportSummaryPanel({
         <div className={styles.stockList}>
           {ingredients.map((ingredient) => {
             const Icon = ingredient.baseUnit === 'millilitre'
-              ? Drop
+              ? WaterDrop
               : ingredient.baseUnit === 'piece'
                 ? Package
                 : Coffee;
@@ -207,7 +197,7 @@ export function ReportSummaryPanel({
                 key={ingredient.ingredientId}
               >
                 <span>
-                  <i><Icon size={13} aria-hidden="true" /></i>
+                  <i><Icon width={13} height={13} aria-hidden="true" /></i>
                   <strong>{ingredient.ingredientName}</strong>
                 </span>
                 <strong>
@@ -232,7 +222,7 @@ export function ReportSummaryPanel({
           disabled
           title="Export destination pending owner confirmation"
         >
-          <FileCsv size={15} aria-hidden="true" />
+          <File width={15} height={15} aria-hidden="true" />
           <span>Export CSV</span>
         </button>
         <button
@@ -241,7 +231,7 @@ export function ReportSummaryPanel({
           disabled
           title="Export destination pending owner confirmation"
         >
-          <FilePdf size={15} aria-hidden="true" />
+          <File width={15} height={15} aria-hidden="true" />
           <span>Export PDF report</span>
         </button>
       </footer>

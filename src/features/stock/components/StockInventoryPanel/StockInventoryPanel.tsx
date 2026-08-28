@@ -1,11 +1,4 @@
-import {
-  ArrowsClockwise,
-  MagnifyingGlass,
-  Plus,
-  SlidersHorizontal,
-  Stack,
-  Warning,
-} from '@phosphor-icons/react';
+import { RefreshCw, Search, Plus, SliderAlt, Layers, AlertTriangle } from '@boxicons/react';
 import type {
   InventoryMetrics,
   ManagedIngredient,
@@ -18,10 +11,10 @@ import { StockTable } from '../StockTable/StockTable';
 import styles from './StockInventoryPanel.module.css';
 
 const summaryIcons = {
-  stack: Stack,
-  warning: Warning,
-  movement: ArrowsClockwise,
-  adjustment: SlidersHorizontal,
+  stack: Layers,
+  warning: AlertTriangle,
+  movement: RefreshCw,
+  adjustment: SliderAlt,
 } as const;
 
 interface StockInventoryPanelProps {
@@ -102,7 +95,7 @@ export function StockInventoryPanel({
           type="button"
           onClick={onAddIngredient}
         >
-          <Plus size={15} aria-hidden="true" />
+          <Plus width={15} height={15} aria-hidden="true" />
           <span>Add ingredient</span>
         </button>
       </header>
@@ -116,7 +109,7 @@ export function StockInventoryPanel({
                 <span className={styles.summaryDivider} aria-hidden="true" />
               ) : null}
               <span className={`${styles.summaryIcon} ${styles[tone]}`}>
-                <Icon size={15} aria-hidden="true" />
+                <Icon width={15} height={15} aria-hidden="true" />
               </span>
               <span className={styles.summaryCopy}>
                 <strong>{value}</strong>
@@ -129,7 +122,7 @@ export function StockInventoryPanel({
 
       <div className={styles.toolbar}>
         <label className={styles.search}>
-          <MagnifyingGlass size={15} aria-hidden="true" />
+          <Search width={15} height={15} aria-hidden="true" />
           <input
             type="search"
             aria-label="Search stock"

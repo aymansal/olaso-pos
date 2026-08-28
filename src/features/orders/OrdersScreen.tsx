@@ -1,25 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useOrdersData } from '../../data/useOrdersData';
-import type { ClockFormat } from '../../data/terminalSettings';
-import { Header } from '../pos/components/Header/Header';
-import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { OrderDetailPanel } from './components/OrderDetailPanel/OrderDetailPanel';
 import { OrdersListPanel } from './components/OrdersListPanel/OrdersListPanel';
 import styles from './OrdersScreen.module.css';
 
-interface OrdersScreenProps {
-  clockFormat: ClockFormat;
-  onNavigate?: (page: NavigationPage) => void;
-  onOpenSettings?: () => void;
-  onSwitchStaff: () => Promise<boolean>;
-}
-
-export function OrdersScreen({
-  clockFormat,
-  onNavigate,
-  onOpenSettings,
-  onSwitchStaff,
-}: OrdersScreenProps) {
+export function OrdersScreen() {
   const data = useOrdersData();
   const [selectedKey, setSelectedKey] = useState<string>();
   const selectedOrder = data.orders.find((order) => order.key === selectedKey);
@@ -31,13 +16,6 @@ export function OrdersScreen({
 
   return (
     <main className={styles.screen} aria-label="Olaso orders">
-      <Header
-        activePage="Orders"
-        clockFormat={clockFormat}
-        onOpenSettings={onOpenSettings}
-        onNavigate={onNavigate}
-        onSwitchStaff={onSwitchStaff}
-      />
       <OrdersListPanel
         orders={data.orders}
         selectedKey={selectedKey}

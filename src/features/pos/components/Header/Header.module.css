@@ -1,5 +1,6 @@
 .header {
   position: absolute;
+  z-index: 4;
   top: 16px;
   left: 18px;
   display: flex;
@@ -64,26 +65,4 @@
 
 .report:active {
   background: var(--olaso-soft);
-}
-
-.notificationWrap {
-  position: relative;
-  width: 46px;
-  height: 46px;
-}
-
-.badge {
-  position: absolute;
-  top: 0;
-  left: 30px;
-  display: grid;
-  place-items: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  color: white;
-  background: #f0443e;
-  font-size: 9px;
-  font-weight: 700;
-  pointer-events: none;
 }

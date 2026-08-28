@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInventoryManagement } from '../../data/useInventoryManagement';
-import type { ClockFormat } from '../../data/terminalSettings';
-import { Header } from '../pos/components/Header/Header';
-import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { IngredientDialog } from './components/IngredientDialog/IngredientDialog';
 import { StockAdjustmentDialog } from './components/StockAdjustmentDialog/StockAdjustmentDialog';
 import { StockDetailPanel } from './components/StockDetailPanel/StockDetailPanel';
@@ -22,21 +19,9 @@ import {
 } from './stockPresentation';
 import styles from './StockScreen.module.css';
 
-interface StockScreenProps {
-  clockFormat: ClockFormat;
-  onNavigate?: (page: NavigationPage) => void;
-  onOpenSettings?: () => void;
-  onSwitchStaff: () => Promise<boolean>;
-}
-
 const PAGE_SIZE = 5;
 
-export function StockScreen({
-  clockFormat,
-  onNavigate,
-  onOpenSettings,
-  onSwitchStaff,
-}: StockScreenProps) {
+export function StockScreen() {
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>();
   const [search, setSearch] = useState('');
   const [unitGroup, setUnitGroup] = useState<StockUnitGroup>('all');
@@ -101,13 +86,6 @@ export function StockScreen({
 
   return (
     <main className={styles.screen} aria-label="Olaso stock">
-      <Header
-        activePage="Stock"
-        clockFormat={clockFormat}
-        onOpenSettings={onOpenSettings}
-        onNavigate={onNavigate}
-        onSwitchStaff={onSwitchStaff}
-      />
       <StockInventoryPanel
         metrics={inventory.metrics}
         ingredients={pageIngredients}

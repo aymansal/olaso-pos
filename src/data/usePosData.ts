@@ -8,6 +8,7 @@ import {
   loadOperationalCache,
   type OperationalCacheSnapshot,
 } from './operationalCache.ts';
+import { topSellingProductIds } from './offlineViews.ts';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
 
@@ -15,6 +16,7 @@ export function usePosData() {
   const session = useStaffSession();
   const reconnect = useReconnect();
   const [menu, setMenu] = useState<OperationalCacheSnapshot>();
+  const [quickAddProductIds, setQuickAddProductIds] = useState<string[]>([]);
   const [localError, setLocalError] = useState('');
   const [printFeedback, setPrintFeedback] = useState<{
     kind: 'neutral' | 'error' | 'success';
@@ -22,8 +24,12 @@ export function usePosData() {
   }>();
   const loadedRevision = useRef<number | undefined>(undefined);
   const reloadLocal = useCallback(async () => {
-    const cached = await loadOperationalCache();
+    const [cached, quickAdd] = await Promise.all([
+      loadOperationalCache(),
+      topSellingProductIds(),
+    ]);
     setMenu(cached);
+    setQuickAddProductIds(quickAdd);
     return cached;
   }, []);
 
@@ -70,6 +76,7 @@ export function usePosData() {
 
   return {
     menu,
+    quickAddProductIds,
     completeOrder,
     printFeedback,
     isLoading: !menu,

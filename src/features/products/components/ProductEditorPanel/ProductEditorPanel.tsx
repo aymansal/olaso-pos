@@ -1,11 +1,4 @@
-import {
-  ArrowRight,
-  DotsThree,
-  FloppyDisk,
-  Leaf,
-  Link,
-  LinkBreak,
-} from '@phosphor-icons/react';
+import { ArrowRight, DotsHorizontalRounded, Save, Leaf, Link, Unlink } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import type {
   ManagedCategory,
@@ -148,7 +141,7 @@ export function ProductEditorPanel({
     return (
       <aside className={styles.panel} aria-labelledby="product-editor-title">
         <div className={styles.empty}>
-          <Leaf size={28} aria-hidden="true" />
+          <Leaf width={28} height={28} aria-hidden="true" />
           <h2 id="product-editor-title">Select a product</h2>
           <p>Choose a live menu record or add a new product.</p>
         </div>
@@ -208,7 +201,7 @@ export function ProductEditorPanel({
               }
             }}
           >
-            <DotsThree size={16} weight="regular" aria-hidden="true" />
+            <DotsHorizontalRounded width={16} height={16} aria-hidden="true" />
           </button>
           {product ? (
             <button
@@ -241,7 +234,7 @@ export function ProductEditorPanel({
       <div className={styles.identity}>
         <span className={styles.identityLeft}>
           <span className={styles.artwork}>
-            <Leaf size={25} weight="regular" aria-hidden="true" />
+            <Leaf width={25} height={25} aria-hidden="true" />
           </span>
           <span className={styles.identityCopy}>
             <strong>{name || 'New product'}</strong>
@@ -353,9 +346,9 @@ export function ProductEditorPanel({
       <div className={styles.recipeEmpty}>
         <span className={styles.recipeIcon}>
           {recipeData?.versionNumber ? (
-            <Link size={16} weight="regular" aria-hidden="true" />
+            <Link width={16} height={16} aria-hidden="true" />
           ) : (
-            <LinkBreak size={16} weight="regular" aria-hidden="true" />
+            <Unlink width={16} height={16} aria-hidden="true" />
           )}
         </span>
         <span className={styles.recipeCopy}>
@@ -376,7 +369,7 @@ export function ProductEditorPanel({
           onClick={() => setShowRecipe(true)}
         >
           <span>{recipeData?.versionNumber ? 'Edit' : 'Set up'}</span>
-          <ArrowRight size={11} weight="regular" aria-hidden="true" />
+          <ArrowRight width={11} height={11} aria-hidden="true" />
         </button>
       </div>
       {productCost?.hasRecipe ? (
@@ -403,7 +396,7 @@ export function ProductEditorPanel({
           Number(priceMad) < 0
         }
       >
-        <FloppyDisk size={16} weight="regular" aria-hidden="true" />
+        <Save width={16} height={16} aria-hidden="true" />
         <span>{saving ? 'Saving…' : 'Save changes'}</span>
       </button>
 

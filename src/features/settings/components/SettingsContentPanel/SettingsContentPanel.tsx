@@ -1,14 +1,4 @@
-import {
-  ArrowClockwise,
-  CheckCircle,
-  CloudArrowUp,
-  Database,
-  DeviceTablet,
-  ImageSquare,
-  Info,
-  Printer as PrinterIcon,
-  WarningCircle,
-} from '@phosphor-icons/react';
+import { RotateCw, CheckCircle, Cloud, Database, Tablet, Image, InfoCircle, Printer as PrinterIcon, AlertCircle } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import type { InstalledAppInfo } from '../../../../data/appUpdate';
 import type {
@@ -147,7 +137,7 @@ export function SettingsContentPanel({
               disabled={printerBusy || isLoading}
               onClick={installPrinterLogo}
             >
-              <ImageSquare size={17} aria-hidden="true" />
+              <Image width={17} height={17} aria-hidden="true" />
               <span>{isInstallingPrinterLogo ? 'Restoring…' : 'Restore saved logo'}</span>
             </button>
             <button
@@ -156,7 +146,7 @@ export function SettingsContentPanel({
               disabled={printerBusy || isLoading}
               onClick={testPrinter}
             >
-              <PrinterIcon size={17} aria-hidden="true" />
+              <PrinterIcon width={17} height={17} aria-hidden="true" />
               <span>{isTestingPrinter ? 'Testing…' : 'Test printer'}</span>
             </button>
           </div>
@@ -164,7 +154,7 @@ export function SettingsContentPanel({
 
         <div className={styles.identity}>
           <span className={styles.deviceIcon}>
-            <PrinterIcon size={24} aria-hidden="true" />
+            <PrinterIcon width={24} height={24} aria-hidden="true" />
           </span>
           <div>
             <span>LAN receipt printer</span>
@@ -204,7 +194,7 @@ export function SettingsContentPanel({
         </div>
 
         <div className={`${styles.notice} ${styles.printerNotice}`}>
-          <Info size={18} aria-hidden="true" />
+          <InfoCircle width={18} height={18} aria-hidden="true" />
           <p>
             Test printer sends a marked non-sale diagnostic. Restore saved logo
             replaces every image stored in the printer with the approved OLASO
@@ -241,7 +231,7 @@ export function SettingsContentPanel({
               disabled={isSyncing || !online || isLoading}
               onClick={onSync}
             >
-              <CloudArrowUp size={17} aria-hidden="true" />
+              <Cloud width={17} height={17} aria-hidden="true" />
               <span>{isSyncing ? 'Syncing…' : 'Sync now'}</span>
             </button>
           </div>
@@ -250,8 +240,8 @@ export function SettingsContentPanel({
         <div className={styles.statusHero}>
           <span className={styles.statusIcon}>
             {error
-              ? <WarningCircle size={24} aria-hidden="true" />
-              : <CheckCircle size={24} aria-hidden="true" />}
+              ? <AlertCircle width={24} height={24} aria-hidden="true" />
+              : <CheckCircle width={24} height={24} aria-hidden="true" />}
           </span>
           <div>
             <span>Synchronization state</span>
@@ -281,14 +271,14 @@ export function SettingsContentPanel({
 
         <div className={styles.detailList}>
           <div>
-            <Database size={18} aria-hidden="true" />
+            <Database width={18} height={18} aria-hidden="true" />
             <span>
               <strong>Saved operational menu</strong>
               <small>{formatTimestamp(settings?.menuUpdatedAt)}</small>
             </span>
           </div>
           <div>
-            <DeviceTablet size={18} aria-hidden="true" />
+            <Tablet width={18} height={18} aria-hidden="true" />
             <span>
               <strong>Device ID</strong>
               <small>{settings?.deviceId ?? 'Loading…'}</small>
@@ -297,7 +287,7 @@ export function SettingsContentPanel({
         </div>
 
         <div className={styles.notice}>
-          <Info size={18} aria-hidden="true" />
+          <InfoCircle width={18} height={18} aria-hidden="true" />
           <p>
             Online tablets synchronize saved work automatically while the app is
             open. Sync now retries failed rows and processes at most 10 saved
@@ -346,7 +336,7 @@ export function SettingsContentPanel({
               }
               onClick={() => void onCheckUpdate()}
             >
-              <ArrowClockwise size={17} aria-hidden="true" />
+              <RotateCw width={17} height={17} aria-hidden="true" />
               <span>
                 {isCheckingUpdate ? 'Checking…' : 'Check for update'}
               </span>
@@ -363,7 +353,7 @@ export function SettingsContentPanel({
                   }
                   onClick={() => void onInstallUpdate()}
                 >
-                  <CheckCircle size={17} aria-hidden="true" />
+                  <CheckCircle width={17} height={17} aria-hidden="true" />
                   <span>
                     {isInstallingUpdate
                       ? 'Starting…'
@@ -423,14 +413,14 @@ export function SettingsContentPanel({
           disabled={isSaving || isLoading}
           onClick={save}
         >
-          <CheckCircle size={17} aria-hidden="true" />
+          <CheckCircle width={17} height={17} aria-hidden="true" />
           <span>{isSaving ? 'Saving…' : 'Save settings'}</span>
         </button>
       </div>
 
       <div className={styles.identity}>
         <span className={styles.deviceIcon}>
-          <DeviceTablet size={24} aria-hidden="true" />
+          <Tablet width={24} height={24} aria-hidden="true" />
         </span>
         <div>
           <span>This tablet</span>
@@ -494,7 +484,7 @@ export function SettingsContentPanel({
       </fieldset>
 
       <div className={styles.notice}>
-        <Info size={18} aria-hidden="true" />
+        <InfoCircle width={18} height={18} aria-hidden="true" />
         <p>
           These preferences stay only on this tablet. They contain no password,
           PIN, cloud secret, or production login policy.

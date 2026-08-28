@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { useConnectionStatus } from '../../data/connectionContext';
 import { useSettingsData } from '../../data/useSettingsData';
 import { useStaffManagement } from '../../data/useStaffManagement';
-import type { ClockFormat, TerminalPreferences } from '../../data/terminalSettings';
-import { Header } from '../pos/components/Header/Header';
-import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
+import type { TerminalPreferences } from '../../data/terminalSettings';
 import { SettingsContentPanel } from './components/SettingsContentPanel/SettingsContentPanel';
 import { StaffAccessPanel } from './components/StaffAccessPanel/StaffAccessPanel';
 import {
@@ -14,17 +12,13 @@ import {
 import styles from './SettingsScreen.module.css';
 
 interface SettingsScreenProps {
-  clockFormat: ClockFormat;
   hasUnfinishedCart: boolean;
-  onNavigate: (page: NavigationPage) => void;
   onLock: () => Promise<boolean>;
   onPreferencesChange: (preferences: TerminalPreferences) => void;
 }
 
 export function SettingsScreen({
-  clockFormat,
   hasUnfinishedCart,
-  onNavigate,
   onLock,
   onPreferencesChange,
 }: SettingsScreenProps) {
@@ -58,11 +52,6 @@ export function SettingsScreen({
 
   return (
     <main className={styles.screen}>
-      <Header
-        clockFormat={clockFormat}
-        onNavigate={onNavigate}
-        onSwitchStaff={lock}
-      />
       <SettingsNavigationPanel
         activeSection={section}
         lockError={lockError}

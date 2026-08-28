@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useProductManagement } from '../../data/useProductManagement';
-import type { ClockFormat } from '../../data/terminalSettings';
-import { Header } from '../pos/components/Header/Header';
-import type { NavigationPage } from '../pos/components/TopNavigation/TopNavigation';
 import { CategoryDialog } from './components/CategoryDialog/CategoryDialog';
 import { ProductCatalogPanel } from './components/ProductCatalogPanel/ProductCatalogPanel';
 import { ProductDialog } from './components/ProductDialog/ProductDialog';
@@ -14,22 +11,10 @@ import type {
 } from './productManagementTypes';
 import styles from './ProductsScreen.module.css';
 
-interface ProductsScreenProps {
-  clockFormat: ClockFormat;
-  onNavigate?: (page: NavigationPage) => void;
-  onOpenSettings?: () => void;
-  onSwitchStaff: () => Promise<boolean>;
-}
-
 type AvailabilityFilter = 'all' | ManagedProduct['status'];
 type ProductSort = 'updated' | 'name' | 'price';
 
-export function ProductsScreen({
-  clockFormat,
-  onNavigate,
-  onOpenSettings,
-  onSwitchStaff,
-}: ProductsScreenProps) {
+export function ProductsScreen() {
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState<string>();
   const [search, setSearch] = useState('');
@@ -157,13 +142,6 @@ export function ProductsScreen({
 
   return (
     <main className={styles.screen} aria-label="Olaso products">
-      <Header
-        activePage="Products"
-        clockFormat={clockFormat}
-        onOpenSettings={onOpenSettings}
-        onNavigate={onNavigate}
-        onSwitchStaff={onSwitchStaff}
-      />
       <ProductCatalogPanel
         categories={visibleCategories}
         products={visibleProducts}

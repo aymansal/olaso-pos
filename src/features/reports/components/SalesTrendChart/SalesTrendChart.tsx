@@ -1,4 +1,4 @@
-import { TrendUp } from '@phosphor-icons/react';
+import { TrendingUp } from '@boxicons/react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import { formatMoney } from '../../../../lib/money';
 import type { ReportTab } from '../../reportTypes';
@@ -138,7 +138,7 @@ export function SalesTrendChart({
 
       <footer className={styles.footer}>
         <span>
-          <TrendUp size={12} aria-hidden="true" />
+          <TrendingUp width={12} height={12} aria-hidden="true" />
           {peak.value && peak.toDate
             ? `Peak ${
                 peak.fromDate !== peak.toDate

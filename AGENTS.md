@@ -107,7 +107,7 @@ decision changes.
 - Keep screen layout in screen modules and child internals in child modules.
 - Do not use barrel files, monolithic component files, monolithic CSS files, or
   speculative interfaces and repositories.
-- Use Astryx when its primitive matches the required behavior, Phosphor for all
+- Use Astryx when its primitive matches the required behavior, Boxicons for all
   interface icons, and the built Olaso theme for tokens.
 - React components never contain database, sync, reporting-query, secret, or
   printer-protocol logic. Follow `ARCHITECTURE.md` when those layers arrive.

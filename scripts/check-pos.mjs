@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   addProduct,
   decrementCartLine,
@@ -117,5 +118,29 @@ assert.deepEqual(
     choiceValueIds: ['oat', 'shot'],
   }],
 );
+
+const screen = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
+assert.match(screen, /<QuickAddRow products=\{quickAddProducts\} onAdd=\{beginAdd\}/);
+const header = readFileSync('src/features/pos/components/Header/Header.tsx', 'utf8');
+assert.doesNotMatch(header, /Bell|badge/);
+const rail = readFileSync('src/features/pos/components/ReceiptRail/ReceiptRail.tsx', 'utf8');
+assert.doesNotMatch(rail, /ReceiptHeader|Purchase Receipt|Local draft/);
+assert.match(rail, /aria-label="Clear cart"/);
+assert.match(screen, /onClearCart=/);
+const segmented = readFileSync(
+  'src/features/pos/components/SegmentedControl/SegmentedControl.tsx',
+  'utf8',
+);
+assert.match(segmented, /styles\.indicator/);
+const payment = readFileSync(
+  'src/features/pos/components/PaymentMethodControl/PaymentMethodControl.tsx',
+  'utf8',
+);
+assert.match(payment, /styles\.indicator/);
+const navigation = readFileSync(
+  'src/features/pos/components/TopNavigation/TopNavigation.tsx',
+  'utf8',
+);
+assert.match(navigation, /styles\.indicator/);
 
 console.log('POS cart and money checks passed.');

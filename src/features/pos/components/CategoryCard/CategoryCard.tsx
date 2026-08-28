@@ -29,6 +29,7 @@ export function CategoryCard({
         height={120}
         padding={0}
       >
+        <span className={styles.fill} aria-hidden="true" />
         <span className={styles.status}>{status}</span>
         <strong className={styles.name}>{name}</strong>
         <span className={styles.count}>{count} items</span>

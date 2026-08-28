@@ -1,13 +1,4 @@
-import {
-  Database,
-  Gear,
-  Info,
-  LockKey,
-  Printer,
-  Receipt,
-  Stack,
-  UsersThree,
-} from '@phosphor-icons/react';
+import { Database, Cog, InfoCircle, Lock, Printer, Receipt, Layers, Group } from '@boxicons/react';
 import styles from './SettingsNavigationPanel.module.css';
 
 export type SettingsSection = 'general' | 'staff' | 'printer' | 'sync' | 'about';
@@ -15,11 +6,11 @@ export type SettingsSection = 'general' | 'staff' | 'printer' | 'sync' | 'about'
 const items: ReadonlyArray<{
   id?: SettingsSection;
   label: string;
-  icon: typeof Gear;
+  icon: typeof Cog;
   unavailable?: string;
 }> = [
-  { id: 'general', label: 'General', icon: Gear },
-  { id: 'staff', label: 'Staff & access', icon: UsersThree },
+  { id: 'general', label: 'General', icon: Cog },
+  { id: 'staff', label: 'Staff & access', icon: Group },
   { id: 'printer', label: 'Printer & hardware', icon: Printer },
   {
     label: 'Orders & receipts',
@@ -28,11 +19,11 @@ const items: ReadonlyArray<{
   },
   {
     label: 'Stock rules',
-    icon: Stack,
+    icon: Layers,
     unavailable: 'Pending owner stock-blocking policy',
   },
   { id: 'sync', label: 'Data & sync', icon: Database },
-  { id: 'about', label: 'About', icon: Info },
+  { id: 'about', label: 'About', icon: InfoCircle },
 ];
 
 interface SettingsNavigationPanelProps {
@@ -69,7 +60,7 @@ export function SettingsNavigationPanel({
               key={label}
             >
               <span className={styles.icon}>
-                <Icon size={16} aria-hidden="true" />
+                <Icon width={16} height={16} aria-hidden="true" />
               </span>
               <span>{label}</span>
             </button>
@@ -79,7 +70,7 @@ export function SettingsNavigationPanel({
 
       <div className={styles.lockWrap}>
         <button className={styles.lock} type="button" onClick={() => void onLock()}>
-          <LockKey size={16} aria-hidden="true" />
+          <Lock width={16} height={16} aria-hidden="true" />
           <span>Lock application</span>
         </button>
         {lockError ? <p role="alert">{lockError}</p> : null}

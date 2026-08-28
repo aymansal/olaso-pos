@@ -114,4 +114,17 @@ assert.match(stock, /saveLocalIngredient/);
 assert.match(stock, /receiveLocalPurchase/);
 assert.match(stock, /recordLocalStockAdjustment/);
 
+const views = readFileSync('src/data/offlineViews.ts', 'utf8');
+const quickAdd = views.slice(
+  views.indexOf('export async function topSellingProductIds'),
+  views.indexOf('export function aggregateOfflineSales'),
+);
+assert.match(quickAdd, /SUM\(item\.quantity\)/);
+assert.match(quickAdd, /ORDER BY quantity DESC/);
+assert.match(quickAdd, /sale\.status = 'completed'/);
+assert.match(quickAdd, /LIMIT \$\{QUICK_ADD_LIMIT\}/);
+assert.match(views, /const QUICK_ADD_LIMIT = 3/);
+const pos = readFileSync('src/data/usePosData.ts', 'utf8');
+assert.match(pos, /topSellingProductIds/);
+
 console.log('Offline Products, Stock, Dashboard, and Reports fallback checks passed.');

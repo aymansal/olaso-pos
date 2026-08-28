@@ -1,4 +1,4 @@
-import { Coffee, Drop, Leaf, Package } from '@phosphor-icons/react';
+import { Coffee, WaterDrop, Leaf, Package } from '@boxicons/react';
 export type StockIconName = 'package' | 'drop' | 'leaf' | 'coffee';
 
 interface StockIconProps {
@@ -7,8 +7,8 @@ interface StockIconProps {
 }
 
 export function StockIcon({ name, size }: StockIconProps) {
-  if (name === 'coffee') return <Coffee size={size} aria-hidden="true" />;
-  if (name === 'drop') return <Drop size={size} aria-hidden="true" />;
-  if (name === 'leaf') return <Leaf size={size} aria-hidden="true" />;
-  return <Package size={size} aria-hidden="true" />;
+  if (name === 'coffee') return <Coffee width={size} height={size} aria-hidden="true" />;
+  if (name === 'drop') return <WaterDrop width={size} height={size} aria-hidden="true" />;
+  if (name === 'leaf') return <Leaf width={size} height={size} aria-hidden="true" />;
+  return <Package width={size} height={size} aria-hidden="true" />;
 }

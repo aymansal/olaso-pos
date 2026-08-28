@@ -1,4 +1,4 @@
-import { FloppyDisk, Plus, Trash, X } from '@phosphor-icons/react';
+import { Save, Plus, Trash, X } from '@boxicons/react';
 import { useState } from 'react';
 import type { ManagedProduct, ManagedProductSize } from '../../productManagementTypes';
 import { queueProductSizeSaves } from '../../queueProductSizeSaves';
@@ -34,7 +34,7 @@ export function SizesEditorDialog({ product, sizes, onClose, onSave, onDelete }:
   return <div className={styles.overlay} role="presentation">
     <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="sizes-dialog-title">
       <header><span><small>PRODUCT SIZES</small><h2 id="sizes-dialog-title">Sizes · {product.name}</h2></span>
-        <button type="button" onClick={onClose} aria-label="Close sizes editor"><X size={18} /></button></header>
+        <button type="button" onClick={onClose} aria-label="Close sizes editor"><X width={18} height={18} /></button></header>
       <div className={styles.rows}>
         {drafts.map((size, index) => <article className={styles.row} key={size.id ?? `new-${index}`}>
           <label><span>Name</span><input value={size.name} onChange={(event) => update(index, { name: event.target.value })} /></label>
@@ -50,13 +50,13 @@ export function SizesEditorDialog({ product, sizes, onClose, onSave, onDelete }:
             if (!size.id || size.revision === undefined) { setDrafts((current) => current.filter((_, itemIndex) => itemIndex !== index)); return; }
             try { await onDelete({ id: size.id, revision: size.revision }); setDrafts((current) => current.filter((_, itemIndex) => itemIndex !== index)); }
             catch (caught) { setError(caught instanceof Error ? caught.message : 'Size delete failed.'); }
-          }} aria-label={`Delete ${size.name || 'size'}`}><Trash size={16} /></button>
+          }} aria-label={`Delete ${size.name || 'size'}`}><Trash width={16} height={16} /></button>
         </article>)}
       </div>
       <button type="button" className={styles.add} disabled={drafts.length >= 8}
-        onClick={() => setDrafts((current) => [...current, blankSize(product.id, Math.max(0, ...current.map((item) => item.sortOrder)) + 10)])}><Plus size={15} />Add size</button>
+        onClick={() => setDrafts((current) => [...current, blankSize(product.id, Math.max(0, ...current.map((item) => item.sortOrder)) + 10)])}><Plus width={15} height={15} />Add size</button>
       {error ? <p className={styles.error}>{error}</p> : null}
-      <footer><span>Up to 8 saved sizes</span><button type="button" className={styles.save} onClick={save} disabled={saving || drafts.some((size) => !size.name.trim())}><FloppyDisk size={16} />{saving ? 'Saving…' : 'Save sizes'}</button></footer>
+      <footer><span>Up to 8 saved sizes</span><button type="button" className={styles.save} onClick={save} disabled={saving || drafts.some((size) => !size.name.trim())}><Save width={16} height={16} />{saving ? 'Saving…' : 'Save sizes'}</button></footer>
     </section>
   </div>;
 }

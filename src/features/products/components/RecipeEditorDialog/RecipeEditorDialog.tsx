@@ -1,4 +1,4 @@
-import { FloppyDisk, Plus, Trash, X } from '@phosphor-icons/react';
+import { Save, Plus, Trash, X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import type {
   ManagedProduct,
@@ -105,7 +105,7 @@ export function RecipeEditorDialog({
             <h2 id="recipe-dialog-title">Recipe · {product.name}</h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close recipe editor">
-            <X size={18} aria-hidden="true" />
+            <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
 
@@ -161,7 +161,7 @@ export function RecipeEditorDialog({
                   }
                   aria-label={`Remove ${ingredient?.name ?? 'ingredient'}`}
                 >
-                  <Trash size={16} aria-hidden="true" />
+                  <Trash width={16} height={16} aria-hidden="true" />
                 </button>
                 {activeSizes.map((size) => (
                   <label className={styles.sizeQuantity} key={size.id}>
@@ -194,7 +194,7 @@ export function RecipeEditorDialog({
           onClick={addItem}
           disabled={items.length >= data.ingredients.length}
         >
-          <Plus size={15} aria-hidden="true" />
+          <Plus width={15} height={15} aria-hidden="true" />
           Add ingredient
         </button>
 
@@ -210,7 +210,7 @@ export function RecipeEditorDialog({
             onClick={submit}
             disabled={saving || items.length === 0}
           >
-            <FloppyDisk size={16} aria-hidden="true" />
+            <Save width={16} height={16} aria-hidden="true" />
             {saving ? 'Saving…' : 'Save new version'}
           </button>
         </footer>

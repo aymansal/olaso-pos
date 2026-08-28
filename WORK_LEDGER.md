@@ -113,6 +113,38 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 tablet UI (Boxicons, sliding green pills on nav/filters/Products
+  categories, shared App Header so the top pill can move, screen fade, POS
+  in-card category bloom, CSS Module scope guard) is ready to push. Product
+  grid does not animate. POLISH-01 remains pending until owner closeout.
+- Exact next action: commit/push this polish; owner continues POLISH-01 review.
+
+- POLISH-01 POS search band: owner rejected variable-width priced chips (ragged
+  row, ellipsized names, fourth chip clipped). Quick-add is now at most three
+  equal-width name-only chips at 15px filling the remaining 636px beside the
+  320px search field (`left: 330px; right: 0;` = 10px gap). `QUICK_ADD_LIMIT`
+  is 3. Debug APK install-over succeeded on SM-X115; tablet was Dozing/locked
+  so visual confirm is blocked. Uncommitted.
+- Exact next action: owner unlocks the Tab A9 and visually confirms three flush
+  equal chips; then review/commit.
+
+- Root cause of the stacked search-field icon: `PurchaseDialog.module.css`,
+  `ExpenseDialog.module.css`, `CompensationDialog.module.css`, and
+  `StaffDialog.module.css` each grouped a bare `label` (and, in PurchaseDialog,
+  a bare `footer`) into a `display: flex; flex-direction: column` rule. CSS
+  Modules only rewrite class names, so those selectors stayed global. Visiting
+  Stock, Reports, or Settings appended that chunk's stylesheet after
+  `index.css` and column-stacked every `<label>` in the app until reload —
+  which is why the fault followed the operator back to POS and Orders and
+  vanished after a cold start. All four selectors are now scoped to their
+  container class. The earlier `label { flex-direction: row }` line in
+  `globals.css` was a misdiagnosis and is removed. `npm run check:css-scope`
+  fails on any CSS Module selector that does not start with a hashed class.
+
+- The Tab A9 was deliberately wiped by an uninstall to install the debug beta;
+  the owner confirmed the sales on it were mock data. The tablet needs an online
+  owner sign-in again, and quick-add chips stay hidden until it has saved sales.
+
 - POLISH-01 Lock + Dashboard is on `origin/main` as
   `10765f8104f37ae3de4c62326b963029e6418676`. Lock sign-in cleaned and scaled
   with in-app staff list; Dashboard today follows the local date, quiet today
@@ -1247,6 +1279,34 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-28 — POLISH-01 shared shell, pills, and POS category bloom
+
+- Phosphor replaced with Boxicons. Sliding green pills on Dine In/Take Away,
+  Cash/Card, top nav, Orders filters, Reports tabs, and Products categories.
+- One App-owned Header so the nav pill can animate across screens; lazy
+  screens fade without a cream flash. CSS Module scope guard added.
+- POS category cards keep a clipped in-card green bloom; a row-level sliding
+  pill leaked into the 10px gaps and was rejected. Product grid stays still.
+- QuickAddRow is its own component folder. No barrels, no dumped CSS.
+
+### 2026-08-27 — POLISH-01 quick-add equal chips
+
+- Owner rejected four variable-width name+price chips: ragged widths, names
+  cut off, fourth chip clipped by `overflow: hidden`.
+- Query cap 4→3. Chips are equal `flex: 1; min-width: 0`, name only at 15px,
+  row spans search+10px gap to the menu-column right edge (636px row, ~205px
+  each of three).
+- Passed: `npm run build`, `check:pos`, `check:css-scope`, `check:offline`.
+  `graphify update .` ran. `android:sync` + debug beta + `adb install -r`
+  succeeded on SM-X115 `R8YX91AKWXJ`. Tablet was Dozing with lockscreen;
+  visual check needs owner unlock. Chips stay empty until last-7-day sales.
+- Follow-up: `flex: 1` alone stretched a lone chip across the whole 636px row
+  when fewer than three products qualified. Chips now carry
+  `max-width: calc((100% - 20px) / 3)`, so one or two keep the three-across
+  size and left-align. Rebuilt, rechecked, reinstalled on the tablet.
+- Exact next action: owner unlocks Tab A9, confirms three flush equal chips,
+  then review/commit. No push.
 
 ### 2026-08-26 — OPTIONS-04 honest costs and packaging closeout
 

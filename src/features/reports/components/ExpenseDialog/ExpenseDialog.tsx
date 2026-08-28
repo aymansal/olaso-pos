@@ -1,4 +1,4 @@
-import { X } from '@phosphor-icons/react';
+import { X } from '@boxicons/react';
 import { useState } from 'react';
 import type {
   ExpenseInput,
@@ -70,7 +70,7 @@ export function ExpenseDialog({
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="expense-title">
         <header>
           <h2 id="expense-title">{expense ? 'Correct expense' : 'Add expense'}</h2>
-          <button type="button" onClick={onClose} aria-label="Close expense"><X size={18} /></button>
+          <button type="button" onClick={onClose} aria-label="Close expense"><X width={18} height={18} /></button>
         </header>
         <div className={styles.grid}>
           <label>Category<input autoFocus value={category} onChange={(event) => setCategory(event.target.value)} /></label>

@@ -1,9 +1,4 @@
-import {
-  ArrowDown,
-  PencilSimple,
-  SlidersHorizontal,
-  X,
-} from '@phosphor-icons/react';
+import { ArrowDown, Pencil, SliderAlt, X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import type {
   ManagedIngredient,
@@ -60,7 +55,7 @@ export function StockDetailPanel({
     return (
       <aside className={styles.panel} aria-labelledby="stock-item-title">
         <div className={styles.empty}>
-          <SlidersHorizontal size={25} aria-hidden="true" />
+          <SliderAlt width={25} height={25} aria-hidden="true" />
           <h2 id="stock-item-title">Select an ingredient</h2>
           <p>Choose a live stock record to review its balance and movements.</p>
         </div>
@@ -87,7 +82,7 @@ export function StockDetailPanel({
         </span>
         <span className={styles.headerActions}>
           <button type="button" onClick={() => onEdit(ingredient)}>
-            <PencilSimple size={12} aria-hidden="true" />
+            <Pencil width={12} height={12} aria-hidden="true" />
             Edit
           </button>
           <strong
@@ -242,7 +237,7 @@ export function StockDetailPanel({
           disabled={archived}
           onClick={() => onAdjust(ingredient, 'set-count')}
         >
-          <SlidersHorizontal size={15} aria-hidden="true" />
+          <SliderAlt width={15} height={15} aria-hidden="true" />
           <span>Adjust count</span>
         </button>
         <button
@@ -251,7 +246,7 @@ export function StockDetailPanel({
           disabled={archived}
           onClick={() => onReceivePurchase(ingredient)}
         >
-          <ArrowDown size={15} aria-hidden="true" />
+          <ArrowDown width={15} height={15} aria-hidden="true" />
           <span>Receive purchase</span>
         </button>
       </footer>
@@ -273,7 +268,7 @@ export function StockDetailPanel({
               onClick={() => setShowHistory(false)}
               aria-label="Close movement history"
             >
-              <X size={17} aria-hidden="true" />
+              <X width={17} height={17} aria-hidden="true" />
             </button>
           </header>
           <div className={styles.historyRows}>

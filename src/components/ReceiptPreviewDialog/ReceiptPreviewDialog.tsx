@@ -1,4 +1,4 @@
-import { X } from '@phosphor-icons/react';
+import { X } from '@boxicons/react';
 import { formatMoney } from '../../lib/money';
 import styles from './ReceiptPreviewDialog.module.css';
 
@@ -49,7 +49,7 @@ export function ReceiptPreviewDialog({
             <h2 id="receipt-preview-title">{receipt.receiptNumber}</h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close receipt preview">
-            <X size={18} aria-hidden="true" />
+            <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
         <dl className={styles.meta}>

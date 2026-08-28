@@ -1,9 +1,4 @@
-import {
-  ArrowsDownUp,
-  CheckCircle,
-  MagnifyingGlass,
-  Plus,
-} from '@phosphor-icons/react';
+import { ArrowDownUp, CheckCircle, Search, Plus } from '@boxicons/react';
 import type {
   ManagedCategory,
   ManagedProduct,
@@ -74,14 +69,14 @@ export function ProductCatalogPanel({
           className={styles.addProduct}
           onClick={onAddProduct}
         >
-          <Plus size={15} weight="regular" aria-hidden="true" />
+          <Plus width={15} height={15} aria-hidden="true" />
           <span>Add product</span>
         </button>
       </header>
 
       <div className={styles.toolbar}>
         <label className={styles.search}>
-          <MagnifyingGlass size={16} weight="regular" aria-hidden="true" />
+          <Search width={16} height={16} aria-hidden="true" />
           <input
             aria-label="Search products"
             placeholder="Search product"
@@ -90,7 +85,7 @@ export function ProductCatalogPanel({
           />
         </label>
         <label className={styles.filter}>
-          <CheckCircle size={15} weight="regular" aria-hidden="true" />
+          <CheckCircle width={15} height={15} aria-hidden="true" />
           <select
             aria-label="Filter availability"
             value={availability}
@@ -105,7 +100,7 @@ export function ProductCatalogPanel({
           </select>
         </label>
         <label className={styles.sort}>
-          <ArrowsDownUp size={15} weight="regular" aria-hidden="true" />
+          <ArrowDownUp width={15} height={15} aria-hidden="true" />
           <select
             aria-label="Sort products"
             value={sort}

@@ -1,11 +1,11 @@
 import { Card } from '@astryxdesign/core/Card';
+import { Trash } from '@boxicons/react';
 import type { Product } from '../../data/products';
 import type { PaymentMethod, ServiceMode } from '../../posSession';
 import { OrderItemCard } from '../OrderItemCard/OrderItemCard';
 import { PaymentMethodControl } from '../PaymentMethodControl/PaymentMethodControl';
 import { PaymentSummary } from '../PaymentSummary/PaymentSummary';
 import { PrimaryAction } from '../PrimaryAction/PrimaryAction';
-import { ReceiptHeader } from '../ReceiptHeader/ReceiptHeader';
 import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
 import styles from './ReceiptRail.module.css';
 
@@ -32,6 +32,7 @@ type ReceiptRailProps = {
   onDecrement: (lineId: string) => void;
   onIncrement: (lineId: string) => void;
   onRemove: (lineId: string) => void;
+  onClearCart: () => void;
   onServiceModeChange: (serviceMode: ServiceMode) => void;
   onPaymentMethodChange: (paymentMethod: PaymentMethod) => void;
   onPlaceOrder: () => Promise<void>;
@@ -50,17 +51,30 @@ export function ReceiptRail({
   onDecrement,
   onIncrement,
   onRemove,
+  onClearCart,
   onServiceModeChange,
   onPaymentMethodChange,
   onPlaceOrder,
 }: ReceiptRailProps) {
   return (
     <Card className={styles.rail} width={320} height={688} padding={0}>
-      <ReceiptHeader />
       <SegmentedControl value={serviceMode} onChange={onServiceModeChange} />
       <PaymentMethodControl value={paymentMethod} onChange={onPaymentMethodChange} />
       <div className={styles.orderSection}>
-        <span className={styles.sectionLabel}>Order list</span>
+        <div className={styles.sectionHeading}>
+          <span className={styles.sectionLabel}>Order list</span>
+          {lines.length > 0 ? (
+            <button
+              className={styles.clearCart}
+              type="button"
+              aria-label="Clear cart"
+              disabled={checkoutProcessing}
+              onClick={onClearCart}
+            >
+              <Trash width={18} height={18} aria-hidden="true" />
+            </button>
+          ) : null}
+        </div>
         <div className={styles.orderList}>
           {lines.length > 0
             ? lines.map(({ id, product, quantity, modifierSummary }) => (

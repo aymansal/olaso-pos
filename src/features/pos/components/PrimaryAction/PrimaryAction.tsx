@@ -1,5 +1,5 @@
 import { Button } from '@astryxdesign/core/Button';
-import { ArrowRight, CaretDoubleRight } from '@phosphor-icons/react';
+import { ArrowRight, ChevronsRight } from '@boxicons/react';
 import { formatMoney } from '../../../../lib/money';
 import styles from './PrimaryAction.module.css';
 
@@ -24,8 +24,8 @@ export function PrimaryAction({
       label={`Place order, ${amount}`}
       width={296}
       variant="primary"
-      icon={<ArrowRight size={18} />}
-      endContent={<CaretDoubleRight size={22} />}
+      icon={<ArrowRight width={18} height={18} />}
+      endContent={<ChevronsRight width={22} height={22} />}
       isDisabled={disabled}
       isLoading={processing}
       clickAction={onPlaceOrder}

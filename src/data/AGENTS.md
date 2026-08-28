@@ -8,8 +8,10 @@ tablet's local SQLite operational record.
 ## Ownership
 
 - `usePosData.ts` hydrates the POS from the local operational cache and asks
-  the shared worker to synchronize after a committed sale. Receipt language
-  comes from the App-owned saved terminal preferences, not another POS read.
+ the shared worker to synchronize after a committed sale. Receipt language
+ comes from the App-owned saved terminal preferences, not another POS read. It
+ also supplies the POS quick-add ranking with the same load, so a committed
+ sale refreshes it without another screen-level read.
 - `useOrdersData.ts` renders the bounded local history page before remote work
   settles, requests cloud pages only while Orders is mounted, merges rows by
   the sale idempotency key while preserving tablet-local print state, and
@@ -47,8 +49,10 @@ tablet's local SQLite operational record.
   cache refresh gate, and visible-hook completion revision. Automatic runs
   start only after local POS paint (double rAF + idle callback); manual Sync
   remains immediate.
-- `offlineViews.ts` owns bounded tablet-only Products/Stock detail and
-  Dashboard/Reports fallback reads; it never performs management writes.
+- `offlineViews.ts` owns bounded tablet-only Products/Stock detail,
+ Dashboard/Reports fallback reads, and the POS quick-add ranking over the last
+ seven business days; it never performs management writes. Quick add ranks by
+ units sold, the same rule as the Dashboard best seller.
 - `identitySession.ts` derives and persists one protected local session/PIN
   verifier/attempt-state record per provisioned staff profile after successful
   sign-in; it also promotes an offline-created profile's protected verifier and

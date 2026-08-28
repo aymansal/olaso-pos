@@ -1,4 +1,4 @@
-import { X } from '@phosphor-icons/react';
+import { X } from '@boxicons/react';
 import { useState } from 'react';
 import type { StaffCreationInput } from '../../../../data/localStaff.ts';
 import styles from './StaffDialog.module.css';
@@ -43,7 +43,7 @@ export function StaffDialog({
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="staff-dialog-title">
         <header>
           <h2 id="staff-dialog-title">Add staff</h2>
-          <button type="button" onClick={onClose} aria-label="Close staff form"><X size={18} /></button>
+          <button type="button" onClick={onClose} aria-label="Close staff form"><X width={18} height={18} /></button>
         </header>
         <div className={styles.form}>
           <label>

@@ -1,17 +1,4 @@
-import {
-  CheckCircle,
-  Clock,
-  DotsThree,
-  Info,
-  MapPin,
-  Package,
-  Printer,
-  Receipt,
-  ArrowsClockwise,
-  ArrowCounterClockwise,
-  Storefront,
-  User,
-} from '@phosphor-icons/react';
+import { CheckCircle, Clock, DotsHorizontalRounded, InfoCircle, Pin, Package, Printer, Receipt, RefreshCw, RotateCcw, Store, User } from '@boxicons/react';
 import { useState } from 'react';
 import { ReceiptPreviewDialog } from '../../../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
@@ -56,7 +43,7 @@ export function OrderDetailPanel({
   if (!order) {
     return (
       <aside className={`${styles.panel} ${styles.empty}`} aria-live="polite">
-        <Receipt size={28} aria-hidden="true" />
+        <Receipt width={28} height={28} aria-hidden="true" />
         <strong>No order selected</strong>
         <span>Choose a saved order to inspect its receipt snapshot.</span>
       </aside>
@@ -68,8 +55,8 @@ export function OrderDetailPanel({
     0,
   );
   const metadata = [
-    { icon: Storefront, value: serviceLabel(order), label: 'Service' },
-    { icon: MapPin, value: order.receipt.tableLabel ?? '—', label: 'Table' },
+    { icon: Store, value: serviceLabel(order), label: 'Service' },
+    { icon: Pin, value: order.receipt.tableLabel ?? '—', label: 'Table' },
     {
       icon: Clock,
       value: new Date(order.receipt.completedAt).toLocaleTimeString(
@@ -116,7 +103,7 @@ export function OrderDetailPanel({
             <strong>{stateLabel(order)}</strong>
           </span>
           <button type="button" aria-label="Cancel order" title={canCancel ? 'Cancel this whole sale' : 'This order cannot be corrected'} disabled={!canCancel || cancelling} onClick={() => setCancellationOpen(true)}>
-            {canCancel ? <ArrowCounterClockwise size={16} weight="regular" aria-hidden="true" /> : <DotsThree size={16} weight="regular" aria-hidden="true" />}
+            {canCancel ? <RotateCcw width={16} height={16} aria-hidden="true" /> : <DotsHorizontalRounded width={16} height={16} aria-hidden="true" />}
           </button>
         </span>
       </header>
@@ -124,7 +111,7 @@ export function OrderDetailPanel({
       <div className={styles.metadata}>
         {metadata.map(({ icon: Icon, value, label }) => (
           <span className={styles.metaItem} key={label}>
-            <Icon size={16} weight="regular" aria-hidden="true" />
+            <Icon width={16} height={16} aria-hidden="true" />
             <span>
               <strong>{value}</strong>
               <small>{label}</small>
@@ -136,7 +123,7 @@ export function OrderDetailPanel({
       <div className={styles.customer}>
         <span className={styles.customerIdentity}>
           <span className={styles.customerIcon}>
-            <User size={16} weight="regular" aria-hidden="true" />
+            <User width={16} height={16} aria-hidden="true" />
           </span>
           <span>
             <small>Customer</small>
@@ -162,7 +149,7 @@ export function OrderDetailPanel({
           return (
             <article className={styles.item} key={`${item.productName}-${index}`}>
               <span className={`${styles.itemIcon} ${index === 0 ? styles.itemIconActive : ''}`}>
-                <Package size={17} weight="regular" aria-hidden="true" />
+                <Package width={17} height={17} aria-hidden="true" />
               </span>
               <span className={styles.itemCopy}>
                 <strong>{item.productName}</strong>
@@ -214,7 +201,7 @@ export function OrderDetailPanel({
           title={canReprint ? 'Print the immutable saved receipt' : printNote}
           onClick={() => void onReprint(order)}
         >
-          <Printer size={17} weight="regular" aria-hidden="true" />
+          <Printer width={17} height={17} aria-hidden="true" />
           <span>{reprinting ? 'Printing…' : 'Reprint'}</span>
         </button>
         <button
@@ -222,7 +209,7 @@ export function OrderDetailPanel({
           className={styles.preview}
           onClick={() => setPreviewOpen(true)}
         >
-          <Receipt size={17} weight="regular" aria-hidden="true" />
+          <Receipt width={17} height={17} aria-hidden="true" />
           <span>View receipt</span>
         </button>
         <button
@@ -232,20 +219,20 @@ export function OrderDetailPanel({
           onClick={() => void onRetry(order.localSaleId)}
         >
           {canRetry ? (
-            <ArrowsClockwise size={18} weight="regular" aria-hidden="true" />
+            <RefreshCw width={18} height={18} aria-hidden="true" />
           ) : (
-            <CheckCircle size={18} weight="regular" aria-hidden="true" />
+            <CheckCircle width={18} height={18} aria-hidden="true" />
           )}
           <span>{retrying ? 'Retrying…' : canRetry ? 'Retry sync' : 'Synced'}</span>
         </button>
         <button type="button" className={styles.cancelOrder} disabled={!canCancel || cancelling} onClick={() => setCancellationOpen(true)}>
-          <ArrowCounterClockwise size={17} weight="regular" aria-hidden="true" />
+          <RotateCcw width={17} height={17} aria-hidden="true" />
           <span>{cancelling ? 'Cancelling…' : 'Cancel'}</span>
         </button>
       </div>
 
       <div className={styles.stockNote} title={order.printError ?? printNote}>
-        <Info size={13} weight="regular" aria-hidden="true" />
+        <InfoCircle width={13} height={13} aria-hidden="true" />
         <span>{printNote} · {syncStateNote}</span>
       </div>
       {previewOpen ? (

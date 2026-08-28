@@ -144,35 +144,57 @@
   display: flex;
   width: 798px;
   height: 44px;
-  gap: 4px;
+  overflow: hidden;
   padding: 0;
   border-radius: 22px;
   background: var(--olaso-table-head);
 }
 
+.indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--count, 1));
+  height: 100%;
+  border-radius: 22px;
+  background: var(--olaso-green);
+  transform: translateX(calc(var(--index, 0) * 100%));
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
 .tabs button {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: center;
+  min-width: 0;
   height: 44px;
   gap: 7px;
   padding: 0;
   border: 0;
   border-radius: 22px;
-  color: var(--olaso-text-meta);
+  color: var(--olaso-text-dark-soft);
   background: transparent;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
+  transition: color 180ms ease;
+  white-space: nowrap;
 }
 
 .tabs button.activeTab {
-  color: var(--olaso-text);
-  background: var(--olaso-white);
-  box-shadow: 0 1px 4px rgba(24, 53, 30, 0.07);
-  font-weight: 700;
+  color: var(--olaso-white);
 }
 
 .activeTab svg {
-  color: var(--olaso-green);
+  color: var(--olaso-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator,
+  .tabs button {
+    transition: none;
+  }
 }
