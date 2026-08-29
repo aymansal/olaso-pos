@@ -88,7 +88,7 @@ SYNC-01.
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
-| SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — SYNC-02 lists the sale after retry; no UI copy |
+| SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main`; SYNC-02 lists the sale after retry; no UI copy |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | pending |
 | SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | pending |
 | SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | pending |
@@ -284,7 +284,7 @@ Café SQLite not wiped. Install-over debug APK on SM-X115 `R8YX91AKWXJ`.
 
 ### SYNC-06 — Orders retry must unstick or honestly refuse chained sales
 
-**Status:** done — SYNC-02 + SYNC-03 cover Orders Retry; added check; no UI copy
+**Status:** done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main`; SYNC-02 + SYNC-03 cover Orders Retry; added check; no UI copy
 
 **Objective:** Retry on an order whose outbox parent is a stuck management
 row must either reset that blocking parent when policy allows, or tell the
@@ -424,7 +424,8 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
   (https://developer.android.com/topic/architecture/data-layer/offline-first).
 - Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped.
   Live chained Retry not reproduced (0016/0017 already synced).
-- Exact next action: SYNC-07.
+- Exact next action: SYNC-07. Pushed `79b10d6555fb5e529d806e575677e7af4cbf1ced`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-05 keep abandon only for true permanent conflicts
 

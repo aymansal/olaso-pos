@@ -176,7 +176,7 @@ polished product.
 | SYNC-03 | Do not skip sale drain when management processed/failed in-batch | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` | same ledger |
 | SYNC-04 | Classify sale sync failures so automatic retry stays correct | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` | same ledger |
 | SYNC-05 | Keep abandon only for true permanent sale conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` | same ledger |
-| SYNC-06 | Orders retry must unstick or honestly refuse chained sales | done — verify-only; SHA after push | same ledger |
+| SYNC-06 | Orders retry must unstick or honestly refuse chained sales | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` | same ledger |
 | SYNC-07 | Honest Settings waiting count and copy | pending | same ledger |
 | SYNC-08 | Manual Sync must not look successful when the worker never started | pending | same ledger |
 | SYNC-09 | Online Dashboard/Reports after successful upload; unsynced fallback only if required | pending | same ledger |

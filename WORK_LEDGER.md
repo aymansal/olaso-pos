@@ -40,7 +40,7 @@ remaining goal and card sequence.
 | SYNC-03 — Reconnect must not skip sales after management processed | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 — Sale failure classification / automatic retry | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 — Permanent abandon only for true conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
-| SYNC-06 — Orders retry vs management parent | done — verify-only; SHA after push |
+| SYNC-06 — Orders retry vs management parent | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` |
 | SYNC-07 — Settings waiting count/copy | pending |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
@@ -135,6 +135,7 @@ remaining goal and card sequence.
   stopped at unset `OLASO_OWNER_PIN`. `check:reconnect`. `npx tsc -b`.
   Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped.
   Live chained Retry not reproduced (0016/0017 already synced).
+  On `origin/main` as `79b10d6555fb5e529d806e575677e7af4cbf1ced`.
   Exact next action: SYNC-07.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
@@ -1384,7 +1385,8 @@ remaining goal and card sequence.
 - Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
   Success on SM-X115 `R8YX91AKWXJ`. Café DB untouched. Live chained Retry not
   reproduced (0016/0017 already synced); automated check is the proof.
-- Exact next action: SYNC-07.
+- Exact next action: SYNC-07. Pushed `79b10d6555fb5e529d806e575677e7af4cbf1ced`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-05 keep abandon only for true permanent conflicts
 
