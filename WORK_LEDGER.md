@@ -38,7 +38,7 @@ remaining goal and card sequence.
 | SYNC-01 — Convex sale snapshot schema so POS tickets insert | done — `ecf8500465db6e4c434a60dc991b4a78dd5224db` on `origin/main`; owner Manual Sync 29 Aug landed 0826-0001…0017 plus category delete; 0826-0018 auto-synced; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
 | SYNC-02 — Failed management must not hide later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 — Reconnect must not skip sales after management processed | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
-| SYNC-04 — Sale failure classification / automatic retry | pending |
+| SYNC-04 — Sale failure classification / automatic retry | done — pending SHA on `origin/main` |
 | SYNC-05 — Permanent abandon only for true conflicts | pending |
 | SYNC-06 — Orders retry vs management parent | pending |
 | SYNC-07 — Settings waiting count/copy | pending |
@@ -124,20 +124,19 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- SYNC-03 (29 Aug 2026): reconnect no longer `continue`s past sales because
-  staff/catalog/inventory `processed > 0`. After inventory the same batch
-  falls through to `syncPendingSales`, then costs, then the existing empty
-  sales+costs `break`. `listPendingOutbox` still hides children of **pending**
-  parents. Android research: stay in the existing Capacitor WebView reconnect
-  worker; WorkManager is for work that outlives the visible app, which Olaso
-  rejects while locked/hidden. No second worker, no native plugin, no SYNC-02
-  SQL change. Checks: `npm run check:reconnect` (source assertion: the
-  processed-sum `continue` is gone; `syncPendingSales` and `batch < 10`
-  remain), `npx tsc -b` pass. Install-over debug APK succeeded on SM-X115
-  `R8YX91AKWXJ`. Café SQLite was not wiped or injected; the 0826 queue was
-  already drained. Automated source check is the proof of the skip bug.
-  On `origin/main` as `31eb5fce8d7897b3525c5657b60f222a8d033fe8`.
-- Exact next action: SYNC-04.
+- SYNC-04 (29 Aug 2026): `describeSaleSyncFailure` classifies Convex extra-field
+  / validator / `INVALID_ARGUMENT` rejects as `Cloud rejected this saved order. Use Sync now to retry.`
+  before the generic fallback. Automatic reconnect still retries only
+  `CONNECTION_SYNC_FAILURE`; Manual Sync still retries all failed. Orders
+  failed `syncNote` uses `order.syncError` when present. Settings already
+  shows `last_error` via `lastSyncError`. Android research: classification is
+  React/data only; no native plugin, WorkManager, or Capacitor change.
+  Checks: `check:sales` local half (cloud half stopped at unset PIN),
+  `check:reconnect` (classified sentence stays failed), `npx tsc -b`,
+  `npm run build` via `android:sync`. Install-over debug APK succeeded on
+  SM-X115 `R8YX91AKWXJ`. Café SQLite was not wiped or injected; no live
+  connection drop or business fail was forced. SHA pending after commit.
+- Exact next action: SYNC-05.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
@@ -1344,6 +1343,28 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — SYNC-04 classify cloud sale rejects without auto-retry
+
+- In `describeSaleSyncFailure`, after auth/network/permanent branches and
+  before the fallback, extra-field / `not in the validator` /
+  `ArgumentValidation` (parsed message) or `INVALID_ARGUMENT` (raw error)
+  returns exactly `Cloud rejected this saved order. Use Sync now to retry.`
+  Secret `Uncaught ConvexError: secret server detail` still falls back to
+  `Sale synchronization failed.` Convex dumps and field names are not stored.
+- `failSale` already persists that classified sentence. `makeConnectivityFailuresAvailable`
+  still matches only `CONNECTION_SYNC_FAILURE`. Did not touch
+  `PERMANENT_SALE_SYNC_FAILURE`, `abandonSale`, SYNC-02 SQL, or reconnect
+  `continue`.
+- Orders `OrderDetailPanel`: failed `syncNote` is `order.syncError` when
+  non-empty, else the previous hardcoded sentence.
+- Checks: extra-field fixture in `check-sales.mjs`; classified sentence
+  left failed in `check-reconnect.mjs`. `npm run check:sales` local half
+  passed (PIN unset stopped cloud half). `check:reconnect` and `npx tsc -b`
+  pass.
+- Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
+  Success on SM-X115 `R8YX91AKWXJ`. Café DB untouched.
+- Exact next action: SYNC-05.
 
 ### 2026-08-29 — SYNC-03 attempt eligible sales after management work
 

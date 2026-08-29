@@ -92,6 +92,12 @@ const insert = database.prepare(
 insert.run('pending', 'sale-pending', 'pending', null);
 insert.run('connection', 'sale-connection', 'failed', CONNECTION_SYNC_FAILURE);
 insert.run('business', 'sale-business', 'failed', 'A sale product is no longer available.');
+insert.run(
+  'schema',
+  'sale-schema',
+  'failed',
+  'Cloud rejected this saved order. Use Sync now to retry.',
+);
 
 assert.deepEqual(
   (await listPendingOutboxFromDatabase(adapter, 1, 10)).map((row) => row.operationId),
@@ -106,10 +112,14 @@ assert.equal(
   database.prepare("SELECT state FROM outbox WHERE operation_id = 'business'").get().state,
   'failed',
 );
+assert.equal(
+  database.prepare("SELECT state FROM outbox WHERE operation_id = 'schema'").get().state,
+  'failed',
+);
 await makePendingOutboxAvailableInDatabase(adapter);
 assert.equal(
   database.prepare("SELECT COUNT(*) count FROM outbox WHERE state = 'pending'").get().count,
-  3,
+  4,
 );
 database.close();
 

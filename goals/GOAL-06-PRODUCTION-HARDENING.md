@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; SYNC-01 through SYNC-03 done; next SYNC-04; POLISH-01 paused for remaining SYNC cards
+**Status:** active; SYNC-01 through SYNC-04 done; next SYNC-05; POLISH-01 paused for remaining SYNC cards
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -174,7 +174,7 @@ polished product.
 | SYNC-01 | Persist size/choice fields on Convex sale receipt snapshots so accept can insert | done — 0826-0001…0018 in Convex | [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) |
 | SYNC-02 | Stop failed management parents from hiding later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` | same ledger |
 | SYNC-03 | Do not skip sale drain when management processed/failed in-batch | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` | same ledger |
-| SYNC-04 | Classify sale sync failures so automatic retry stays correct | pending | same ledger |
+| SYNC-04 | Classify sale sync failures so automatic retry stays correct | done — pending SHA on `origin/main` | same ledger |
 | SYNC-05 | Keep abandon only for true permanent sale conflicts | pending | same ledger |
 | SYNC-06 | Orders retry must unstick or honestly refuse chained sales | pending | same ledger |
 | SYNC-07 | Honest Settings waiting count and copy | pending | same ledger |

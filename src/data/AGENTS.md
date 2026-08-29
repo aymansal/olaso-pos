@@ -171,7 +171,10 @@ tablet's local SQLite operational record.
   is unavailable, upsert only the authenticated profile and preserve all
   others.
 - Persist only safe operator sync-failure descriptions; never store raw server
-  responses in SQLite or surface them to the application.
+  responses in SQLite or surface them to the application. Convex extra-field /
+  validator rejects persist `Cloud rejected this saved order. Use Sync now to retry.`
+  and stay failed until Manual Sync; automatic reconnect retries only the
+  connection sentence.
 - Device ID is immutable after first setup. Manual sync releases local retry
   backoff, processes at most 10 sales, and performs one fresh bounded snapshot
   request only after the outbox is empty.

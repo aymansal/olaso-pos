@@ -1,8 +1,8 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01, SYNC-02, and SYNC-03 done. Owner Manual Sync 29 Aug landed
+**Status:** SYNC-01 through SYNC-04 done. Owner Manual Sync 29 Aug landed
 0826-0001…0017 and the chained category delete; 0826-0018 auto-synced.
-SYNC-04 through SYNC-09 remain latent; do not treat the drained queue as
+SYNC-05 through SYNC-09 remain latent; do not treat the drained queue as
 proof they are gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
@@ -21,8 +21,8 @@ bug pauses the current card and overrides ordinary order. POLISH-01 stays
 pending. HARD-08 cannot accept the application while tablet sales never land
 in Convex.
 
-One goal, one card at a time. SYNC-04 is next. Do not start SYNC-05 through
-SYNC-09 until SYNC-04 is pushed.
+One goal, one card at a time. SYNC-05 is next. Do not start SYNC-06 through
+SYNC-09 until SYNC-05 is pushed.
 
 ## Diagnosis already done (do not repeat as a card)
 
@@ -86,7 +86,7 @@ SYNC-01.
 | SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | done — Convex has 0826-0001…0018; SHA `ecf8500465db6e4c434a60dc991b4a78dd5224db` |
 | SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
-| SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | pending |
+| SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — pending SHA on `origin/main` |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | pending |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | pending |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | pending |
@@ -222,7 +222,7 @@ Automated source check is the proof of the skip bug.
 
 ### SYNC-04 — Retry sale business failures on Manual Sync; classify schema noise
 
-**Status:** pending
+**Status:** done — classified sentence `Cloud rejected this saved order. Use Sync now to retry.`
 
 **Objective:** a sale that failed for a retryable reason must run again on
 Manual Sync (already resets all failed). Automatic reconnect should retry
@@ -245,11 +245,16 @@ automatically; one business failure stays failed until Manual Sync.
 **Must not do:** store full Convex schema dumps in SQLite or the UI. Do not
 auto-retry permanent conflicts (SYNC-05 owns abandon policy).
 
-**Acceptance evidence:** classification check; Settings/Orders show the
-classified sentence, not only the generic fallback, for a reproduced
-business failure.
+**Acceptance evidence:** extra-field / `INVALID_ARGUMENT` fixture returns
+exactly `Cloud rejected this saved order. Use Sync now to retry.` and is not
+`CONNECTION_SYNC_FAILURE`. Receipt-number, permanent product-unavailable, and
+secret ConvexError still pass. `check:reconnect` leaves that classified
+sentence failed while Manual Sync would retry all failed. Orders failed
+detail uses `syncError` when present. Settings already surfaces `last_error`.
+Install-over debug APK on SM-X115 `R8YX91AKWXJ` succeeded. Café SQLite was
+not wiped; no live connection/business fail was forced.
 
-**Next action:** SYNC-05.
+**Next action:** none for this card. SYNC-05 is next.
 
 ### SYNC-05 — Keep abandon only for true permanent sale conflicts
 
@@ -389,6 +394,19 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — SYNC-04 classify cloud sale rejects without auto-retry
+
+- `describeSaleSyncFailure` now returns exactly
+  `Cloud rejected this saved order. Use Sync now to retry.` for extra-field /
+  validator / ArgumentValidation / `INVALID_ARGUMENT` rejects that are not
+  the receipt-number case. Generic unknown ConvexError stays
+  `Sale synchronization failed.` Automatic retry still only
+  `CONNECTION_SYNC_FAILURE`.
+- Orders failed `syncNote` uses `order.syncError` when non-empty.
+- Checks: `check:sales` local half, `check:reconnect`, `npx tsc -b`.
+  Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café DB untouched.
+- Exact next action: SYNC-05.
 
 ### 2026-08-29 — SYNC-03 sales run after management in the same batch
 

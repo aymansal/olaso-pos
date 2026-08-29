@@ -940,6 +940,13 @@ export function describeSaleSyncFailure(caught: unknown, fallback: string) {
   if (PERMANENT_SALE_SYNC_FAILURE.test(message)) {
     return message.length <= 180 ? message : fallback;
   }
+  const raw = caught instanceof Error ? caught.message : String(caught ?? '');
+  if (
+    /extra field|not in the validator|ArgumentValidation/i.test(message)
+    || /INVALID_ARGUMENT/i.test(raw)
+  ) {
+    return 'Cloud rejected this saved order. Use Sync now to retry.';
+  }
   return fallback;
 }
 

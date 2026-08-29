@@ -73,7 +73,7 @@ export function OrderDetailPanel({
     ? styles.statusAttention
     : styles.statusComplete;
   const syncNote = order.syncState === 'failed'
-    ? 'Cloud synchronization needs attention. Retry when online.'
+    ? (order.syncError || 'Cloud synchronization needs attention. Retry when online.')
     : order.syncState === 'pending'
       ? 'Saved locally · waiting for cloud acknowledgement'
       : 'Cancellation and refund permissions await owner confirmation';

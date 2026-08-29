@@ -11,6 +11,7 @@ import {
   describeSaleSyncFailure,
   prepareSale,
 } from '../src/data/localSales.ts';
+import { CONNECTION_SYNC_FAILURE } from '../src/data/outbox.ts';
 import { loadOperationalCache } from '../src/data/operationalCache.ts';
 import {
   recordSalePrintAttempt,
@@ -102,6 +103,12 @@ assert.equal(
   describeSaleSyncFailure(new Error('Uncaught ConvexError: secret server detail'), 'Sale synchronization failed.'),
   'Sale synchronization failed.',
 );
+const extraFieldFailure = describeSaleSyncFailure(
+  new Error('Uncaught ConvexError: {"code":"INVALID_ARGUMENT","message":"Object contains extra field `choiceValueIds` that is not in the validator."}'),
+  'Sale synchronization failed.',
+);
+assert.equal(extraFieldFailure, 'Cloud rejected this saved order. Use Sync now to retry.');
+assert.notEqual(extraFieldFailure, CONNECTION_SYNC_FAILURE);
 database.exec(`
   INSERT INTO categories
     (id, key, name, sort_order, status, revision, updated_at)
