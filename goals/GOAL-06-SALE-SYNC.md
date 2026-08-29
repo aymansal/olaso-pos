@@ -92,7 +92,7 @@ SYNC-01.
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main`; SYNC-02 lists the sale after retry; no UI copy |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
-| SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | done — verify-only; SHA follow-up |
+| SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
 
 ## Work cards
 
@@ -451,7 +451,8 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
   second analytics store.
 - Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Samsung keyguard blocked
   Dashboard; PIN not invented. Café SQLite not wiped.
-- Exact next action: POLISH-01.
+- Exact next action: POLISH-01. Pushed `590696ebe2ebd6776fec144bc4950808621242e0`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-08 throw when reconnect never starts
 

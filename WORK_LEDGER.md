@@ -43,7 +43,7 @@ remaining goal and card sequence.
 | SYNC-06 — Orders retry vs management parent | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` |
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
-| SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — verify-only; SHA follow-up |
+| SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | next — customize footer already on `origin/main` as `7e9e6b573ad9f6813a91f05bef1aa547728f107e` |
 | HARD-08 — Final endurance and acceptance | pending |
 
@@ -144,6 +144,7 @@ remaining goal and card sequence.
   and is rejected here. `check:offline` source-match. `npx tsc -b`.
   `npm run build`. Did not run `seed:dev` / `check:dashboard` /
   `check:reports`. Exact next action: POLISH-01.
+  On `origin/main` as `590696ebe2ebd6776fec144bc4950808621242e0`.
 - Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Samsung keyguard blocked
   the UI; PIN not invented. Café SQLite not wiped. Proof is Convex tables
   plus hook source-match.
@@ -1450,7 +1451,8 @@ remaining goal and card sequence.
   Samsung keyguard was showing (Sat 29 Aug); Olaso `MainActivity` sat
   underneath. PIN not invented. Dashboard/Reports not opened. Proof is
   Convex `dailyMetrics` plus `check:offline` source-match.
-- Exact next action: POLISH-01. SHA follow-up after push.
+- Exact next action: POLISH-01. Pushed `590696ebe2ebd6776fec144bc4950808621242e0`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-07 count waiting Settings sales not all outbox rows
 

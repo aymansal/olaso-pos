@@ -179,7 +179,7 @@ HARD-08 then runs final endurance against the polished product.
 | SYNC-06 | Orders retry must unstick or honestly refuse chained sales | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` | same ledger |
 | SYNC-07 | Honest Settings waiting count and copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` | same ledger |
 | SYNC-08 | Manual Sync must not look successful when the worker never started | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` | same ledger |
-| SYNC-09 | Online Dashboard/Reports after successful upload; unsynced fallback only if required | done — verify-only; SHA follow-up | same ledger |
+| SYNC-09 | Online Dashboard/Reports after successful upload; unsynced fallback only if required | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` | same ledger |
 | POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | next |
 | POLISH-02 | Apply and verify the owner's final changes one screen at a time | pending | — |
 | HARD-08 | Run service endurance, final owner acceptance, and release closeout | pending | — |
