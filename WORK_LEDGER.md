@@ -126,8 +126,10 @@ remaining goal and card sequence.
 ## Current Checkpoint
 
 - POLISH-01 (29 Aug 2026): Product-card price uses `--olaso-text-dark-soft`
-  so it sits between the name and the old gray. Committing charts,
-  slide-to-order, and product-card polish together.
+  so it sits between the name and the old gray. Charts, slide-to-order, and
+  product-card polish on `origin/main` as
+  `441b54292cc5019659684aa60b43d613f011730c`. Exact next action: owner
+  continues POLISH-01.
 - POLISH-01 (29 Aug 2026): Dashboard Sales rhythm now has the same Y-axis
   ticks as Reports (`formatCompactMoney` at 100/75/50/25 of the period max).
   Peak bar gets the Reports white cap. Tap a bar on Dashboard or Reports for
