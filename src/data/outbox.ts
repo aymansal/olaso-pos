@@ -48,6 +48,7 @@ export async function listPendingOutboxFromDatabase(
          OR NOT EXISTS (
            SELECT 1 FROM outbox AS dependency
            WHERE dependency.operation_id = candidate.depends_on_operation_id
+             AND dependency.state = 'pending'
          )
        )
      ORDER BY candidate.created_at, candidate.rowid

@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; SYNC-01 done (0826-0001…0018 in Convex); POLISH-01 in progress; remaining SYNC cards latent
+**Status:** active; SYNC-01 and SYNC-02 done; next SYNC-03; POLISH-01 paused for remaining SYNC cards
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -171,8 +171,8 @@ polished product.
 | OPTIONS-02 | Add custom product choices, exact ingredient actions, and independent copying | pending | — |
 | OPTIONS-03 | Connect exact cashier selections to price, stock, immutable sales, and synchronization | pending | — |
 | OPTIONS-04 | Reconcile selected ingredient costs, reports, migration, and offline acceptance | pending | — |
-| SYNC-01 | Persist size/choice fields on Convex sale receipt snapshots so accept can insert | in progress — schema deployed, APK installed; Manual Sync blocked on `OLASO_OWNER_PIN` | [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) |
-| SYNC-02 | Stop failed management parents from hiding later sales | pending | same ledger |
+| SYNC-01 | Persist size/choice fields on Convex sale receipt snapshots so accept can insert | done — 0826-0001…0018 in Convex | [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) |
+| SYNC-02 | Stop failed management parents from hiding later sales | done — pending-only parent blocking and pin targets | same ledger |
 | SYNC-03 | Do not skip sale drain when management processed/failed in-batch | pending | same ledger |
 | SYNC-04 | Classify sale sync failures so automatic retry stays correct | pending | same ledger |
 | SYNC-05 | Keep abandon only for true permanent sale conflicts | pending | same ledger |

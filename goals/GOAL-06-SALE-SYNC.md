@@ -1,8 +1,9 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01 done. Owner Manual Sync 29 Aug landed 0826-0001…0017 and
-the chained category delete; 0826-0018 auto-synced. SYNC-02 through SYNC-09
-remain latent defects; do not treat this drained queue as proof they are gone.
+**Status:** SYNC-01 and SYNC-02 done. Owner Manual Sync 29 Aug landed
+0826-0001…0017 and the chained category delete; 0826-0018 auto-synced.
+SYNC-03 through SYNC-09 remain latent; do not treat the drained queue as
+proof they are gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
 the outbox/reconnect defects that keep later tickets, Settings copy, and
@@ -20,8 +21,8 @@ bug pauses the current card and overrides ordinary order. POLISH-01 stays
 pending. HARD-08 cannot accept the application while tablet sales never land
 in Convex.
 
-One goal, one card at a time. SYNC-01 first. Do not start SYNC-02 through
-SYNC-09 until SYNC-01 is pushed and the physical tablet queue can accept.
+One goal, one card at a time. SYNC-03 is next. Do not start SYNC-04 through
+SYNC-09 until SYNC-03 is pushed.
 
 ## Diagnosis already done (do not repeat as a card)
 
@@ -83,7 +84,7 @@ SYNC-01.
 | Card | What we are fixing | Status |
 | --- | --- | --- |
 | SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | done — Convex has 0826-0001…0018; SHA `ecf8500465db6e4c434a60dc991b4a78dd5224db` |
-| SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | pending |
+| SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — failed parents no longer hide children or pin later work |
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | pending |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | pending |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | pending |
@@ -146,7 +147,7 @@ not required for the 29 Aug queue that already drained.
 
 ### SYNC-02 — Stop failed management from hiding later sales
 
-**Status:** pending — blocked on SYNC-01
+**Status:** done — failed parent no longer hides children or pins later work
 
 **Objective:** a new sale must not wait forever on an unrelated or **failed**
 catalog/inventory outbox row. A category delete must not wait forever on a
@@ -179,8 +180,12 @@ Failed parents stay in `outbox`, so children are invisible. Also
 **Must not do:** send a sale before a still-pending catalog change that the
 sale actually used. Do not `DELETE FROM outbox` as a support wipe.
 
-**Acceptance evidence:** automated dependency check; tablet 0826-0016/0017
-leave pending (synced or explicit failure); journal the outbox dump after.
+**Acceptance evidence:** `check:reconnect` lists a child while its failed
+parent remains in `outbox`, and new work pins only to pending management /
+pending sales. `check:local-management` and `check:local-catalog` pass.
+0826-0016/0017 already left pending on SYNC-01 Manual Sync (parent succeeded,
+not the failed-forever case). Café SQLite was not wiped or injected.
+Install-over debug APK on SM-X115 `R8YX91AKWXJ` succeeded.
 
 **Next action:** SYNC-03.
 
@@ -381,6 +386,21 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — SYNC-02 failed parents no longer hide later work
+
+- `listPendingOutboxFromDatabase`: a parent blocks only while `state = 'pending'`.
+- `latestPendingManagementOperationIdFromDatabase`: `state = 'pending'` only.
+- `latestPendingSaleForRecordFromDatabase`: pending sale/correction rows only;
+  failed/absent sale lets category/product/ingredient delete pin to pending
+  management. Recursive descendants also stay pending-only.
+- Callers of the management helper were not duplicated; they inherit pending-only.
+- Checks: `check:reconnect`, `check:local-management`, `check:local-catalog`
+  pass. `check:sales` local half pass; cloud half stopped at unset PIN.
+  `npx tsc -b` pass. No Convex schema change.
+- Android: install-over debug APK on SM-X115 `R8YX91AKWXJ` succeeded. Café
+  outbox left untouched. 0826-0016/0017 already synced after SYNC-01.
+- Exact next action: SYNC-03.
 
 ### 2026-08-29 — owner Manual Sync drained the 18-row queue
 

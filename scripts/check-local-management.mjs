@@ -196,7 +196,8 @@ try {
     (await listPendingOutboxFromDatabase(adapter, 200, 10)).map(
       (operation) => operation.operationId,
     ),
-    ['operation-compensation'],
+    ['operation-product', 'operation-compensation'],
+    'A failed parent still in outbox must not hide its child.',
   );
   await makeConnectivityFailuresAvailableInDatabase(adapter);
   assert.deepEqual(

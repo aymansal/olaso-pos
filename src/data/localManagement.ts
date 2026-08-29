@@ -30,7 +30,7 @@ export async function latestPendingManagementOperationIdFromDatabase(
   }
   const result = await database.query(
     `SELECT operation_id FROM outbox
-     WHERE state IN ('pending', 'failed')
+     WHERE state = 'pending'
        AND operation_type LIKE 'management.%'
        ${types ? `AND operation_type IN (${types.map(() => '?').join(', ')})` : ''}
      ORDER BY rowid DESC LIMIT 1`,
@@ -70,6 +70,7 @@ export async function latestPendingSaleForRecordFromDatabase(
      END
      ${relation}
      WHERE outbox.operation_type IN ('sale-completed', 'sale-cancelled')
+       AND outbox.state = 'pending'
        AND ${target} = ?
      ORDER BY outbox.rowid DESC LIMIT 1`,
     [managementIdentifier(recordId, 'Local record ID')],
@@ -87,11 +88,13 @@ export async function latestPendingSaleForRecordFromDatabase(
   }
   const dependent = await database.query(
     `WITH RECURSIVE chain(operation_id) AS (
-       SELECT operation_id FROM outbox WHERE operation_id = ?
+       SELECT operation_id FROM outbox
+       WHERE operation_id = ? AND state = 'pending'
        UNION
        SELECT outbox.operation_id FROM outbox
        JOIN chain ON outbox.depends_on_operation_id = chain.operation_id
        WHERE outbox.operation_type IN (${types.map(() => '?').join(', ')})
+         AND outbox.state = 'pending'
      )
      SELECT outbox.operation_id FROM outbox
      JOIN chain ON chain.operation_id = outbox.operation_id

@@ -103,8 +103,9 @@ tablet's local SQLite operational record.
 - Commit related local sale, stock, and outbox effects in one transaction.
 - Commit each management domain change, immutable management-operation record,
   and outbox entry in one serialized transaction. A dependency remains blocked
-  while its parent outbox row exists; acknowledgement deletes only the parent
-  outbox row and preserves its audit/mapping record.
+  while its parent outbox row is pending; a failed or missing parent does not
+  hide the child. Acknowledgement deletes only the parent outbox row and
+  preserves its audit/mapping record.
 - Category, product, ingredient, and staff deletion removes the live record
   immediately without deleting immutable sale, recipe, movement, purchase, or
   compensation history. Earlier dependent sales/corrections synchronize first;

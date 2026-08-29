@@ -36,7 +36,7 @@ remaining goal and card sequence.
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | done — `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962` on `origin/main` |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | done — `ca7c9540dc29f7778f63d3f73bd19ffc7d6c5f00` on `origin/main` |
 | SYNC-01 — Convex sale snapshot schema so POS tickets insert | done — `ecf8500465db6e4c434a60dc991b4a78dd5224db` on `origin/main`; owner Manual Sync 29 Aug landed 0826-0001…0017 plus category delete; 0826-0018 auto-synced; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
-| SYNC-02 — Failed management must not hide later sales | pending |
+| SYNC-02 — Failed management must not hide later sales | done — pending follow-up SHA on `origin/main` |
 | SYNC-03 — Reconnect must not skip sales after management processed | pending |
 | SYNC-04 — Sale failure classification / automatic retry | pending |
 | SYNC-05 — Permanent abandon only for true conflicts | pending |
@@ -124,6 +124,23 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- SYNC-02 (29 Aug 2026): failed outbox parents no longer hide children or
+  pin later sales/deletes. Shared SQL: `listPendingOutboxFromDatabase`
+  blocks only while the parent is `pending`; `latestPendingManagementOperationIdFromDatabase`
+  is pending-only; `latestPendingSaleForRecordFromDatabase` ignores failed
+  sale/correction rows so deletes fall through to pending management.
+  Android research: stay in the existing Capacitor SQLite + foreground
+  reconnect worker (offline-first local SoT); no WorkManager, no second
+  outbox, no native plugin. Checks: `check:reconnect`, `check:local-management`,
+  `check:local-catalog` pass; `check:sales` local half pass (cloud half
+  stopped at unset `OLASO_OWNER_PIN`); `npx tsc -b` pass. Install-over
+  debug APK succeeded on SM-X115 `R8YX91AKWXJ`; café SQLite was not wiped
+  or injected. 0826-0016/0017 already left pending on SYNC-01 Manual Sync.
+  Automated check is the proof of the latent failed-parent-forever bug.
+- Exact next action: SYNC-03.
+
+- POLISH: Customize-order is a column flex so footer + 24px padding stay
+  visible at 544px max-height; groups scroll in leftover space.
 - POLISH-01 (29 Aug 2026): OverlayPortal so dialogs cover Header; Orders/
   Products/Stock pager uses saved COUNT not loaded rows; Customize-order
   `.dialog` 680→544px and `.groups` 500→400px (20%). On `origin/main` as
@@ -1324,6 +1341,20 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — SYNC-02 failed parents must not hide later work
+
+- Three shared SQL fixes: pending-only parent blocking in
+  `listPendingOutboxFromDatabase`; pending-only
+  `latestPendingManagementOperationIdFromDatabase`; pending-only
+  `latestPendingSaleForRecordFromDatabase` (failed/absent sale lets delete
+  pin to pending management). Callers unchanged.
+- Smallest checks in `check-reconnect.mjs` and the existing
+  `check-local-management.mjs` failed-parent list. Catalog pending-chain
+  asserts still pass.
+- Install-over on SM-X115 succeeded. Café outbox left untouched;
+  0826-0016/0017 had already synced after SYNC-01.
+- Exact next action: SYNC-03.
 
 ### 2026-08-28 — POLISH-01 shared shell, pills, and POS category bloom
 

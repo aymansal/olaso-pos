@@ -128,7 +128,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; POLISH-01 in progress (SYNC-01 done; remaining SYNC cards latent) | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-02 done (next SYNC-03) | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -258,8 +258,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-SYNC-01 is done: colorful-newt-937 has tablet receipts 0826-0001…0018.
-Remaining SYNC-02…SYNC-09 are latent (failed-parent forever, skip-sales-after-
-management, Settings copy, etc.). POLISH-01 is active: install the current
-debug APK so the owner can judge the shorter Customize-order popup.
+SYNC-03: reconnect must still attempt eligible sales when staff/catalog/inventory
+processed (including failed) in the same batch.
 [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).
