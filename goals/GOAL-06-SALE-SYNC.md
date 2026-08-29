@@ -1,9 +1,8 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01 through SYNC-07 done. Owner Manual Sync 29 Aug landed
+**Status:** SYNC-01 through SYNC-08 done. Owner Manual Sync 29 Aug landed
 0826-0001…0017 and the chained category delete; 0826-0018 auto-synced.
-SYNC-08 through SYNC-09 remain latent; do not treat the drained queue as
-proof they are gone.
+SYNC-09 remains latent; do not treat the drained queue as proof it is gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
 the outbox/reconnect defects that keep later tickets, Settings copy, and
@@ -21,8 +20,8 @@ bug pauses the current card and overrides ordinary order. POLISH-01 stays
 pending. HARD-08 cannot accept the application while tablet sales never land
 in Convex.
 
-One goal, one card at a time. SYNC-08 is next. Do not start SYNC-09 until
-SYNC-08 is pushed.
+One goal, one card at a time. SYNC-09 is next. Do not start later cards until
+SYNC-09 is pushed.
 
 ## Diagnosis already done (do not repeat as a card)
 
@@ -91,7 +90,7 @@ SYNC-01.
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main`; SYNC-02 lists the sale after retry; no UI copy |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
-| SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | pending |
+| SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | done — SHA after push |
 | SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | pending |
 
 ## Work cards
@@ -348,7 +347,7 @@ invented; Settings not opened past lock.
 
 ### SYNC-08 — Manual Sync must not look successful when it never ran
 
-**Status:** pending
+**Status:** done — install-over + `check:reconnect`; SHA after push
 
 **Objective:** Settings Sync and post-checkout reconnect must not return a
 quiet success when `available !== true`, `!foreground`, or pending staff
@@ -360,15 +359,20 @@ synchronization” only if pending > 0 — which is easy to misread as “sync
 ran and sales failed” rather than “sync did not start.” Checkout
 `reconnect.run('automatic').catch` does not fire on that success path.
 
-**Do:** return a distinct result or throw the existing connection/access
-sentence when the worker did not start. Settings already has offline/error
-copy — use it. Physical: with validated internet and focus, Sync still
-runs. With the worker gated, the operator sees that sync did not start.
+**Did:** throw existing sentences before `try`. Unvalidated internet or
+unfocused activity throws `CONNECTION_SYNC_FAILURE`. Pending staff throws
+`Synchronization access is unavailable. Restore terminal access and try again.`
+Gate kept. No `ReconnectResult` field. No invented copy.
 
-**Must not do:** sync while locked, while hidden, or while Android says
-internet is not validated. Do not treat Wi-Fi association as online.
+**Must not do:**
 
-**Acceptance evidence:** `check:reconnect` / `check:settings`; tablet note.
+- Do not sync while locked, while hidden, or while Android says
+  internet is not validated. Do not treat Wi-Fi association as online.
+
+**Acceptance evidence:** `check:reconnect` asserts the gated path throws
+and does not return `{ synced: 0 }`. `check:settings`; `npx tsc -b`;
+`npm run build`. Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Lock
+screen blocked Settings; PIN not invented. Café SQLite not wiped.
 
 **Next action:** SYNC-09.
 
@@ -414,6 +418,20 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — SYNC-08 throw when reconnect never starts
+
+- `perform()` throws `CONNECTION_SYNC_FAILURE` when `available !== true`
+  or `!foreground`, and the access sentence when
+  `isPendingStaffSession`. Throw before `try`. No quiet success, no
+  skip-path `loadTerminalSettings` / `recordSyncFailure`.
+- `check:reconnect` asserts throws, no `synced: 0` skip, gate kept.
+  `check:settings`. `npx tsc -b`. `npm run build`.
+- Android research: React/data using existing validated internet +
+  WebView focus. No Kotlin, WorkManager, or native Sync button.
+- Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Lock blocked Settings;
+  PIN not invented. Café outbox 0/0.
+- Exact next action: SYNC-09. SHA after push to `origin/main`.
 
 ### 2026-08-29 — SYNC-07 count waiting Settings sales not all outbox rows
 

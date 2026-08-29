@@ -273,6 +273,24 @@ assert.match(dataProvider, /void previous\.close\(\)/);
 assert.match(dataProvider, /retiredForOutage\.current/);
 assert.match(dataProvider, /addEventListener\('offline', retireConvexClient\)/);
 assert.match(worker, /available !== true \|\| !foreground/);
+assert.match(worker, /throw new Error\(CONNECTION_SYNC_FAILURE\)/);
+assert.match(
+  worker,
+  /throw new Error\(\s*'Synchronization access is unavailable\. Restore terminal access and try again\.'/,
+);
+assert.doesNotMatch(worker, /synced: 0/);
+const gate = worker.indexOf('available !== true || !foreground');
+const throwConnection = worker.indexOf('throw new Error(CONNECTION_SYNC_FAILURE)');
+const throwAccess = worker.indexOf(
+  'Synchronization access is unavailable. Restore terminal access and try again.',
+);
+const performTry = worker.indexOf('try {', gate);
+assert.ok(gate >= 0 && throwConnection > gate && throwConnection < performTry);
+assert.ok(throwAccess > throwConnection && throwAccess < performTry);
+assert.ok(performTry < worker.indexOf('await syncPendingSales'));
+assert.ok(
+  worker.indexOf('await loadTerminalSettings()') > performTry,
+);
 assert.match(connection, /document\.hasFocus\(\)/);
 assert.match(connection, /addEventListener\('blur', suspend\)/);
 assert.match(worker, /const ready = available === true && foreground/);

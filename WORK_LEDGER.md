@@ -42,7 +42,7 @@ remaining goal and card sequence.
 | SYNC-05 — Permanent abandon only for true conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 — Orders retry vs management parent | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` |
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
-| SYNC-08 — Manual Sync silent no-op when worker gated | pending |
+| SYNC-08 — Manual Sync silent no-op when worker gated | done — SHA after push to origin/main |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — customize footer `7e9e6b573ad9f6813a91f05bef1aa547728f107e` on `origin/main` |
 | HARD-08 — Final endurance and acceptance | pending |
@@ -123,6 +123,24 @@ remaining goal and card sequence.
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- SYNC-08 (29 Aug 2026): `perform()` throws existing sentences when the
+  worker never starts — `CONNECTION_SYNC_FAILURE` if internet is not
+  validated or the activity is unfocused; the access sentence if staff
+  provisioning is still pending. No quiet `{ synced: 0, pending }` return,
+  no `loadTerminalSettings` / `recordSyncFailure` on that path, throw
+  before `try`. Android research: React/data uses existing
+  SecureSession-validated `available` plus WebView focus; no Kotlin,
+  plugin, WorkManager, or native Sync button. WorkManager rejected
+  (persists after the app leaves the visible state). Notification-shade
+  sync rejected (`foreground === false` is correct). Checks:
+  `check:reconnect` (throws + no `synced: 0` skip), `check:settings`,
+  `npx tsc -b`, `npm run build`. Install-over debug APK on SM-X115
+  `R8YX91AKWXJ`. Lock screen blocked Settings; PIN not invented. Café
+  SQLite not wiped; outbox 0/0. Exact next action: record SHA on
+  `origin/main`, then SYNC-09.
+- POLISH Customize-order CSS remains on `origin/main` as
+  `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
 - SYNC-07 (29 Aug 2026): `pendingSyncCount` is pending+failed sale outbox
   rows (`sale-completed`, `sale-cancelled`), not `COUNT(*)` of all outbox
@@ -1393,6 +1411,41 @@ remaining goal and card sequence.
   Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café outbox empty.
   Exact next action: SYNC-08. Pushed `91a71642629fe36f39750955a92cb53543f80377`
   to `origin/main`.
+
+### 2026-08-29 — SYNC-08 throw when reconnect never starts
+
+- `perform()` no longer returns `{ synced: 0, failed: 0, pending,
+  refreshed: false }` when `available !== true`, `!foreground`, or
+  pending staff. Gate kept. Throw before `try`.
+- Unvalidated internet or unfocused activity:
+  `Cloud connection failed. Check the connection and try again.`
+  (`CONNECTION_SYNC_FAILURE`). Pending staff:
+  `Synchronization access is unavailable. Restore terminal access and try again.`
+- No `loadTerminalSettings()` on the skip path. No `recordSyncFailure` on
+  skip. Settings `syncNow` catch still `setError(message)`. POS checkout
+  catch still `The order is saved locally and waiting to synchronize.`
+- Android research: skip is React/data using existing Android-validated
+  `available` from SecureSession / `connectionContext` plus
+  `document.visibilityState` / `document.hasFocus`. Official offline-first
+  local source of truth
+  (https://developer.android.com/topic/architecture/data-layer/offline-first).
+  WorkManager is for work that continues after the app leaves the visible
+  state
+  (https://developer.android.com/develop/background-work/background-tasks/persistent);
+  rejected because Olaso must not sync while locked, hidden, or without
+  validated internet. Notification-shade sync rejected. No Kotlin, plugin,
+  WorkManager, or native Sync button.
+- `check:reconnect`: gate match kept; gated path throws
+  `CONNECTION_SYNC_FAILURE`; pending-staff throws the access sentence;
+  throw is before `try` and before `await syncPendingSales`; `synced: 0`
+  skip return gone. `check:settings`. `npx tsc -b`. `npm run build`.
+  `OLASO_OWNER_PIN` unset; no cloud half.
+- Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
+  Success on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped or injected.
+  Read-only dump: outbox 0 sales / 0 all. Launch showed Unlock Olaso
+  (owner selected, Terminal online). PIN not invented. Settings not
+  opened. Install-over + `check:reconnect` is the physical evidence.
+- Exact next action: record SHA on `origin/main`, then SYNC-09.
 
 ### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
 

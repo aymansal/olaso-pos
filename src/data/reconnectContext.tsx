@@ -17,6 +17,7 @@ import {
   type SaleSyncPayload,
 } from './localSales';
 import {
+  CONNECTION_SYNC_FAILURE,
   makeConnectivityFailuresAvailable,
   makePendingOutboxAvailable,
 } from './outbox';
@@ -175,14 +176,13 @@ export function ReconnectProvider({
   const [revision, setRevision] = useState(0);
 
   const perform = useCallback(async (mode: ReconnectMode) => {
-    if (available !== true || !foreground || isPendingStaffSession(session)) {
-      const settings = await loadTerminalSettings();
-      return {
-        synced: 0,
-        failed: 0,
-        pending: settings.pendingSyncCount,
-        refreshed: false,
-      };
+    if (available !== true || !foreground) {
+      throw new Error(CONNECTION_SYNC_FAILURE);
+    }
+    if (isPendingStaffSession(session)) {
+      throw new Error(
+        'Synchronization access is unavailable. Restore terminal access and try again.',
+      );
     }
 
     let synced = 0;

@@ -50,7 +50,10 @@ tablet's local SQLite operational record.
   cache refresh gate, and visible-hook completion revision. Automatic runs
   start only after local POS paint (double rAF + idle callback); manual Sync
   remains immediate. Each batch still attempts eligible sales after staff,
-  catalog, and inventory work.
+  catalog, and inventory work. `perform` throws the existing connection or
+  access sentence when internet is not validated, the activity is not focused,
+  or staff provisioning is still pending; it must not return a successful empty
+  sync.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail,
  Dashboard/Reports fallback reads, and the POS quick-add ranking over the last
  seven business days; it never performs management writes. Quick add ranks by

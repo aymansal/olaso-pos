@@ -128,7 +128,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-07 done (next SYNC-08) | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-08 done (next SYNC-09) | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -258,6 +258,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-SYNC-08: Manual Sync / reconnect must not look successful when the worker
-never started (offline, unfocused, pending staff).
+SYNC-09: After uploads work, online Dashboard/Reports must show those cloud
+metrics; decide any still-unsynced local fallback without a second analytics
+pipeline.
 [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).
