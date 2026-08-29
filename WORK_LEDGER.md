@@ -37,7 +37,7 @@ remaining goal and card sequence.
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | done — `ca7c9540dc29f7778f63d3f73bd19ffc7d6c5f00` on `origin/main` |
 | SYNC-01 — Convex sale snapshot schema so POS tickets insert | done — `ecf8500465db6e4c434a60dc991b4a78dd5224db` on `origin/main`; owner Manual Sync 29 Aug landed 0826-0001…0017 plus category delete; 0826-0018 auto-synced; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
 | SYNC-02 — Failed management must not hide later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
-| SYNC-03 — Reconnect must not skip sales after management processed | done — SHA recorded after push |
+| SYNC-03 — Reconnect must not skip sales after management processed | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 — Sale failure classification / automatic retry | pending |
 | SYNC-05 — Permanent abandon only for true conflicts | pending |
 | SYNC-06 — Orders retry vs management parent | pending |
@@ -136,7 +136,7 @@ remaining goal and card sequence.
   remain), `npx tsc -b` pass. Install-over debug APK succeeded on SM-X115
   `R8YX91AKWXJ`. Café SQLite was not wiped or injected; the 0826 queue was
   already drained. Automated source check is the proof of the skip bug.
-  SHA recorded after push.
+  On `origin/main` as `31eb5fce8d7897b3525c5657b60f222a8d033fe8`.
 - Exact next action: SYNC-04.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
@@ -1358,7 +1358,8 @@ remaining goal and card sequence.
   beta BUILD SUCCESSFUL. `adb install -r` Success on SM-X115 `R8YX91AKWXJ`.
 - Café outbox left untouched; queue already drained (0826-0001…0018). Did
   not inject a failed catalog row.
-- Exact next action: push, record SHA, then SYNC-04.
+- Pushed `31eb5fce8d7897b3525c5657b60f222a8d033fe8` to `origin/main`.
+- Exact next action: SYNC-04.
 
 ### 2026-08-29 — SYNC-02 failed parents must not hide later work
 

@@ -85,7 +85,7 @@ SYNC-01.
 | --- | --- | --- |
 | SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | done — Convex has 0826-0001…0018; SHA `ecf8500465db6e4c434a60dc991b4a78dd5224db` |
 | SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
-| SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — SHA recorded after push |
+| SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | pending |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | pending |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | pending |
@@ -401,7 +401,8 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 - Checks: `npm run check:reconnect`, `npx tsc -b`. Android: `android:sync`,
   debug beta BUILD SUCCESSFUL, `adb install -r` Success on SM-X115
   `R8YX91AKWXJ`. Café DB untouched.
-- Exact next action: record SHA on `origin/main`, then SYNC-04.
+- Exact next action: SYNC-04. Pushed `31eb5fce8d7897b3525c5657b60f222a8d033fe8`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-02 failed parents no longer hide later work
 
