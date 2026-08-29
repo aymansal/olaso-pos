@@ -1,5 +1,6 @@
 import { X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import styles from './CancellationDialog.module.css';
 
 export function CancellationDialog({
@@ -29,6 +30,7 @@ export function CancellationDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="cancel-order-title">
         <header>
@@ -49,5 +51,6 @@ export function CancellationDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

@@ -1,8 +1,8 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01 in progress. Schema is deployed and the debug APK is on
-SM-X115. Manual Sync and the Convex half of `check:sales` are blocked on
-`OLASO_OWNER_PIN` (tablet is on the owner lock screen). Do not start SYNC-02.
+**Status:** SYNC-01 done. Owner Manual Sync 29 Aug landed 0826-0001…0017 and
+the chained category delete; 0826-0018 auto-synced. SYNC-02 through SYNC-09
+remain latent defects; do not treat this drained queue as proof they are gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
 the outbox/reconnect defects that keep later tickets, Settings copy, and
@@ -82,7 +82,7 @@ SYNC-01.
 
 | Card | What we are fixing | Status |
 | --- | --- | --- |
-| SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | in progress — schema deployed to colorful-newt-937; APK installed; blocked on `OLASO_OWNER_PIN` for Manual Sync |
+| SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | done — Convex has 0826-0001…0018; SHA `ecf8500465db6e4c434a60dc991b4a78dd5224db` |
 | SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | pending |
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | pending |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | pending |
@@ -96,7 +96,7 @@ SYNC-01.
 
 ### SYNC-01 — Make `sales.accept` persist size/choice receipt snapshots
 
-**Status:** in progress — schema deployed, debug APK on SM-X115; Manual Sync blocked on unset `OLASO_OWNER_PIN`
+**Status:** done — owner Manual Sync proved 0826-0001…0017 in Convex; 0826-0018 auto-synced
 
 **Objective:** a locally committed POS sale must insert into Convex `sales`
 (and related sale items / stock / daily metrics) instead of dying on schema
@@ -141,9 +141,8 @@ exists in Convex `sales` with matching `localSaleId`; `sales.accept` logs show
 success; focused check covers the extra-field case; Graphify updated if
 schema/AST changed; ledger SHA on `origin/main`.
 
-**Next action:** set `OLASO_OWNER_PIN`, unlock owner, Settings → Sync now,
-prove at least one of 0826-0001…0015 in Convex `sales`. Then SYNC-02. Do not
-mark this card done until that Manual Sync evidence exists.
+**Next action:** none for this card. SYNC-02 is latent (failed parent forever),
+not required for the 29 Aug queue that already drained.
 
 ### SYNC-02 — Stop failed management from hiding later sales
 
@@ -382,6 +381,20 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — owner Manual Sync drained the 18-row queue
+
+- Owner unlocked, Settings → Sync now. Convex colorful-newt-937 now contains
+  tablet `0826-0001` … `0826-0018` on `device-9a9b0736-2f17-4923-af5f-c280c9d67bfa`.
+- 0001–0017 plus the pending `management.category.delete` drained in one
+  Manual Sync (`makePendingOutboxAvailable` retries every `failed` row).
+  0014 succeeded, so the delete’s parent left `outbox`, then 0016/0017
+  became eligible. 0018 (Cappuccino) auto-synced after a later checkout.
+- The “0016/0017 still wait on SYNC-02” prediction assumed a parent that
+  **stays failed**. This parent succeeded, so the chain was intended behavior,
+  not a remaining blocker.
+- Exact next action: POLISH-01 APK for Customize-order height. Keep SYNC-02
+  as the latent failed-parent-forever case.
 
 ### 2026-08-29 — SYNC-01 schema + APK; Manual Sync blocked on PIN
 

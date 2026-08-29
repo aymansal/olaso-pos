@@ -1,5 +1,6 @@
 import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type { ManagedCategory } from '../../productManagementTypes';
 import { CategoryArtworkPicker } from '../CategoryArtworkPicker/CategoryArtworkPicker.tsx';
 import { categoryArtworkKey } from '../../../../lib/categoryArtwork.ts';
@@ -38,6 +39,7 @@ export function CategoryDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section
         className={styles.dialog}
@@ -89,5 +91,6 @@ export function CategoryDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

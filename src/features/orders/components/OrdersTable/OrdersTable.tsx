@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrdersTable.module.css';
@@ -48,6 +49,8 @@ export function OrdersTable({
   onSelect: (key: string) => void;
   emptyMessage: string;
 }) {
+  const selectedIndex = orders.findIndex((order) => order.key === selectedKey);
+
   return (
     <div className={styles.table} role="table" aria-label="Orders">
       <div className={styles.head} role="row">
@@ -58,7 +61,15 @@ export function OrdersTable({
 
       {orders.length === 0 ? (
         <p className={styles.empty} role="status">{emptyMessage}</p>
-      ) : orders.map((order) => {
+      ) : (
+      <div
+        className={styles.body}
+        style={{ '--index': Math.max(0, selectedIndex) } as CSSProperties}
+      >
+        {selectedIndex >= 0 ? (
+          <span className={styles.indicator} aria-hidden="true" />
+        ) : null}
+        {orders.map((order) => {
         const status = statusPresentation(order);
         const selected = order.key === selectedKey;
         const itemCount = order.receipt.lines.reduce(
@@ -68,14 +79,14 @@ export function OrdersTable({
         return (
         <button
           type="button"
-          className={`${styles.row} ${selected ? styles.selected : ''}`}
+          className={styles.row}
           role="row"
           aria-selected={selected}
           onClick={() => onSelect(order.key)}
           key={order.key}
         >
           <span className={styles.identityCell} role="cell">
-            {selected ? <span className={styles.selectedMark} /> : null}
+            <span className={styles.markSpacer} aria-hidden="true" />
             <span className={styles.identity}>
               <strong title={order.receipt.receiptNumber}>
                 {compactReceiptNumber(order.receipt.receiptNumber)}
@@ -101,7 +112,10 @@ export function OrdersTable({
             </span>
           </span>
         </button>
-      )})}
+        );
+        })}
+      </div>
+      )}
     </div>
   );
 }

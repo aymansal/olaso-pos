@@ -1,4 +1,5 @@
 import { X } from '@boxicons/react';
+import { OverlayPortal } from '../OverlayPortal';
 import { formatMoney } from '../../lib/money';
 import styles from './ReceiptPreviewDialog.module.css';
 
@@ -36,6 +37,7 @@ export function ReceiptPreviewDialog({
   statusMessage?: string;
 }) {
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section
         className={styles.dialog}
@@ -108,5 +110,6 @@ export function ReceiptPreviewDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

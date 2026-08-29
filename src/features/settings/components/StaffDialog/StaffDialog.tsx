@@ -1,5 +1,6 @@
 import { X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type { StaffCreationInput } from '../../../../data/localStaff.ts';
 import styles from './StaffDialog.module.css';
 
@@ -39,6 +40,7 @@ export function StaffDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="staff-dialog-title">
         <header>
@@ -74,5 +76,6 @@ export function StaffDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

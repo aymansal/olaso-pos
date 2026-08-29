@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../convex/_generated/api.js';
 import {
+  countLocalOrders,
   loadLocalOrderPage,
   makeLocalSaleRetryAvailable,
 } from '../src/data/orderHistory.ts';
@@ -111,6 +112,17 @@ assert.notEqual(firstPage.page[0].key, secondPage.page[0].key);
 await assert.rejects(
   loadLocalOrderPage({ limit: 21 }, adapter),
   /integer from 1 to 20/,
+);
+assert.equal(await countLocalOrders(undefined, adapter), 2);
+const offsetPage = await loadLocalOrderPage({ limit: 1, offset: 1 }, adapter);
+assert.equal(offsetPage.page.length, 1);
+assert.equal(offsetPage.page[0].localSaleId, 'sale-1');
+assert.equal(offsetPage.isDone, true);
+const cancelledOnly = await countLocalOrders({ status: 'cancelled' }, adapter);
+assert.equal(cancelledOnly, 0);
+await assert.rejects(
+  loadLocalOrderPage({ limit: 1, cursor: firstPage.continueCursor, offset: 0 }, adapter),
+  /cursor and an offset/,
 );
 
 await makeLocalSaleRetryAvailable('sale-2', adapter);

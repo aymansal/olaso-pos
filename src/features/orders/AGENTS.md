@@ -18,8 +18,9 @@ Provides bounded order history and a selected order's receipt-style detail.
 - Preserve selection between the list and detail panel.
 - The date picker and quick periods remain compact and open toward available
   screen space.
-- History reads are bounded and paginated; loading more is an explicit cashier
-  action rather than polling or a hidden-screen subscription.
+- History reads are bounded and paginated. The pager uses the saved SQLite
+  order count; each page click loads that OFFSET window of six rows. Next on
+  the last page stays there.
 - Show immutable receipt snapshots and the local/cloud sync state without
   reconstructing current product data.
 - Receipt preview, deliberate sync retry, and local saved-snapshot reprint are

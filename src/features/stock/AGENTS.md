@@ -43,6 +43,8 @@ history.
   archive/restore/delete, or stock-adjustment form.
 - All stock levels means all active ingredients; archived ingredients appear
   only when the operator deliberately selects the Archived filter.
+- The inventory table opens on the first visible ingredient. Pagination shows
+  the same sliding three-page window as Orders.
 
 ## Work Guidance
 

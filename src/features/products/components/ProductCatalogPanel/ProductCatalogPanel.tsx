@@ -1,4 +1,4 @@
-import { ArrowDownUp, CheckCircle, Search, Plus } from '@boxicons/react';
+import { ArrowDownUp, CheckCircle, Search, Plus, X } from '@boxicons/react';
 import type {
   ManagedCategory,
   ManagedProduct,
@@ -30,6 +30,10 @@ interface ProductCatalogPanelProps {
   onSetCategoryArchived: () => void;
   onDeleteCategory: () => void;
   onAddProduct: () => void;
+  page: number;
+  pageCount: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
 }
 
 export function ProductCatalogPanel({
@@ -52,6 +56,10 @@ export function ProductCatalogPanel({
   onSetCategoryArchived,
   onDeleteCategory,
   onAddProduct,
+  page,
+  pageCount,
+  totalItems,
+  onPageChange,
 }: ProductCatalogPanelProps) {
   const selectedCategory = categories.find(
     (category) => category.id === selectedCategoryId,
@@ -78,11 +86,22 @@ export function ProductCatalogPanel({
         <label className={styles.search}>
           <Search width={16} height={16} aria-hidden="true" />
           <input
+            type="search"
             aria-label="Search products"
             placeholder="Search product"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
           />
+          {search !== '' ? (
+            <button
+              type="button"
+              className={styles.clear}
+              aria-label="Clear search"
+              onClick={() => onSearchChange('')}
+            >
+              <X width={14} height={14} aria-hidden="true" />
+            </button>
+          ) : null}
         </label>
         <label className={styles.filter}>
           <CheckCircle width={15} height={15} aria-hidden="true" />
@@ -132,7 +151,11 @@ export function ProductCatalogPanel({
         selectedProductId={selectedProductId}
         isLoading={isLoading}
         error={error}
+        page={page}
+        pageCount={pageCount}
+        totalItems={totalItems}
         onSelect={onSelectProduct}
+        onPageChange={onPageChange}
         onRenameCategory={onRenameCategory}
         onSetCategoryArchived={onSetCategoryArchived}
         onDeleteCategory={onDeleteCategory}

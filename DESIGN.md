@@ -343,17 +343,17 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `PosShell` | header, menu content, receipt rail | Full-bleed landscape application root at the target size; cream gutters may adapt on wider screens. |
 | `HeaderBar` | logo asset, live date/time, report action, cashier | One horizontal line. Use the real OLASO asset; date and time never wrap and time follows the terminal clock-format preference. Carries no notification control until real alerts exist. |
 | `ProfileControl` | staff name, role, profile menu | Preserve the 178 by 50 Header control. Every role sees one 44-pixel `Lock / switch staff` action; only the owner sees Settings, and Settings is omitted when already open. |
-| `SearchField` | query, search action | 320 by 50 at the target viewport. The magnifier and the input sit on one line in explicit grid columns. Visible focus state. Never use placeholder text as the only accessible label. |
+| `SearchField` | query, search action | 320 by 50 at the target viewport. The magnifier and the input sit on one line in explicit grid columns. Visible focus state. Never use placeholder text as the only accessible label. A clear control stays visible whenever the query is not empty, including after the keyboard is dismissed. POS, Orders, Products, and Stock search fields follow that rule. |
 | `QuickAddRow` | best-seller chips | Up to three equal-width 50-pixel-tall chips carrying a product name only at 15px, filling the remaining width beside the search field. Chips come from saved tablet sales, never a fixed list, and the row renders nothing when there are none. An unusually long name may ellipsis. |
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
 | `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. |
-| `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. |
+| `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. Orders, Products, and Stock table row highlights use the same vertical slide, keeping the existing cream selected fill and green mark. |
 | `LabeledField` | visible label, current value | Text and select variants. Control is 129 by 48. |
 | `OrderLine` | product, unit price, quantity, size, note, total | Keep the total right-aligned. A note is optional. |
 | `QuantityStepper` | decrement, quantity, increment | 116 by 44 so both actions retain independent 44-pixel targets. Disable decrement at the minimum and expose an accessible value. |
 | `PaymentSummary` | subtotal, total | Right-align values and emphasize only the total. Use tabular figures; the confirmed policy has no tax row. |
 | `PrimaryAction` | action label, order total | 266 by 50. One primary action per screen. Disable it while submitting. |
-| `ReceiptRail` | service mode, payment method, order, clear cart, totals, primary action | 320 by 688 at the target viewport. No decorative receipt title. Dine In / Take Away and Cash / Card sit at the top; payment details and Place order stay at the bottom. Clear cart is a small trash control on the order-list heading and appears only when the cart has lines. |
+| `ReceiptRail` | service mode, payment method, order, clear cart, totals, primary action | 320 by 688 at the target viewport. A centered Current order title sits at the top with an always-visible clear-cart trash on the right (gray when empty, active when the cart has lines). Dine In / Take Away and Cash / Card sit under that row; payment details and Place order stay at the bottom. An empty cart list is blank. Each line uses the same compact card outline. |
 
 Use existing components before adding a new one. A visual difference that can be expressed as content or a documented variant is not a new component.
 
@@ -538,7 +538,7 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   filter; restoration stays available there.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
-Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate flex or grid layout dimensions. POS category selection blooms a clipped green fill inside the tapped card; it never travels the gap between cards. The product grid does not animate. Respect `prefers-reduced-motion`.
+Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate flex or grid layout dimensions. POS category selection wipes green in from the left on the tapped card only, in 125ms; the previous card snaps off. It never travels the gap between cards. The product grid does not animate. Respect `prefers-reduced-motion`.
 
 ### Category artwork
 

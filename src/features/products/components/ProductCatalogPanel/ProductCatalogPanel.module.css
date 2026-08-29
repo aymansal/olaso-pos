@@ -102,6 +102,26 @@
   opacity: 1;
 }
 
+.search input::-webkit-search-cancel-button,
+.search input::-webkit-search-decoration {
+  display: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.clear {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: -6px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
 .filter,
 .sort {
   justify-content: space-between;

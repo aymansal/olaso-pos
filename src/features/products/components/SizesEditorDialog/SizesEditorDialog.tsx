@@ -1,5 +1,6 @@
 import { Save, Plus, Trash, X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type { ManagedProduct, ManagedProductSize } from '../../productManagementTypes';
 import { queueProductSizeSaves } from '../../queueProductSizeSaves';
 import styles from './SizesEditorDialog.module.css';
@@ -31,7 +32,7 @@ export function SizesEditorDialog({ product, sizes, onClose, onSave, onDelete }:
       setError(caught instanceof Error ? caught.message : 'Size save failed.');
     } finally { setSaving(false); }
   }
-  return <div className={styles.overlay} role="presentation">
+  return <OverlayPortal><div className={styles.overlay} role="presentation">
     <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="sizes-dialog-title">
       <header><span><small>PRODUCT SIZES</small><h2 id="sizes-dialog-title">Sizes · {product.name}</h2></span>
         <button type="button" onClick={onClose} aria-label="Close sizes editor"><X width={18} height={18} /></button></header>
@@ -58,5 +59,5 @@ export function SizesEditorDialog({ product, sizes, onClose, onSave, onDelete }:
       {error ? <p className={styles.error}>{error}</p> : null}
       <footer><span>Up to 8 saved sizes</span><button type="button" className={styles.save} onClick={save} disabled={saving || drafts.some((size) => !size.name.trim())}><Save width={16} height={16} />{saving ? 'Saving…' : 'Save sizes'}</button></footer>
     </section>
-  </div>;
+  </div></OverlayPortal>;
 }

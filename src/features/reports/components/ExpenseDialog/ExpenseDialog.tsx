@@ -1,5 +1,6 @@
 import { X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type {
   ExpenseInput,
   SavedExpense,
@@ -66,6 +67,7 @@ export function ExpenseDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="expense-title">
         <header>
@@ -93,5 +95,6 @@ export function ExpenseDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

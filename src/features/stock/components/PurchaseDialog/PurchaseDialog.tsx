@@ -1,5 +1,6 @@
 import { Package, X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type { ManagedIngredient } from '../../stockManagementTypes';
 import { formatMoney } from '../../../../lib/money';
 import { formatStockQuantity } from '../../stockPresentation';
@@ -56,7 +57,7 @@ export function PurchaseDialog({ ingredient, onClose, onSave }: PurchaseDialogPr
 
   const totalQuantity = valid ? count * quantity : 0;
   const totalCost = valid ? count * priceCentimes : 0;
-  return <div className={styles.overlay} role="presentation"><section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="purchase-title">
+  return <OverlayPortal><div className={styles.overlay} role="presentation"><section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="purchase-title">
     <header><span><small>PACKAGE RECEIPT</small><h2 id="purchase-title">Receive purchase</h2></span><button type="button" onClick={onClose} aria-label="Close purchase receipt"><X width={18} height={18} /></button></header>
     <p className={styles.ingredient}><Package width={18} height={18} /> <strong>{ingredient.name}</strong><span>On hand {formatStockQuantity(ingredient.currentStockQuantity, ingredient.baseUnit)}</span></p>
     <div className={styles.grid}>
@@ -70,5 +71,5 @@ export function PurchaseDialog({ ingredient, onClose, onSave }: PurchaseDialogPr
     <p className={styles.summary}>Adds {formatStockQuantity(totalQuantity, ingredient.baseUnit)} · purchase cash {formatMoney(totalCost)}</p>
     {error ? <p className={styles.error}>{error}</p> : null}
     <footer><button type="button" onClick={onClose}>Cancel</button><button type="button" onClick={submit} disabled={saving || !valid}>{saving ? 'Saving…' : 'Save purchase'}</button></footer>
-  </section></div>;
+  </section></div></OverlayPortal>;
 }

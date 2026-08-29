@@ -96,6 +96,26 @@
   opacity: 1;
 }
 
+.search input::-webkit-search-cancel-button,
+.search input::-webkit-search-decoration {
+  display: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.clear {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: -6px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
 .filters {
   position: relative;
   display: flex;
@@ -235,7 +255,7 @@
 }
 
 .footer > span {
-  max-width: 660px;
+  max-width: 360px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -11,7 +11,6 @@ import type {
   StockAdjustmentMode,
 } from './stockManagementTypes';
 import {
-  ingredientLevel,
   matchesLevelFilter,
   type StockLevelFilter,
   type StockUnitGroup,
@@ -35,18 +34,7 @@ export function StockScreen() {
     mode: StockAdjustmentMode;
   }>();
   const [purchaseIngredient, setPurchaseIngredient] = useState<ManagedIngredient>();
-  const initialized = useRef(false);
   const inventory = useInventoryManagement(selectedIngredientId);
-
-  useEffect(() => {
-    if (initialized.current || inventory.isLoading || inventory.error) return;
-    const preferred =
-      inventory.ingredients.find(
-        (ingredient) => ingredientLevel(ingredient) === 'Low',
-      ) ?? inventory.ingredients.find((ingredient) => ingredient.status === 'active');
-    setSelectedIngredientId(preferred?.id);
-    initialized.current = true;
-  }, [inventory.error, inventory.ingredients, inventory.isLoading]);
 
   const visibleIngredients = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase();
@@ -62,8 +50,20 @@ export function StockScreen() {
     });
   }, [inventory.ingredients, levelFilter, search, unitGroup]);
 
-  const pageCount = Math.ceil(visibleIngredients.length / PAGE_SIZE);
-  const safePage = Math.min(page, Math.max(0, pageCount - 1));
+  useEffect(() => {
+    if (inventory.isLoading || inventory.error || selectedIngredientId) return;
+    setSelectedIngredientId(visibleIngredients[0]?.id);
+  }, [
+    inventory.error,
+    inventory.isLoading,
+    selectedIngredientId,
+    visibleIngredients,
+  ]);
+
+  const pageCount = inventory.isLoading
+    ? 0
+    : Math.max(1, Math.ceil(visibleIngredients.length / PAGE_SIZE));
+  const safePage = pageCount === 0 ? 0 : Math.min(page, pageCount - 1);
   const pageIngredients = visibleIngredients.slice(
     safePage * PAGE_SIZE,
     safePage * PAGE_SIZE + PAGE_SIZE,

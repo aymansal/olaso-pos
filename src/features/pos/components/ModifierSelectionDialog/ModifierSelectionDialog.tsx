@@ -1,5 +1,6 @@
 import { Plus, X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import { formatMoney } from '../../../../lib/money';
 import styles from './ModifierSelectionDialog.module.css';
 
@@ -138,6 +139,7 @@ export function ModifierSelectionDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section
         className={styles.dialog}
@@ -242,5 +244,6 @@ export function ModifierSelectionDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

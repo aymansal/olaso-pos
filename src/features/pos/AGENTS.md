@@ -29,7 +29,9 @@ owns the shared Header and TopNavigation currently used across the application.
 
 - Preserve the documented 966-pixel menu column, 320-pixel receipt rail, narrow
  product cards, embedded category art, and full-bleed cream viewport.
-- The search field is a compact 320-pixel control. `QuickAddRow` fills the rest
+- The search field is a compact 320-pixel control. A clear control stays
+ visible whenever the query is not empty, including after the keyboard is
+ dismissed. `QuickAddRow` fills the rest
  of that band with at most three equal-width name-only best-seller chips and
  renders nothing when the tablet has no saved sales. Chips reuse the same add
  path as a product card, so a product needing a size or a required choice still
@@ -52,8 +54,10 @@ owns the shared Header and TopNavigation currently used across the application.
   one size must not force a size selection. Cart identity includes the selected
   size once OPTIONS-03 activates product-owned checkout.
 - Checkout clears the cart only after the local sale transaction commits. A
-  cashier may empty the current draft from the trash control on the order-list
-  heading; it is hidden while the cart is empty.
+  cashier may empty the current draft from the always-visible trash next to
+  the Current order title; it stays gray while the cart is empty. The cart list itself
+  stays blank until a product is added; each line uses the same compact card
+  outline.
 - Saved receipts support on-screen preview and plain post-commit print feedback.
   Do not expose printer settings, permissions, bytes, or transport from this
   feature.

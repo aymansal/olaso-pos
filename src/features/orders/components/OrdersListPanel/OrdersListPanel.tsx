@@ -1,77 +1,53 @@
-import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Search, Receipt } from '@boxicons/react';
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
-import type {
-  OrderHistoryRecord,
-  OrderStatus,
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Search, Receipt, X } from '@boxicons/react';
+import { useState, type CSSProperties } from 'react';
+import {
+  ORDER_PAGE_SIZE,
+  type OrderHistoryRecord,
 } from '../../../../data/orderHistory';
 import { OrdersTable } from '../OrdersTable/OrdersTable';
+import { visiblePageIndexes } from '../../../../lib/pagination';
 import styles from './OrdersListPanel.module.css';
 
 const filters = ['All', 'Completed', 'Cancelled', 'Refunded'] as const;
-const PAGE_SIZE = 6;
 
 export function OrdersListPanel({
   orders,
   selectedKey,
   onSelect,
   isLoading,
-  isLoadingMore,
-  hasMore,
-  onLoadMore,
   message,
   lastSuccessAt,
+  totalCount,
+  page,
+  pageCount,
+  query,
+  status,
+  businessDate,
+  onQueryChange,
+  onStatusChange,
+  onBusinessDateChange,
+  onPageChange,
 }: {
   orders: OrderHistoryRecord[];
   selectedKey?: string;
   onSelect: (key: string) => void;
   isLoading: boolean;
-  isLoadingMore: boolean;
-  hasMore: boolean;
-  onLoadMore: () => Promise<void>;
   message: string;
   lastSuccessAt?: number;
+  totalCount: number;
+  page: number;
+  pageCount: number;
+  query: string;
+  status: (typeof filters)[number];
+  businessDate: string;
+  onQueryChange: (query: string) => void;
+  onStatusChange: (status: (typeof filters)[number]) => void;
+  onBusinessDateChange: (businessDate: string) => void;
+  onPageChange: (page: number) => void;
 }) {
-  const [query, setQuery] = useState('');
-  const [status, setStatus] = useState<(typeof filters)[number]>('All');
-  const [businessDate, setBusinessDate] = useState('');
   const [dateOpen, setDateOpen] = useState(false);
-  const [page, setPage] = useState(0);
-  const filtered = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase();
-    return orders.filter((order) => {
-      const matchesQuery =
-        !normalized
-        || order.receipt.receiptNumber.toLocaleLowerCase().includes(normalized)
-        || order.receipt.customerName
-          ?.toLocaleLowerCase()
-          .includes(normalized);
-      const matchesStatus =
-        status === 'All'
-        || order.status === (status.toLocaleLowerCase() as OrderStatus);
-      const matchesDate = !businessDate || order.businessDate === businessDate;
-      return matchesQuery && matchesStatus && matchesDate;
-    });
-  }, [businessDate, orders, query, status]);
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const visible = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  const start = visible.length === 0 ? 0 : page * PAGE_SIZE + 1;
-  const end = page * PAGE_SIZE + visible.length;
-
-  useEffect(() => {
-    setPage(0);
-  }, [businessDate, query, status]);
-
-  useEffect(() => {
-    if (page >= pageCount) setPage(pageCount - 1);
-  }, [page, pageCount]);
-
-  async function nextPage() {
-    if (page + 1 < pageCount) {
-      setPage((current) => current + 1);
-      return;
-    }
-    if (hasMore) await onLoadMore();
-  }
+  const start = orders.length === 0 ? 0 : page * ORDER_PAGE_SIZE + 1;
+  const end = page * ORDER_PAGE_SIZE + orders.length;
 
   return (
     <section className={styles.panel} aria-labelledby="orders-title">
@@ -88,7 +64,7 @@ export function OrdersListPanel({
                   'en-GB',
                   { hour: '2-digit', minute: '2-digit' },
                 )}`
-              : `${orders.length} loaded`}
+              : `${totalCount} orders`}
           </strong>
         </span>
       </header>
@@ -97,11 +73,22 @@ export function OrdersListPanel({
         <label className={styles.search}>
           <Search width={16} height={16} aria-hidden="true" />
           <input
+            type="search"
             aria-label="Search orders"
             placeholder="Search order or customer"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => onQueryChange(event.target.value)}
           />
+          {query !== '' ? (
+            <button
+              type="button"
+              className={styles.clear}
+              aria-label="Clear search"
+              onClick={() => onQueryChange('')}
+            >
+              <X width={14} height={14} aria-hidden="true" />
+            </button>
+          ) : null}
         </label>
 
         <div
@@ -115,7 +102,7 @@ export function OrdersListPanel({
               type="button"
               className={filter === status ? styles.filterActive : styles.filter}
               aria-pressed={filter === status}
-              onClick={() => setStatus(filter)}
+              onClick={() => onStatusChange(filter)}
               key={filter}
             >
               {filter}
@@ -140,7 +127,7 @@ export function OrdersListPanel({
                 <button
                   type="button"
                   onClick={() => {
-                    setBusinessDate('');
+                    onBusinessDateChange('');
                     setDateOpen(false);
                   }}
                 >
@@ -149,7 +136,7 @@ export function OrdersListPanel({
                 <button
                   type="button"
                   onClick={() => {
-                    setBusinessDate(new Date().toISOString().slice(0, 10));
+                    onBusinessDateChange(new Date().toISOString().slice(0, 10));
                     setDateOpen(false);
                   }}
                 >
@@ -161,7 +148,7 @@ export function OrdersListPanel({
                 aria-label="Order date"
                 value={businessDate}
                 onChange={(event) => {
-                  setBusinessDate(event.target.value);
+                  onBusinessDateChange(event.target.value);
                   setDateOpen(false);
                 }}
               />
@@ -171,7 +158,7 @@ export function OrdersListPanel({
       </div>
 
       <OrdersTable
-        orders={visible}
+        orders={orders}
         selectedKey={selectedKey}
         onSelect={onSelect}
         emptyMessage={isLoading ? 'Loading order history…' : 'No matching orders.'}
@@ -179,29 +166,38 @@ export function OrdersListPanel({
 
       <footer className={styles.footer}>
         <span role={message ? 'alert' : undefined}>
-          {message || `Showing ${start} to ${end} of ${filtered.length} loaded orders`}
+          {message || `Showing ${start} to ${end} of ${totalCount} orders`}
         </span>
         <nav className={styles.pagination} aria-label="Orders pagination">
           <button
             type="button"
             aria-label="Previous page"
-            disabled={page === 0}
-            onClick={() => setPage((current) => Math.max(0, current - 1))}
+            disabled={page <= 0}
+            onClick={() => onPageChange(page - 1)}
+            key="prev"
           >
             <ChevronLeft width={14} height={14} aria-hidden="true" />
           </button>
-          <button type="button" className={styles.current} aria-current="page">
-            {page + 1}
-          </button>
+          {isLoading
+            ? null
+            : visiblePageIndexes(page, pageCount).map((index) => (
+            <button
+              type="button"
+              className={index === page ? styles.current : undefined}
+              aria-current={index === page ? 'page' : undefined}
+              aria-label={`Page ${index + 1}`}
+              onClick={() => onPageChange(index)}
+              key={index}
+            >
+              {index + 1}
+            </button>
+          ))}
           <button
             type="button"
-            aria-label={
-              page + 1 < pageCount ? 'Next page' : 'Load more orders'
-            }
-            disabled={
-              isLoadingMore || (page + 1 >= pageCount && !hasMore)
-            }
-            onClick={() => void nextPage()}
+            aria-label="Next page"
+            disabled={page >= pageCount - 1}
+            onClick={() => onPageChange(page + 1)}
+            key="next"
           >
             <ChevronRight width={14} height={14} aria-hidden="true" />
           </button>

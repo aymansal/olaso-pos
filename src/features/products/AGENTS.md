@@ -24,6 +24,10 @@ recipe management with saved tablet presentation during an outage.
 
 - Keep category, product, availability, price, and recipe presentation in one
   coherent editing workspace.
+- The catalog opens on All products. Category selection is an explicit operator
+  action.
+- The product table shows a fixed page of six rows with the same sliding
+  three-page window as Orders; it does not scroll.
 - Keep leaf components prop-driven; only the application data hook imports
   Convex.
 - Category, product, size, choice, and recipe writes use validated local domain

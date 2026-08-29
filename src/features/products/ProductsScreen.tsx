@@ -14,6 +14,8 @@ import styles from './ProductsScreen.module.css';
 type AvailabilityFilter = 'all' | ManagedProduct['status'];
 type ProductSort = 'updated' | 'name' | 'price';
 
+const PAGE_SIZE = 6;
+
 export function ProductsScreen() {
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState<string>();
@@ -21,30 +23,11 @@ export function ProductsScreen() {
   const [availability, setAvailability] =
     useState<AvailabilityFilter>('all');
   const [sort, setSort] = useState<ProductSort>('updated');
+  const [page, setPage] = useState(0);
   const [categoryEditor, setCategoryEditor] =
     useState<'new' | ManagedCategory>();
   const [productEditor, setProductEditor] = useState<'new'>();
-  const initialized = useRef(false);
   const management = useProductManagement(selectedProductId);
-
-  useEffect(() => {
-    if (initialized.current || management.isLoading || management.error) return;
-    const preferredCategory =
-      management.categories.find(
-        (category) => category.key === 'matcha-tea',
-      ) ?? management.categories.find((category) => category.status === 'active');
-    const preferredProduct = management.products.find(
-      (product) => product.categoryId === preferredCategory?.id,
-    );
-    setSelectedCategoryId(preferredCategory?.id ?? 'all');
-    setSelectedProductId(preferredProduct?.id ?? management.products[0]?.id);
-    initialized.current = true;
-  }, [
-    management.categories,
-    management.error,
-    management.isLoading,
-    management.products,
-  ]);
 
   const visibleProducts = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase();
@@ -73,6 +56,34 @@ export function ProductsScreen() {
     selectedCategoryId,
     sort,
   ]);
+
+  const filterKey = `${availability}\u0000${search}\u0000${selectedCategoryId}\u0000${sort}`;
+  const previousFilters = useRef(filterKey);
+  useEffect(() => {
+    if (previousFilters.current === filterKey) return;
+    previousFilters.current = filterKey;
+    setPage(0);
+  }, [filterKey]);
+
+  useEffect(() => {
+    if (management.isLoading || management.error || selectedProductId) return;
+    setSelectedProductId(visibleProducts[0]?.id);
+  }, [
+    management.error,
+    management.isLoading,
+    selectedProductId,
+    visibleProducts,
+  ]);
+
+  const pageCount = management.isLoading
+    ? 0
+    : Math.max(1, Math.ceil(visibleProducts.length / PAGE_SIZE));
+  const safePage = pageCount === 0 ? 0 : Math.min(page, pageCount - 1);
+  const pageProducts = visibleProducts.slice(
+    safePage * PAGE_SIZE,
+    safePage * PAGE_SIZE + PAGE_SIZE,
+  );
+
   const visibleCategories = useMemo(
     () => availability === 'archived'
       ? management.categories
@@ -144,7 +155,7 @@ export function ProductsScreen() {
     <main className={styles.screen} aria-label="Olaso products">
       <ProductCatalogPanel
         categories={visibleCategories}
-        products={visibleProducts}
+        products={pageProducts}
         selectedCategoryId={selectedCategoryId}
         selectedProductId={selectedProductId}
         search={search}
@@ -152,6 +163,9 @@ export function ProductsScreen() {
         sort={sort}
         isLoading={management.isLoading}
         error={management.error}
+        page={safePage}
+        pageCount={pageCount}
+        totalItems={visibleProducts.length}
         onSearchChange={setSearch}
         onAvailabilityChange={setAvailability}
         onSortChange={setSort}
@@ -183,6 +197,7 @@ export function ProductsScreen() {
           }
         }}
         onAddProduct={() => setProductEditor('new')}
+        onPageChange={setPage}
       />
       <ProductEditorPanel
         product={selectedProduct}

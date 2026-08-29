@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; SYNC-01 in progress (schema deployed; Manual Sync blocked on PIN; POLISH-01 paused)
+**Status:** active; SYNC-01 done (0826-0001…0018 in Convex); POLISH-01 in progress; remaining SYNC cards latent
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove

@@ -1,4 +1,4 @@
-import { RefreshCw, Search, Plus, SliderAlt, Layers, AlertTriangle } from '@boxicons/react';
+import { RefreshCw, Search, Plus, SliderAlt, Layers, AlertTriangle, X } from '@boxicons/react';
 import type {
   InventoryMetrics,
   ManagedIngredient,
@@ -130,6 +130,16 @@ export function StockInventoryPanel({
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
           />
+          {search !== '' ? (
+            <button
+              type="button"
+              className={styles.clear}
+              aria-label="Clear search"
+              onClick={() => onSearchChange('')}
+            >
+              <X width={14} height={14} aria-hidden="true" />
+            </button>
+          ) : null}
         </label>
         <label className={styles.filter}>
           <select

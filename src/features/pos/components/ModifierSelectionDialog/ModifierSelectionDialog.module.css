@@ -9,7 +9,7 @@
 
 .dialog {
   width: 560px;
-  max-height: 680px;
+  max-height: 544px;
   padding: 24px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -62,7 +62,7 @@
 }
 
 .groups {
-  max-height: 500px;
+  max-height: 400px;
   margin-top: 16px;
   overflow-y: auto;
 }

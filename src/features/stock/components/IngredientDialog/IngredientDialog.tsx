@@ -1,5 +1,6 @@
 import { Archive, Save, X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type {
   IngredientSaveInput,
   ManagedIngredient,
@@ -84,6 +85,7 @@ export function IngredientDialog({
             openingCostCentimes < 1))));
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section
         className={styles.dialog}
@@ -242,5 +244,6 @@ export function IngredientDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

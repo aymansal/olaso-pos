@@ -58,37 +58,33 @@ export function ReceiptRail({
 }: ReceiptRailProps) {
   return (
     <Card className={styles.rail} width={320} height={688} padding={0}>
+      <div className={styles.heading}>
+        <h2 className={styles.title}>Current order</h2>
+        <button
+          className={styles.clearCart}
+          type="button"
+          aria-label="Clear cart"
+          disabled={lines.length === 0 || checkoutProcessing}
+          onClick={onClearCart}
+        >
+          <Trash width={18} height={18} aria-hidden="true" />
+        </button>
+      </div>
       <SegmentedControl value={serviceMode} onChange={onServiceModeChange} />
       <PaymentMethodControl value={paymentMethod} onChange={onPaymentMethodChange} />
-      <div className={styles.orderSection}>
-        <div className={styles.sectionHeading}>
-          <span className={styles.sectionLabel}>Order list</span>
-          {lines.length > 0 ? (
-            <button
-              className={styles.clearCart}
-              type="button"
-              aria-label="Clear cart"
-              disabled={checkoutProcessing}
-              onClick={onClearCart}
-            >
-              <Trash width={18} height={18} aria-hidden="true" />
-            </button>
-          ) : null}
-        </div>
+      <div className={styles.orderSection} role="region" aria-label="Cart">
         <div className={styles.orderList}>
-          {lines.length > 0
-            ? lines.map(({ id, product, quantity, modifierSummary }) => (
-                <OrderItemCard
-                  key={id}
-                  product={product}
-                  quantity={quantity}
-                  modifierSummary={modifierSummary}
-                  onDecrement={() => onDecrement(id)}
-                  onIncrement={() => onIncrement(id)}
-                  onRemove={() => onRemove(id)}
-                />
-              ))
-            : <p className={styles.emptyOrder} role="status">Add a product to start the order.</p>}
+          {lines.map(({ id, product, quantity, modifierSummary }) => (
+            <OrderItemCard
+              key={id}
+              product={product}
+              quantity={quantity}
+              modifierSummary={modifierSummary}
+              onDecrement={() => onDecrement(id)}
+              onIncrement={() => onIncrement(id)}
+              onRemove={() => onRemove(id)}
+            />
+          ))}
         </div>
       </div>
       <PaymentSummary

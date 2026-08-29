@@ -1,6 +1,6 @@
 .control {
   position: absolute;
-  top: 76px;
+  top: 126px;
   left: 12px;
   display: grid;
   grid-template-columns: 1fr 1fr;

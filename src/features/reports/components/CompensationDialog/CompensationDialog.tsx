@@ -1,5 +1,6 @@
 import { X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import { localBusinessDate } from '../../../../lib/date.ts';
 import type { SavedCostManagement } from '../../../../data/localCosts.ts';
 import styles from './CompensationDialog.module.css';
@@ -50,6 +51,7 @@ export function CompensationDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="compensation-title">
         <header><h2 id="compensation-title">Add compensation</h2><button type="button" onClick={onClose} aria-label="Close compensation"><X width={18} height={18} /></button></header>
@@ -63,5 +65,6 @@ export function CompensationDialog({
         <footer><button type="button" onClick={onClose}>Cancel</button><button type="button" disabled={!valid || saving} onClick={submit}>{saving ? 'Saving…' : 'Save compensation'}</button></footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

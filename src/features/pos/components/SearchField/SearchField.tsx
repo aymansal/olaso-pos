@@ -1,4 +1,4 @@
-import { Search } from '@boxicons/react';
+import { Search, X } from '@boxicons/react';
 import styles from './SearchField.module.css';
 
 type SearchFieldProps = {
@@ -17,6 +17,16 @@ export function SearchField({ value, onChange }: SearchFieldProps) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
+      {value !== '' ? (
+        <button
+          type="button"
+          className={styles.clear}
+          aria-label="Clear search"
+          onClick={() => onChange('')}
+        >
+          <X width={16} height={16} aria-hidden="true" />
+        </button>
+      ) : null}
     </label>
   );
 }

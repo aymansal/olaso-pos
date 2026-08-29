@@ -1,5 +1,6 @@
 import { ArrowDown, Save, SliderAlt, X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type {
   ManagedIngredient,
   StockAdjustmentMode,
@@ -57,6 +58,7 @@ export function StockAdjustmentDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section
         className={styles.dialog}
@@ -144,5 +146,6 @@ export function StockAdjustmentDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

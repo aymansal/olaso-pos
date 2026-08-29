@@ -12,10 +12,10 @@ tablet's local SQLite operational record.
  comes from the App-owned saved terminal preferences, not another POS read. It
  also supplies the POS quick-add ranking with the same load, so a committed
  sale refreshes it without another screen-level read.
-- `useOrdersData.ts` renders the bounded local history page before remote work
-  settles, requests cloud pages only while Orders is mounted, merges rows by
-  the sale idempotency key while preserving tablet-local print state, and
-  coordinates deliberate retry/reprint recovery through the shared worker.
+- `useOrdersData.ts` reads the saved SQLite order count plus one OFFSET page
+  before remote work settles, enriches matching keys from the first cloud page
+  while Orders is mounted, preserves tablet-local print state, and coordinates
+  deliberate retry/reprint recovery through the shared worker.
 - `useDashboardData.ts` makes one saved-summary snapshot request only while
   Dashboard is mounted, uses the current local business date on each visible
   load, and exposes explicit retry state.
@@ -127,8 +127,9 @@ tablet's local SQLite operational record.
 - Represent offline sale usage as a signed local stock delta over the cached
   cloud balance so low stock never blocks a valid sale.
 - Keep operational and outbox reads explicitly bounded.
-- Page local sale history by the created-time keyset index and keep public cloud
-  history page sizes at 20 or fewer.
+- Page local sale history with the created-time index: COUNT plus LIMIT/OFFSET
+  for a numbered page, keyset for sequential reads. Keep public cloud history
+  page sizes at 20 or fewer.
 - Dashboard reads use one bounded snapshot request on mount or deliberate
   retry, with a bounded saved-tablet fallback offline; never poll or subscribe
   while the screen is hidden.

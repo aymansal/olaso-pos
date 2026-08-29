@@ -5,17 +5,35 @@ import { api } from '../../convex/_generated/api';
 import { useConnectionStatus } from './connectionContext.tsx';
 import { completeLocalSaleCancellation } from './localSales.ts';
 import {
+  countLocalOrders,
   loadLocalOrderPage,
   loadLocalSyncSummary,
   makeLocalSaleRetryAvailable,
-  type LocalOrderCursor,
+  ORDER_PAGE_SIZE,
   type OrderHistoryRecord,
+  type OrderListFilter,
+  type OrderStatus,
 } from './orderHistory.ts';
 import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
 
-const PAGE_SIZE = 6;
+export type OrdersListQuery = {
+  page: number;
+  status: 'All' | 'Completed' | 'Cancelled' | 'Refunded';
+  businessDate: string;
+  query: string;
+};
+
+function listFilter(list: OrdersListQuery): OrderListFilter {
+  return {
+    ...(list.status === 'All'
+      ? {}
+      : { status: list.status.toLocaleLowerCase() as OrderStatus }),
+    ...(list.businessDate ? { businessDate: list.businessDate } : {}),
+    ...(list.query.trim() ? { query: list.query } : {}),
+  };
+}
 
 function mergeOrders(
   existing: OrderHistoryRecord[],
@@ -77,57 +95,59 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
   };
 }
 
-export function useOrdersData() {
+export function useOrdersData(list: OrdersListQuery) {
   const { available, foreground } = useConnectionStatus();
   const session = useStaffSession();
   const reconnect = useReconnect();
   const convex = useConvex();
   const [orders, setOrders] = useState<OrderHistoryRecord[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [retryingId, setRetryingId] = useState<string>();
   const [reprintingId, setReprintingId] = useState<string>();
   const [cancellingId, setCancellingId] = useState<string>();
   const [message, setMessage] = useState('');
   const [lastSuccessAt, setLastSuccessAt] = useState<number>();
   const mounted = useRef(true);
-  const loadingMore = useRef(false);
-  const localCursor = useRef<LocalOrderCursor | undefined>(undefined);
-  const cloudCursor = useRef<string | undefined>(undefined);
-  const localDone = useRef(false);
-  const cloudDone = useRef(false);
-  const loadedKey = useRef<string | undefined>(undefined);
+  const fetchGeneration = useRef(0);
   const hasOrdersSnapshot = useRef(false);
 
   const refresh = useCallback(async () => {
-    if (!hasOrdersSnapshot.current) setIsLoading(true);
+    const initial = !hasOrdersSnapshot.current;
+    if (initial) setIsLoading(true);
     setMessage('');
-    localCursor.current = undefined;
-    cloudCursor.current = undefined;
-    localDone.current = false;
-    cloudDone.current = false;
-    const cloudHistory = available && foreground
+    const filter = listFilter(list);
+    const offset = list.page * ORDER_PAGE_SIZE;
+    const generation = fetchGeneration.current + 1;
+    fetchGeneration.current = generation;
+    const cloudHistory = list.page === 0 && available && foreground
       ? convex.query(api.sales.listOrders, {
           sessionToken: session.token,
           deviceId: session.deviceId,
-          limit: PAGE_SIZE,
+          limit: ORDER_PAGE_SIZE,
         })
       : undefined;
-    cloudDone.current = !cloudHistory;
-    const [localResult, summaryResult] = await Promise.allSettled([
-      loadLocalOrderPage({ limit: PAGE_SIZE }),
+    const [localResult, countResult, summaryResult] = await Promise.allSettled([
+      loadLocalOrderPage({
+        limit: ORDER_PAGE_SIZE,
+        offset,
+        filter,
+      }),
+      countLocalOrders(filter),
       loadLocalSyncSummary(),
     ]);
-    if (!mounted.current) return;
-    const firstOrders: OrderHistoryRecord[] = [];
+    if (!mounted.current || generation !== fetchGeneration.current) return;
+    const pageOrders =
+      localResult.status === 'fulfilled' ? localResult.value.page : [];
     const errors: string[] = [];
-    if (localResult.status === 'fulfilled') {
-      firstOrders.push(...localResult.value.page);
-      localCursor.current = localResult.value.continueCursor;
-      localDone.current = localResult.value.isDone;
-    } else {
-      localDone.current = true;
+    if (localResult.status === 'rejected') {
       errors.push('Local order history is unavailable.');
+    }
+    if (countResult.status === 'fulfilled') {
+      setTotalCount(countResult.value);
+    } else if (!hasOrdersSnapshot.current) {
+      setTotalCount(pageOrders.length);
+      errors.push('The order count is unavailable.');
     }
     if (summaryResult.status === 'fulfilled') {
       setLastSuccessAt(summaryResult.value.lastSuccessAt);
@@ -135,92 +155,52 @@ export function useOrdersData() {
         errors.push('Some saved orders still need synchronization.');
       }
     }
-    setOrders(mergeOrders([], firstOrders));
+    setOrders(pageOrders);
     hasOrdersSnapshot.current = true;
     setMessage(errors[0] ?? '');
     setIsLoading(false);
 
     if (!cloudHistory) return;
-    void Promise.allSettled([cloudHistory]).then(
-      ([cloudResult]) => {
-        if (!mounted.current) return;
-        const backgroundErrors: string[] = [];
-        if (cloudResult.status === 'fulfilled') {
-          cloudCursor.current = cloudResult.value.continueCursor;
-          cloudDone.current = cloudResult.value.isDone;
-          setOrders((current) =>
-            mergeOrders(current, cloudResult.value.page.map(cloudOrder))
-          );
-        } else {
-          cloudDone.current = true;
-          backgroundErrors.push(
-            'Cloud history is unavailable; saved local orders remain visible.',
-          );
-        }
-        if (!errors.length && backgroundErrors.length) {
-          setMessage(backgroundErrors[0]);
-        }
-      },
-    );
-  }, [available, convex, foreground, session.deviceId, session.token]);
+    const [cloudResult] = await Promise.allSettled([cloudHistory]);
+    if (!mounted.current || generation !== fetchGeneration.current) return;
+    const backgroundErrors: string[] = [];
+    if (cloudResult.status === 'fulfilled') {
+      const allowed = new Set(pageOrders.map((order) => order.key));
+      setOrders(
+        mergeOrders(
+          pageOrders,
+          cloudResult.value.page.map(cloudOrder).filter((order) =>
+            allowed.has(order.key)
+          ),
+        ),
+      );
+    } else {
+      backgroundErrors.push(
+        'Cloud history is unavailable; saved local orders remain visible.',
+      );
+    }
+    if (!errors.length && backgroundErrors.length) {
+      setMessage(backgroundErrors[0]);
+    }
+  }, [
+    available,
+    convex,
+    foreground,
+    list.businessDate,
+    list.page,
+    list.query,
+    list.status,
+    session.deviceId,
+    session.token,
+  ]);
 
   useEffect(() => {
     mounted.current = true;
-    const requestKey = `${session.staffProfileId}:${available}:${foreground}:${reconnect.revision}`;
-    if (loadedKey.current !== requestKey) {
-      void refresh().then(() => { loadedKey.current = requestKey; });
-    }
+    void refresh();
     return () => {
       mounted.current = false;
     };
-  }, [reconnect.revision, refresh]);
-
-  const loadMore = useCallback(async () => {
-    if (loadingMore.current || (localDone.current && cloudDone.current)) return;
-    loadingMore.current = true;
-    setIsLoadingMore(true);
-    const requests: Array<Promise<OrderHistoryRecord[]>> = [];
-    if (!localDone.current) {
-      requests.push(
-        loadLocalOrderPage({
-          limit: PAGE_SIZE,
-          cursor: localCursor.current,
-        }).then((result) => {
-          localCursor.current = result.continueCursor;
-          localDone.current = result.isDone;
-          return result.page;
-        }),
-      );
-    }
-    if (!cloudDone.current && available && foreground) {
-      requests.push(
-        convex
-          .query(api.sales.listOrders, {
-            sessionToken: session.token,
-            deviceId: session.deviceId,
-            limit: PAGE_SIZE,
-            ...(cloudCursor.current ? { cursor: cloudCursor.current } : {}),
-          })
-          .then((result) => {
-            cloudCursor.current = result.continueCursor;
-            cloudDone.current = result.isDone;
-            return result.page.map(cloudOrder);
-          }),
-      );
-    }
-    const results = await Promise.allSettled(requests);
-    if (mounted.current) {
-      const incoming = results.flatMap((result) =>
-        result.status === 'fulfilled' ? result.value : []
-      );
-      setOrders((current) => mergeOrders(current, incoming));
-      if (results.some((result) => result.status === 'rejected')) {
-        setMessage('More history could not be loaded. Try again when online.');
-      }
-      setIsLoadingMore(false);
-    }
-    loadingMore.current = false;
-  }, [available, convex, foreground, session.deviceId, session.token]);
+  }, [reconnect.revision, refresh, session.staffProfileId]);
 
   const retrySync = useCallback(
     async (localSaleId: string) => {
@@ -289,20 +269,18 @@ export function useOrdersData() {
         if (mounted.current) setCancellingId(undefined);
       }
     },
-    [reconnect, refresh, session.name],
+    [reconnect, refresh, session.name, session.staffProfileId],
   );
 
   return {
     orders,
+    totalCount,
     isLoading,
-    isLoadingMore,
     retryingId,
     reprintingId,
     cancellingId,
     message,
     lastSuccessAt,
-    hasMore: !localDone.current || !cloudDone.current,
-    loadMore,
     retrySync,
     reprintReceipt,
     cancelOrder,

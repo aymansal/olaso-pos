@@ -35,7 +35,7 @@ remaining goal and card sequence.
 | OPTIONS-02 — Custom product choices and independent copying | done — `6f072c64074b85ad958e4a1227fd14854e5afcc9` on `origin/main` |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | done — `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962` on `origin/main` |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | done — `ca7c9540dc29f7778f63d3f73bd19ffc7d6c5f00` on `origin/main` |
-| SYNC-01 — Convex sale snapshot schema so POS tickets insert | in progress — schema on colorful-newt-937, APK on SM-X115; blocked on `OLASO_OWNER_PIN` for Manual Sync; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
+| SYNC-01 — Convex sale snapshot schema so POS tickets insert | done — `ecf8500465db6e4c434a60dc991b4a78dd5224db` on `origin/main`; owner Manual Sync 29 Aug landed 0826-0001…0017 plus category delete; 0826-0018 auto-synced; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
 | SYNC-02 — Failed management must not hide later sales | pending |
 | SYNC-03 — Reconnect must not skip sales after management processed | pending |
 | SYNC-04 — Sale failure classification / automatic retry | pending |
@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | pending |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending — paused for sale-sync bug override |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — overlay portal, Orders/Products/Stock pager, Customize-order max-height 20% |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -124,17 +124,22 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- SYNC-01 (29 Aug 2026): `receiptLine` now allows optional `sizeId` /
-  `sizeName` / `choiceValueIds`. Schema deployed with `npx convex dev --once`
-  to colorful-newt-937. Debug APK install-over succeeded on SM-X115
-  (`R8YX91AKWXJ`). Tablet remains on the owner lock screen.
-- `check:sales` local half passed; cloud half needs `OLASO_OWNER_PIN` (unset).
-  Did not reset the owner PIN. Manual Sync not run. Cloud `sales` still seed
-  `dev-sale-0001`…`0013`. Tablet 0826-0001…0015 still failed; 0016/0017 still
-  pending behind the category delete (SYNC-02).
-- Exact next action: set `OLASO_OWNER_PIN`, unlock owner, Settings → Sync now,
-  prove a previously failed receipt in Convex, then finish SYNC-01 and start
-  SYNC-02. Do not mark SYNC-01 done until that evidence exists.
+- POLISH-01 (29 Aug 2026): OverlayPortal so dialogs cover Header; Orders/
+  Products/Stock pager uses saved COUNT not loaded rows; Customize-order
+  `.dialog` 680→544px and `.groups` 500→400px (20%).
+- SYNC-01 closeout (29 Aug 2026): owner unlocked, Settings → Sync now. Convex
+  colorful-newt-937 now has tablet receipts **0826-0001 … 0826-0018**. Batch
+  0001–0017 plus the category-delete outbox row drained in one Manual Sync;
+  0018 (Cappuccino) auto-synced after checkout. Schema extra-field reject was
+  the only blocker for this queue.
+- Why 0016/0017 also synced (not SYNC-02): the category delete was **pending**,
+  waiting on failed 0014. Manual Sync flips all `failed` sales back to
+  `pending`. 0014 then succeeded, the delete’s parent left `outbox`, then
+  0016/0017 became eligible. SYNC-02 remains a latent bug only if a parent
+  **stays failed** forever.
+- Exact next action: install-over the debug APK on SM-X115 so the owner can
+  judge the shorter Customize-order popup. Do not start SYNC-02 unless a
+  parent stays failed.
 
 - Sale-sync bug override (29 Aug 2026): tablet POS orders are not saved in
   Convex. Ledger: [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).

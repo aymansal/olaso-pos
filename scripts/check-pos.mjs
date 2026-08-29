@@ -124,8 +124,10 @@ assert.match(screen, /<QuickAddRow products=\{quickAddProducts\} onAdd=\{beginAd
 const header = readFileSync('src/features/pos/components/Header/Header.tsx', 'utf8');
 assert.doesNotMatch(header, /Bell|badge/);
 const rail = readFileSync('src/features/pos/components/ReceiptRail/ReceiptRail.tsx', 'utf8');
-assert.doesNotMatch(rail, /ReceiptHeader|Purchase Receipt|Local draft/);
+assert.doesNotMatch(rail, /ReceiptHeader|Purchase Receipt|Local draft|Order list|start the order/);
 assert.match(rail, /aria-label="Clear cart"/);
+assert.match(rail, /<h2 className=\{styles\.title\}>Current order<\/h2>/);
+assert.match(rail, /disabled=\{lines\.length === 0 \|\| checkoutProcessing\}/);
 assert.match(screen, /onClearCart=/);
 const segmented = readFileSync(
   'src/features/pos/components/SegmentedControl/SegmentedControl.tsx',

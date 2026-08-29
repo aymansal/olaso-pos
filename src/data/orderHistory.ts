@@ -56,6 +56,66 @@ export type LocalOrderCursor = {
   localSaleId: string;
 };
 
+export const ORDER_PAGE_SIZE = 6;
+
+export type OrderListFilter = {
+  status?: OrderStatus;
+  businessDate?: string;
+  query?: string;
+};
+
+function likeNeedle(query: string) {
+  const trimmed = query.trim();
+  if (!trimmed) return null;
+  return `%${trimmed.replaceAll('%', '').replaceAll('_', '')}%`;
+}
+
+function filterBinds(filter?: OrderListFilter) {
+  const status = filter?.status ?? null;
+  const businessDate = filter?.businessDate?.trim() || null;
+  const like = likeNeedle(filter?.query ?? '');
+  return {
+    clause: `AND (? IS NULL OR s.status = ?)
+     AND (? IS NULL OR s.business_date = ?)
+     AND (? IS NULL OR s.receipt_number LIKE ? OR IFNULL(s.customer_name, '') LIKE ?)`,
+    values: [status, status, businessDate, businessDate, like, like, like],
+  };
+}
+
+function recordFromSaleRow(row: Record<string, unknown>): OrderHistoryRecord {
+  const status = String(row.status);
+  const syncState = String(row.effective_sync_state);
+  const printState = String(row.print_state);
+  if (
+    !['completed', 'cancelled', 'refunded'].includes(status)
+    || !['pending', 'synced', 'failed'].includes(syncState)
+    || !['pending', 'printed', 'failed'].includes(printState)
+  ) {
+    throw new Error('A saved order state is invalid.');
+  }
+  const localSaleId = String(row.local_sale_id);
+  const deviceId = String(row.device_id);
+  const receipt = parseReceipt(row.receipt_snapshot_json);
+  return {
+    key: `${deviceId}:${localSaleId}`,
+    deviceId,
+    localSaleId,
+    ...(row.cloud_sale_id ? { cloudSaleId: String(row.cloud_sale_id) } : {}),
+    businessDate: String(row.business_date),
+    ...(receipt.cashierName ? { cashierName: receipt.cashierName } : {}),
+    status: status as OrderStatus,
+    syncState: syncState as OrderSyncState,
+    syncAttemptCount: Number(row.attempt_count ?? 0),
+    ...(row.last_error ? { syncError: String(row.last_error) } : {}),
+    printState: printState as SalePrintState,
+    printAttemptCount: Number(row.print_attempt_count ?? 0),
+    ...(row.last_print_error_message
+      ? { printError: String(row.last_print_error_message) }
+      : {}),
+    receipt,
+  };
+}
+
 function money(value: unknown, label: string) {
   const amount = Number(value);
   if (!Number.isSafeInteger(amount) || amount < 0) {
@@ -146,18 +206,51 @@ function parseReceipt(raw: unknown): OrderReceipt {
   };
 }
 
+export async function countLocalOrders(
+  filter?: OrderListFilter,
+  connection?: OrderDatabase,
+) {
+  const database = connection ?? await openLocalDatabase();
+  const binds = filterBinds(filter);
+  const result = await database.query(
+    `SELECT COUNT(*) AS count
+     FROM sales AS s
+     WHERE 1 = 1
+     ${binds.clause}`,
+    binds.values,
+  );
+  const count = Number(result.values?.[0]?.count ?? 0);
+  if (!Number.isSafeInteger(count) || count < 0) {
+    throw new Error('The saved order count is invalid.');
+  }
+  return count;
+}
+
 export async function loadLocalOrderPage(
   {
-    limit = 6,
+    limit = ORDER_PAGE_SIZE,
     cursor,
+    offset,
+    filter,
   }: {
     limit?: number;
     cursor?: LocalOrderCursor;
+    offset?: number;
+    filter?: OrderListFilter;
   } = {},
   connection?: OrderDatabase,
 ) {
   if (!Number.isSafeInteger(limit) || limit < 1 || limit > 20) {
     throw new Error('Order page size must be an integer from 1 to 20.');
+  }
+  if (cursor && offset !== undefined) {
+    throw new Error('Order pages cannot use both a cursor and an offset.');
+  }
+  if (
+    offset !== undefined
+    && (!Number.isSafeInteger(offset) || offset < 0)
+  ) {
+    throw new Error('The order page offset is invalid.');
   }
   if (
     cursor
@@ -170,8 +263,10 @@ export async function loadLocalOrderPage(
     throw new Error('The local order cursor is invalid.');
   }
   const database = connection ?? await openLocalDatabase();
-  const cursorTime = cursor?.createdAt ?? null;
-  const cursorId = cursor?.localSaleId ?? null;
+  const binds = filterBinds(filter);
+  const usingOffset = offset !== undefined;
+  const cursorTime = usingOffset ? null : cursor?.createdAt ?? null;
+  const cursorId = usingOffset ? null : cursor?.localSaleId ?? null;
   const result = await database.query(
     `SELECT s.local_sale_id, s.device_id, s.cloud_sale_id, s.status,
       s.business_date, s.receipt_snapshot_json,
@@ -193,45 +288,24 @@ export async function loadLocalOrderPage(
        OR s.created_at < ?
        OR (s.created_at = ? AND s.local_sale_id < ?)
      )
+     ${binds.clause}
      ORDER BY s.created_at DESC, s.local_sale_id DESC
-     LIMIT ?`,
-    [cursorTime, cursorTime, cursorTime, cursorId, limit + 1],
+     LIMIT ? OFFSET ?`,
+    [
+      cursorTime,
+      cursorTime,
+      cursorTime,
+      cursorId,
+      ...binds.values,
+      limit + 1,
+      usingOffset ? offset : 0,
+    ],
   );
   const rows = result.values ?? [];
   const pageRows = rows.slice(0, limit);
-  const page: OrderHistoryRecord[] = pageRows.map((row) => {
-    const status = String(row.status);
-    const syncState = String(row.effective_sync_state);
-    const printState = String(row.print_state);
-    if (
-      !['completed', 'cancelled', 'refunded'].includes(status)
-      || !['pending', 'synced', 'failed'].includes(syncState)
-      || !['pending', 'printed', 'failed'].includes(printState)
-    ) {
-      throw new Error('A saved order state is invalid.');
-    }
-    const localSaleId = String(row.local_sale_id);
-    const deviceId = String(row.device_id);
-    const receipt = parseReceipt(row.receipt_snapshot_json);
-    return {
-      key: `${deviceId}:${localSaleId}`,
-      deviceId,
-      localSaleId,
-      ...(row.cloud_sale_id ? { cloudSaleId: String(row.cloud_sale_id) } : {}),
-      businessDate: String(row.business_date),
-      ...(receipt.cashierName ? { cashierName: receipt.cashierName } : {}),
-      status: status as OrderStatus,
-      syncState: syncState as OrderSyncState,
-      syncAttemptCount: Number(row.attempt_count ?? 0),
-      ...(row.last_error ? { syncError: String(row.last_error) } : {}),
-      printState: printState as SalePrintState,
-      printAttemptCount: Number(row.print_attempt_count ?? 0),
-      ...(row.last_print_error_message
-        ? { printError: String(row.last_print_error_message) }
-        : {}),
-      receipt,
-    };
-  });
+  const page = pageRows.map((row) =>
+    recordFromSaleRow(row as Record<string, unknown>),
+  );
   const last = pageRows.at(-1);
   return {
     page,

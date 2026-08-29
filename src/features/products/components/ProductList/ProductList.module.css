@@ -115,25 +115,25 @@
   left: 0;
   width: 612px;
   height: 396px;
-  overflow-y: auto;
-}
-
-.row {
-  position: relative;
-  display: block;
-  width: 612px;
-  height: 66px;
-  padding: 0;
-  border: 0;
+  overflow: hidden;
   background: var(--olaso-white);
-  text-align: left;
 }
 
-.selected {
+.indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 66px;
   background: var(--olaso-table-selected);
+  transform: translateY(calc(var(--index, 0) * 66px));
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.selectedMark {
+.indicator::before {
+  content: '';
   position: absolute;
   top: 12px;
   left: 0;
@@ -141,6 +141,18 @@
   height: 42px;
   border-radius: 2px;
   background: var(--olaso-green);
+}
+
+.row {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 612px;
+  height: 66px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
 }
 
 .productIcon {
@@ -254,22 +266,47 @@
 
 .footer {
   position: absolute;
-  top: 490px;
+  top: 486px;
   left: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 580px;
-  height: 24px;
+  height: 34px;
   color: var(--olaso-text-meta);
   font-size: 7.5px;
   font-weight: 500;
 }
 
-.footer strong {
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pagination button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
   color: var(--olaso-green);
+  background: transparent;
   font-size: 8px;
   font-weight: 700;
+}
+
+.pagination button:disabled {
+  color: var(--olaso-disabled);
+  cursor: not-allowed;
+}
+
+.pagination .current {
+  border-color: var(--olaso-green);
+  color: var(--olaso-white);
+  background: var(--olaso-green);
 }
 
 .state {
@@ -277,4 +314,10 @@
   color: var(--olaso-text-meta);
   text-align: center;
   font-size: 9px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator {
+    transition: none;
+  }
 }

@@ -1,5 +1,6 @@
 import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type { ManagedCategory, ProductSaveInput } from '../../productManagementTypes';
 import styles from './ProductDialog.module.css';
 
@@ -50,6 +51,7 @@ export function ProductDialog({
   }
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section
         className={styles.dialog}
@@ -128,5 +130,6 @@ export function ProductDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }

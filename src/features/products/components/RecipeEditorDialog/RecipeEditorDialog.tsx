@@ -1,5 +1,6 @@
 import { Save, Plus, Trash, X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
+import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type {
   ManagedProduct,
   ManagedRecipeData,
@@ -92,6 +93,7 @@ export function RecipeEditorDialog({
     sizeQuantities.find((item) => item.ingredientId === ingredientId && item.productSizeId === sizeId)?.quantity ?? baseQuantity;
 
   return (
+    <OverlayPortal>
     <div className={styles.overlay} role="presentation">
       <section
         className={styles.dialog}
@@ -216,5 +218,6 @@ export function RecipeEditorDialog({
         </footer>
       </section>
     </div>
+    </OverlayPortal>
   );
 }
