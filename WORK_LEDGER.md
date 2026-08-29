@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | pending |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — overlay portal, Orders/Products/Stock pager, Customize-order max-height 20% |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — `694775f19016de01ac2886b7b4a3eaad26f60a76` on `origin/main`; APK on SM-X115 |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -126,7 +126,9 @@ remaining goal and card sequence.
 
 - POLISH-01 (29 Aug 2026): OverlayPortal so dialogs cover Header; Orders/
   Products/Stock pager uses saved COUNT not loaded rows; Customize-order
-  `.dialog` 680→544px and `.groups` 500→400px (20%).
+  `.dialog` 680→544px and `.groups` 500→400px (20%). On `origin/main` as
+  `694775f19016de01ac2886b7b4a3eaad26f60a76`. Debug APK install-over succeeded
+  on SM-X115 (`R8YX91AKWXJ`).
 - SYNC-01 closeout (29 Aug 2026): owner unlocked, Settings → Sync now. Convex
   colorful-newt-937 now has tablet receipts **0826-0001 … 0826-0018**. Batch
   0001–0017 plus the category-delete outbox row drained in one Manual Sync;
@@ -137,9 +139,9 @@ remaining goal and card sequence.
   `pending`. 0014 then succeeded, the delete’s parent left `outbox`, then
   0016/0017 became eligible. SYNC-02 remains a latent bug only if a parent
   **stays failed** forever.
-- Exact next action: install-over the debug APK on SM-X115 so the owner can
-  judge the shorter Customize-order popup. Do not start SYNC-02 unless a
-  parent stays failed.
+- Exact next action: owner opens POS, adds a many-option product, and judges
+  whether the 20% shorter Customize-order popup is enough. Do not start
+  SYNC-02 unless a parent stays failed.
 
 - Sale-sync bug override (29 Aug 2026): tablet POS orders are not saved in
   Convex. Ledger: [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).
