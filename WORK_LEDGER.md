@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | pending |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — `694775f19016de01ac2886b7b4a3eaad26f60a76` on `origin/main`; APK on SM-X115 |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — customize footer `7e9e6b573ad9f6813a91f05bef1aa547728f107e` on `origin/main` |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -142,7 +142,7 @@ remaining goal and card sequence.
 
 - POLISH: Customize-order is a column flex so footer + 24px padding stay
   visible at 544px max-height; groups scroll in leftover space (no 400px
-  groups cap). Included in this commit.
+  groups cap). On `origin/main` as `7e9e6b573ad9f6813a91f05bef1aa547728f107e`.
 - POLISH-01 (29 Aug 2026): OverlayPortal so dialogs cover Header; Orders/
   Products/Stock pager uses saved COUNT not loaded rows; Customize-order
   `.dialog` 680→544px and `.groups` 500→400px (20%). On `origin/main` as
