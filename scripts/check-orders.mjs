@@ -10,6 +10,7 @@ import {
   loadLocalOrderPage,
   makeLocalSaleRetryAvailable,
 } from '../src/data/orderHistory.ts';
+import { listPendingOutboxFromDatabase } from '../src/data/outbox.ts';
 import {
   recordSalePrintAttempt,
   recordSalePrintFailure,
@@ -215,6 +216,79 @@ assert.equal(savedPrint.last_print_error_code, 'TIMEOUT');
 assert.deepEqual({ ...invariantCounts() }, { ...beforeReprint });
 database.close();
 
+const chained = new DatabaseSync(':memory:');
+chained.exec('PRAGMA foreign_keys = ON');
+for (const migration of localMigrations) {
+  for (const statement of migration.statements) chained.exec(statement);
+  chained.exec(`PRAGMA user_version = ${migration.toVersion}`);
+}
+const chainedAdapter = {
+  query(statement, values = []) {
+    return { values: chained.prepare(statement).all(...values) };
+  },
+  run(statement, values = []) {
+    const result = chained.prepare(statement).run(...values);
+    return { changes: { changes: Number(result.changes) } };
+  },
+};
+const insertChainedSale = chained.prepare(
+  `INSERT INTO sales
+    (local_sale_id, device_id, receipt_number, status, service_type,
+     subtotal_centimes, tax_centimes, total_centimes, currency, business_date,
+     receipt_snapshot_json, sync_state, created_at)
+   VALUES (?, 'orders-check-device', ?, 'completed', 'take-away',
+     1500, 0, 1500, 'MAD', '2026-07-28', ?, 'failed', ?)`,
+);
+insertChainedSale.run(
+  'sale-failed-parent',
+  'CHECK-006A',
+  receipt('CHECK-006A', secondAt, 'Latte'),
+  secondAt,
+);
+insertChainedSale.run(
+  'sale-pending-parent',
+  'CHECK-006B',
+  receipt('CHECK-006B', secondAt + 1, 'Mocha'),
+  secondAt + 1,
+);
+const enqueueChained = chained.prepare(
+  `INSERT INTO outbox
+    (operation_id, device_id, operation_type, local_record_id, state,
+     depends_on_operation_id, attempt_count, last_error, created_at, available_at)
+   VALUES (?, 'orders-check-device', ?, ?, ?, ?, 1, NULL, ?, 0)`,
+);
+enqueueChained.run(
+  'parent-failed', 'management.category.save', 'cat-failed', 'failed', null, secondAt,
+);
+enqueueChained.run(
+  'sale-of-failed', 'sale-completed', 'sale-failed-parent', 'failed',
+  'parent-failed', secondAt + 1,
+);
+enqueueChained.run(
+  'parent-pending', 'management.category.save', 'cat-pending', 'pending', null,
+  secondAt + 2,
+);
+enqueueChained.run(
+  'sale-of-pending', 'sale-completed', 'sale-pending-parent', 'failed',
+  'parent-pending', secondAt + 3,
+);
+await makeLocalSaleRetryAvailable('sale-failed-parent', chainedAdapter);
+await makeLocalSaleRetryAvailable('sale-pending-parent', chainedAdapter);
+const listed = (await listPendingOutboxFromDatabase(chainedAdapter, 10, 10)).map(
+  (row) => row.operationId,
+);
+assert.deepEqual(
+  listed.filter((id) => id === 'sale-of-failed' || id === 'parent-failed'),
+  ['sale-of-failed'],
+  'Orders retry must list a sale whose management parent is still failed in outbox.',
+);
+assert.deepEqual(
+  listed.filter((id) => id === 'sale-of-pending' || id === 'parent-pending'),
+  ['parent-pending'],
+  'A still-pending management parent must hide its sale after Orders retry.',
+);
+chained.close();
+
 const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 const localEnv = readFileSync(new URL('../.env.local', import.meta.url), 'utf8');
 const convexUrl = localEnv.match(/^VITE_CONVEX_URL=(.+)$/m)?.[1]?.trim();
@@ -269,6 +343,9 @@ assert(
   'Local order history must render before cloud work settles.',
 );
 assert.match(ordersHook, /attemptSaleReceiptPrint/);
+assert.match(ordersHook, /makeLocalSaleRetryAvailable/);
+assert.match(ordersHook, /reconnect\.run\('automatic'\)/);
+assert.doesNotMatch(ordersHook, /makePendingOutboxAvailable/);
 const orderDetail = readFileSync(
   new URL(
     '../src/features/orders/components/OrderDetailPanel/OrderDetailPanel.tsx',

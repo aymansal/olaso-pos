@@ -40,7 +40,7 @@ remaining goal and card sequence.
 | SYNC-03 — Reconnect must not skip sales after management processed | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 — Sale failure classification / automatic retry | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 — Permanent abandon only for true conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
-| SYNC-06 — Orders retry vs management parent | pending |
+| SYNC-06 — Orders retry vs management parent | done — verify-only; SHA after push |
 | SYNC-07 — Settings waiting count/copy | pending |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
@@ -123,6 +123,21 @@ remaining goal and card sequence.
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- SYNC-06 (29 Aug 2026): verify-only. SYNC-02 + SYNC-03 cover Orders Retry;
+  added `check:orders` sqlite fixture; no UI copy. A failed
+  `management.category.save` parent still in outbox does not hide the sale
+  after `makeLocalSaleRetryAvailable`. A still-pending parent still hides
+  the child until it leaves `pending`. Case C cannot happen after SYNC-03 in
+  this worker. Android research: retry is React/data SQLite + existing
+  reconnect worker; no native plugin, WorkManager, or Capacitor change.
+  Checks: `check:orders` sqlite half (chained retry listing); cloud half
+  stopped at unset `OLASO_OWNER_PIN`. `check:reconnect`. `npx tsc -b`.
+  Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped.
+  Live chained Retry not reproduced (0016/0017 already synced).
+  Exact next action: SYNC-07.
+- POLISH Customize-order CSS remains on `origin/main` as
+  `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
 - SYNC-05 (29 Aug 2026): `PERMANENT_SALE_SYNC_FAILURE` unchanged after
   re-reading every `conflict(` / `invalid(` string in `convex/sales.ts`.
@@ -1348,6 +1363,28 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
+
+- Ponytail verify-first: no TSX. SYNC-02 already lists a child whose parent
+  is `failed` and still in outbox. SYNC-03 processes catalog/inventory then
+  sales in the same automatic reconnect batch. Case C (sale still hidden by a
+  still-pending ineligible parent after Retry) cannot happen in this worker:
+  automatic reconnect only promotes `CONNECTION_SYNC_FAILURE` to `pending`
+  with `available_at = 0`. Worker-gated `synced: 0` is SYNC-08.
+- `check:orders`: after `makeLocalSaleRetryAvailable`, a sale depending on a
+  failed `management.category.save` is listed; a sale depending on a pending
+  parent is not (parent listed instead). Retry still uses
+  `reconnect.run('automatic')` and does not call `makePendingOutboxAvailable`.
+- Did not clear `depends_on` on a pending parent. Did not add waiting-on-change
+  copy. Did not fork Settings Sync.
+- Checks: `npm run check:orders` sqlite half pass; cloud half stopped at unset
+  PIN. `npm run check:reconnect`. `npx tsc -b`. Graphify update after the
+  check script.
+- Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
+  Success on SM-X115 `R8YX91AKWXJ`. Café DB untouched. Live chained Retry not
+  reproduced (0016/0017 already synced); automated check is the proof.
+- Exact next action: SYNC-07.
 
 ### 2026-08-29 — SYNC-05 keep abandon only for true permanent conflicts
 

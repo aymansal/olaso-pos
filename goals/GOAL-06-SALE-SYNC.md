@@ -1,8 +1,8 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01 through SYNC-05 done. Owner Manual Sync 29 Aug landed
+**Status:** SYNC-01 through SYNC-06 done. Owner Manual Sync 29 Aug landed
 0826-0001…0017 and the chained category delete; 0826-0018 auto-synced.
-SYNC-06 through SYNC-09 remain latent; do not treat the drained queue as
+SYNC-07 through SYNC-09 remain latent; do not treat the drained queue as
 proof they are gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
@@ -21,8 +21,8 @@ bug pauses the current card and overrides ordinary order. POLISH-01 stays
 pending. HARD-08 cannot accept the application while tablet sales never land
 in Convex.
 
-One goal, one card at a time. SYNC-06 is next. Do not start SYNC-07 through
-SYNC-09 until SYNC-06 is pushed.
+One goal, one card at a time. SYNC-07 is next. Do not start SYNC-08 or
+SYNC-09 until SYNC-07 is pushed.
 
 ## Diagnosis already done (do not repeat as a card)
 
@@ -88,7 +88,7 @@ SYNC-01.
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
-| SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | pending |
+| SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — SYNC-02 lists the sale after retry; no UI copy |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | pending |
 | SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | pending |
 | SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | pending |
@@ -284,7 +284,7 @@ Café SQLite not wiped. Install-over debug APK on SM-X115 `R8YX91AKWXJ`.
 
 ### SYNC-06 — Orders retry must unstick or honestly refuse chained sales
 
-**Status:** pending — blocked on SYNC-02
+**Status:** done — SYNC-02 + SYNC-03 cover Orders Retry; added check; no UI copy
 
 **Objective:** Retry on an order whose outbox parent is a stuck management
 row must either reset that blocking parent when policy allows, or tell the
@@ -293,16 +293,25 @@ operator the sale is waiting on another saved change — not silently no-op.
 **Root cause:** `makeLocalSaleRetryAvailable` only flips that sale’s outbox
 row to pending. `listPendingOutbox` still hides it while `depends_on` exists.
 
-**Do:** smallest change in the shared retry path used by Orders (and do not
-fork Settings Sync). After SYNC-02 the hide rule may already be enough; if
-so, this card verifies Orders retry on a chained sale and records that
-SYNC-02 covered it. If not, reset or clear the obsolete parent according to
-SYNC-02’s rule.
+**Verified:** A failed `management.category.save` parent still in outbox no
+longer hides the child (SYNC-02). After `makeLocalSaleRetryAvailable`,
+`listPendingOutboxFromDatabase` includes that sale. A still-pending parent
+still hides the child until it leaves `pending`; SYNC-03 then processes
+catalog/inventory before sales in the same automatic reconnect run. Case C
+(silent no-op while a parent stays pending and ineligible this run) cannot
+happen after SYNC-03 in this worker: automatic reconnect promotes only
+connection failures to `pending` with `available_at = 0`, and a still-pending
+catalog/inventory parent is processed before sales. Worker-gated
+`synced: 0` is SYNC-08. No TSX copy, no second sync client, no clearing
+`depends_on` on a pending parent.
 
 **Must not do:** a separate Orders-only sync client.
 
-**Acceptance evidence:** tablet Retry on a chained sale either uploads or
-shows the waiting-on-change copy; check if logic changed.
+**Acceptance evidence:** `check:orders` sqlite fixture after Orders retry:
+failed parent still in outbox → sale listed; pending parent → parent listed,
+sale hidden. `check:reconnect`; `npx tsc -b`. No TSX change. Install-over
+debug APK on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped. Live chained
+Retry not reproduced (0016/0017 already synced). Automated check is the proof.
 
 **Next action:** SYNC-07.
 
@@ -397,6 +406,25 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
+
+- SYNC-02 already lists a sale whose `management.category.save` parent is
+  still `failed` in outbox. `makeLocalSaleRetryAvailable` then leaves that
+  sale eligible for automatic reconnect. No extra unstick SQL.
+- A still-pending parent still hides the child (correct ordering). SYNC-03
+  processes catalog/inventory then sales in the same `reconnect.run('automatic')`.
+- Case C cannot happen after SYNC-03 in this worker: connection-failed parents
+  return to `pending` with `available_at = 0`; a still-pending catalog/inventory
+  parent is listed before sales. Worker-gated silent success is SYNC-08.
+- No TSX copy. `check:orders` sqlite fixture proves retry listing. Cloud half
+  stopped at unset `OLASO_OWNER_PIN`. `check:reconnect`, `npx tsc -b`.
+- Android research: retry stays React/data SQLite + existing reconnect worker.
+  No native plugin, WorkManager, or Capacitor change
+  (https://developer.android.com/topic/architecture/data-layer/offline-first).
+- Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped.
+  Live chained Retry not reproduced (0016/0017 already synced).
+- Exact next action: SYNC-07.
 
 ### 2026-08-29 — SYNC-05 keep abandon only for true permanent conflicts
 
