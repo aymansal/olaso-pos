@@ -13,7 +13,8 @@ presentation.
   non-secret local preferences.
 - Manual synchronization calls the data hook once per deliberate action and
   reports pending, success, offline, and error states. Online tablets also
-  synchronize automatically while the app is open and connected.
+  synchronize automatically while the app is open and connected. Waiting sales
+  is pending and failed sale outbox rows only, not management operations.
 - Every role reaches the same local Lock / Switch staff action from the Header;
   this does not grant Settings access. A deliberate non-empty-cart switch asks
   for confirmation and preserves that order while the app process remains

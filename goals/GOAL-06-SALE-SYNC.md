@@ -1,8 +1,8 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01 through SYNC-06 done. Owner Manual Sync 29 Aug landed
+**Status:** SYNC-01 through SYNC-07 done. Owner Manual Sync 29 Aug landed
 0826-0001…0017 and the chained category delete; 0826-0018 auto-synced.
-SYNC-07 through SYNC-09 remain latent; do not treat the drained queue as
+SYNC-08 through SYNC-09 remain latent; do not treat the drained queue as
 proof they are gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
@@ -21,8 +21,8 @@ bug pauses the current card and overrides ordinary order. POLISH-01 stays
 pending. HARD-08 cannot accept the application while tablet sales never land
 in Convex.
 
-One goal, one card at a time. SYNC-07 is next. Do not start SYNC-08 or
-SYNC-09 until SYNC-07 is pushed.
+One goal, one card at a time. SYNC-08 is next. Do not start SYNC-09 until
+SYNC-08 is pushed.
 
 ## Diagnosis already done (do not repeat as a card)
 
@@ -72,7 +72,8 @@ SYNC-01.
   they synchronize or a recorded recovery says otherwise.
 - Do not mark a sale synced because SQLite has it. Cloud `sales` must contain
   the row with a matching `deviceId` + `localSaleId`.
-- Do not treat Settings “N waiting” as N unsynced tickets until SYNC-07.
+- Settings waiting count is pending+failed sale outbox rows only (SYNC-07);
+  it is not every outbox type.
 - Do not skip sales forever because a later catalog/inventory op failed.
 - Do not add a second outbox, WorkManager, or a cloud write from a React
   screen. Fix `sales.accept` / schema and the existing reconnect worker.
@@ -89,7 +90,7 @@ SYNC-01.
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main`; SYNC-02 lists the sale after retry; no UI copy |
-| SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | pending |
+| SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | done — SHA after push to `origin/main` |
 | SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | pending |
 | SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | pending |
 
@@ -317,7 +318,7 @@ Retry not reproduced (0016/0017 already synced). Automated check is the proof.
 
 ### SYNC-07 — Honest Settings waiting count and copy
 
-**Status:** pending
+**Status:** done — SHA after push to `origin/main`
 
 **Objective:** Settings must not say “N saved orders” when N is every outbox
 row (sales + category delete + inventory + staff).
@@ -334,7 +335,14 @@ category delete + 2 pending sales, the sentence matches reality.
 **Must not do:** a sync dashboard, progress bars, or technical operation IDs
 in the cashier UI.
 
-**Acceptance evidence:** `check:settings`; tablet Settings copy.
+**Acceptance evidence:** `check:settings` mixed fixture: 1 pending
+`sale-completed` restart still counts 1; then pending+failed
+`sale-completed`, pending `sale-cancelled`, and pending
+`management.category.delete` → `pendingSyncCount === 3` while
+`COUNT(*) === 4`. Existing Settings copy unchanged. Install-over debug
+APK on SM-X115 `R8YX91AKWXJ`. Café outbox empty after SYNC-01 drain;
+`0` / Up to date is correct. Did not inject 15 failed sales. PIN not
+invented; Settings not opened past lock.
 
 **Next action:** SYNC-08.
 
@@ -406,6 +414,39 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — SYNC-07 count waiting Settings sales not all outbox rows
+
+- `loadTerminalSettingsFromDatabase` COUNT is
+  `WHERE operation_type IN ('sale-completed', 'sale-cancelled')`. Outbox
+  only keeps pending/failed rows; acknowledged rows are deleted. No state
+  filter. Field name `pendingSyncCount` unchanged. No second metric.
+- Copy left unchanged: `Waiting sales`; `${N} waiting`;
+  `${n} saved order(s) still need synchronization.`; zero remaining sales
+  still `'Menu and synchronization state are up to date.'` even if a
+  management row remains. Did not switch to “saved changes”. Did not
+  change `reconnect.perform` `{ synced, failed, pending }` shape or
+  `result.synced` copy.
+- `check:settings`: existing one-sale restart still `pendingSyncCount === 1`;
+  then + failed `sale-completed` + pending `sale-cancelled` + pending
+  `management.category.delete` → all rows 4, waiting sales 3.
+- Android research: waiting count is React/data reading SQLite through the
+  already-installed Capacitor SQLite plugin. Official offline-first UI
+  reads the local data layer
+  (https://developer.android.com/topic/architecture/data-layer/offline-first).
+  Rejected a native Settings/badge COUNT and WorkManager periodic work
+  (https://developer.android.com/develop/background-work/background-tasks);
+  WorkManager is for deferrable background jobs, not a foreground Settings
+  article. No Kotlin, plugin, or WorkManager added.
+- Checks: `npm run check:settings`, `npx tsc -b`, `npm run build`.
+  `OLASO_OWNER_PIN` unset; no cloud half run. Graphify update after COUNT
+  SQL.
+- Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
+  Success on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped or injected.
+  Read-only dump: outbox 0 sales / 0 all. Launch showed lock; PIN not
+  invented. Empty waiting count is correct after SYNC-01 drain. Mixed
+  queue proof is the check fixture.
+- Exact next action: SYNC-08.
 
 ### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
 

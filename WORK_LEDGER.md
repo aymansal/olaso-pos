@@ -41,7 +41,7 @@ remaining goal and card sequence.
 | SYNC-04 — Sale failure classification / automatic retry | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 — Permanent abandon only for true conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 — Orders retry vs management parent | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` |
-| SYNC-07 — Settings waiting count/copy | pending |
+| SYNC-07 — Settings waiting count/copy | done — SHA after push to `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — customize footer `7e9e6b573ad9f6813a91f05bef1aa547728f107e` on `origin/main` |
@@ -123,6 +123,22 @@ remaining goal and card sequence.
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- SYNC-07 (29 Aug 2026): `pendingSyncCount` is pending+failed sale outbox
+  rows (`sale-completed`, `sale-cancelled`), not `COUNT(*)` of all outbox
+  types. Existing Settings copy kept (`Waiting sales`, `N waiting`,
+  `N saved order(s) still need synchronization.`, zero-sales success
+  `Menu and synchronization state are up to date.` even if management
+  remains). Android research: count stays React/data SQLite via the
+  existing Capacitor plugin; no Kotlin, plugin, WorkManager, or native
+  badge. Checks: `check:settings` (1 sale restart, then 3 sales + 1
+  `management.category.delete` → count 3 not 4). `npx tsc -b`.
+  `npm run build`. Install-over debug APK on SM-X115 `R8YX91AKWXJ`.
+  Café outbox empty (0/0); lock screen after launch; PIN not invented;
+  Settings not opened. Mixed-queue proof is the check fixture.
+  Exact next action: SYNC-08.
+- POLISH Customize-order CSS remains on `origin/main` as
+  `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
 - SYNC-06 (29 Aug 2026): verify-only. SYNC-02 + SYNC-03 cover Orders Retry;
   added `check:orders` sqlite fixture; no UI copy. A failed
@@ -1364,6 +1380,17 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — SYNC-07 count waiting Settings sales not all outbox rows
+
+- `pendingSyncCount` COUNT filters `sale-completed` / `sale-cancelled` only.
+  Existing Settings copy unchanged. Mixed `check:settings` fixture: 3 sales
+  + 1 `management.category.delete` → 3 not 4.
+- Android research: React/data SQLite via existing Capacitor plugin. No
+  Kotlin, WorkManager, or native badge.
+- Checks: `check:settings`, `npx tsc -b`, `npm run build`. PIN unset.
+  Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café outbox empty.
+  Exact next action: SYNC-08.
 
 ### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
 

@@ -100,6 +100,46 @@ assert.equal(restarted.isLocked, true);
 assert.equal(restarted.printerHost, '192.168.11.100');
 assert.equal(restarted.printerPort, 9100);
 assert.equal(restarted.pendingSyncCount, 1);
+
+database
+  .prepare(
+    `INSERT INTO outbox
+      (operation_id, device_id, operation_type, local_record_id, state,
+       created_at, available_at)
+     VALUES ('failed-sale-settings', ?, 'sale-completed', 'sale-failed',
+       'failed', ?, ?)`,
+  )
+  .run(initial.deviceId, now, now);
+database
+  .prepare(
+    `INSERT INTO outbox
+      (operation_id, device_id, operation_type, local_record_id, state,
+       created_at, available_at)
+     VALUES ('cancelled-sale-settings', ?, 'sale-cancelled', 'sale-cancelled',
+       'pending', ?, ?)`,
+  )
+  .run(initial.deviceId, now, now);
+database
+  .prepare(
+    `INSERT INTO outbox
+      (operation_id, device_id, operation_type, local_record_id, state,
+       created_at, available_at)
+     VALUES ('category-delete-settings', ?, 'management.category.delete',
+       'category-delete', 'pending', ?, ?)`,
+  )
+  .run(initial.deviceId, now, now);
+
+const mixedQueue = await loadTerminalSettingsFromDatabase(
+  adapter,
+  () => 'must-not-replace',
+  now + 3,
+);
+assert.equal(
+  database.prepare('SELECT COUNT(*) AS count FROM outbox').get().count,
+  4,
+);
+assert.equal(mixedQueue.pendingSyncCount, 3);
+
 assert.equal(restarted.lastSyncAt, now);
 assert.equal(restarted.lastSyncError, 'offline');
 assert.equal(

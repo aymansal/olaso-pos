@@ -32,7 +32,8 @@ tablet's local SQLite operational record.
   AppUpdate plugin boundary; it never embeds a download credential.
 - `terminalSettings.ts` owns immutable device identity, terminal label, clock
   format, validated local printer endpoint, local lock state, sync summary, and
-  safe failure copy.
+  safe failure copy. `pendingSyncCount` is pending and failed
+  `sale-completed` / `sale-cancelled` outbox rows, not all outbox types.
 - `secureSession.ts` owns the Android-only protected-storage wrapper for opaque
   session tokens and offline PIN verifiers; ordinary SQLite settings never hold
   credentials.

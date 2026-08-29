@@ -140,7 +140,10 @@ export async function loadTerminalSettingsFromDatabase(
        WHERE id = 1
        LIMIT 1`,
     ),
-    database.query('SELECT COUNT(*) AS count FROM outbox'),
+    database.query(
+      `SELECT COUNT(*) AS count FROM outbox
+       WHERE operation_type IN ('sale-completed', 'sale-cancelled')`,
+    ),
   ]);
   const sync = syncState.values?.[0];
   const menuUpdatedAt = Number(
