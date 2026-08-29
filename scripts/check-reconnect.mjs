@@ -243,6 +243,11 @@ assert.match(worker, /operationSessionArgs/);
 assert.match(worker, /actorProfileId/);
 assert.match(worker, /await clearStaffSession/);
 assert.match(worker, /batch < 10/);
+assert.match(worker, /syncPendingSales/);
+assert.doesNotMatch(
+  worker,
+  /staffResult\.processed \+ catalog\.processed \+ inventory\.processed/,
+);
 assert.match(worker, /makeConnectivityFailuresAvailable/);
 assert.match(worker, /mode === 'manual'/);
 assert.match(worker, /hasPendingManagementOperations/);

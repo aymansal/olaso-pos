@@ -1,8 +1,8 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01 and SYNC-02 done. Owner Manual Sync 29 Aug landed
+**Status:** SYNC-01, SYNC-02, and SYNC-03 done. Owner Manual Sync 29 Aug landed
 0826-0001…0017 and the chained category delete; 0826-0018 auto-synced.
-SYNC-03 through SYNC-09 remain latent; do not treat the drained queue as
+SYNC-04 through SYNC-09 remain latent; do not treat the drained queue as
 proof they are gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
@@ -21,8 +21,8 @@ bug pauses the current card and overrides ordinary order. POLISH-01 stays
 pending. HARD-08 cannot accept the application while tablet sales never land
 in Convex.
 
-One goal, one card at a time. SYNC-03 is next. Do not start SYNC-04 through
-SYNC-09 until SYNC-03 is pushed.
+One goal, one card at a time. SYNC-04 is next. Do not start SYNC-05 through
+SYNC-09 until SYNC-04 is pushed.
 
 ## Diagnosis already done (do not repeat as a card)
 
@@ -85,7 +85,7 @@ SYNC-01.
 | --- | --- | --- |
 | SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | done — Convex has 0826-0001…0018; SHA `ecf8500465db6e4c434a60dc991b4a78dd5224db` |
 | SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
-| SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | pending |
+| SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — SHA recorded after push |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | pending |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | pending |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | pending |
@@ -191,7 +191,7 @@ Install-over debug APK on SM-X115 `R8YX91AKWXJ` succeeded.
 
 ### SYNC-03 — Do not skip the sale drain because management failed
 
-**Status:** pending — blocked on SYNC-01
+**Status:** done
 
 **Objective:** one reconnect run must still attempt eligible sales even if a
 staff/catalog/inventory item was processed (including failed) in that batch.
@@ -212,14 +212,17 @@ sales after SYNC-01/02.
 **Must not do:** process sales before a still-pending catalog op the sale
 depends on. Do not add a second worker.
 
-**Acceptance evidence:** reconnect check covering “management failed this
-batch, sale still attempted”; tablet Manual Sync evidence.
+**Acceptance evidence:** `check:reconnect` asserts the processed-sum
+`continue` is gone and `syncPendingSales` still runs inside the 10-batch
+loop. Install-over debug APK on SM-X115 `R8YX91AKWXJ` succeeded. Café
+SQLite was not wiped or injected; the 0826 queue was already drained.
+Automated source check is the proof of the skip bug.
 
-**Next action:** SYNC-04.
+**Next action:** none for this card. SYNC-04 is next.
 
 ### SYNC-04 — Retry sale business failures on Manual Sync; classify schema noise
 
-**Status:** pending — blocked on SYNC-01
+**Status:** pending
 
 **Objective:** a sale that failed for a retryable reason must run again on
 Manual Sync (already resets all failed). Automatic reconnect should retry
@@ -250,7 +253,7 @@ business failure.
 
 ### SYNC-05 — Keep abandon only for true permanent sale conflicts
 
-**Status:** pending — blocked on SYNC-01
+**Status:** pending
 
 **Objective:** `abandonSale` must not drop a ticket that could succeed after
 SYNC-01/04. Permanent messages (product gone, revision, newer recipe, cost
@@ -346,7 +349,7 @@ internet is not validated. Do not treat Wi-Fi association as online.
 
 ### SYNC-09 — Online Dashboard/Reports vs unsynced local sales
 
-**Status:** pending — blocked on SYNC-01
+**Status:** pending
 
 **Objective:** after sales upload, online pulse/reports must include those
 cloud daily metrics. Decide explicitly whether a **still-unsynced** local
@@ -386,6 +389,19 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — SYNC-03 sales run after management in the same batch
+
+- Deleted `if (staffResult.processed + catalog.processed + inventory.processed > 0) continue`
+  in `reconnectContext.tsx`. Fall through to `syncPendingSales`, then costs,
+  then the existing empty-batch `break`. No extra yield; post-costs
+  `setTimeout(0)` remains. SYNC-02 SQL untouched.
+- `check-reconnect.mjs` source assertion: that processed sum is absent;
+  `syncPendingSales` and `batch < 10` remain.
+- Checks: `npm run check:reconnect`, `npx tsc -b`. Android: `android:sync`,
+  debug beta BUILD SUCCESSFUL, `adb install -r` Success on SM-X115
+  `R8YX91AKWXJ`. Café DB untouched.
+- Exact next action: record SHA on `origin/main`, then SYNC-04.
 
 ### 2026-08-29 — SYNC-02 failed parents no longer hide later work
 

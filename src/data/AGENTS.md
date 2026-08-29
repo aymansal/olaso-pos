@@ -48,7 +48,8 @@ tablet's local SQLite operational record.
 - `reconnectContext.tsx` owns the authenticated single-flight outbox worker,
   cache refresh gate, and visible-hook completion revision. Automatic runs
   start only after local POS paint (double rAF + idle callback); manual Sync
-  remains immediate.
+  remains immediate. Each batch still attempts eligible sales after staff,
+  catalog, and inventory work.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail,
  Dashboard/Reports fallback reads, and the POS quick-add ranking over the last
  seven business days; it never performs management writes. Quick add ranks by

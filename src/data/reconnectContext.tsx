@@ -441,10 +441,6 @@ export function ReconnectProvider({
           }));
         synced += inventory.synced;
         failed += inventory.failed;
-        if (staffResult.processed + catalog.processed + inventory.processed > 0) {
-          await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
-          continue;
-        }
         const result = await syncPendingSales(
           async (input) => {
             const actorSessionArgs = await sessionFor({

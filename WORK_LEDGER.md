@@ -37,7 +37,7 @@ remaining goal and card sequence.
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | done — `ca7c9540dc29f7778f63d3f73bd19ffc7d6c5f00` on `origin/main` |
 | SYNC-01 — Convex sale snapshot schema so POS tickets insert | done — `ecf8500465db6e4c434a60dc991b4a78dd5224db` on `origin/main`; owner Manual Sync 29 Aug landed 0826-0001…0017 plus category delete; 0826-0018 auto-synced; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
 | SYNC-02 — Failed management must not hide later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
-| SYNC-03 — Reconnect must not skip sales after management processed | pending |
+| SYNC-03 — Reconnect must not skip sales after management processed | done — SHA recorded after push |
 | SYNC-04 — Sale failure classification / automatic retry | pending |
 | SYNC-05 — Permanent abandon only for true conflicts | pending |
 | SYNC-06 — Orders retry vs management parent | pending |
@@ -124,21 +124,22 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- SYNC-02 (29 Aug 2026): failed outbox parents no longer hide children or
-  pin later sales/deletes. Shared SQL: `listPendingOutboxFromDatabase`
-  blocks only while the parent is `pending`; `latestPendingManagementOperationIdFromDatabase`
-  is pending-only; `latestPendingSaleForRecordFromDatabase` ignores failed
-  sale/correction rows so deletes fall through to pending management.
-  Android research: stay in the existing Capacitor SQLite + foreground
-  reconnect worker (offline-first local SoT); no WorkManager, no second
-  outbox, no native plugin. Checks: `check:reconnect`, `check:local-management`,
-  `check:local-catalog` pass; `check:sales` local half pass (cloud half
-  stopped at unset `OLASO_OWNER_PIN`); `npx tsc -b` pass. Install-over
-  debug APK succeeded on SM-X115 `R8YX91AKWXJ`; café SQLite was not wiped
-  or injected. 0826-0016/0017 already left pending on SYNC-01 Manual Sync.
-  Automated check is the proof of the latent failed-parent-forever bug.
-  On `origin/main` as `d5c87b0e31f7be4c6933390568683f3d15179330`.
-- Exact next action: SYNC-03.
+- SYNC-03 (29 Aug 2026): reconnect no longer `continue`s past sales because
+  staff/catalog/inventory `processed > 0`. After inventory the same batch
+  falls through to `syncPendingSales`, then costs, then the existing empty
+  sales+costs `break`. `listPendingOutbox` still hides children of **pending**
+  parents. Android research: stay in the existing Capacitor WebView reconnect
+  worker; WorkManager is for work that outlives the visible app, which Olaso
+  rejects while locked/hidden. No second worker, no native plugin, no SYNC-02
+  SQL change. Checks: `npm run check:reconnect` (source assertion: the
+  processed-sum `continue` is gone; `syncPendingSales` and `batch < 10`
+  remain), `npx tsc -b` pass. Install-over debug APK succeeded on SM-X115
+  `R8YX91AKWXJ`. Café SQLite was not wiped or injected; the 0826 queue was
+  already drained. Automated source check is the proof of the skip bug.
+  SHA recorded after push.
+- Exact next action: SYNC-04.
+- POLISH Customize-order CSS remains on `origin/main` as
+  `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
 - POLISH: Customize-order is a column flex so footer + 24px padding stay
   visible at 544px max-height; groups scroll in leftover space (no 400px
@@ -1343,6 +1344,21 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — SYNC-03 attempt eligible sales after management work
+
+- Deleted the reconnect `if (staffResult.processed + catalog.processed +
+  inventory.processed > 0) continue` block. Staff → catalog → inventory →
+  sales → costs order, 10-batch cap, and empty sales+costs `break` unchanged.
+  Optional extra yield was skipped; the existing post-costs `setTimeout(0)`
+  remains.
+- `scripts/check-reconnect.mjs` asserts the processed-sum skip is absent and
+  `syncPendingSales` plus `batch < 10` remain.
+- `npm run check:reconnect` and `npx tsc -b` pass. `android:sync` + debug
+  beta BUILD SUCCESSFUL. `adb install -r` Success on SM-X115 `R8YX91AKWXJ`.
+- Café outbox left untouched; queue already drained (0826-0001…0018). Did
+  not inject a failed catalog row.
+- Exact next action: push, record SHA, then SYNC-04.
 
 ### 2026-08-29 — SYNC-02 failed parents must not hide later work
 
