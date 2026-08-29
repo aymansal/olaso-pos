@@ -41,7 +41,7 @@ remaining goal and card sequence.
 | SYNC-04 — Sale failure classification / automatic retry | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 — Permanent abandon only for true conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 — Orders retry vs management parent | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` |
-| SYNC-07 — Settings waiting count/copy | done — SHA after push to `origin/main` |
+| SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — customize footer `7e9e6b573ad9f6813a91f05bef1aa547728f107e` on `origin/main` |
@@ -136,6 +136,7 @@ remaining goal and card sequence.
   `npm run build`. Install-over debug APK on SM-X115 `R8YX91AKWXJ`.
   Café outbox empty (0/0); lock screen after launch; PIN not invented;
   Settings not opened. Mixed-queue proof is the check fixture.
+  On `origin/main` as `91a71642629fe36f39750955a92cb53543f80377`.
   Exact next action: SYNC-08.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
@@ -1390,7 +1391,8 @@ remaining goal and card sequence.
   Kotlin, WorkManager, or native badge.
 - Checks: `check:settings`, `npx tsc -b`, `npm run build`. PIN unset.
   Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café outbox empty.
-  Exact next action: SYNC-08.
+  Exact next action: SYNC-08. Pushed `91a71642629fe36f39750955a92cb53543f80377`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
 

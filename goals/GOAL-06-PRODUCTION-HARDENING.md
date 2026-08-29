@@ -177,7 +177,7 @@ polished product.
 | SYNC-04 | Classify sale sync failures so automatic retry stays correct | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` | same ledger |
 | SYNC-05 | Keep abandon only for true permanent sale conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` | same ledger |
 | SYNC-06 | Orders retry must unstick or honestly refuse chained sales | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` | same ledger |
-| SYNC-07 | Honest Settings waiting count and copy | done | same ledger |
+| SYNC-07 | Honest Settings waiting count and copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` | same ledger |
 | SYNC-08 | Manual Sync must not look successful when the worker never started | pending | same ledger |
 | SYNC-09 | Online Dashboard/Reports after successful upload; unsynced fallback only if required | pending | same ledger |
 | POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | paused until SYNC-01+ |

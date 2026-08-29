@@ -90,7 +90,7 @@ SYNC-01.
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main`; SYNC-02 lists the sale after retry; no UI copy |
-| SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | done — SHA after push to `origin/main` |
+| SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | pending |
 | SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | pending |
 
@@ -318,7 +318,7 @@ Retry not reproduced (0016/0017 already synced). Automated check is the proof.
 
 ### SYNC-07 — Honest Settings waiting count and copy
 
-**Status:** done — SHA after push to `origin/main`
+**Status:** done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main`
 
 **Objective:** Settings must not say “N saved orders” when N is every outbox
 row (sales + category delete + inventory + staff).
@@ -446,7 +446,8 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
   Read-only dump: outbox 0 sales / 0 all. Launch showed lock; PIN not
   invented. Empty waiting count is correct after SYNC-01 drain. Mixed
   queue proof is the check fixture.
-- Exact next action: SYNC-08.
+- Exact next action: SYNC-08. Pushed `91a71642629fe36f39750955a92cb53543f80377`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
 
