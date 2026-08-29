@@ -39,7 +39,7 @@ remaining goal and card sequence.
 | SYNC-02 — Failed management must not hide later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 — Reconnect must not skip sales after management processed | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 — Sale failure classification / automatic retry | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
-| SYNC-05 — Permanent abandon only for true conflicts | pending |
+| SYNC-05 — Permanent abandon only for true conflicts | pending SHA |
 | SYNC-06 — Orders retry vs management parent | pending |
 | SYNC-07 — Settings waiting count/copy | pending |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
@@ -124,20 +124,23 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- SYNC-04 (29 Aug 2026): `describeSaleSyncFailure` classifies Convex extra-field
-  / validator / `INVALID_ARGUMENT` rejects as `Cloud rejected this saved order. Use Sync now to retry.`
-  before the generic fallback. Automatic reconnect still retries only
-  `CONNECTION_SYNC_FAILURE`; Manual Sync still retries all failed. Orders
-  failed `syncNote` uses `order.syncError` when present. Settings already
-  shows `last_error` via `lastSyncError`. Android research: classification is
-  React/data only; no native plugin, WorkManager, or Capacitor change.
-  Checks: `check:sales` local half (cloud half stopped at unset PIN),
-  `check:reconnect` (classified sentence stays failed), `npx tsc -b`,
-  `npm run build` via `android:sync`. Install-over debug APK succeeded on
-  SM-X115 `R8YX91AKWXJ`. Café SQLite was not wiped or injected; no live
-  connection drop or business fail was forced. On `origin/main` as
-  `8c656caeac92918404082975194d2196063e332e`.
-- Exact next action: SYNC-05.
+- SYNC-05 (29 Aug 2026): `PERMANENT_SALE_SYNC_FAILURE` unchanged after
+  re-reading every `conflict(` / `invalid(` string in `convex/sales.ts`.
+  Card-listed permanent phrases are already in the regex (product gone,
+  revision, newer recipe, cost no longer matches, receipt-number format).
+  Classified receipt-number still matches `/receipt-number support/i`.
+  Not added on purpose: selected-size unavailable, current-recipe
+  unavailable, daily-summary / correction conflicts, recipe-ingredient
+  unavailable/missing. Generic `Sale synchronization failed.`, SYNC-04
+  `Cloud rejected this saved order. Use Sync now to retry.`,
+  `CONNECTION_SYNC_FAILURE`, and extra-field dumps must not abandon.
+  `failSale` / `abandonSale` control flow unchanged. Android research:
+  abandon is React/data only; no native plugin, WorkManager, or Capacitor
+  change. Checks: `check:sales` local half (`isPermanentSaleSyncFailure`
+  asserts); cloud half stopped at unset PIN. `npx tsc -b`. Install-over
+  debug APK on SM-X115 `R8YX91AKWXJ`. Physical permanent conflict not
+  reproduced; regex reviewed. Café SQLite was not wiped or injected.
+  Exact next action: SYNC-06.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
@@ -1344,6 +1347,38 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — SYNC-05 keep abandon only for true permanent conflicts
+
+- Re-read every `conflict(` / `invalid(` operator string in `convex/sales.ts`
+  against `PERMANENT_SALE_SYNC_FAILURE`. Regex not changed: every
+  card-listed permanent phrase was already present.
+- Still permanent: `A sale product is no longer available.`;
+  `${name} changed after it was added.`; `${name} has a newer recipe.`;
+  `The saved ingredient cost no longer matches its valuation revision.`;
+  `Receipt number must use MMYY-0001.` plus classified
+  `This saved order needs receipt-number support before it can synchronize.`
+  (`/receipt-number support/i`). Existing leftover `modifier setup` /
+  `selected modifier` / `category is unavailable` phrases kept, not widened.
+- Reviewed and left non-permanent on purpose (do not expand):
+  `A selected size for ${name} is unavailable.`;
+  `${name}'s current recipe is unavailable.`;
+  `A recipe ingredient is unavailable.` / `is missing.`;
+  daily-summary duplicated/exceeds-limits; correction same-day / already
+  corrected / history incomplete and related correction conflicts.
+- Must not abandon (checks added): generic `Sale synchronization failed.`;
+  SYNC-04 `Cloud rejected this saved order. Use Sync now to retry.`;
+  `CONNECTION_SYNC_FAILURE`; extra-field `choiceValueIds` fixture after
+  `describeSaleSyncFailure`. Must still abandon: product-unavailable fixture
+  and classified receipt-number path.
+- `failSale` / `abandonSale` control flow unchanged. Physical permanent
+  conflict not reproduced; regex reviewed against `convex/sales.ts`. Did not
+  delete a café outbox row.
+- Checks: `npm run check:sales` local half pass; cloud half stopped at unset
+  PIN. `npx tsc -b` pass. Graphify update after check-sales import.
+- Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
+  Success on SM-X115 `R8YX91AKWXJ`. Café DB untouched.
+- Exact next action: SYNC-06.
 
 ### 2026-08-29 — SYNC-04 classify cloud sale rejects without auto-retry
 

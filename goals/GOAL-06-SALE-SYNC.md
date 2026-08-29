@@ -1,8 +1,8 @@
 # Goal 06 Sale-Sync Ledger
 
-**Status:** SYNC-01 through SYNC-04 done. Owner Manual Sync 29 Aug landed
+**Status:** SYNC-01 through SYNC-05 done. Owner Manual Sync 29 Aug landed
 0826-0001…0017 and the chained category delete; 0826-0018 auto-synced.
-SYNC-05 through SYNC-09 remain latent; do not treat the drained queue as
+SYNC-06 through SYNC-09 remain latent; do not treat the drained queue as
 proof they are gone.
 
 **Purpose:** restore retry-safe upload of tablet sales into Convex, then fix
@@ -21,8 +21,8 @@ bug pauses the current card and overrides ordinary order. POLISH-01 stays
 pending. HARD-08 cannot accept the application while tablet sales never land
 in Convex.
 
-One goal, one card at a time. SYNC-05 is next. Do not start SYNC-06 through
-SYNC-09 until SYNC-05 is pushed.
+One goal, one card at a time. SYNC-06 is next. Do not start SYNC-07 through
+SYNC-09 until SYNC-06 is pushed.
 
 ## Diagnosis already done (do not repeat as a card)
 
@@ -87,7 +87,7 @@ SYNC-01.
 | SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
-| SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | pending |
+| SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; SHA pending |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | pending |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | pending |
 | SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | pending |
@@ -258,7 +258,7 @@ not wiped; no live connection/business fail was forced.
 
 ### SYNC-05 — Keep abandon only for true permanent sale conflicts
 
-**Status:** pending
+**Status:** done — regex unchanged; physical not reproduced
 
 **Objective:** `abandonSale` must not drop a ticket that could succeed after
 SYNC-01/04. Permanent messages (product gone, revision, newer recipe, cost
@@ -274,8 +274,11 @@ reviewed.”
 
 **Must not do:** abandon on generic `Sale synchronization failed.`
 
-**Acceptance evidence:** check that abandon regex does not match the schema
-insert error; ledger note.
+**Acceptance evidence:** `check:sales` asserts generic / SYNC-04 classified /
+connection / extra-field classified sentences are not permanent, while
+product-unavailable and classified receipt-number remain permanent. Regex
+unchanged. Physical not reproduced; regex reviewed against `convex/sales.ts`.
+Café SQLite not wiped. Install-over debug APK on SM-X115 `R8YX91AKWXJ`.
 
 **Next action:** SYNC-06.
 
@@ -394,6 +397,21 @@ If `adb devices` shows `unauthorized`, do not skip the card: `adb kill-server`,
 reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 
 ## Journal
+
+### 2026-08-29 — SYNC-05 keep abandon only for true permanent conflicts
+
+- Regex reviewed against every `conflict(` / `invalid(` string in
+  `convex/sales.ts`. No card-listed phrase was missing. Regex not changed
+  and not widened.
+- Left non-permanent on purpose: selected-size unavailable, current-recipe
+  unavailable, recipe-ingredient unavailable/missing, daily-summary
+  duplicated/exceeds-limits, correction conflicts.
+- `check-sales.mjs`: `isPermanentSaleSyncFailure` false for generic, SYNC-04
+  classified, `CONNECTION_SYNC_FAILURE`, extra-field fixture; true for
+  product-unavailable and classified receipt-number.
+- `failSale` / `abandonSale` unchanged. Physical not reproduced. Café DB
+  untouched. Install-over debug APK on SM-X115 `R8YX91AKWXJ`.
+- Exact next action: SYNC-06.
 
 ### 2026-08-29 — SYNC-04 classify cloud sale rejects without auto-retry
 

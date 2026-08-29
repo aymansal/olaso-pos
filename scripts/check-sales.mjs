@@ -9,6 +9,7 @@ import {
   cancelLocalSale,
   commitLocalSale,
   describeSaleSyncFailure,
+  isPermanentSaleSyncFailure,
   prepareSale,
 } from '../src/data/localSales.ts';
 import { CONNECTION_SYNC_FAILURE } from '../src/data/outbox.ts';
@@ -82,11 +83,12 @@ for (const migration of localMigrations) {
 }
 
 const now = Date.parse('2026-07-28T10:00:00.000Z');
+const receiptNumberFailure = describeSaleSyncFailure(
+  new Error('Uncaught ConvexError: {"code":"INVALID_ARGUMENT","message":"Receipt number must use MMYY-0001."}'),
+  'Sale synchronization failed.',
+);
 assert.equal(
-  describeSaleSyncFailure(
-    new Error('Uncaught ConvexError: {"code":"INVALID_ARGUMENT","message":"Receipt number must use MMYY-0001."}'),
-    'Sale synchronization failed.',
-  ),
+  receiptNumberFailure,
   'This saved order needs receipt-number support before it can synchronize.',
 );
 assert.equal(
@@ -109,6 +111,15 @@ const extraFieldFailure = describeSaleSyncFailure(
 );
 assert.equal(extraFieldFailure, 'Cloud rejected this saved order. Use Sync now to retry.');
 assert.notEqual(extraFieldFailure, CONNECTION_SYNC_FAILURE);
+assert.equal(isPermanentSaleSyncFailure('Sale synchronization failed.'), false);
+assert.equal(
+  isPermanentSaleSyncFailure('Cloud rejected this saved order. Use Sync now to retry.'),
+  false,
+);
+assert.equal(isPermanentSaleSyncFailure(CONNECTION_SYNC_FAILURE), false);
+assert.equal(isPermanentSaleSyncFailure(extraFieldFailure), false);
+assert.equal(isPermanentSaleSyncFailure('A sale product is no longer available.'), true);
+assert.equal(isPermanentSaleSyncFailure(receiptNumberFailure), true);
 database.exec(`
   INSERT INTO categories
     (id, key, name, sort_order, status, revision, updated_at)

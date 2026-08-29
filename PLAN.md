@@ -128,7 +128,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-04 done (next SYNC-05) | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-05 done (next SYNC-06) | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -258,6 +258,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-SYNC-05: keep `abandonSale` only for true permanent conflicts; do not drop
-retryable tickets.
+SYNC-06: Orders retry must unstick or honestly refuse a sale still chained
+to management outbox.
 [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).
