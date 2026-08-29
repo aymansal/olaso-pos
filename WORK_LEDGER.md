@@ -38,7 +38,7 @@ remaining goal and card sequence.
 | SYNC-01 — Convex sale snapshot schema so POS tickets insert | done — `ecf8500465db6e4c434a60dc991b4a78dd5224db` on `origin/main`; owner Manual Sync 29 Aug landed 0826-0001…0017 plus category delete; 0826-0018 auto-synced; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
 | SYNC-02 — Failed management must not hide later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 — Reconnect must not skip sales after management processed | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
-| SYNC-04 — Sale failure classification / automatic retry | done — pending SHA on `origin/main` |
+| SYNC-04 — Sale failure classification / automatic retry | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 — Permanent abandon only for true conflicts | pending |
 | SYNC-06 — Orders retry vs management parent | pending |
 | SYNC-07 — Settings waiting count/copy | pending |
@@ -135,7 +135,8 @@ remaining goal and card sequence.
   `check:reconnect` (classified sentence stays failed), `npx tsc -b`,
   `npm run build` via `android:sync`. Install-over debug APK succeeded on
   SM-X115 `R8YX91AKWXJ`. Café SQLite was not wiped or injected; no live
-  connection drop or business fail was forced. SHA pending after commit.
+  connection drop or business fail was forced. On `origin/main` as
+  `8c656caeac92918404082975194d2196063e332e`.
 - Exact next action: SYNC-05.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
@@ -1364,7 +1365,8 @@ remaining goal and card sequence.
   pass.
 - Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
   Success on SM-X115 `R8YX91AKWXJ`. Café DB untouched.
-- Exact next action: SYNC-05.
+- Exact next action: SYNC-05. Pushed `8c656caeac92918404082975194d2196063e332e`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-03 attempt eligible sales after management work
 

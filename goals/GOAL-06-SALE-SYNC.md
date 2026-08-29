@@ -86,7 +86,7 @@ SYNC-01.
 | SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | done — Convex has 0826-0001…0018; SHA `ecf8500465db6e4c434a60dc991b4a78dd5224db` |
 | SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
-| SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — pending SHA on `origin/main` |
+| SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | pending |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | pending |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | pending |
@@ -222,7 +222,7 @@ Automated source check is the proof of the skip bug.
 
 ### SYNC-04 — Retry sale business failures on Manual Sync; classify schema noise
 
-**Status:** done — classified sentence `Cloud rejected this saved order. Use Sync now to retry.`
+**Status:** done — `8c656caeac92918404082975194d2196063e332e` on `origin/main`; classified sentence `Cloud rejected this saved order. Use Sync now to retry.`
 
 **Objective:** a sale that failed for a retryable reason must run again on
 Manual Sync (already resets all failed). Automatic reconnect should retry
@@ -406,7 +406,8 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
 - Orders failed `syncNote` uses `order.syncError` when non-empty.
 - Checks: `check:sales` local half, `check:reconnect`, `npx tsc -b`.
   Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Café DB untouched.
-- Exact next action: SYNC-05.
+- Exact next action: SYNC-05. Pushed `8c656caeac92918404082975194d2196063e332e`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-03 sales run after management in the same batch
 
