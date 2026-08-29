@@ -35,7 +35,16 @@ remaining goal and card sequence.
 | OPTIONS-02 — Custom product choices and independent copying | done — `6f072c64074b85ad958e4a1227fd14854e5afcc9` on `origin/main` |
 | OPTIONS-03 — Exact cashier selection, stock, and sale snapshots | done — `3587c3c2c419fe01a9c27bbb3e60ec4cc095e962` on `origin/main` |
 | OPTIONS-04 — Ingredient-cost reconciliation and offline closeout | done — `ca7c9540dc29f7778f63d3f73bd19ffc7d6c5f00` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending |
+| SYNC-01 — Convex sale snapshot schema so POS tickets insert | in progress — schema on colorful-newt-937, APK on SM-X115; blocked on `OLASO_OWNER_PIN` for Manual Sync; [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md) |
+| SYNC-02 — Failed management must not hide later sales | pending |
+| SYNC-03 — Reconnect must not skip sales after management processed | pending |
+| SYNC-04 — Sale failure classification / automatic retry | pending |
+| SYNC-05 — Permanent abandon only for true conflicts | pending |
+| SYNC-06 — Orders retry vs management parent | pending |
+| SYNC-07 — Settings waiting count/copy | pending |
+| SYNC-08 — Manual Sync silent no-op when worker gated | pending |
+| SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | pending — paused for sale-sync bug override |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -106,12 +115,40 @@ remaining goal and card sequence.
   retained smooth navigation, category/staff/lock completion, measured startup,
   recovery, signing, upgrade, security/quota, then the owner's final manual
   screen review, approved simplification, endurance, and acceptance.
+- [Goal 06 — Sale-sync ledger](goals/GOAL-06-SALE-SYNC.md) — active bug
+  override: SYNC-01 through SYNC-09 so tablet POS sales insert into Convex.
 - [Goal 06 — Product Configuration Blueprint](goals/GOAL-06-PRODUCT-CONFIGURATION.md)
   — approved product-owned sizes, freely named choices, exact ingredient
   effects, mandatory independent copying, honest ingredient-only costing,
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- SYNC-01 (29 Aug 2026): `receiptLine` now allows optional `sizeId` /
+  `sizeName` / `choiceValueIds`. Schema deployed with `npx convex dev --once`
+  to colorful-newt-937. Debug APK install-over succeeded on SM-X115
+  (`R8YX91AKWXJ`). Tablet remains on the owner lock screen.
+- `check:sales` local half passed; cloud half needs `OLASO_OWNER_PIN` (unset).
+  Did not reset the owner PIN. Manual Sync not run. Cloud `sales` still seed
+  `dev-sale-0001`…`0013`. Tablet 0826-0001…0015 still failed; 0016/0017 still
+  pending behind the category delete (SYNC-02).
+- Exact next action: set `OLASO_OWNER_PIN`, unlock owner, Settings → Sync now,
+  prove a previously failed receipt in Convex, then finish SYNC-01 and start
+  SYNC-02. Do not mark SYNC-01 done until that evidence exists.
+
+- Sale-sync bug override (29 Aug 2026): tablet POS orders are not saved in
+  Convex. Ledger: [goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).
+  SYNC-01 first. POLISH-01 paused (`PLAN.md` mandatory bug rule).
+- Diagnosis: `sales.accept` writes `sizeId` / `sizeName` / `choiceValueIds` onto
+  `receiptSnapshot.lines`; schema `receiptLine` rejects extra fields. Convex
+  logs 27–28 Aug; cloud `sales` still only July seed `dev-sale-0001`–`0013`.
+- Tablet SQLite (`R8YX91AKWXJ`, `olaso_posSQLite.db`): 15 failed
+  `sale-completed` (0826-0001…0015, 2 tries, `Sale synchronization failed.`);
+  one pending `management.category.delete` depending on failed 0826-0014;
+  today 0826-0016/0017 pending 0 tries, depending on that delete. Outbox count
+  18. ADB was `unauthorized` on the first attempt that day, then `device`.
+- Exact next action: SYNC-01 when the owner continues. Do not implement until
+  that card is activated.
 
 - POLISH-01 tablet UI (Boxicons, sliding green pills on nav/filters/Products
   categories, shared App Header so the top pill can move, screen fade, POS

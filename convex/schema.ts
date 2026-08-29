@@ -61,6 +61,9 @@ const receiptLine = v.object({
   unitPriceCentimes: v.number(),
   lineTotalCentimes: v.number(),
   modifiers: v.array(modifierSnapshot),
+  sizeId: v.optional(v.id('productSizes')),
+  sizeName: v.optional(v.string()),
+  choiceValueIds: v.optional(v.array(v.id('productChoiceValues'))),
 });
 
 export default defineSchema({

@@ -128,7 +128,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; OPTIONS-01 next | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-01 next (sale-sync bug override) | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -219,6 +219,15 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 | OPTIONS-02 | Add freely named product choices, size-specific recipes, safe ingredient actions, and mandatory independent copying from another product. |
 | OPTIONS-03 | Connect actual cashier selections to exact prices, stock deductions, ingredient costs, immutable sales, and retry-safe synchronization. |
 | OPTIONS-04 | Verify honest ingredient-cost ranges, actual-sale profitability, independent copying, historical safety, and full offline/tablet reconciliation. |
+| SYNC-01 | Persist POS size/choice fields on Convex `sales.receiptSnapshot` so `sales.accept` can insert. Tablet sales currently never reach Convex. |
+| SYNC-02 | Stop failed/pending management parents from hiding later sales (today’s tickets wait on a category delete that waits on a failed sale). |
+| SYNC-03 | Do not skip the sale drain because staff/catalog/inventory processed (including failed) in the same reconnect batch. |
+| SYNC-04 | Stop classifying non-connection sale failures so automatic reconnect never retries them; keep Manual Sync as deliberate recovery. |
+| SYNC-05 | Keep `abandonSale` only for true permanent conflicts; do not drop retryable tickets. |
+| SYNC-06 | Orders retry must unstick or honestly refuse a sale still chained to management outbox. |
+| SYNC-07 | Settings waiting count/copy must not call every outbox row a saved order. |
+| SYNC-08 | Manual Sync / reconnect must not look successful when the worker never started (offline, unfocused, pending staff). |
+| SYNC-09 | After uploads work, online Dashboard/Reports must show those cloud metrics; decide any still-unsynced local fallback without a second analytics pipeline. |
 | POLISH-01 | Walk through the now fully functional app with the owner and record every disliked, verbose, redundant, or “AI-ish” element. |
 | POLISH-02 | Apply and verify the owner's final changes one screen at a time before moving to the next screen. |
 | HARD-08 | Run realistic service endurance, offline/reconnect, printer, upgrade, recovery, final owner acceptance, documentation, and release closeout. |
@@ -227,6 +236,11 @@ The complete approved product, size, choice, recipe, stock, ingredient-cost,
 copying, migration, and verification blueprint lives in
 [Goal 06 Product Configuration](goals/GOAL-06-PRODUCT-CONFIGURATION.md).
 Executable per-card specs live in [goals/options/](goals/options/).
+
+Sale-sync diagnosis, tablet/Convex evidence, and SYNC-01 through SYNC-09
+contracts live in [Goal 06 Sale-Sync Ledger](goals/GOAL-06-SALE-SYNC.md).
+That sequence overrides POLISH-01 until tablet sales insert into Convex
+(`PLAN.md` mandatory bug rule).
 
 ## First-production-release exit
 
@@ -244,5 +258,9 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-OPTIONS-02 owner editor and independent copying is complete on closeout.
-Exact next action: POLISH-01 owner-led UI review when the owner continues.
+POLISH-01 is paused. SYNC-01 schema is deployed and the debug APK is on
+SM-X115, but Manual Sync has not run: the tablet is on the owner lock screen
+and `OLASO_OWNER_PIN` is unset. Cloud `sales` are still seed-only.
+[goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).
+Exact next action: set `OLASO_OWNER_PIN`, unlock owner, Settings → Sync now,
+prove 0826-0001…0015 in Convex, then SYNC-02.

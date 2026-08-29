@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; OPTIONS-01 next after HARD-07
+**Status:** active; SYNC-01 in progress (schema deployed; Manual Sync blocked on PIN; POLISH-01 paused)
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -27,11 +27,11 @@ review. The separately approved product-owned size/choice/ingredient cards
 then complete before the owner's final visual review. Their full contracts live in
 [Goal 06 Product Configuration](GOAL-06-PRODUCT-CONFIGURATION.md).
 
-POLISH-01 and POLISH-02 are deliberately last. Only after LOCAL-01 through
-HARD-07 and OPTIONS-01 through OPTIONS-04 are complete does the owner manually
-inspect every fully functional screen, prompt the desired UI changes, and
-approve each result. HARD-08 then runs final endurance and acceptance against
-that polished product.
+POLISH-01 and POLISH-02 are deliberately last after functional work. A
+2026-08-29 tablet/Convex diagnosis found POS sales never insert into Convex.
+SYNC-01 through SYNC-09 in [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) override
+POLISH until that queue drains. HARD-08 then runs final endurance against the
+polished product.
 
 ## Verified starting leads
 
@@ -171,7 +171,16 @@ that polished product.
 | OPTIONS-02 | Add custom product choices, exact ingredient actions, and independent copying | pending | — |
 | OPTIONS-03 | Connect exact cashier selections to price, stock, immutable sales, and synchronization | pending | — |
 | OPTIONS-04 | Reconcile selected ingredient costs, reports, migration, and offline acceptance | pending | — |
-| POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | — |
+| SYNC-01 | Persist size/choice fields on Convex sale receipt snapshots so accept can insert | in progress — schema deployed, APK installed; Manual Sync blocked on `OLASO_OWNER_PIN` | [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) |
+| SYNC-02 | Stop failed management parents from hiding later sales | pending | same ledger |
+| SYNC-03 | Do not skip sale drain when management processed/failed in-batch | pending | same ledger |
+| SYNC-04 | Classify sale sync failures so automatic retry stays correct | pending | same ledger |
+| SYNC-05 | Keep abandon only for true permanent sale conflicts | pending | same ledger |
+| SYNC-06 | Orders retry must unstick or honestly refuse chained sales | pending | same ledger |
+| SYNC-07 | Honest Settings waiting count and copy | pending | same ledger |
+| SYNC-08 | Manual Sync must not look successful when the worker never started | pending | same ledger |
+| SYNC-09 | Online Dashboard/Reports after successful upload; unsynced fallback only if required | pending | same ledger |
+| POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | paused until SYNC-01+ |
 | POLISH-02 | Apply and verify the owner's final changes one screen at a time | pending | — |
 | HARD-08 | Run service endurance, final owner acceptance, and release closeout | pending | — |
 
@@ -596,10 +605,19 @@ owner verification; every authorized screen remained usable without internet.
 - Record first-production-week Convex and operational monitoring steps without
   adding speculative infrastructure.
 
+### SYNC-01 through SYNC-09 — Tablet sales into Convex
+
+Full diagnosis, tablet/Convex evidence, do/must-not, and acceptance for each
+card live in [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md). SYNC-01 is the
+blocking insert (`receiptLine` vs size/choice snapshot). SYNC-02 through
+SYNC-09 are the outbox/reconnect/Settings/Dashboard follow-ons. Do not start
+POLISH-01 until SYNC-01 is pushed and the physical queue can accept.
+
 ### POLISH-01 — Final owner walkthrough
 
-- Start only after LOCAL-01 through HARD-07 are complete and the physical
-  tablet exposes the fully functional, technically stable application.
+- Start only after LOCAL-01 through HARD-07, OPTIONS-01 through OPTIONS-04,
+  and SYNC-01 through SYNC-09 are complete and the physical tablet exposes the
+  fully functional, technically stable application.
 - First read the complete DOX chain, ledger, plan, authorities, and this file;
   query Graphify; inspect the current application state; and explain the
   understood product back to the owner in plain English.

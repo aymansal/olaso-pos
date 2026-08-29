@@ -18,8 +18,53 @@ import {
   recordSalePrintSuccess,
 } from '../src/data/printState.ts';
 import { addProduct } from '../src/features/pos/posSession.ts';
+import { resolveProductConfiguration } from '../src/lib/productConfiguration.ts';
 import { localMigrations } from '../src/data/schema.ts';
 import { ownerSession } from './owner-session.mjs';
+
+function preparedCloudLine(snapshot, product, size, choiceValueIds) {
+  const resolved = resolveProductConfiguration({
+    sizeId: size.id,
+    choiceValueIds,
+    sizes: snapshot.productSizes.filter((row) => row.productId === product.id),
+    recipeItems: snapshot.recipeItems.filter(
+      (item) => item.recipeVersionId === product.currentRecipeVersionId,
+    ),
+    sizeQuantities: snapshot.recipeSizeQuantities.filter(
+      (row) => row.recipeVersionId === product.currentRecipeVersionId,
+    ),
+    sections: snapshot.productChoiceSections.filter(
+      (section) => section.productId === product.id,
+    ),
+    sectionSizeIds: snapshot.productChoiceSectionSizes,
+    values: snapshot.productChoiceValues,
+    valueSizes: snapshot.productChoiceValueSizes,
+    effects: snapshot.productChoiceValueEffects,
+    effectSizes: snapshot.productChoiceValueEffectSizes,
+  });
+  const ingredientById = new Map(
+    snapshot.ingredients.map((ingredient) => [ingredient.id, ingredient]),
+  );
+  let ingredientCostCentimes = 0;
+  for (const [ingredientId, quantity] of resolved.ingredients) {
+    if (quantity === 0) continue;
+    const ingredient = ingredientById.get(ingredientId);
+    assert(ingredient?.inventoryValueCentimes !== undefined, 'Seeded valuation is unavailable');
+    ingredientCostCentimes += Math.floor(
+      (ingredient.inventoryValueCentimes * quantity + ingredient.currentStockQuantity / 2)
+      / ingredient.currentStockQuantity,
+    );
+  }
+  return {
+    unitPriceCentimes: resolved.unitPriceCentimes,
+    ingredientCostCentimes,
+    valuationRevisions: [...resolved.ingredients.keys()].map((ingredientId) => {
+      const ingredient = ingredientById.get(ingredientId);
+      assert(ingredient, 'Resolved ingredient is missing');
+      return { ingredientId, revision: ingredient.valuationRevision };
+    }),
+  };
+}
 
 const database = new DatabaseSync(':memory:');
 database.exec('PRAGMA foreign_keys = ON');
@@ -611,6 +656,9 @@ await client.action(api.identity.validateSession, {
   assert.equal(stored.receiptSnapshot.receiptLanguage, 'en');
   assert.equal('customerName' in stored.receiptSnapshot, false);
   assert.equal('tableLabel' in stored.receiptSnapshot, false);
+  assert.equal(stored.receiptSnapshot.lines[0].sizeId, regular.id);
+  assert.equal(stored.receiptSnapshot.lines[0].sizeName, 'Regular');
+  assert.deepEqual(stored.receiptSnapshot.lines[0].choiceValueIds, []);
 
   const after = await client.query(api.sync.getOperationalSnapshot, sessionArgs);
   const afterReport = await client.query(api.reports.getSummary, {
@@ -662,6 +710,50 @@ await client.action(api.identity.validateSession, {
     reportQuantity(beforeReport, 'Oat milk'),
   );
 
+  const extraSection = after.productChoiceSections.find(
+    (section) =>
+      section.productId === product.id
+      && section.status === 'active'
+      && !section.required,
+  );
+  assert(extraSection, 'Cappuccino extra choice section is unavailable');
+  const extra = after.productChoiceValues.find(
+    (value) => value.sectionId === extraSection.id && value.status === 'active',
+  );
+  assert(extra, 'Cappuccino extra choice is unavailable');
+  const extraProduct = after.products.find((row) => row.id === product.id);
+  const extraSize = after.productSizes.find(
+    (row) => row.productId === product.id && row.name === 'Regular',
+  );
+  assert(extraProduct?.currentRecipeVersionId && extraSize, 'Cappuccino is unavailable after first sale');
+  const extraPrepared = preparedCloudLine(after, extraProduct, extraSize, [extra.id]);
+  const extraInput = {
+    ...cloudInput,
+    localSaleId: `policy-check-choices-${Date.now()}`,
+    receiptNumber: '0726-0002',
+    ingredientCostCentimes: extraPrepared.ingredientCostCentimes,
+    lines: [{
+      ...cloudInput.lines[0],
+      productId: extraProduct.id,
+      productRevision: extraProduct.revision,
+      recipeVersionId: extraProduct.currentRecipeVersionId,
+      sizeId: extraSize.id,
+      choiceValueIds: [extra.id],
+      ingredientCostCentimes: extraPrepared.ingredientCostCentimes,
+      valuationRevisions: extraPrepared.valuationRevisions,
+    }],
+  };
+  await client.mutation(api.sales.accept, { ...sessionArgs, ...extraInput });
+  const extraOrders = await client.query(api.sales.listOrders, {
+    ...sessionArgs,
+    limit: 20,
+  });
+  const storedExtra = extraOrders.page.find((sale) => sale.localSaleId === extraInput.localSaleId);
+  assert(storedExtra, 'Choice sale is missing from the protected Orders result');
+  assert.equal(storedExtra.receiptSnapshot.lines[0].sizeId, extraSize.id);
+  assert.equal(storedExtra.receiptSnapshot.lines[0].sizeName, 'Regular');
+  assert.deepEqual(storedExtra.receiptSnapshot.lines[0].choiceValueIds, [extra.id]);
+
   await assert.rejects(
     client.mutation(api.sales.cancel, {
       ...sessionArgs,
@@ -697,6 +789,15 @@ await client.action(api.identity.validateSession, {
   assert.equal(cancellation.duplicate, false);
   assert.equal(cancellationRetry.duplicate, true);
   assert.equal(cancellationRetry.correctionId, cancellation.correctionId);
+  const extraCancellation = await client.mutation(api.sales.cancel, {
+    ...sessionArgs,
+    localCorrectionId: `policy-correction-choices-${Date.now()}`,
+    originalLocalSaleId: extraInput.localSaleId,
+    reason: 'Customer changed order',
+    businessDate: extraInput.businessDate,
+    correctedAt: extraInput.completedAt + 1,
+  });
+  assert.equal(extraCancellation.kind, 'cancelled');
   const restored = await client.query(api.sync.getOperationalSnapshot, sessionArgs);
   const restoredReport = await client.query(api.reports.getSummary, {
     ...sessionArgs, fromDate: '2026-07-28', toDate: '2026-07-28',
