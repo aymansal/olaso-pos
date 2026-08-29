@@ -141,7 +141,8 @@ remaining goal and card sequence.
 - Exact next action: SYNC-03.
 
 - POLISH: Customize-order is a column flex so footer + 24px padding stay
-  visible at 544px max-height; groups scroll in leftover space.
+  visible at 544px max-height; groups scroll in leftover space (no 400px
+  groups cap). Included in this commit.
 - POLISH-01 (29 Aug 2026): OverlayPortal so dialogs cover Header; Orders/
   Products/Stock pager uses saved COUNT not loaded rows; Customize-order
   `.dialog` 680→544px and `.groups` 500→400px (20%). On `origin/main` as
