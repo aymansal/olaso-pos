@@ -16,30 +16,34 @@
   height: 92px;
   border-radius: 10px;
   object-fit: cover;
+  pointer-events: none;
 }
 
 .name,
 .price {
   position: absolute;
   left: 14px;
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
 }
 
 .name {
   top: 115px;
-  max-width: 108px;
-  overflow: hidden;
-  color: #111711;
+  width: 100px;
+  color: var(--olaso-text);
   font-size: 13px;
   font-weight: 700;
   line-height: 16px;
-  text-overflow: clip;
 }
 
 .price {
   top: 139px;
-  color: #4b564d;
+  width: 100px;
+  color: var(--olaso-text-dark-soft);
   font-size: 11px;
+  font-weight: 700;
   line-height: 13px;
 }
 
@@ -47,23 +51,33 @@
   position: absolute;
   top: 107px;
   left: 122px;
+  z-index: 1;
   display: grid;
   width: 44px;
   height: 44px;
-  min-width: 44px;
-  padding: 0;
   place-items: center;
   border: 1.2px solid var(--olaso-border);
   border-radius: 50%;
   color: var(--olaso-green);
-  background: white;
+  background: var(--olaso-white);
+  pointer-events: none;
 }
 
-.add:focus-visible {
+.hit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  background: transparent;
+}
+
+.hit:focus-visible {
   outline: 2px solid var(--olaso-green);
-  outline-offset: 2px;
+  outline-offset: -3px;
 }
 
-.add:active {
-  background: var(--olaso-soft);
+.card:has(.hit:active) {
+  filter: brightness(0.94);
 }

@@ -14,21 +14,22 @@ export function ProductCard({ name, priceCentimes, image, onAdd }: ProductCardPr
       <img
         className={styles.photo}
         src={image}
-        alt={name}
+        alt=""
         width={72}
         height={92}
         decoding="async"
       />
       <strong className={styles.name}>{name}</strong>
       <span className={styles.price}>{formatMoney(priceCentimes)}</span>
+      <span className={styles.add} aria-hidden="true">
+        <Plus width={20} height={20} />
+      </span>
       <button
-        className={styles.add}
+        className={styles.hit}
         type="button"
         aria-label={`Add ${name}`}
         onClick={onAdd}
-      >
-        <Plus width={20} height={20} />
-      </button>
+      />
     </Card>
   );
 }

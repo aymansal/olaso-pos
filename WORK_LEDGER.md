@@ -125,15 +125,30 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- POLISH-01 (29 Aug 2026): shared right panels are 400px (left 922) with
-  left cards 886 (`18+886+18+400+18=1340`) on Orders, Products, Stock,
-  Reports, and Dashboard. Orders actions are a 2×2 grid so View receipt
-  is not clipped. Recent orders show `Completed · 27 Aug, 13:11`.
-  SalesPulse yesterday pill sits 14px after net sales; Orders / Average
-  order / Items sold are equal centered thirds. Physical SM-X115
-  install-over. On `origin/main` as
-  `bb6652aaf454e0b52bffbe77c11bf95b5d1aeef3`. Exact next action: owner
-  continues POLISH-01.
+- POLISH-01 (29 Aug 2026): Product-card price uses `--olaso-text-dark-soft`
+  so it sits between the name and the old gray. Committing charts,
+  slide-to-order, and product-card polish together.
+- POLISH-01 (29 Aug 2026): Dashboard Sales rhythm now has the same Y-axis
+  ticks as Reports (`formatCompactMoney` at 100/75/50/25 of the period max).
+  Peak bar gets the Reports white cap. Tap a bar on Dashboard or Reports for
+  a small amount pill on that bar; Reports bar colors/scale unchanged. Live
+  colorful-newt-937 29 Aug: net 54200 / 5 orders / 22 items, avg 10840,
+  +271.2% vs 28 Aug 14600, peak 29 Aug (not 27 Aug 23200). Best seller
+  Hojicha Latte 11 units. SM-X115 screenshots: Y-axis, peak cap, tap 27
+  `232,00 MAD` and tap 29 `542,00 MAD` on both charts. `check:css-scope`,
+  `npm run build`. Did not run `seed:dev` / `check:dashboard` /
+  `check:reports`. Exact next action: owner continues POLISH-01; commit
+  when asked.
+- POLISH-01 (29 Aug 2026): Dashboard right cards stay equal 334px, but
+  lists are four fixed 60px slots (240px). Two stock warnings sit in
+  slots 1–2; empty room left for 3–4. Four recent orders fill all four
+  slots. Other pages already use fixed table slots (Orders 6×68,
+  Products 6×66, Stock 5×62, Reports 3×28) and were not stretched.
+  SM-X115: no overflow. Exact next action: owner continues POLISH-01;
+  commit when asked.
+- POLISH-01 (29 Aug 2026): shared right panels 400px / left 886 on
+  Orders, Products, Stock, Reports, and Dashboard. On `origin/main` as
+  `bb6652aaf454e0b52bffbe77c11bf95b5d1aeef3`.
 - SYNC-09 (29 Aug 2026): verify-only. colorful-newt-937 has receipts
   `0826-0001`…`0826-0018` on device
   `device-9a9b0736-2f17-4923-af5f-c280c9d67bfa`. `dailyMetrics` 2026-08-29

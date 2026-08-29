@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { RotateCw, Calculator, Coffee, Bolt, Pulse, Receipt, Star, TrendingDown, TrendingUp } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
-import { formatMoney } from '../../../../lib/money';
+import { formatCompactMoney, formatMoney } from '../../../../lib/money';
 import styles from './SalesPulse.module.css';
 
 export function SalesPulse({
@@ -59,13 +60,15 @@ export function SalesPulse({
       orderCount: 0,
     }),
   );
-  const maximum = Math.max(...chart.map((day) => day.netCentimes), 1);
+  const maximum = Math.max(...chart.map((day) => day.netCentimes), 0);
+  const scaleMaximum = Math.max(maximum, 1);
   const peak = chart.reduce(
     (highest, day) =>
       day.netCentimes > highest.netCentimes ? day : highest,
     chart[0],
   );
   const bestSeller = today?.bestSeller;
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   return (
     <section className={styles.panel} aria-labelledby="sales-pulse-title">
@@ -151,29 +154,60 @@ export function SalesPulse({
 
       <div className={styles.chart} aria-label="Daily net sales for the latest 12 days">
         <div className={styles.guides} aria-hidden="true">
-          <span /><span /><span /><span /><span />
+          {[1, 0.75, 0.5, 0.25].map((ratio) => (
+            <span key={ratio}>
+              <small>{formatCompactMoney(maximum * ratio)}</small>
+              <i />
+            </span>
+          ))}
         </div>
-        <div className={styles.bars} aria-hidden="true">
+        <div className={styles.bars}>
           {chart.map((day) => {
-            const intensity = day.netCentimes / maximum;
+            const isPeak = Boolean(peak?.netCentimes) && day === peak;
+            const selected = selectedDate === day.businessDate;
+            const amount = formatMoney(day.netCentimes);
+            const intensity = day.netCentimes / scaleMaximum;
             const height = day.netCentimes
-              ? Math.max(14, Math.round(intensity * 206))
+              ? Math.max(8, Math.round(intensity * 168))
               : 4;
             const tone = day.netCentimes
               ? Math.max(1, Math.ceil(intensity * 10))
               : 1;
             return (
-            <span className={styles.barColumn} key={day.businessDate}>
+            <button
+              type="button"
+              className={styles.barColumn}
+              key={day.businessDate}
+              aria-pressed={selected}
+              aria-label={`${
+                day.businessDate.length === 10
+                  ? day.businessDate.slice(8)
+                  : '—'
+              }, ${amount}`}
+              onClick={() => setSelectedDate(selected ? null : day.businessDate)}
+            >
               <span
-                className={`${styles.bar} ${styles[`tone${tone}`]}`}
+                className={`${styles.bar} ${styles[`tone${tone}`]} ${
+                  isPeak ? styles.peakBar : ''
+                }`}
                 style={{ height }}
-              />
-            </span>
+              >
+                {selected ? <span className={styles.tip}>{amount}</span> : null}
+                {isPeak ? (
+                  <span className={styles.peakCap} aria-hidden="true" />
+                ) : null}
+              </span>
+            </button>
           )})}
         </div>
         <div className={styles.axis}>
           {chart.map((day) => (
-            <span key={day.businessDate}>
+            <span
+              className={
+                peak?.netCentimes && day === peak ? styles.peakAxis : undefined
+              }
+              key={day.businessDate}
+            >
               {day.businessDate.length === 10
                 ? day.businessDate.slice(8)
                 : '—'}

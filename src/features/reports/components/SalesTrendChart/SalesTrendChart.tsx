@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { TrendingUp } from '@boxicons/react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
-import { formatMoney } from '../../../../lib/money';
+import { formatCompactMoney, formatMoney } from '../../../../lib/money';
 import type { ReportTab } from '../../reportTypes';
 import styles from './SalesTrendChart.module.css';
 
@@ -15,9 +16,7 @@ function metricValue(
 
 function compactValue(value: number, tab: ReportTab) {
   if (tab !== 'sales') return String(Math.round(value));
-  return `${new Intl.NumberFormat('en-MA', {
-    maximumFractionDigits: 1,
-  }).format(value / 100)} MAD`;
+  return formatCompactMoney(value);
 }
 
 function averageValue(value: number, tab: ReportTab) {
@@ -84,6 +83,11 @@ export function SalesTrendChart({
   const subtitle = bucketSize === 1
     ? metricSubtitle
     : `${bucketSize}-day buckets · ${metricSubtitle}`;
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSelectedKey(null);
+  }, [tab]);
 
   return (
     <section className={styles.chart} aria-labelledby="report-trend-title">
@@ -114,8 +118,19 @@ export function SalesTrendChart({
       >
         {points.map((point) => {
           const isPeak = point.value > 0 && point === peak;
+          const selected = selectedKey === point.toDate;
+          const amount = tab === 'sales'
+            ? formatMoney(point.value)
+            : compactValue(point.value, tab);
           return (
-          <span className={styles.barGroup} key={point.toDate}>
+          <button
+            type="button"
+            className={styles.barGroup}
+            key={point.toDate}
+            aria-pressed={selected}
+            aria-label={`${point.label}, ${amount}`}
+            onClick={() => setSelectedKey(selected ? null : point.toDate ?? null)}
+          >
             <i
               className={`${styles.bar} ${isPeak ? styles.peakBar : ''}`}
               style={{
@@ -127,12 +142,15 @@ export function SalesTrendChart({
                   : 4,
               }}
             >
-              {isPeak ? <span aria-hidden="true" /> : null}
+              {selected ? <span className={styles.tip}>{amount}</span> : null}
+              {isPeak ? (
+                <span className={styles.peakCap} aria-hidden="true" />
+              ) : null}
             </i>
             <small className={isPeak ? styles.peakLabel : ''}>
               {point.label}
             </small>
-          </span>
+          </button>
         )})}
       </div>
 

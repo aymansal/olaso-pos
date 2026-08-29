@@ -120,13 +120,40 @@
 }
 
 .barGroup {
+  position: relative;
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: flex-end;
   height: 156px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   flex-direction: column;
   gap: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.barGroup:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.tip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  z-index: 1;
+  padding: 3px 7px;
+  border-radius: 10px;
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-soft);
+  font-size: 7px;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .bar {
@@ -141,7 +168,7 @@
   background: var(--olaso-green);
 }
 
-.peakBar > span {
+.peakCap {
   position: absolute;
   top: 8px;
   left: 9px;

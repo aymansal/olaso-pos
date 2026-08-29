@@ -346,13 +346,13 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `SearchField` | query, search action | 320 by 50 at the target viewport. The magnifier and the input sit on one line in explicit grid columns. Visible focus state. Never use placeholder text as the only accessible label. A clear control stays visible whenever the query is not empty, including after the keyboard is dismissed. POS, Orders, Products, and Stock search fields follow that rule. |
 | `QuickAddRow` | best-seller chips | Up to three equal-width 50-pixel-tall chips carrying a product name only at 15px, filling the remaining width beside the search field. Chips come from saved tablet sales, never a fixed list, and the row renders nothing when there are none. An unusually long name may ellipsis. |
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
-| `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. |
+| `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. A long name or price ellipsises before that control. The price is 11px in a slightly softer ink than the name. The whole card adds to the order. |
 | `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. Orders, Products, and Stock table row highlights use the same vertical slide, keeping the existing cream selected fill and green mark. |
 | `LabeledField` | visible label, current value | Text and select variants. Control is 129 by 48. |
 | `OrderLine` | product, unit price, quantity, size, note, total | Keep the total right-aligned. A note is optional. |
 | `QuantityStepper` | decrement, quantity, increment | 116 by 44 so both actions retain independent 44-pixel targets. Disable decrement at the minimum and expose an accessible value. |
 | `PaymentSummary` | subtotal, total | Right-align values and emphasize only the total. Use tabular figures; the confirmed policy has no tax row. |
-| `PrimaryAction` | action label, order total | 266 by 50. One primary action per screen. Disable it while submitting. |
+| `PrimaryAction` | action label, order total | 296 by 50. Slide the white control to the end to place the order; a check marks completion. Disable it while submitting. |
 | `ReceiptRail` | service mode, payment method, order, clear cart, totals, primary action | 320 by 688 at the target viewport. A centered Current order title sits at the top with an always-visible clear-cart trash on the right (gray when empty, active when the cart has lines). Dine In / Take Away and Cash / Card sit under that row; payment details and Place order stay at the bottom. An empty cart list is blank. Each line uses the same compact card outline. |
 
 Use existing components before adding a new one. A visual difference that can be expressed as content or a documented variant is not a new component.
@@ -502,6 +502,7 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Service mode has exactly one selected option: `Dine-in` / `Sur place` or
   `Take-away`. The small café uses no table selector and has no online mode.
 - `Place order` is disabled for an empty order and while submission is in progress.
+  The cashier slides the white control to the end; a tap does not submit.
 - Successful submission shows a concise confirmation and starts a fresh receipt only after the local sale transaction commits.
 - After local persistence succeeds, printing is attempted once and cloud synchronization runs in the background.
 - A print failure preserves the completed sale and exposes `Reprint receipt` without resubmitting the order.

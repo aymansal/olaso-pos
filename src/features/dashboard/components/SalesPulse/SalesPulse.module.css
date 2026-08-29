@@ -254,49 +254,102 @@
 
 .guides {
   position: absolute;
-  inset: 0 0 28px;
-}
-
-.guides span {
-  position: absolute;
+  top: 18px;
   left: 0;
   width: 834px;
+}
+
+.guides > span {
+  position: relative;
+  display: block;
+  height: 50px;
+}
+
+.guides small {
+  position: absolute;
+  top: -5px;
+  left: 0;
+  width: 52px;
+  color: var(--olaso-axis);
+  font-size: 7px;
+  font-weight: 600;
+}
+
+.guides i {
+  position: absolute;
+  top: 6px;
+  left: 56px;
+  width: 778px;
   height: 1px;
   background: var(--olaso-line-soft);
 }
 
-.guides span:nth-child(1) { top: 14px; }
-.guides span:nth-child(2) { top: 64px; }
-.guides span:nth-child(3) { top: 114px; }
-.guides span:nth-child(4) { top: 164px; }
-.guides span:nth-child(5) { top: 214px; }
-
 .bars,
 .axis {
   position: absolute;
-  left: 0;
+  left: 56px;
   display: flex;
-  width: 834px;
-  gap: 22px;
+  width: 778px;
+  gap: 10px;
 }
 
 .bars {
-  top: 0;
+  top: 18px;
   align-items: flex-end;
-  height: 216px;
+  height: 200px;
 }
 
 .barColumn {
+  position: relative;
   display: flex;
+  flex: 1;
   align-items: flex-end;
   justify-content: center;
-  flex: 0 0 46px;
-  height: 216px;
+  height: 200px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.barColumn:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.tip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  z-index: 1;
+  padding: 3px 7px;
+  border-radius: 10px;
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-soft);
+  font-size: 7px;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .bar {
+  position: relative;
+  display: block;
   width: 22px;
   border-radius: 8px 8px 2px 2px;
+}
+
+.peakCap {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--olaso-white);
+  transform: translateX(-50%);
 }
 
 .tone1 { background: var(--olaso-chart-1); }
@@ -311,16 +364,21 @@
 .tone10 { background: var(--olaso-green); }
 
 .axis {
-  top: 230px;
+  top: 226px;
   height: 14px;
 }
 
 .axis span {
-  flex: 0 0 46px;
+  flex: 1;
   color: var(--olaso-axis);
   font-size: 8px;
   font-weight: 600;
   text-align: center;
+}
+
+.peakAxis {
+  color: var(--olaso-green);
+  font-weight: 700;
 }
 
 .bestSellerDivider {

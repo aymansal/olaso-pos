@@ -145,4 +145,23 @@ const navigation = readFileSync(
 );
 assert.match(navigation, /styles\.indicator/);
 
+const action = readFileSync(
+  'src/features/pos/components/PrimaryAction/PrimaryAction.tsx',
+  'utf8',
+);
+assert.match(action, /Slide to place order/);
+assert.doesNotMatch(action, /clickAction/);
+
+const productCard = readFileSync(
+  'src/features/pos/components/ProductCard/ProductCard.tsx',
+  'utf8',
+);
+const productCardCss = readFileSync(
+  'src/features/pos/components/ProductCard/ProductCard.module.css',
+  'utf8',
+);
+assert.match(productCard, /<Plus /);
+assert.match(productCardCss, /text-overflow: ellipsis/);
+assert.match(productCardCss, /width: 100px/);
+
 console.log('POS cart and money checks passed.');

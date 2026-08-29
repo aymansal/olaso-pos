@@ -39,6 +39,8 @@ owns the shared Header and TopNavigation currently used across the application.
 - The Header carries no notification control; do not reintroduce a decorative
  bell or a hardcoded badge count.
 - Product and category assets are content; do not recreate them with UI icons.
+- A long product name or price ellipsises before the plus; the plus stays
+  visible. The whole card adds to the order.
 - All interface icons come from Boxicons.
 - Search, category, and cart behavior must stay local during service.
 - Preserve already visited live category grids and their prepared product
@@ -53,11 +55,12 @@ owns the shared Header and TopNavigation currently used across the application.
   explicit cashier choices; never silently select an option. A product with
   one size must not force a size selection. Cart identity includes the selected
   size once OPTIONS-03 activates product-owned checkout.
-- Checkout clears the cart only after the local sale transaction commits. A
-  cashier may empty the current draft from the always-visible trash next to
-  the Current order title; it stays gray while the cart is empty. The cart list itself
-  stays blank until a product is added; each line uses the same compact card
-  outline.
+- Checkout clears the cart only after the local sale transaction commits. Place
+  order is a slide-to-confirm on the existing primary pill; sliding to the end
+  commits, and a tap does not. A cashier may empty the current draft from the
+  always-visible trash next to the Current order title; it stays gray while the
+  cart is empty. The cart list itself stays blank until a product is added; each
+  line uses the same compact card outline.
 - Saved receipts support on-screen preview and plain post-commit print feedback.
   Do not expose printer settings, permissions, bytes, or transport from this
   feature.
