@@ -109,6 +109,22 @@ assert.match(stock, /loadOfflineIngredientDetail/);
 assert.match(dashboard, /loadOfflineDashboard/);
 assert.doesNotMatch(dashboard, /useState\(localBusinessDate\)/);
 assert.match(reports, /loadOfflineReport/);
+const dashboardOnline = dashboard.match(
+  /const request = available\s*\?\s*([\s\S]*?)\s*:\s*loadOffline/,
+);
+assert.ok(dashboardOnline, 'useDashboardData must choose cloud vs offline by available');
+assert.match(dashboardOnline[1], /api\.dashboard\.getSnapshot/);
+assert.doesNotMatch(dashboardOnline[1], /loadOfflineDashboard|pendingSyncCount/);
+assert.doesNotMatch(dashboard, /pendingSyncCount/);
+assert.match(dashboard, /available === undefined \|\| !foreground/);
+const reportsOnline = reports.match(
+  /const request = available\s*\?\s*([\s\S]*?)\s*:\s*loadOffline/,
+);
+assert.ok(reportsOnline, 'useReportsData must choose cloud vs offline by available');
+assert.match(reportsOnline[1], /api\.reports\.getSummary/);
+assert.doesNotMatch(reportsOnline[1], /loadOfflineReport|pendingSyncCount/);
+assert.doesNotMatch(reports, /pendingSyncCount/);
+assert.match(reports, /available === undefined \|\| !foreground/);
 assert.doesNotMatch(products + stock, /useQuery_experimental|useMutation/);
 assert.match(stock, /saveLocalIngredient/);
 assert.match(stock, /receiveLocalPurchase/);

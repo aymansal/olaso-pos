@@ -8,7 +8,7 @@ owns only the final production-hardening scope and card order.
 
 **Goal:** Goal 06 — Production Hardening, Release, and Acceptance
 
-**Status:** active; SYNC-01 through SYNC-08 done; next SYNC-09; POLISH-01 paused for remaining SYNC cards
+**Status:** active; SYNC-09 done; next POLISH-01; sale-sync override complete
 
 **Objective:** Complete every authorized management operation as a local-first
 workflow, preserve prepared screens and saved content across navigation, remove
@@ -27,11 +27,11 @@ review. The separately approved product-owned size/choice/ingredient cards
 then complete before the owner's final visual review. Their full contracts live in
 [Goal 06 Product Configuration](GOAL-06-PRODUCT-CONFIGURATION.md).
 
-POLISH-01 and POLISH-02 are deliberately last after functional work. A
-2026-08-29 tablet/Convex diagnosis found POS sales never insert into Convex.
-SYNC-01 through SYNC-09 in [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) override
-POLISH until that queue drains. HARD-08 then runs final endurance against the
-polished product.
+POLISH-01 and POLISH-02 are deliberately last after functional work. The
+2026-08-29 tablet/Convex diagnosis and SYNC-01 through SYNC-09 in
+[GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) restored tablet sales into
+Convex and kept online Dashboard/Reports Convex-only. POLISH-01 is next.
+HARD-08 then runs final endurance against the polished product.
 
 ## Verified starting leads
 
@@ -179,8 +179,8 @@ polished product.
 | SYNC-06 | Orders retry must unstick or honestly refuse chained sales | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` | same ledger |
 | SYNC-07 | Honest Settings waiting count and copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` | same ledger |
 | SYNC-08 | Manual Sync must not look successful when the worker never started | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` | same ledger |
-| SYNC-09 | Online Dashboard/Reports after successful upload; unsynced fallback only if required | pending | same ledger |
-| POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | paused until SYNC-01+ |
+| SYNC-09 | Online Dashboard/Reports after successful upload; unsynced fallback only if required | done — verify-only; SHA follow-up | same ledger |
+| POLISH-01 | Capture the owner's final app-wide simplification and dislike list | pending | next |
 | POLISH-02 | Apply and verify the owner's final changes one screen at a time | pending | — |
 | HARD-08 | Run service endurance, final owner acceptance, and release closeout | pending | — |
 
@@ -610,8 +610,9 @@ owner verification; every authorized screen remained usable without internet.
 Full diagnosis, tablet/Convex evidence, do/must-not, and acceptance for each
 card live in [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md). SYNC-01 is the
 blocking insert (`receiptLine` vs size/choice snapshot). SYNC-02 through
-SYNC-09 are the outbox/reconnect/Settings/Dashboard follow-ons. Do not start
-POLISH-01 until SYNC-01 is pushed and the physical queue can accept.
+SYNC-09 are the outbox/reconnect/Settings/Dashboard follow-ons. SYNC-09
+closed the override: online Dashboard/Reports stay Convex-only. POLISH-01
+is next.
 
 ### POLISH-01 — Final owner walkthrough
 

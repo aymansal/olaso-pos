@@ -142,6 +142,9 @@ tablet's local SQLite operational record.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry, with a one-to-31-day saved-tablet fallback offline; tab
   switches remain local and never start another query.
+- Online Dashboard and Reports use Convex saved summaries; still-unsynced
+  tablet sales are not mixed into those totals; `offlineViews` remain the
+  offline tablet-only path.
 - Retained visible-screen hooks reload only for their first safe snapshot,
   an actual authenticated reconnect revision, changed request inputs, or a
   deliberate user action. Showing an already-loaded React Activity never

@@ -29,6 +29,9 @@ performance, ingredient usage, and bounded period controls.
 - Keep ingredient base units separate; never invent a cross-unit stock total.
 - Offline Reports derive the selected one-to-31-day period from bounded saved
   tablet receipts and movements and never remain on a cloud loading state.
+- Online Reports use Convex saved summaries; still-unsynced tablet sales are
+  not mixed into those totals; `offlineViews` remain the offline tablet-only
+  path.
 - Expense and compensation saves appear immediately from SQLite. Compensation
   and profitability are never rendered for a non-owner role.
 - Historical ingredient/category reports and worker compensation keep their

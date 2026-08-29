@@ -23,6 +23,9 @@ recent orders.
   states without importing Convex.
 - Offline Dashboard uses bounded saved tablet sales and stock warnings; it does
   not claim the complete cloud-wide total.
+- Online Dashboard uses Convex saved summaries; still-unsynced tablet sales are
+  not mixed into those totals; `offlineViews` remain the offline tablet-only
+  path.
 - Today’s best seller is the product with the most units sold, online and
   offline. A quiet today still compares against yesterday when yesterday had
   sales.

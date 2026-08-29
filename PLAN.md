@@ -128,7 +128,7 @@ evidence. Every implementation card receives real physical-tablet testing.
 | Goal 03 | Production checkout and Android LAN ESC/POS printing | done | goals/GOAL-03-PRINTING-INTEGRATION.md |
 | Goal 04 | Costs and profitability | done | goals/GOAL-04-COSTS-PROFITABILITY.md |
 | Goal 05 | Business policy, identity, and permissions | done | goals/GOAL-05-BUSINESS-POLICY-IDENTITY-PERMISSIONS.md |
-| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-08 done (next SYNC-09) | goals/GOAL-06-PRODUCTION-HARDENING.md |
+| Goal 06 | Complete safe deletion, smooth retained navigation, production hardening, exact product configuration, final owner-led UI polish, and acceptance | active; SYNC-09 done (next POLISH-01) | goals/GOAL-06-PRODUCTION-HARDENING.md |
 
 ## Goal 03 — Production checkout and printing
 
@@ -227,7 +227,7 @@ Goal 06 remains normal card-by-card collaboration, not one autonomous `/goal`.
 | SYNC-06 | Orders retry must unstick or honestly refuse a sale still chained to management outbox. |
 | SYNC-07 | Settings waiting count/copy must not call every outbox row a saved order. |
 | SYNC-08 | Manual Sync / reconnect must not look successful when the worker never started (offline, unfocused, pending staff). |
-| SYNC-09 | After uploads work, online Dashboard/Reports must show those cloud metrics; decide any still-unsynced local fallback without a second analytics pipeline. |
+| SYNC-09 | After uploads work, online Dashboard/Reports stay Convex-only; still-unsynced tickets stay on Orders. Sale-sync override complete. |
 | POLISH-01 | Walk through the now fully functional app with the owner and record every disliked, verbose, redundant, or “AI-ish” element. |
 | POLISH-02 | Apply and verify the owner's final changes one screen at a time before moving to the next screen. |
 | HARD-08 | Run realistic service endurance, offline/reconnect, printer, upgrade, recovery, final owner acceptance, documentation, and release closeout. |
@@ -239,8 +239,8 @@ Executable per-card specs live in [goals/options/](goals/options/).
 
 Sale-sync diagnosis, tablet/Convex evidence, and SYNC-01 through SYNC-09
 contracts live in [Goal 06 Sale-Sync Ledger](goals/GOAL-06-SALE-SYNC.md).
-That sequence overrides POLISH-01 until tablet sales insert into Convex
-(`PLAN.md` mandatory bug rule).
+SYNC-09 closed that override: online Dashboard/Reports stay Convex-only
+after uploaded 0826 sales; POLISH-01 is the exact next action.
 
 ## First-production-release exit
 
@@ -258,7 +258,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-SYNC-09: After uploads work, online Dashboard/Reports must show those cloud
-metrics; decide any still-unsynced local fallback without a second analytics
-pipeline.
-[goals/GOAL-06-SALE-SYNC.md](goals/GOAL-06-SALE-SYNC.md).
+POLISH-01: Walk through the now fully functional app with the owner and
+record every disliked, verbose, redundant, or “AI-ish” element.
+[goals/GOAL-06-PRODUCTION-HARDENING.md](goals/GOAL-06-PRODUCTION-HARDENING.md).

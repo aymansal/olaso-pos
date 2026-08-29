@@ -43,8 +43,8 @@ remaining goal and card sequence.
 | SYNC-06 — Orders retry vs management parent | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` |
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
-| SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — customize footer `7e9e6b573ad9f6813a91f05bef1aa547728f107e` on `origin/main` |
+| SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — verify-only; SHA follow-up |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | next — customize footer already on `origin/main` as `7e9e6b573ad9f6813a91f05bef1aa547728f107e` |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -115,14 +115,40 @@ remaining goal and card sequence.
   retained smooth navigation, category/staff/lock completion, measured startup,
   recovery, signing, upgrade, security/quota, then the owner's final manual
   screen review, approved simplification, endurance, and acceptance.
-- [Goal 06 — Sale-sync ledger](goals/GOAL-06-SALE-SYNC.md) — active bug
-  override: SYNC-01 through SYNC-09 so tablet POS sales insert into Convex.
+- [Goal 06 — Sale-sync ledger](goals/GOAL-06-SALE-SYNC.md) — SYNC-01 through
+  SYNC-09 done; tablet POS sales insert into Convex; online Dashboard/Reports
+  stay Convex-only. Exact next action is POLISH-01.
 - [Goal 06 — Product Configuration Blueprint](goals/GOAL-06-PRODUCT-CONFIGURATION.md)
   — approved product-owned sizes, freely named choices, exact ingredient
   effects, mandatory independent copying, honest ingredient-only costing,
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- SYNC-09 (29 Aug 2026): verify-only. colorful-newt-937 has receipts
+  `0826-0001`…`0826-0018` on device
+  `device-9a9b0736-2f17-4923-af5f-c280c9d67bfa`. `dailyMetrics` 2026-08-29
+  is `orderCount` 3, `grossCentimes`/`netCentimes` 9700 (0826-0016…0018);
+  27 Aug 11/23200; 28 Aug 4/14600. Matching sale totals. Cloud path already
+  correct; no `sales.accept` / `dashboard.ts` patch. Locked: online Dashboard
+  and Reports stay Convex-only; still-unsynced tickets stay on Orders;
+  `offlineViews` remain offline tablet-only. No SQLite+cloud merge, polling,
+  or unsynced Dashboard copy. Android research: React/data Convex queries
+  plus existing offline SQLite views. No Kotlin, plugin, WorkManager, or
+  native charts. Rejected: merging local receipts into online totals;
+  polling `dailyMetrics`; a second analytics store. Official offline-first
+  local source of truth
+  (https://developer.android.com/topic/architecture/data-layer/offline-first).
+  WorkManager continues after the app leaves the visible state
+  (https://developer.android.com/develop/background-work/background-tasks/persistent)
+  and is rejected here. `check:offline` source-match. `npx tsc -b`.
+  `npm run build`. Did not run `seed:dev` / `check:dashboard` /
+  `check:reports`. Exact next action: POLISH-01.
+- Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Samsung keyguard blocked
+  the UI; PIN not invented. Café SQLite not wiped. Proof is Convex tables
+  plus hook source-match.
+- POLISH Customize-order CSS remains on `origin/main` as
+  `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
 - SYNC-08 (29 Aug 2026): `perform()` throws existing sentences when the
   worker never starts — `CONNECTION_SYNC_FAILURE` if internet is not
@@ -1399,6 +1425,32 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — SYNC-09 keep online Dashboard/Reports Convex-only
+
+- Prove-first on colorful-newt-937 (read-only, never seeded): 18 café
+  receipts `0826-0001`…`0826-0018` in `sales`; `dailyMetrics` 2026-08-29
+  3/9700 matches 0016…0018; 27 Aug 11/23200; 28 Aug 4/14600. `getSnapshot`
+  reads `dailyMetrics` by business date. No Convex code change.
+- Locked decision: online (`available === true`) Convex-only. Do not call
+  `loadOfflineDashboard` / `loadOfflineReport` while online. Do not merge
+  SQLite into cloud totals when `pendingSyncCount > 0`. Unsynced tickets
+  stay on Orders. Offline keeps `offlineViews`. `reconnect.revision`
+  already refetches. Do not treat Wi-Fi as online. Do not read cloud while
+  `!foreground`.
+- Hooks already match; no TSX. `check:offline` asserts the online arm is
+  `getSnapshot` / `getSummary` and never mentions `pendingSyncCount` or
+  `loadOffline*`. One-sentence DOX in `src/data/AGENTS.md`, dashboard, and
+  reports.
+- Android research: Dashboard/Reports are React/data Convex queries plus
+  existing offline SQLite views. No Kotlin, plugin, WorkManager, or native
+  charts. Rejected merge, polling, second analytics store.
+- Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
+  Success on SM-X115 `R8YX91AKWXJ`. Café SQLite not wiped or injected.
+  Samsung keyguard was showing (Sat 29 Aug); Olaso `MainActivity` sat
+  underneath. PIN not invented. Dashboard/Reports not opened. Proof is
+  Convex `dailyMetrics` plus `check:offline` source-match.
+- Exact next action: POLISH-01. SHA follow-up after push.
 
 ### 2026-08-29 — SYNC-07 count waiting Settings sales not all outbox rows
 
