@@ -175,7 +175,7 @@ polished product.
 | SYNC-02 | Stop failed management parents from hiding later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` | same ledger |
 | SYNC-03 | Do not skip sale drain when management processed/failed in-batch | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` | same ledger |
 | SYNC-04 | Classify sale sync failures so automatic retry stays correct | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` | same ledger |
-| SYNC-05 | Keep abandon only for true permanent sale conflicts | done | same ledger |
+| SYNC-05 | Keep abandon only for true permanent sale conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` | same ledger |
 | SYNC-06 | Orders retry must unstick or honestly refuse chained sales | pending | same ledger |
 | SYNC-07 | Honest Settings waiting count and copy | pending | same ledger |
 | SYNC-08 | Manual Sync must not look successful when the worker never started | pending | same ledger |

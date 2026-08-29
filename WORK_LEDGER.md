@@ -39,7 +39,7 @@ remaining goal and card sequence.
 | SYNC-02 — Failed management must not hide later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 — Reconnect must not skip sales after management processed | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 — Sale failure classification / automatic retry | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
-| SYNC-05 — Permanent abandon only for true conflicts | pending SHA |
+| SYNC-05 — Permanent abandon only for true conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 — Orders retry vs management parent | pending |
 | SYNC-07 — Settings waiting count/copy | pending |
 | SYNC-08 — Manual Sync silent no-op when worker gated | pending |
@@ -140,6 +140,7 @@ remaining goal and card sequence.
   asserts); cloud half stopped at unset PIN. `npx tsc -b`. Install-over
   debug APK on SM-X115 `R8YX91AKWXJ`. Physical permanent conflict not
   reproduced; regex reviewed. Café SQLite was not wiped or injected.
+  On `origin/main` as `b5a0577c348e89be82125a2ce63a29f2b0ca4bff`.
   Exact next action: SYNC-06.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
@@ -1378,7 +1379,8 @@ remaining goal and card sequence.
   PIN. `npx tsc -b` pass. Graphify update after check-sales import.
 - Android: `android:sync`, debug beta BUILD SUCCESSFUL, `adb install -r`
   Success on SM-X115 `R8YX91AKWXJ`. Café DB untouched.
-- Exact next action: SYNC-06.
+- Exact next action: SYNC-06. Pushed `b5a0577c348e89be82125a2ce63a29f2b0ca4bff`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-04 classify cloud sale rejects without auto-retry
 

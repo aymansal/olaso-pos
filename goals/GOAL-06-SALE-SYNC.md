@@ -87,7 +87,7 @@ SYNC-01.
 | SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | done — `31eb5fce8d7897b3525c5657b60f222a8d033fe8` on `origin/main` |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | done — `8c656caeac92918404082975194d2196063e332e` on `origin/main` |
-| SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; SHA pending |
+| SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | pending |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | pending |
 | SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | pending |
@@ -258,7 +258,7 @@ not wiped; no live connection/business fail was forced.
 
 ### SYNC-05 — Keep abandon only for true permanent sale conflicts
 
-**Status:** done — regex unchanged; physical not reproduced
+**Status:** done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main`; physical not reproduced
 
 **Objective:** `abandonSale` must not drop a ticket that could succeed after
 SYNC-01/04. Permanent messages (product gone, revision, newer recipe, cost
@@ -411,7 +411,8 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
   product-unavailable and classified receipt-number.
 - `failSale` / `abandonSale` unchanged. Physical not reproduced. Café DB
   untouched. Install-over debug APK on SM-X115 `R8YX91AKWXJ`.
-- Exact next action: SYNC-06.
+- Exact next action: SYNC-06. Pushed `b5a0577c348e89be82125a2ce63a29f2b0ca4bff`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-04 classify cloud sale rejects without auto-retry
 
