@@ -2,7 +2,7 @@
   position: absolute;
   top: 504px;
   left: 24px;
-  width: 798px;
+  width: 838px;
   height: 156px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 766px;
+  width: 806px;
   height: 22px;
 }
 
@@ -35,8 +35,8 @@
 .columns,
 .row {
   display: grid;
-  grid-template-columns: 280px 140px 100px 140px 138px;
-  width: 798px;
+  grid-template-columns: 304px 148px 100px 148px 138px;
+  width: 838px;
 }
 
 .columns {
@@ -105,7 +105,7 @@
 
 .empty {
   display: grid;
-  width: 798px;
+  width: 838px;
   height: 84px;
   place-items: center;
   margin: 0;

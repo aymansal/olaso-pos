@@ -2,7 +2,7 @@
   position: absolute;
   top: 92px;
   left: 18px;
-  width: 846px;
+  width: 886px;
   height: 686px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 794px;
+  width: 834px;
   height: 32px;
 }
 
@@ -83,10 +83,16 @@
   letter-spacing: 1.4px;
 }
 
-.netValue {
+.netRow {
   position: absolute;
   top: 103px;
   left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.netValue {
   color: var(--olaso-text);
   font-size: 48px;
   font-weight: 700;
@@ -95,9 +101,6 @@
 }
 
 .change {
-  position: absolute;
-  top: 119px;
-  left: 320px;
   height: 28px;
   gap: 5px;
   padding: 0 10px;
@@ -123,7 +126,7 @@
 .bestSellerDivider {
   position: absolute;
   left: 26px;
-  width: 794px;
+  width: 834px;
   height: 1px;
   background: var(--olaso-line);
 }
@@ -141,13 +144,16 @@
   top: 192px;
   left: 26px;
   display: grid;
-  grid-template-columns: 264px 264px 266px;
-  width: 794px;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 834px;
   height: 62px;
 }
 
 .metricSlot {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 62px;
 }
 
@@ -188,8 +194,8 @@
 
 .metricDivider {
   position: absolute;
-  top: 3px;
-  right: 17px;
+  top: 12px;
+  right: 0;
   width: 1px;
   height: 38px;
   background: var(--olaso-line);
@@ -202,7 +208,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 794px;
+  width: 834px;
   height: 34px;
 }
 
@@ -242,7 +248,7 @@
   position: absolute;
   top: 328px;
   left: 26px;
-  width: 794px;
+  width: 834px;
   height: 244px;
 }
 
@@ -254,7 +260,7 @@
 .guides span {
   position: absolute;
   left: 0;
-  width: 794px;
+  width: 834px;
   height: 1px;
   background: var(--olaso-line-soft);
 }
@@ -270,7 +276,7 @@
   position: absolute;
   left: 0;
   display: flex;
-  width: 794px;
+  width: 834px;
   gap: 22px;
 }
 
@@ -328,7 +334,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 794px;
+  width: 834px;
   height: 58px;
   padding: 0 16px;
   border-radius: 18px;

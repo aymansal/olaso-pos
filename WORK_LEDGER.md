@@ -125,6 +125,13 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 (29 Aug 2026): shared right panels are 400px (left 922) with
+  left cards 886 (`18+886+18+400+18=1340`) on Orders, Products, Stock,
+  Reports, and Dashboard. Orders actions are a 2×2 grid so View receipt
+  is not clipped. Recent orders show `Completed · 27 Aug, 13:11`.
+  SalesPulse yesterday pill sits 14px after net sales; Orders / Average
+  order / Items sold are equal centered thirds. Physical SM-X115
+  install-over. Exact next action: push `origin/main` and record SHA.
 - SYNC-09 (29 Aug 2026): verify-only. colorful-newt-937 has receipts
   `0826-0001`…`0826-0018` on device
   `device-9a9b0736-2f17-4923-af5f-c280c9d67bfa`. `dailyMetrics` 2026-08-29
@@ -1426,6 +1433,17 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-29 — POLISH-01 Dashboard 400px stack and recent-order dates
+
+- Dashboard right stack (Needs attention + Recent orders) now 400px at left
+  922, matching Orders/Products/Stock/Reports. SalesPulse 886. Inner 834 /
+  356. Agent: [Dashboard 400px + dates](4347b86b-f166-4ca0-8d37-32ca33a4adb9).
+- Recent orders status includes day + short month + time (`29 Aug, 13:11`).
+  Tablet screenshot: 0826-0015 is 28 Aug; 0016–0018 are 29 Aug.
+- `check:css-scope`, `npm run build`, `android:beta`, install-over SM-X115.
+  SalesPulse equal thirds + yesterday pill beside net sales. Pushing
+  `origin/main`. Exact next action: owner continues POLISH-01.
 
 ### 2026-08-29 — SYNC-09 keep online Dashboard/Reports Convex-only
 

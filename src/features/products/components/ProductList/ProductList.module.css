@@ -2,7 +2,7 @@
   position: absolute;
   top: 138px;
   left: 210px;
-  width: 612px;
+  width: 652px;
   height: 522px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 580px;
+  width: 620px;
   height: 34px;
 }
 
@@ -90,7 +90,7 @@
   position: absolute;
   top: 56px;
   left: 0;
-  width: 612px;
+  width: 652px;
   height: 32px;
   background: var(--olaso-product-head);
 }
@@ -105,15 +105,15 @@
 }
 
 .columns span:nth-child(1) { left: 62px; }
-.columns span:nth-child(2) { left: 316px; }
-.columns span:nth-child(3) { left: 390px; }
-.columns span:nth-child(4) { left: 500px; }
+.columns span:nth-child(2) { left: 356px; }
+.columns span:nth-child(3) { left: 430px; }
+.columns span:nth-child(4) { left: 540px; }
 
 .rows {
   position: absolute;
   top: 88px;
   left: 0;
-  width: 612px;
+  width: 652px;
   height: 396px;
   overflow: hidden;
   background: var(--olaso-white);
@@ -147,7 +147,7 @@
   position: relative;
   z-index: 1;
   display: block;
-  width: 612px;
+  width: 652px;
   height: 66px;
   padding: 0;
   border: 0;
@@ -198,7 +198,7 @@
 .price {
   position: absolute;
   top: 25px;
-  left: 316px;
+  left: 356px;
 }
 
 .available,
@@ -215,7 +215,7 @@
 }
 
 .available {
-  left: 390px;
+  left: 430px;
   width: 88px;
   color: var(--olaso-green-ink);
   background: var(--olaso-green-icon);
@@ -244,7 +244,7 @@
 }
 
 .recipe {
-  left: 500px;
+  left: 540px;
   width: 96px;
   color: var(--olaso-gold);
   background: var(--olaso-status-gold);
@@ -259,7 +259,7 @@
   position: absolute;
   bottom: 0;
   left: 62px;
-  width: 534px;
+  width: 574px;
   height: 1px;
   background: var(--olaso-line-soft);
 }
@@ -271,7 +271,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 580px;
+  width: 620px;
   height: 34px;
   color: var(--olaso-text-meta);
   font-size: 7.5px;

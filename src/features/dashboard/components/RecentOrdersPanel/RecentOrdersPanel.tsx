@@ -69,10 +69,12 @@ export function RecentOrdersPanel({
                   : order.status === 'cancelled'
                     ? 'Cancelled'
                     : 'Refunded'}{' '}
-                · {new Date(order.completedAt).toLocaleTimeString('en-GB', {
+                · {new Intl.DateTimeFormat('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
                   hour: '2-digit',
                   minute: '2-digit',
-                })}
+                }).format(new Date(order.completedAt))}
               </small>
             </span>
             {index < orders.length - 1 ? <span className={styles.divider} /> : null}

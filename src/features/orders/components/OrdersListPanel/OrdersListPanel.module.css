@@ -2,7 +2,7 @@
   position: absolute;
   top: 92px;
   left: 18px;
-  width: 846px;
+  width: 886px;
   height: 686px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 798px;
+  width: 838px;
   height: 44px;
 }
 
@@ -62,7 +62,7 @@
   left: 24px;
   display: flex;
   align-items: center;
-  width: 798px;
+  width: 838px;
   height: 42px;
   gap: 10px;
 }
@@ -119,7 +119,7 @@
 .filters {
   position: relative;
   display: flex;
-  width: 362px;
+  width: 402px;
   height: 42px;
   overflow: hidden;
   padding: 4px;
@@ -247,7 +247,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 798px;
+  width: 838px;
   height: 44px;
   color: var(--olaso-copy);
   font-size: 9px;

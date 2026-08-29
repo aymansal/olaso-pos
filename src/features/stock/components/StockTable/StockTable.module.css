@@ -2,7 +2,7 @@
   position: absolute;
   top: 232px;
   left: 24px;
-  width: 798px;
+  width: 838px;
   height: 428px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 766px;
+  width: 806px;
   height: 24px;
 }
 
@@ -35,8 +35,8 @@
 .columns,
 .row {
   display: grid;
-  grid-template-columns: 230px 120px 110px 110px 100px 128px;
-  width: 798px;
+  grid-template-columns: 270px 120px 110px 110px 100px 128px;
+  width: 838px;
 }
 
 .columns {
@@ -70,7 +70,7 @@
   position: absolute;
   top: 78px;
   left: 0;
-  width: 798px;
+  width: 838px;
   background: var(--olaso-white);
 }
 
@@ -211,7 +211,7 @@ strong.lowValue {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 766px;
+  width: 806px;
   height: 34px;
   color: var(--olaso-text-meta);
   font-size: 8px;

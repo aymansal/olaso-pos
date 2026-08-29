@@ -1,8 +1,8 @@
 .panel {
   position: absolute;
   top: 92px;
-  left: 882px;
-  width: 440px;
+  left: 922px;
+  width: 400px;
   height: 686px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -17,24 +17,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
-  height: 42px;
+  width: 356px;
+  height: 44px;
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
 
 .headerActions > button {
   display: flex;
   align-items: center;
-  height: 26px;
+  height: 44px;
   gap: 4px;
-  padding: 0 8px;
+  padding: 0 12px;
   border: 1px solid var(--olaso-control-border);
-  border-radius: 13px;
+  border-radius: 22px;
   color: var(--olaso-green);
   background: transparent;
   font-size: 7px;
@@ -105,7 +105,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 66px;
 }
 
@@ -154,7 +154,7 @@
 .divider {
   position: absolute;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 1px;
   background: var(--olaso-order-divider);
 }
@@ -168,7 +168,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 20px;
 }
 
@@ -191,7 +191,7 @@
   left: 22px;
   display: flex;
   align-items: center;
-  width: 396px;
+  width: 356px;
   height: 68px;
   padding: 0 14px;
   border-radius: 16px;
@@ -241,7 +241,7 @@
   left: 22px;
   display: flex;
   align-items: center;
-  width: 396px;
+  width: 356px;
   height: 42px;
   gap: 9px;
   padding: 0 12px;
@@ -260,7 +260,7 @@
   position: absolute;
   top: 332px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   margin: 0;
   color: var(--olaso-text-meta);
   font-size: 8px;
@@ -292,7 +292,7 @@
   position: absolute;
   top: 378px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 140px;
 }
 
@@ -304,7 +304,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 38px;
 }
 
@@ -341,7 +341,7 @@
   position: absolute;
   top: 526px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 92px;
 }
 
@@ -366,7 +366,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 34px;
 }
 
@@ -394,21 +394,23 @@
 
 .actions {
   position: absolute;
-  top: 620px;
+  top: 624px;
   left: 22px;
   display: flex;
-  width: 396px;
-  height: 48px;
-  gap: 10px;
+  width: 356px;
+  height: 44px;
+  gap: 8px;
 }
 
 .actions button {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
-  gap: 7px;
-  border-radius: 24px;
+  min-width: 0;
+  height: 44px;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: 22px;
   font-size: 9px;
   font-weight: 700;
 }
@@ -418,7 +420,7 @@
 }
 
 .adjust {
-  width: 148px;
+  flex: 1;
   border: 1px solid var(--olaso-green);
   color: var(--olaso-green);
   background: transparent;
@@ -499,8 +501,8 @@
 .historyOverlay header button {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid var(--olaso-divider);
   border-radius: 50%;

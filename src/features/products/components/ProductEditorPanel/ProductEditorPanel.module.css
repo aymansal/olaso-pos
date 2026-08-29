@@ -1,8 +1,8 @@
 .panel {
   position: absolute;
   top: 92px;
-  left: 882px;
-  width: 440px;
+  left: 922px;
+  width: 400px;
   height: 686px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 42px;
 }
 
@@ -124,7 +124,7 @@
   top: 76px;
   left: 22px;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 66px;
 }
 
@@ -171,7 +171,7 @@
 .divider {
   position: absolute;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 1px;
   background: var(--olaso-order-divider);
 }
@@ -221,12 +221,12 @@
 }
 
 .nameField input {
-  width: 270px;
+  width: 230px;
 }
 
 .codeField {
   top: 198px;
-  left: 304px;
+  left: 264px;
 }
 
 .codeField input {
@@ -270,13 +270,13 @@
 }
 
 .categoryField select {
-  width: 176px;
+  width: 136px;
   color: var(--olaso-text);
 }
 
 .availabilityField {
   top: 266px;
-  left: 322px;
+  left: 282px;
 }
 
 .availability {
@@ -326,7 +326,7 @@
   top: 366px;
   left: 22px;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 20px;
 }
 
@@ -359,7 +359,7 @@
   position: absolute;
   top: 394px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 42px;
   gap: 8px;
   overflow-x: auto;
@@ -369,7 +369,7 @@
 .options::-webkit-scrollbar { display: none; }
 
 .option {
-  flex: 0 0 93px;
+  flex: 0 0 83px;
   height: 42px;
   gap: 8px;
   padding: 0 10px;
@@ -412,7 +412,7 @@
   top: 490px;
   left: 22px;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 20px;
 }
 
@@ -441,7 +441,7 @@
   position: absolute;
   top: 518px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 62px;
   gap: 11px;
   padding: 0 14px;
@@ -495,7 +495,7 @@
   position: absolute;
   top: 586px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   margin: 0;
   color: var(--olaso-text-meta);
   text-align: center;
@@ -507,7 +507,7 @@
   position: absolute;
   top: 600px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   margin: 0;
   color: var(--olaso-green);
   text-align: center;
@@ -520,8 +520,9 @@
   top: 620px;
   left: 22px;
   justify-content: center;
-  width: 396px;
+  width: 356px;
   height: 48px;
+  padding: 0 12px;
   gap: 8px;
   border: 0;
   border-radius: 24px;
@@ -538,7 +539,7 @@
 .empty {
   position: absolute;
   top: 255px;
-  left: 60px;
+  left: 40px;
   width: 320px;
   color: var(--olaso-text-meta);
   text-align: center;

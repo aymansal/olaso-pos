@@ -1,8 +1,8 @@
 .panel {
   position: absolute;
   top: 92px;
-  left: 882px;
-  width: 440px;
+  left: 922px;
+  width: 400px;
   height: 686px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 42px;
 }
 
@@ -68,7 +68,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 66px;
 }
 
@@ -104,7 +104,7 @@
 .divider {
   position: absolute;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 1px;
   background: var(--olaso-order-divider);
 }
@@ -117,7 +117,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 20px;
 }
 
@@ -132,7 +132,7 @@
   position: absolute;
   top: 176px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 178px;
 }
 
@@ -144,7 +144,7 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr 100px 32px;
-  width: 396px;
+  width: 356px;
   height: 38px;
   align-items: start;
 }
@@ -171,7 +171,7 @@
   top: 22px;
   left: 0;
   display: block;
-  width: 396px;
+  width: 356px;
   height: 4px;
   overflow: hidden;
   border-radius: 2px;
@@ -219,13 +219,13 @@
   position: absolute;
   top: 372px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 72px;
 }
 
 .paymentBar {
   display: flex;
-  width: 396px;
+  width: 356px;
   height: 10px;
   margin-top: 12px;
   overflow: hidden;
@@ -244,7 +244,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 18px;
   margin-top: 12px;
 }
@@ -272,7 +272,7 @@
   position: absolute;
   top: 476px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 130px;
 }
 
@@ -280,7 +280,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 22px;
 }
 
@@ -308,7 +308,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 34px;
 }
 
@@ -344,7 +344,7 @@
   top: 620px;
   left: 22px;
   display: flex;
-  width: 396px;
+  width: 356px;
   height: 48px;
   gap: 10px;
 }
@@ -366,7 +366,9 @@
 }
 
 .csv {
-  width: 142px;
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px;
   border: 1px solid var(--olaso-green);
   color: var(--olaso-green);
   background: transparent;
@@ -374,6 +376,8 @@
 
 .pdf {
   flex: 1;
+  min-width: 0;
+  padding: 0 8px;
   border: 0;
   color: var(--olaso-white);
   background: var(--olaso-green);

@@ -2,7 +2,7 @@
   position: absolute;
   top: 138px;
   left: 24px;
-  width: 798px;
+  width: 838px;
   height: 448px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -12,8 +12,8 @@
 .head,
 .row {
   display: grid;
-  grid-template-columns: 108px 155px 160px 85px 105px 185px;
-  width: 798px;
+  grid-template-columns: 118px 165px 170px 85px 105px 195px;
+  width: 838px;
 }
 
 .head {

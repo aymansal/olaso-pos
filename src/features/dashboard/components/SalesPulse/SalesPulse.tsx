@@ -93,20 +93,22 @@ export function SalesPulse({
 
       <div className={styles.accent} />
       <p className={styles.netLabel}>NET SALES</p>
-      <p className={styles.netValue}>
-        {isLoading ? '—' : formatMoney(today?.netCentimes ?? 0)}
-      </p>
-      {error ? (
-        <button type="button" className={styles.change} onClick={onRetry}>
-          <RotateCw width={14} height={14} aria-hidden="true" />
-          <strong>Retry summary</strong>
-        </button>
-      ) : (
-        <div className={styles.change}>
-          <ComparisonIcon width={14} height={14} aria-hidden="true" />
-          <strong>{isLoading ? 'Loading saved summary' : changeLabel}</strong>
-        </div>
-      )}
+      <div className={styles.netRow}>
+        <p className={styles.netValue}>
+          {isLoading ? '—' : formatMoney(today?.netCentimes ?? 0)}
+        </p>
+        {error ? (
+          <button type="button" className={styles.change} onClick={onRetry}>
+            <RotateCw width={14} height={14} aria-hidden="true" />
+            <strong>Retry summary</strong>
+          </button>
+        ) : (
+          <div className={styles.change}>
+            <ComparisonIcon width={14} height={14} aria-hidden="true" />
+            <strong>{isLoading ? 'Loading saved summary' : changeLabel}</strong>
+          </div>
+        )}
+      </div>
 
       <div className={styles.summaryDividerTop} />
       <div className={styles.summary} aria-label="Today’s sales summary">

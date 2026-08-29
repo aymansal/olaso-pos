@@ -2,7 +2,7 @@
   position: absolute;
   top: 92px;
   left: 18px;
-  width: 846px;
+  width: 886px;
   height: 686px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 798px;
+  width: 838px;
   height: 44px;
 }
 
@@ -62,7 +62,7 @@
   left: 24px;
   display: flex;
   align-items: center;
-  width: 798px;
+  width: 838px;
   height: 42px;
   gap: 10px;
 }
@@ -79,7 +79,7 @@
 }
 
 .search {
-  width: 390px;
+  width: 430px;
   gap: 9px;
   padding: 0 14px;
   color: var(--olaso-muted);

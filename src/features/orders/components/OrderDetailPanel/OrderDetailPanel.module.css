@@ -1,8 +1,8 @@
 .panel {
   position: absolute;
   top: 92px;
-  left: 882px;
-  width: 440px;
+  left: 922px;
+  width: 400px;
   height: 686px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 50px;
 }
 
@@ -112,7 +112,7 @@
   position: absolute;
   top: 84px;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 60px;
   border-radius: 18px;
   background: var(--olaso-table-head);
@@ -148,7 +148,7 @@
   top: 158px;
   left: 22px;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 50px;
 }
 
@@ -182,7 +182,7 @@
 .divider {
   position: absolute;
   left: 22px;
-  width: 396px;
+  width: 356px;
   height: 1px;
   background: var(--olaso-order-divider);
 }
@@ -194,7 +194,7 @@
   top: 238px;
   left: 22px;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 24px;
 }
 
@@ -214,14 +214,14 @@
   position: absolute;
   top: 270px;
   left: 22px;
-  width: 396px;
-  height: 176px;
+  width: 356px;
+  height: 136px;
   overflow-y: auto;
 }
 
 .item {
   position: relative;
-  width: 396px;
+  width: 356px;
   height: 58px;
 }
 
@@ -248,7 +248,7 @@
   top: 10px;
   left: 52px;
   gap: 6px;
-  width: 250px;
+  width: 210px;
 }
 
 .itemCopy strong {
@@ -279,19 +279,19 @@
   position: absolute;
   bottom: 0;
   left: 52px;
-  width: 344px;
+  width: 304px;
   height: 1px;
   background: var(--olaso-line-soft);
 }
 
-.itemsDivider { top: 446px; }
+.itemsDivider { top: 406px; }
 
 .paymentHeader {
   position: absolute;
-  top: 464px;
+  top: 424px;
   left: 22px;
   justify-content: space-between;
-  width: 396px;
+  width: 356px;
   height: 22px;
 }
 
@@ -314,11 +314,11 @@
 
 .payment {
   position: absolute;
-  top: 494px;
+  top: 454px;
   left: 22px;
   display: flex;
   flex-direction: column;
-  width: 396px;
+  width: 356px;
   margin: 0;
   gap: 12px;
 }
@@ -354,33 +354,46 @@
   font-weight: 700;
 }
 
-.actionsDivider { top: 570px; }
+.actionsDivider { top: 538px; }
 
 .actions {
   position: absolute;
-  top: 588px;
+  top: 550px;
   left: 22px;
-  width: 396px;
-  height: 50px;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  width: 356px;
+  height: 96px;
+  gap: 8px;
 }
 
 .actions button {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
-  gap: 8px;
-  border-radius: 25px;
+  min-width: 0;
+  height: 44px;
+  gap: 6px;
+  padding: 0 10px;
+  overflow: hidden;
+  border-radius: 22px;
   font-size: 10px;
   font-weight: 700;
+}
+
+.actions button svg {
+  flex-shrink: 0;
+}
+
+.actions button span {
+  min-width: 0;
 }
 
 .preview,
 .reprint,
 .sync,
 .cancelOrder {
-  flex: 1;
   min-width: 0;
 }
 
@@ -428,15 +441,23 @@
 
 .stockNote {
   position: absolute;
-  top: 650px;
+  top: 654px;
   left: 22px;
   justify-content: center;
-  width: 396px;
+  width: 356px;
   height: 20px;
+  overflow: hidden;
   gap: 7px;
   color: var(--olaso-note);
   font-size: 8px;
   font-weight: 500;
+}
+
+.stockNote > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .empty {
