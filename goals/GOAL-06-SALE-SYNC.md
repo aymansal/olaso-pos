@@ -84,7 +84,7 @@ SYNC-01.
 | Card | What we are fixing | Status |
 | --- | --- | --- |
 | SYNC-01 | Cloud `sales.accept` writes size/choice onto `receiptSnapshot.lines`; schema `receiptLine` rejects those fields, so **no POS sale is saved in Convex**. | done — Convex has 0826-0001…0018; SHA `ecf8500465db6e4c434a60dc991b4a78dd5224db` |
-| SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — failed parents no longer hide children or pin later work |
+| SYNC-02 | A sale (and later management) sets `depends_on` to the latest pending **or failed** catalog/inventory outbox row. The pending list hides children while that parent exists. | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` |
 | SYNC-03 | Reconnect `continue`s past `syncPendingSales` whenever staff/catalog/inventory `processed > 0`, including failures. | pending |
 | SYNC-04 | Automatic reconnect only re-queues `last_error ===` the connection sentence. Schema and other business errors stay `failed`. | pending |
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | pending |
@@ -400,6 +400,7 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
   `npx tsc -b` pass. No Convex schema change.
 - Android: install-over debug APK on SM-X115 `R8YX91AKWXJ` succeeded. Café
   outbox left untouched. 0826-0016/0017 already synced after SYNC-01.
+- Pushed `d5c87b0e31f7be4c6933390568683f3d15179330` to `origin/main`.
 - Exact next action: SYNC-03.
 
 ### 2026-08-29 — owner Manual Sync drained the 18-row queue

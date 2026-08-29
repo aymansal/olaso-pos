@@ -172,7 +172,7 @@ polished product.
 | OPTIONS-03 | Connect exact cashier selections to price, stock, immutable sales, and synchronization | pending | — |
 | OPTIONS-04 | Reconcile selected ingredient costs, reports, migration, and offline acceptance | pending | — |
 | SYNC-01 | Persist size/choice fields on Convex sale receipt snapshots so accept can insert | done — 0826-0001…0018 in Convex | [GOAL-06-SALE-SYNC.md](GOAL-06-SALE-SYNC.md) |
-| SYNC-02 | Stop failed management parents from hiding later sales | done — pending-only parent blocking and pin targets | same ledger |
+| SYNC-02 | Stop failed management parents from hiding later sales | done — `d5c87b0e31f7be4c6933390568683f3d15179330` on `origin/main` | same ledger |
 | SYNC-03 | Do not skip sale drain when management processed/failed in-batch | pending | same ledger |
 | SYNC-04 | Classify sale sync failures so automatic retry stays correct | pending | same ledger |
 | SYNC-05 | Keep abandon only for true permanent sale conflicts | pending | same ledger |
