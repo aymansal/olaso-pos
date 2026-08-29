@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | next — customize footer already on `origin/main` as `7e9e6b573ad9f6813a91f05bef1aa547728f107e` |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — panels `bb6652aaf454e0b52bffbe77c11bf95b5d1aeef3` on `origin/main` |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -131,7 +131,9 @@ remaining goal and card sequence.
   is not clipped. Recent orders show `Completed · 27 Aug, 13:11`.
   SalesPulse yesterday pill sits 14px after net sales; Orders / Average
   order / Items sold are equal centered thirds. Physical SM-X115
-  install-over. Exact next action: push `origin/main` and record SHA.
+  install-over. On `origin/main` as
+  `bb6652aaf454e0b52bffbe77c11bf95b5d1aeef3`. Exact next action: owner
+  continues POLISH-01.
 - SYNC-09 (29 Aug 2026): verify-only. colorful-newt-937 has receipts
   `0826-0001`…`0826-0018` on device
   `device-9a9b0736-2f17-4923-af5f-c280c9d67bfa`. `dailyMetrics` 2026-08-29
@@ -1442,8 +1444,9 @@ remaining goal and card sequence.
 - Recent orders status includes day + short month + time (`29 Aug, 13:11`).
   Tablet screenshot: 0826-0015 is 28 Aug; 0016–0018 are 29 Aug.
 - `check:css-scope`, `npm run build`, `android:beta`, install-over SM-X115.
-  SalesPulse equal thirds + yesterday pill beside net sales. Pushing
-  `origin/main`. Exact next action: owner continues POLISH-01.
+  SalesPulse equal thirds + yesterday pill beside net sales. On
+  `origin/main` as `bb6652aaf454e0b52bffbe77c11bf95b5d1aeef3`. Exact next
+  action: owner continues POLISH-01.
 
 ### 2026-08-29 — SYNC-09 keep online Dashboard/Reports Convex-only
 
