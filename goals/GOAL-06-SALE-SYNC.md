@@ -90,7 +90,7 @@ SYNC-01.
 | SYNC-05 | Some Convex messages permanently **delete** the sale outbox row (`abandonSale`) and leave `sales.sync_state = 'failed'` with no retry. | done — regex unchanged; `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 | Orders retry resets only that sale’s outbox row. It cannot clear a failed management parent, so retry is a no-op for chained tickets. | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main`; SYNC-02 lists the sale after retry; no UI copy |
 | SYNC-07 | Settings waiting count is all outbox types; copy says “saved orders”. | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
-| SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | done — SHA after push |
+| SYNC-08 | `perform()` returns success with `synced: 0` when Android internet is not validated, the WebView lacks focus, or the session is pending provision. Manual Sync looks like it ran. | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 | Online Dashboard/Reports read cloud `dailyMetrics` / recent cloud sales only. Unsynced local tickets do not appear in pulse/reports while the tablet is online. | pending |
 
 ## Work cards
@@ -347,7 +347,7 @@ invented; Settings not opened past lock.
 
 ### SYNC-08 — Manual Sync must not look successful when it never ran
 
-**Status:** done — install-over + `check:reconnect`; SHA after push
+**Status:** done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main`
 
 **Objective:** Settings Sync and post-checkout reconnect must not return a
 quiet success when `available !== true`, `!foreground`, or pending staff
@@ -431,7 +431,8 @@ reconnect USB, unlock the tablet, accept the RSA prompt, then continue.
   WebView focus. No Kotlin, WorkManager, or native Sync button.
 - Install-over debug APK on SM-X115 `R8YX91AKWXJ`. Lock blocked Settings;
   PIN not invented. Café outbox 0/0.
-- Exact next action: SYNC-09. SHA after push to `origin/main`.
+- Exact next action: SYNC-09. Pushed `0379d0c1011a8a820d71a9ac173e0e85bd7d4942`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-07 count waiting Settings sales not all outbox rows
 

@@ -42,7 +42,7 @@ remaining goal and card sequence.
 | SYNC-05 — Permanent abandon only for true conflicts | done — `b5a0577c348e89be82125a2ce63a29f2b0ca4bff` on `origin/main` |
 | SYNC-06 — Orders retry vs management parent | done — `79b10d6555fb5e529d806e575677e7af4cbf1ced` on `origin/main` |
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
-| SYNC-08 — Manual Sync silent no-op when worker gated | done — SHA after push to origin/main |
+| SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | pending |
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — customize footer `7e9e6b573ad9f6813a91f05bef1aa547728f107e` on `origin/main` |
 | HARD-08 — Final endurance and acceptance | pending |
@@ -137,8 +137,8 @@ remaining goal and card sequence.
   `check:reconnect` (throws + no `synced: 0` skip), `check:settings`,
   `npx tsc -b`, `npm run build`. Install-over debug APK on SM-X115
   `R8YX91AKWXJ`. Lock screen blocked Settings; PIN not invented. Café
-  SQLite not wiped; outbox 0/0. Exact next action: record SHA on
-  `origin/main`, then SYNC-09.
+  SQLite not wiped; outbox 0/0. On `origin/main` as
+  `0379d0c1011a8a820d71a9ac173e0e85bd7d4942`. Exact next action: SYNC-09.
 - POLISH Customize-order CSS remains on `origin/main` as
   `7e9e6b573ad9f6813a91f05bef1aa547728f107e`; not restaged.
 
@@ -1445,7 +1445,8 @@ remaining goal and card sequence.
   Read-only dump: outbox 0 sales / 0 all. Launch showed Unlock Olaso
   (owner selected, Terminal online). PIN not invented. Settings not
   opened. Install-over + `check:reconnect` is the physical evidence.
-- Exact next action: record SHA on `origin/main`, then SYNC-09.
+- Exact next action: SYNC-09. Pushed `0379d0c1011a8a820d71a9ac173e0e85bd7d4942`
+  to `origin/main`.
 
 ### 2026-08-29 — SYNC-06 verify Orders retry after failed parents no longer hide sales
 
