@@ -27,9 +27,8 @@ application, global tokens, and the feature screens under `features/`.
   saved-snapshot receipt model, and deterministic WD8260 byte encoding; React
   components receive only plain settings, actions, and feedback.
 - `components/` and `lib/` hold only proven cross-feature UI and formatting
-  contracts; the shared receipt preview, overlay portal, money formatter,
-  stock-quantity formatter, and product-configuration resolver are the current
-  examples.
+  contracts; the overlay portal, money formatter, stock-quantity formatter,
+  and product-configuration resolver are the current examples.
 - `globals.css` owns only font/reset imports, semantic root variables, body
   defaults, and the full-viewport baseline.
 - Every CSS Module selector must start with a hashed class. CSS Modules leave a

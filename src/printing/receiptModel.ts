@@ -25,6 +25,11 @@ export type ReceiptSnapshotForPrint = {
   taxPolicyLabel: string;
   paymentMethod: string;
   receiptLanguage?: 'en' | 'fr';
+  tenders?: Array<{
+    dueCentimes: number;
+    amountCentimes: number;
+    changeCentimes: number;
+  }>;
 };
 
 export type ReceiptModel = {
@@ -51,6 +56,10 @@ export type ReceiptModel = {
   receiptLanguage: 'en' | 'fr';
   paymentAmountCentimes?: number;
   changeCentimes?: number;
+  tenders?: Array<{
+    amountCentimes: number;
+    changeCentimes: number;
+  }>;
 };
 
 function text(value: unknown, label: string, maximum: number) {
@@ -158,6 +167,31 @@ export function createReceiptModel(
     throw new Error('Receipt change does not match payment and total.');
   }
 
+  const tenders = snapshot.tenders;
+  let modelTenders: ReceiptModel['tenders'];
+  if (tenders !== undefined) {
+    if (!Array.isArray(tenders) || tenders.length < 1 || tenders.length > 20) {
+      throw new Error('Receipt must contain 1 to 20 payments.');
+    }
+    let dueSum = 0;
+    modelTenders = tenders.map((tender) => {
+      const dueCentimes = money(tender.dueCentimes, 'payment due');
+      const amountCentimes = money(tender.amountCentimes, 'payment amount');
+      const tenderChange = money(tender.changeCentimes, 'change');
+      if (amountCentimes < dueCentimes) {
+        throw new Error('Receipt payment amount is less than its due.');
+      }
+      if (tenderChange !== amountCentimes - dueCentimes) {
+        throw new Error('Receipt change does not match amount and due.');
+      }
+      dueSum += dueCentimes;
+      return { amountCentimes, changeCentimes: tenderChange };
+    });
+    if (dueSum !== totalCentimes) {
+      throw new Error('Receipt payments do not add up to the total.');
+    }
+  }
+
   const tableLabel = optionalText(snapshot.tableLabel, 'table', 40);
   const cashierName = optionalText(snapshot.cashierName, 'cashier', 80);
   const customerName = optionalText(snapshot.customerName, 'customer', 80);
@@ -190,5 +224,6 @@ export function createReceiptModel(
     receiptLanguage,
     ...(paymentAmountCentimes === undefined ? {} : { paymentAmountCentimes }),
     ...(changeCentimes === undefined ? {} : { changeCentimes }),
+    ...(modelTenders === undefined ? {} : { tenders: modelTenders }),
   };
 }

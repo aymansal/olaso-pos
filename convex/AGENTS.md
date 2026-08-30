@@ -59,6 +59,8 @@ data, reporting summaries, and development seeding.
   and deductions before writing any effect. Size/choice resolution must match
   `src/lib/productConfiguration.ts`. An optional complimentary flag charges 0
   while still deducting recipe stock; daily metrics use the charged total.
+  Optional tenders on the receipt snapshot store amount given and change;
+  their dues must sum to the charged sale total.
 - Seed/reset work is internal, development-only, deterministic, and runnable
   through the CLI.
 - Do not add actions for ordinary database work or import backend clients into

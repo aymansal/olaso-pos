@@ -7,6 +7,7 @@ type SavedLine = {
   productName: string;
   quantity: number;
   lineTotalCentimes: number;
+  complimentary?: boolean;
   categoryIdSnapshot?: string;
   categoryNameSnapshot?: string;
 };
@@ -157,8 +158,11 @@ export function aggregateOfflineSales(
         quantity: 0,
         totalCentimes: 0,
       };
+      const chargedCentimes = line.complimentary === true
+        ? 0
+        : line.lineTotalCentimes;
       product.quantity += line.quantity;
-      product.totalCentimes += line.lineTotalCentimes;
+      product.totalCentimes += chargedCentimes;
       products.set(line.productId, product);
       if (category) {
         const total = categories.get(category.id) ?? {
@@ -168,7 +172,7 @@ export function aggregateOfflineSales(
           totalCentimes: 0,
         };
         total.quantity += line.quantity;
-        total.totalCentimes += line.lineTotalCentimes;
+        total.totalCentimes += chargedCentimes;
         categories.set(category.id, total);
       }
     }

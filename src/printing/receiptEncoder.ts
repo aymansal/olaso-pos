@@ -143,9 +143,19 @@ function receiptRows(model: ReceiptModel): ReceiptRow[] {
     meta.push(...wrap(`${labels.customer}: ${model.customerName}`, WIDTH).map((text) => ({ text })));
   }
 
-  const payment = model.paymentAmountCentimes === undefined
-    ? detailRows(labels.payment, model.paymentMethod)
-    : detailRows(model.paymentMethod, formatReceiptMoney(model.paymentAmountCentimes));
+  const payment = model.tenders?.length
+    ? model.tenders.flatMap((tender) => [
+        ...detailRows(model.paymentMethod, formatReceiptMoney(tender.amountCentimes)),
+        ...detailRows(labels.change, formatReceiptMoney(tender.changeCentimes)),
+      ])
+    : [
+        ...(model.paymentAmountCentimes === undefined
+          ? detailRows(labels.payment, model.paymentMethod)
+          : detailRows(model.paymentMethod, formatReceiptMoney(model.paymentAmountCentimes))),
+        ...(model.changeCentimes === undefined
+          ? []
+          : detailRows(labels.change, formatReceiptMoney(model.changeCentimes))),
+      ];
 
   return [
     { text: '-'.repeat(WIDTH) },
@@ -164,9 +174,6 @@ function receiptRows(model: ReceiptModel): ReceiptRow[] {
       doubleWidth: true,
     },
     ...payment,
-    ...(model.changeCentimes === undefined
-      ? []
-      : detailRows(labels.change, formatReceiptMoney(model.changeCentimes))),
     { text: '-'.repeat(WIDTH) },
     { text: labels.thanks, align: 'center', bold: true, doubleWidth: true },
     { text: model.receiptLanguage === 'fr' ? 'À bientôt' : 'See you soon', align: 'center' },

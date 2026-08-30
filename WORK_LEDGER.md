@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — Offert `6f6c90ba7fa288a42a0e860d67e02229eda8d474` on `origin/main` |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — cash/split overlay committing after Offert `6f6c90ba7fa288a42a0e860d67e02229eda8d474` |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -125,12 +125,11 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- POLISH-01 (30 Aug 2026): line Offert, payment Total pinned above Place
-  order, Gift beside trash, compact cart controls, and centered Place
-  order chevron nudge. On `origin/main` as
-  `6f6c90ba7fa288a42a0e860d67e02229eda8d474`. Exact next action: owner
-  confirms product-based split checkout (pay some lines, leave the rest
-  in the cart; not split tender).
+- POLISH-01 (30 Aug 2026): cash tender, sequential split, Offert skip, no
+  on-screen receipt preview, cart gap, and split prices pinned to the right
+  edge. Owner confirmed lemonade/brioche/croissant amounts line up on SM-X115
+  `R8YX91AKWXJ`. Exact next action: commit and push `origin/main`, then record
+  the SHA.
 - POLISH-01 (30 Aug 2026): cart line Gift, trash, and quantity pill are
   visually smaller (36px circles / 100×36 pill) with 8px gaps; 44px hits
   kept. Exact next action: owner checks on tablet; commit when asked.
@@ -1483,6 +1482,44 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-30 — POLISH-01 split alignment, Offert split, cart space, no preview
+
+- Split prices stay in a right column; long names/options ellipsis. Split
+  only when two-plus paid units; Offert never appears as a 0 DH split line.
+  Given/Change sit outside the scrolling body. Cart list is 348px without
+  Offert so three lines fit with a 16px gap above Payment Details. POS
+  ReceiptPreviewDialog deleted. Owner confirmed split amounts align.
+- Exact next action: commit and push `origin/main`.
+
+### 2026-08-30 — POLISH-01 payment overlay follow-up
+
+- Fully Offert carts skip PaymentDialog (nothing to collect). Split hides
+  when cart unit count is 1. Quick amounts are 20/50/100/200 on one 44px row.
+  Split lists fade in with the 420ms page curve; Remaining/This payment are
+  hairline rows, no nested boxes. Offline product/category money uses charged
+  0 for Offert; daily net already used sale total. Split print still goes
+  through `createSavedReceiptBytes` / existing encoder; golden SHA unchanged.
+- Exact next action: owner checks overlay skip, chips, split UI, paper;
+  commit only if asked.
+
+### 2026-08-30 — POLISH-01 cash tender, change, and split overlay
+
+- Place order opens PaymentDialog. Cash: 20/50/100 DH plus custom given and
+  change. Split assigns remaining units (qty 2 takes one) to the next payer;
+  overlay stays after the first payment. One sale, one ticket, each tender
+  given+change. Card is exact due. Revises POLICY-01 product-based sequential
+  checkout.
+- Android research: React overlay and decimal input; persist `tenders` on the
+  saved receipt JSON; Convex optional snapshot/accept tenders; print from
+  snapshot tenders. Golden SHA unchanged (payment-arg path).
+- Checks: `check:pos`, `check:printing` golden SHA unchanged, `check:css-scope`,
+  `check:orders`, `tsc -b`, `npm run build`, `convex codegen`. Local tenders
+  in `check:sales` passed; live seed still fails on café Cappuccino Regular
+  (pre-existing). Graphify AST refresh; export unchanged. Debug APK
+  install-over SM-X115 `R8YX91AKWXJ`. Uncommitted.
+- Exact next action: owner unlocks, slides Place order, tries cash change
+  then Split with two drinks; commit only if asked.
 
 ### 2026-08-30 — POLISH-01 trial cart-line Offert
 

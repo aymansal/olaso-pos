@@ -29,6 +29,8 @@ performance, ingredient usage, and bounded period controls.
 - Keep ingredient base units separate; never invent a cross-unit stock total.
 - Offline Reports derive the selected one-to-31-day period from bounded saved
   tablet receipts and movements and never remain on a cloud loading state.
+  Offert drinks still count as units sold; their product and category money is
+  0. Daily net uses the charged sale total.
 - Online Reports use Convex saved summaries; still-unsynced tablet sales are
   not mixed into those totals; `offlineViews` remain the offline tablet-only
   path.

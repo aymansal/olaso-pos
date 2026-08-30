@@ -2,10 +2,17 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   addProduct,
+  chargedCentimes,
+  changeCentimes,
   complimentaryCentimes,
   decrementCartLine,
   filterProducts,
   incrementCartLine,
+  moveCartUnit,
+  paidUnitCount,
+  parseDirhamsToCentimes,
+  payableCart,
+  QUICK_TENDER_CENTIMES,
   removeCartLine,
   subtotalCentimes,
   taxCentimes,
@@ -184,6 +191,47 @@ assert.equal(offered[0].quantity, 2);
 assert.equal(offered[0].complimentary, undefined);
 assert.equal(complimentaryCentimes(offered, sizes), 0);
 
+assert.equal(parseDirhamsToCentimes('20'), 2000);
+assert.equal(parseDirhamsToCentimes('20,50'), 2050);
+assert.equal(parseDirhamsToCentimes('100.00'), 10000);
+assert.equal(parseDirhamsToCentimes('20.123'), undefined);
+assert.equal(parseDirhamsToCentimes('abc'), undefined);
+assert.equal(changeCentimes(8000, 10000), 2000);
+assert.equal(changeCentimes(8000, 7000), undefined);
+assert.deepEqual([...QUICK_TENDER_CENTIMES], [2000, 5000, 10000, 20000]);
+
+let splitCart = addProduct([], 'americano', 'americano-reg');
+splitCart = addProduct(splitCart, 'americano', 'americano-reg');
+const moved = moveCartUnit(splitCart, [], splitCart[0].id);
+assert.equal(moved.from[0].quantity, 1);
+assert.equal(moved.to[0].quantity, 1);
+assert.equal(chargedCentimes(moved.to, sizes), 1300);
+
+let mixed = addProduct([], 'americano', 'americano-reg');
+mixed = addProduct(mixed, 'latte', 'latte-reg');
+mixed = toggleCartLineOffert(mixed, mixed[0].id);
+assert.equal(paidUnitCount(mixed), 1);
+assert.equal(payableCart(mixed).length, 1);
+assert.equal(chargedCentimes(mixed, sizes), 1800);
+
+const paymentDialog = readFileSync(
+  'src/features/pos/components/PaymentDialog/PaymentDialog.tsx',
+  'utf8',
+);
+assert.match(paymentDialog, /QUICK_TENDER_CENTIMES/);
+assert.match(paymentDialog, /payableCart/);
+assert.match(paymentDialog, /canSplit/);
+assert.match(paymentDialog, /Split/);
+assert.match(paymentDialog, /locked \|\| processing \? null/);
+assert.doesNotMatch(paymentDialog, /onClose=\{onCancel\}/);
+const posScreen = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
+assert.match(posScreen, /PaymentDialog/);
+assert.match(posScreen, /total === 0/);
+assert.match(posScreen, /setPaying\(true\)/);
+assert.match(posScreen, /paidUnitCount/);
+assert.match(posScreen, /tenders/);
+assert.doesNotMatch(posScreen, /ReceiptPreviewDialog|setReceiptPreview/);
+
 const card = readFileSync(
   'src/features/pos/components/OrderItemCard/OrderItemCard.tsx',
   'utf8',
@@ -208,5 +256,17 @@ const summaryCss = readFileSync(
   'utf8',
 );
 assert.match(summaryCss, /justify-content: flex-end/);
+const railCss = readFileSync(
+  'src/features/pos/components/ReceiptRail/ReceiptRail.module.css',
+  'utf8',
+);
+assert.match(railCss, /height: 348px/);
+assert.match(railCss, /\[data-offert\]/);
+const paymentCss = readFileSync(
+  'src/features/pos/components/PaymentDialog/PaymentDialog.module.css',
+  'utf8',
+);
+assert.match(paymentCss, /\.sharePrice \{[\s\S]*right: 0/);
+assert.match(paymentCss, /width: 88px/);
 
 console.log('POS cart and money checks passed.');

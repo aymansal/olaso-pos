@@ -20,6 +20,11 @@ const serviceMode = v.union(
 );
 const paymentMethod = v.union(v.literal('Cash'), v.literal('Card'));
 const receiptLanguage = v.union(v.literal('en'), v.literal('fr'));
+const receiptTender = v.object({
+  dueCentimes: v.number(),
+  amountCentimes: v.number(),
+  changeCentimes: v.number(),
+});
 const saleLine = v.object({
   productId: v.id('products'),
   productRevision: v.number(),
@@ -70,6 +75,37 @@ function checkedTotal(value: number, label: string) {
     return invalid(`${label} is outside the supported integer range.`);
   }
   return value;
+}
+
+function readTenders(
+  tenders: Array<{
+    dueCentimes: number;
+    amountCentimes: number;
+    changeCentimes: number;
+  }> | undefined,
+  saleTotalCentimes: number,
+) {
+  if (tenders === undefined) return undefined;
+  if (tenders.length < 1 || tenders.length > 20) {
+    return invalid('A sale can include 1 to 20 payments.');
+  }
+  let dueSum = 0;
+  for (const tender of tenders) {
+    checkedTotal(tender.dueCentimes, 'Payment due');
+    checkedTotal(tender.amountCentimes, 'Payment amount');
+    checkedTotal(tender.changeCentimes, 'Payment change');
+    if (tender.amountCentimes < tender.dueCentimes) {
+      return invalid('A payment amount is less than its due.');
+    }
+    if (tender.changeCentimes !== tender.amountCentimes - tender.dueCentimes) {
+      return invalid('Payment change does not match amount and due.');
+    }
+    dueSum += tender.dueCentimes;
+  }
+  if (dueSum !== saleTotalCentimes) {
+    return invalid('Split payments do not add up to the sale total.');
+  }
+  return tenders;
 }
 
 function snapshotCost(
@@ -132,6 +168,7 @@ export const accept = mutation({
     serviceMode,
     paymentMethod,
     receiptLanguage,
+    tenders: v.optional(v.array(receiptTender)),
     businessDate: v.string(),
     completedAt: v.number(),
     ingredientCostCentimes: v.optional(v.number()),
@@ -506,6 +543,7 @@ export const accept = mutation({
       subtotalCentimes - discountCentimes,
       'Sale total',
     );
+    const tenders = readTenders(args.tenders, totalCentimes);
     const completeLineCosts = preparedLines.every(
       (line) => line.costStatus === 'complete',
     );
@@ -642,6 +680,7 @@ export const accept = mutation({
         taxPolicyLabel: TAX_POLICY_LABEL,
         paymentMethod: args.paymentMethod,
         receiptLanguage: args.receiptLanguage,
+        ...(tenders ? { tenders } : {}),
       },
     });
     for (const line of preparedLines) {

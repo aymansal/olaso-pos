@@ -1,0 +1,316 @@
+.overlay {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(28 33 27 / 38%);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: 480px;
+  max-height: 560px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.dialog header,
+.dialog header > span,
+.dialog footer,
+.change,
+.change div,
+.paid {
+  display: flex;
+}
+
+.dialog header,
+.dialog footer {
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog header > span,
+.change {
+  flex-direction: column;
+}
+
+.dialog header small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dialog h2 {
+  margin: 3px 0 0;
+  color: var(--olaso-text);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.dialog header > button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 16px;
+  overflow-y: auto;
+}
+
+.split {
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  color: var(--olaso-copy);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.split[aria-pressed='true'] {
+  border-color: transparent;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.split:disabled {
+  opacity: 0.45;
+}
+
+.paid {
+  gap: 8px;
+  margin: 12px 0 0;
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+}
+
+.shares {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  min-width: 0;
+  margin-top: 14px;
+  opacity: 0;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.shares > div {
+  min-width: 0;
+}
+
+.shares[data-fade='prepare'] {
+  opacity: 0;
+  transition: none;
+}
+
+.shares[data-fade='run'] {
+  opacity: 1;
+}
+
+.shareHead {
+  display: flex;
+  margin: 0 0 2px;
+  align-items: baseline;
+  justify-content: space-between;
+  color: var(--olaso-text);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.shareHead span {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.shareEmpty,
+.cardNote {
+  margin: 8px 0 0;
+  color: var(--olaso-text-meta);
+  font-size: 9px;
+}
+
+.shareRow {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 6px 112px 6px 0;
+  border: 0;
+  border-bottom: 1px solid var(--olaso-line-soft);
+  border-radius: 0;
+  appearance: none;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 10px;
+  text-align: left;
+}
+
+.shareCopy {
+  display: block;
+  overflow: hidden;
+}
+
+.shareName,
+.shareCopy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shareCopy small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+}
+
+.shareQty,
+.sharePrice {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-variant-numeric: tabular-nums;
+}
+
+.shareQty {
+  right: 88px;
+  width: 16px;
+  color: var(--olaso-text-meta);
+  text-align: right;
+}
+
+.sharePrice {
+  right: 0;
+  width: 88px;
+  overflow: hidden;
+  color: var(--olaso-green);
+  font-size: 9px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.quick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.quick button {
+  height: 44px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.quick button[aria-pressed='true'] {
+  border-color: transparent;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.custom {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.custom input {
+  height: 50px;
+  padding: 0 16px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 25px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardNote {
+  margin: 16px 0 0;
+}
+
+.change {
+  flex-shrink: 0;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.change div {
+  align-items: baseline;
+  justify-content: space-between;
+  color: var(--olaso-copy);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.change div:last-child {
+  color: var(--olaso-text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dialog footer {
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cancel,
+.confirm {
+  height: 50px;
+  padding: 0 18px;
+  border-radius: 25px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cancel {
+  border: 1px solid var(--olaso-control-border);
+  color: var(--olaso-copy);
+  background: transparent;
+}
+
+.confirm {
+  flex: 1;
+  border: 0;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.confirm:disabled {
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shares {
+    transition: none;
+  }
+}

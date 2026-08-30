@@ -207,6 +207,75 @@ export function complimentaryCentimes(
   );
 }
 
+export function chargedCentimes(
+  cart: CartLine[],
+  sizes: readonly PricedSize[],
+  choiceValues: readonly PricedChoiceValue[] = [],
+): number {
+  return subtotalCentimes(cart, sizes, choiceValues)
+    - complimentaryCentimes(cart, sizes, choiceValues);
+}
+
+export function payableCart(cart: CartLine[]) {
+  return cart.filter((line) => line.complimentary !== true);
+}
+
+export function paidUnitCount(cart: CartLine[]) {
+  return payableCart(cart).reduce((sum, line) => sum + line.quantity, 0);
+}
+
+export type PaymentTender = {
+  dueCentimes: number;
+  amountCentimes: number;
+  changeCentimes: number;
+};
+
+export const QUICK_TENDER_CENTIMES = [2000, 5000, 10000, 20000] as const;
+
+export function parseDirhamsToCentimes(value: string): number | undefined {
+  const normalized = value.trim().replace(/\s/g, '').replace(',', '.');
+  if (!normalized) return undefined;
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return undefined;
+  const centimes = Math.round(Number(normalized) * 100);
+  if (!Number.isSafeInteger(centimes) || centimes < 0 || centimes > 10_000_000) {
+    return undefined;
+  }
+  return centimes;
+}
+
+export function changeCentimes(
+  dueCentimes: number,
+  tenderedCentimes: number,
+): number | undefined {
+  if (!Number.isSafeInteger(dueCentimes) || dueCentimes < 0) return undefined;
+  if (!Number.isSafeInteger(tenderedCentimes) || tenderedCentimes < dueCentimes) {
+    return undefined;
+  }
+  return tenderedCentimes - dueCentimes;
+}
+
+export function moveCartUnit(
+  from: CartLine[],
+  to: CartLine[],
+  lineId: string,
+): { from: CartLine[]; to: CartLine[] } {
+  const line = from.find((item) => item.id === lineId);
+  if (!line) return { from, to };
+  const taken = lineFrom(line, 1, line.complimentary === true);
+  const nextFrom = line.quantity < 2
+    ? from.filter((item) => item !== line)
+    : from.map((item) =>
+      item === line ? { ...line, quantity: line.quantity - 1 } : item,
+    );
+  const twin = to.find((item) => item.id === taken.id);
+  const nextTo = twin
+    ? to.map((item) =>
+      item === twin ? { ...twin, quantity: twin.quantity + 1 } : item,
+    )
+    : [...to, taken];
+  return { from: nextFrom, to: nextTo };
+}
+
 export function validatePosSession(
   session: PosSession,
   sizes: readonly PricedSize[],

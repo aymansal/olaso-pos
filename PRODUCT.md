@@ -443,14 +443,23 @@ Each completed sale keeps a permanent snapshot of:
 - Product names and prices at the time of sale.
 - Recipe version used for each line.
 - Ingredient-cost snapshot and cost-completeness state for each line and sale.
-- Subtotal, total, and payment method.
+- Subtotal, total, payment method, and each payment's amount given and change.
 - Printing and synchronization state.
 - Cancellation references.
 
 The first production policy has no tax calculation anywhere in the application,
 and receipts show no tax line. Cash and card are the only payment methods.
-Product-based split checkout completes one customer's selected products and
-keeps unpaid products available for the next customer; it is not split tender.
+Place order opens a payment overlay unless the charged total is 0 DH (the
+whole cart is Offert): cash uses 20 / 50 / 100 / 200 DH quick amounts
+plus a custom amount given, then shows change to return. Card takes the exact
+due. Split is hidden unless two or more paid units remain; Offert drinks stay
+off the split lists. With two or more paid units it assigns remaining products
+to the next payer in that same overlay;
+the overlay stays until every product is paid. One sale and one ticket record
+each payment's amount given and change. This is not a 50/50 tender split
+without product assignment, and unpaid products do not remain in the cart as a
+later sale.
+
 A cart line may be marked Offert for the physical ninth-drink stamp card: the
 drink is real, stock still deducts, and the charged price is 0 DH. The app does
 not track stamps or customers. Other discounts remain unavailable.

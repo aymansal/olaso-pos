@@ -162,6 +162,19 @@ export function OrderDetailPanel({
           <dt>Total</dt>
           <dd>{formatMoney(order.receipt.totalCentimes)}</dd>
         </div>
+        {order.receipt.tenders?.flatMap((tender, index) => {
+          const many = (order.receipt.tenders?.length ?? 0) > 1;
+          return [
+            <div key={`given-${index}`}>
+              <dt>{many ? `Given ${index + 1}` : 'Given'}</dt>
+              <dd>{formatMoney(tender.amountCentimes)}</dd>
+            </div>,
+            <div key={`change-${index}`}>
+              <dt>{many ? `Change ${index + 1}` : 'Change'}</dt>
+              <dd>{formatMoney(tender.changeCentimes)}</dd>
+            </div>,
+          ];
+        })}
       </dl>
 
       <div className={`${styles.divider} ${styles.actionsDivider}`} />

@@ -149,6 +149,27 @@ assert.equal(
   goldenSha256,
   'Application receipt bytes differ from the approved policy receipt stream',
 );
+const splitSnapshot = {
+  ...snapshot,
+  tenders: [
+    { dueCentimes: 3600, amountCentimes: 5000, changeCentimes: 1400 },
+    { dueCentimes: 3350, amountCentimes: 5000, changeCentimes: 1650 },
+  ],
+};
+const splitText = renderReceiptText(createReceiptModel(splitSnapshot));
+assert.match(splitText, /Change\s+14\.00/);
+assert.match(splitText, /Change\s+16\.50/);
+assert.equal((splitText.match(/Cash\s+50\.00/g) || []).length, 2);
+const splitBytes = createSavedReceiptBytes(splitSnapshot);
+assert.equal(
+  Buffer.from(splitBytes).subarray(0, 10).equals(Buffer.from(raw.subarray(0, 10))),
+  true,
+);
+assert.deepEqual([...splitBytes.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
+assert.match(
+  renderReceiptText(createReceiptModel(JSON.parse(JSON.stringify(splitSnapshot)))),
+  /Change\s+14\.00/,
+);
 assert.deepEqual(
   [...encodeCp858('TÉTOUAN Café Thé À bientôt')],
   [84, 144, 84, 79, 85, 65, 78, 32, 67, 97, 102, 130, 32, 84, 104, 130, 32, 183, 32, 98, 105, 101, 110, 116, 147, 116],

@@ -65,13 +65,17 @@
   top: 180px;
   left: 12px;
   width: 296px;
+  height: 348px;
+}
+
+.orderSection[data-offert] {
   height: 276px;
 }
 
 .orderList {
   display: flex;
   width: 296px;
-  height: 276px;
+  height: 100%;
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;

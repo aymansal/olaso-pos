@@ -351,8 +351,9 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `LabeledField` | visible label, current value | Text and select variants. Control is 129 by 48. |
 | `OrderLine` | product, unit price, quantity, size, note, total, Offert | Keep the total right-aligned. Gift and trash keep 44-pixel hits with 36-pixel circles and 8-pixel gaps; green when Offert is active; charged total 0,00. A note is optional. |
 | `QuantityStepper` | decrement, quantity, increment | Cart line uses a 100 by 36 pill; plus and minus keep independent 44-pixel hits. Disable decrement at the minimum and expose an accessible value. |
-| `PaymentSummary` | total, optional Offert | Pin Total at the bottom of the 115-pixel block, just above Place order. Show Subtotal and Offert only when an Offert amount is greater than zero; those rows expand upward between Payment Details and Total so Total does not move. Use tabular figures; the confirmed policy has no tax row. |
-| `PrimaryAction` | action label, order total | 296 by 50. Slide the white control to the end to place the order; a check marks completion. Disable it while submitting. |
+| `PaymentSummary` | total, optional Offert | Pin Total at the bottom of the 115-pixel block, just above Place order. Show Subtotal and Offert only when an Offert amount is greater than zero; those rows expand upward between Payment Details and Total so Total does not move. When they are hidden, the cart list uses that empty space so three lines fit, and keeps a 16-pixel gap above Payment Details. Use tabular figures; the confirmed policy has no tax row. |
+| `PrimaryAction` | action label, order total | 296 by 50. Slide the white control to the end to open payment; a check marks completion. Disable it while the overlay is open or submitting. |
+| `PaymentDialog` | due, split, quick amounts, custom given, change | Overlay after Place order when the charged total is greater than 0. Default is one cash tender: 20 / 50 / 100 / 200 DH chips on one row plus custom, then Given and Change stay pinned below the scrolling lists. Split is hidden unless two or more paid units remain; Offert lines stay off the split lists. Names clip with an ellipsis; prices are pinned to the right edge so option text cannot shift them. After the first recorded payer the overlay cannot close. Card is exact due, change 0. |
 | `ReceiptRail` | service mode, payment method, order, clear cart, totals, primary action | 320 by 688 at the target viewport. A centered Current order title sits at the top with an always-visible clear-cart trash on the right (gray when empty, active when the cart has lines). Dine In / Take Away and Cash / Card sit under that row; payment details and Place order stay at the bottom. An empty cart list is blank. Each line uses the same compact card outline. |
 
 Use existing components before adding a new one. A visual difference that can be expressed as content or a documented variant is not a new component.
@@ -406,6 +407,8 @@ src/
       QuantityStepper.module.css
       PaymentSummary.tsx
       PaymentSummary.module.css
+      PaymentDialog.tsx
+      PaymentDialog.module.css
   data/
     localDatabase.ts
     sync.ts

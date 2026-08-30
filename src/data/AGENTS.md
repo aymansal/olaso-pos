@@ -57,7 +57,9 @@ tablet's local SQLite operational record.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail,
  Dashboard/Reports fallback reads, and the POS quick-add ranking over the last
  seven business days; it never performs management writes. Quick add ranks by
- units sold, the same rule as the Dashboard best seller.
+ units sold, the same rule as the Dashboard best seller. Offert lines still
+ count units; product and category money use the charged 0, not catalog line
+ totals.
 - `identitySession.ts` derives and persists one protected local session/PIN
   verifier/attempt-state record per provisioned staff profile after successful
   sign-in; it also promotes an offline-created profile's protected verifier and
@@ -72,7 +74,8 @@ tablet's local SQLite operational record.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
   immutable receipt snapshots, and outbox acknowledgement/failure state.
   Offert lines keep catalog prices on the snapshot, write 0 charged money to
-  `sale_items`, and set `discountCentimes`.
+  `sale_items`, and set `discountCentimes`. Optional tenders store each
+  payment's due, amount given, and change; their dues must sum to the sale total.
 - `localManagement.ts` owns the shared local-first management operation
   persistence: atomic outbox enqueue, optional parent dependency, cloud
   acknowledgement plus local/cloud record mappings, and safe retry/failure

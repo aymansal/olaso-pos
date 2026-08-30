@@ -75,7 +75,12 @@ export function ReceiptRail({
       </div>
       <SegmentedControl value={serviceMode} onChange={onServiceModeChange} />
       <PaymentMethodControl value={paymentMethod} onChange={onPaymentMethodChange} />
-      <div className={styles.orderSection} role="region" aria-label="Cart">
+      <div
+        className={styles.orderSection}
+        data-offert={offertCentimes > 0 ? '' : undefined}
+        role="region"
+        aria-label="Cart"
+      >
         <div className={styles.orderList}>
           {lines.map(({ id, product, quantity, modifierSummary, complimentary }) => (
             <OrderItemCard

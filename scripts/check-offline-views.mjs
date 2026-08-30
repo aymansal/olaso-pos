@@ -99,6 +99,27 @@ const preservedCategory = aggregateOfflineSales([{
 assert.deepEqual(preservedCategory.categoryTotals.map((row) => row.categoryName),
   ['Deleted coffee']);
 
+const offertRevenue = aggregateOfflineSales([{
+  ...rows[0],
+  id: 'sale-offert',
+  totalCentimes: 0,
+  receipt: {
+    completedAt: 3,
+    paymentMethod: 'Cash',
+    lines: [{
+      productId: 'espresso',
+      productName: 'Espresso',
+      quantity: 1,
+      lineTotalCentimes: 1300,
+      complimentary: true,
+    }],
+  },
+}], new Map());
+assert.equal(offertRevenue.netCentimes, 0);
+assert.equal(offertRevenue.itemCount, 1);
+assert.equal(offertRevenue.productTotals[0]?.quantity, 1);
+assert.equal(offertRevenue.productTotals[0]?.totalCentimes, 0);
+
 const products = readFileSync('src/data/useProductManagement.ts', 'utf8');
 const stock = readFileSync('src/data/useInventoryManagement.ts', 'utf8');
 const dashboard = readFileSync('src/data/useDashboardData.ts', 'utf8');

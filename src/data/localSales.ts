@@ -1,5 +1,5 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
-import type { CartLine } from '../features/pos/posSession';
+import type { CartLine, PaymentTender } from '../features/pos/posSession';
 import {
   loadOperationalCache,
   type OperationalCacheSnapshot,
@@ -68,6 +68,7 @@ export type SavedReceipt = {
   taxPolicyLabel: string;
   paymentMethod: string;
   receiptLanguage?: ReceiptLanguage;
+  tenders?: PaymentTender[];
   ingredientCostCentimes?: number;
   costStatus: 'complete' | 'incomplete';
 };
@@ -81,6 +82,7 @@ export type SaleSyncPayload = {
   serviceMode: 'dine-in' | 'take-away';
   paymentMethod: PaymentMethod;
   receiptLanguage: ReceiptLanguage;
+  tenders?: PaymentTender[];
   businessDate: string;
   completedAt: number;
   ingredientCostCentimes?: number;
@@ -108,6 +110,7 @@ export type CompleteSaleInput = {
   serviceType: Exclude<LocalServiceType, 'order-online'>;
   paymentMethod: PaymentMethod;
   receiptLanguage?: ReceiptLanguage;
+  tenders?: PaymentTender[];
   completedAt?: number;
 };
 
@@ -123,6 +126,36 @@ export type SaleCancellationPayload = {
 };
 
 const TAX_POLICY_LABEL = 'No tax';
+
+function validateTenders(tenders: PaymentTender[], saleTotalCentimes: number) {
+  if (tenders.length < 1 || tenders.length > 20) {
+    throw new Error('A sale can include 1 to 20 payments.');
+  }
+  let dueSum = 0;
+  for (const tender of tenders) {
+    if (
+      !Number.isSafeInteger(tender.dueCentimes)
+      || tender.dueCentimes < 0
+      || !Number.isSafeInteger(tender.amountCentimes)
+      || tender.amountCentimes < 0
+      || !Number.isSafeInteger(tender.changeCentimes)
+      || tender.changeCentimes < 0
+    ) {
+      throw new Error('A saved payment amount is invalid.');
+    }
+    if (tender.amountCentimes < tender.dueCentimes) {
+      throw new Error('A payment amount is less than its due.');
+    }
+    if (tender.changeCentimes !== tender.amountCentimes - tender.dueCentimes) {
+      throw new Error('Payment change does not match amount and due.');
+    }
+    dueSum += tender.dueCentimes;
+  }
+  if (dueSum !== saleTotalCentimes) {
+    throw new Error('Split payments do not add up to the sale total.');
+  }
+  return tenders;
+}
 
 function businessDate(timestamp: number) {
   const date = new Date(timestamp);
@@ -463,6 +496,9 @@ export function prepareSale(
     taxPolicyLabel: TAX_POLICY_LABEL,
     paymentMethod: input.paymentMethod,
     receiptLanguage: language,
+    ...(input.tenders
+      ? { tenders: validateTenders(input.tenders, totalCentimes) }
+      : {}),
     ...(ingredientCostCentimes === undefined ? {} : { ingredientCostCentimes }),
     costStatus: completeCost ? 'complete' : 'incomplete',
   };
@@ -799,6 +835,7 @@ async function loadSaleSyncPayload(
     serviceMode: row.service_type === 'dine-in' ? 'dine-in' : 'take-away',
     paymentMethod: receipt.paymentMethod === 'Card' ? 'Card' : 'Cash',
     receiptLanguage: receipt.receiptLanguage === 'fr' ? 'fr' : 'en',
+    ...(receipt.tenders ? { tenders: receipt.tenders } : {}),
     businessDate: String(row.business_date),
     completedAt: receipt.completedAt,
     ...(receipt.ingredientCostCentimes === undefined

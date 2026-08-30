@@ -264,6 +264,34 @@ assert.ok(
   [...offeredSale.stockUsage.values()].some((quantity) => quantity > 0),
   'Offert drinks still deduct recipe stock',
 );
+const tenderMenu = await loadOperationalCache(adapter);
+const tenderedSale = prepareSale(
+  tenderMenu,
+  {
+    ...input,
+    paymentMethod: 'Cash',
+    tenders: [
+      { dueCentimes: 1000, amountCentimes: 2000, changeCentimes: 1000 },
+      { dueCentimes: 1100, amountCentimes: 2000, changeCentimes: 900 },
+    ],
+  },
+  'local-tender-check',
+);
+assert.equal(tenderedSale.receipt.tenders?.length, 2);
+assert.equal(tenderedSale.receipt.tenders?.[1].changeCentimes, 900);
+assert.throws(
+  () => prepareSale(
+    tenderMenu,
+    {
+      ...input,
+      tenders: [
+        { dueCentimes: 2100, amountCentimes: 1000, changeCentimes: 0 },
+      ],
+    },
+    'local-bad-tender-check',
+  ),
+  /less than its due/,
+);
 assert.equal(completed.receipt.cashierName, 'Test cashier');
 assert.equal(completed.receipt.costStatus, 'complete');
 assert.equal(completed.receipt.ingredientCostCentimes, 218);

@@ -6,11 +6,9 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
-import { ReceiptPreviewDialog } from '../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import { usePosData } from '../../data/usePosData';
 import { useConnectionStatus } from '../../data/connectionContext';
 import type { ReceiptLanguage } from '../../data/terminalSettings';
-import type { SavedReceipt } from '../../data/localSales.ts';
 import type { OperationalCacheSnapshot } from '../../data/operationalCache.ts';
 import { categoryArtworkUrl } from '../../lib/categoryArtwork.ts';
 import { CategoryRow } from './components/CategoryRow/CategoryRow';
@@ -23,6 +21,7 @@ import {
   type PosChoiceSection,
   type PosProductSize,
 } from './components/ModifierSelectionDialog/ModifierSelectionDialog';
+import { PaymentDialog } from './components/PaymentDialog/PaymentDialog';
 import type { Category } from './data/categories';
 import { productImage, type Product } from './data/products';
 import {
@@ -31,10 +30,12 @@ import {
   decrementCartLine,
   filterProducts,
   incrementCartLine,
+  paidUnitCount,
   removeCartLine,
   subtotalCentimes,
   toggleCartLineOffert,
   validatePosSession,
+  type PaymentTender,
   type PosSession,
   type ServiceMode,
 } from './posSession';
@@ -170,7 +171,7 @@ export function PosScreen({
     error: dataWarning,
   } = usePosData();
   const [configuringProductId, setConfiguringProductId] = useState<string>();
-  const [receiptPreview, setReceiptPreview] = useState<SavedReceipt>();
+  const [paying, setPaying] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
   const [visitedCategoryIds, setVisitedCategoryIds] = useState<string[]>(
     () => [session.selectedCategoryId],
@@ -416,6 +417,16 @@ export function PosScreen({
   async function placeOrder() {
     if (validation.kind !== 'valid') return;
     setCheckoutError('');
+    if (total === 0) {
+      await confirmPayment();
+      return;
+    }
+    setPaying(true);
+  }
+
+  async function confirmPayment(tenders?: PaymentTender[]) {
+    if (validation.kind !== 'valid') return;
+    setCheckoutError('');
     onSessionChange((current) => ({ ...current, checkoutStatus: 'processing' }));
     try {
       const result = await completeOrder({
@@ -423,8 +434,9 @@ export function PosScreen({
         serviceType: localServiceType(session.serviceMode),
         paymentMethod: session.paymentMethod,
         receiptLanguage,
+        ...(tenders ? { tenders } : {}),
       });
-      setReceiptPreview(result.receipt);
+      setPaying(false);
       onSessionChange((current) => ({
         ...current,
         cart: [],
@@ -489,7 +501,9 @@ export function PosScreen({
         paymentMethod={session.paymentMethod}
         checkoutFeedback={checkoutFeedback}
         checkoutDisabled={
-          validation.kind !== 'valid' || session.checkoutStatus === 'processing'
+          validation.kind !== 'valid'
+          || session.checkoutStatus === 'processing'
+          || paying
         }
         checkoutProcessing={session.checkoutStatus === 'processing'}
         onDecrement={(lineId) =>
@@ -540,10 +554,28 @@ export function PosScreen({
           }}
         />
       ) : null}
-      {receiptPreview ? (
-        <ReceiptPreviewDialog
-          receipt={receiptPreview}
-          onClose={() => setReceiptPreview(undefined)}
+      {paying ? (
+        <PaymentDialog
+          cart={session.cart}
+          labels={Object.fromEntries(
+            receiptLines.map((line) => [
+              line.id,
+              {
+                name: line.product.name,
+                ...(line.modifierSummary
+                  ? { detail: line.modifierSummary }
+                  : {}),
+                unitPriceCentimes: line.product.priceCentimes,
+              },
+            ]),
+          )}
+          paymentMethod={session.paymentMethod}
+          sizes={pricedSizes}
+          choiceValues={pricedChoiceValues}
+          canSplit={paidUnitCount(session.cart) > 1}
+          processing={session.checkoutStatus === 'processing'}
+          onCancel={() => setPaying(false)}
+          onConfirm={confirmPayment}
         />
       ) : null}
     </main>

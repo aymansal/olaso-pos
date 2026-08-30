@@ -23,7 +23,8 @@ Provides bounded order history and a selected order's receipt-style detail.
   order-number cell is the receipt number only. The list and selected-order
   detail do not show customer or table. Service and created time sit on one
   line in the detail card. Payment shows subtotal and total, plus Offert when
-  the saved discount is greater than zero.
+  the saved discount is greater than zero, and each saved tender's amount
+  given and change.
 - The date picker and quick periods remain compact and open toward available
   screen space.
 - History reads are bounded and paginated. The pager uses the saved SQLite

@@ -330,6 +330,11 @@ export default defineSchema({
       taxPolicyLabel: v.string(),
       paymentMethod: v.string(),
       receiptLanguage: v.optional(v.union(v.literal('en'), v.literal('fr'))),
+      tenders: v.optional(v.array(v.object({
+        dueCentimes: v.number(),
+        amountCentimes: v.number(),
+        changeCentimes: v.number(),
+      }))),
     }),
   })
     .index('by_device_local_sale', ['deviceId', 'localSaleId'])

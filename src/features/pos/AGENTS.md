@@ -3,7 +3,7 @@
 ## Purpose
 
 Provides the cashier sales workspace: menu discovery, cart/receipt editing,
-totals, local-first checkout orchestration, and saved receipt preview. It also
+totals, local-first checkout orchestration, and post-commit print feedback. It also
 owns the shared Header and TopNavigation currently used across the application.
 
 ## Ownership
@@ -57,16 +57,21 @@ owns the shared Header and TopNavigation currently used across the application.
   size once OPTIONS-03 activates product-owned checkout.
 - Checkout clears the cart only after the local sale transaction commits. Place
   order is a slide-to-confirm on the existing primary pill; sliding to the end
-  commits, and a tap does not. A cashier may empty the current draft from the
-  always-visible trash next to the Current order title; it stays gray while the
-  cart is empty. The cart list itself stays blank until a product is added; each
-  line uses the same compact card outline. A Gift left of the line trash marks
-  that unit Offert: catalog price stays on the snapshot, charged total is 0, recipe
-  stock still deducts, and qty greater than 1 splits one Offert unit. This is
-  not a general discount.
-- Saved receipts support on-screen preview and plain post-commit print feedback.
-  Do not expose printer settings, permissions, bytes, or transport from this
-  feature.
+  opens the payment overlay when there is something to collect, and a tap does
+  not. A fully Offert cart skips the overlay. Cash shows 20 / 50 / 100 / 200 DH
+  plus custom given and change; Split is hidden unless two or more paid units
+  remain. Offert lines stay off the split lists. With two or more paid units it
+  fades in on that overlay and cannot close after the first recorded payer. One
+  sale records every tender on the ticket.
+  A cashier may empty the current draft from the always-visible trash next to
+  the Current order title; it stays gray while the cart is empty. The cart list
+  itself stays blank until a product is added; each line uses the same compact
+  card outline. A Gift left of the line trash marks that unit Offert: catalog
+  price stays on the snapshot, charged total is 0, recipe stock still deducts,
+  and qty greater than 1 splits one Offert unit. This is not a general discount.
+- Checkout prints the saved ticket. POS does not open an on-screen receipt
+  preview. Do not expose printer settings, permissions, bytes, or transport
+  from this feature.
 - Checkout, persistence, stock deduction, sync, and printing do not belong in
   leaf components.
 - Changing Header or TopNavigation requires visual verification of all six
@@ -75,7 +80,7 @@ owns the shared Header and TopNavigation currently used across the application.
 ## Work Guidance
 
 - Reuse existing controls before adding variants.
-- Keep the modifier dialog and shared receipt preview prop-driven.
+- Keep the modifier dialog and payment overlay prop-driven.
 - Keep receipt presentation separate from any later printer boundary.
 
 ## Verification

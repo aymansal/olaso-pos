@@ -34,6 +34,11 @@ export type OrderReceipt = {
   totalCentimes: number;
   taxPolicyLabel: string;
   paymentMethod: string;
+  tenders?: Array<{
+    dueCentimes: number;
+    amountCentimes: number;
+    changeCentimes: number;
+  }>;
 };
 
 export type OrderHistoryRecord = {
@@ -206,7 +211,29 @@ function parseReceipt(raw: unknown): OrderReceipt {
     totalCentimes: money(value.totalCentimes, 'total'),
     taxPolicyLabel: text(value.taxPolicyLabel, 'tax policy'),
     paymentMethod: text(value.paymentMethod, 'payment method'),
+    ...(Array.isArray(value.tenders) && value.tenders.length
+      ? { tenders: parseTenders(value.tenders) }
+      : {}),
   };
+}
+
+function parseTenders(raw: unknown[]): OrderReceipt['tenders'] {
+  if (raw.length > 20) {
+    throw new Error('The saved receipt has too many payments.');
+  }
+  return raw.map((rawTender) => {
+    const tender = rawTender as Record<string, unknown>;
+    const dueCentimes = money(tender.dueCentimes, 'payment due');
+    const amountCentimes = money(tender.amountCentimes, 'payment amount');
+    const changeCentimes = money(tender.changeCentimes, 'change');
+    if (amountCentimes < dueCentimes) {
+      throw new Error('The saved receipt payment amount is invalid.');
+    }
+    if (changeCentimes !== amountCentimes - dueCentimes) {
+      throw new Error('The saved receipt change is invalid.');
+    }
+    return { dueCentimes, amountCentimes, changeCentimes };
+  });
 }
 
 export async function countLocalOrders(
