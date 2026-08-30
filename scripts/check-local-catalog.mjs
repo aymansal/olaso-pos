@@ -339,12 +339,36 @@ assert.match(productHookSource, /saveLocalProduct/);
 assert.match(productHookSource, /saveLocalChoiceSection/);
 assert.match(productHookSource, /saveLocalProductSize/);
 assert.match(productHookSource, /saveLocalRecipeVersion/);
+assert.match(productHookSource, /section\.status !== 'archived'/);
 const productScreenSource = readFileSync(
   'src/features/products/ProductsScreen.tsx',
   'utf8',
 );
 assert.match(productScreenSource, /product\.status !== 'archived'/);
 assert.match(productScreenSource, /category\.status !== 'archived'/);
+assert.match(productScreenSource, /UNCATEGORIZED_ID = 'uncategorized'/);
+assert.match(productScreenSource, /!product\.categoryId/);
+assert.match(
+  readFileSync(
+    'src/features/products/components/CategorySidebar/CategorySidebar.tsx',
+    'utf8',
+  ),
+  /name: 'Uncategorized'/,
+);
+assert.match(
+  readFileSync(
+    'src/features/products/components/ProductEditorPanel/ProductEditorPanel.module.css',
+    'utf8',
+  ),
+  /flex: 0 0 28px/,
+);
+assert.doesNotMatch(
+  readFileSync(
+    'src/features/products/components/ProductEditorPanel/ProductEditorPanel.tsx',
+    'utf8',
+  ),
+  /formatMad\(size\.priceCentimes\) · \{size\.status\}/,
+);
 assert.ok(
   [...operationalCacheSource.matchAll(/CASE WHEN status = 'archived'/g)].length >= 4,
   'Bounded catalog reads must prioritize live records over archived history.',

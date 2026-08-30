@@ -15,6 +15,13 @@ type AvailabilityFilter = 'all' | ManagedProduct['status'];
 type ProductSort = 'updated' | 'name' | 'price';
 
 const PAGE_SIZE = 6;
+const UNCATEGORIZED_ID = 'uncategorized';
+
+function productInCategory(product: ManagedProduct, categoryId: string) {
+  if (categoryId === 'all') return true;
+  if (categoryId === UNCATEGORIZED_ID) return !product.categoryId;
+  return product.categoryId === categoryId;
+}
 
 export function ProductsScreen() {
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
@@ -33,8 +40,7 @@ export function ProductsScreen() {
     const normalizedSearch = search.trim().toLocaleLowerCase();
     const next = management.products.filter(
       (product) =>
-        (selectedCategoryId === 'all' ||
-          product.categoryId === selectedCategoryId) &&
+        productInCategory(product, selectedCategoryId) &&
         (availability === 'all'
           ? product.status !== 'archived'
           : product.status === availability) &&
@@ -141,7 +147,7 @@ export function ProductsScreen() {
   async function saveProduct(input: ProductSaveInput) {
     const result = await management.saveProduct(input);
     setSelectedProductId(result.id);
-    setSelectedCategoryId(input.categoryId || 'all');
+    setSelectedCategoryId(input.categoryId || UNCATEGORIZED_ID);
   }
 
   async function setProductStatus(
@@ -155,6 +161,8 @@ export function ProductsScreen() {
     <main className={styles.screen} aria-label="Olaso products">
       <ProductCatalogPanel
         categories={visibleCategories}
+        uncategorizedCount={management.products.filter((product) => !product.categoryId).length}
+        totalProducts={management.products.length}
         products={pageProducts}
         selectedCategoryId={selectedCategoryId}
         selectedProductId={selectedProductId}
@@ -171,9 +179,8 @@ export function ProductsScreen() {
         onSortChange={setSort}
         onSelectCategory={(categoryId) => {
           setSelectedCategoryId(categoryId);
-          const first = management.products.find(
-            (product) =>
-              categoryId === 'all' || product.categoryId === categoryId,
+          const first = management.products.find((product) =>
+            productInCategory(product, categoryId),
           );
           setSelectedProductId(first?.id);
         }}

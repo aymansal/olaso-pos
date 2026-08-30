@@ -388,4 +388,16 @@ const ordersTableCss = readFileSync(
 assert.match(ordersTableCss, /\.indicator \{/);
 assert.doesNotMatch(ordersTableCss, /\.indicator::before/);
 
+const orderDetailCss = readFileSync(
+  new URL(
+    '../src/features/orders/components/OrderDetailPanel/OrderDetailPanel.module.css',
+    import.meta.url,
+  ),
+  'utf8',
+);
+assert.match(orderDetailCss, /\.items \{[\s\S]*?flex: 1 1 0;/);
+assert.match(orderDetailCss, /\.payment \{[\s\S]*?height: auto;/);
+assert.match(orderDetailCss, /\.payment \{[\s\S]*?max-height: 136px;/);
+assert.match(orderDetailCss, /\.paySplit \{[\s\S]*?margin-top: auto;/);
+
 console.log('Bounded local/cloud order history and recovery checks passed.');

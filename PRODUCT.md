@@ -77,7 +77,9 @@ The cashier can:
 The manager can do everything a cashier can do, plus:
 - Add, edit, archive, restore, and permanently delete products while completed
   orders keep their saved product snapshots.
-- Organize products into categories.
+- Organize products into categories. The Products catalog always ends with
+  Uncategorized so products with no category can be assigned without hunting
+  through the full list. It is a filter, not a saved menu group.
 - Set prices, sizes, options, and extras.
 - Create ingredients and define their measurement units.
 - Define and version each product's recipe.

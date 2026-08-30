@@ -10,8 +10,12 @@ import styles from './ProductCatalogPanel.module.css';
 type AvailabilityFilter = 'all' | ManagedProduct['status'];
 type ProductSort = 'updated' | 'name' | 'price';
 
+const UNCATEGORIZED_ID = 'uncategorized';
+
 interface ProductCatalogPanelProps {
   categories: ManagedCategory[];
+  uncategorizedCount: number;
+  totalProducts: number;
   products: ManagedProduct[];
   selectedCategoryId: string;
   selectedProductId?: string;
@@ -38,6 +42,8 @@ interface ProductCatalogPanelProps {
 
 export function ProductCatalogPanel({
   categories,
+  uncategorizedCount,
+  totalProducts,
   products,
   selectedCategoryId,
   selectedProductId,
@@ -137,16 +143,18 @@ export function ProductCatalogPanel({
       <CategorySidebar
         categories={categories}
         selectedCategoryId={selectedCategoryId}
-        totalProducts={categories.reduce(
-          (total, category) => total + category.productCount,
-          0,
-        )}
+        totalProducts={totalProducts}
+        uncategorizedCount={uncategorizedCount}
         onSelect={onSelectCategory}
         onAdd={onAddCategory}
       />
       <ProductList
         category={selectedCategory}
-        categoryName={selectedCategory?.name ?? 'All products'}
+        categoryName={
+          selectedCategoryId === UNCATEGORIZED_ID
+            ? 'Uncategorized'
+            : selectedCategory?.name ?? 'All products'
+        }
         products={products}
         selectedProductId={selectedProductId}
         isLoading={isLoading}

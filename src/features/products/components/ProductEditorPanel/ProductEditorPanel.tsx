@@ -324,8 +324,23 @@ export function ProductEditorPanel({
         </span>
       </div>
       <div className={styles.options}>
-        {sizes.map((size) => <span className={styles.option} key={size.id}><strong>{size.name}</strong><small>{formatMad(size.priceCentimes)} · {size.status}</small></span>)}
-        {choiceSections.map((section) => <span className={styles.option} key={section.id}><strong>{section.name}</strong><small>{section.values.length} choices</small></span>)}
+        {sizes.map((size) => (
+          <span className={styles.option} key={size.id}>
+            <strong>{size.name}</strong>
+            <small>
+              {formatMad(size.priceCentimes)}
+              {size.status !== 'active' ? ` · ${size.status}` : ''}
+            </small>
+          </span>
+        ))}
+        {choiceSections.map((section) => (
+          <span className={styles.option} key={section.id}>
+            <strong>{section.name}</strong>
+            <small>
+              {section.values.length} choice{section.values.length === 1 ? '' : 's'}
+            </small>
+          </span>
+        ))}
         {!sizes.length && !choiceSections.length ? <small className={styles.emptyOptions}>Save the product, then add a size before it can be sold.</small> : null}
       </div>
 

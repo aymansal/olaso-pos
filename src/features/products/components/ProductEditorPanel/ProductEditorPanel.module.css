@@ -359,25 +359,30 @@
   position: absolute;
   top: 394px;
   left: 22px;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
   width: 356px;
-  height: 42px;
-  gap: 8px;
+  height: 62px;
+  gap: 6px;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
 }
 
 .options::-webkit-scrollbar { display: none; }
 
 .option {
-  flex: 0 0 83px;
-  height: 42px;
-  gap: 8px;
+  flex: 0 0 28px;
+  height: 28px;
+  gap: 6px;
   padding: 0 10px;
   border-radius: 14px;
   color: var(--olaso-green);
   background: var(--olaso-table-head);
   border: 1px solid transparent;
-  text-align: left;
+  white-space: nowrap;
 }
 
 .emptyOptions {

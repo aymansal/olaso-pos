@@ -8,48 +8,53 @@
 }
 
 .dialog {
-  width: 680px;
-  max-height: 650px;
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  width: 560px;
+  max-height: 640px;
+  padding: 20px 20px 18px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
   border-radius: 28px;
   background: var(--olaso-white);
 }
 
-.dialog header,
-.dialog header > span,
-.item label,
-.dialog footer {
+.header,
+.heading,
+.footer,
+.amount,
+.qty,
+.save {
   display: flex;
 }
 
-.dialog header,
-.dialog footer {
+.header,
+.footer {
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
 }
 
-.dialog header > span,
-.item label {
+.heading {
   flex-direction: column;
+  gap: 3px;
 }
 
-.dialog header small {
+.heading small {
   color: var(--olaso-copy);
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
-.dialog h2 {
-  margin: 3px 0 0;
+.heading h2 {
+  margin: 0;
   color: var(--olaso-text);
   font-size: 18px;
+  line-height: 1.1;
 }
 
-.dialog header button,
-.item > button {
+.header button {
   display: grid;
   place-items: center;
   width: 44px;
@@ -61,83 +66,101 @@
   background: transparent;
 }
 
-.version {
-  margin: 18px 0 12px;
-  color: var(--olaso-copy);
-  font-size: 10px;
-}
-
-.items {
-  max-height: 390px;
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 16px;
   overflow-y: auto;
 }
 
-.item {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--olaso-line-soft);
+.block {
+  display: grid;
+  grid-template-columns: 64px repeat(4, minmax(0, 1fr));
+  gap: 6px 8px;
+  align-items: center;
 }
 
-.item label {
-  position: relative;
-  gap: 6px;
+.block + .block {
+  margin-top: 14px;
+}
+
+.rowLabel {
   color: var(--olaso-copy);
-  font-size: 9px;
-  font-weight: 600;
+  font-size: 8px;
+  font-weight: 700;
 }
 
-.item > label:first-child {
-  flex: 1 1 230px;
-}
-
-.sizeQuantity {
-  flex: 0 0 74px;
-}
-
-.sizeQuantity input {
-  width: 74px;
-}
-
-.item select,
-.item input {
-  height: 44px;
-  padding: 0 14px;
+.block select,
+.block input,
+.qty input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 0 8px;
   border: 1px solid var(--olaso-control-border);
-  border-radius: 22px;
+  border-radius: 18px;
   color: var(--olaso-text);
   background: var(--olaso-white);
   font: inherit;
+  font-size: 10px;
+  font-weight: 600;
 }
 
-.quantity small {
+.amount {
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.qty {
+  position: relative;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+}
+
+.qty input {
+  padding-right: 24px;
+}
+
+.qty small {
   position: absolute;
-  right: 14px;
-  bottom: 15px;
+  right: 8px;
   color: var(--olaso-text-meta);
   font-size: 8px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.remove {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  color: var(--olaso-danger);
+  background: var(--olaso-table-head);
 }
 
 .add {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
-  height: 40px;
-  gap: 7px;
+  align-self: flex-start;
+  height: 36px;
+  gap: 6px;
   margin-top: 12px;
-  padding: 0 14px;
+  padding: 0 12px;
   border: 1px solid var(--olaso-category-border);
-  border-radius: 20px;
+  border-radius: 18px;
   color: var(--olaso-green);
   background: transparent;
   font-size: 9px;
   font-weight: 700;
-}
-
-.add:disabled,
-.save:disabled {
-  opacity: 0.45;
 }
 
 .error {
@@ -146,22 +169,34 @@
   font-size: 9px;
 }
 
-.dialog footer {
-  margin-top: 18px;
-  color: var(--olaso-text-meta);
+.footer {
+  margin-top: 14px;
+}
+
+.cancel,
+.save {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 22px;
   font-size: 9px;
+  font-weight: 700;
+}
+
+.cancel {
+  border: 1px solid var(--olaso-control-border);
+  color: var(--olaso-copy);
+  background: transparent;
 }
 
 .save {
-  display: flex;
   align-items: center;
-  height: 44px;
   gap: 8px;
-  padding: 0 18px;
   border: 0;
-  border-radius: 22px;
   color: var(--olaso-white);
   background: var(--olaso-green);
-  font-size: 9px;
-  font-weight: 700;
+}
+
+.add:disabled,
+.save:disabled {
+  opacity: 0.45;
 }

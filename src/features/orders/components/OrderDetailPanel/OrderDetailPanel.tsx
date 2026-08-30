@@ -102,6 +102,7 @@ export function OrderDetailPanel({
         </span>
       </div>
 
+      <div className={styles.body}>
       <div className={styles.itemsHeader}>
         <strong>Order items</strong>
         <small>{itemCount} {itemCount === 1 ? 'item' : 'items'}</small>
@@ -137,7 +138,7 @@ export function OrderDetailPanel({
         })}
       </div>
 
-      <div className={`${styles.divider} ${styles.itemsDivider}`} />
+      <div className={`${styles.divider} ${styles.paySplit}`} />
 
       <div className={styles.paymentHeader}>
         <strong>Payment</strong>
@@ -177,7 +178,7 @@ export function OrderDetailPanel({
         })}
       </dl>
 
-      <div className={`${styles.divider} ${styles.actionsDivider}`} />
+      <div className={styles.divider} />
 
       <div className={styles.actions}>
         <button
@@ -199,6 +200,7 @@ export function OrderDetailPanel({
       <div className={styles.stockNote} title={order.printError ?? printNote}>
         <InfoCircle width={13} height={13} aria-hidden="true" />
         <span>{printNote} · {syncStateNote}</span>
+      </div>
       </div>
       {cancellationOpen ? (
         <CancellationDialog

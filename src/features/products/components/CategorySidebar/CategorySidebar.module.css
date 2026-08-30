@@ -35,6 +35,15 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 150px;
+  max-height: 346px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.categories::-webkit-scrollbar {
+  display: none;
 }
 
 .indicator {
@@ -114,6 +123,16 @@
 
 .categoryActive small {
   color: var(--olaso-white);
+}
+
+.uncategorized {
+  position: absolute;
+  top: 418px;
+  left: 10px;
+}
+
+.uncategorizedActive {
+  background: var(--olaso-green);
 }
 
 @media (prefers-reduced-motion: reduce) {

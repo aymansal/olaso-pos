@@ -24,7 +24,10 @@ Provides bounded order history and a selected order's receipt-style detail.
   detail do not show customer or table. Service and created time sit on one
   line in the detail card. Payment shows subtotal and total, plus Offert when
   the saved discount is greater than zero, and each saved tender's amount
-  given and change.
+  given and change. Those rows hug the totals on a simple receipt and grow
+  only for split tenders, then scroll above Reprint and Cancel. Payment and
+  actions stay pinned to the bottom of the card so completed and cancelled
+  receipts do not shift the layout.
 - The date picker and quick periods remain compact and open toward available
   screen space.
 - History reads are bounded and paginated. The pager uses the saved SQLite

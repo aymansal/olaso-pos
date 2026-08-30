@@ -1,23 +1,491 @@
-.overlay { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; background: rgb(28 33 27 / 38%); }
-.dialog { width: 760px; height: 650px; padding: 22px; overflow: hidden; border: 1px solid var(--olaso-panel-border); border-radius: 28px; background: var(--olaso-white); }
-.dialog header, .dialog header > span, .picker, .copy, .fields, .fields label, .valuesHeader, .valueFields, .overrides, .effects, .effect, .dialog footer { display: flex; }
-.dialog header, .picker, .valuesHeader, .dialog footer { align-items: center; justify-content: space-between; }
-.dialog header > span, .fields label { flex-direction: column; }
-.dialog header small, .dialog label, .dialog footer { color: var(--olaso-copy); font-size: 8px; font-weight: 600; }
-.dialog h2 { margin: 3px 0 0; color: var(--olaso-text); font-size: 18px; }
-.dialog header > button, .valueFields > button, .effect > button { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1px solid var(--olaso-divider); border-radius: 50%; color: var(--olaso-danger); background: transparent; }
-.picker { margin-top: 12px; }.picker select { width: 360px; }
-.picker > button, .copy > button, .valuesHeader button, .effects > button { display: flex; align-items: center; height: 32px; gap: 6px; padding: 0 11px; border: 1px solid var(--olaso-category-border); border-radius: 16px; color: var(--olaso-green); background: transparent; font-size: 8px; font-weight: 700; }
-.copy { align-items: center; gap: 8px; margin-top: 10px; padding: 8px; border-radius: 12px; background: var(--olaso-table-head); }.copy select { width: 150px; }
-.mapping { display: flex; gap: 6px; }.mapping label { display: flex; flex-direction: column; gap: 3px; }.mapping select { width: 92px; }
-.body { height: 378px; margin-top: 10px; overflow-y: auto; }
-.fields { align-items: end; gap: 8px; }.fields label:first-child { flex: 1; }
-.dialog input, .dialog select { height: 34px; padding: 0 9px; border: 1px solid var(--olaso-control-border); border-radius: 17px; color: var(--olaso-text); background: var(--olaso-white); font: inherit; }
-.fields input, .fields select { width: 74px; }.fields label:first-child input { width: 180px; }
-.check { flex-direction: row !important; align-items: center; height: 34px; gap: 4px; }.check input { width: 15px; height: 15px; }
-.sizes { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; padding: 6px 0; border: 0; }.sizes legend { color: var(--olaso-copy); font-size: 8px; }.sizes label { display: flex; align-items: center; gap: 3px; }.sizes input { width: 14px; height: 14px; }
-.valuesHeader { margin-top: 6px; color: var(--olaso-text); font-size: 10px; }
-.value { margin-top: 7px; padding: 9px; border: 1px solid var(--olaso-line-soft); border-radius: 12px; }.valueFields { align-items: end; gap: 7px; }.valueFields label:first-child { flex: 1; }.valueFields input { width: 82px; }.valueFields label:first-child input { width: 190px; }
-.overrides { flex-wrap: wrap; gap: 5px; margin-top: 7px; }.overrides label { display: flex; align-items: center; gap: 3px; }.overrides input[type="number"] { width: 65px; height: 28px; }.overrides input[type="checkbox"] { width: 14px; height: 14px; }
-.effects { flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 8px; }.effect { align-items: center; gap: 4px; }.effect select { width: 110px; height: 30px; }.effect input { width: 60px; height: 30px; }.effect > button { width: 30px; height: 30px; }
-.error { margin: 6px 0 0; color: var(--olaso-danger); font-size: 9px; } .dialog footer { margin-top: 10px; }.delete, .save { height: 40px; padding: 0 15px; border-radius: 20px; font-size: 9px; font-weight: 700; }.delete { border: 1px solid var(--olaso-danger); color: var(--olaso-danger); background: transparent; }.save { display: flex; align-items: center; gap: 7px; border: 0; color: var(--olaso-white); background: var(--olaso-green); }.save:disabled, .copy button:disabled { opacity: .45; }
+.overlay {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(28 33 27 / 38%);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  max-height: 640px;
+  padding: 20px 20px 18px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.header,
+.heading,
+.tabs,
+.setup,
+.mode,
+.sizes,
+.sizes > div,
+.nameField,
+.limit,
+.valuesHead,
+.valueRow,
+.extra,
+.sizeRules,
+.sizeRule,
+.stock,
+.effect,
+.copy,
+.mapping,
+.footer,
+.save {
+  display: flex;
+}
+
+.header,
+.valuesHead,
+.footer {
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.heading {
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heading small {
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.heading h2 {
+  margin: 0;
+  color: var(--olaso-text);
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.header button,
+.remove,
+.effectRemove {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-muted);
+  background: transparent;
+}
+
+.header button {
+  width: 44px;
+  height: 44px;
+}
+
+.remove,
+.effectRemove {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  color: var(--olaso-danger);
+  background: var(--olaso-table-head);
+}
+
+.tabs {
+  flex-shrink: 0;
+  gap: 6px;
+  margin-top: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab,
+.tabOn {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  height: 36px;
+  gap: 6px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 18px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.tab {
+  color: var(--olaso-text-dark-soft);
+  background: var(--olaso-table-head);
+}
+
+.tabOn {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 16px;
+  overflow-y: auto;
+}
+
+.setup {
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px 12px;
+}
+
+.nameField,
+.limit,
+.extra,
+.sizeRule {
+  flex-direction: column;
+  gap: 8px;
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.nameField {
+  flex: 0 0 168px;
+  width: 168px;
+}
+
+.dialog input,
+.dialog select {
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 18px;
+  color: var(--olaso-text);
+  background: var(--olaso-white);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.nameField input {
+  width: 100%;
+}
+
+.limit {
+  gap: 10px;
+}
+
+.limit input {
+  width: 44px;
+  padding: 0;
+  border: 0;
+  background: var(--olaso-table-head);
+  text-align: center;
+}
+
+.mode {
+  height: 36px;
+  padding: 3px;
+  gap: 0;
+  border-radius: 18px;
+  background: var(--olaso-table-head);
+}
+
+.mode button {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 15px;
+  color: var(--olaso-text-dark-soft);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.mode button[aria-pressed='true'] {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.required,
+.requiredOn,
+.usual,
+.usualOn {
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 18px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.required,
+.usual {
+  color: var(--olaso-text-dark-soft);
+  background: var(--olaso-table-head);
+}
+
+.requiredOn,
+.usualOn {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.sizes {
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.sizes > div {
+  flex: 1;
+  gap: 6px;
+}
+
+.size,
+.sizeOn {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 16px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.size {
+  color: var(--olaso-text-dark-soft);
+  background: var(--olaso-table-head);
+}
+
+.sizeOn {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.sizes small {
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.valuesHead {
+  margin-top: 18px;
+  margin-bottom: 4px;
+  color: var(--olaso-text);
+  font-size: 11px;
+}
+
+.valuesHead button,
+.addEffect,
+.copyAction {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid var(--olaso-category-border);
+  border-radius: 16px;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.value {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--olaso-line-soft);
+}
+
+.valueRow {
+  align-items: end;
+  gap: 8px;
+}
+
+.valueName {
+  flex: 0 0 160px;
+  width: 160px;
+  min-width: 0;
+}
+
+.valueName input {
+  width: 100%;
+}
+
+.extra {
+  position: relative;
+  width: 72px;
+}
+
+.extra input {
+  width: 72px;
+  padding-right: 26px;
+}
+
+.extra small {
+  position: absolute;
+  right: 8px;
+  bottom: 11px;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.link {
+  height: 36px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.sizeRules {
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.sizeRule {
+  align-items: center;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.sizeRule input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  accent-color: var(--olaso-green);
+}
+
+.sizeRule input[type='number'] {
+  width: 64px;
+  height: 36px;
+}
+
+.stock {
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  padding-left: 4px;
+}
+
+.effect {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.effect select {
+  width: 110px;
+}
+
+.effect input {
+  width: 56px;
+}
+
+.addEffect {
+  align-self: flex-start;
+}
+
+.copy,
+.copyToggle {
+  flex-shrink: 0;
+  margin-top: 12px;
+}
+
+.copy {
+  align-items: center;
+  gap: 8px;
+}
+
+.copy select {
+  width: 180px;
+}
+
+.mapping {
+  gap: 8px;
+}
+
+.mapping label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.mapping select {
+  width: 110px;
+}
+
+.copyToggle {
+  align-self: flex-start;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.error {
+  flex-shrink: 0;
+  margin: 8px 0 0;
+  color: var(--olaso-danger);
+  font-size: 9px;
+}
+
+.footer {
+  margin-top: 14px;
+}
+
+.cancel,
+.delete,
+.save {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 22px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.cancel {
+  border: 1px solid var(--olaso-control-border);
+  color: var(--olaso-copy);
+  background: transparent;
+}
+
+.delete {
+  border: 1px solid var(--olaso-danger);
+  color: var(--olaso-danger);
+  background: transparent;
+}
+
+.save {
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.valuesHead button:disabled,
+.addEffect:disabled,
+.copyAction:disabled,
+.save:disabled {
+  opacity: 0.45;
+}

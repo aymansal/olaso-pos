@@ -125,11 +125,54 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- POLISH-01 (30 Aug 2026): cash tender, sequential split, Offert skip, no
-  on-screen receipt preview, cart gap, and split prices pinned to the right
-  edge. Owner confirmed lemonade/brioche/croissant amounts line up on SM-X115
-  `R8YX91AKWXJ`. Pushed `bb5a499194ceae6ea13a39eea0bc82cdf20730f5` on
-  `origin/main`. Exact next action: owner continues POLISH-01.
+- POLISH-01 (30 Aug 2026): Choices overlay is 600px with 36px fields. Section
+  and choice names no longer stretch. At least / At most use filled 44px
+  counts with 10px label gap (labels were not flex, so gap never applied).
+  Android research: React/CSS only. Checks: `check:css-scope`, `tsc -b`,
+  `npm run build`, `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and
+  relaunched. Exact next action: owner opens Choices on Several and confirms
+  short names, spaced counts, smaller card.
+- POLISH-01 (30 Aug 2026): Recipe overlay dropped the version sentence. It is
+  a 560px card with Ingredient and Amount as row labels and four compact
+  name-then-amount columns. Android research: React/CSS only. Checks:
+  `check:css-scope`, `tsc -b`, `npm run build`, `android:beta`. Install-over
+  SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next action: owner
+  opens Recipe on a product with several ingredients and confirms four across,
+  short fields, and no version copy.
+- POLISH-01 (30 Aug 2026): Choice Delete archived the section but Products
+  still listed it. Hook now hides archived sections/values; row trash saves
+  immediately. Android research: React/SQLite only. Checks:
+  `check:local-catalog`, `tsc -b`, `npm run build`, `android:beta`.
+  Install-over SM-X115 `R8YX91AKWXJ` and restarted. Uncommitted. Exact next
+  action: owner creates a choice, taps Delete, confirms it is gone.
+- POLISH-01 (30 Aug 2026): Choices and Recipe overlays rebuilt to match
+  Category/Payment: cream 28px card, 44px fields, Cancel/Save, hairline
+  rows. Choices use section tabs; Stock and By size stay closed until
+  tapped. Recipe is an ingredient table. Android research: React/CSS only.
+  Checks: `check:css-scope`, `tsc -b`, `npm run build`, `android:beta`.
+  Install-over SM-X115 `R8YX91AKWXJ` and restarted. Uncommitted. Exact next
+  action: owner opens Choices and Recipe on a product with sizes/options.
+- POLISH-01 (30 Aug 2026): Edit Product chips fill the leftover Sizes &
+  options height as two 28px rows, then scroll sideways. CSS column wrap;
+  no native. Checks: `check:css-scope`, `check:local-catalog`, `tsc -b`,
+  `npm run build`, `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and
+  restarted. Uncommitted. Exact next action: owner opens a product with
+  several sizes/choices and confirms two rows then a side swipe.
+- POLISH-01 (30 Aug 2026): Products catalog always ends with pinned
+  Uncategorized (filter, not a saved category; no rename/archive/delete).
+  Edit Product size/choice chips are one compact line: name + price, no
+  stacked Active. Android research: React/CSS only; same `'uncategorized'`
+  id as POS; no SQLite/Convex category. Checks: `check:css-scope`,
+  `check:local-catalog`, `tsc -b`, `npm run build`, `android:beta`.
+  Install-over SM-X115 `R8YX91AKWXJ` and restarted. Browser stayed on Lock
+  (no PIN). Uncommitted. Exact next action: owner opens Products, taps
+  Uncategorized, then Espresso and confirms Regular is a small one-line chip.
+- POLISH-01 (30 Aug 2026): cancelled vs completed Orders detail was packing
+  the payment block upward when the receipt had fewer rows. `margin-top:
+  auto` on the items-to-payment split pins Payment/Reprint/Cancel to the
+  bottom. Debug APK install-over SM-X115 `R8YX91AKWXJ` and restarted.
+  Uncommitted. Exact next action: owner switches 0826-0033 and a cancelled
+  order and confirms the card does not jump.
 - POLISH-01 (30 Aug 2026): cart line Gift, trash, and quantity pill are
   visually smaller (36px circles / 100×36 pill) with 8px gaps; 44px hits
   kept. Exact next action: owner checks on tablet; commit when asked.
@@ -1482,6 +1525,44 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-30 — POLISH-01 compact Choices overlay
+
+- Dialog 880×680 → 600×max 640. Name fields 168/160px. At least / At most
+  are filled counts with 10px label gap, not bordered 44px capsules.
+- Exact next action: owner opens Choices on Several on the tablet.
+
+### 2026-08-30 — POLISH-01 Recipe overlay four-up layout
+
+- Removed “Saving creates version n” copy. Ingredient and Amount sit as row
+  labels beside four compact selects and amount fields. Dialog is 560px.
+- Exact next action: owner opens Recipe on the tablet.
+
+### 2026-08-30 — POLISH-01 Choices and Recipe overlay overhaul
+
+- Both overlays now use the Category/Payment card: 44px controls, Cancel/Save,
+  hairline rows. Choices are section tabs; Stock/By size/Copy stay closed.
+  Recipe is an ingredient table with size columns only when there are two sizes.
+- Exact next action: owner opens Choices and Recipe on the tablet.
+
+### 2026-08-30 — POLISH-01 Uncategorized filter and compact size chips
+
+- Products sidebar always shows Uncategorized last, pinned above Add
+  category, even at count 0. Same `'uncategorized'` id as POS. Not a saved
+  menu group. Edit Product chips are 28px one-line name + price; Active is
+  omitted unless the size is unavailable/archived.
+- Exact next action: owner checks Uncategorized list and Espresso Regular
+  on the tablet; commit when asked.
+
+### 2026-08-30 — POLISH-01 tender sync deploy and Orders payment band
+
+- Root cause of Needs sync: live `sales.accept` rejected extra field `tenders`.
+  Deployed Convex dev (colorful-newt-937). Manual Sync retries the failed
+  sales; they are not permanent.
+- Orders detail payment band is 136px above Reprint/Cancel so split Given/
+  Change rows cannot cover the buttons.
+- Exact next action: owner Sync now, then inspect a split order after the
+  new debug APK.
 
 ### 2026-08-30 — POLISH-01 split alignment, Offert split, cart space, no preview
 

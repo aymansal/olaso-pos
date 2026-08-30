@@ -25,7 +25,10 @@ recipe management with saved tablet presentation during an outage.
 - Keep category, product, availability, price, and recipe presentation in one
   coherent editing workspace.
 - The catalog opens on All products. Category selection is an explicit operator
-  action.
+  action. Uncategorized is always the last sidebar row, even at count 0; it is
+  a filter for products with no category, not a saved menu group, and cannot
+  be renamed, archived, or deleted. Edit Product size and choice chips are
+  one compact line and fill two rows, then scroll sideways.
 - The product table shows a fixed page of six rows with the same sliding
   three-page window as Orders; it does not scroll. Each column header sits
   over that column’s values. PRODUCT lines up with the product name; the
@@ -64,8 +67,12 @@ recipe management with saved tablet presentation during an outage.
   boundary. Sizes save only new or changed rows, with the default size last, so
   adding a size does not rewrite already saved sizes.
 - Do not add database mutations directly to form components.
-- Keep dialogs inside the tablet viewport, with bounded internal scrolling when
-  option or recipe rows exceed the available height.
+-   Keep dialogs inside the tablet viewport, with bounded internal scrolling when
+  option or recipe rows exceed the available height. Choices is a 600-pixel
+  card with compact 36-pixel fields, short names, and spaced At least / At most
+  counts; Copy / Stock / By size stay quiet. Recipe is four compact columns in
+  a 560-pixel overlay, with Ingredient and Amount as row labels; it does not
+  explain versioning.
 
 ## Verification
 

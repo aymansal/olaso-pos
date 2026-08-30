@@ -74,7 +74,8 @@ export function useProductManagement(selectedProductId?: string) {
   })() : undefined;
   const productSizes: ManagedProductSize[] = (cache?.productSizes ?? []).map((size) => ({ ...size }));
   const choiceSections: ManagedChoiceSection[] = (cache?.productChoiceSections ?? [])
-    .filter((section) => section.productId === selectedProductId)
+    .filter((section) =>
+      section.productId === selectedProductId && section.status !== 'archived')
     .map((section) => ({
     id: section.id, productId: section.productId, key: section.key, name: section.name,
     selectionMode: section.selectionMode, required: section.required,
@@ -82,7 +83,8 @@ export function useProductManagement(selectedProductId?: string) {
     sortOrder: section.sortOrder, status: section.status, revision: section.revision,
     productSizeIds: (cache?.productChoiceSectionSizes ?? []).filter((link) => link.sectionId === section.id)
       .map((link) => link.productSizeId),
-    values: (cache?.productChoiceValues ?? []).filter((value) => value.sectionId === section.id)
+    values: (cache?.productChoiceValues ?? []).filter((value) =>
+      value.sectionId === section.id && value.status !== 'archived')
       .map((value) => ({
         id: value.id, key: value.key, name: value.name, priceDeltaCentimes: value.priceDeltaCentimes,
         isDefaultSelected: value.isDefaultSelected, sortOrder: value.sortOrder, status: value.status,
@@ -106,11 +108,12 @@ export function useProductManagement(selectedProductId?: string) {
         ?.currentRecipeVersionId;
       if (!currentId) return { complete: false, hasRecipe: false };
       const sections = (cache.productChoiceSections ?? []).filter(
-        (section) => section.productId === selectedProductId,
+        (section) =>
+          section.productId === selectedProductId && section.status !== 'archived',
       );
       const sectionIds = new Set(sections.map((section) => section.id));
       const values = (cache.productChoiceValues ?? []).filter((value) =>
-        sectionIds.has(value.sectionId),
+        sectionIds.has(value.sectionId) && value.status !== 'archived',
       );
       const valueIds = new Set(values.map((value) => value.id));
       const effects = (cache.productChoiceValueEffects ?? []).filter((effect) =>

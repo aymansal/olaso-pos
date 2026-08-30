@@ -52,7 +52,6 @@
 .itemsHeader,
 .paymentHeader,
 .paymentHeader > span,
-.actions,
 .stockNote {
   display: flex;
   align-items: center;
@@ -63,11 +62,13 @@
 }
 
 .orderStatus {
+  flex-shrink: 0;
   height: 28px;
   gap: 6px;
   padding: 0 10px;
   border-radius: 14px;
   font-size: 8px;
+  white-space: nowrap;
 }
 
 .orderStatus > span {
@@ -141,21 +142,34 @@
   font-weight: 600;
 }
 
-.divider {
-  position: absolute;
-  left: 22px;
-  width: 356px;
-  height: 1px;
-  background: var(--olaso-order-divider);
-}
-
-.itemsHeader {
+.body {
   position: absolute;
   top: 144px;
   left: 22px;
+  display: flex;
+  flex-direction: column;
+  width: 356px;
+  height: 530px;
+}
+
+.divider {
+  flex-shrink: 0;
+  width: 356px;
+  height: 1px;
+  margin: 8px 0 0;
+  background: var(--olaso-order-divider);
+}
+
+.paySplit {
+  margin-top: auto;
+}
+
+.itemsHeader {
+  flex-shrink: 0;
   justify-content: space-between;
   width: 356px;
   height: 24px;
+  margin-bottom: 8px;
 }
 
 .itemsHeader strong,
@@ -171,11 +185,9 @@
 }
 
 .items {
-  position: absolute;
-  top: 176px;
-  left: 22px;
+  flex: 1 1 0;
+  min-height: 0;
   width: 356px;
-  height: 300px;
   overflow-y: auto;
 }
 
@@ -247,15 +259,12 @@
   background: var(--olaso-line-soft);
 }
 
-.itemsDivider { top: 484px; }
-
 .paymentHeader {
-  position: absolute;
-  top: 500px;
-  left: 22px;
+  flex-shrink: 0;
   justify-content: space-between;
   width: 356px;
   height: 22px;
+  margin-top: 8px;
 }
 
 .paymentHeader > span {
@@ -276,23 +285,25 @@
 }
 
 .payment {
-  position: absolute;
-  top: 520px;
-  left: 22px;
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   width: 356px;
-  height: 64px;
+  height: auto;
+  max-height: 136px;
   margin: 0;
-  gap: 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  gap: 4px;
 }
 
 .payment > div {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  height: 22px;
+  height: 18px;
   color: var(--olaso-copy);
   font-size: 11px;
   font-weight: 500;
@@ -310,28 +321,25 @@
 }
 
 .payment .total {
-  height: 36px;
+  height: 24px;
   color: var(--olaso-text);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .payment .total dd {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
 }
 
-.actionsDivider { top: 584px; }
-
 .actions {
-  position: absolute;
-  top: 600px;
-  left: 22px;
   display: grid;
+  flex-shrink: 0;
   grid-template-columns: 1fr 1fr;
   align-items: stretch;
   width: 356px;
   height: 44px;
+  margin-top: 8px;
   gap: 8px;
 }
 
@@ -387,12 +395,11 @@
 }
 
 .stockNote {
-  position: absolute;
-  top: 654px;
-  left: 22px;
+  flex-shrink: 0;
   justify-content: center;
   width: 356px;
   height: 20px;
+  margin-top: 10px;
   overflow: hidden;
   gap: 7px;
   color: var(--olaso-note);

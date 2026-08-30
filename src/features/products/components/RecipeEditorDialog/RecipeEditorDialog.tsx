@@ -1,12 +1,15 @@
 import { Save, Plus, Trash, X } from '@boxicons/react';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { OverlayPortal } from '../../../../components/OverlayPortal';
 import type {
+  ManagedIngredient,
   ManagedProduct,
   ManagedRecipeData,
   ManagedProductSize,
 } from '../../productManagementTypes';
 import styles from './RecipeEditorDialog.module.css';
+
+const COLUMNS = 4;
 
 type RecipeDraftItem = {
   ingredientId: string;
@@ -24,6 +27,19 @@ interface RecipeEditorDialogProps {
   ) => Promise<void>;
 }
 
+function unitLabel(unit: ManagedIngredient['baseUnit']) {
+  if (unit === 'millilitre') return 'ml';
+  if (unit === 'gram') return 'g';
+  if (unit === 'milligram') return 'mg';
+  return 'pc';
+}
+
+function pads(count: number, prefix: string) {
+  return Array.from({ length: count }, (_, index) => (
+    <span key={`${prefix}-${index}`} />
+  ));
+}
+
 export function RecipeEditorDialog({
   product,
   data,
@@ -35,6 +51,8 @@ export function RecipeEditorDialog({
   const [sizeQuantities, setSizeQuantities] = useState(data.sizeQuantities);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const extraSizes = sizes.filter((size) => size.status === 'active').slice(0, 4);
+  const sizeRows = extraSizes.length > 1 ? extraSizes : [];
 
   useEffect(() => {
     setItems(
@@ -51,10 +69,7 @@ export function RecipeEditorDialog({
     setError('');
   }, [data.versionNumber, product.id]);
 
-  function updateItem(
-    index: number,
-    patch: Partial<RecipeDraftItem>,
-  ) {
+  function updateItem(index: number, patch: Partial<RecipeDraftItem>) {
     setItems((current) =>
       current.map((item, itemIndex) =>
         itemIndex === index ? { ...item, ...patch } : item,
@@ -64,8 +79,7 @@ export function RecipeEditorDialog({
 
   function addItem() {
     const ingredient = data.ingredients.find(
-      (candidate) =>
-        !items.some((item) => item.ingredientId === candidate.id),
+      (candidate) => !items.some((item) => item.ingredientId === candidate.id),
     );
     if (ingredient) {
       setItems((current) => [
@@ -73,6 +87,12 @@ export function RecipeEditorDialog({
         { ingredientId: ingredient.id, quantity: 1 },
       ]);
     }
+  }
+
+  function quantityFor(ingredientId: string, sizeId: string, baseQuantity: number) {
+    return sizeQuantities.find(
+      (item) => item.ingredientId === ingredientId && item.productSizeId === sizeId,
+    )?.quantity ?? baseQuantity;
   }
 
   async function submit() {
@@ -88,136 +108,158 @@ export function RecipeEditorDialog({
     }
   }
 
-  const activeSizes = sizes.filter((size) => size.status === 'active');
-  const quantityFor = (ingredientId: string, sizeId: string, baseQuantity: number) =>
-    sizeQuantities.find((item) => item.ingredientId === ingredientId && item.productSizeId === sizeId)?.quantity ?? baseQuantity;
+  const blocks: RecipeDraftItem[][] = [];
+  for (let start = 0; start < items.length; start += COLUMNS) {
+    blocks.push(items.slice(start, start + COLUMNS));
+  }
 
   return (
     <OverlayPortal>
-    <div className={styles.overlay} role="presentation">
-      <section
-        className={styles.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="recipe-dialog-title"
-      >
-        <header>
-          <span>
-            <small>IMMUTABLE VERSION</small>
-            <h2 id="recipe-dialog-title">Recipe · {product.name}</h2>
-          </span>
-          <button type="button" onClick={onClose} aria-label="Close recipe editor">
-            <X width={18} height={18} aria-hidden="true" />
-          </button>
-        </header>
-
-        <p className={styles.version}>
-          {data.versionNumber
-            ? `Editing version ${data.versionNumber} creates version ${data.versionNumber + 1}.`
-            : 'Saving creates the first active recipe version.'}
-        </p>
-
-        <div className={styles.items}>
-          {items.map((item, index) => {
-            const ingredient = data.ingredients.find(
-              (candidate) => candidate.id === item.ingredientId,
-            );
-            return (
-              <div className={styles.item} key={`${item.ingredientId}-${index}`}>
-                <label>
-                  <span>Ingredient</span>
-                  <select
-                    value={item.ingredientId}
-                    onChange={(event) =>
-                      updateItem(index, { ingredientId: event.target.value })
-                    }
-                  >
-                    {data.ingredients.map((candidate) => (
-                      <option value={candidate.id} key={candidate.id}>
-                        {candidate.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className={styles.quantity}>
-                  <span>Quantity</span>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    value={item.quantity}
-                    onChange={(event) =>
-                      updateItem(index, {
-                        quantity: Number(event.target.value),
-                      })
-                    }
-                  />
-                  <small>{ingredient?.baseUnit ?? 'unit'}</small>
-                </label>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setItems((current) =>
-                      current.filter((_, itemIndex) => itemIndex !== index),
-                    )
-                  }
-                  aria-label={`Remove ${ingredient?.name ?? 'ingredient'}`}
-                >
-                  <Trash width={16} height={16} aria-hidden="true" />
-                </button>
-                {activeSizes.map((size) => (
-                  <label className={styles.sizeQuantity} key={size.id}>
-                    <span>{size.name}</span>
-                    <input
-                      aria-label={`${size.name} quantity`}
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={quantityFor(item.ingredientId, size.id!, item.quantity)}
-                      onChange={(event) => {
-                        const quantity = Number(event.target.value);
-                        setSizeQuantities((current) => [
-                          ...current.filter((row) =>
-                            row.ingredientId !== item.ingredientId || row.productSizeId !== size.id),
-                          { ingredientId: item.ingredientId, productSizeId: size.id!, quantity },
-                        ]);
-                      }}
-                    />
-                  </label>
-                ))}
-              </div>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          className={styles.add}
-          onClick={addItem}
-          disabled={items.length >= data.ingredients.length}
+      <div className={styles.overlay} role="presentation">
+        <section
+          className={styles.dialog}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="recipe-dialog-title"
         >
-          <Plus width={15} height={15} aria-hidden="true" />
-          Add ingredient
-        </button>
+          <header className={styles.header}>
+            <span className={styles.heading}>
+              <small>RECIPE</small>
+              <h2 id="recipe-dialog-title">{product.name}</h2>
+            </span>
+            <button type="button" onClick={onClose} aria-label="Close recipe editor">
+              <X width={18} height={18} aria-hidden="true" />
+            </button>
+          </header>
 
-        {error ? <p className={styles.error}>{error}</p> : null}
-        <footer>
-          <span>
-            {data.versions.length} saved version
-            {data.versions.length === 1 ? '' : 's'}
-          </span>
+          <div className={styles.body}>
+            {blocks.map((row, blockIndex) => {
+              const start = blockIndex * COLUMNS;
+              const empty = COLUMNS - row.length;
+              return (
+                <div className={styles.block} key={start}>
+                  <span className={styles.rowLabel}>Ingredient</span>
+                  {row.map((item, offset) => (
+                    <select
+                      key={`ingredient-${start + offset}`}
+                      value={item.ingredientId}
+                      aria-label={`Ingredient ${start + offset + 1}`}
+                      onChange={(event) =>
+                        updateItem(start + offset, { ingredientId: event.target.value })
+                      }
+                    >
+                      {data.ingredients.map((candidate) => (
+                        <option value={candidate.id} key={candidate.id}>
+                          {candidate.name}
+                        </option>
+                      ))}
+                    </select>
+                  ))}
+                  {pads(empty, `pad-ingredient-${start}`)}
+
+                  <span className={styles.rowLabel}>Amount</span>
+                  {row.map((item, offset) => {
+                    const ingredient = data.ingredients.find(
+                      (candidate) => candidate.id === item.ingredientId,
+                    );
+                    return (
+                      <span className={styles.amount} key={`amount-${start + offset}`}>
+                        <span className={styles.qty}>
+                          <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            aria-label={`${ingredient?.name ?? 'Ingredient'} amount`}
+                            value={item.quantity}
+                            onChange={(event) =>
+                              updateItem(start + offset, {
+                                quantity: Number(event.target.value),
+                              })
+                            }
+                          />
+                          <small>{ingredient ? unitLabel(ingredient.baseUnit) : ''}</small>
+                        </span>
+                        <button
+                          type="button"
+                          className={styles.remove}
+                          onClick={() =>
+                            setItems((current) =>
+                              current.filter((_, itemIndex) => itemIndex !== start + offset),
+                            )
+                          }
+                          aria-label={`Remove ${ingredient?.name ?? 'ingredient'}`}
+                        >
+                          <Trash width={14} height={14} aria-hidden="true" />
+                        </button>
+                      </span>
+                    );
+                  })}
+                  {pads(empty, `pad-amount-${start}`)}
+
+                  {sizeRows.map((size) => (
+                    <Fragment key={size.id}>
+                      <span className={styles.rowLabel}>{size.name}</span>
+                      {row.map((item, offset) => (
+                        <input
+                          key={`size-${size.id}-${start + offset}`}
+                          type="number"
+                          min="0"
+                          step="1"
+                          aria-label={`${size.name} amount`}
+                          value={quantityFor(item.ingredientId, size.id!, item.quantity)}
+                          onChange={(event) => {
+                            const quantity = Number(event.target.value);
+                            setSizeQuantities((current) => [
+                              ...current.filter(
+                                (entry) =>
+                                  entry.ingredientId !== item.ingredientId
+                                  || entry.productSizeId !== size.id,
+                              ),
+                              {
+                                ingredientId: item.ingredientId,
+                                productSizeId: size.id!,
+                                quantity,
+                              },
+                            ]);
+                          }}
+                        />
+                      ))}
+                      {pads(empty, `pad-size-${size.id}-${start}`)}
+                    </Fragment>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+
           <button
             type="button"
-            className={styles.save}
-            onClick={submit}
-            disabled={saving || items.length === 0}
+            className={styles.add}
+            onClick={addItem}
+            disabled={items.length >= data.ingredients.length}
           >
-            <Save width={16} height={16} aria-hidden="true" />
-            {saving ? 'Saving…' : 'Save new version'}
+            <Plus width={15} height={15} aria-hidden="true" />
+            Add ingredient
           </button>
-        </footer>
-      </section>
-    </div>
+
+          {error ? <p className={styles.error}>{error}</p> : null}
+
+          <footer className={styles.footer}>
+            <button type="button" className={styles.cancel} onClick={onClose}>
+              Cancel
+            </button>
+            <button
+              type="button"
+              className={styles.save}
+              onClick={submit}
+              disabled={saving || items.length === 0}
+            >
+              <Save width={16} height={16} aria-hidden="true" />
+              {saving ? 'Saving…' : 'Save'}
+            </button>
+          </footer>
+        </section>
+      </div>
     </OverlayPortal>
   );
 }

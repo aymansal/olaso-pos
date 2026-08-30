@@ -510,6 +510,11 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - After local persistence succeeds, printing is attempted once and cloud synchronization runs in the background.
 - A print failure preserves the completed sale and exposes `Reprint receipt` without resubmitting the order.
 - Orders detail presents Reprint and Cancel as the two footer actions.
+  Subtotal, Offert, total, and tender rows hug their content above those
+  actions. The payment band grows only when split tenders need it, then
+  scrolls at 136px so they never cover Reprint or Cancel. Payment and
+  actions stay at the bottom of the card for both completed and cancelled
+  receipts.
 - The profile-owned Printer settings panel uses persistent IPv4/port labels,
   `Test printer`, and a secondary `Restore saved logo` setup action. The logo
   action requires an explicit replacement warning. Both keep 44-pixel targets
@@ -529,10 +534,19 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Product editing shows the selected product's real sizes and owner-created
   choices rather than four fixed Size/Milk/Syrup/Extras placeholder cards. A
   product with one size does not force an unnecessary cashier size selection.
+  Size and choice chips stay on one compact line (name plus price or choice
+  count). They fill two rows in the Sizes & options band, then scroll
+  sideways. They do not stack availability under the price.
 - Product choice controls use concise owner-facing labels for Add, Replace,
   Set amount, Remove, or No stock change. `Copy choices from another product`
   is required; avoid global-group management screens, decorative icon clutter,
-  technical explanations, and hidden cross-product editing effects.
+  technical explanations, and hidden cross-product editing effects. The Choices
+  and Recipe overlays use the same cream card, Cancel/Save footer, and
+  hairline rows as Category and Payment. Choices is a 600-pixel card with
+  compact 36-pixel fields, short name inputs, and spaced At least / At most
+  counts; stock and per-size extras stay behind Stock / By size. Recipe is a
+  560-pixel card with Ingredient and Amount as row labels and four compact
+  name-then-amount columns. It does not explain versioning.
 - Edit Product may show a compact honest ingredient-cost range or incomplete
   state. It does not show a gross-profit/margin panel, a detailed simulated
   configuration preview, or packaging costs. Deeper comparison placement is
