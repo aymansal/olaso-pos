@@ -1,4 +1,4 @@
-import { RefreshCw, Search, Plus, SliderAlt, Layers, AlertTriangle, X } from '@boxicons/react';
+import { Search, Plus, X } from '@boxicons/react';
 import type {
   InventoryMetrics,
   ManagedIngredient,
@@ -7,15 +7,9 @@ import type {
   StockLevelFilter,
   StockUnitGroup,
 } from '../../stockPresentation';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import { StockTable } from '../StockTable/StockTable';
 import styles from './StockInventoryPanel.module.css';
-
-const summaryIcons = {
-  stack: Layers,
-  warning: AlertTriangle,
-  movement: RefreshCw,
-  adjustment: SliderAlt,
-} as const;
 
 interface StockInventoryPanelProps {
   metrics: InventoryMetrics;
@@ -57,39 +51,26 @@ export function StockInventoryPanel({
   onAddIngredient,
 }: StockInventoryPanelProps) {
   const summaries = [
-    {
-      icon: 'stack',
-      value: metrics.ingredientCount,
-      label: 'Active ingredients',
-      tone: 'green',
-    },
-    {
-      icon: 'warning',
-      value: metrics.lowStockCount,
-      label: 'Low stock',
-      tone: 'low',
-    },
-    {
-      icon: 'movement',
-      value: metrics.movementCount,
-      label: 'Movements today',
-      tone: 'value',
-    },
-    {
-      icon: 'adjustment',
-      value: metrics.adjustmentCount,
-      label: 'Counts corrected',
-      tone: 'neutral',
-    },
+    { value: metrics.ingredientCount, label: 'Active items' },
+    { value: metrics.lowStockCount, label: 'Low stock' },
+    { value: metrics.movementCount, label: 'Used today' },
+    { value: metrics.adjustmentCount, label: 'Corrections' },
   ] as const;
 
   return (
     <section className={styles.panel} aria-labelledby="stock-inventory-title">
       <header className={styles.header}>
-        <span className={styles.heading}>
-          <h1 id="stock-inventory-title">Stock inventory</h1>
-          <small>Ingredients and packaging measured in their real units</small>
-        </span>
+        <h1 className={styles.heading} id="stock-inventory-title">
+          Stock inventory
+        </h1>
+        <div className={styles.metrics} aria-label="Stock summary">
+          {summaries.map(({ value, label }) => (
+            <span className={styles.metric} key={label}>
+              <strong>{value}</strong>
+              <small>{label}</small>
+            </span>
+          ))}
+        </div>
         <button
           className={styles.addIngredient}
           type="button"
@@ -99,26 +80,6 @@ export function StockInventoryPanel({
           <span>Add ingredient</span>
         </button>
       </header>
-
-      <div className={styles.summary} aria-label="Stock summary">
-        {summaries.map(({ icon, value, label, tone }, index) => {
-          const Icon = summaryIcons[icon];
-          return (
-            <div className={styles.summaryEntry} key={label}>
-              {index > 0 ? (
-                <span className={styles.summaryDivider} aria-hidden="true" />
-              ) : null}
-              <span className={`${styles.summaryIcon} ${styles[tone]}`}>
-                <Icon width={15} height={15} aria-hidden="true" />
-              </span>
-              <span className={styles.summaryCopy}>
-                <strong>{value}</strong>
-                <small>{label}</small>
-              </span>
-            </div>
-          );
-        })}
-      </div>
 
       <div className={styles.toolbar}>
         <label className={styles.search}>
@@ -141,34 +102,31 @@ export function StockInventoryPanel({
             </button>
           ) : null}
         </label>
-        <label className={styles.filter}>
-          <select
-            aria-label="Filter stock unit group"
+        <div className={styles.filter}>
+          <MenuSelect
+            ariaLabel="Filter stock unit group"
             value={unitGroup}
-            onChange={(event) =>
-              onUnitGroupChange(event.target.value as StockUnitGroup)
-            }
-          >
-            <option value="all">All units</option>
-            <option value="liquids">Liquids</option>
-            <option value="weighed">Weighed</option>
-            <option value="pieces">Pieces</option>
-          </select>
-        </label>
-        <label className={styles.statusFilter}>
-          <select
-            aria-label="Filter stock level"
+            onChange={(id) => onUnitGroupChange(id as StockUnitGroup)}
+            options={[
+              { id: 'all', label: 'All units' },
+              { id: 'liquids', label: 'Liquids' },
+              { id: 'weighed', label: 'Weighed' },
+              { id: 'pieces', label: 'Pieces' },
+            ]}
+          />
+        </div>
+        <div className={styles.statusFilter}>
+          <MenuSelect
+            ariaLabel="Filter stock level"
             value={levelFilter}
-            onChange={(event) =>
-              onLevelFilterChange(event.target.value as StockLevelFilter)
-            }
-          >
-            <option value="all">All stock levels</option>
-            <option value="low">Low stock</option>
-            <option value="healthy">Healthy</option>
-            <option value="archived">Archived</option>
-          </select>
-        </label>
+            onChange={(id) => onLevelFilterChange(id as StockLevelFilter)}
+            options={[
+              { id: 'all', label: 'All stock levels' },
+              { id: 'low', label: 'Low stock' },
+              { id: 'healthy', label: 'Healthy' },
+            ]}
+          />
+        </div>
       </div>
 
       <StockTable

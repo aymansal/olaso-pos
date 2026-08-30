@@ -1,6 +1,7 @@
 import { X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type {
   ExpenseInput,
   SavedExpense,
@@ -68,17 +69,21 @@ export function ExpenseDialog({
 
   return (
     <OverlayPortal>
-    <div className={styles.overlay} role="presentation">
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+    >
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="expense-title">
         <header>
           <h2 id="expense-title">{expense ? 'Correct expense' : 'Add expense'}</h2>
           <button type="button" onClick={onClose} aria-label="Close expense"><X width={18} height={18} /></button>
         </header>
         <div className={styles.grid}>
-          <label>Category<input autoFocus value={category} onChange={(event) => setCategory(event.target.value)} /></label>
-          <label>Amount · MAD<input type="number" min="0.01" step="0.01" value={amountMad} onChange={(event) => setAmountMad(event.target.value)} /></label>
+          <label>Category<input value={category} onChange={(event) => setCategory(event.target.value)} /></label>
+          <label>Amount · MAD<input type="number" min="0.01" step="0.01" placeholder="0" value={amountMad} onChange={(event) => setAmountMad(event.target.value)} /></label>
           <label className={styles.full}>Description<input value={description} onChange={(event) => setDescription(event.target.value)} /></label>
-          <label>Repeats<select value={recurrence} onChange={(event) => setRecurrence(event.target.value as 'one-time' | 'monthly')}><option value="one-time">Once</option><option value="monthly">Monthly</option></select></label>
+          <label>Repeats<MenuSelect ariaLabel="Repeats" value={recurrence} onChange={(id) => setRecurrence(id as 'one-time' | 'monthly')} options={[{ id: 'one-time', label: 'Once' }, { id: 'monthly', label: 'Monthly' }]} /></label>
           {recurrence === 'one-time' ? (
             <label>Date<input type="date" value={effectiveDate} onChange={(event) => setEffectiveDate(event.target.value)} /></label>
           ) : (

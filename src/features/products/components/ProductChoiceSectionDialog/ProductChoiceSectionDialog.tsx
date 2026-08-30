@@ -1,6 +1,7 @@
 import { Save, Plus, Trash, X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type {
   ManagedChoiceEffect,
   ManagedChoiceSection,
@@ -64,6 +65,19 @@ const blankValue = (sortOrder: number): ManagedChoiceSection['values'][number] =
   effects: [],
 });
 
+function withOneUsual(section: ManagedChoiceSection): ManagedChoiceSection {
+  let kept = false;
+  return {
+    ...section,
+    values: section.values.map((value) => {
+      if (!value.isDefaultSelected) return value;
+      if (kept) return { ...value, isDefaultSelected: false };
+      kept = true;
+      return value;
+    }),
+  };
+}
+
 export function ProductChoiceSectionDialog({
   product,
   products,
@@ -100,7 +114,7 @@ export function ProductChoiceSectionDialog({
   useEffect(() => {
     setDraft(
       selected
-        ? structuredClone(selected)
+        ? withOneUsual(structuredClone(selected))
         : blankSection(product.id, sections.length * 10 + 10),
     );
     setError('');
@@ -172,7 +186,7 @@ export function ProductChoiceSectionDialog({
     setSaving(true);
     setError('');
     try {
-      await onSave(draft);
+      await onSave(withOneUsual(draft));
       onClose();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Choice section save failed.');
@@ -221,7 +235,11 @@ export function ProductChoiceSectionDialog({
 
   return (
     <OverlayPortal>
-      <div className={styles.overlay} role="presentation">
+      <div
+        className={styles.overlay}
+        role="presentation"
+        onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+      >
         <section
           className={styles.dialog}
           role="dialog"
@@ -238,7 +256,7 @@ export function ProductChoiceSectionDialog({
             </button>
           </header>
 
-          <div className={styles.tabs} role="tablist" aria-label="Choice sections">
+          <div className={styles.tabs} role="tablist" aria-label="Groups">
             {sections.map((section) => (
               <button
                 key={section.id}
@@ -259,14 +277,14 @@ export function ProductChoiceSectionDialog({
               onClick={() => setSelectedId('new')}
             >
               <Plus width={13} height={13} aria-hidden="true" />
-              New
+              New group
             </button>
           </div>
 
           <div className={styles.body}>
             <div className={styles.setup}>
               <label className={styles.nameField}>
-                <span>Name</span>
+                <span>Group</span>
                 <input
                   value={draft.name}
                   onChange={(event) =>
@@ -315,7 +333,8 @@ export function ProductChoiceSectionDialog({
                     <input
                       type="number"
                       min="0"
-                      value={draft.minimumSelections}
+                      placeholder="0"
+                      value={draft.minimumSelections || ''}
                       onChange={(event) =>
                         setDraft((current) => ({
                           ...current,
@@ -329,7 +348,8 @@ export function ProductChoiceSectionDialog({
                     <input
                       type="number"
                       min="1"
-                      value={draft.maximumSelections}
+                      placeholder="0"
+                      value={draft.maximumSelections || ''}
                       onChange={(event) =>
                         setDraft((current) => ({
                           ...current,
@@ -401,7 +421,7 @@ export function ProductChoiceSectionDialog({
                       <input
                         aria-label="Choice name"
                         value={value.name}
-                        placeholder="Name"
+                        placeholder="Choice"
                         onChange={(event) =>
                           updateValue(valueIndex, { name: event.target.value })
                         }
@@ -409,17 +429,20 @@ export function ProductChoiceSectionDialog({
                     </label>
                     <label className={styles.extra}>
                       <span>Extra</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={value.priceDeltaCentimes / 100}
-                        onChange={(event) =>
-                          updateValue(valueIndex, {
-                            priceDeltaCentimes: Math.round(Number(event.target.value) * 100),
-                          })
-                        }
-                      />
-                      <small>DH</small>
+                      <span className={styles.extraBox}>
+                        <input
+                          type="number"
+                          step="0.01"
+                          placeholder="0"
+                          value={value.priceDeltaCentimes / 100 || ''}
+                          onChange={(event) =>
+                            updateValue(valueIndex, {
+                              priceDeltaCentimes: Math.round(Number(event.target.value) * 100),
+                            })
+                          }
+                        />
+                        <small>DH</small>
+                      </span>
                     </label>
                     <button
                       type="button"
@@ -433,9 +456,7 @@ export function ProductChoiceSectionDialog({
                             isDefaultSelected:
                               index === valueIndex
                                 ? !value.isDefaultSelected
-                                : current.selectionMode === 'single'
-                                  ? false
-                                  : item.isDefaultSelected,
+                                : false,
                           })),
                         }))
                       }
@@ -508,9 +529,9 @@ export function ProductChoiceSectionDialog({
                               placeholder="DH"
                               step="0.01"
                               value={
-                                rule?.priceDeltaCentimes === undefined
-                                  ? ''
-                                  : rule.priceDeltaCentimes / 100
+                                rule?.priceDeltaCentimes
+                                  ? rule.priceDeltaCentimes / 100
+                                  : ''
                               }
                               onChange={(event) =>
                                 updateValue(valueIndex, {
@@ -539,62 +560,62 @@ export function ProductChoiceSectionDialog({
                     <div className={styles.stock}>
                       {value.effects.map((effect, effectIndex) => (
                         <div className={styles.effect} key={effect.id ?? effectIndex}>
-                          <select
-                            aria-label="Stock change"
+                          <MenuSelect
+                            ariaLabel="Stock change"
+                            className={styles.effectSelect}
                             value={effect.effectType}
-                            onChange={(event) =>
+                            onChange={(id) =>
                               updateEffect(valueIndex, effectIndex, {
-                                effectType: event.target.value as ManagedChoiceEffect['effectType'],
+                                effectType: id as ManagedChoiceEffect['effectType'],
                               })
                             }
-                          >
-                            {(Object.keys(EFFECT_LABELS) as Array<ManagedChoiceEffect['effectType']>).map(
-                              (type) => (
-                                <option value={type} key={type}>
-                                  {EFFECT_LABELS[type]}
-                                </option>
-                              ),
-                            )}
-                          </select>
-                          <select
-                            aria-label="Ingredient"
+                            options={(
+                              Object.keys(EFFECT_LABELS) as Array<
+                                ManagedChoiceEffect['effectType']
+                              >
+                            ).map((type) => ({
+                              id: type,
+                              label: EFFECT_LABELS[type],
+                            }))}
+                          />
+                          <MenuSelect
+                            ariaLabel="Ingredient"
+                            className={styles.effectSelect}
                             value={effect.ingredientId}
-                            onChange={(event) =>
+                            onChange={(id) =>
                               updateEffect(valueIndex, effectIndex, {
-                                ingredientId: event.target.value,
+                                ingredientId: id,
                               })
                             }
-                          >
-                            {ingredients.map((ingredient) => (
-                              <option key={ingredient.id} value={ingredient.id}>
-                                {ingredient.name}
-                              </option>
-                            ))}
-                          </select>
+                            options={ingredients.map((ingredient) => ({
+                              id: ingredient.id,
+                              label: ingredient.name,
+                            }))}
+                          />
                           {effect.effectType === 'replace' ? (
-                            <select
-                              aria-label="Replacement"
+                            <MenuSelect
+                              ariaLabel="Replacement"
+                              className={styles.effectSelect}
                               value={effect.replacementIngredientId ?? ''}
-                              onChange={(event) =>
+                              placeholder="Replacement"
+                              onChange={(id) =>
                                 updateEffect(valueIndex, effectIndex, {
-                                  replacementIngredientId: event.target.value,
+                                  replacementIngredientId: id,
                                 })
                               }
-                            >
-                              <option value="">Replacement</option>
-                              {ingredients.map((ingredient) => (
-                                <option key={ingredient.id} value={ingredient.id}>
-                                  {ingredient.name}
-                                </option>
-                              ))}
-                            </select>
+                              options={ingredients.map((ingredient) => ({
+                                id: ingredient.id,
+                                label: ingredient.name,
+                              }))}
+                            />
                           ) : null}
                           {effect.effectType !== 'remove' ? (
                             <input
                               aria-label="Amount"
                               type="number"
                               min="0"
-                              value={effect.quantity}
+                              placeholder="0"
+                              value={effect.quantity || ''}
                               onChange={(event) =>
                                 updateEffect(valueIndex, effectIndex, {
                                   quantity: Number(event.target.value),
@@ -644,39 +665,37 @@ export function ProductChoiceSectionDialog({
 
           {copyOpen ? (
             <div className={styles.copy}>
-              <select
-                aria-label="Copy from product"
+              <MenuSelect
+                ariaLabel="Copy from product"
+                className={styles.copySelect}
                 value={sourceId}
-                onChange={(event) => setSourceId(event.target.value)}
-              >
-                <option value="">Choose product</option>
-                {copyProducts.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
+                placeholder="Choose product"
+                onChange={setSourceId}
+                options={copyProducts.map((item) => ({
+                  id: item.id,
+                  label: item.name,
+                }))}
+              />
               {needsSizeMap ? (
                 <div className={styles.mapping}>
                   {sourceSizes.map((size) => (
                     <label key={size.id}>
                       {size.name}
-                      <select
+                      <MenuSelect
+                        className={styles.mapSelect}
                         value={mapping[size.id ?? ''] ?? ''}
-                        onChange={(event) =>
+                        placeholder="Map size"
+                        onChange={(id) =>
                           setMapping((current) => ({
                             ...current,
-                            [size.id!]: event.target.value,
+                            [size.id!]: id,
                           }))
                         }
-                      >
-                        <option value="">Map size</option>
-                        {activeSizes.map((item) => (
-                          <option key={item.id} value={item.id}>
-                            {item.name}
-                          </option>
-                        ))}
-                      </select>
+                        options={activeSizes.map((item) => ({
+                          id: item.id ?? '',
+                          label: item.name,
+                        }))}
+                      />
                     </label>
                   ))}
                 </div>

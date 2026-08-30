@@ -11,10 +11,10 @@ import type {
 } from './productManagementTypes';
 import styles from './ProductsScreen.module.css';
 
-type AvailabilityFilter = 'all' | ManagedProduct['status'];
+type AvailabilityFilter = 'all' | 'active' | 'unavailable';
 type ProductSort = 'updated' | 'name' | 'price';
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 7;
 const UNCATEGORIZED_ID = 'uncategorized';
 
 function productInCategory(product: ManagedProduct, categoryId: string) {
@@ -91,12 +91,8 @@ export function ProductsScreen() {
   );
 
   const visibleCategories = useMemo(
-    () => availability === 'archived'
-      ? management.categories
-      : management.categories.filter(
-          (category) => category.status !== 'archived',
-        ),
-    [availability, management.categories],
+    () => management.categories,
+    [management.categories],
   );
 
   const selectedProduct = management.products.find(
@@ -148,13 +144,6 @@ export function ProductsScreen() {
     const result = await management.saveProduct(input);
     setSelectedProductId(result.id);
     setSelectedCategoryId(input.categoryId || UNCATEGORIZED_ID);
-  }
-
-  async function setProductStatus(
-    product: ManagedProduct,
-    status: ManagedProduct['status'],
-  ) {
-    await management.setProductStatus(product.id, status, product.revision);
   }
 
   return (
@@ -223,7 +212,6 @@ export function ProductsScreen() {
         productCost={management.productCost}
         isRecipeLoading={management.isRecipeLoading}
         onSave={saveProduct}
-        onSetStatus={setProductStatus}
         onDelete={async (product) => {
           await management.deleteProduct(product);
           setSelectedProductId(undefined);

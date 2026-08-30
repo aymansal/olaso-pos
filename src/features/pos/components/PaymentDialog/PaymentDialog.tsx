@@ -1,6 +1,6 @@
 import { X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { formatMoney } from '../../../../lib/money';
 import {
   changeCentimes,
@@ -173,7 +173,13 @@ export function PaymentDialog({
 
   return (
     <OverlayPortal>
-      <div className={styles.overlay} role="presentation">
+      <div
+        className={styles.overlay}
+        role="presentation"
+        onPointerDown={(event) => {
+          if (!locked && !processing) closeOnBackdrop(event, onCancel);
+        }}
+      >
         <section
           className={styles.dialog}
           role="dialog"

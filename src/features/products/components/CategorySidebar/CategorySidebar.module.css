@@ -1,9 +1,9 @@
 .sidebar {
   position: absolute;
-  top: 138px;
+  top: 76px;
   left: 24px;
   width: 170px;
-  height: 522px;
+  height: 584px;
   border-radius: 20px;
   background: var(--olaso-table-head);
 }
@@ -36,7 +36,7 @@
   flex-direction: column;
   gap: 8px;
   width: 150px;
-  max-height: 346px;
+  max-height: 408px;
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: none;
@@ -127,7 +127,7 @@
 
 .uncategorized {
   position: absolute;
-  top: 418px;
+  top: 480px;
   left: 10px;
 }
 
@@ -145,7 +145,7 @@
 
 .addCategory {
   position: absolute;
-  top: 470px;
+  top: 532px;
   left: 10px;
   height: 36px;
   gap: 8px;
@@ -153,6 +153,6 @@
   border: 1px solid var(--olaso-category-border);
   color: var(--olaso-green);
   background: transparent;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
 }

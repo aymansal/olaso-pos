@@ -238,6 +238,7 @@ export const getOperationalSnapshot = query({
         ...(product.imageAssetKey
           ? { imageAssetKey: product.imageAssetKey }
           : {}),
+        ...(product.imageJpeg ? { imageJpeg: product.imageJpeg } : {}),
         sortOrder: product.sortOrder,
         ...(product.currentRecipeVersionId
           ? { currentRecipeVersionId: product.currentRecipeVersionId }

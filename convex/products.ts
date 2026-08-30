@@ -6,6 +6,7 @@ import {
   boundedInteger,
   cleanKey,
   cleanOptionalText,
+  cleanProductImageJpeg,
   cleanText,
   conflict,
   expectRevision,
@@ -63,6 +64,7 @@ export const save = mutation({
     basePriceCentimes: v.number(),
     status: productStatus,
     imageAssetKey: v.optional(v.string()),
+    imageJpeg: v.optional(v.string()),
     sortOrder: v.number(),
     modifierGroupIds: v.optional(v.array(v.id('modifierGroups'))),
     expectedRevision: v.optional(v.number()),
@@ -78,6 +80,7 @@ export const save = mutation({
       'Image asset key',
       120,
     );
+    const imageJpeg = cleanProductImageJpeg(args.imageJpeg);
     const basePriceCentimes = boundedInteger(
       args.basePriceCentimes,
       'Base price',
@@ -105,6 +108,7 @@ export const save = mutation({
         basePriceCentimes,
         status: args.status,
         imageAssetKey,
+        ...(imageJpeg ? { imageJpeg } : {}),
         sortOrder,
         modifierGroupIds: [],
         revision: product.revision + 1,
@@ -138,6 +142,7 @@ export const save = mutation({
       basePriceCentimes,
       status: args.status,
       imageAssetKey,
+      ...(imageJpeg ? { imageJpeg } : {}),
       sortOrder,
       modifierGroupIds: [],
       revision: 1,

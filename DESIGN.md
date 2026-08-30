@@ -348,7 +348,8 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
 | `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. A long name or price ellipsises before that control. The price is 11px in a slightly softer ink than the name. Only the add control adds to the order. |
 | `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. Orders, Products, and Stock table row highlights use the same vertical slide and cream selected fill. Products and Stock keep the green mark; Orders does not. Column headers on those three tables are centered over their values. |
-| `LabeledField` | visible label, current value | Text and select variants. Control is 129 by 48. |
+| `LabeledField` | visible label, current value | Text and in-app `MenuSelect` list. Control is 129 by 48 on Lock; compact form lists are 36px tall. |
+| `MenuSelect` | options, current value | One in-app list from Lock. Lock size keeps the 54px identity control; every other list menu uses the compact size. Do not use the Android native select. Date and month stay native until the custom calendar. |
 | `OrderLine` | product, unit price, quantity, size, note, total, Offert | Keep the total right-aligned. Gift and trash keep 44-pixel hits with 36-pixel circles and 8-pixel gaps; green when Offert is active; charged total 0,00. A note is optional. |
 | `QuantityStepper` | decrement, quantity, increment | Cart line uses a 100 by 36 pill; plus and minus keep independent 44-pixel hits. Disable decrement at the minimum and expose an accessible value. |
 | `PaymentSummary` | total, optional Offert | Pin Total at the bottom of the 115-pixel block, just above Place order. Show Subtotal and Offert only when an Offert amount is greater than zero; those rows expand upward between Payment Details and Total so Total does not move. When they are hidden, the cart list uses that empty space so three lines fit, and keeps a 16-pixel gap above Payment Details. Use tabular figures; the confirmed policy has no tax row. |
@@ -528,6 +529,9 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   POLISH-02 keeps everyday labels concise and moves retained support detail
   behind deliberate disclosure.
 - A local persistence failure keeps the order intact. A cloud failure marks the saved sale as waiting to sync without blocking service.
+- Overlays do not steal keyboard focus. A backdrop tap dismisses an open
+  keyboard first; a second backdrop tap closes the overlay. After the first
+  recorded PaymentDialog tender the overlay cannot close.
 - Authorized management saves use the same immediate local feedback. A quiet
   `Waiting to sync` state may communicate pending cloud acknowledgement, but
   offline status never disables an otherwise valid management form.
@@ -542,9 +546,12 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   is required; avoid global-group management screens, decorative icon clutter,
   technical explanations, and hidden cross-product editing effects. The Choices
   and Recipe overlays use the same cream card, Cancel/Save footer, and
-  hairline rows as Category and Payment. Choices is a 600-pixel card with
+  hairline rows as Category and Payment. Choices is a 520-pixel card with
   compact 36-pixel fields, short name inputs, and spaced At least / At most
-  counts; stock and per-size extras stay behind Stock / By size. Recipe is a
+  counts; stock and per-size extras stay behind Stock / By size. Extra sits
+  left of the price field; delete stays at the row’s right edge. One Usual per
+  group. Tabs are groups; rows under them are choices. Number fields
+  keep 0 as a placeholder, not a stuck digit. Recipe is a
   560-pixel card with Ingredient and Amount as row labels and four compact
   name-then-amount columns. It does not explain versioning.
 - Edit Product may show a compact honest ingredient-cost range or incomplete
@@ -577,7 +584,7 @@ Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-laye
 - Maintain a minimum 44 by 44 CSS-pixel interactive target; prefer 48 by 48 for Android controls where the approved layout permits it.
 - Keep at least 8 pixels between independent touch targets.
 - Preserve visible keyboard focus with a 2-pixel Operational Green outline and sufficient offset.
-- Native buttons, inputs, and selects are preferred beneath Astryx styling.
+- Native buttons and inputs are preferred beneath Astryx styling. List menus use the shared in-app `MenuSelect` (Lock appearance); date and month stay native until the custom calendar.
 - Form fields have persistent visible labels. Placeholders are examples, not labels.
 - Meaningful product images have useful alt text; decorative category artwork has empty alt text.
 - Status never relies on color alone. Pair danger and availability colors with text or an icon.

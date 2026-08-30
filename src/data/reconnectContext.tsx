@@ -281,6 +281,9 @@ export function ReconnectProvider({
               name: String(payload.name), receiptName: String(payload.receiptName),
               basePriceCentimes: Number(payload.basePriceCentimes),
               status: payload.status, sortOrder: Number(payload.sortOrder),
+              ...(typeof payload.imageJpeg === 'string'
+                ? { imageJpeg: String(payload.imageJpeg) }
+                : {}),
               modifierGroupIds: [],
               clientMutationId: operation.operationId,
             });

@@ -22,7 +22,7 @@ export function CategoryArtworkPicker({
             aria-pressed={value === option.key}
             onClick={() => onChange(option.key)}
           >
-            <img src={option.image} alt="" width={48} height={48} decoding="async" />
+            <img src={option.image} alt="" width={36} height={36} decoding="async" />
             <span>{option.label}</span>
           </button>
         ))}

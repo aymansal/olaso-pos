@@ -1,6 +1,6 @@
-import { Package, X } from '@boxicons/react';
+import { X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import type { ManagedIngredient } from '../../stockManagementTypes';
 import { formatMoney } from '../../../../lib/money';
 import { formatStockQuantity } from '../../stockPresentation';
@@ -57,14 +57,14 @@ export function PurchaseDialog({ ingredient, onClose, onSave }: PurchaseDialogPr
 
   const totalQuantity = valid ? count * quantity : 0;
   const totalCost = valid ? count * priceCentimes : 0;
-  return <OverlayPortal><div className={styles.overlay} role="presentation"><section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="purchase-title">
+  return <OverlayPortal><div className={styles.overlay} role="presentation" onPointerDown={(event) => closeOnBackdrop(event, onClose)}><section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="purchase-title">
     <header><span><small>PACKAGE RECEIPT</small><h2 id="purchase-title">Receive purchase</h2></span><button type="button" onClick={onClose} aria-label="Close purchase receipt"><X width={18} height={18} /></button></header>
-    <p className={styles.ingredient}><Package width={18} height={18} /> <strong>{ingredient.name}</strong><span>On hand {formatStockQuantity(ingredient.currentStockQuantity, ingredient.baseUnit)}</span></p>
+    <p className={styles.ingredient}><strong>{ingredient.name}</strong><span>On hand {formatStockQuantity(ingredient.currentStockQuantity, ingredient.baseUnit)}</span></p>
     <div className={styles.grid}>
       <label>Package label<input value={packageLabel} onChange={(event) => setPackageLabel(event.target.value)} /></label>
       <label>Packages<input type="number" min="1" step="1" value={packageCount} onChange={(event) => setPackageCount(event.target.value)} /></label>
-      <label>Quantity per package<input autoFocus type="number" min="1" step="1" value={quantityPerPackage} onChange={(event) => setQuantityPerPackage(event.target.value)} /></label>
-      <label>Price per package · MAD<input type="number" min="0.01" step="0.01" value={priceMad} onChange={(event) => setPriceMad(event.target.value)} /></label>
+      <label>Quantity per package<input type="number" min="1" step="1" placeholder="0" value={quantityPerPackage} onChange={(event) => setQuantityPerPackage(event.target.value)} /></label>
+      <label>Price per package · MAD<input type="number" min="0.01" step="0.01" placeholder="0" value={priceMad} onChange={(event) => setPriceMad(event.target.value)} /></label>
       <label>Supplier (optional)<input value={supplierLabel} onChange={(event) => setSupplierLabel(event.target.value)} /></label>
       <label>Note (optional)<input value={note} onChange={(event) => setNote(event.target.value)} /></label>
     </div>

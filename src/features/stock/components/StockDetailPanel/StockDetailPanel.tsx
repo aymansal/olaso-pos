@@ -1,6 +1,7 @@
-import { ArrowDown, Pencil, SliderAlt, X } from '@boxicons/react';
+import { ArrowDown, Save, X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import type {
+  IngredientSaveInput,
   ManagedIngredient,
   ManagedIngredientDetail,
   StockAdjustmentMode,
@@ -8,19 +9,18 @@ import type {
 import {
   baseUnitLabel,
   formatStockQuantity,
-  ingredientIcon,
   ingredientLevel,
   movementLabel,
 } from '../../stockPresentation';
 import { formatMoney } from '../../../../lib/money';
-import { StockIcon } from '../StockIcon/StockIcon';
 import styles from './StockDetailPanel.module.css';
 
 interface StockDetailPanelProps {
   ingredient?: ManagedIngredient;
   detail?: ManagedIngredientDetail;
   isLoading: boolean;
-  onEdit: (ingredient: ManagedIngredient) => void;
+  onSave: (input: IngredientSaveInput) => Promise<void>;
+  onDelete: (ingredient: ManagedIngredient) => Promise<void>;
   onAdjust: (
     ingredient: ManagedIngredient,
     mode: StockAdjustmentMode,
@@ -41,21 +41,30 @@ export function StockDetailPanel({
   ingredient,
   detail,
   isLoading,
-  onEdit,
+  onSave,
+  onDelete,
   onAdjust,
   onReceivePurchase,
 }: StockDetailPanelProps) {
+  const [name, setName] = useState('');
+  const [threshold, setThreshold] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
   const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
+    setName(ingredient?.name ?? '');
+    setThreshold(
+      ingredient?.lowStockThreshold ? String(ingredient.lowStockThreshold) : '',
+    );
+    setMessage('');
     setShowHistory(false);
-  }, [ingredient?.id]);
+  }, [ingredient?.id, ingredient?.revision]);
 
   if (!ingredient) {
     return (
       <aside className={styles.panel} aria-labelledby="stock-item-title">
         <div className={styles.empty}>
-          <SliderAlt width={25} height={25} aria-hidden="true" />
           <h2 id="stock-item-title">Select an ingredient</h2>
           <p>Choose a live stock record to review its balance and movements.</p>
         </div>
@@ -63,54 +72,116 @@ export function StockDetailPanel({
     );
   }
 
-  const level = ingredientLevel(ingredient);
+  const current = ingredient;
+  const level = ingredientLevel(current);
   const difference =
     ingredient.currentStockQuantity - ingredient.lowStockThreshold;
   const recentMovements = detail?.movements.slice(0, 2) ?? [];
   const linkedRecipes = detail?.linkedRecipes.slice(0, 3) ?? [];
-  const archived = ingredient.status === 'archived';
   const inventoryValue = ingredient.inventoryValueCentimes;
   const averageCost = inventoryValue === undefined || ingredient.currentStockQuantity === 0
     ? undefined : Math.round(inventoryValue / ingredient.currentStockQuantity);
+  const invalidThreshold =
+    !Number.isSafeInteger(Number(threshold)) || Number(threshold) < 0;
+
+  async function save() {
+    setSaving(true);
+    setMessage('');
+    try {
+      await onSave({
+        id: current.id,
+        name,
+        baseUnit: current.baseUnit,
+        lowStockThreshold: Number(threshold),
+        expectedRevision: current.revision,
+      });
+      setMessage('Changes saved.');
+    } catch (caught) {
+      setMessage(caught instanceof Error ? caught.message : 'Save failed.');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <aside className={styles.panel} aria-labelledby="stock-item-title">
       <header className={styles.header}>
         <span className={styles.heading}>
-          <h2 id="stock-item-title">Stock item</h2>
-          <small>Ingredient details and movements</small>
+          <small>STOCK DETAILS</small>
+          <h2 id="stock-item-title">Edit ingredient</h2>
         </span>
         <span className={styles.headerActions}>
-          <button type="button" onClick={() => onEdit(ingredient)}>
-            <Pencil width={12} height={12} aria-hidden="true" />
-            Edit
-          </button>
-          <strong
-            className={`${styles.stockStatus} ${styles[level.toLowerCase()]}`}
-          >
+          <strong className={`${styles.stockStatus} ${styles[level.toLowerCase()]}`}>
             <span aria-hidden="true" />
             {level}
           </strong>
+          <button
+            type="button"
+            className={styles.deleteAction}
+            disabled={saving}
+            onClick={async () => {
+              if (!window.confirm(
+                `Delete ${ingredient.name}? Drinks using it will need updating.`,
+              )) return;
+              setSaving(true);
+              setMessage('');
+              try {
+                await onDelete(ingredient);
+              } catch (caught) {
+                setMessage(caught instanceof Error
+                  ? caught.message
+                  : 'Ingredient could not be deleted.');
+              } finally {
+                setSaving(false);
+              }
+            }}
+          >
+            Delete
+          </button>
         </span>
       </header>
 
-      <section className={styles.identity} aria-label="Selected ingredient">
-        <span className={styles.identityLeft}>
-          <span className={styles.artwork}>
-            <StockIcon name={ingredientIcon(ingredient)} size={20} />
-          </span>
-          <span className={styles.identityCopy}>
-            <strong>{ingredient.name}</strong>
-            <small>{ingredient.key.toUpperCase()} · Revision {ingredient.revision}</small>
-          </span>
+      <div className={styles.identity}>
+        <span className={styles.identityCopy}>
+          <strong>{name || ingredient.name}</strong>
+          <small>
+            {ingredient.key.toUpperCase()} · {baseUnitLabel(ingredient.baseUnit)}
+          </small>
         </span>
-        <span className={styles.unit}>
-          <small>BASE UNIT</small>
-          <strong>{baseUnitLabel(ingredient.baseUnit)}</strong>
+        <span className={styles.onHand}>
+          <strong>
+            {formatStockQuantity(
+              ingredient.currentStockQuantity,
+              ingredient.baseUnit,
+            )}
+          </strong>
+          <small>On hand</small>
         </span>
-      </section>
+      </div>
 
       <span className={`${styles.divider} ${styles.identityDivider}`} aria-hidden="true" />
+      <h3 className={styles.infoTitle}>Ingredient information</h3>
+
+      <label className={`${styles.field} ${styles.nameField}`}>
+        <span>Ingredient name</span>
+        <input
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+      </label>
+      <label className={`${styles.field} ${styles.thresholdField}`}>
+        <span>Low-stock threshold</span>
+        <input
+          type="number"
+          min="0"
+          step="1"
+          placeholder="0"
+          value={threshold}
+          onChange={(event) => setThreshold(event.target.value)}
+        />
+      </label>
+
+      <span className={`${styles.divider} ${styles.infoDivider}`} aria-hidden="true" />
 
       <section className={styles.levelSection} aria-labelledby="stock-level-title">
         <header className={styles.levelHeader}>
@@ -148,28 +219,19 @@ export function StockDetailPanel({
             </span>
           ))}
         </div>
-        <p className={styles.costSummary}>{ingredient.costStatus === 'complete' && inventoryValue !== undefined ? <>Inventory value {formatMoney(inventoryValue)} · average {formatMoney(averageCost ?? 0)} / {formatStockQuantity(1, ingredient.baseUnit)}</> : 'Cost incomplete — receive a priced package before claiming inventory value.'}</p>
-        <div
-          className={`${styles.warning} ${level === 'Healthy' ? styles.warningHealthy : ''} ${archived ? styles.warningArchived : ''}`}
-        >
-          <span>
-            {archived
-              ? 'Archived ingredients remain linked to history and recipes.'
-              : difference < 0
-                ? `${formatStockQuantity(-difference, ingredient.baseUnit)} below minimum. Warning only; sales remain available.`
-                : `${formatStockQuantity(difference, ingredient.baseUnit)} above minimum.`}
-          </span>
-        </div>
+        <p className={styles.costSummary}>
+          {ingredient.costStatus === 'complete' && inventoryValue !== undefined
+            ? `Inventory value ${formatMoney(inventoryValue)} · average ${formatMoney(averageCost ?? 0)} / ${formatStockQuantity(1, ingredient.baseUnit)}`
+            : 'Cost incomplete — receive a priced package before claiming inventory value.'}
+        </p>
       </section>
-
-      <span className={`${styles.divider} ${styles.levelSectionDivider}`} aria-hidden="true" />
 
       <section className={styles.recipes} aria-labelledby="linked-recipes-title">
         <header className={styles.sectionHeader}>
           <h3 id="linked-recipes-title">Linked recipes</h3>
           <small>
             {detail?.linkedRecipes.length ?? 0} product
-            {(detail?.linkedRecipes.length ?? 0) === 1 ? "" : "s"}
+            {(detail?.linkedRecipes.length ?? 0) === 1 ? '' : 's'}
           </small>
         </header>
         <div className={styles.recipeList}>
@@ -179,12 +241,7 @@ export function StockDetailPanel({
           ) : null}
           {linkedRecipes.map((recipe) => (
             <article className={styles.recipe} key={recipe.productId}>
-              <span className={styles.recipeIdentity}>
-                <span className={styles.recipeIcon}>
-                  <StockIcon name={ingredientIcon(ingredient)} size={13} />
-                </span>
-                <strong>{recipe.productName}</strong>
-              </span>
+              <strong>{recipe.productName}</strong>
               <small>
                 {formatStockQuantity(recipe.quantity, ingredient.baseUnit)} / sale
               </small>
@@ -234,22 +291,30 @@ export function StockDetailPanel({
         <button
           className={styles.adjust}
           type="button"
-          disabled={archived}
           onClick={() => onAdjust(ingredient, 'set-count')}
         >
-          <SliderAlt width={15} height={15} aria-hidden="true" />
-          <span>Adjust count</span>
+          Adjust count
         </button>
         <button
           className={styles.receive}
           type="button"
-          disabled={archived}
           onClick={() => onReceivePurchase(ingredient)}
         >
           <ArrowDown width={15} height={15} aria-hidden="true" />
-          <span>Receive purchase</span>
+          Receive
         </button>
       </footer>
+
+      {message ? <p className={styles.notice}>{message}</p> : null}
+      <button
+        type="button"
+        className={styles.save}
+        onClick={save}
+        disabled={saving || !name.trim() || invalidThreshold}
+      >
+        <Save width={16} height={16} aria-hidden="true" />
+        <span>{saving ? 'Saving…' : 'Save changes'}</span>
+      </button>
 
       {showHistory && detail ? (
         <section

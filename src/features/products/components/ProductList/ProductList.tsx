@@ -119,11 +119,14 @@ export function ProductList({
                     <span
                       className={`${styles.productIcon} ${selected ? styles.productIconActive : ''}`}
                     >
-                      <Icon width={17} height={17} aria-hidden="true" />
+                      {product.imageJpeg ? (
+                        <img src={product.imageJpeg} alt="" />
+                      ) : (
+                        <Icon width={17} height={17} aria-hidden="true" />
+                      )}
                     </span>
                     <span className={styles.productCopy}>
                       <strong>{product.name}</strong>
-                      <small>{product.key.toUpperCase()}</small>
                     </span>
                   </span>
                   <strong className={styles.price}>

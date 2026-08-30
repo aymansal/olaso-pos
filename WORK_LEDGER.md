@@ -125,6 +125,86 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 (30 Aug 2026): Ingredient editing is the Stock right card (name +
+  threshold, Save/Delete). Add ingredient is create-only; its base-unit menu
+  matches the 47px fields. Product archive UI and ingredient archive UI are
+  gone. Table and detail no longer show ingredient icons. StockIcon removed.
+  Orders search/tabs/dates are 42px with 12px type. MenuSelect compact labels
+  and search placeholders are 12px. Android research: React/CSS only. Checks:
+  `check:css-scope`, `tsc -b`, `npm run build`, `android:beta`. Install-over
+  SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted until this card commit.
+  Exact next action: owner checks Add ingredient unit menu, Edit ingredient on
+  the right card, no archive, no table/detail icons, Orders outlines, and
+  placeholder size.
+- POLISH-01 (30 Aug 2026): Product archive UI is gone (Edit Product control and
+  Archived availability filter). Sizes overlay is one header row plus compact
+  single-line fields. Add product/category/ingredient keep the same layout with
+  ~30% larger type and 47px fields; Add category button label is 12px. Orders
+  search/tabs/dates and Stock search share a 36px outline. Stock title counts
+  read Active items / Low stock / Used today / Corrections beside the numbers.
+  Stock Edit is a quiet 28px pill. Receive purchase and Adjust count have no
+  decorative ingredient icons. Android research: React/CSS only. Checks:
+  `check:css-scope`, `tsc -b`, `npm run build`, `android:beta`. Install-over
+  SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next action: owner
+  checks product archive gone, Sizes one-line rows, larger add overlays, Orders
+  and Stock search outlines, Stock metric labels, quieter Edit, and icon-free
+  stock popups.
+- POLISH-01 (30 Aug 2026): Overlays no longer autoFocus a field (keyboard stays
+  closed until the operator taps a text box). Backdrop tap blurs / waits for
+  the IME to close first; a second backdrop tap closes the overlay. Payment
+  still cannot close after the first tender. Android research: WebView IME
+  opens on `autoFocus`; `blur()` plus `visualViewport` height dismisses it
+  without a native keyboard plugin. Checks: `tsc -b`, `npm run build`,
+  `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and relaunched.
+  Uncommitted. Exact next action: owner opens Add product, confirms no
+  keyboard until the name field is tapped, then taps outside once to close
+  the keyboard and again to close the overlay.
+- POLISH-01 (30 Aug 2026): Orders DATE is one baseline (date + time). Products
+  and Stock row values share one vertical center; Stock copies Products
+  (centered STATUS chips, green selected mark). Stock title metrics are quiet
+  counts beside Add ingredient. Add product is 320px (name+photo, category+price
+  on one row). Category and Add ingredient overlays are smaller; base unit
+  matches the 36px threshold. Overlays close on X or backdrop (Payment stays
+  locked after the first tender). Product photos compress to JPEG ≤16KB on the
+  tablet, then SQLite schema 22 `image_jpeg` and Convex `imageJpeg`. Android
+  research: WebView `<input type="file" accept="image/*">` plus canvas compress;
+  no native picker plugin. Checks: `check:css-scope`, `tsc -b`,
+  `check:local-catalog`, `check:management`, `npx convex dev --once`,
+  `npm run build`, `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and
+  relaunched. Uncommitted. Exact next action: owner checks Orders date/time,
+  Products/Stock row alignment, smaller Add product/category/ingredient
+  overlays, backdrop close, and product photo pick on Add product plus the
+  Edit Product artwork pill.
+- POLISH-01 (30 Aug 2026): Products rows hide the code (kept on Edit Product),
+  same 65px row, larger type. Orders table taller; showing-count + pager sit
+  together near the card bottom; eight equal 55px rows, larger type. Stock
+  metrics sit on the title row; table shows seven equal rows, no base-unit
+  subtitle, larger type. Android research: React/CSS only. Checks:
+  `check:css-scope`, `tsc -b`, `npm run build`, `android:beta`. Install-over
+  SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next action: owner
+  checks Products name-only rows, Orders footer/rows, and Stock title-row
+  metrics plus seven inventory rows.
+- POLISH-01 (30 Aug 2026): Shared Lock in-app list (`MenuSelect`) replaces every
+  native `<select>` except date/month. Products search/filter/sort sit on the
+  title row; table is seven equal-height rows that do not stretch on short
+  pages; Add product overlay is 400px. Android research: React/CSS only, no
+  native picker. Checks: `check:css-scope`, `tsc -b`, `npm run build`,
+  `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and relaunched.
+  Uncommitted. Exact next action: owner checks Lock staff list, Products
+  title-row filters, seven vs two product rows, Add product width, and
+  dropdowns in Products/Stock/popups (leave calendars alone).
+- POLISH-01 (30 Aug 2026): Choices overlay: tabs are Groups, rows are Choices.
+  Extra sits left of the price; trash at the row’s right. One Usual per group
+  (Several no longer allows two). Android research: React/CSS only. Checks:
+  `check:css-scope`, `tsc -b`, `npm run build`, `android:beta`. Install-over
+  SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next action: owner
+  opens Choices, taps Usual on two rows, confirms only the last one stays on.
+- POLISH-01 (30 Aug 2026): Choices card 600→520px. Number fields treat 0 as a
+  real placeholder so typing 1 is 1, not 01 (Choices, Recipe, prices, sizes,
+  stock, costs). Android research: React/CSS only. Checks: `check:css-scope`,
+  `tsc -b`, `npm run build`, `android:beta`. Install-over SM-X115
+  `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next action: owner opens
+  Choices Several, taps At least, types 1, and confirms a tighter card.
 - POLISH-01 (30 Aug 2026): Choices overlay is 600px with 36px fields. Section
   and choice names no longer stretch. At least / At most use filled 44px
   counts with 10px label gap (labels were not flex, so gap never applied).
@@ -1526,6 +1606,37 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-30 — POLISH-01 overlay keyboard vs backdrop close
+
+- Removed dialog `autoFocus`. Backdrop close now dismisses an open keyboard
+  first (`blur` + visualViewport), then closes on the next dimmed tap.
+- Exact next action: owner checks Add product keyboard on the tablet.
+
+### 2026-08-30 — POLISH-01 table alignment, compact overlays, product photos
+
+- Orders date/time share one baseline. Products and Stock cells center on one
+  line; Stock STATUS is a centered chip with the Products green selected mark.
+- Stock title-row Active/Low/Today/Counts are quiet number+label pairs.
+- Add product 320px with photo picker; category and ingredient overlays
+  shrunk; unit control matches the 36px threshold. Backdrop or X closes
+  overlays except a locked PaymentDialog.
+- Schema 22 + Convex `imageJpeg`: canvas JPEG cap 16,384 chars before SQLite
+  or the management outbox.
+- Exact next action: owner checks alignment, overlay size, backdrop close,
+  and product photos on the tablet.
+
+### 2026-08-30 — POLISH-01 Choices group vs choice, one Usual
+
+- Overlay name field is Group; list rows are Choices. Extra is left of the
+  price; delete is at the right edge. Usual is exclusive in a group.
+- Exact next action: owner checks Usual and Extra on the tablet.
+
+### 2026-08-30 — POLISH-01 tighter Choices and number placeholders
+
+- Choices width 520px. Empty numeric 0 is a placeholder across product, recipe,
+  stock, and cost number fields.
+- Exact next action: owner types into At least / Extra / Price on the tablet.
 
 ### 2026-08-30 — POLISH-01 compact Choices overlay
 

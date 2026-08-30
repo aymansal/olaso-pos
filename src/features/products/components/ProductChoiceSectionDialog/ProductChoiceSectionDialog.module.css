@@ -10,7 +10,7 @@
 .dialog {
   display: flex;
   flex-direction: column;
-  width: 600px;
+  width: 520px;
   max-height: 640px;
   padding: 20px 20px 18px;
   overflow: hidden;
@@ -31,6 +31,7 @@
 .valuesHead,
 .valueRow,
 .extra,
+.extraBox,
 .sizeRules,
 .sizeRule,
 .stock,
@@ -95,6 +96,10 @@
   background: var(--olaso-table-head);
 }
 
+.remove {
+  margin-left: auto;
+}
+
 .tabs {
   flex-shrink: 0;
   gap: 6px;
@@ -146,7 +151,6 @@
 
 .nameField,
 .limit,
-.extra,
 .sizeRule {
   flex-direction: column;
   gap: 8px;
@@ -156,12 +160,11 @@
 }
 
 .nameField {
-  flex: 0 0 168px;
-  width: 168px;
+  flex: 0 0 140px;
+  width: 140px;
 }
 
-.dialog input,
-.dialog select {
+.dialog input {
   box-sizing: border-box;
   height: 36px;
   padding: 0 10px;
@@ -170,8 +173,12 @@
   color: var(--olaso-text);
   background: var(--olaso-white);
   font: inherit;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
+}
+
+.dialog input::placeholder {
+  color: var(--olaso-text-meta);
 }
 
 .nameField input {
@@ -307,13 +314,13 @@
 }
 
 .valueRow {
-  align-items: end;
+  align-items: center;
   gap: 8px;
 }
 
 .valueName {
-  flex: 0 0 160px;
-  width: 160px;
+  flex: 0 0 140px;
+  width: 140px;
   min-width: 0;
 }
 
@@ -322,8 +329,16 @@
 }
 
 .extra {
+  align-items: center;
+  gap: 8px;
+  color: var(--olaso-copy);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.extraBox {
   position: relative;
-  width: 72px;
+  align-items: center;
 }
 
 .extra input {
@@ -334,7 +349,6 @@
 .extra small {
   position: absolute;
   right: 8px;
-  bottom: 11px;
   color: var(--olaso-text-meta);
   font-size: 8px;
   font-weight: 700;
@@ -387,7 +401,7 @@
   gap: 6px;
 }
 
-.effect select {
+.effectSelect {
   width: 110px;
 }
 
@@ -410,7 +424,7 @@
   gap: 8px;
 }
 
-.copy select {
+.copySelect {
   width: 180px;
 }
 
@@ -427,7 +441,7 @@
   font-weight: 600;
 }
 
-.mapping select {
+.mapSelect {
   width: 110px;
 }
 

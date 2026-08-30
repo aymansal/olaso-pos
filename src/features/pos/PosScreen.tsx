@@ -234,7 +234,11 @@ export function PosScreen({
             categoryId: categoryKey,
             name: product.name,
             priceCentimes: product.priceCentimes,
-            image: productImage(product.imageAssetKey, categoryArtworkKey),
+            image: productImage(
+              product.imageAssetKey,
+              categoryArtworkKey,
+              product.imageJpeg,
+            ),
           };
         }),
     [categoryArtworkKeyById, categoryKeyById, menu],

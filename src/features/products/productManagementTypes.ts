@@ -18,6 +18,7 @@ export type ManagedProduct = {
   basePriceCentimes: number;
   status: 'active' | 'unavailable' | 'archived';
   imageAssetKey?: string;
+  imageJpeg?: string;
   sortOrder: number;
   currentRecipeVersionId?: string;
   revision: number;
@@ -124,4 +125,5 @@ export type ProductSaveInput = {
   status: 'active' | 'unavailable';
   sortOrder: number;
   expectedRevision?: number;
+  imageJpeg?: string;
 };

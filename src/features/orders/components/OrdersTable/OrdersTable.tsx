@@ -106,7 +106,7 @@ export function OrdersTable({
           </strong>
           <span className={styles.when} role="cell">
             <strong>{when.date}</strong>
-            <small>{when.time}</small>
+            <span>{when.time}</span>
           </span>
           <span className={styles.statusCol} role="cell">
             <span className={`${styles.status} ${styles[status.tone]}`}>

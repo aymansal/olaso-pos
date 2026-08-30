@@ -58,6 +58,20 @@ export function cleanOptionalText(
   return cleanText(value, label, maxLength);
 }
 
+export function cleanProductImageJpeg(value: string | undefined) {
+  if (!value) return undefined;
+  if (
+    !value.startsWith('data:image/jpeg;base64,') ||
+    value.length > 16_384
+  ) {
+    return fail(
+      'INVALID_ARGUMENT',
+      'Product photo is too large. Choose a smaller image.',
+    );
+  }
+  return value;
+}
+
 export function cleanKey(value: string | undefined, label: string) {
   if (
     !value ||

@@ -1,6 +1,6 @@
-import { ArrowDown, Save, SliderAlt, X } from '@boxicons/react';
+import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import type {
   ManagedIngredient,
   StockAdjustmentMode,
@@ -31,7 +31,11 @@ export function StockAdjustmentDialog({
 }: StockAdjustmentDialogProps) {
   const receiving = mode === 'receive';
   const [quantity, setQuantity] = useState(
-    receiving ? '' : String(ingredient.currentStockQuantity),
+    receiving
+      ? ''
+      : ingredient.currentStockQuantity
+        ? String(ingredient.currentStockQuantity)
+        : '',
   );
   const [reason, setReason] = useState(receiving ? 'Stock received' : '');
   const [error, setError] = useState('');
@@ -59,7 +63,11 @@ export function StockAdjustmentDialog({
 
   return (
     <OverlayPortal>
-    <div className={styles.overlay} role="presentation">
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+    >
       <section
         className={styles.dialog}
         role="dialog"
@@ -79,13 +87,6 @@ export function StockAdjustmentDialog({
         </header>
 
         <div className={styles.ingredient}>
-          <span className={styles.icon}>
-            {receiving ? (
-              <ArrowDown width={18} height={18} aria-hidden="true" />
-            ) : (
-              <SliderAlt width={18} height={18} aria-hidden="true" />
-            )}
-          </span>
           <span>
             <strong>{ingredient.name}</strong>
             <small>
@@ -104,11 +105,11 @@ export function StockAdjustmentDialog({
               {baseUnitLabel(ingredient.baseUnit)}
             </span>
             <input
-              autoFocus
               type="number"
               min={receiving ? 1 : 0}
               step="1"
               value={quantity}
+              placeholder="0"
               onChange={(event) => setQuantity(event.target.value)}
             />
           </label>

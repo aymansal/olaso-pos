@@ -47,6 +47,8 @@ data, reporting summaries, and development seeding.
 - Report snapshots read at most 32 indexed daily summaries per current/prior
   range, accept no more than 31 days, and cap each detail aggregate at 20.
 - Store money as integer centimes and stock in integer ingredient base units.
+- Product photos are optional compressed JPEG data URLs (`imageJpeg`), never
+  bundled-key replacements and never uncompressed camera files.
 - Keep sales, corrections, stock movements, purchases, immutable recipes, and
   compensation append-only or historical. Live categories, products,
   ingredients, and owner-managed staff may be permanently deleted only after

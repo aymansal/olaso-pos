@@ -3,11 +3,11 @@ import type {
   ManagedStockMovement,
   StockBaseUnit,
 } from './stockManagementTypes';
-import type { StockIconName } from './components/StockIcon/StockIcon';
+
 export { formatStockQuantity } from '../../lib/stock.ts';
 
 export type StockUnitGroup = 'all' | 'liquids' | 'weighed' | 'pieces';
-export type StockLevelFilter = 'all' | 'low' | 'healthy' | 'archived';
+export type StockLevelFilter = 'all' | 'low' | 'healthy';
 
 export function unitGroup(unit: StockBaseUnit): Exclude<StockUnitGroup, 'all'> {
   if (unit === 'millilitre') return 'liquids';
@@ -43,22 +43,8 @@ export function matchesLevelFilter(
   filter: StockLevelFilter,
 ) {
   const level = ingredientLevel(ingredient).toLowerCase();
-  if (filter === 'archived') return level === 'archived';
   return ingredient.status === 'active'
     && (filter === 'all' || level === filter);
-}
-
-export function ingredientIcon(ingredient: ManagedIngredient): StockIconName {
-  if (ingredient.key.includes('coffee')) return 'coffee';
-  if (
-    ingredient.key.includes('matcha') ||
-    ingredient.key.includes('hojicha') ||
-    ingredient.key.includes('tea')
-  ) {
-    return 'leaf';
-  }
-  if (ingredient.baseUnit === 'millilitre') return 'drop';
-  return 'package';
 }
 
 export function movementLabel(

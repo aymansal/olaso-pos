@@ -70,6 +70,7 @@
 .search {
   display: flex;
   align-items: center;
+  box-sizing: border-box;
   width: 250px;
   height: 42px;
   gap: 9px;
@@ -87,7 +88,7 @@
   outline: 0;
   color: var(--olaso-text);
   background: transparent;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -119,6 +120,7 @@
 .filters {
   position: relative;
   display: flex;
+  box-sizing: border-box;
   width: 402px;
   height: 42px;
   overflow: hidden;
@@ -151,7 +153,7 @@
   border: 0;
   border-radius: 17px;
   background: transparent;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   transition: color 180ms ease;
@@ -183,6 +185,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-sizing: border-box;
   width: 100%;
   height: 42px;
   gap: 8px;
@@ -191,7 +194,7 @@
   border-radius: 21px;
   color: var(--olaso-text);
   background: transparent;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -228,7 +231,7 @@
   border-radius: 10px;
   color: var(--olaso-text);
   background: var(--olaso-white);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .dateMenu button {
@@ -242,7 +245,7 @@
 
 .footer {
   position: absolute;
-  top: 610px;
+  top: 630px;
   left: 24px;
   display: flex;
   align-items: center;
@@ -250,7 +253,7 @@
   width: 838px;
   height: 44px;
   color: var(--olaso-copy);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
 }
 

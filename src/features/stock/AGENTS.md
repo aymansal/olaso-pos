@@ -11,9 +11,9 @@ history.
 - `StockScreen.tsx` composes inventory/detail panels and owns screen filters,
   selection, pagination, and dialog state.
 - `StockInventoryPanel` and `StockTable` own stock discovery and rows.
-- `StockDetailPanel` owns the selected ingredient detail.
-- `StockIcon` owns stock item icon presentation.
-- `IngredientDialog` owns create/edit/archive/restore/delete interaction.
+- `StockDetailPanel` owns selected-ingredient editing, stock facts, and
+  movement history, like Edit Product.
+- `IngredientDialog` owns create-only Add ingredient.
 - `StockAdjustmentDialog` owns receive and physical-count interaction.
 - `stockManagementTypes.ts` defines plain feature records and actions;
   `stockPresentation.ts` formats exact quantities at the display edge.
@@ -31,7 +31,6 @@ history.
   Creating an ingredient with opening quantity requires the price paid; that
   quantity is the first purchase. Empty-shelf create uses quantity 0.
 - Components stay prop-driven and never import Convex.
-- Archived ingredients remain available to history and can be restored.
 - Confirmed ingredient deletion preserves purchase, movement, recipe, and
   report history; removes active recipe/choice references; and marks affected
   products unavailable until their recipe is repaired.
@@ -40,17 +39,27 @@ history.
 - Offline reads use saved ingredients plus bounded local movement, purchase,
   and recipe-link detail instead of waiting for Convex.
 - Internet state never disables a valid ingredient, threshold, purchase,
-  archive/restore/delete, or stock-adjustment form.
-- All stock levels means all active ingredients; archived ingredients appear
-  only when the operator deliberately selects the Archived filter.
+  delete, or stock-adjustment form.
+- All stock levels means all active ingredients. Ordinary lists exclude leftover
+  archived rows; there is no ingredient archive action.
 - The inventory table opens on the first visible ingredient. Pagination shows
-  the same sliding three-page window as Orders. The ingredient column starts
-  at the table’s left edge; status ends at the right. Other headers stay
-  centered over their values.
+  the same sliding three-page window as Orders, with a fixed page of seven
+  equal-height rows that do not stretch. Unit-group and stock-level
+  filters use the shared in-app list menu, not the Android native select.
+  Ingredient names sit at the left without an icon; remaining headers,
+  including STATUS, sit centered over their values. Selected rows use the
+  same green leading mark as Products. Rows show the ingredient name only;
+  the unit group column already names the family. Title-row counts sit
+  beside Add ingredient as Active items, Low stock, Used today, and
+  Corrections. The search field matches the 36-pixel All units / All stock
+  levels outline with 12-pixel type. Edit ingredient is the right card:
+  name and threshold fields, Save and Delete, no archive, no base-unit menu,
+  and no decorative ingredient icons. Add ingredient stays a create overlay
+  whose base-unit menu matches the other 47-pixel fields.
 
 ## Work Guidance
 
-- Keep summary metrics compact and centered within their cards.
+- Keep summary metrics compact on the Stock inventory title row.
 - Keep stock list/table behavior separate from selected-item detail.
 - Do not add deduction or adjustment calculations to React components.
 - Keep all list/detail reads bounded and pagination client-side only within the
@@ -60,7 +69,7 @@ history.
 
 - Run `npm run build`.
 - Run `npm run check:inventory` after inventory domain changes.
-- Inspect Stock at 1340 × 800, including centered metrics, status clarity, table
+- Inspect Stock at 1340 × 800, including title-row metrics, status clarity, table
   alignment, detail-panel fit, dialogs, and movement history.
 
 ## Child DOX Index

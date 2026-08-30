@@ -1,6 +1,6 @@
 import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import type { ManagedCategory } from '../../productManagementTypes';
 import { CategoryArtworkPicker } from '../CategoryArtworkPicker/CategoryArtworkPicker.tsx';
 import { categoryArtworkKey } from '../../../../lib/categoryArtwork.ts';
@@ -40,7 +40,11 @@ export function CategoryDialog({
 
   return (
     <OverlayPortal>
-    <div className={styles.overlay} role="presentation">
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+    >
       <section
         className={styles.dialog}
         role="dialog"
@@ -60,7 +64,6 @@ export function CategoryDialog({
         <label>
           <span>Category name</span>
           <input
-            autoFocus
             value={name}
             onChange={(event) => setName(event.target.value)}
             onKeyDown={(event) => {

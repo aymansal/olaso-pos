@@ -29,10 +29,12 @@ Provides bounded order history and a selected order's receipt-style detail.
   actions stay pinned to the bottom of the card so completed and cancelled
   receipts do not shift the layout.
 - The date picker and quick periods remain compact and open toward available
-  screen space.
+  screen space. Search, All/Completed/Cancelled, and All dates share one
+  42-pixel outline with 12-pixel type.
 - History reads are bounded and paginated. The pager uses the saved SQLite
-  order count; each page click loads that OFFSET window of eight rows. Next on
-  the last page stays there.
+  order count; each page click loads that OFFSET window of eight equal-height
+  rows. The showing-count and pager sit on one line near the card bottom.
+  Next on the last page stays there.
 - Show immutable receipt snapshots and the local/cloud sync state without
   reconstructing current product data.
 - Reprint and whole-sale cancellation are the detail actions. Receipt preview

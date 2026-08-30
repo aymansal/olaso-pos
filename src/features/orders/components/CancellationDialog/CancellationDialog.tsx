@@ -1,6 +1,6 @@
 import { X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import styles from './CancellationDialog.module.css';
 
 export function CancellationDialog({
@@ -31,7 +31,11 @@ export function CancellationDialog({
 
   return (
     <OverlayPortal>
-    <div className={styles.overlay} role="presentation">
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+    >
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="cancel-order-title">
         <header>
           <span><small>WHOLE-SALE CORRECTION</small><h2 id="cancel-order-title">Cancel {receiptNumber}</h2></span>
@@ -40,7 +44,7 @@ export function CancellationDialog({
         <p>This records the cancellation and restores the saved stock. Card payment reversals must be handled outside Olaso.</p>
         <label>
           <span>Required reason</span>
-          <textarea autoFocus value={reason} maxLength={240} onChange={(event) => setReason(event.target.value)} />
+          <textarea value={reason} maxLength={240} onChange={(event) => setReason(event.target.value)} />
         </label>
         {error ? <strong>{error}</strong> : null}
         <footer>

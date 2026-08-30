@@ -8,10 +8,10 @@
 }
 
 .dialog {
-  width: 540px;
-  padding: 24px;
+  width: 416px;
+  padding: 18px;
   border: 1px solid var(--olaso-panel-border);
-  border-radius: 28px;
+  border-radius: 24px;
   background: var(--olaso-white);
 }
 
@@ -19,6 +19,8 @@
 .dialog header > span,
 .dialog label,
 .dialog footer,
+.nameRow,
+.pair,
 .price,
 .save {
   display: flex;
@@ -37,22 +39,22 @@
 
 .dialog header small {
   color: var(--olaso-copy);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .dialog h2 {
-  margin: 3px 0 0;
+  margin: 2px 0 0;
   color: var(--olaso-text);
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .dialog header button {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   padding: 0;
   border: 1px solid var(--olaso-divider);
   border-radius: 50%;
@@ -60,23 +62,49 @@
   background: transparent;
 }
 
+.nameRow,
+.pair {
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.nameRow label,
+.pair label {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+
 .dialog label {
-  gap: 7px;
-  margin-top: 18px;
+  gap: 6px;
   color: var(--olaso-copy);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
 }
 
-.dialog input,
-.dialog select {
-  height: 44px;
+.dialog input {
+  width: 100%;
+  height: 47px;
+  box-sizing: border-box;
   padding: 0 14px;
   border: 1px solid var(--olaso-control-border);
-  border-radius: 22px;
+  border-radius: 23px;
   color: var(--olaso-text);
   background: var(--olaso-white);
-  font: inherit;
+  font-size: 13px;
+}
+
+.photo {
+  width: 47px;
+  height: 47px;
+  flex: 0 0 47px;
+}
+
+.pair .categoryMenu button {
+  height: 47px;
+  border-radius: 23px;
+  font-size: 13px;
 }
 
 .price {
@@ -91,26 +119,26 @@
 
 .price small {
   color: var(--olaso-text-meta);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .dialog p {
   margin: 10px 0 0;
   color: var(--olaso-danger);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .dialog footer {
-  margin-top: 22px;
+  margin-top: 16px;
 }
 
 .cancel,
 .save {
-  height: 44px;
-  padding: 0 18px;
-  border-radius: 22px;
-  font-size: 9px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 21px;
+  font-size: 11px;
   font-weight: 700;
 }
 

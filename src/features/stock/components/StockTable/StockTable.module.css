@@ -1,9 +1,9 @@
 .table {
   position: absolute;
-  top: 232px;
+  top: 128px;
   left: 24px;
   width: 838px;
-  height: 428px;
+  height: 532px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
   border-radius: 20px;
@@ -37,7 +37,6 @@
   display: grid;
   grid-template-columns: 270px 120px 110px 110px 100px 128px;
   width: 838px;
-  align-items: center;
 }
 
 .columns {
@@ -45,6 +44,7 @@
   top: 46px;
   left: 0;
   height: 32px;
+  align-items: center;
   background: var(--olaso-product-head);
 }
 
@@ -56,26 +56,26 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
+  height: 100%;
   padding: 0 10px;
   text-align: center;
 }
 
-.columns span:first-child,
-.ingredient {
+.columns span:first-child {
   justify-content: flex-start;
-  padding-left: 12px;
+  padding-left: 20px;
   text-align: left;
 }
 
-.columns span:last-child,
-.statusCell {
-  justify-content: flex-end;
-  padding-right: 12px;
+.ingredient {
+  justify-content: flex-start;
+  padding-left: 20px;
+  text-align: left;
 }
 
 .columns span {
   color: var(--olaso-copy);
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.6px;
 }
@@ -85,6 +85,8 @@
   top: 78px;
   left: 0;
   width: 838px;
+  height: 399px;
+  overflow: hidden;
   background: var(--olaso-white);
 }
 
@@ -93,18 +95,30 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 62px;
+  height: 57px;
   background: var(--olaso-table-selected);
-  transform: translateY(calc(var(--index, 0) * 62px));
+  transform: translateY(calc(var(--index, 0) * 57px));
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   z-index: 0;
 }
 
+.indicator::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 3px;
+  height: 36px;
+  border-radius: 2px;
+  background: var(--olaso-green);
+}
+
 .row {
   position: relative;
   z-index: 1;
-  height: 62px;
+  height: 57px;
+  align-items: stretch;
   padding: 0;
   border-bottom: 1px solid var(--olaso-line-soft);
   border-top: 0;
@@ -119,56 +133,28 @@
 .ingredient {
   display: flex;
   align-items: center;
-  height: 62px;
-  gap: 10px;
+  height: 57px;
 }
 
-.icon {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  border-radius: 12px;
-  color: var(--olaso-copy);
-  background: var(--olaso-neutral-icon);
-}
-
-.selectedIcon {
-  color: var(--olaso-green);
-  background: var(--olaso-product-art);
-}
-
-.ingredientCopy {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ingredientCopy strong {
+.ingredient strong {
   overflow: hidden;
   color: var(--olaso-text);
-  font-size: 9px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ingredientCopy small {
-  color: var(--olaso-text-faint);
-  font-size: 7px;
-  font-weight: 500;
-}
-
 .cell {
   color: var(--olaso-muted);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
 }
 
 strong.cell {
   color: var(--olaso-text);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -179,11 +165,11 @@ strong.lowValue {
 .status {
   display: flex;
   align-items: center;
-  height: 24px;
+  height: 26px;
   gap: 5px;
   padding: 0 9px;
-  border-radius: 12px;
-  font-size: 7px;
+  border-radius: 13px;
+  font-size: 9px;
   font-weight: 700;
 }
 
@@ -222,7 +208,7 @@ strong.lowValue {
 
 .footer {
   position: absolute;
-  top: 390px;
+  top: 482px;
   left: 16px;
   display: flex;
   align-items: center;

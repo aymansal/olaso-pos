@@ -107,7 +107,8 @@ tablet's local SQLite operational record.
 
 - Keep React components free of SQL, synchronization, and secret handling.
 - Evolve SQLite only through ordered migrations; never rewrite a released
-  migration.
+  migration. Schema 22 stores an optional compressed product JPEG data URL
+  (`image_jpeg`); do not queue raw camera files.
 - Store money in integer centimes and ingredient quantities in integer base
   units.
 - Commit related local sale, stock, and outbox effects in one transaction.

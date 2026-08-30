@@ -1,6 +1,7 @@
 import { Save, Plus, Trash, X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type { ManagedProduct, ManagedProductSize } from '../../productManagementTypes';
 import { queueProductSizeSaves } from '../../queueProductSizeSaves';
 import styles from './SizesEditorDialog.module.css';
@@ -32,19 +33,26 @@ export function SizesEditorDialog({ product, sizes, onClose, onSave, onDelete }:
       setError(caught instanceof Error ? caught.message : 'Size save failed.');
     } finally { setSaving(false); }
   }
-  return <OverlayPortal><div className={styles.overlay} role="presentation">
+  return <OverlayPortal><div className={styles.overlay} role="presentation" onPointerDown={(event) => closeOnBackdrop(event, onClose)}>
     <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="sizes-dialog-title">
       <header><span><small>PRODUCT SIZES</small><h2 id="sizes-dialog-title">Sizes · {product.name}</h2></span>
         <button type="button" onClick={onClose} aria-label="Close sizes editor"><X width={18} height={18} /></button></header>
       <div className={styles.rows}>
+        <div className={styles.columnHead} aria-hidden="true">
+          <span>Name</span>
+          <span>Price</span>
+          <span>Order</span>
+          <span>Availability</span>
+          <span>Default</span>
+          <span />
+        </div>
         {drafts.map((size, index) => <article className={styles.row} key={size.id ?? `new-${index}`}>
-          <label><span>Name</span><input value={size.name} onChange={(event) => update(index, { name: event.target.value })} /></label>
-          <label><span>Price · MAD</span><input type="number" min="0" step="0.01" value={size.priceCentimes / 100}
-            onChange={(event) => update(index, { priceCentimes: Math.round(Number(event.target.value) * 100) })} /></label>
-          <label><span>Order</span><input type="number" min="0" value={size.sortOrder}
-            onChange={(event) => update(index, { sortOrder: Number(event.target.value) })} /></label>
-          <label><span>Availability</span><select value={size.status} onChange={(event) => update(index, { status: event.target.value as ManagedProductSize['status'] })}>
-            <option value="active">Active</option><option value="unavailable">Unavailable</option></select></label>
+          <input aria-label="Size name" value={size.name} onChange={(event) => update(index, { name: event.target.value })} />
+          <input aria-label="Price in MAD" type="number" min="0" step="0.01" placeholder="0" value={size.priceCentimes / 100 || ''}
+            onChange={(event) => update(index, { priceCentimes: Math.round(Number(event.target.value) * 100) })} />
+          <input aria-label="Sort order" type="number" min="0" placeholder="0" value={size.sortOrder || ''}
+            onChange={(event) => update(index, { sortOrder: Number(event.target.value) })} />
+          <MenuSelect className={styles.availabilityMenu} ariaLabel="Availability" value={size.status} onChange={(id) => update(index, { status: id as ManagedProductSize['status'] })} options={[{ id: 'active', label: 'Active' }, { id: 'unavailable', label: 'Unavailable' }]} />
           <label className={styles.default}><input type="radio" name="default-size" checked={size.isDefault}
             onChange={() => setDrafts((current) => current.map((item, itemIndex) => ({ ...item, isDefault: itemIndex === index })))} />Default</label>
           <button type="button" onClick={async () => {

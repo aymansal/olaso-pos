@@ -90,7 +90,6 @@
   font-weight: 700;
 }
 
-.block select,
 .block input,
 .qty input {
   box-sizing: border-box;
@@ -103,8 +102,13 @@
   color: var(--olaso-text);
   background: var(--olaso-white);
   font: inherit;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
+}
+
+.block input::placeholder,
+.qty input::placeholder {
+  color: var(--olaso-text-meta);
 }
 
 .amount {

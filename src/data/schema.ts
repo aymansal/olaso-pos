@@ -888,6 +888,12 @@ export const localMigrations = [
       `ALTER TABLE sale_items ADD COLUMN size_name_snapshot TEXT`,
     ],
   },
+  {
+    toVersion: 22,
+    statements: [
+      `ALTER TABLE products ADD COLUMN image_jpeg TEXT`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

@@ -1,4 +1,4 @@
-import { ArrowRight, DotsHorizontalRounded, Save, Leaf, Link, Unlink } from '@boxicons/react';
+import { ArrowRight, Save, Leaf, Link, Unlink } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import type {
   ManagedCategory,
@@ -10,7 +10,9 @@ import type {
   ManagedChoiceSection,
   ProductSaveInput,
 } from '../../productManagementTypes';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import { ProductChoiceSectionDialog } from '../ProductChoiceSectionDialog/ProductChoiceSectionDialog';
+import { ProductImageButton } from '../ProductImageButton/ProductImageButton';
 import { RecipeEditorDialog } from '../RecipeEditorDialog/RecipeEditorDialog';
 import { SizesEditorDialog } from '../SizesEditorDialog/SizesEditorDialog';
 import styles from './ProductEditorPanel.module.css';
@@ -28,10 +30,6 @@ interface ProductEditorPanelProps {
   productCost?: ManagedProductCost;
   isRecipeLoading: boolean;
   onSave: (input: ProductSaveInput) => Promise<void>;
-  onSetStatus: (
-    product: ManagedProduct,
-    status: ManagedProduct['status'],
-  ) => Promise<void>;
   onDelete: (product: ManagedProduct) => Promise<void>;
   onSaveRecipe: (
     product: ManagedProduct,
@@ -66,7 +64,6 @@ export function ProductEditorPanel({
   productCost,
   isRecipeLoading,
   onSave,
-  onSetStatus,
   onDelete,
   onSaveRecipe,
   onSaveSize,
@@ -77,7 +74,8 @@ export function ProductEditorPanel({
 }: ProductEditorPanelProps) {
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [priceMad, setPriceMad] = useState('0');
+  const [priceMad, setPriceMad] = useState('');
+  const [imageJpeg, setImageJpeg] = useState<string>();
   const [available, setAvailable] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -96,9 +94,14 @@ export function ProductEditorPanel({
         categories.find((category) => category.status === 'active')?.id ??
         '',
     );
-    setPriceMad(String((product?.basePriceCentimes ?? 0) / 100));
+    setPriceMad(
+      product?.basePriceCentimes
+        ? String(product.basePriceCentimes / 100)
+        : '',
+    );
     setAvailable(product?.status !== 'unavailable');
-  }, [defaultCategoryId, product?.id, product?.revision]);
+    setImageJpeg(product?.imageJpeg);
+  }, [defaultCategoryId, product?.id, product?.revision, product?.imageJpeg]);
 
   useEffect(() => {
     setMessage('');
@@ -128,6 +131,7 @@ export function ProductEditorPanel({
         status: available ? 'active' : 'unavailable',
         sortOrder: product?.sortOrder ?? nextSortOrder,
         expectedRevision: product?.revision,
+        ...(imageJpeg !== product?.imageJpeg ? { imageJpeg } : {}),
       });
       setMessage('Changes saved.');
     } catch (caught) {
@@ -165,44 +169,6 @@ export function ProductEditorPanel({
             <span />
             <strong>{statusLabel}</strong>
           </span>
-          <button
-            type="button"
-            disabled={!product || saving}
-            aria-label={
-              archived ? 'Restore product' : 'Archive product'
-            }
-            title={archived ? 'Restore product' : 'Archive product'}
-            onClick={async () => {
-              if (!product) return;
-              const nextStatus = archived ? 'active' : 'archived';
-              if (
-                nextStatus === 'archived' &&
-                !window.confirm(`Archive ${product.name}?`)
-              ) {
-                return;
-              }
-              setSaving(true);
-              setMessage('');
-              try {
-                await onSetStatus(product, nextStatus);
-                setMessage(
-                  nextStatus === 'archived'
-                    ? 'Product archived.'
-                    : 'Product restored.',
-                );
-              } catch (caught) {
-                setMessage(
-                  caught instanceof Error
-                    ? caught.message
-                    : 'Status change failed.',
-                );
-              } finally {
-                setSaving(false);
-              }
-            }}
-          >
-            <DotsHorizontalRounded width={16} height={16} aria-hidden="true" />
-          </button>
           {product ? (
             <button
               type="button"
@@ -233,9 +199,15 @@ export function ProductEditorPanel({
 
       <div className={styles.identity}>
         <span className={styles.identityLeft}>
-          <span className={styles.artwork}>
-            <Leaf width={25} height={25} aria-hidden="true" />
-          </span>
+          <ProductImageButton
+            className={styles.artwork}
+            previewUrl={imageJpeg}
+            onChange={setImageJpeg}
+            onError={setMessage}
+            disabled={archived || saving}
+            label="Change product photo"
+            fallback={<Leaf width={25} height={25} aria-hidden="true" />}
+          />
           <span className={styles.identityCopy}>
             <strong>{name || 'New product'}</strong>
             <small>
@@ -276,6 +248,7 @@ export function ProductEditorPanel({
             min="0"
             step="0.01"
             value={priceMad}
+            placeholder="0"
             disabled={archived}
             onChange={(event) => setPriceMad(event.target.value)}
           />
@@ -284,22 +257,20 @@ export function ProductEditorPanel({
       </label>
       <label className={`${styles.field} ${styles.categoryField}`}>
         <span>Category</span>
-        <select
+        <MenuSelect
+          ariaLabel="Category"
           value={categoryId}
           disabled={archived}
-          onChange={(event) => setCategoryId(event.target.value)}
-        >
-          <option value="">Uncategorized</option>
-          {categories.map((candidate) => (
-            <option
-              value={candidate.id}
-              disabled={candidate.status === 'archived'}
-              key={candidate.id}
-            >
-              {candidate.name}
-            </option>
-          ))}
-        </select>
+          onChange={setCategoryId}
+          options={[
+            { id: '', label: 'Uncategorized' },
+            ...categories.map((candidate) => ({
+              id: candidate.id,
+              label: candidate.name,
+              disabled: candidate.status === 'archived',
+            })),
+          ]}
+        />
       </label>
       <div className={`${styles.field} ${styles.availabilityField}`}>
         <span>POS availability</span>

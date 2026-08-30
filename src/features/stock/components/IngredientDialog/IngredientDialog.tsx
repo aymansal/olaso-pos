@@ -1,23 +1,17 @@
-import { Archive, Save, X } from '@boxicons/react';
+import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type {
   IngredientSaveInput,
-  ManagedIngredient,
   StockBaseUnit,
 } from '../../stockManagementTypes';
 import { baseUnitLabel } from '../../stockPresentation';
 import styles from './IngredientDialog.module.css';
 
 interface IngredientDialogProps {
-  ingredient?: ManagedIngredient;
   onClose: () => void;
   onSave: (input: IngredientSaveInput) => Promise<void>;
-  onSetArchived: (
-    ingredient: ManagedIngredient,
-    archived: boolean,
-  ) => Promise<void>;
-  onDelete: (ingredient: ManagedIngredient) => Promise<void>;
 }
 
 const units: StockBaseUnit[] = [
@@ -27,25 +21,14 @@ const units: StockBaseUnit[] = [
   'piece',
 ];
 
-export function IngredientDialog({
-  ingredient,
-  onClose,
-  onSave,
-  onSetArchived,
-  onDelete,
-}: IngredientDialogProps) {
-  const [name, setName] = useState(ingredient?.name ?? '');
-  const [baseUnit, setBaseUnit] = useState<StockBaseUnit>(
-    ingredient?.baseUnit ?? 'gram',
-  );
-  const [threshold, setThreshold] = useState(
-    String(ingredient?.lowStockThreshold ?? 0),
-  );
-  const [openingQuantity, setOpeningQuantity] = useState('0');
+export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
+  const [name, setName] = useState('');
+  const [baseUnit, setBaseUnit] = useState<StockBaseUnit>('gram');
+  const [threshold, setThreshold] = useState('');
+  const [openingQuantity, setOpeningQuantity] = useState('');
   const [openingPriceMad, setOpeningPriceMad] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
-  const archived = ingredient?.status === 'archived';
   const openingCount = Number(openingQuantity);
   const openingCostCentimes = Math.round(Number(openingPriceMad) * 100);
 
@@ -54,15 +37,11 @@ export function IngredientDialog({
     setError('');
     try {
       await onSave({
-        id: ingredient?.id,
         name,
         baseUnit,
         lowStockThreshold: Number(threshold),
-        openingQuantity: ingredient ? undefined : openingCount,
-        ...(ingredient || openingCount === 0
-          ? {}
-          : { openingCostCentimes }),
-        expectedRevision: ingredient?.revision,
+        openingQuantity: openingCount,
+        ...(openingCount === 0 ? {} : { openingCostCentimes }),
       });
       onClose();
     } catch (caught) {
@@ -77,16 +56,19 @@ export function IngredientDialog({
   const invalidNumber =
     !Number.isSafeInteger(Number(threshold)) ||
     Number(threshold) < 0 ||
-    (!ingredient &&
-      (!Number.isSafeInteger(openingCount) ||
-        openingCount < 0 ||
-        (openingCount > 0 &&
-          (!Number.isSafeInteger(openingCostCentimes) ||
-            openingCostCentimes < 1))));
+    !Number.isSafeInteger(openingCount) ||
+    openingCount < 0 ||
+    (openingCount > 0 &&
+      (!Number.isSafeInteger(openingCostCentimes) ||
+        openingCostCentimes < 1));
 
   return (
     <OverlayPortal>
-    <div className={styles.overlay} role="presentation">
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+    >
       <section
         className={styles.dialog}
         role="dialog"
@@ -96,9 +78,7 @@ export function IngredientDialog({
         <header>
           <span>
             <small>STOCK RECORD</small>
-            <h2 id="ingredient-dialog-title">
-              {ingredient ? 'Edit ingredient' : 'Add ingredient'}
-            </h2>
+            <h2 id="ingredient-dialog-title">Add ingredient</h2>
           </span>
           <button type="button" onClick={onClose} aria-label="Close ingredient editor">
             <X width={18} height={18} aria-hidden="true" />
@@ -106,30 +86,22 @@ export function IngredientDialog({
         </header>
 
         <div className={styles.fields}>
-          <label className={styles.name}>
+          <label>
             <span>Ingredient name</span>
-            <input
-              autoFocus
-              value={name}
-              disabled={archived}
-              onChange={(event) => setName(event.target.value)}
-            />
+            <input value={name} onChange={(event) => setName(event.target.value)} />
           </label>
           <label>
             <span>Base unit</span>
-            <select
+            <MenuSelect
+              className={styles.unitMenu}
+              ariaLabel="Base unit"
               value={baseUnit}
-              disabled={Boolean(ingredient)}
-              onChange={(event) =>
-                setBaseUnit(event.target.value as StockBaseUnit)
-              }
-            >
-              {units.map((unit) => (
-                <option value={unit} key={unit}>
-                  {baseUnitLabel(unit)}
-                </option>
-              ))}
-            </select>
+              onChange={(id) => setBaseUnit(id as StockBaseUnit)}
+              options={units.map((unit) => ({
+                id: unit,
+                label: baseUnitLabel(unit),
+              }))}
+            />
           </label>
           <label>
             <span>Low-stock threshold</span>
@@ -137,36 +109,34 @@ export function IngredientDialog({
               type="number"
               min="0"
               step="1"
+              placeholder="0"
               value={threshold}
-              disabled={archived}
               onChange={(event) => setThreshold(event.target.value)}
             />
           </label>
-          {!ingredient ? (
-            <>
-              <label>
-                <span>Opening quantity</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={openingQuantity}
-                  onChange={(event) => setOpeningQuantity(event.target.value)}
-                />
-              </label>
-              <label>
-                <span>Price paid · MAD</span>
-                <input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={openingPriceMad}
-                  disabled={openingCount === 0}
-                  onChange={(event) => setOpeningPriceMad(event.target.value)}
-                />
-              </label>
-            </>
-          ) : null}
+          <label>
+            <span>Opening quantity</span>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              placeholder="0"
+              value={openingQuantity}
+              onChange={(event) => setOpeningQuantity(event.target.value)}
+            />
+          </label>
+          <label>
+            <span>Price paid · MAD</span>
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={openingPriceMad}
+              placeholder="0"
+              disabled={openingCount === 0}
+              onChange={(event) => setOpeningPriceMad(event.target.value)}
+            />
+          </label>
         </div>
 
         <p className={styles.helper}>
@@ -178,65 +148,12 @@ export function IngredientDialog({
         {error ? <p className={styles.error}>{error}</p> : null}
 
         <footer>
-          {ingredient ? (
-            <div className={styles.actions}>
-            <button
-              type="button"
-              className={styles.archive}
-              disabled={saving}
-              onClick={async () => {
-                setSaving(true);
-                setError('');
-                try {
-                  await onSetArchived(ingredient, !archived);
-                  onClose();
-                } catch (caught) {
-                  setError(
-                    caught instanceof Error
-                      ? caught.message
-                      : 'Ingredient status failed.',
-                  );
-                } finally {
-                  setSaving(false);
-                }
-              }}
-            >
-              <Archive width={15} height={15} aria-hidden="true" />
-              {archived ? 'Restore' : 'Archive'}
-            </button>
-            <button
-              type="button"
-              className={styles.deleteAction}
-              disabled={saving}
-              onClick={async () => {
-                if (!window.confirm(
-                  `Delete ${ingredient.name}? Drinks using it will need updating.`,
-                )) return;
-                setSaving(true);
-                setError('');
-                try {
-                  await onDelete(ingredient);
-                  onClose();
-                } catch (caught) {
-                  setError(caught instanceof Error
-                    ? caught.message
-                    : 'Ingredient could not be deleted.');
-                } finally {
-                  setSaving(false);
-                }
-              }}
-            >
-              Delete
-            </button>
-            </div>
-          ) : (
-            <span />
-          )}
+          <span />
           <button
             type="button"
             className={styles.save}
             onClick={submit}
-            disabled={saving || archived || !name.trim() || invalidNumber}
+            disabled={saving || !name.trim() || invalidNumber}
           >
             <Save width={16} height={16} aria-hidden="true" />
             {saving ? 'Saving…' : 'Save'}

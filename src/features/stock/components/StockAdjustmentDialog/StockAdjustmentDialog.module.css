@@ -72,16 +72,6 @@
   background: var(--olaso-stock-strip);
 }
 
-.icon {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  color: var(--olaso-green);
-  background: var(--olaso-green-icon);
-}
-
 .ingredient > span:last-child {
   gap: 3px;
 }

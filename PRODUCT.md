@@ -317,7 +317,7 @@ exclude an ingredient from that size.
 The owner can create any number of product-owned choice sections with any
 useful name; there are no required global groups and no permanent four-option
 Size/Milk/Syrup/Extras template. Each choice can define required or optional
-selection, one or multiple values, defaults, minimum/maximum limits, size
+selection, one or multiple values, one default, minimum/maximum limits, size
 applicability, and price adjustments. A value may add an ingredient, replace
 one ingredient with another, set an exact quantity, remove an ingredient,
 change several ingredients together, or remain an instruction with no stock

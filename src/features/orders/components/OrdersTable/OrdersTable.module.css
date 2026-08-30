@@ -3,7 +3,7 @@
   top: 138px;
   left: 24px;
   width: 838px;
-  height: 456px;
+  height: 480px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
   border-radius: 16px;
@@ -41,8 +41,8 @@
 
 .body {
   position: relative;
-  height: 416px;
-  overflow-y: auto;
+  height: 440px;
+  overflow: hidden;
   background: var(--olaso-white);
 }
 
@@ -51,9 +51,9 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 52px;
+  height: 55px;
   background: var(--olaso-table-selected);
-  transform: translateY(calc(var(--index, 0) * 52px));
+  transform: translateY(calc(var(--index, 0) * 55px));
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   z-index: 0;
@@ -62,7 +62,7 @@
 .row {
   position: relative;
   z-index: 1;
-  height: 52px;
+  height: 55px;
   padding: 0;
   border: 0;
   border-bottom: 1px solid var(--olaso-line-soft);
@@ -78,7 +78,7 @@
 
 .row > strong {
   color: var(--olaso-text-dark-soft);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -100,41 +100,48 @@
 
 .service {
   overflow: hidden;
+  color: var(--olaso-text-service);
+  font-size: 11px;
+  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.service {
-  color: var(--olaso-text-service);
-  font-size: 9px;
-  font-weight: 500;
-}
-
 .when {
+  flex-direction: row;
+  align-items: center;
   gap: 6px;
   white-space: nowrap;
+  line-height: 1;
+}
+
+.when strong,
+.when span {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  line-height: 1;
+  font-size: 10px;
 }
 
 .when strong {
   color: var(--olaso-text);
-  font-size: 8px;
   font-weight: 600;
 }
 
-.when small {
+.when span {
   color: var(--olaso-text-time);
-  font-size: 8px;
   font-weight: 500;
 }
 
 .status {
   display: flex;
   align-items: center;
-  height: 26px;
+  height: 28px;
   gap: 6px;
   padding: 0 10px;
-  border-radius: 13px;
-  font-size: 8px;
+  border-radius: 14px;
+  font-size: 9px;
 }
 
 .status > span {
@@ -167,7 +174,7 @@
 .empty {
   display: grid;
   place-items: center;
-  height: 416px;
+  height: 440px;
   margin: 0;
   color: var(--olaso-text-meta);
   font-size: 10px;

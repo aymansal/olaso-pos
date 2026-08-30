@@ -3,11 +3,9 @@ import type { CSSProperties } from 'react';
 import type { ManagedIngredient } from '../../stockManagementTypes';
 import {
   formatStockQuantity,
-  ingredientIcon,
   ingredientLevel,
   unitGroupLabel,
 } from '../../stockPresentation';
-import { StockIcon } from '../StockIcon/StockIcon';
 import { visiblePageIndexes } from '../../../../lib/pagination';
 import styles from './StockTable.module.css';
 
@@ -83,18 +81,7 @@ export function StockTable({
                   key={ingredient.id}
                 >
                   <span className={styles.ingredient}>
-                    <span
-                      className={`${styles.icon} ${selected ? styles.selectedIcon : ''}`}
-                    >
-                      <StockIcon
-                        name={ingredientIcon(ingredient)}
-                        size={15}
-                      />
-                    </span>
-                    <span className={styles.ingredientCopy}>
-                      <strong>{ingredient.name}</strong>
-                      <small>Base unit: {ingredient.baseUnit}</small>
-                    </span>
+                    <strong>{ingredient.name}</strong>
                   </span>
                   <span className={styles.cell}>
                     {unitGroupLabel(ingredient.baseUnit)}

@@ -70,10 +70,20 @@ const context = { deviceId: 'tablet-test', actor: { staffProfileId: 'manager-tes
 const category = await saveLocalCategory(context, {
   name: 'Offline category', artworkKey: 'cold-drinks', sortOrder: 90,
 }, transaction);
+const jpeg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAP8A';
 const product = await saveLocalProduct(context, {
   name: 'Offline drink', categoryId: category.id, basePriceCentimes: 2200,
-  status: 'active', sortOrder: 90,
+  status: 'active', sortOrder: 90, imageJpeg: jpeg,
 }, transaction);
+assert.equal(
+  database.prepare('SELECT image_jpeg FROM products WHERE id = ?').get(product.id).image_jpeg,
+  jpeg,
+);
+await assert.rejects(() => saveLocalProduct(context, {
+  name: 'Huge photo', categoryId: category.id, basePriceCentimes: 1,
+  status: 'active', sortOrder: 92,
+  imageJpeg: `data:image/jpeg;base64,${'A'.repeat(20_000)}`,
+}, transaction));
 const managedProduct = {
   id: product.id, key: product.id, categoryId: category.id, name: 'Offline drink',
   receiptName: 'Offline drink', basePriceCentimes: 2200, status: 'active',

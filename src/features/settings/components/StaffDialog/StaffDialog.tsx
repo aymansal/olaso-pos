@@ -1,6 +1,7 @@
 import { X } from '@boxicons/react';
 import { useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type { StaffCreationInput } from '../../../../data/localStaff.ts';
 import styles from './StaffDialog.module.css';
 
@@ -41,7 +42,11 @@ export function StaffDialog({
 
   return (
     <OverlayPortal>
-    <div className={styles.overlay} role="presentation">
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+    >
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="staff-dialog-title">
         <header>
           <h2 id="staff-dialog-title">Add staff</h2>
@@ -50,15 +55,20 @@ export function StaffDialog({
         <div className={styles.form}>
           <label>
             <span>Name</span>
-            <input autoFocus maxLength={100} value={name} onChange={(event) => setName(event.target.value)} />
+            <input maxLength={100} value={name} onChange={(event) => setName(event.target.value)} />
           </label>
           <label>
             <span>Role</span>
-            <select value={role} onChange={(event) => setRole(event.target.value as StaffCreationInput['role'])}>
-              <option value="cashier">Cashier</option>
-              <option value="manager">Manager</option>
-              <option value="owner">Owner</option>
-            </select>
+            <MenuSelect
+              ariaLabel="Role"
+              value={role}
+              onChange={(id) => setRole(id as StaffCreationInput['role'])}
+              options={[
+                { id: 'cashier', label: 'Cashier' },
+                { id: 'manager', label: 'Manager' },
+                { id: 'owner', label: 'Owner' },
+              ]}
+            />
           </label>
           <label>
             <span>Six-digit PIN</span>

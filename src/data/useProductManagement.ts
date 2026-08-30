@@ -41,7 +41,7 @@ export function useProductManagement(selectedProductId?: string) {
   const products: ManagedProduct[] = (cache?.products ?? []).map((product) => ({
     id: product.id, key: product.key, categoryId: product.categoryId,
     name: product.name, receiptName: product.receiptName, basePriceCentimes: product.priceCentimes,
-    status: product.status, imageAssetKey: product.imageAssetKey, sortOrder: product.sortOrder,
+    status: product.status, imageAssetKey: product.imageAssetKey, imageJpeg: product.imageJpeg, sortOrder: product.sortOrder,
     currentRecipeVersionId: product.currentRecipeVersionId, revision: product.revision, updatedAt: product.updatedAt,
   }));
   const categories: ManagedCategory[] = (cache?.categories ?? []).map((category) => ({

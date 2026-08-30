@@ -27,6 +27,7 @@ export type OperationalCacheSnapshot = {
     priceCentimes: number;
     status: 'active' | 'unavailable' | 'archived';
     imageAssetKey?: string;
+    imageJpeg?: string;
     sortOrder: number;
     currentRecipeVersionId?: string;
     revision: number;
@@ -382,9 +383,9 @@ export async function replaceOperationalCache(
       await database.run(
         `INSERT INTO products
           (id, category_id, name, receipt_name, price_centimes, status, key,
-           image_asset_key, sort_order, current_recipe_version_id, revision,
-           updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           image_asset_key, image_jpeg, sort_order, current_recipe_version_id,
+           revision, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            category_id = excluded.category_id,
            name = excluded.name,
@@ -393,6 +394,7 @@ export async function replaceOperationalCache(
            status = excluded.status,
            key = excluded.key,
            image_asset_key = excluded.image_asset_key,
+           image_jpeg = excluded.image_jpeg,
            sort_order = excluded.sort_order,
            current_recipe_version_id = excluded.current_recipe_version_id,
            revision = excluded.revision,
@@ -406,6 +408,7 @@ export async function replaceOperationalCache(
           product.status,
           product.key,
           product.imageAssetKey ?? null,
+          product.imageJpeg ?? null,
           product.sortOrder,
           product.currentRecipeVersionId ?? null,
           product.revision,
@@ -970,7 +973,8 @@ export async function loadOperationalCache(
       ),
       database.query(
         `SELECT id, key, category_id, name, receipt_name, price_centimes, status,
-          image_asset_key, sort_order, current_recipe_version_id, revision, updated_at
+          image_asset_key, image_jpeg, sort_order, current_recipe_version_id,
+          revision, updated_at
          FROM products
          ORDER BY CASE WHEN status = 'archived' THEN 1 ELSE 0 END,
            sort_order, updated_at DESC
@@ -1113,6 +1117,7 @@ export async function loadOperationalCache(
       ...(row.image_asset_key
         ? { imageAssetKey: String(row.image_asset_key) }
         : {}),
+      ...(row.image_jpeg ? { imageJpeg: String(row.image_jpeg) } : {}),
       sortOrder: Number(row.sort_order),
       ...(row.current_recipe_version_id
         ? { currentRecipeVersionId: String(row.current_recipe_version_id) }

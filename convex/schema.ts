@@ -91,6 +91,7 @@ export default defineSchema({
     basePriceCentimes: v.number(),
     status: productStatus,
     imageAssetKey: v.optional(v.string()),
+    imageJpeg: v.optional(v.string()),
     sortOrder: v.number(),
     modifierGroupIds: v.array(v.id('modifierGroups')),
     currentRecipeVersionId: v.optional(v.id('recipeVersions')),

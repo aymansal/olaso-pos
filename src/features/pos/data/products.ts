@@ -33,7 +33,9 @@ const productImages: Record<string, string> = {
 export function productImage(
   imageAssetKey: string | undefined,
   categoryArtworkKey: string | undefined,
+  imageJpeg?: string,
 ) {
+  if (imageJpeg?.startsWith('data:image/')) return imageJpeg;
   return imageAssetKey
     ? productImages[imageAssetKey] ?? categoryArtworkUrl(categoryArtworkKey)
     : categoryArtworkUrl(categoryArtworkKey);

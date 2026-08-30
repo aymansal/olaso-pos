@@ -18,7 +18,7 @@ import {
 } from './stockPresentation';
 import styles from './StockScreen.module.css';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 7;
 
 export function StockScreen() {
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>();
@@ -27,8 +27,7 @@ export function StockScreen() {
   const [levelFilter, setLevelFilter] =
     useState<StockLevelFilter>('all');
   const [page, setPage] = useState(0);
-  const [ingredientEditor, setIngredientEditor] =
-    useState<'new' | ManagedIngredient>();
+  const [showAddIngredient, setShowAddIngredient] = useState(false);
   const [adjustment, setAdjustment] = useState<{
     ingredient: ManagedIngredient;
     mode: StockAdjustmentMode;
@@ -103,33 +102,27 @@ export function StockScreen() {
         onLevelFilterChange={setLevelFilter}
         onSelect={setSelectedIngredientId}
         onPageChange={setPage}
-        onAddIngredient={() => setIngredientEditor('new')}
+        onAddIngredient={() => setShowAddIngredient(true)}
       />
       <StockDetailPanel
         ingredient={selectedIngredient}
         detail={inventory.detail}
         isLoading={inventory.isDetailLoading}
-        onEdit={setIngredientEditor}
+        onSave={saveIngredient}
+        onDelete={async (ingredient) => {
+          const replacement = inventory.ingredients.find(
+            (item) => item.id !== ingredient.id && item.status === 'active',
+          );
+          await inventory.deleteIngredient(ingredient);
+          setSelectedIngredientId(replacement?.id);
+        }}
         onAdjust={(ingredient, mode) => setAdjustment({ ingredient, mode })}
         onReceivePurchase={setPurchaseIngredient}
       />
-      {ingredientEditor ? (
+      {showAddIngredient ? (
         <IngredientDialog
-          ingredient={
-            ingredientEditor === 'new' ? undefined : ingredientEditor
-          }
-          onClose={() => setIngredientEditor(undefined)}
+          onClose={() => setShowAddIngredient(false)}
           onSave={saveIngredient}
-          onSetArchived={async (ingredient, archived) => {
-            await inventory.setIngredientArchived(ingredient, archived);
-          }}
-          onDelete={async (ingredient) => {
-            const replacement = inventory.ingredients.find(
-              (item) => item.id !== ingredient.id && item.status === 'active',
-            );
-            await inventory.deleteIngredient(ingredient);
-            setSelectedIngredientId(replacement?.id);
-          }}
         />
       ) : null}
       {adjustment ? (

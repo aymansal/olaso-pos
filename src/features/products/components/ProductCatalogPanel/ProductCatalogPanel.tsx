@@ -1,4 +1,5 @@
-import { ArrowDownUp, CheckCircle, Search, Plus, X } from '@boxicons/react';
+import { Search, Plus, X } from '@boxicons/react';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type {
   ManagedCategory,
   ManagedProduct,
@@ -7,10 +8,22 @@ import { CategorySidebar } from '../CategorySidebar/CategorySidebar';
 import { ProductList } from '../ProductList/ProductList';
 import styles from './ProductCatalogPanel.module.css';
 
-type AvailabilityFilter = 'all' | ManagedProduct['status'];
+type AvailabilityFilter = 'all' | 'active' | 'unavailable';
 type ProductSort = 'updated' | 'name' | 'price';
 
 const UNCATEGORIZED_ID = 'uncategorized';
+
+const AVAILABILITY_OPTIONS: { id: AvailabilityFilter; label: string }[] = [
+  { id: 'all', label: 'All availability' },
+  { id: 'active', label: 'Available' },
+  { id: 'unavailable', label: 'Unavailable' },
+];
+
+const SORT_OPTIONS: { id: ProductSort; label: string }[] = [
+  { id: 'updated', label: 'Recently updated' },
+  { id: 'name', label: 'Product name' },
+  { id: 'price', label: 'Price' },
+];
 
 interface ProductCatalogPanelProps {
   categories: ManagedCategory[];
@@ -74,23 +87,11 @@ export function ProductCatalogPanel({
   return (
     <section className={styles.panel} aria-labelledby="products-title">
       <header className={styles.header}>
-        <span className={styles.heading}>
-          <h1 id="products-title">Products</h1>
-          <small>Manage the menu, pricing and availability</small>
-        </span>
-        <button
-          type="button"
-          className={styles.addProduct}
-          onClick={onAddProduct}
-        >
-          <Plus width={15} height={15} aria-hidden="true" />
-          <span>Add product</span>
-        </button>
-      </header>
-
-      <div className={styles.toolbar}>
+        <h1 className={styles.heading} id="products-title">
+          Products
+        </h1>
         <label className={styles.search}>
-          <Search width={16} height={16} aria-hidden="true" />
+          <Search width={14} height={14} aria-hidden="true" />
           <input
             type="search"
             aria-label="Search products"
@@ -105,40 +106,35 @@ export function ProductCatalogPanel({
               aria-label="Clear search"
               onClick={() => onSearchChange('')}
             >
-              <X width={14} height={14} aria-hidden="true" />
+              <X width={12} height={12} aria-hidden="true" />
             </button>
           ) : null}
         </label>
-        <label className={styles.filter}>
-          <CheckCircle width={15} height={15} aria-hidden="true" />
-          <select
-            aria-label="Filter availability"
+        <div className={styles.filter}>
+          <MenuSelect
+            ariaLabel="Filter availability"
+            options={AVAILABILITY_OPTIONS}
             value={availability}
-            onChange={(event) =>
-              onAvailabilityChange(event.target.value as AvailabilityFilter)
-            }
-          >
-            <option value="all">All availability</option>
-            <option value="active">Available</option>
-            <option value="unavailable">Unavailable</option>
-            <option value="archived">Archived</option>
-          </select>
-        </label>
-        <label className={styles.sort}>
-          <ArrowDownUp width={15} height={15} aria-hidden="true" />
-          <select
-            aria-label="Sort products"
+            onChange={(id) => onAvailabilityChange(id as AvailabilityFilter)}
+          />
+        </div>
+        <div className={styles.sort}>
+          <MenuSelect
+            ariaLabel="Sort products"
+            options={SORT_OPTIONS}
             value={sort}
-            onChange={(event) =>
-              onSortChange(event.target.value as ProductSort)
-            }
-          >
-            <option value="updated">Recently updated</option>
-            <option value="name">Product name</option>
-            <option value="price">Price</option>
-          </select>
-        </label>
-      </div>
+            onChange={(id) => onSortChange(id as ProductSort)}
+          />
+        </div>
+        <button
+          type="button"
+          className={styles.addProduct}
+          onClick={onAddProduct}
+        >
+          <Plus width={15} height={15} aria-hidden="true" />
+          <span>Add product</span>
+        </button>
+      </header>
 
       <CategorySidebar
         categories={categories}

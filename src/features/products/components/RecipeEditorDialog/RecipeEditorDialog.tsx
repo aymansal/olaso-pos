@@ -1,6 +1,7 @@
 import { Save, Plus, Trash, X } from '@boxicons/react';
 import { Fragment, useEffect, useState } from 'react';
-import { OverlayPortal } from '../../../../components/OverlayPortal';
+import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type {
   ManagedIngredient,
   ManagedProduct,
@@ -115,7 +116,11 @@ export function RecipeEditorDialog({
 
   return (
     <OverlayPortal>
-      <div className={styles.overlay} role="presentation">
+      <div
+        className={styles.overlay}
+        role="presentation"
+        onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+      >
         <section
           className={styles.dialog}
           role="dialog"
@@ -140,20 +145,18 @@ export function RecipeEditorDialog({
                 <div className={styles.block} key={start}>
                   <span className={styles.rowLabel}>Ingredient</span>
                   {row.map((item, offset) => (
-                    <select
+                    <MenuSelect
                       key={`ingredient-${start + offset}`}
+                      ariaLabel={`Ingredient ${start + offset + 1}`}
                       value={item.ingredientId}
-                      aria-label={`Ingredient ${start + offset + 1}`}
-                      onChange={(event) =>
-                        updateItem(start + offset, { ingredientId: event.target.value })
+                      onChange={(id) =>
+                        updateItem(start + offset, { ingredientId: id })
                       }
-                    >
-                      {data.ingredients.map((candidate) => (
-                        <option value={candidate.id} key={candidate.id}>
-                          {candidate.name}
-                        </option>
-                      ))}
-                    </select>
+                      options={data.ingredients.map((candidate) => ({
+                        id: candidate.id,
+                        label: candidate.name,
+                      }))}
+                    />
                   ))}
                   {pads(empty, `pad-ingredient-${start}`)}
 
@@ -169,8 +172,9 @@ export function RecipeEditorDialog({
                             type="number"
                             min="1"
                             step="1"
+                            placeholder="0"
                             aria-label={`${ingredient?.name ?? 'Ingredient'} amount`}
-                            value={item.quantity}
+                            value={item.quantity || ''}
                             onChange={(event) =>
                               updateItem(start + offset, {
                                 quantity: Number(event.target.value),
@@ -205,8 +209,9 @@ export function RecipeEditorDialog({
                           type="number"
                           min="0"
                           step="1"
+                          placeholder="0"
                           aria-label={`${size.name} amount`}
-                          value={quantityFor(item.ingredientId, size.id!, item.quantity)}
+                          value={quantityFor(item.ingredientId, size.id!, item.quantity) || ''}
                           onChange={(event) => {
                             const quantity = Number(event.target.value);
                             setSizeQuantities((current) => [

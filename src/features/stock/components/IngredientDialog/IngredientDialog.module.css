@@ -8,10 +8,10 @@
 }
 
 .dialog {
-  width: 560px;
-  padding: 24px;
+  width: 546px;
+  padding: 20px;
   border: 1px solid var(--olaso-panel-border);
-  border-radius: 28px;
+  border-radius: 24px;
   background: var(--olaso-white);
 }
 
@@ -20,7 +20,6 @@
 .fields,
 .fields label,
 .dialog footer,
-.archive,
 .save {
   display: flex;
 }
@@ -38,22 +37,22 @@
 
 .dialog header small {
   color: var(--olaso-copy);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .dialog h2 {
-  margin: 3px 0 0;
+  margin: 2px 0 0;
   color: var(--olaso-text);
-  font-size: 18px;
+  font-size: 21px;
 }
 
 .dialog header > button {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   padding: 0;
   border: 1px solid var(--olaso-divider);
   border-radius: 50%;
@@ -63,42 +62,43 @@
 
 .fields {
   flex-wrap: wrap;
-  gap: 14px 10px;
-  margin-top: 22px;
+  gap: 12px 10px;
+  margin-top: 18px;
 }
 
 .fields label {
   width: calc(50% - 5px);
-  gap: 7px;
+  gap: 6px;
   color: var(--olaso-copy);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
 }
 
-.fields .name {
-  width: 100%;
-}
-
-.fields input,
-.fields select {
-  height: 44px;
-  padding: 0 14px;
+.fields input {
+  height: 47px;
+  box-sizing: border-box;
+  padding: 0 16px;
   border: 1px solid var(--olaso-control-border);
-  border-radius: 22px;
+  border-radius: 23px;
   color: var(--olaso-text);
   background: var(--olaso-white);
-  font: inherit;
+  font-size: 13px;
 }
 
-.fields input:disabled,
-.fields select:disabled {
+.fields .unitMenu button {
+  height: 47px;
+  border-radius: 23px;
+  font-size: 13px;
+}
+
+.fields input:disabled {
   opacity: 0.62;
 }
 
 .helper,
 .error {
   margin: 12px 0 0;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .helper {
@@ -110,47 +110,22 @@
 }
 
 .dialog footer {
-  margin-top: 22px;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.archive,
-.save,
-.deleteAction {
-  align-items: center;
-  height: 44px;
-  gap: 8px;
-  padding: 0 18px;
-  border-radius: 22px;
-  font-size: 9px;
-  font-weight: 700;
-}
-
-.archive {
-  border: 1px solid var(--olaso-danger);
-  color: var(--olaso-danger);
-  background: transparent;
+  margin-top: 18px;
 }
 
 .save {
+  align-items: center;
+  height: 47px;
+  gap: 8px;
+  padding: 0 18px;
   border: 0;
+  border-radius: 23px;
   color: var(--olaso-white);
   background: var(--olaso-green);
+  font-size: 11px;
+  font-weight: 700;
 }
 
-.deleteAction {
-  border: 0;
-  color: var(--olaso-danger);
-  background: transparent;
-}
-
-.archive:disabled,
-.save:disabled,
-.deleteAction:disabled {
+.save:disabled {
   opacity: 0.45;
 }

@@ -12,6 +12,7 @@ import {
 import type { LocalManagementActor } from './managementOperation.ts';
 import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 import { keyFromName } from './managementMutations.ts';
+import { productImageJpeg } from '../lib/compressProductImage.ts';
 
 type CatalogDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 type CatalogTransaction = <T>(operation: (database: CatalogDatabase) => Promise<T>) => Promise<T>;
@@ -208,21 +209,27 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
       'SELECT 1 FROM products WHERE key = ? LIMIT 1', [key],
     )).values?.[0]) throw new Error('A product with this name already exists.');
     const revision = existing ? Number(existing.revision) + 1 : 1;
+    const imageJpeg = input.imageJpeg !== undefined
+      ? productImageJpeg(input.imageJpeg) ?? null
+      : existing?.image_jpeg != null && String(existing.image_jpeg)
+        ? String(existing.image_jpeg)
+        : null;
     await database.run(
       `INSERT INTO products
         (id, category_id, name, receipt_name, price_centimes, status,
-         sort_order, revision, updated_at, key)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         sort_order, revision, updated_at, key, image_jpeg)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET category_id = excluded.category_id,
          name = excluded.name, receipt_name = excluded.receipt_name,
          price_centimes = excluded.price_centimes, status = excluded.status,
          sort_order = excluded.sort_order, revision = excluded.revision,
-         updated_at = excluded.updated_at, key = excluded.key`,
+         updated_at = excluded.updated_at, key = excluded.key,
+         image_jpeg = excluded.image_jpeg`,
       [
         localId, input.categoryId || null, name, name,
         integer(input.basePriceCentimes, 'Product price', 0, 10_000_000),
         input.status, integer(input.sortOrder, 'Sort order', 0, 100_000),
-        revision, now, key,
+        revision, now, key, imageJpeg,
       ],
       false,
     );
@@ -238,6 +245,9 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
         key, categoryId: input.categoryId, name, receiptName: name,
         basePriceCentimes: input.basePriceCentimes, status: input.status,
         sortOrder: input.sortOrder,
+        ...(input.imageJpeg !== undefined && imageJpeg
+          ? { imageJpeg }
+          : {}),
       },
       createdAt: now,
     });
