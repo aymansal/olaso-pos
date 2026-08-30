@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — cash/split overlay committing after Offert `6f6c90ba7fa288a42a0e860d67e02229eda8d474` |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — cash/split `bb5a499194ceae6ea13a39eea0bc82cdf20730f5` on `origin/main` |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -128,8 +128,8 @@ remaining goal and card sequence.
 - POLISH-01 (30 Aug 2026): cash tender, sequential split, Offert skip, no
   on-screen receipt preview, cart gap, and split prices pinned to the right
   edge. Owner confirmed lemonade/brioche/croissant amounts line up on SM-X115
-  `R8YX91AKWXJ`. Exact next action: commit and push `origin/main`, then record
-  the SHA.
+  `R8YX91AKWXJ`. Pushed `bb5a499194ceae6ea13a39eea0bc82cdf20730f5` on
+  `origin/main`. Exact next action: owner continues POLISH-01.
 - POLISH-01 (30 Aug 2026): cart line Gift, trash, and quantity pill are
   visually smaller (36px circles / 100×36 pill) with 8px gaps; 44px hits
   kept. Exact next action: owner checks on tablet; commit when asked.
@@ -1490,7 +1490,8 @@ remaining goal and card sequence.
   Given/Change sit outside the scrolling body. Cart list is 348px without
   Offert so three lines fit with a 16px gap above Payment Details. POS
   ReceiptPreviewDialog deleted. Owner confirmed split amounts align.
-- Exact next action: commit and push `origin/main`.
+- Exact next action: owner continues POLISH-01. Pushed
+  `bb5a499194ceae6ea13a39eea0bc82cdf20730f5` on `origin/main`.
 
 ### 2026-08-30 — POLISH-01 payment overlay follow-up
 
