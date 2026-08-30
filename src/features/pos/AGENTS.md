@@ -40,7 +40,7 @@ owns the shared Header and TopNavigation currently used across the application.
  bell or a hardcoded badge count.
 - Product and category assets are content; do not recreate them with UI icons.
 - A long product name or price ellipsises before the plus; the plus stays
-  visible. The whole card adds to the order.
+  visible. Only the plus adds to the order.
 - All interface icons come from Boxicons.
 - Search, category, and cart behavior must stay local during service.
 - Preserve already visited live category grids and their prepared product
@@ -60,7 +60,10 @@ owns the shared Header and TopNavigation currently used across the application.
   commits, and a tap does not. A cashier may empty the current draft from the
   always-visible trash next to the Current order title; it stays gray while the
   cart is empty. The cart list itself stays blank until a product is added; each
-  line uses the same compact card outline.
+  line uses the same compact card outline. A Gift left of the line trash marks
+  that unit Offert: catalog price stays on the snapshot, charged total is 0, recipe
+  stock still deducts, and qty greater than 1 splits one Offert unit. This is
+  not a general discount.
 - Saved receipts support on-screen preview and plain post-commit print feedback.
   Do not expose printer settings, permissions, bytes, or transport from this
   feature.

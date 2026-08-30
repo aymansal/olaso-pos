@@ -15,17 +15,25 @@ Provides bounded order history and a selected order's receipt-style detail.
 
 ## Local Contracts
 
-- Preserve selection between the list and detail panel.
+- Preserve selection between the list and detail panel. The Orders table uses
+  the same cream sliding row highlight as Products and Stock, without the
+  green mark. Column headers are centered over the values in that column.
+  Date and time live on one line in a compact DATE column before STATUS
+  (`dd/mm/yy` then time), with the DATE header centered over that pair; the
+  order-number cell is the receipt number only. The list and selected-order
+  detail do not show customer or table. Service and created time sit on one
+  line in the detail card. Payment shows subtotal and total, plus Offert when
+  the saved discount is greater than zero.
 - The date picker and quick periods remain compact and open toward available
   screen space.
 - History reads are bounded and paginated. The pager uses the saved SQLite
-  order count; each page click loads that OFFSET window of six rows. Next on
+  order count; each page click loads that OFFSET window of eight rows. Next on
   the last page stays there.
 - Show immutable receipt snapshots and the local/cloud sync state without
   reconstructing current product data.
-- Receipt preview, deliberate sync retry, and local saved-snapshot reprint are
-  functional. Reprint updates only print-attempt state. Cancellation and refund
-  remain unavailable until confirmed owner policy authorizes them.
+- Reprint and whole-sale cancellation are the detail actions. Receipt preview
+  stays on POS after checkout. Failed sync is visible as status copy; Settings
+  Manual Sync is the recovery action. Cancellation is not deletion.
 
 ## Work Guidance
 
@@ -34,7 +42,6 @@ Provides bounded order history and a selected order's receipt-style detail.
 - Disable reprint for cloud-only history that has no local immutable snapshot
   row on this tablet.
 - Do not implement cancellation as deletion.
-- Keep the shared receipt preview prop-driven and transport-free.
 
 ## Verification
 

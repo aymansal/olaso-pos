@@ -5,6 +5,7 @@ import type { SalePrintState } from './printState.ts';
 type OrderDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
 export type OrderStatus = 'completed' | 'cancelled' | 'refunded';
+export type OrderStatusFilter = 'All' | 'Completed' | 'Cancelled';
 export type OrderSyncState = 'pending' | 'synced' | 'failed';
 
 export type OrderReceipt = {
@@ -25,6 +26,7 @@ export type OrderReceipt = {
       optionName: string;
       priceDeltaCentimes: number;
     }>;
+    complimentary?: boolean;
   }>;
   subtotalCentimes: number;
   discountCentimes: number;
@@ -56,7 +58,7 @@ export type LocalOrderCursor = {
   localSaleId: string;
 };
 
-export const ORDER_PAGE_SIZE = 6;
+export const ORDER_PAGE_SIZE = 8;
 
 export type OrderListFilter = {
   status?: OrderStatus;
@@ -195,6 +197,7 @@ function parseReceipt(raw: unknown): OrderReceipt {
             ),
           };
         }),
+        ...(line.complimentary === true ? { complimentary: true as const } : {}),
       };
     }),
     subtotalCentimes: money(value.subtotalCentimes, 'subtotal'),

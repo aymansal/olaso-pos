@@ -16,7 +16,6 @@
   height: 92px;
   border-radius: 10px;
   object-fit: cover;
-  pointer-events: none;
 }
 
 .name,
@@ -26,7 +25,6 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  pointer-events: none;
 }
 
 .name {
@@ -51,33 +49,22 @@
   position: absolute;
   top: 107px;
   left: 122px;
-  z-index: 1;
   display: grid;
   width: 44px;
   height: 44px;
+  padding: 0;
   place-items: center;
   border: 1.2px solid var(--olaso-border);
   border-radius: 50%;
   color: var(--olaso-green);
   background: var(--olaso-white);
-  pointer-events: none;
 }
 
-.hit {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  padding: 0;
-  border: 0;
-  border-radius: 20px;
-  background: transparent;
-}
-
-.hit:focus-visible {
+.add:focus-visible {
   outline: 2px solid var(--olaso-green);
-  outline-offset: -3px;
+  outline-offset: 1px;
 }
 
-.card:has(.hit:active) {
+.add:active {
   filter: brightness(0.94);
 }

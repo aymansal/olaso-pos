@@ -2,8 +2,11 @@
   position: absolute;
   top: 488px;
   left: 12px;
+  display: flex;
   width: 296px;
   height: 115px;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .summary h2 {

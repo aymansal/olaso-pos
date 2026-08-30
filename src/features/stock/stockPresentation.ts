@@ -69,7 +69,8 @@ export function movementLabel(
   if (type === 'purchase') return 'Purchase received';
   if (type === 'purchase-reversal') return 'Purchase correction reversal';
   if (type === 'manual-adjustment') return 'Count adjustment';
-  if (type === 'cancellation') return 'Cancellation reversal';
-  if (type === 'refund') return 'Refund reversal';
+  if (type === 'cancellation' || type === 'refund') {
+    return 'Cancellation reversal';
+  }
   return 'Opening balance';
 }

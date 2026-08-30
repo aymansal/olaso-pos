@@ -21,6 +21,7 @@
 .total,
 .meta,
 .quantity,
+.offert,
 .remove {
   position: absolute;
 }
@@ -56,29 +57,74 @@
 }
 
 .quantity {
-  top: 65px;
-  left: 88px;
+  top: 68px;
+  left: 80px;
 }
 
+.offert,
 .remove {
   top: 64px;
-  right: 12px;
   display: grid;
   width: 44px;
   height: 44px;
   padding: 0;
   place-items: center;
+  border: 0;
+  background: transparent;
+}
+
+.offert::before,
+.remove::before {
+  content: '';
+  grid-area: 1 / 1;
+  width: 36px;
+  height: 36px;
   border: 1px solid var(--olaso-divider);
   border-radius: 50%;
-  color: var(--olaso-danger);
   background: white;
 }
 
+.offert svg,
+.remove svg {
+  position: relative;
+  grid-area: 1 / 1;
+}
+
+.offert {
+  right: 64px;
+  color: var(--olaso-copy);
+}
+
+.offertOn {
+  color: white;
+}
+
+.offertOn::before {
+  border-color: var(--olaso-green);
+  background: var(--olaso-green);
+}
+
+.offertLine {
+  border-color: var(--olaso-green);
+}
+
+.offert:focus-visible,
 .remove:focus-visible {
   outline: 2px solid var(--olaso-green);
   outline-offset: 2px;
 }
 
-.remove:active {
+.offert:active::before,
+.remove:active::before {
   background: var(--olaso-soft);
 }
+
+.offertOn:active::before {
+  background: var(--olaso-green);
+}
+
+.remove {
+  right: 12px;
+  color: var(--olaso-danger);
+}
+

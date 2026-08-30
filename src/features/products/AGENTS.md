@@ -27,7 +27,9 @@ recipe management with saved tablet presentation during an outage.
 - The catalog opens on All products. Category selection is an explicit operator
   action.
 - The product table shows a fixed page of six rows with the same sliding
-  three-page window as Orders; it does not scroll.
+  three-page window as Orders; it does not scroll. Each column header sits
+  over that column’s values. PRODUCT lines up with the product name; the
+  icon stays in the leading gutter.
 - Keep leaf components prop-driven; only the application data hook imports
   Convex.
 - Category, product, size, choice, and recipe writes use validated local domain

@@ -15,7 +15,7 @@ tablet's local SQLite operational record.
 - `useOrdersData.ts` reads the saved SQLite order count plus one OFFSET page
   before remote work settles, enriches matching keys from the first cloud page
   while Orders is mounted, preserves tablet-local print state, and coordinates
-  deliberate retry/reprint recovery through the shared worker.
+  reprint and cancellation through the shared worker.
 - `useDashboardData.ts` makes one saved-summary snapshot request only while
   Dashboard is mounted, uses the current local business date on each visible
   load, and exposes explicit retry state.
@@ -71,6 +71,8 @@ tablet's local SQLite operational record.
   parsing, sync summary, and retry reset.
 - `localSales.ts` owns trusted sale preparation, the atomic local commit,
   immutable receipt snapshots, and outbox acknowledgement/failure state.
+  Offert lines keep catalog prices on the snapshot, write 0 charged money to
+  `sale_items`, and set `discountCentimes`.
 - `localManagement.ts` owns the shared local-first management operation
   persistence: atomic outbox enqueue, optional parent dependency, cloud
   acknowledgement plus local/cloud record mappings, and safe retry/failure

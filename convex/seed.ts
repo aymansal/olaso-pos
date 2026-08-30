@@ -41,7 +41,7 @@ const resetOrder = [
 
 type SeedTable = (typeof resetOrder)[number];
 type ServiceMode = 'dine-in' | 'take-away' | 'online';
-type SaleStatus = 'completed' | 'cancelled' | 'refunded';
+type SaleStatus = 'completed' | 'cancelled';
 type IngredientBaseUnit =
   | 'millilitre'
   | 'gram'
@@ -759,7 +759,7 @@ const saleSeeds: readonly SaleSeed[] = [
     cashierName: 'Youssef',
     serviceMode: 'dine-in',
     paymentMethod: 'Cash',
-    status: 'refunded',
+    status: 'cancelled',
     tableLabel: 'T4',
     lines: [{ productKey: 'mocha', quantity: 1 }],
   },
@@ -1254,10 +1254,9 @@ export const resetAndSeed = internalMutation({
             'correction-movement ingredient',
           ),
           quantityDelta: quantity,
-          movementType:
-            saleSeed.status === 'cancelled' ? 'cancellation' : 'refund',
+          movementType: 'cancellation',
           relatedSaleId: saleId,
-          reason: `${saleSeed.status === 'cancelled' ? 'Cancellation' : 'Refund'} reversal for ${saleSeed.receiptNumber}`,
+          reason: `Cancellation reversal for ${saleSeed.receiptNumber}`,
           deviceId: DEVICE_ID,
           actorLabel: saleSeed.cashierName,
           businessDate: saleSeed.businessDate,
@@ -1276,10 +1275,6 @@ export const resetAndSeed = internalMutation({
 
       metrics.grossCentimes += subtotalCentimes;
       metrics.orderCount += 1;
-      if (saleSeed.status === 'refunded') {
-        metrics.refundedCentimes += subtotalCentimes;
-        continue;
-      }
 
       metrics.netCentimes += subtotalCentimes;
       for (const [ingredientKey, quantity] of saleIngredientUsage) {

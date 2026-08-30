@@ -37,6 +37,7 @@
   display: grid;
   grid-template-columns: 270px 120px 110px 110px 100px 128px;
   width: 838px;
+  align-items: center;
 }
 
 .columns {
@@ -49,14 +50,27 @@
 
 .columns span,
 .cell,
-.statusCell {
+.statusCell,
+.ingredient {
   display: flex;
   align-items: center;
+  justify-content: center;
+  min-width: 0;
   padding: 0 10px;
+  text-align: center;
 }
 
-.columns span:first-child {
-  padding-left: 16px;
+.columns span:first-child,
+.ingredient {
+  justify-content: flex-start;
+  padding-left: 12px;
+  text-align: left;
+}
+
+.columns span:last-child,
+.statusCell {
+  justify-content: flex-end;
+  padding-right: 12px;
 }
 
 .columns span {
@@ -107,7 +121,6 @@
   align-items: center;
   height: 62px;
   gap: 10px;
-  padding: 0 16px;
 }
 
 .icon {
@@ -134,8 +147,11 @@
 }
 
 .ingredientCopy strong {
+  overflow: hidden;
   color: var(--olaso-text);
   font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ingredientCopy small {

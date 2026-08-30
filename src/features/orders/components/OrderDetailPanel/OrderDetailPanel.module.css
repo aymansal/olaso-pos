@@ -22,8 +22,6 @@
 }
 
 .heading,
-.metaItem > span,
-.customerIdentity > span:last-child,
 .itemCopy {
   display: flex;
   flex-direction: column;
@@ -51,8 +49,6 @@
 .orderStatus,
 .metadata,
 .metaItem,
-.customer,
-.customerIdentity,
 .itemsHeader,
 .paymentHeader,
 .paymentHeader > span,
@@ -112,71 +108,37 @@
   position: absolute;
   top: 84px;
   left: 22px;
+  justify-content: space-between;
   width: 356px;
-  height: 60px;
+  height: 44px;
+  padding: 0 18px;
   border-radius: 18px;
   background: var(--olaso-table-head);
+  box-sizing: border-box;
 }
 
 .metaItem {
-  justify-content: center;
-  flex: 1;
-  height: 60px;
-  gap: 9px;
+  flex: 0 1 auto;
+  height: 44px;
+  gap: 8px;
   color: var(--olaso-green);
 }
 
-.metaItem > span {
-  gap: 2px;
+.metaItem + .metaItem {
+  border-left: 0;
 }
 
 .metaItem strong {
   color: var(--olaso-text);
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .metaItem small,
-.customer small,
 .itemCopy small {
   color: var(--olaso-text-meta);
   font-size: 8px;
-  font-weight: 500;
-}
-
-.customer {
-  position: absolute;
-  top: 158px;
-  left: 22px;
-  justify-content: space-between;
-  width: 356px;
-  height: 50px;
-}
-
-.customerIdentity {
-  gap: 10px;
-}
-
-.customerIcon {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  color: var(--olaso-green);
-  background: var(--olaso-green-soft);
-}
-
-.customerIdentity > span:last-child {
-  gap: 3px;
-}
-
-.customerIdentity strong {
-  color: var(--olaso-text);
-  font-size: 11px;
-}
-
-.customer > small {
-  color: var(--olaso-text-faint);
+  font-weight: 600;
 }
 
 .divider {
@@ -187,11 +149,9 @@
   background: var(--olaso-order-divider);
 }
 
-.customerDivider { top: 220px; }
-
 .itemsHeader {
   position: absolute;
-  top: 238px;
+  top: 144px;
   left: 22px;
   justify-content: space-between;
   width: 356px;
@@ -212,10 +172,10 @@
 
 .items {
   position: absolute;
-  top: 270px;
+  top: 176px;
   left: 22px;
   width: 356px;
-  height: 136px;
+  height: 300px;
   overflow-y: auto;
 }
 
@@ -261,6 +221,9 @@
 
 .itemCopy small {
   overflow: hidden;
+  color: var(--olaso-text-meta);
+  font-size: 8px;
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -284,11 +247,11 @@
   background: var(--olaso-line-soft);
 }
 
-.itemsDivider { top: 406px; }
+.itemsDivider { top: 484px; }
 
 .paymentHeader {
   position: absolute;
-  top: 424px;
+  top: 500px;
   left: 22px;
   justify-content: space-between;
   width: 356px;
@@ -314,22 +277,24 @@
 
 .payment {
   position: absolute;
-  top: 454px;
+  top: 520px;
   left: 22px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 356px;
+  height: 64px;
   margin: 0;
-  gap: 12px;
+  gap: 8px;
 }
 
 .payment > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 12px;
+  height: 22px;
   color: var(--olaso-copy);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 500;
 }
 
@@ -341,30 +306,32 @@
 .payment dd {
   color: var(--olaso-text);
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .payment .total {
+  height: 36px;
   color: var(--olaso-text);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .payment .total dd {
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 700;
 }
 
-.actionsDivider { top: 538px; }
+.actionsDivider { top: 584px; }
 
 .actions {
   position: absolute;
-  top: 550px;
+  top: 600px;
   left: 22px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: stretch;
   width: 356px;
-  height: 96px;
+  height: 44px;
   gap: 8px;
 }
 
@@ -390,17 +357,9 @@
   min-width: 0;
 }
 
-.preview,
 .reprint,
-.sync,
 .cancelOrder {
   min-width: 0;
-}
-
-.preview {
-  border: 1px solid var(--olaso-green);
-  color: var(--olaso-green);
-  background: transparent;
 }
 
 .reprint {
@@ -413,18 +372,6 @@
   color: var(--olaso-disabled);
   background: var(--olaso-readonly);
   cursor: not-allowed;
-}
-
-.sync {
-  border: 0;
-  color: var(--olaso-white);
-  background: var(--olaso-green);
-}
-
-.sync:disabled {
-  color: var(--olaso-copy-green);
-  background: var(--olaso-green-soft);
-  cursor: default;
 }
 
 .cancelOrder {

@@ -2,12 +2,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   addProduct,
+  complimentaryCentimes,
   decrementCartLine,
   filterProducts,
   incrementCartLine,
   removeCartLine,
   subtotalCentimes,
   taxCentimes,
+  toggleCartLineOffert,
   totalCentimes,
   validatePosSession,
 } from '../src/features/pos/posSession.ts';
@@ -161,7 +163,50 @@ const productCardCss = readFileSync(
   'utf8',
 );
 assert.match(productCard, /<Plus /);
+assert.doesNotMatch(productCard, /styles\.hit/);
 assert.match(productCardCss, /text-overflow: ellipsis/);
 assert.match(productCardCss, /width: 100px/);
+
+let offered = addProduct([], 'latte', 'latte-reg');
+offered = incrementCartLine(offered, offered[0].id);
+offered = toggleCartLineOffert(offered, offered[0].id);
+assert.equal(offered.length, 2);
+assert.equal(offered.find((line) => line.complimentary)?.quantity, 1);
+assert.equal(offered.find((line) => !line.complimentary)?.quantity, 1);
+assert.equal(subtotalCentimes(offered, sizes), 3600);
+assert.equal(complimentaryCentimes(offered, sizes), 1800);
+offered = toggleCartLineOffert(
+  offered,
+  offered.find((line) => line.complimentary).id,
+);
+assert.equal(offered.length, 1);
+assert.equal(offered[0].quantity, 2);
+assert.equal(offered[0].complimentary, undefined);
+assert.equal(complimentaryCentimes(offered, sizes), 0);
+
+const card = readFileSync(
+  'src/features/pos/components/OrderItemCard/OrderItemCard.tsx',
+  'utf8',
+);
+assert.match(card, /Mark \$\{product.name\} Offert/);
+assert.match(card, /onToggleOffert/);
+const cardCss = readFileSync(
+  'src/features/pos/components/OrderItemCard/OrderItemCard.module.css',
+  'utf8',
+);
+assert.match(cardCss, /\.offert \{[\s\S]*right: 64px/);
+assert.match(cardCss, /width: 36px/);
+assert.doesNotMatch(cardCss, /\.offert \{[\s\S]*left: 8px/);
+const summary = readFileSync(
+  'src/features/pos/components/PaymentSummary/PaymentSummary.tsx',
+  'utf8',
+);
+assert.match(summary, /Offert/);
+assert.doesNotMatch(summary, /No tax/);
+const summaryCss = readFileSync(
+  'src/features/pos/components/PaymentSummary/PaymentSummary.module.css',
+  'utf8',
+);
+assert.match(summaryCss, /justify-content: flex-end/);
 
 console.log('POS cart and money checks passed.');

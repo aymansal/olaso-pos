@@ -343,7 +343,6 @@ assert(
   'Local order history must render before cloud work settles.',
 );
 assert.match(ordersHook, /attemptSaleReceiptPrint/);
-assert.match(ordersHook, /makeLocalSaleRetryAvailable/);
 assert.match(ordersHook, /reconnect\.run\('automatic'\)/);
 assert.doesNotMatch(ordersHook, /makePendingOutboxAvailable/);
 const orderDetail = readFileSync(
@@ -355,6 +354,38 @@ const orderDetail = readFileSync(
 );
 assert.match(orderDetail, /Reprint/);
 assert.match(orderDetail, /Cancel/);
+assert.match(orderDetail, /Offert/);
+assert.doesNotMatch(orderDetail, /View receipt|ReceiptPreviewDialog|Walk-in|tableLabel|>Tax</);
 assert.doesNotMatch(orderDetail, /commitLocalSale|completeLocalSale|stock_movements|outbox/);
+assert.doesNotMatch(orderDetail, /Refunded/);
+const ordersList = readFileSync(
+  new URL(
+    '../src/features/orders/components/OrdersListPanel/OrdersListPanel.tsx',
+    import.meta.url,
+  ),
+  'utf8',
+);
+assert.doesNotMatch(ordersList, /Refunded/);
+assert.match(ordersList, /Cancelled/);
+const ordersTable = readFileSync(
+  new URL(
+    '../src/features/orders/components/OrdersTable/OrdersTable.tsx',
+    import.meta.url,
+  ),
+  'utf8',
+);
+assert.match(ordersTable, /styles\.indicator/);
+assert.match(ordersTable, /DATE/);
+assert.doesNotMatch(ordersTable, /CUSTOMER/);
+assert.doesNotMatch(ordersTable, /tableLabel/);
+const ordersTableCss = readFileSync(
+  new URL(
+    '../src/features/orders/components/OrdersTable/OrdersTable.module.css',
+    import.meta.url,
+  ),
+  'utf8',
+);
+assert.match(ordersTableCss, /\.indicator \{/);
+assert.doesNotMatch(ordersTableCss, /\.indicator::before/);
 
 console.log('Bounded local/cloud order history and recovery checks passed.');

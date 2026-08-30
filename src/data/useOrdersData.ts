@@ -8,11 +8,11 @@ import {
   countLocalOrders,
   loadLocalOrderPage,
   loadLocalSyncSummary,
-  makeLocalSaleRetryAvailable,
   ORDER_PAGE_SIZE,
   type OrderHistoryRecord,
   type OrderListFilter,
   type OrderStatus,
+  type OrderStatusFilter,
 } from './orderHistory.ts';
 import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
 import { useReconnect } from './reconnectContext';
@@ -20,7 +20,7 @@ import { useStaffSession } from './sessionContext';
 
 export type OrdersListQuery = {
   page: number;
-  status: 'All' | 'Completed' | 'Cancelled' | 'Refunded';
+  status: OrderStatusFilter;
   businessDate: string;
   query: string;
 };
@@ -103,7 +103,6 @@ export function useOrdersData(list: OrdersListQuery) {
   const [orders, setOrders] = useState<OrderHistoryRecord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [retryingId, setRetryingId] = useState<string>();
   const [reprintingId, setReprintingId] = useState<string>();
   const [cancellingId, setCancellingId] = useState<string>();
   const [message, setMessage] = useState('');
@@ -202,30 +201,6 @@ export function useOrdersData(list: OrdersListQuery) {
     };
   }, [reconnect.revision, refresh, session.staffProfileId]);
 
-  const retrySync = useCallback(
-    async (localSaleId: string) => {
-      setRetryingId(localSaleId);
-      setMessage('');
-      try {
-        await makeLocalSaleRetryAvailable(localSaleId);
-        const result = await reconnect.run('automatic');
-        if (result.failed > 0) {
-          setMessage('The order is still saved locally and waiting to sync.');
-        }
-        await refresh();
-      } catch (error) {
-        setMessage(
-          error instanceof Error
-            ? error.message
-            : 'Order synchronization could not be retried.',
-        );
-      } finally {
-        if (mounted.current) setRetryingId(undefined);
-      }
-    },
-    [reconnect, refresh],
-  );
-
   const reprintReceipt = useCallback(
     async (order: OrderHistoryRecord) => {
       if (!order.printState) {
@@ -276,12 +251,10 @@ export function useOrdersData(list: OrdersListQuery) {
     orders,
     totalCount,
     isLoading,
-    retryingId,
     reprintingId,
     cancellingId,
     message,
     lastSuccessAt,
-    retrySync,
     reprintReceipt,
     cancelOrder,
   };

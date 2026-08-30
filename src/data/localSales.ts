@@ -59,6 +59,7 @@ export type SavedReceipt = {
       ingredientName: string;
       quantity: number;
     }>;
+    complimentary?: true;
   }>;
   subtotalCentimes: number;
   discountCentimes: number;
@@ -94,6 +95,7 @@ export type SaleSyncPayload = {
     ingredientCostCentimes?: number;
     costStatus: 'complete' | 'incomplete';
     valuationRevisions: Array<{ ingredientId: string; revision: number }>;
+    complimentary?: true;
   }>;
 };
 
@@ -421,6 +423,7 @@ export function prepareSale(
       choiceValueIds,
       modifiers,
       recipe,
+      ...(cartLine.complimentary === true ? { complimentary: true as const } : {}),
     };
   });
   const subtotalCentimes = lines.reduce(
@@ -428,6 +431,18 @@ export function prepareSale(
     0,
   );
   if (!Number.isSafeInteger(subtotalCentimes) || subtotalCentimes < 0) {
+    throw new Error('The saved order total is invalid.');
+  }
+  const discountCentimes = lines.reduce(
+    (sum, line) =>
+      line.complimentary === true ? sum + line.lineTotalCentimes : sum,
+    0,
+  );
+  if (!Number.isSafeInteger(discountCentimes) || discountCentimes < 0) {
+    throw new Error('The saved Offert total is invalid.');
+  }
+  const totalCentimes = subtotalCentimes - discountCentimes;
+  if (!Number.isSafeInteger(totalCentimes) || totalCentimes < 0) {
     throw new Error('The saved order total is invalid.');
   }
   const date = businessDate(completedAt);
@@ -442,9 +457,9 @@ export function prepareSale(
     serviceType: input.serviceType,
     lines,
     subtotalCentimes,
-    discountCentimes: 0,
+    discountCentimes,
     taxCentimes: 0,
-    totalCentimes: subtotalCentimes,
+    totalCentimes,
     taxPolicyLabel: TAX_POLICY_LABEL,
     paymentMethod: input.paymentMethod,
     receiptLanguage: language,
@@ -530,10 +545,10 @@ export async function commitLocalSale(
         line.productId,
         line.quantity,
         line.productName,
-        line.unitPriceCentimes,
+        line.complimentary === true ? 0 : line.unitPriceCentimes,
         JSON.stringify(line.modifiers),
         JSON.stringify(line.recipe),
-        line.lineTotalCentimes,
+        line.complimentary === true ? 0 : line.lineTotalCentimes,
         line.ingredientCostCentimes ?? null,
         line.costStatus,
         category?.id ?? '',
@@ -805,6 +820,7 @@ async function loadSaleSyncPayload(
         : { ingredientCostCentimes: line.ingredientCostCentimes }),
       costStatus: line.costStatus,
       valuationRevisions: line.valuationRevisions,
+      ...(line.complimentary === true ? { complimentary: true as const } : {}),
     })),
   };
 }

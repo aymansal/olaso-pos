@@ -1,6 +1,5 @@
-import { CheckCircle, Clock, DotsHorizontalRounded, InfoCircle, Pin, Package, Printer, Receipt, RefreshCw, RotateCcw, Store, User } from '@boxicons/react';
+import { Clock, DotsHorizontalRounded, InfoCircle, Package, Printer, Receipt, RotateCcw, Store } from '@boxicons/react';
 import { useState } from 'react';
-import { ReceiptPreviewDialog } from '../../../../components/ReceiptPreviewDialog/ReceiptPreviewDialog';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrderDetailPanel.module.css';
@@ -15,29 +14,25 @@ function serviceLabel(order: OrderHistoryRecord) {
 function stateLabel(order: OrderHistoryRecord) {
   if (order.syncState === 'failed') return 'Needs sync';
   if (order.syncState === 'pending') return 'Waiting to sync';
-  if (order.status === 'cancelled') return 'Cancelled';
-  if (order.status === 'refunded') return 'Refunded';
+  if (order.status === 'cancelled' || order.status === 'refunded') {
+    return 'Cancelled';
+  }
   return 'Completed';
 }
 
 export function OrderDetailPanel({
   order,
-  retrying,
   reprinting,
   cancelling,
-  onRetry,
   onReprint,
   onCancel,
 }: {
   order?: OrderHistoryRecord;
-  retrying: boolean;
   reprinting: boolean;
   cancelling: boolean;
-  onRetry: (localSaleId: string) => Promise<void>;
   onReprint: (order: OrderHistoryRecord) => Promise<void>;
   onCancel: (order: OrderHistoryRecord, reason: string) => Promise<void>;
 }) {
-  const [previewOpen, setPreviewOpen] = useState(false);
   const [cancellationOpen, setCancellationOpen] = useState(false);
 
   if (!order) {
@@ -54,29 +49,15 @@ export function OrderDetailPanel({
     (total, line) => total + line.quantity,
     0,
   );
-  const metadata = [
-    { icon: Store, value: serviceLabel(order), label: 'Service' },
-    { icon: Pin, value: order.receipt.tableLabel ?? '—', label: 'Table' },
-    {
-      icon: Clock,
-      value: new Date(order.receipt.completedAt).toLocaleTimeString(
-        'en-GB',
-        { hour: '2-digit', minute: '2-digit' },
-      ),
-      label: 'Created',
-    },
-  ] as const;
-  const canRetry = order.syncState !== 'synced';
+  const createdAt = new Date(order.receipt.completedAt).toLocaleTimeString(
+    'en-GB',
+    { hour: '2-digit', minute: '2-digit' },
+  );
   const canReprint = order.status === 'completed' && Boolean(order.printState);
   const canCancel = order.status === 'completed' && Boolean(order.printState);
-  const statusTone = canRetry || order.status !== 'completed'
+  const statusTone = order.syncState !== 'synced' || order.status !== 'completed'
     ? styles.statusAttention
     : styles.statusComplete;
-  const syncNote = order.syncState === 'failed'
-    ? (order.syncError || 'Cloud synchronization needs attention. Retry when online.')
-    : order.syncState === 'pending'
-      ? 'Saved locally · waiting for cloud acknowledgement'
-      : 'Cancellation and refund permissions await owner confirmation';
   const printNote = order.printState === 'failed'
     ? 'Printer unavailable · reprint available'
     : order.printState === 'pending'
@@ -109,31 +90,17 @@ export function OrderDetailPanel({
       </header>
 
       <div className={styles.metadata}>
-        {metadata.map(({ icon: Icon, value, label }) => (
-          <span className={styles.metaItem} key={label}>
-            <Icon width={16} height={16} aria-hidden="true" />
-            <span>
-              <strong>{value}</strong>
-              <small>{label}</small>
-            </span>
-          </span>
-        ))}
-      </div>
-
-      <div className={styles.customer}>
-        <span className={styles.customerIdentity}>
-          <span className={styles.customerIcon}>
-            <User width={16} height={16} aria-hidden="true" />
-          </span>
-          <span>
-            <small>Customer</small>
-            <strong>{order.receipt.customerName ?? 'Walk-in'}</strong>
-          </span>
+        <span className={styles.metaItem}>
+          <Store width={16} height={16} aria-hidden="true" />
+          <small>Service</small>
+          <strong>{serviceLabel(order)}</strong>
         </span>
-        <small>{order.cashierName ?? 'Cashier unavailable'}</small>
+        <span className={styles.metaItem}>
+          <Clock width={16} height={16} aria-hidden="true" />
+          <small>Created</small>
+          <strong>{createdAt}</strong>
+        </span>
       </div>
-
-      <div className={`${styles.divider} ${styles.customerDivider}`} />
 
       <div className={styles.itemsHeader}>
         <strong>Order items</strong>
@@ -143,6 +110,7 @@ export function OrderDetailPanel({
       <div className={styles.items}>
         {order.receipt.lines.map((item, index) => {
           const options = [
+            item.complimentary ? 'Offert' : '',
             item.sizeName,
             ...item.modifiers.map((modifier) => modifier.optionName),
           ].filter(Boolean).join(', ');
@@ -159,7 +127,7 @@ export function OrderDetailPanel({
                 </small>
               </span>
               <strong className={styles.itemTotal}>
-                {formatMoney(item.lineTotalCentimes)}
+                {formatMoney(item.complimentary ? 0 : item.lineTotalCentimes)}
               </strong>
               {index < order.receipt.lines.length - 1
                 ? <span className={styles.itemDivider} />
@@ -184,7 +152,12 @@ export function OrderDetailPanel({
           <dt>Subtotal</dt>
           <dd>{formatMoney(order.receipt.subtotalCentimes)}</dd>
         </div>
-        <div><dt>Tax</dt><dd>{formatMoney(order.receipt.taxCentimes)}</dd></div>
+        {order.receipt.discountCentimes > 0 ? (
+          <div>
+            <dt>Offert</dt>
+            <dd>-{formatMoney(order.receipt.discountCentimes)}</dd>
+          </div>
+        ) : null}
         <div className={styles.total}>
           <dt>Total</dt>
           <dd>{formatMoney(order.receipt.totalCentimes)}</dd>
@@ -204,27 +177,6 @@ export function OrderDetailPanel({
           <Printer width={17} height={17} aria-hidden="true" />
           <span>{reprinting ? 'Printing…' : 'Reprint'}</span>
         </button>
-        <button
-          type="button"
-          className={styles.preview}
-          onClick={() => setPreviewOpen(true)}
-        >
-          <Receipt width={17} height={17} aria-hidden="true" />
-          <span>View receipt</span>
-        </button>
-        <button
-          type="button"
-          className={styles.sync}
-          disabled={!canRetry || retrying}
-          onClick={() => void onRetry(order.localSaleId)}
-        >
-          {canRetry ? (
-            <RefreshCw width={18} height={18} aria-hidden="true" />
-          ) : (
-            <CheckCircle width={18} height={18} aria-hidden="true" />
-          )}
-          <span>{retrying ? 'Retrying…' : canRetry ? 'Retry sync' : 'Synced'}</span>
-        </button>
         <button type="button" className={styles.cancelOrder} disabled={!canCancel || cancelling} onClick={() => setCancellationOpen(true)}>
           <RotateCcw width={17} height={17} aria-hidden="true" />
           <span>{cancelling ? 'Cancelling…' : 'Cancel'}</span>
@@ -235,17 +187,6 @@ export function OrderDetailPanel({
         <InfoCircle width={13} height={13} aria-hidden="true" />
         <span>{printNote} · {syncStateNote}</span>
       </div>
-      {previewOpen ? (
-        <ReceiptPreviewDialog
-          receipt={order.receipt}
-          statusMessage={
-            order.syncState === 'synced'
-              ? 'Cloud copy confirmed · saved receipt snapshot'
-              : syncNote
-          }
-          onClose={() => setPreviewOpen(false)}
-        />
-      ) : null}
       {cancellationOpen ? (
         <CancellationDialog
           receiptNumber={order.receipt.receiptNumber}

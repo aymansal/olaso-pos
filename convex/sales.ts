@@ -31,6 +31,7 @@ const saleLine = v.object({
   ingredientCostCentimes: v.optional(v.number()),
   costStatus: v.union(v.literal('complete'), v.literal('incomplete')),
   valuationRevisions: v.array(v.object({ ingredientId: v.string(), revision: v.number() })),
+  complimentary: v.optional(v.boolean()),
 });
 const TAX_POLICY_LABEL = 'No tax';
 
@@ -41,6 +42,7 @@ type PreparedLine = {
   quantity: number;
   unitPriceCentimes: number;
   lineTotalCentimes: number;
+  complimentary: boolean;
   sizeId?: Id<'productSizes'>;
   sizeName?: string;
   choiceValueIds?: Id<'productChoiceValues'>[];
@@ -469,6 +471,7 @@ export const accept = mutation({
         quantity,
         unitPriceCentimes,
         lineTotalCentimes,
+        complimentary: line.complimentary === true,
         ...(resolvedSizeId
           ? {
               sizeId: resolvedSizeId,
@@ -490,6 +493,18 @@ export const accept = mutation({
     const subtotalCentimes = checkedTotal(
       preparedLines.reduce((sum, line) => sum + line.lineTotalCentimes, 0),
       'Sale subtotal',
+    );
+    const discountCentimes = checkedTotal(
+      preparedLines.reduce(
+        (sum, line) =>
+          line.complimentary ? sum + line.lineTotalCentimes : sum,
+        0,
+      ),
+      'Sale Offert',
+    );
+    const totalCentimes = checkedTotal(
+      subtotalCentimes - discountCentimes,
+      'Sale total',
     );
     const completeLineCosts = preparedLines.every(
       (line) => line.costStatus === 'complete',
@@ -592,9 +607,9 @@ export const accept = mutation({
       cashierName,
       serviceMode: args.serviceMode,
       subtotalCentimes,
-      discountCentimes: 0,
+      discountCentimes,
       taxCentimes: 0,
-      totalCentimes: subtotalCentimes,
+      totalCentimes,
       ...(saleIngredientCostCentimes === undefined
         ? {}
         : { ingredientCostCentimes: saleIngredientCostCentimes }),
@@ -617,12 +632,13 @@ export const accept = mutation({
           ...(line.sizeName ? { sizeName: line.sizeName } : {}),
           ...(line.sizeId ? { sizeId: line.sizeId } : {}),
           ...(line.choiceValueIds ? { choiceValueIds: line.choiceValueIds } : {}),
+          ...(line.complimentary ? { complimentary: true } : {}),
           modifiers: line.modifiers,
         })),
         subtotalCentimes,
-        discountCentimes: 0,
+        discountCentimes,
         taxCentimes: 0,
-        totalCentimes: subtotalCentimes,
+        totalCentimes,
         taxPolicyLabel: TAX_POLICY_LABEL,
         paymentMethod: args.paymentMethod,
         receiptLanguage: args.receiptLanguage,
@@ -635,11 +651,11 @@ export const accept = mutation({
         ...(line.category ? { categoryId: line.category._id } : {}),
         productName: line.product.name,
         receiptName: line.product.receiptName,
-        unitPriceCentimes: line.unitPriceCentimes,
+        unitPriceCentimes: line.complimentary ? 0 : line.unitPriceCentimes,
         quantity: line.quantity,
         modifiers: line.modifiers,
         ...(line.recipe ? { recipeVersionId: line.recipe._id } : {}),
-        lineTotalCentimes: line.lineTotalCentimes,
+        lineTotalCentimes: line.complimentary ? 0 : line.lineTotalCentimes,
         ...(line.ingredientCostCentimes === undefined
           ? {}
           : { ingredientCostCentimes: line.ingredientCostCentimes }),
@@ -741,12 +757,12 @@ export const accept = mutation({
       (row) => row.paymentMethod === args.paymentMethod,
     );
     if (payment) {
-      payment.totalCentimes += subtotalCentimes;
+      payment.totalCentimes += totalCentimes;
       payment.orderCount += 1;
     } else {
       totalsByPaymentMethod.push({
         paymentMethod: args.paymentMethod,
-        totalCentimes: subtotalCentimes,
+        totalCentimes,
         orderCount: 1,
       });
     }
@@ -757,12 +773,12 @@ export const accept = mutation({
       (row) => row.serviceMode === args.serviceMode,
     );
     if (service) {
-      service.totalCentimes += subtotalCentimes;
+      service.totalCentimes += totalCentimes;
       service.orderCount += 1;
     } else {
       totalsByServiceMode.push({
         serviceMode: args.serviceMode,
-        totalCentimes: subtotalCentimes,
+        totalCentimes,
         orderCount: 1,
       });
     }
@@ -776,20 +792,21 @@ export const accept = mutation({
       ? metric.ingredientTotals.map((row) => ({ ...row }))
       : [];
     for (const line of preparedLines) {
+      const chargedCentimes = line.complimentary ? 0 : line.lineTotalCentimes;
       const productTotal = productTotals.find(
         (row) => row.productId === line.product._id,
       );
       if (productTotal) {
         if (line.category) productTotal.categoryName ??= line.category.name;
         productTotal.quantity += line.quantity;
-        productTotal.totalCentimes += line.lineTotalCentimes;
+        productTotal.totalCentimes += chargedCentimes;
       } else {
         productTotals.push({
           productId: line.product._id,
           productName: line.product.name,
           ...(line.category ? { categoryName: line.category.name } : {}),
           quantity: line.quantity,
-          totalCentimes: line.lineTotalCentimes,
+          totalCentimes: chargedCentimes,
         });
       }
       if (line.category) {
@@ -798,13 +815,13 @@ export const accept = mutation({
         );
         if (categoryTotal) {
           categoryTotal.quantity += line.quantity;
-          categoryTotal.totalCentimes += line.lineTotalCentimes;
+          categoryTotal.totalCentimes += chargedCentimes;
         } else {
           categoryTotals.push({
             categoryId: line.category._id,
             categoryName: line.category.name,
             quantity: line.quantity,
-            totalCentimes: line.lineTotalCentimes,
+            totalCentimes: chargedCentimes,
           });
         }
       }
@@ -832,8 +849,8 @@ export const accept = mutation({
     }
     const metricValue = {
       businessDate: args.businessDate,
-      grossCentimes: (metric?.grossCentimes ?? 0) + subtotalCentimes,
-      netCentimes: (metric?.netCentimes ?? 0) + subtotalCentimes,
+      grossCentimes: (metric?.grossCentimes ?? 0) + totalCentimes,
+      netCentimes: (metric?.netCentimes ?? 0) + totalCentimes,
       orderCount: (metric?.orderCount ?? 0) + 1,
       cancelledCentimes: metric?.cancelledCentimes ?? 0,
       refundedCentimes: metric?.refundedCentimes ?? 0,

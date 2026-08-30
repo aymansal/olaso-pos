@@ -27,13 +27,13 @@ import type { Category } from './data/categories';
 import { productImage, type Product } from './data/products';
 import {
   addProduct,
+  complimentaryCentimes,
   decrementCartLine,
   filterProducts,
   incrementCartLine,
   removeCartLine,
   subtotalCentimes,
-  taxCentimes,
-  totalCentimes,
+  toggleCartLineOffert,
   validatePosSession,
   type PosSession,
   type ServiceMode,
@@ -325,20 +325,27 @@ export function PosScreen({
       },
       quantity: line.quantity,
       modifierSummary: meta,
+      complimentary: line.complimentary === true,
     }];
   });
   let subtotal = 0;
+  let offert = 0;
   try {
     subtotal = subtotalCentimes(
       session.cart,
       pricedSizes,
       pricedChoiceValues,
     );
+    offert = complimentaryCentimes(
+      session.cart,
+      pricedSizes,
+      pricedChoiceValues,
+    );
   } catch {
     subtotal = 0;
+    offert = 0;
   }
-  const tax = taxCentimes(subtotal);
-  const total = totalCentimes(subtotal, tax);
+  const total = subtotal - offert;
   const validation = isLoading
     ? { kind: 'empty' as const, message: 'Loading the saved menu…' }
     : validatePosSession(
@@ -476,7 +483,7 @@ export function PosScreen({
       <ReceiptRail
         lines={receiptLines}
         subtotalCentimes={subtotal}
-        taxCentimes={tax}
+        offertCentimes={offert}
         totalCentimes={total}
         serviceMode={session.serviceMode}
         paymentMethod={session.paymentMethod}
@@ -499,6 +506,11 @@ export function PosScreen({
           editSession((current) => ({
             ...current,
             cart: removeCartLine(current.cart, lineId),
+          }))}
+        onToggleOffert={(lineId) =>
+          editSession((current) => ({
+            ...current,
+            cart: toggleCartLineOffert(current.cart, lineId),
           }))}
         onClearCart={() =>
           editSession((current) => ({ ...current, cart: [] }))}

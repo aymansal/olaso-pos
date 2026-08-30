@@ -66,9 +66,7 @@ export function RecentOrdersPanel({
               <small>
                 {order.status === 'completed'
                   ? 'Completed'
-                  : order.status === 'cancelled'
-                    ? 'Cancelled'
-                    : 'Refunded'}{' '}
+                  : 'Cancelled'}{' '}
                 · {new Intl.DateTimeFormat('en-GB', {
                   day: 'numeric',
                   month: 'short',

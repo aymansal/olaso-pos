@@ -16,6 +16,7 @@ export type ReceiptSnapshotForPrint = {
       groupName?: string;
       optionName: string;
     }>;
+    complimentary?: boolean;
   }>;
   subtotalCentimes: number;
   discountCentimes: number;
@@ -39,6 +40,7 @@ export type ReceiptModel = {
     unitPriceCentimes: number;
     lineTotalCentimes: number;
     modifiers: string[];
+    complimentary?: boolean;
   }>;
   subtotalCentimes: number;
   discountCentimes: number;
@@ -114,12 +116,14 @@ export function createReceiptModel(
       unitPriceCentimes,
       lineTotalCentimes,
       modifiers: [
+        ...(line.complimentary === true ? ['Offert'] : []),
         ...(typeof line.sizeName === 'string' && line.sizeName.trim()
           ? [text(line.sizeName.trim(), 'size', 80)]
           : []),
         ...line.modifiers.map((modifier) =>
           text(modifier.optionName, 'modifier', 80)),
       ],
+      ...(line.complimentary === true ? { complimentary: true } : {}),
     };
   });
 

@@ -88,8 +88,8 @@ function wrap(value: string, width: number) {
 
 function itemRows(model: ReceiptModel): ReceiptRow[] {
   const labels = model.receiptLanguage === 'fr'
-    ? { item: 'ARTICLE', quantity: 'QTÉ', payment: 'Paiement', subtotal: 'Sous-total', discount: 'Remise', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
-    : { item: 'ITEM', quantity: 'QTY', payment: 'Payment', subtotal: 'Subtotal', discount: 'Discount', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
+    ? { item: 'ARTICLE', quantity: 'QTÉ', payment: 'Paiement', subtotal: 'Sous-total', discount: 'Offert', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
+    : { item: 'ITEM', quantity: 'QTY', payment: 'Payment', subtotal: 'Subtotal', discount: 'Offert', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
   const rows: ReceiptRow[] = [{
     text: `${labels.item.padEnd(ITEM_WIDTH)}${labels.quantity.padEnd(QUANTITY_WIDTH)}${'MAD'.padStart(MONEY_WIDTH)}`,
     bold: true,
@@ -98,8 +98,11 @@ function itemRows(model: ReceiptModel): ReceiptRow[] {
     const names = wrap(line.name, ITEM_WIDTH);
     names.forEach((name, index) => {
       const quantity = index ? '' : ` ${line.quantity}`.padEnd(QUANTITY_WIDTH);
+      const money = index
+        ? ''
+        : formatReceiptMoney(line.complimentary ? 0 : line.lineTotalCentimes);
       rows.push({
-        text: `${name.padEnd(ITEM_WIDTH)}${quantity}${(index ? '' : formatReceiptMoney(line.lineTotalCentimes)).padStart(MONEY_WIDTH)}`,
+        text: `${name.padEnd(ITEM_WIDTH)}${quantity}${money.padStart(MONEY_WIDTH)}`,
       });
     });
     for (const modifier of line.modifiers) {
@@ -118,8 +121,8 @@ function detailRows(label: string, value: string): ReceiptRow[] {
 
 function receiptRows(model: ReceiptModel): ReceiptRow[] {
   const labels = model.receiptLanguage === 'fr'
-    ? { payment: 'Paiement', subtotal: 'Sous-total', discount: 'Remise', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
-    : { payment: 'Payment', subtotal: 'Subtotal', discount: 'Discount', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
+    ? { payment: 'Paiement', subtotal: 'Sous-total', discount: 'Offert', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
+    : { payment: 'Payment', subtotal: 'Subtotal', discount: 'Offert', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
   const date = formatReceiptDate(model.completedAt);
   const order = `${labels.order} ${model.receiptNumber}`;
   const orderRow = columns(order, date);

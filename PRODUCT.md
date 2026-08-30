@@ -445,13 +445,15 @@ Each completed sale keeps a permanent snapshot of:
 - Ingredient-cost snapshot and cost-completeness state for each line and sale.
 - Subtotal, total, and payment method.
 - Printing and synchronization state.
-- Cancellation or refund references.
+- Cancellation references.
 
 The first production policy has no tax calculation anywhere in the application,
 and receipts show no tax line. Cash and card are the only payment methods.
 Product-based split checkout completes one customer's selected products and
 keeps unpaid products available for the next customer; it is not split tender.
-Discounts remain unavailable until the owner separately approves a policy.
+A cart line may be marked Offert for the physical ninth-drink stamp card: the
+drink is real, stock still deducts, and the charged price is 0 DH. The app does
+not track stamps or customers. Other discounts remain unavailable.
 
 Receipts use the approved Olaso logo-only header until legal details are
 requested, render in the currently selected French or English staff language,
@@ -482,7 +484,7 @@ The planned reports include:
 - Worker compensation and other operating expenses.
 - Monthly revenue, ingredient cost, gross profit, operating expenses, and
   operating profit.
-- Cancelled or refunded sales.
+- Cancelled sales.
 - Cashier activity after roles are confirmed.
 
 Reports must open from saved summaries and bounded pages. They must not scan the
@@ -885,7 +887,8 @@ canonical `PLAN.md`.
 - Production Android version and kiosk behavior.
 - Production printer address reservation and raw TCP port confirmation.
 - Official menu spelling and current prices.
-- Future discount policy.
+- Future discount policy, and whether the Offert line control stays after café
+  trial.
 - Final fiche technique and measurement units.
 - Whether the owner needs a remote web dashboard.
 

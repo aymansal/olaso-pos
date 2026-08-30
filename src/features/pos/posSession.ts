@@ -9,6 +9,7 @@ export type CartLine = {
   sizeId: string;
   quantity: number;
   choiceValueIds: string[];
+  complimentary?: true;
 };
 
 export type PosSession = {
@@ -52,14 +53,45 @@ export function hasUnfinishedCart(session: Pick<PosSession, 'cart'>) {
   return session.cart.length > 0;
 }
 
+function normalizedChoiceIds(choiceValueIds: string[]) {
+  return [...new Set(choiceValueIds)].sort();
+}
+
+export function cartLineId(
+  productId: string,
+  sizeId: string,
+  choiceValueIds: string[],
+  complimentary = false,
+) {
+  const choices = normalizedChoiceIds(choiceValueIds);
+  return complimentary
+    ? JSON.stringify([productId, sizeId, choices, true])
+    : JSON.stringify([productId, sizeId, choices]);
+}
+
+function lineFrom(
+  line: CartLine,
+  quantity: number,
+  complimentary: boolean,
+): CartLine {
+  return {
+    id: cartLineId(line.productId, line.sizeId, line.choiceValueIds, complimentary),
+    productId: line.productId,
+    sizeId: line.sizeId,
+    quantity,
+    choiceValueIds: line.choiceValueIds,
+    ...(complimentary ? { complimentary: true as const } : {}),
+  };
+}
+
 export function addProduct(
   cart: CartLine[],
   productId: string,
   sizeId: string,
   choiceValueIds: string[] = [],
 ): CartLine[] {
-  const normalizedChoices = [...new Set(choiceValueIds)].sort();
-  const id = JSON.stringify([productId, sizeId, normalizedChoices]);
+  const normalizedChoices = normalizedChoiceIds(choiceValueIds);
+  const id = cartLineId(productId, sizeId, normalizedChoices);
   const existing = cart.find((line) => line.id === id);
 
   return existing
@@ -107,6 +139,28 @@ export function removeCartLine(cart: CartLine[], lineId: string): CartLine[] {
   return cart.filter((line) => line.id !== lineId);
 }
 
+export function toggleCartLineOffert(cart: CartLine[], lineId: string): CartLine[] {
+  const line = cart.find((item) => item.id === lineId);
+  if (!line) return cart;
+
+  const nextComplimentary = line.complimentary !== true;
+  const moved = lineFrom(line, 1, nextComplimentary);
+  const remainingQuantity = line.quantity - 1;
+
+  let next = remainingQuantity < 1
+    ? cart.filter((item) => item !== line)
+    : cart.map((item) =>
+      item === line ? { ...line, quantity: remainingQuantity } : item
+    );
+
+  const twin = next.find((item) => item.id === moved.id);
+  return twin
+    ? next.map((item) =>
+      item === twin ? { ...twin, quantity: twin.quantity + 1 } : item
+    )
+    : [...next, moved];
+}
+
 export function subtotalCentimes(
   cart: CartLine[],
   sizes: readonly PricedSize[],
@@ -139,6 +193,18 @@ export function subtotalCentimes(
 
     return subtotal + (sizePrice + choicePrice) * line.quantity;
   }, 0);
+}
+
+export function complimentaryCentimes(
+  cart: CartLine[],
+  sizes: readonly PricedSize[],
+  choiceValues: readonly PricedChoiceValue[] = [],
+): number {
+  return subtotalCentimes(
+    cart.filter((line) => line.complimentary === true),
+    sizes,
+    choiceValues,
+  );
 }
 
 export function validatePosSession(

@@ -14,12 +14,13 @@ type ReceiptLine = {
   product: Product;
   quantity: number;
   modifierSummary: string;
+  complimentary: boolean;
 };
 
 type ReceiptRailProps = {
   lines: ReceiptLine[];
   subtotalCentimes: number;
-  taxCentimes: number;
+  offertCentimes: number;
   totalCentimes: number;
   serviceMode: ServiceMode;
   paymentMethod: PaymentMethod;
@@ -32,6 +33,7 @@ type ReceiptRailProps = {
   onDecrement: (lineId: string) => void;
   onIncrement: (lineId: string) => void;
   onRemove: (lineId: string) => void;
+  onToggleOffert: (lineId: string) => void;
   onClearCart: () => void;
   onServiceModeChange: (serviceMode: ServiceMode) => void;
   onPaymentMethodChange: (paymentMethod: PaymentMethod) => void;
@@ -41,7 +43,7 @@ type ReceiptRailProps = {
 export function ReceiptRail({
   lines,
   subtotalCentimes,
-  taxCentimes,
+  offertCentimes,
   totalCentimes,
   serviceMode,
   paymentMethod,
@@ -51,6 +53,7 @@ export function ReceiptRail({
   onDecrement,
   onIncrement,
   onRemove,
+  onToggleOffert,
   onClearCart,
   onServiceModeChange,
   onPaymentMethodChange,
@@ -74,22 +77,24 @@ export function ReceiptRail({
       <PaymentMethodControl value={paymentMethod} onChange={onPaymentMethodChange} />
       <div className={styles.orderSection} role="region" aria-label="Cart">
         <div className={styles.orderList}>
-          {lines.map(({ id, product, quantity, modifierSummary }) => (
+          {lines.map(({ id, product, quantity, modifierSummary, complimentary }) => (
             <OrderItemCard
               key={id}
               product={product}
               quantity={quantity}
               modifierSummary={modifierSummary}
+              complimentary={complimentary}
               onDecrement={() => onDecrement(id)}
               onIncrement={() => onIncrement(id)}
               onRemove={() => onRemove(id)}
+              onToggleOffert={() => onToggleOffert(id)}
             />
           ))}
         </div>
       </div>
       <PaymentSummary
         subtotalCentimes={subtotalCentimes}
-        taxCentimes={taxCentimes}
+        offertCentimes={offertCentimes}
         totalCentimes={totalCentimes}
       />
       <p

@@ -44,7 +44,9 @@ history.
 - All stock levels means all active ingredients; archived ingredients appear
   only when the operator deliberately selects the Archived filter.
 - The inventory table opens on the first visible ingredient. Pagination shows
-  the same sliding three-page window as Orders.
+  the same sliding three-page window as Orders. The ingredient column starts
+  at the table’s left edge; status ends at the right. Other headers stay
+  centered over their values.
 
 ## Work Guidance
 

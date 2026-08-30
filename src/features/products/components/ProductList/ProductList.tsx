@@ -101,7 +101,7 @@ export function ProductList({
           <span className={styles.indicator} aria-hidden="true" />
         ) : null}
         {!isLoading && !error
-          ? products.map((product, index) => {
+          ? products.map((product) => {
               const selected = product.id === selectedProductId;
               const Icon = product.key.includes('matcha') ? Leaf : Coffee;
               const RecipeIcon = product.currentRecipeVersionId
@@ -115,14 +115,16 @@ export function ProductList({
                   aria-pressed={selected}
                   key={product.id}
                 >
-                  <span
-                    className={`${styles.productIcon} ${selected ? styles.productIconActive : ''}`}
-                  >
-                    <Icon width={17} height={17} aria-hidden="true" />
-                  </span>
-                  <span className={styles.productCopy}>
-                    <strong>{product.name}</strong>
-                    <small>{product.key.toUpperCase()}</small>
+                  <span className={styles.product}>
+                    <span
+                      className={`${styles.productIcon} ${selected ? styles.productIconActive : ''}`}
+                    >
+                      <Icon width={17} height={17} aria-hidden="true" />
+                    </span>
+                    <span className={styles.productCopy}>
+                      <strong>{product.name}</strong>
+                      <small>{product.key.toUpperCase()}</small>
+                    </span>
                   </span>
                   <strong className={styles.price}>
                     {formatMad(product.basePriceCentimes)}
@@ -151,9 +153,6 @@ export function ProductList({
                       {product.currentRecipeVersionId ? 'Linked' : 'Not linked'}
                     </strong>
                   </span>
-                  {index < products.length - 1 ? (
-                    <span className={styles.divider} />
-                  ) : null}
                 </button>
               );
             })

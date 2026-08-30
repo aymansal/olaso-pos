@@ -3,21 +3,35 @@ import type { OrderHistoryRecord } from '../../../../data/orderHistory';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrdersTable.module.css';
 
-const columns = ['ORDER', 'CUSTOMER', 'SERVICE', 'ITEMS', 'TOTAL', 'STATUS'] as const;
+const columns = [
+  'ORDER',
+  'SERVICE',
+  'ITEMS',
+  'TOTAL',
+  'DATE',
+  'STATUS',
+] as const;
 
 function compactReceiptNumber(receiptNumber: string) {
   return receiptNumber.replace(/^[A-Z]+-/, '#');
 }
 
+function formatOrderWhen(completedAt: number) {
+  const date = new Date(completedAt);
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yy = String(date.getFullYear()).slice(-2);
+  const time = date.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  return { date: `${dd}/${mm}/${yy}`, time };
+}
+
 function serviceLabel(order: OrderHistoryRecord) {
-  const service = order.receipt.serviceType === 'dine-in'
-    ? 'Dine in'
-    : order.receipt.serviceType === 'take-away'
-      ? 'Take away'
-      : 'Order online';
-  return order.receipt.tableLabel
-    ? `${service} · ${order.receipt.tableLabel}`
-    : service;
+  if (order.receipt.serviceType === 'dine-in') return 'Dine in';
+  if (order.receipt.serviceType === 'take-away') return 'Take away';
+  return 'Order online';
 }
 
 function statusPresentation(
@@ -30,10 +44,7 @@ function statusPresentation(
     return { label: 'Waiting to sync', tone: 'preparing' };
   }
   if (order.status === 'cancelled' || order.status === 'refunded') {
-    return {
-      label: order.status === 'cancelled' ? 'Cancelled' : 'Refunded',
-      tone: 'failed',
-    };
+    return { label: 'Cancelled', tone: 'failed' };
   }
   return { label: 'Completed · Synced', tone: 'completed' };
 }
@@ -71,41 +82,33 @@ export function OrdersTable({
         ) : null}
         {orders.map((order) => {
         const status = statusPresentation(order);
-        const selected = order.key === selectedKey;
         const itemCount = order.receipt.lines.reduce(
           (total, line) => total + line.quantity,
           0,
         );
+        const when = formatOrderWhen(order.receipt.completedAt);
         return (
         <button
           type="button"
           className={styles.row}
           role="row"
-          aria-selected={selected}
+          aria-selected={order.key === selectedKey}
           onClick={() => onSelect(order.key)}
           key={order.key}
         >
-          <span className={styles.identityCell} role="cell">
-            <span className={styles.markSpacer} aria-hidden="true" />
-            <span className={styles.identity}>
-              <strong title={order.receipt.receiptNumber}>
-                {compactReceiptNumber(order.receipt.receiptNumber)}
-              </strong>
-              <small>
-                {new Date(order.receipt.completedAt).toLocaleTimeString(
-                  'en-GB',
-                  { hour: '2-digit', minute: '2-digit' },
-                )}
-              </small>
-            </span>
-          </span>
-          <strong role="cell">{order.receipt.customerName ?? 'Walk-in'}</strong>
+          <strong className={styles.order} role="cell" title={order.receipt.receiptNumber}>
+            {compactReceiptNumber(order.receipt.receiptNumber)}
+          </strong>
           <span className={styles.service} role="cell">{serviceLabel(order)}</span>
-          <strong role="cell">{itemCount}</strong>
+          <strong className={styles.num} role="cell">{itemCount}</strong>
           <strong className={styles.total} role="cell">
             {formatMoney(order.receipt.totalCentimes)}
           </strong>
-          <span role="cell">
+          <span className={styles.when} role="cell">
+            <strong>{when.date}</strong>
+            <small>{when.time}</small>
+          </span>
+          <span className={styles.statusCol} role="cell">
             <span className={`${styles.status} ${styles[status.tone]}`}>
               <span />
               <strong>{status.label}</strong>

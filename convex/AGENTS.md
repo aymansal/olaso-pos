@@ -57,7 +57,8 @@ data, reporting summaries, and development seeding.
 - The sale mutation re-reads current products, revisions, recipes, modifiers,
   product-owned sizes and choices, and ingredients and computes trusted totals
   and deductions before writing any effect. Size/choice resolution must match
-  `src/lib/productConfiguration.ts`.
+  `src/lib/productConfiguration.ts`. An optional complimentary flag charges 0
+  while still deducting recipe stock; daily metrics use the charged total.
 - Seed/reset work is internal, development-only, deterministic, and runnable
   through the CLI.
 - Do not add actions for ordinary database work or import backend clients into

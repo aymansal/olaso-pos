@@ -8,7 +8,7 @@ import { OrdersTable } from '../OrdersTable/OrdersTable';
 import { visiblePageIndexes } from '../../../../lib/pagination';
 import styles from './OrdersListPanel.module.css';
 
-const filters = ['All', 'Completed', 'Cancelled', 'Refunded'] as const;
+const filters = ['All', 'Completed', 'Cancelled'] as const;
 
 export function OrdersListPanel({
   orders,
@@ -75,7 +75,7 @@ export function OrdersListPanel({
           <input
             type="search"
             aria-label="Search orders"
-            placeholder="Search order or customer"
+            placeholder="Search order"
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
           />

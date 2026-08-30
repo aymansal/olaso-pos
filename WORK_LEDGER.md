@@ -125,11 +125,39 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- POLISH-01 (29 Aug 2026): Product-card price uses `--olaso-text-dark-soft`
-  so it sits between the name and the old gray. Charts, slide-to-order, and
-  product-card polish on `origin/main` as
-  `441b54292cc5019659684aa60b43d613f011730c`. Exact next action: owner
-  continues POLISH-01.
+- POLISH-01 (30 Aug 2026): Place order chevrons nudge -3px to +3px so left
+  and right rest equally inside the thumb. Then Offert trial + payment
+  layout + cart Gift polish committed to origin/main.
+- POLISH-01 (30 Aug 2026): cart line Gift, trash, and quantity pill are
+  visually smaller (36px circles / 100×36 pill) with 8px gaps; 44px hits
+  kept. Exact next action: owner checks on tablet; commit when asked.
+- POLISH-01 (30 Aug 2026): Offert Gift sits left of the line trash, not on
+  the product photo. Quantity stepper shifted 8px left so the 44px targets
+  do not overlap. CSS only. Exact next action: owner checks on tablet;
+  commit when asked.
+- POLISH-01 (30 Aug 2026): Payment Details/Total sit at the bottom of the
+  existing 115px POS block (`justify-content: flex-end`). Offert Subtotal
+  rows expand upward; Total stays put above Place order. CSS only; no native.
+  Exact next action: owner checks on tablet; commit when asked.
+- POLISH-01 (30 Aug 2026): trial cart-line Offert (ninth-drink loyalty).
+  Gift on the POS line photo marks one unit Offert: real product + recipe
+  stock, charged 0 DH, catalog prices stay on the snapshot, `discountCentimes`
+  is the Offert catalog total. Qty > 1 splits. Physical stamp card stays the
+  counter; no customer/stamp tracking. Android research: React cart + SQLite
+  snapshot JSON + Convex optional `complimentary` flag; no Kotlin/plugin.
+  Checks: `tsc -b`, `check:pos`, `check:orders`, `check:printing` golden
+  unchanged, `check:css-scope`, `npm run build`. Local Offert path in
+  `check:sales` passed; live Convex seed then failed on café Cappuccino
+  Regular size (pre-existing snapshot, not Offert). Convex functions
+  deployed to colorful-newt-937. Install-over debug APK on SM-X115
+  `R8YX91AKWXJ`; app restarted. Uncommitted so the owner can revert with
+  `git restore`. Exact next action: owner unlocks, adds a drink, taps the
+  gift on the photo; keep or revert; commit only if asked.
+- POLISH-01 (29 Aug 2026): Orders detail dropped customer, table, tax,
+  View receipt, and the dummy Synced control. Service and created sit on
+  one line; footer is Reprint + Cancel; payment (subtotal/total) fills
+  the freed space. Snapshot fields stay on receipts for old rows. Exact
+  next action: owner checks; commit when asked.
 - POLISH-01 (29 Aug 2026): Dashboard Sales rhythm now has the same Y-axis
   ticks as Reports (`formatCompactMoney` at 100/75/50/25 of the period max).
   Peak bar gets the Reports white cap. Tap a bar on Dashboard or Reports for
@@ -1452,6 +1480,17 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-08-30 — POLISH-01 trial cart-line Offert
+
+- Gift on the POS cart-line photo marks one unit Offert for the physical
+  ninth-drink stamp card. Catalog prices stay on the snapshot; charged total
+  is 0; recipe stock still deducts; qty > 1 splits a paid twin. No stamp
+  wallet, customer records, or general discount.
+- Android research: React/data cart flag + SQLite receipt JSON + Convex
+  optional `complimentary`. No Kotlin, plugin, or native control.
+- Uncommitted so the owner can `git restore` if they dislike it.
+- Exact next action: owner tries it on the tablet; keep or revert.
 
 ### 2026-08-29 — POLISH-01 Dashboard 400px stack and recent-order dates
 

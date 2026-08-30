@@ -64,6 +64,7 @@ const receiptLine = v.object({
   sizeId: v.optional(v.id('productSizes')),
   sizeName: v.optional(v.string()),
   choiceValueIds: v.optional(v.array(v.id('productChoiceValues'))),
+  complimentary: v.optional(v.boolean()),
 });
 
 export default defineSchema({

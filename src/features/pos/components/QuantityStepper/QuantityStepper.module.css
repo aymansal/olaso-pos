@@ -2,9 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 116px;
-  height: 44px;
-  border-radius: 22px;
+  width: 100px;
+  height: 36px;
+  border-radius: 18px;
   color: var(--olaso-text);
   background: var(--olaso-soft);
 }

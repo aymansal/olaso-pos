@@ -243,6 +243,27 @@ const completed = await commitLocalSale(
 database.exec('COMMIT');
 
 assert.equal(completed.receipt.totalCentimes, 2100);
+assert.equal(completed.receipt.discountCentimes, 0);
+const offeredSale = prepareSale(
+  await loadOperationalCache(adapter),
+  {
+    ...input,
+    cart: input.cart.map((line) => ({
+      ...line,
+      id: JSON.stringify([line.productId, line.sizeId, line.choiceValueIds, true]),
+      complimentary: true,
+    })),
+  },
+  'local-offert-check',
+);
+assert.equal(offeredSale.receipt.subtotalCentimes, 2100);
+assert.equal(offeredSale.receipt.discountCentimes, 2100);
+assert.equal(offeredSale.receipt.totalCentimes, 0);
+assert.equal(offeredSale.receipt.lines[0].complimentary, true);
+assert.ok(
+  [...offeredSale.stockUsage.values()].some((quantity) => quantity > 0),
+  'Offert drinks still deduct recipe stock',
+);
 assert.equal(completed.receipt.cashierName, 'Test cashier');
 assert.equal(completed.receipt.costStatus, 'complete');
 assert.equal(completed.receipt.ingredientCostCentimes, 218);

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ORDER_PAGE_SIZE } from '../../data/orderHistory';
+import {
+  ORDER_PAGE_SIZE,
+  type OrderStatusFilter,
+} from '../../data/orderHistory';
 import { useOrdersData } from '../../data/useOrdersData';
 import { OrderDetailPanel } from './components/OrderDetailPanel/OrderDetailPanel';
 import { OrdersListPanel } from './components/OrdersListPanel/OrdersListPanel';
@@ -8,9 +11,7 @@ import styles from './OrdersScreen.module.css';
 export function OrdersScreen() {
   const [page, setPage] = useState(0);
   const [query, setQuery] = useState('');
-  const [status, setStatus] = useState<
-    'All' | 'Completed' | 'Cancelled' | 'Refunded'
-  >('All');
+  const [status, setStatus] = useState<OrderStatusFilter>('All');
   const [businessDate, setBusinessDate] = useState('');
   const data = useOrdersData({ page, status, businessDate, query });
   const [selectedKey, setSelectedKey] = useState<string>();
@@ -59,10 +60,8 @@ export function OrdersScreen() {
       />
       <OrderDetailPanel
         order={selectedOrder}
-        retrying={data.retryingId === selectedOrder?.localSaleId}
         reprinting={data.reprintingId === selectedOrder?.localSaleId}
         cancelling={data.cancellingId === selectedOrder?.localSaleId}
-        onRetry={data.retrySync}
         onReprint={data.reprintReceipt}
         onCancel={data.cancelOrder}
       />
