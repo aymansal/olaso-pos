@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — panels `bb6652aaf454e0b52bffbe77c11bf95b5d1aeef3` on `origin/main` |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — Offert `6f6c90ba7fa288a42a0e860d67e02229eda8d474` on `origin/main` |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -125,9 +125,12 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- POLISH-01 (30 Aug 2026): Place order chevrons nudge -3px to +3px so left
-  and right rest equally inside the thumb. Then Offert trial + payment
-  layout + cart Gift polish committed to origin/main.
+- POLISH-01 (30 Aug 2026): line Offert, payment Total pinned above Place
+  order, Gift beside trash, compact cart controls, and centered Place
+  order chevron nudge. On `origin/main` as
+  `6f6c90ba7fa288a42a0e860d67e02229eda8d474`. Exact next action: owner
+  confirms product-based split checkout (pay some lines, leave the rest
+  in the cart; not split tender).
 - POLISH-01 (30 Aug 2026): cart line Gift, trash, and quantity pill are
   visually smaller (36px circles / 100×36 pill) with 8px gaps; 44px hits
   kept. Exact next action: owner checks on tablet; commit when asked.
@@ -1483,14 +1486,17 @@ remaining goal and card sequence.
 
 ### 2026-08-30 — POLISH-01 trial cart-line Offert
 
-- Gift on the POS cart-line photo marks one unit Offert for the physical
+- Gift beside the cart-line trash marks one unit Offert for the physical
   ninth-drink stamp card. Catalog prices stay on the snapshot; charged total
   is 0; recipe stock still deducts; qty > 1 splits a paid twin. No stamp
-  wallet, customer records, or general discount.
+  wallet, customer records, or general discount. Payment Total stays pinned
+  above Place order; Gift/trash/stepper are compact with 8px gaps. Place
+  order chevrons nudge -3px to +3px.
 - Android research: React/data cart flag + SQLite receipt JSON + Convex
-  optional `complimentary`. No Kotlin, plugin, or native control.
-- Uncommitted so the owner can `git restore` if they dislike it.
-- Exact next action: owner tries it on the tablet; keep or revert.
+  optional `complimentary`. Chevron/layout are CSS only.
+- On `origin/main` as `6f6c90ba7fa288a42a0e860d67e02229eda8d474`.
+- Exact next action: product-based split checkout (pay selected lines, leave
+  the rest in the cart; not split tender).
 
 ### 2026-08-29 — POLISH-01 Dashboard 400px stack and recent-order dates
 
