@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — cash/split `bb5a499194ceae6ea13a39eea0bc82cdf20730f5` on `origin/main` |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — `95cd14c82bfbac5e6f39e1c9cf8717f6c035cd53` on `origin/main` |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -130,8 +130,9 @@ remaining goal and card sequence.
   counts with 10px label gap (labels were not flex, so gap never applied).
   Android research: React/CSS only. Checks: `check:css-scope`, `tsc -b`,
   `npm run build`, `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and
-  relaunched. Exact next action: owner opens Choices on Several and confirms
-  short names, spaced counts, smaller card.
+  relaunched. Pushed `95cd14c82bfbac5e6f39e1c9cf8717f6c035cd53` on
+  `origin/main`. Exact next action: owner opens Choices on Several and
+  confirms short names, spaced counts, smaller card.
 - POLISH-01 (30 Aug 2026): Recipe overlay dropped the version sentence. It is
   a 560px card with Ingredient and Amount as row labels and four compact
   name-then-amount columns. Android research: React/CSS only. Checks:
@@ -1530,7 +1531,8 @@ remaining goal and card sequence.
 
 - Dialog 880×680 → 600×max 640. Name fields 168/160px. At least / At most
   are filled counts with 10px label gap, not bordered 44px capsules.
-- Exact next action: owner opens Choices on Several on the tablet.
+- Exact next action: owner opens Choices on Several on the tablet. Pushed
+  `95cd14c82bfbac5e6f39e1c9cf8717f6c035cd53` on `origin/main`.
 
 ### 2026-08-30 — POLISH-01 Recipe overlay four-up layout
 
