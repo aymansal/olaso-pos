@@ -136,10 +136,15 @@ remaining goal and card sequence.
   TypeScript, production build, and Convex codegen/typecheck all pass. Reports
   also passes its local section and stops only at the intentionally unavailable
   `OLASO_OWNER_PIN` cloud gate. Graphify code refresh completed at 3,025 nodes
-  and 5,956 edges, followed by clustering at 184 communities. Exact next
-  action: commit and push this POLISH-01 set, build the Android beta, install it
-  with `adb install -r`, restart once, and inspect the visible screen plus
-  focused startup errors.
+  and 5,956 edges, followed by clustering at 184 communities. Commit
+  `fc79d1e72e0bd35449efe1bf23c1dd2a61d48ee7` is on `origin/main`. The first
+  Android gate exposed only a stale assertion for deleted demo drink images;
+  the obsolete assertion was removed because runtime photos now come from the
+  saved product record. `check:android`, the production web build, Capacitor
+  sync, Android unit tasks, and the 140-task debug APK build then passed. Exact
+  next action: push this check correction, install the built APK with
+  `adb install -r`, restart once, and inspect the visible screen plus focused
+  startup errors.
 
 - POLISH-01 mandatory identity/data/payment/report repair (2 Sep 2026): traced
   the lost staff PIN to `seed:resetAndSeed` deleting `staffProfiles` while

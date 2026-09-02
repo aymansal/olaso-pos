@@ -250,25 +250,6 @@ assert.doesNotMatch(
   /(?:^|\/)(?:local\.properties|.*\.(?:apk|aab|jks|keystore|p12|pem|key))$/im,
 );
 
-const productAssets = readFileSync('src/features/pos/data/products.ts', 'utf8');
-assert.match(productAssets, /pos-product-americano\.webp/);
-assert.doesNotMatch(productAssets, /\.png['"]/);
-for (const drink of [
-  'americano',
-  'cappuccino',
-  'caramel-mac',
-  'cold-brew',
-  'espresso',
-  'flat-white',
-  'iced-coffee-milk',
-  'latte',
-  'mocha',
-]) {
-  assert.ok(
-    existsSync(`images/pos-product-${drink}.webp`),
-    `Missing right-sized product asset for ${drink}`,
-  );
-}
 assert.match(
   readFileSync('src/features/pos/components/ProductCard/ProductCard.tsx', 'utf8'),
   /width=\{72\}[\s\S]*?height=\{92\}[\s\S]*?decoding="async"/,
