@@ -491,6 +491,8 @@ export const fr: Record<string, string> = {
   'Test printer': 'Tester l’imprimante',
   'Testing…': 'Test…',
   'The correction could not be saved.': 'La correction n’a pas pu être enregistrée.',
+  'The correction date cannot be before the original expense start date.':
+    'La date de correction ne peut pas être antérieure à la date de début de la dépense initiale.',
   'The order could not be saved.': 'La commande n’a pas pu être enregistrée.',
   'The terminal could not be locked.': 'Le terminal n’a pas pu être verrouillé.',
   'This month': 'Ce mois',

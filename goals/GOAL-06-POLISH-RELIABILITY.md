@@ -135,7 +135,7 @@ These decisions are final for this batch and must not be reopened:
 
 | Card | Scope | Status |
 | --- | --- | --- |
-| PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | pending — first card |
+| PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | in progress — checks passed; commit/push pending |
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | pending |
 | PR-03 | Select the correct graph month and localize every visible application date | pending |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | pending |
@@ -145,23 +145,36 @@ These decisions are final for this batch and must not be reopened:
 
 **Active card:** `PR-01`
 
-**Active status:** pending implementation
+**Active status:** in progress — checks passed; commit/push pending
 
-**Last completed step:** owner decisions captured and durable ledger created
+**Last completed step:** PR-01 focused and build checks passed
 
 **Current facts:**
 
-- `convex/staff.ts` `listAllCompensation` still omits optional exact start/end
-  dates even though the per-profile compensation query returns them.
-- Recurring expense correction uses the replacement date as the reversal start
-  without rejecting a date earlier than the original start.
-- No application code was changed while preparing this ledger.
+- `convex/staff.ts` `listAllCompensation` returns optional exact start/end
+  dates, matching the per-profile compensation query.
+- Local and cloud recurring-expense correction reject a date earlier than the
+  exact original start (or the original start-month fallback) before writes.
 - The tablet was not touched.
+- `main` is clean at the owner-supplied starting commit
+  `6f261da3891fd5b3cb0569692b9f85a81a4fbe67`.
+- Graphify identifies the PR-01 path as `convex/staff.ts`
+  `listAllCompensation` through `reconnectContext.tsx` to
+  `localCostViews.ts` replacement, plus the paired local
+  `localCosts.ts` and cloud `convex/expenses.ts` correction paths.
+- Official Android SQLite guidance confirms the required all-or-nothing
+  correction write belongs in the existing SQLite transaction; Capacitor's
+  official platform guidance confirms no native/plugin change is needed for
+  this React/SQLite/Convex data validation repair.
+- `listAllCompensation` now returns exact optional start/end dates, preserving
+  them through the existing reconnect spread and local replacement.
+- Both expense-correction paths now reject an earlier correction before either
+  paired correction row is inserted; the existing translated dialog presents
+  the approved English/French meaning.
 
-**Exact next action:** read the Recovery Protocol, verify clean `main`, perform
-the mandatory official Android/Capacitor boundary check, query Graphify for
-`listAllCompensation` and both local/cloud expense-correction paths, then start
-PR-01 only.
+**Exact next action:** re-read the applicable instructions, stage only PR-01,
+commit, push directly to `origin/main`, verify the full SHA, then mark PR-01
+done and activate PR-02.
 
 ## PR-01 — Exact compensation and expense correction dates
 
@@ -615,3 +628,106 @@ Do not claim physical acceptance. The owner performs it.
 - Exact next action: follow the complete Recovery Protocol and begin PR-01
   only. Do not begin PR-02 or any other card until PR-01 is verified, journaled,
   committed, pushed, and recorded here with its full SHA.
+
+### 2026-09-02 — PR-01 recovery and native-boundary checkpoint
+
+- Re-read the complete repository instructions, project plan, project ledger,
+  this repair ledger, its Recovery Protocol, State Pointer, PR-01 contract,
+  and newest checkpoint entry before code exploration.
+- Verified `main...origin/main` is clean at
+  `6f261da3891fd5b3cb0569692b9f85a81a4fbe67`; no existing work needs
+  preservation.
+- Queried the current Graphify graph for the exact compensation replacement and
+  expense-correction flows. It identifies `convex/staff.ts`,
+  `src/data/reconnectContext.tsx`, `src/data/localCostViews.ts`,
+  `src/data/localCosts.ts`, and `convex/expenses.ts` as the relevant path.
+- Reviewed current official Android SQLite transaction guidance and Capacitor
+  platform guidance. The selected boundary is existing React/SQLite/Convex:
+  local correction rows remain one existing SQLite transaction; cloud
+  validation remains in the existing Convex mutation. No Android, Capacitor,
+  plugin, dependency, or Kotlin change is needed or permitted for PR-01.
+- No application code, app, tablet, browser, ADB, PIN, seed, or live data was
+  touched. Exact next action: inspect the identified code and focused checks,
+  then implement PR-01 only.
+
+### 2026-09-02 — PR-01 implementation and regression coverage added
+
+- `convex/staff.ts` now includes optional `effectiveStartDate` and
+  `effectiveEndDate` in the owner-only all-compensation snapshot, matching the
+  per-profile query. The existing reconnect mapping spreads those fields into
+  `replaceSavedCompensation` unchanged.
+- `src/data/localCostViews.ts` accepts the existing transaction seam for
+  compensation replacement, allowing the existing focused in-memory SQLite
+  check to prove that exact dates persist while legacy month-only rows retain
+  absent optional dates.
+- `src/data/localCosts.ts` and `convex/expenses.ts` now reject a correction
+  before the original recurring expense start before either paired reversal or
+  replacement row is written. `src/lib/fr.ts` translates the exact approved
+  user-facing sentence in the existing dialog path.
+- `scripts/check-local-inventory-costs.mjs` now proves exact compensation
+  refresh, month-only compatibility, early-correction rejection with zero
+  correction rows, and correction on the original start date with the usual
+  paired rows. No checks have run yet; no app, tablet, browser, ADB, PIN, seed,
+  or live data was touched.
+- Exact next action: run PR-01 focused checks and repair only any failure.
+
+### 2026-09-02 — PR-01 initial focused-check result
+
+- `npm run check:reconnect` and `npm run check:costs` passed.
+- `npm run check:local-inventory-costs` correctly reached the new coverage but
+  retained an earlier compensation-row count of one after the new legacy
+  month-only fixture added a second row.
+- `npx tsc -b` found the new optional local replacement test seam referenced a
+  missing local `Transaction` type, which also caused inferred callback values
+  to be `any`. `git diff --check` passed aside from normal Windows line-ending
+  notices.
+- These are implementation-test wiring issues, not a product-data failure. No
+  app, tablet, browser, ADB, PIN, seed, or live data was touched. Exact next
+  action: add the already-used transaction shape locally, correct the expected
+  fixture count, and rerun the same focused checks.
+
+### 2026-09-02 — PR-01 second focused-check result
+
+- Added the existing local transaction shape to the compensation replacement
+  seam and corrected the deliberately expanded fixture counts. `npx tsc -b`,
+  `npm run check:reconnect`, `npm run check:costs`, and `git diff --check`
+  now pass (the latter only prints normal Windows line-ending notices).
+- The local inventory/cost check then correctly rejected an old fixture because
+  the new legacy month-only compensation was open-ended and overlapped the
+  existing July fixture. This is a fixture setup issue, not a product failure:
+  the compatibility record can retain absent exact dates while using its legacy
+  end-month field. No app, tablet, browser, ADB, PIN, seed, or live data was
+  touched.
+- Exact next action: give the legacy fixture its legacy `effectiveEndMonth`,
+  then rerun PR-01 focused checks.
+
+### 2026-09-02 — PR-01 third focused-check result
+
+- The legacy fixture now has an end month, but it still used July 2026, the
+  same historical month as a pre-existing valid fixture. The local overlap
+  guard correctly refused the second July period. The compatibility fixture
+  must use an older non-overlapping month instead.
+- `npm run check:reconnect`, `npm run check:costs`, `npx tsc -b`, and
+  `git diff --check` continue to pass. No app, tablet, browser, ADB, PIN, seed,
+  or live data was touched. Exact next action: move the month-only fixture to
+  July 2025 and rerun PR-01 focused checks.
+
+### 2026-09-02 — PR-01 checks passed
+
+- The exact-date refresh fixture is independent from the existing August
+  allocation fixture. The local check proves an exact `2026-09-15` through
+  `2026-09-20` compensation snapshot survives replacement, a month-only legacy
+  record retains absent exact dates, an early recurring correction writes no
+  paired rows, and a correction on the original start writes both rows.
+- Passed: `npm run check:local-inventory-costs`, `npm run check:reconnect`,
+  `npm run check:costs`, `npx tsc -b`, `npm run check:convex`, `npm run build`,
+  and `git diff --check`. The Vite build printed its existing browser
+  compatibility warning for `jeep-sqlite`'s `crypto` import; no failure or new
+  warning was introduced by PR-01.
+- Protected `check:expenses`, `check:staff`, and `check:monthly-costs` were not
+  run because they require a PIN and reset development data; the required local
+  no-PIN regression covers this card's paths. No app, tablet, browser, ADB,
+  PIN, seed, or live data was touched.
+- Exact next action: re-read the applicable instructions, review/stage only
+  PR-01, commit and push it to `origin/main`, record the full SHA, then
+  activate PR-02 only.

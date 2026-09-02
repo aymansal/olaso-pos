@@ -193,6 +193,12 @@ export const correct = mutation({
     const correctionDate = input.recurrence === 'monthly'
       ? input.effectiveStartDate
       : input.effectiveDate;
+    const originalStartDate = original.recurrence === 'monthly'
+      ? original.effectiveStartDate ?? `${original.effectiveStartMonth}-01`
+      : original.effectiveDate;
+    if (originalStartDate && correctionDate < originalStartDate) {
+      throw new Error('The correction date cannot be before the original expense start date.');
+    }
     const reversalStartDate = original.recurrence === 'monthly'
       ? correctionDate
       : original.effectiveStartDate;

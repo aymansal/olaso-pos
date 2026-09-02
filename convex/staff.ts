@@ -248,6 +248,8 @@ export const listAllCompensation = query({
       monthlyAmountCentimes: row.monthlyAmountCentimes,
       effectiveStartMonth: row.effectiveStartMonth,
       ...(row.effectiveEndMonth ? { effectiveEndMonth: row.effectiveEndMonth } : {}),
+      ...(row.effectiveStartDate ? { effectiveStartDate: row.effectiveStartDate } : {}),
+      ...(row.effectiveEndDate ? { effectiveEndDate: row.effectiveEndDate } : {}),
       revision: row.revision,
     }));
   },

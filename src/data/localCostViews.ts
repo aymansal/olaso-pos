@@ -8,6 +8,7 @@ import type {
 } from './localCosts.ts';
 
 type Database = Pick<SQLiteDBConnection, 'query' | 'run'>;
+type Transaction = <T>(operation: (database: Database) => Promise<T>) => Promise<T>;
 
 function month(value: string) {
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
@@ -317,9 +318,10 @@ export function replaceSavedCompensation(
     effectiveEndDate?: string;
     revision: number;
   }>,
+  transact: Transaction = withLocalTransaction,
 ) {
   if (rows.length > 100) throw new Error('Compensation snapshot exceeds its limit.');
-  return withLocalTransaction(async (database) => {
+  return transact(async (database) => {
     const now = Date.now();
     const blocked = await database.query(
       `SELECT m.local_record_id FROM management_operations m

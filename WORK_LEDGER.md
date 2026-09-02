@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — reliability ledger `c5afe1edb8686ea60f3b3fe3f6fb6527896a9b6a`; PR-01 is next |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 checks passed; commit/push pending |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -141,6 +141,60 @@ remaining goal and card sequence.
   is on `origin/main`.
   Exact next action: begin PR-01 only from the linked ledger after its complete
   Recovery Protocol and mandatory official Android/Capacitor boundary check.
+
+- PR-01 recovery checkpoint (2 Sep 2026): completed the linked ledger's
+  mandatory recovery reread, verified clean `main` at
+  `6f261da3891fd5b3cb0569692b9f85a81a4fbe67`, and queried Graphify for the
+  compensation replacement and local/cloud expense-correction paths. Official
+  Android SQLite and Capacitor guidance confirms this is an existing
+  React/SQLite/Convex boundary: local paired correction rows stay atomic in the
+  current SQLite transaction and cloud validation stays in Convex; no native,
+  plugin, dependency, Kotlin, app, tablet, browser, ADB, PIN, seed, or live
+  data action occurred. Exact next action: inspect those callers and implement
+  PR-01 only, with its required focused checks and ledger evidence.
+
+- PR-01 implementation checkpoint (2 Sep 2026): `listAllCompensation` now
+  returns exact optional compensation dates through the existing reconnect
+  replacement path. Local and Convex recurring-expense correction now reject a
+  date before the original exact (or month-start fallback) date before either
+  append-only paired correction row is inserted; the existing translated error
+  display has the approved French sentence. Added focused local SQLite coverage
+  for exact-date replacement, month-only compatibility, early rejection with
+  no rows, and a valid same-date correction. Checks are pending. No app,
+  tablet, browser, ADB, PIN, seed, or live data was touched. Exact next action:
+  run PR-01 focused checks and repair only any failure.
+
+- PR-01 initial check result (2 Sep 2026): `check:reconnect` and `check:costs`
+  passed. The focused local SQLite regression reached the new fixture but an
+  earlier expected compensation count was still one rather than the new two;
+  TypeScript also found the new optional replacement test seam missing its
+  local transaction type. `git diff --check` passed apart from ordinary Windows
+  line-ending notices. These are test-wiring issues only; no application,
+  tablet, browser, ADB, PIN, seed, or live data action occurred. Exact next
+  action: correct those two small issues and rerun the focused checks.
+
+- PR-01 second check result (2 Sep 2026): after correcting the transaction type
+  and fixture counts, TypeScript, reconnect, exact-cost, and diff checks pass.
+  The local check then correctly refused a pre-existing July fixture because
+  the new legacy month-only compensation fixture was open-ended. The fixture
+  will use its legacy end-month field while leaving optional exact dates absent.
+  No application, tablet, browser, ADB, PIN, seed, or live data action
+  occurred. Exact next action: correct that fixture and rerun PR-01 checks.
+
+- PR-01 third check result (2 Sep 2026): closing the legacy fixture exposed its
+  remaining overlap with a pre-existing July 2026 test fixture; the local guard
+  correctly rejected it. The fixture will move to July 2025, retaining its
+  month-only compatibility purpose. Reconnect, exact-cost, TypeScript, and
+  diff checks still pass. No application, tablet, browser, ADB, PIN, seed, or
+  live data action occurred. Exact next action: move that fixture and rerun
+  PR-01 focused checks.
+
+- PR-01 checks passed (2 Sep 2026): focused local replacement and correction
+  regression, reconnect, exact-cost, TypeScript, Convex typecheck/codegen, and
+  production build all passed. The protected cloud tests were not run because
+  they require a PIN and reset development data; no tablet or application was
+  launched. Exact next action: stage only PR-01, commit/push to `origin/main`,
+  record the full SHA, then activate PR-02 only.
 
 - POLISH-01 release handoff (2 Sep 2026): the owner authorized committing and
   pushing the complete pending polish set to `main`, then installing it over

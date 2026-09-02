@@ -23,6 +23,7 @@ import {
   loadLocalCostManagementFromDatabase,
   pruneSavedCompensationFromDatabase,
   pruneSavedExpensesFromDatabase,
+  replaceSavedCompensation,
 } from '../src/data/localCostViews.ts';
 import { listPendingOutboxFromDatabase } from '../src/data/outbox.ts';
 import { localMigrations } from '../src/data/schema.ts';
@@ -148,6 +149,43 @@ const compensation = await addLocalCompensationPeriod(owner, {
   effectiveStartMonth: '2026-08',
 }, transaction);
 assert.ok(compensation.id);
+await replaceSavedCompensation([
+  {
+    id: compensation.id,
+    staffProfileId: 'manager-local',
+    monthlyAmountCentimes: 550_000,
+    effectiveStartMonth: '2026-08',
+    revision: 1,
+  },
+  {
+    id: 'exact-refresh-pay',
+    staffProfileId: 'manager-local',
+    monthlyAmountCentimes: 20_000,
+    effectiveStartMonth: '2026-09',
+    effectiveEndMonth: '2026-09',
+    effectiveStartDate: '2026-09-15',
+    effectiveEndDate: '2026-09-20',
+    revision: 2,
+  },
+  {
+    id: 'legacy-month-only-pay',
+    staffProfileId: 'manager-local',
+    monthlyAmountCentimes: 10_000,
+    effectiveStartMonth: '2025-07',
+    effectiveEndMonth: '2025-07',
+    revision: 1,
+  },
+], transaction);
+assert.deepEqual({ ...database.prepare(
+  `SELECT effective_start_date, effective_end_date FROM compensation_periods WHERE id = ?`,
+).get('exact-refresh-pay') }, {
+  effective_start_date: '2026-09-15', effective_end_date: '2026-09-20',
+});
+assert.deepEqual({ ...database.prepare(
+  `SELECT effective_start_date, effective_end_date FROM compensation_periods WHERE id = ?`,
+).get('legacy-month-only-pay') }, {
+  effective_start_date: null, effective_end_date: null,
+});
 await assert.rejects(
   addLocalCompensationPeriod(manager, {
     staffProfileId: 'owner-local',
@@ -156,7 +194,7 @@ await assert.rejects(
   }, transaction),
   /cannot make this change/,
 );
-assert.equal(database.prepare('SELECT COUNT(*) count FROM compensation_periods').get().count, 1);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM compensation_periods').get().count, 3);
 const extraPay = await addLocalCompensationPeriod(owner, {
   staffProfileId: 'manager-local',
   monthlyAmountCentimes: 1_000,
@@ -164,7 +202,7 @@ const extraPay = await addLocalCompensationPeriod(owner, {
   effectiveEndMonth: '2026-07',
 }, transaction);
 await deleteLocalCompensationPeriod(owner, extraPay, transaction);
-assert.equal(database.prepare('SELECT COUNT(*) count FROM compensation_periods').get().count, 2);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM compensation_periods').get().count, 4);
 assert.equal(
   database.prepare('SELECT effective_end_month FROM compensation_periods WHERE id = ?').get(extraPay.id).effective_end_month,
   '2026-07',
@@ -177,6 +215,36 @@ await correctLocalExpense(manager, { id: expense.id, revision: 1 }, {
   recurrence: 'one-time',
   effectiveDate: '2026-08-20',
 }, transaction);
+const monthlyExpense = await addLocalExpense(manager, {
+  category: 'Lease',
+  description: 'September lease',
+  amountCentimes: 90_000,
+  recurrence: 'monthly',
+  effectiveStartDate: '2026-09-10',
+}, transaction);
+await assert.rejects(
+  correctLocalExpense(manager, monthlyExpense, {
+    category: 'Lease',
+    description: 'September lease correction',
+    amountCentimes: 95_000,
+    recurrence: 'monthly',
+    effectiveStartDate: '2026-09-01',
+  }, transaction),
+  /The correction date cannot be before the original expense start date/,
+);
+assert.equal(database.prepare(
+  `SELECT COUNT(*) count FROM operating_expenses WHERE correction_of_expense_id = ?`,
+).get(monthlyExpense.id).count, 0);
+await correctLocalExpense(manager, monthlyExpense, {
+  category: 'Lease',
+  description: 'September lease correction',
+  amountCentimes: 95_000,
+  recurrence: 'monthly',
+  effectiveStartDate: '2026-09-10',
+}, transaction);
+assert.equal(database.prepare(
+  `SELECT COUNT(*) count FROM operating_expenses WHERE correction_of_expense_id = ?`,
+).get(monthlyExpense.id).count, 2);
 database.prepare(`INSERT INTO sales
   (local_sale_id, device_id, receipt_number, status, service_type,
    subtotal_centimes, tax_centimes, total_centimes, currency, business_date,
@@ -295,7 +363,7 @@ assert.equal(database.prepare(
 ).get().count, 0);
 assert.equal(database.prepare(
   'SELECT COUNT(*) count FROM operating_expenses',
-).get().count, 3);
+).get().count, 6);
 assert.equal(database.prepare(
   'SELECT COUNT(*) count FROM compensation_periods',
 ).get().count, 2);
