@@ -137,15 +137,15 @@ These decisions are final for this batch and must not be reopened:
 | --- | --- | --- |
 | PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | done — `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main` |
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
-| PR-03 | Select the correct graph month and localize every visible application date | in progress |
+| PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | pending |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** `PR-03`
+**Active card:** none — wait for owner before `PR-04`
 
-**Active status:** in progress — final checks and Graphify refresh passed; commit pending
+**Active status:** PR-03 complete and pushed
 
 **Last completed step:** added active-language date formatting and selected chart month
 
@@ -158,8 +158,8 @@ These decisions are final for this batch and must not be reopened:
   boundary confirm active-language date formatting belongs in the existing React
   formatting layer; no native, plugin, dependency, or Kotlin change is needed.
 
-**Exact next action:** review, commit, and push the PR-03-only diff without
-beginning PR-04.
+**Exact next action:** wait for owner authorization; then follow Recovery
+Protocol and begin PR-04 only.
 
 ## PR-01 — Exact compensation and expense correction dates
 
@@ -809,3 +809,11 @@ Do not claim physical acceptance. The owner performs it.
   3,032 nodes, 6,006 edges, and 186 communities. No app, tablet, browser, ADB,
   printer, PIN, seed, or live data was touched. Exact next action: review,
   commit, and push PR-03 only.
+
+### 2026-09-02 — PR-03 committed and pushed
+
+- Committed and pushed `e9cc667e94505237ba04cab56d4e84468cdbe8f4`
+  (`PR-03: localize report dates`) directly to `origin/main`.
+- PR-03 is complete. Owner physical acceptance and protected reports check
+  remain unavailable under the no-app/no-PIN instruction. Exact next action:
+  wait for owner authorization, then begin PR-04 only.

@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 `0bea66ae496e3ecc24efea13aa195903d3358aa6` and PR-02 `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` done on `origin/main`; PR-03 waits for owner |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01, PR-02, and PR-03 `e9cc667e94505237ba04cab56d4e84468cdbe8f4` done on `origin/main`; PR-04 waits for owner |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -149,6 +149,11 @@ remaining goal and card sequence.
   3,032 nodes, 6,006 edges, and 186 communities. The protected reports check
   stopped before any reset because its owner test PIN is unavailable. Exact next
   action: review, commit, and push PR-03 only.
+
+- PR-03 complete (2 Sep 2026): committed and pushed
+  `e9cc667e94505237ba04cab56d4e84468cdbe8f4`
+  (`PR-03: localize report dates`) to `origin/main`. Exact next action: wait
+  for owner authorization, then follow Recovery Protocol and begin PR-04 only.
 
 - PR-02 implementation checkpoint (2 Sep 2026): Reports now separates the full
   ingredient-type count from its 20 visible rows. The All preset has a bounded
