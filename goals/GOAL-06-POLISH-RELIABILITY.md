@@ -135,19 +135,19 @@ These decisions are final for this batch and must not be reopened:
 
 | Card | Scope | Status |
 | --- | --- | --- |
-| PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | in progress — checks passed; commit/push pending |
-| PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | pending |
+| PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | done — `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main` |
+| PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | pending — next card |
 | PR-03 | Select the correct graph month and localize every visible application date | pending |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | pending |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** `PR-01`
+**Active card:** `PR-02`
 
-**Active status:** in progress — checks passed; commit/push pending
+**Active status:** pending implementation
 
-**Last completed step:** PR-01 focused and build checks passed
+**Last completed step:** PR-01 committed and pushed to `origin/main`
 
 **Current facts:**
 
@@ -172,9 +172,8 @@ These decisions are final for this batch and must not be reopened:
   paired correction row is inserted; the existing translated dialog presents
   the approved English/French meaning.
 
-**Exact next action:** re-read the applicable instructions, stage only PR-01,
-commit, push directly to `origin/main`, verify the full SHA, then mark PR-01
-done and activate PR-02.
+**Exact next action:** do not begin implementation until the next owner request;
+then follow the full Recovery Protocol and start PR-02 only.
 
 ## PR-01 — Exact compensation and expense correction dates
 
@@ -731,3 +730,13 @@ Do not claim physical acceptance. The owner performs it.
 - Exact next action: re-read the applicable instructions, review/stage only
   PR-01, commit and push it to `origin/main`, record the full SHA, then
   activate PR-02 only.
+
+### 2026-09-02 — PR-01 committed and pushed
+
+- Committed the complete PR-01 source, regression coverage, and ledger evidence
+  as `0bea66ae496e3ecc24efea13aa195903d3358aa6`
+  (`PR-01: preserve exact cost dates`) and pushed it directly to `origin/main`.
+- Verified `main...origin/main` is synchronized and clean after the push.
+- PR-01 is done. PR-02 is the next pending card; it has not been inspected or
+  started. Exact next action: wait for the owner, then follow this ledger's
+  Recovery Protocol and begin PR-02 only.

@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 checks passed; commit/push pending |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 done `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main`; PR-02 next |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -195,6 +195,15 @@ remaining goal and card sequence.
   they require a PIN and reset development data; no tablet or application was
   launched. Exact next action: stage only PR-01, commit/push to `origin/main`,
   record the full SHA, then activate PR-02 only.
+
+- PR-01 complete (2 Sep 2026): committed and pushed
+  `0bea66ae496e3ecc24efea13aa195903d3358aa6`
+  (`PR-01: preserve exact cost dates`) to `origin/main`. This includes exact
+  compensation-date refresh preservation, early recurring-correction rejection
+  before paired writes, its French message, focused no-PIN regression, and all
+  recorded automated checks. `main` matched `origin/main` after the push; no
+  application, tablet, browser, ADB, PIN, seed, or live data action occurred.
+  PR-02 is next but not started.
 
 - POLISH-01 release handoff (2 Sep 2026): the owner authorized committing and
   pushing the complete pending polish set to `main`, then installing it over
