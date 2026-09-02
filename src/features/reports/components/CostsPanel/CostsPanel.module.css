@@ -67,15 +67,23 @@
 }
 
 .lists > section {
+  display: flex;
+  flex-direction: column;
   padding: 18px;
-  overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
   border-radius: 20px;
 }
 
 .lists h3 {
+  flex: none;
   margin: 0 0 10px;
   font-size: 16px;
+}
+
+.rows {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .rows article {

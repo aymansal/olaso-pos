@@ -139,13 +139,39 @@ assert.match(stock, /loadOfflineIngredientDetail/);
 assert.match(dashboard, /loadOfflineDashboard/);
 assert.doesNotMatch(dashboard, /useState\(localBusinessDate\)/);
 const dashboardOnline = dashboard.match(
-  /const request = available\s*\?\s*([\s\S]*?)\s*:\s*loadOffline/,
+  /const request = available\s*\?\s*([\s\S]*?)\s*:\s*localRequest/,
 );
 assert.ok(dashboardOnline, 'useDashboardData must choose cloud vs offline by available');
 assert.match(dashboardOnline[1], /api\.dashboard\.getSnapshot/);
-assert.doesNotMatch(dashboardOnline[1], /loadOfflineDashboard|pendingSyncCount/);
+assert.match(dashboardOnline[1], /Promise\.all/);
+assert.doesNotMatch(dashboardOnline[1], /pendingSyncCount/);
 assert.doesNotMatch(dashboard, /pendingSyncCount/);
+assert.match(dashboard, /loadOfflineDashboard\(businessDate\) as Promise<DashboardSnapshot>/);
+assert.match(
+  dashboard,
+  /\(local\.today\?\.orderCount \?\? 0\) > cloudToday/,
+);
+const pickDashboard = (cloudToday, localToday, local) =>
+  local && localToday > cloudToday ? 'local' : 'cloud';
+assert.equal(pickDashboard(5, 6, true), 'local');
+assert.equal(pickDashboard(6, 6, true), 'cloud');
+assert.equal(pickDashboard(5, 5, true), 'cloud');
+assert.equal(pickDashboard(5, 0, false), 'cloud');
 assert.match(dashboard, /available === undefined \|\| !foreground/);
+const costsPanel = readFileSync(
+  'src/features/reports/components/CostsPanel/CostsPanel.tsx',
+  'utf8',
+);
+const costsCss = readFileSync(
+  'src/features/reports/components/CostsPanel/CostsPanel.module.css',
+  'utf8',
+);
+assert.doesNotMatch(costsPanel, /slice\(0, 8\)/);
+assert.match(costsPanel, /saved\.expenses\.map\(/);
+assert.match(costsPanel, /saved\.compensation\.map\(/);
+assert.match(costsCss, /min-height: 0/);
+assert.match(costsCss, /overflow-y: auto/);
+assert.match(costsCss, /flex-direction: column/);
 assert.match(reports, /loadOfflineReport/);
 assert.match(reports, /api\.reports\.getSummary/);
 assert.match(reports, /api\.reports\.getAllSummary/);

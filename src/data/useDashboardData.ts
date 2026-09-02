@@ -31,13 +31,22 @@ export function useDashboardData() {
     let cancelled = false;
     if (!hasSnapshot.current) setIsLoading(true);
     setError('');
+    const localRequest = loadOfflineDashboard(businessDate) as Promise<DashboardSnapshot>;
     const request = available
-      ? convex.query(api.dashboard.getSnapshot, {
-          businessDate,
-          sessionToken: session.token,
-          deviceId: session.deviceId,
+      ? Promise.all([
+          convex.query(api.dashboard.getSnapshot, {
+            businessDate,
+            sessionToken: session.token,
+            deviceId: session.deviceId,
+          }),
+          localRequest.catch(() => undefined),
+        ]).then(([cloud, local]) => {
+          const cloudToday = cloud.today?.orderCount ?? 0;
+          return local && (local.today?.orderCount ?? 0) > cloudToday
+            ? local
+            : cloud;
         })
-      : loadOfflineDashboard(businessDate) as Promise<DashboardSnapshot>;
+      : localRequest;
     void request
       .then((result) => {
         if (!cancelled) {

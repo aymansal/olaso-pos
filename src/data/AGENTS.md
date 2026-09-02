@@ -166,16 +166,20 @@ tablet's local SQLite operational record.
   page sizes at 20 or fewer.
 - Dashboard reads use one bounded snapshot request on mount or deliberate
   retry, with a bounded saved-tablet fallback offline; never poll or subscribe
-  while the screen is hidden.
+  while the screen is hidden. Online reads request the cloud snapshot and the
+  saved-tablet snapshot concurrently and show the tablet snapshot only when it
+  has strictly more completed current-day sales; they never add the two
+  totals.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry, with a one-to-31-day saved-tablet fallback offline; tab
   switches remain local and never start another query. The selected range
   prefers this tablet’s saved receipts when they contain more completed sales
   than the cloud snapshot, so unsynced today sales still appear. Used-ingredient
   bars overlay this tablet’s on-hand stock by name and unit.
-- Online Dashboard uses Convex saved summaries; still-unsynced tablet sales
-  are not mixed into those totals; `offlineViews` remain the offline
-  tablet-only path.
+- Online Dashboard uses Convex saved summaries, with the saved-tablet
+  snapshot shown temporarily while a newer local completed sale still waits
+  for acknowledgement; totals are never mixed by addition; `offlineViews`
+  remain the offline tablet-only path.
 - Retained visible-screen hooks reload only for their first safe snapshot,
   an actual authenticated reconnect revision, changed request inputs, or a
   deliberate user action. Showing an already-loaded React Activity never

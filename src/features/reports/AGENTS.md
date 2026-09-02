@@ -10,7 +10,9 @@ performance, ingredient usage, and bounded period controls.
 - `ReportsScreen.tsx` composes the summary and analytics panels.
 - `ReportsAnalyticsPanel` owns local Sales, Products, Stock Usage, and
   role-appropriate Costs tab selection plus the shared period calendar.
-- `CostsPanel` owns adding expenses and monthly pay. Managers see expenses;
+- `CostsPanel` owns adding expenses and monthly pay. Every saved expense and
+  compensation record is reachable through the card's internal row scrolling;
+  the page layout never grows. Managers see expenses;
   owners also add compensation. Profit is not shown on this tab.
 - `ReportSummaryPanel` and `SalesTrendChart` own the right-card facts and the
   current-month chart. The Products right rail is two Dashboard-like cards

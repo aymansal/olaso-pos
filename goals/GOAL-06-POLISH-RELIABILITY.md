@@ -138,28 +138,36 @@ These decisions are final for this batch and must not be reopened:
 | PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | done — `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main` |
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
-| PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | pending |
+| PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — SHA recorded below |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** none — wait for owner before `PR-04`
+**Active card:** none — wait for owner before `PR-05`
 
-**Active status:** PR-03 complete and pushed
+**Active status:** PR-04 complete and pushed
 
-**Last completed step:** added active-language date formatting and selected chart month
+**Last completed step:** removed the Costs list caps and added honest pending-sale Dashboard selection
 
 **Current facts:**
 
-- `PR-02` is `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main`.
-- Graphify identifies the PR-03 flow as `src/lib/date.ts`, `ReportsScreen`,
-  `SalesTrendChart`, `PeriodCalendar`, and the Dashboard/Orders/Stock date views.
-- Official Android internationalization guidance and Capacitor's web-native
-  boundary confirm active-language date formatting belongs in the existing React
-  formatting layer; no native, plugin, dependency, or Kotlin change is needed.
+- `PR-03` is `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main`.
+- PR-04 removed both `.slice(0, 8)` limits in `CostsPanel.tsx` and made each
+  Costs card a flex column whose rows scroll internally (`min-height: 0`,
+  `overflow-y: auto`) without changing the page layout.
+- `useDashboardData` now requests the cloud Dashboard and the saved-tablet
+  Dashboard concurrently when online and shows the tablet snapshot only when
+  its completed current-day sales strictly exceed the cloud count; offline
+  remains local-only; totals are never added together.
+- Graphify was refreshed after the structural changes (3,035 nodes,
+  6,009 edges, 177 communities). The `dashboard` and `data`/`reports`
+  feature DOX contracts were updated to match the approved behavior.
+- Protected `check:reports` and `check:dashboard` stopped at the required
+  missing `OLASO_OWNER_PIN` before either script seeded or reset data; they
+  were not bypassed.
 
 **Exact next action:** wait for owner authorization; then follow Recovery
-Protocol and begin PR-04 only.
+Protocol and begin PR-05 only.
 
 ## PR-01 — Exact compensation and expense correction dates
 
@@ -817,3 +825,36 @@ Do not claim physical acceptance. The owner performs it.
 - PR-03 is complete. Owner physical acceptance and protected reports check
   remain unavailable under the no-app/no-PIN instruction. Exact next action:
   wait for owner authorization, then begin PR-04 only.
+
+### 2026-09-02 — PR-04 recovery and implementation checkpoint
+
+- The owner authorized PR-04. Re-read the complete Recovery Protocol, State
+  Pointer, the PR-04 contract, the repository instruction chain (`AGENTS.md`,
+  `src/AGENTS.md`, `src/data/AGENTS.md`, `reports/` and `dashboard/` feature
+  DOX), `PLAN.md`, and `WORK_LEDGER.md`; `main` is clean and synchronized at
+  `e84ac4e98cefe7c80da254a38f834a1466085106`.
+- Graphify traced the CostsPanel list and Dashboard snapshot flows. Existing
+  React/SQLite/Convex boundaries remain sufficient: no Android, Capacitor
+  plugin, dependency, or Kotlin change is needed. No app, tablet, browser,
+  ADB, PIN, seed, or live-data action occurred.
+- Removed both `.slice(0, 8)` display caps in `CostsPanel.tsx` and made each
+  Costs card a flex column with `flex: 1; min-height: 0; overflow-y: auto`
+  rows; headings and Add controls stay fixed and the page layout is unchanged.
+- `useDashboardData` now requests the cloud snapshot and the saved-tablet
+  snapshot concurrently while online and shows the tablet snapshot only when
+  its completed current-day sales strictly exceed the cloud count, reusing the
+  established Reports selection rule. Offline remains local-only and totals
+  are never added together.
+- `scripts/check-offline-views.mjs` now guards the new concurrent Dashboard
+  contract, the strict-greater selection rule with all four acceptance
+  outcomes, the removed slice caps, and the internal-scroll CSS. Graphify
+  refreshed to 3,035 nodes, 6,009 edges, and 177 communities; the `dashboard`,
+  `data`, and `reports` DOX contracts were updated.
+- Passed `npm run check:offline`, `npx tsc -b`, `npm run check:css-scope`,
+  `npm run build`, and `git diff --check` (ordinary Windows line-ending
+  notices only). Protected `check:reports` and `check:dashboard` stopped at
+  the required missing `OLASO_OWNER_PIN` before either script seeded or reset
+  data; they were not bypassed. No app, tablet, browser, ADB, printer, PIN,
+  seed, or live data was touched.
+- Exact next action: review, commit, and push PR-04 only, then record its
+  full SHA here and in `WORK_LEDGER.md`.

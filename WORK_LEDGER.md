@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01, PR-02, and PR-03 `e9cc667e94505237ba04cab56d4e84468cdbe8f4` done on `origin/main`; PR-04 waits for owner |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01, PR-02, PR-03 `e9cc667e94505237ba04cab56d4e84468cdbe8f4`, and PR-04 done on `origin/main`; PR-05 waits for owner |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -128,6 +128,21 @@ remaining goal and card sequence.
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- PR-04 checkpoint (2 Sep 2026): began only after PR-03's pushed completion
+  and the owner's explicit authorization. Removed both `.slice(0, 8)` Costs
+  list caps in `CostsPanel.tsx` with internal row scrolling
+  (`min-height: 0`, `overflow-y: auto`) and no page-layout change. Online
+  Dashboard now requests cloud and saved-tablet snapshots concurrently and
+  shows the tablet snapshot only when completed current-day sales strictly
+  exceed the cloud count; offline stays local-only; totals are never added.
+  Focused offline-view guards cover the selection rule and caps. Passed
+  `check:offline`, `tsc -b`, `check:css-scope`, `npm run build`, and
+  `git diff --check`; protected `check:reports`/`check:dashboard` stopped at
+  the absent owner PIN before seeding. Graphify refreshed to 3,035 nodes,
+  6,009 edges, 177 communities; `dashboard`/`data`/`reports` DOX updated.
+  No app, tablet, browser, ADB, PIN, seed, or live data touched. Exact next
+  action: commit/push PR-04, record its SHA, then wait for owner before PR-05.
 
 - PR-03 recovery checkpoint (2 Sep 2026): began only after PR-02's pushed
   completion. Graphify traced the existing date helper, report chart, calendar,

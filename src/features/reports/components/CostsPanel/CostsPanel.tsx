@@ -59,7 +59,7 @@ export function CostsPanel({
         <section>
           <h3>{t('Expenses')}</h3>
           <div className={styles.rows}>
-            {saved.expenses.length ? saved.expenses.slice(0, 8).map((expense) => (
+            {saved.expenses.length ? saved.expenses.map((expense) => (
               <article key={expense.id}>
                 <span>
                   <strong>{expense.description}</strong>
@@ -90,7 +90,7 @@ export function CostsPanel({
           <section>
             <h3>{t('Monthly pay')}</h3>
             <div className={styles.rows}>
-              {saved.compensation.length ? saved.compensation.slice(0, 8).map((period) => (
+              {saved.compensation.length ? saved.compensation.map((period) => (
                 <article key={period.id}>
                   <span>
                     <strong>
