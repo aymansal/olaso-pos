@@ -129,6 +129,25 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 daily-report print repair (2 Sep 2026): owner-reported bug — the
+  Header Reports button showed `Printer action failed. Check the settings and
+  try again.` while sale receipts printed fine. Root cause:
+  `dailyOwnerReport.ts` selected the nonexistent `sales.discount_centimes`
+  column (discount lives only in `receipt_snapshot_json`), so the composition
+  query threw an unclassified SQLite error before the printer transport ran.
+  Fixed by removing that column and deriving Offert exactly as completed
+  `subtotal_centimes − netCentimes`; the queries moved into exported
+  `loadDailySalesOverview` for regression coverage
+  (`check:local-inventory-costs` daily-overview fixture; `check:offline`
+  source guards). Focused checks, `tsc -b`, `npm run build`, `check:android`,
+  `android:sync`, and the debug beta all pass. Graphify refreshed to 3,040
+  nodes, 6,017 edges, 186 communities. The 26,479,611-byte debug APK was
+  installed over connected SM-X115 `R8YX91AKWXJ` with `adb install -r`
+  (`Success`), preserving app data. No PIN was requested or used; no data was
+  seeded or wiped. Exact next action: owner taps the Reports header button and
+  confirms the bilingual daily summary prints on the WD8260; then commit/push
+  this repair and PR-05 remains pending owner authorization.
+
 - PR-04 checkpoint (2 Sep 2026): began only after PR-03's pushed completion
   and the owner's explicit authorization. Removed both `.slice(0, 8)` Costs
   list caps in `CostsPanel.tsx` with internal row scrolling

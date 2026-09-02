@@ -26,6 +26,7 @@ import {
   replaceSavedCompensation,
 } from '../src/data/localCostViews.ts';
 import { listPendingOutboxFromDatabase } from '../src/data/outbox.ts';
+import { loadDailySalesOverview } from '../src/data/dailyOwnerReport.ts';
 import { localMigrations } from '../src/data/schema.ts';
 import { operatingCostsForRange } from '../src/lib/costs.ts';
 import { matchesLevelFilter } from '../src/features/stock/stockPresentation.ts';
@@ -464,6 +465,39 @@ assert.deepEqual(
 assert.equal((await loadLocalCostManagementFromDatabase(
   adapter, '2026-08', 'owner',
 )).purchaseCashCentimes, 14_000);
+
+const reportSale = (id, status, serviceType, subtotal, total, date) => {
+  database.prepare(`INSERT INTO sales
+    (local_sale_id, device_id, receipt_number, status, service_type,
+     subtotal_centimes, tax_centimes, total_centimes, currency, business_date,
+     receipt_snapshot_json, ingredient_cost_centimes, cost_status, sync_state,
+     created_at)
+    VALUES (?, 'tablet-local', ?, ?, ?, ?, 0, ?, 'MAD', ?, '{}', 0,
+      'complete', 'synced', 1)`).run(
+    id, `0902-${id}`, status, serviceType, subtotal, total, date,
+  );
+};
+reportSale('done-1', 'completed', 'dine-in', 1300, 1000, '2026-09-02');
+reportSale('done-2', 'completed', 'take-away', 2500, 2500, '2026-09-02');
+reportSale('gone-1', 'cancelled', 'dine-in', 9000, 9000, '2026-09-02');
+database.prepare(`INSERT INTO sale_corrections
+  (local_correction_id, original_local_sale_id, device_id, reason, actor_name,
+   business_date, corrected_at, sync_state)
+  VALUES ('corr-1', 'gone-1', 'tablet-local', 'Wrong order', 'Owner',
+   '2026-09-02', 1, 'synced')`).run();
+const dailyOverview = await loadDailySalesOverview(adapter, '2026-09-02');
+const dailyCompleted = dailyOverview.salesRows.filter(
+  (row) => row.status === 'completed',
+);
+assert.equal(dailyCompleted.length, 2);
+assert.equal(dailyCompleted.reduce(
+  (sum, row) => sum + Number(row.subtotal_centimes), 0,
+), 3800);
+assert.deepEqual(dailyOverview.cancellations, [{
+  receiptNumber: '0902-gone-1',
+  reason: 'Wrong order',
+  actorName: 'Owner',
+}]);
 database.close();
 
 console.log('Local-first inventory, expense, compensation, and dependency checks passed.');

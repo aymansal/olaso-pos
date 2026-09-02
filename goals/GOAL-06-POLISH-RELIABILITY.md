@@ -181,6 +181,35 @@ Protocol and begin PR-05 only.
   no-app/no-PIN instruction.
 - Exact next action: wait for owner authorization, then begin PR-05 only.
 
+### 2026-09-02 — POLISH-01 mandatory bug repair: daily owner report print
+
+- Owner-reported bug: the Header Reports button (owner daily accounting
+  summary) showed the generic `Printer action failed. Check the settings and
+  try again.` while normal sale receipts printed fine. Under the mandatory
+  bug rule this paused card progression for a root-cause fix.
+- Root cause: `dailyOwnerReport.ts` selected a nonexistent
+  `discount_centimes` column from `sales`. Offert/discount is stored only in
+  `receipt_snapshot_json`, so the composition query threw
+  `no such column: discount_centimes` before the printer transport was ever
+  contacted; that unclassified JS error fell through
+  `describePrinterFailure` to its generic fallback.
+- Fix: the sales overview query no longer references `discount_centimes`;
+  the Offert total is derived exactly as completed-sale
+  `subtotal_centimes − netCentimes` (each sale stores
+  `total = subtotal − discount`, no tax). The two queries and their limit
+  guard moved into exported `loadDailySalesOverview(database, businessDate)`,
+  giving the same seam style as PR-01's local replacement check.
+- Regression coverage: `check:local-inventory-costs` now seeds two completed
+  and one cancelled sale plus a same-day correction and proves completed
+  filtering, the 3,800-centime subtotal sum, and cancellation mapping;
+  `check:offline-views` adds source guards that `discount_centimes` never
+  returns and the subtotal-minus-net derivation stays.
+- Passed `npm run check:local-inventory-costs`, `npm run check:offline`,
+  `npx tsc -b`, and `npm run build`. No app data, tablet, PIN, or seed was
+  touched by the code fix. Exact next action: rebuild the Android beta,
+  install over the connected SM-X115 with `adb install -r`, record the
+  owner's physical print verification, then commit and push.
+
 ## PR-01 — Exact compensation and expense correction dates
 
 **Status:** pending — first implementation card

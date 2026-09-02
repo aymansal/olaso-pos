@@ -1,5 +1,6 @@
 import { operatingCostsForRange } from '../lib/costs.ts';
 import { localBusinessDate } from '../lib/date.ts';
+import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import {
   encodeDailyOwnerReport,
   type DailyOwnerReport,
@@ -14,19 +15,15 @@ import {
   validatePrinterPreferences,
 } from './terminalSettings.ts';
 
-export async function createDailyOwnerReport(
-  ownerName: string,
-  printedAt = Date.now(),
-): Promise<DailyOwnerReport> {
-  const businessDate = localBusinessDate(new Date(printedAt));
-  const database = await openLocalDatabase();
-  const [report, costs, inventory, settings, sales, corrections] = await Promise.all([
-    loadOfflineReport(businessDate, businessDate),
-    loadLocalCostManagement(businessDate.slice(0, 7), 'owner'),
-    loadOfflineInventory(),
-    loadTerminalSettings(),
+type ReportDatabase = Pick<SQLiteDBConnection, 'query'>;
+
+export async function loadDailySalesOverview(
+  database: ReportDatabase,
+  businessDate: string,
+) {
+  const [sales, corrections] = await Promise.all([
     database.query(
-      `SELECT status, service_type, subtotal_centimes, discount_centimes,
+      `SELECT status, service_type, subtotal_centimes,
         cost_status, print_state FROM sales
        WHERE business_date = ? LIMIT 1001`,
       [businessDate],
@@ -43,9 +40,32 @@ export async function createDailyOwnerReport(
   if ((sales.values?.length ?? 0) > 1_000 || (corrections.values?.length ?? 0) > 100) {
     throw new Error('The saved daily report exceeds its supported limit.');
   }
-  const completed = (sales.values ?? []).filter((row) => row.status === 'completed');
+  return {
+    salesRows: sales.values ?? [],
+    cancellations: (corrections.values ?? []).map((row) => ({
+      receiptNumber: String(row.receipt_number),
+      reason: String(row.reason),
+      actorName: String(row.actor_name),
+    })),
+  };
+}
+
+export async function createDailyOwnerReport(
+  ownerName: string,
+  printedAt = Date.now(),
+): Promise<DailyOwnerReport> {
+  const businessDate = localBusinessDate(new Date(printedAt));
+  const database = await openLocalDatabase();
+  const [report, costs, inventory, settings, overview] = await Promise.all([
+    loadOfflineReport(businessDate, businessDate),
+    loadLocalCostManagement(businessDate.slice(0, 7), 'owner'),
+    loadOfflineInventory(),
+    loadTerminalSettings(),
+    loadDailySalesOverview(database, businessDate),
+  ]);
+  const completed = overview.salesRows.filter((row) => row.status === 'completed');
   const subtotalCentimes = completed.reduce((sum, row) => sum + Number(row.subtotal_centimes), 0);
-  const offertCentimes = completed.reduce((sum, row) => sum + Number(row.discount_centimes), 0);
+  const offertCentimes = subtotalCentimes - report.current.netCentimes;
   const services = new Map<'dine-in' | 'take-away' | 'online', number>();
   for (const row of completed) {
     const service = row.service_type === 'dine-in' || row.service_type === 'take-away'
@@ -81,11 +101,7 @@ export async function createDailyOwnerReport(
       orderCount: payment.orderCount,
     })),
     serviceTotals: [...services].map(([service, orderCount]) => ({ service, orderCount })),
-    cancellations: (corrections.values ?? []).map((row) => ({
-      receiptNumber: String(row.receipt_number),
-      reason: String(row.reason),
-      actorName: String(row.actor_name),
-    })),
+    cancellations: overview.cancellations,
     products: report.current.productTotals.map((product) => ({
       name: product.productName,
       quantity: product.quantity,
