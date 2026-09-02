@@ -13,6 +13,9 @@
 **Last verified repository state before this ledger:**
 `1542abb67baf4dff4b4e88a0cf708838298c14dc` on `origin/main`
 
+**Durable planning checkpoint:**
+`c5afe1edb8686ea60f3b3fe3f6fb6527896a9b6a` on `origin/main`
+
 ## Purpose
 
 This is the durable source of truth for the approved September 2026 Reports,
@@ -607,6 +610,8 @@ Do not claim physical acceptance. The owner performs it.
   documentation because no LLM API key is configured. The supported
   `graphify . --update --code-only --no-viz` refresh passed with 3,024 nodes,
   5,955 edges, and 184 communities; application code remained unchanged.
-- Exact next action: verify the documentation diff, commit and push this
-  checkpoint, then give the owner a short start prompt containing the final
-  commit SHA and mandatory re-read instruction.
+- Documentation checkpoint
+  `c5afe1edb8686ea60f3b3fe3f6fb6527896a9b6a` is on `origin/main`.
+- Exact next action: follow the complete Recovery Protocol and begin PR-01
+  only. Do not begin PR-02 or any other card until PR-01 is verified, journaled,
+  committed, pushed, and recorded here with its full SHA.
