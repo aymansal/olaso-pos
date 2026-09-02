@@ -139,35 +139,52 @@ These decisions are final for this batch and must not be reopened:
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
+| AUDIT-01 | Repair five confirmed post-implementation correctness findings | pending — next |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** none — wait for owner before `PR-05`
+**Active card:** `AUDIT-01`
 
-**Active status:** PR-04 complete and pushed
+**Active status:** owner authorized the repair plan; implementation has not started
 
-**Last completed step:** removed the Costs list caps and added honest pending-sale Dashboard selection
+**Last completed step:** completed a read-only post-implementation audit and
+captured the five confirmed findings below
 
 **Current facts:**
 
-- `PR-03` is `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main`.
-- PR-04 removed both `.slice(0, 8)` limits in `CostsPanel.tsx` and made each
-  Costs card a flex column whose rows scroll internally (`min-height: 0`,
-  `overflow-y: auto`) without changing the page layout.
-- `useDashboardData` now requests the cloud Dashboard and the saved-tablet
-  Dashboard concurrently when online and shows the tablet snapshot only when
-  its completed current-day sales strictly exceed the cloud count; offline
-  remains local-only; totals are never added together.
-- Graphify was refreshed after the structural changes (3,035 nodes,
-  6,009 edges, 177 communities). The `dashboard` and `data`/`reports`
-  feature DOX contracts were updated to match the approved behavior.
-- Protected `check:reports` and `check:dashboard` stopped at the required
-  missing `OLASO_OWNER_PIN` before either script seeded or reset data; they
-  were not bypassed.
+- Current audited source is `5bf0c15d3da21d49acff302653c963a25a840793`
+  on synchronized `main` and `origin/main`. The only worktree item before this
+  documentation update was the owner's untracked `.commandcode/` directory;
+  it must remain untouched and unstaged.
+- Confirmed finding 1: the cloud All report repeatedly invokes Convex
+  `.paginate()` inside one query. Convex permits one paginated database query
+  per function call, so All can fail after its first 31-day page.
+- Confirmed finding 2: offline All derives `itemCount` from a top-20 product
+  result, so more than 20 distinct products undercount total units sold.
+- Confirmed finding 3: the local legacy recurring-expense correction guard
+  reads only `effectiveStartDate`; month-only legacy rows need the same
+  `effectiveStartMonth + '-01'` fallback already used by the cloud path.
+- Confirmed finding 4: offline All groups a whole mixed-tender sale under its
+  top-level payment method instead of splitting exact Cash and Card amounts
+  from the saved receipt tenders.
+- Confirmed finding 5: Orders detail still places `Offert` in the product
+  option text even though the Payment summary already reports the Offert
+  amount. Printed receipts already use the approved behavior.
+- Safe read-only audit checks passed: POS, CSS scope, local management, local
+  catalog, local inventory/costs, local staff, lock switching, navigation,
+  costs, local data, product configuration, reconnect, offline views,
+  settings, printing, TypeScript, production build, printing endurance, and
+  Android project checks. The build retained only the existing jeep-sqlite
+  browser crypto warning. Protected cloud checks were not run because they
+  require the owner's PIN and may reset or seed live test data.
+- Cloud-only Orders restoration, optimistic numeric profit with its missing-
+  ingredient-cost warning, and Reports graph geometry remain intentional
+  non-changes.
 
-**Exact next action:** wait for owner authorization; then follow Recovery
-Protocol and begin PR-05 only.
+**Exact next action:** follow the Recovery Protocol, read the applicable DOX
+chain, query Graphify, verify current official Convex pagination guidance, and
+implement `AUDIT-01` only. Do not start PR-05 or menu creation.
 
 ### 2026-09-02 — PR-04 committed and pushed
 
@@ -672,7 +689,165 @@ a completed sale still waiting for cloud acknowledgement.
 
 ### Completion gate
 
-Complete, journal, commit, push, and record PR-04 before activating PR-05.
+Complete, journal, commit, push, and record PR-04 before activating AUDIT-01.
+
+## AUDIT-01 — Repair remaining audit findings
+
+**Status:** pending — active card
+
+### Objective
+
+Repair the five confirmed post-implementation correctness findings without
+changing approved layouts, profit policy, ordinary report ranges, receipt
+formatting, cloud-only Orders restoration, or live menu data.
+
+### A. Make cloud All use legal bounded pagination
+
+Current failure: `convex/reports.ts` loops and calls `.paginate()` more than
+once inside one `getAllSummary` query. Convex's built-in pagination permits one
+paginated database query per function invocation. The existing check has only
+31 days and therefore does not exercise a second page.
+
+Required implementation:
+
+1. Replace the looping server query with one page function that accepts the
+   official Convex pagination validator and invokes `.paginate()` exactly once.
+2. Request successive pages from the Reports data layer only for explicit All
+   mode, following returned cursors until completion.
+3. Combine daily summaries into the same report shape. Aggregate all totals
+   before limiting ranked display lists such as top products.
+4. Keep ordinary Today/week/custom ranges and their current 1–31-day graph
+   behavior unchanged.
+5. Keep this bounded to daily summaries. Do not add an unbounded raw-sales read,
+   a dependency, or a second reporting architecture.
+6. Do not use server wall-clock time to define the tablet's business date. If
+   a current local date is required, pass the existing client business date.
+
+Acceptance:
+
+- A fixture containing at least 40 distinct daily metric rows loads All without
+  a Convex pagination error.
+- First, middle, and final pages contribute exact sales, order, payment,
+  ingredient, cost, profit, and ranked-product totals.
+- Ranked product display remains capped where the UI contract caps it, but its
+  totals are calculated from the full history.
+
+### B. Count every offline All unit beyond the top 20 products
+
+Current failure: `src/data/offlineViews.ts` limits product totals to 20 and then
+sums that limited list to produce `itemCount`.
+
+Required implementation:
+
+1. Add the smallest independent SQL aggregate that sums all completed
+   `sale_items.quantity` in the All snapshot.
+2. Continue returning no more than 20 ranked products for display.
+3. Do not load all raw sales or all product rows into JavaScript.
+
+Acceptance: with at least 21 distinct sold products, the displayed ranked list
+contains at most 20 while `itemCount` equals every completed unit sold.
+
+### C. Split offline All mixed payments by saved tenders
+
+Current failure: offline All assigns the entire sale to the receipt's top-level
+payment method. A Card/Cash split sale therefore appears under only one method.
+
+Required implementation:
+
+1. For modern saved receipts, aggregate each tender's exact `dueCentimes` under
+   its own Cash or Card method.
+2. Count the order once in each payment-method group that participated in it.
+3. Fall back to the top-level receipt payment method only for a legacy receipt
+   that has no tender array.
+4. Use the smallest bounded SQLite JSON aggregation or existing receipt parsing
+   pattern. Do not introduce an unbounded raw-sale loader.
+
+Acceptance: one mixed Card/Cash sale contributes the exact tender amount to
+both methods and contributes one order to each participating method; a legacy
+single-method receipt remains correct.
+
+### D. Reject an early correction for legacy month-only recurring expenses
+
+Current failure: the local replacement guard reads only
+`prior.effectiveStartDate`, while legacy monthly rows may contain only
+`effectiveStartMonth`.
+
+Required implementation:
+
+- For a monthly prior record, calculate its original start using
+  `prior.effectiveStartDate`, falling back to the first day represented by
+  `prior.effectiveStartMonth` (for example, `2026-08-01`).
+- Reject a replacement effective before that date before any local write or
+  outbox entry occurs.
+- Preserve the already-correct cloud behavior and every modern exact-date path.
+
+Acceptance: a legacy month-only record rejects a replacement before the first
+day of its start month, permits the first day, and leaves zero partial local or
+outbox writes after rejection.
+
+### E. Remove Offert from Orders item options
+
+Current failure: `OrderDetailPanel` prepends `Offert` to each complimentary
+item's option string. Offert is a payment/price fact, not a selected product
+option.
+
+Required implementation:
+
+- Remove only the complimentary `Offert` label from the item-options list.
+- Keep size and real selected choices unchanged.
+- Keep the existing Offert amount in the Payment summary.
+- Do not alter printed receipt behavior or saved receipt snapshots.
+
+Acceptance: a complimentary configured product shows only its real size and
+choices under the item, while its Offert amount remains visible in Payment.
+
+### Non-goals and safeguards
+
+- Do not restore cloud-only Orders into an empty tablet database in this card.
+- Do not hide numeric profit or change the missing ingredient-cost warning.
+- Do not change Reports chart geometry or the chosen graph-month rules.
+- Do not create, import, or edit the real café menu.
+- Do not launch the app, use ADB, install an APK, print, request a PIN, seed,
+  reset, or alter live business data. The owner performs physical acceptance.
+- Preserve `.commandcode/` and every unrelated owner change.
+
+### Focused verification
+
+Add the smallest deterministic coverage for each acceptance rule, then run:
+
+- the focused 40-plus-day Convex report test
+- the focused 21-plus-product offline All test
+- the focused mixed-tender offline All test
+- the focused legacy month-only correction test
+- the focused Orders Offert presentation check
+- `npm run check:offline`
+- `npm run check:local-inventory-costs`
+- `npm run check:printing`
+- `npm run check:pos`
+- `npm run check:costs`
+- `npm run check:navigation`
+- `npm run check:css-scope`
+- `npx tsc -b`
+- `npm run build`
+- `git diff --check`
+
+Run protected checks only if they have a documented no-PIN, no-reset mode.
+Otherwise record the exact gate honestly. Because a Convex function changes,
+run `npx convex dev --once` after the focused local checks as required by the
+repository contract; deploy code only and never seed, reset, or expose secrets.
+
+### Completion gate
+
+1. Re-query Graphify and refresh it if the structural change requires it.
+2. Update the applicable DOX file only if a durable subtree contract changed.
+3. Update this Card Board, State Pointer, and Checkpoint Ledger with files,
+   checks, limitations, and the exact next action.
+4. Update `WORK_LEDGER.md`.
+5. Review and stage only AUDIT-01 files. Never stage `.commandcode/`.
+6. Commit directly on `main` with `AUDIT-01: repair report and order audit findings`.
+7. Push immediately to `origin/main`, record the full SHA and remote location,
+   and verify synchronized main before changing AUDIT-01 to done.
+8. Leave PR-05 pending for the owner's physical acceptance and final closeout.
 
 ## PR-05 — Regression and owner handoff
 
@@ -686,7 +861,8 @@ synchronized, and hand physical acceptance to the owner.
 ### Required review
 
 1. Re-read the full instruction chain and this ledger.
-2. Confirm the eight approved repairs are present.
+2. Confirm the eight original approved repairs and all five AUDIT-01 repairs
+   are present.
 3. Confirm cloud-only Orders code was not changed for this batch.
 4. Confirm profit remains numeric, its missing-cost warning remains, and no
    historical cost backfill was added.
@@ -741,6 +917,12 @@ The final response must ask the owner to test:
 6. French month/date labels throughout Dashboard, Orders, Reports, and Stock.
 7. Ninth expense and ninth compensation row via internal scrolling.
 8. Dashboard immediately after a locally completed sale and again after sync.
+9. All-time Reports with more than 31 days of cloud daily history.
+10. Offline All after more than 20 distinct products have sold.
+11. Offline All payment totals for a mixed Card/Cash receipt.
+12. A legacy recurring-expense correction before and on its first valid day.
+13. A complimentary configured item in Orders: real choices under the item,
+    Offert amount only in Payment.
 
 Do not claim physical acceptance. The owner performs it.
 
@@ -759,6 +941,21 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-02 — AUDIT-01 planned from read-only post-implementation audit
+
+- Owner authorized adding the remaining confirmed audit findings to the
+  durable plan and requested a copyable implementation prompt in chat.
+- Added AUDIT-01 before PR-05 with exact contracts for legal page-by-page cloud
+  All reporting, full offline item counts beyond the ranked top 20, exact mixed
+  Cash/Card offline All totals, the legacy month-only expense correction floor,
+  and removal of Offert from Orders item options.
+- Recorded the passing safe audit checks and preserved the protected-check,
+  no-app, no-ADB, no-PIN, no-seed, no-reset, no-live-data boundaries.
+- Added the separate factual menu transcription at
+  `goals/OLASO-REAL-MENU-EXTRACTION.md`; menu creation is not part of AUDIT-01.
+- Exact next action: implementing agent follows the Recovery Protocol and
+  completes AUDIT-01 only, then commits and pushes it before PR-05.
 
 ### 2026-09-02 — Durable repair ledger created
 

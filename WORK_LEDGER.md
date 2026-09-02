@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01, PR-02, PR-03 `e9cc667e94505237ba04cab56d4e84468cdbe8f4`, and PR-04 `2e3c96e8205f33f621612f9191169f12ff265758` done on `origin/main`; PR-05 waits for owner |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04 done on `origin/main`; AUDIT-01 is the next authorized repair card; PR-05 follows |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -119,15 +119,34 @@ remaining goal and card sequence.
   SYNC-09 done; tablet POS sales insert into Convex; online Dashboard/Reports
   stay Convex-only. Exact next action is POLISH-01.
 - [Goal 06 — POLISH Reliability Ledger](goals/GOAL-06-POLISH-RELIABILITY.md)
-  — permanent PR-01 through PR-05 repair authority. Its complete Recovery
-  Protocol, State Pointer, active card, and newest checkpoint must be reread
-  after every context compaction, handoff, pause, or resumed session.
+  — permanent PR-01 through PR-04, AUDIT-01, and PR-05 repair authority. Its
+  complete Recovery Protocol, State Pointer, active card, and newest checkpoint
+  must be reread after every context compaction, handoff, pause, or resumed
+  session.
 - [Goal 06 — Product Configuration Blueprint](goals/GOAL-06-PRODUCT-CONFIGURATION.md)
   — approved product-owned sizes, freely named choices, exact ingredient
   effects, mandatory independent copying, honest ingredient-only costing,
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
+- [Olaso Real Menu Extraction](goals/OLASO-REAL-MENU-EXTRACTION.md) — factual
+  transcription of all seven owner-supplied menu images: 92 priced listings,
+  source categories, sizes, milk types, syrups, extras, badges, stated brioche
+  ingredients, proposed app mapping, and confirmations required before import.
 
 ## Current Checkpoint
+
+- AUDIT-01 planning and real-menu extraction (2 Sep 2026): a read-only audit of
+  current `main` confirmed five remaining correctness problems: cloud All calls
+  Convex pagination repeatedly in one query; offline All undercounts units when
+  more than 20 products sold; legacy month-only recurring expenses lack the
+  local first-day fallback; offline All misclassifies mixed Cash/Card tenders;
+  and Orders still shows Offert as a product option. Added an exact repair card
+  before PR-05 in the POLISH Reliability Ledger. Safe repository audit checks
+  had passed; protected PIN/reset/seed checks were not run. Separately captured
+  every visible item, price, category, size, milk type, syrup, extra, badge, and
+  stated ingredient from the seven menu images in
+  `goals/OLASO-REAL-MENU-EXTRACTION.md`. No application code, app, tablet, ADB,
+  printer, PIN, or live data was touched. Exact next action: implement
+  AUDIT-01 only from its durable contract; menu creation remains unstarted.
 
 - POLISH-01 dimmed stale Reports totals (2 Sep 2026): owner rejected the
   whole-content fade (loading state still flashed) and asked for
