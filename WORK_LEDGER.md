@@ -129,6 +129,20 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 Reports reload fade (2 Sep 2026): owner deferred the
+  performance-by-profile request (per-profile amounts in the printed daily
+  report and on the Reports page) for a layout-safe design discussion after
+  today's work; not implemented. The Reports period/tab reload flash is
+  fixed: the screen content sits in a keyed wrapper that replays the exact
+  420 ms screen-crossfade motion on range, tab, and load/ready changes
+  (reduced-motion respected, geometry untouched). Passed `tsc -b`,
+  `check:css-scope`, `check:navigation`, `check:offline`, `npm run build`,
+  debug beta, Graphify (3,041 nodes, 6,013 edges). APK installed over
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), data preserved.
+  Exact next action: owner verifies the fade plus the earlier
+  split-payment/reports-print fixes; then discuss profile performance;
+  PR-05 pending owner authorization.
+
 - POLISH-01 split-payment repair (2 Sep 2026): owner reported split receipts
   printing every payment as Card and asked for an explicit bilingual split
   question before payment. Root cause: `receiptModel.ts` coerced each

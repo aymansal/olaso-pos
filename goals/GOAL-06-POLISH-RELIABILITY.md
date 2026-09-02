@@ -285,6 +285,27 @@ Protocol and begin PR-05 only.
   product direct checkout, the split question (EN/FR), and per-method
   receipt paper; PR-05 remains pending owner authorization.
 
+### 2026-09-02 — POLISH-01: Reports reload fade; profile performance deferred
+
+- Owner deferred the performance-by-profile request (per-profile amounts in
+  the printed daily report and on the Reports page) until after today's work
+  and wants a layout-safe design discussion first; nothing was implemented
+  for it.
+- Owner-reported polish: changing the Reports period made every tab and
+  right card flash while reloading. The Reports content now sits in a keyed
+  wrapper that replays the exact 420 ms `cubic-bezier(0.22, 1, 0.36, 1)`
+  screen-crossfade motion whenever the selected range, active tab, or
+  load/ready state changes, including the loading and ready steps. Reduced
+  motion preference disables it; the approved geometry, cards, and chart are
+  untouched.
+- Passed `npx tsc -b`, `npm run check:css-scope`, `npm run check:navigation`,
+  `npm run check:offline`, and `npm run build`. Graphify refreshed (3,041
+  nodes, 6,013 edges). The rebuilt APK was installed over SM-X115
+  `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving data. Exact
+  next action: owner verifies the fade and the earlier split-payment
+  behavior; then discuss the profile-performance design; PR-05 remains
+  pending owner authorization.
+
 ## PR-01 — Exact compensation and expense correction dates
 
 **Status:** pending — first implementation card
