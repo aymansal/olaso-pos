@@ -1,4 +1,5 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { localBusinessDate, shiftBusinessDate } from '../lib/date.ts';
 import type { StaffRole } from './permissions.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import {
@@ -172,10 +173,27 @@ export function deleteLocalStaff(
       [profile.id, profile.id, profile.id, profile.id, profile.id],
     );
     const now = Date.now();
+    const compensationEndDate = shiftBusinessDate(localBusinessDate(), -1);
+    const compensationEndMonth = compensationEndDate.slice(0, 7);
     await database.run(
       `UPDATE compensation_periods SET staff_name_snapshot = ?,
-        staff_role_snapshot = ? WHERE staff_profile_id = ?`,
-      [String(saved.name), String(saved.role), profile.id],
+        staff_role_snapshot = ?,
+        effective_end_month = CASE
+          WHEN effective_end_month IS NULL OR effective_end_month > ?
+            THEN ?
+          ELSE effective_end_month
+        END
+        , effective_end_date = CASE
+          WHEN effective_end_date IS NULL OR effective_end_date > ?
+            THEN ?
+          ELSE effective_end_date
+        END
+       WHERE staff_profile_id = ?`,
+      [
+        String(saved.name), String(saved.role),
+        compensationEndMonth, compensationEndMonth,
+        compensationEndDate, compensationEndDate, profile.id,
+      ],
       false,
     );
     await database.run('DELETE FROM staff_profiles WHERE id = ?', [profile.id], false);
@@ -191,7 +209,12 @@ export function deleteLocalStaff(
       requiredPermission: 'staff',
       actor: context.actor,
       expectedRevision: profile.revision,
-      payload: { name: String(saved.name), role: String(saved.role) },
+      payload: {
+        name: String(saved.name),
+        role: String(saved.role),
+        compensationEndMonth,
+        compensationEndDate,
+      },
       createdAt: now,
     });
     return { id: profile.id, operationId: operation.operationId };
@@ -215,6 +238,31 @@ export async function loadLocalStaffProfiles(): Promise<SavedStaffProfile[]> {
     identityRevision: Number(row.identity_revision),
     pending: String(row.id).startsWith('staff:'),
   }));
+}
+
+export async function loadStaffPreferredLanguage(
+  staffProfileId: string,
+): Promise<'en' | 'fr'> {
+  const result = await (await openLocalDatabase()).query(
+    `SELECT preferred_language FROM staff_profiles WHERE id = ? LIMIT 1`,
+    [staffProfileId],
+  );
+  return result.values?.[0]?.preferred_language === 'fr' ? 'fr' : 'en';
+}
+
+export async function saveStaffPreferredLanguage(
+  staffProfileId: string,
+  language: 'en' | 'fr',
+) {
+  return withLocalTransaction(async (database) => {
+    await database.run(
+      `UPDATE staff_profiles
+       SET preferred_language = ?, updated_at = ?
+       WHERE id = ?`,
+      [language, Date.now(), staffProfileId],
+      false,
+    );
+  });
 }
 
 export async function cleanupAcknowledgedStaffProvisioning() {

@@ -1,4 +1,5 @@
 import type { Category, CategoryId } from '../../data/categories';
+import { useT } from '../../../../lib/locale';
 import { CategoryCard } from '../CategoryCard/CategoryCard';
 import styles from './CategoryRow.module.css';
 
@@ -13,8 +14,9 @@ export function CategoryRow({
   selectedCategoryId,
   onSelect,
 }: CategoryRowProps) {
+  const t = useT();
   return (
-    <nav className={styles.row} aria-label="Product categories">
+    <nav className={styles.row} aria-label={t('Product categories')}>
       {categories.map((category) => (
         <CategoryCard
           key={category.id}

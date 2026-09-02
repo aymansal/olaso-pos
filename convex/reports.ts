@@ -8,6 +8,7 @@ import {
   requireOwner,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
+import { operatingCostsForRange } from '../src/lib/costs';
 
 const MAX_RANGE_DAYS = 31;
 const MAX_DETAIL_ROWS = 20;
@@ -73,11 +74,15 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
   let netCentimes = 0;
   let orderCount = 0;
   let ingredientUsageEventCount = 0;
+  let ingredientCostCentimes = 0;
+  let incompleteSaleCount = 0;
 
   for (const row of rows) {
     netCentimes += row.netCentimes;
     orderCount += row.orderCount;
     ingredientUsageEventCount += row.ingredientUsageEventCount ?? 0;
+    ingredientCostCentimes += row.ingredientCostCentimes ?? 0;
+    incompleteSaleCount += row.incompleteCostSaleCount ?? 0;
 
     for (const product of row.productTotals) {
       const key = String(product.productId);
@@ -105,7 +110,7 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
       payments.set(payment.paymentMethod, total);
     }
     for (const ingredient of row.ingredientTotals ?? []) {
-      const key = String(ingredient.ingredientId);
+      const key = `${ingredient.ingredientName}\0${ingredient.baseUnit}`;
       const total = ingredients.get(key) ?? { ...ingredient, quantity: 0 };
       total.quantity += ingredient.quantity;
       ingredients.set(key, total);
@@ -121,6 +126,8 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
   return {
     netCentimes,
     orderCount,
+    ingredientCostCentimes,
+    incompleteSaleCount,
     itemCount: allProductTotals.reduce(
       (total, product) => total + product.quantity,
       0,
@@ -190,13 +197,31 @@ export const getSummary = query({
     }
 
     const current = aggregate(currentRows);
+    const liveIngredients = await ctx.db
+      .query('ingredients')
+      .withIndex('by_status_name', (index) => index.eq('status', 'active'))
+      .take(101);
+    if (liveIngredients.length > 100) {
+      throw new Error('Report ingredient list exceeds its bounded limit.');
+    }
+    const stockByName = new Map(
+      liveIngredients.map((row) => [
+        `${row.name}\0${row.baseUnit}`,
+        row.currentStockQuantity,
+      ]),
+    );
+    const ingredientTotals = current.ingredientTotals.map((item) => ({
+      ...item,
+      currentStockQuantity:
+        stockByName.get(`${item.ingredientName}\0${item.baseUnit}`) ?? 0,
+    }));
     const byDate = new Map(
       currentRows.map((row) => [row.businessDate, row]),
     );
     return {
       range,
       comparisonRange: { from: previousFrom, to: previousTo },
-      current,
+      current: { ...current, ingredientTotals },
       previous: aggregate(previousRows),
       daily: Array.from({ length: range.days }, (_, index) => {
         const date = shiftBusinessDate(range.from, index);
@@ -204,6 +229,7 @@ export const getSummary = query({
         return {
           businessDate: date,
           netCentimes: row?.netCentimes ?? 0,
+          ingredientCostCentimes: row?.ingredientCostCentimes ?? 0,
           itemCount: row?.productTotals.reduce(
             (total, product) => total + product.quantity,
             0,
@@ -237,15 +263,10 @@ export const getMonthlyCosts = query({
     const revenueCentimes = daily.reduce((sum, row) => sum + row.netCentimes, 0);
     const ingredientCostCentimes = daily.reduce((sum, row) => sum + (row.ingredientCostCentimes ?? 0), 0);
     const incompleteSaleCount = daily.reduce((sum, row) => sum + (row.incompleteCostSaleCount ?? 0), 0);
-    const compensationCentimes = staff.reduce((sum, row) =>
-      args.month >= row.effectiveStartMonth && (!row.effectiveEndMonth || args.month <= row.effectiveEndMonth)
-        ? sum + row.monthlyAmountCentimes : sum, 0);
-    const expenseCentimes = expenses.reduce((sum, row) => {
-      const applies = row.recurrence === 'one-time'
-        ? row.effectiveDate?.slice(0, 7) === args.month
-        : row.effectiveStartMonth && args.month >= row.effectiveStartMonth && (!row.effectiveEndMonth || args.month <= row.effectiveEndMonth);
-      return applies ? sum + (row.transactionType === 'reversal' ? -row.amountCentimes : row.amountCentimes) : sum;
-    }, 0);
+    const {
+      compensationCentimes,
+      otherExpenseCentimes: expenseCentimes,
+    } = operatingCostsForRange(expenses, staff, from, to);
     return {
       month: args.month, revenueCentimes, ingredientCostCentimes, incompleteSaleCount,
       grossProfitCentimes: revenueCentimes - ingredientCostCentimes,

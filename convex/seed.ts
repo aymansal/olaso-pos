@@ -6,6 +6,7 @@ import type { MutationCtx, QueryCtx } from './_generated/server';
 declare const process: { env: Record<string, string | undefined> };
 
 const ENABLE_FLAG = 'OLASO_ENABLE_DEV_SEED';
+const ERASE_FLAG = 'OLASO_ALLOW_DESTRUCTIVE_DEV_RESET';
 const CONFIRMATION = 'RESET_OLASO_DEV';
 const DEVICE_ID = 'olaso-tab-a9-dev';
 const RESET_LIMIT = 250;
@@ -819,6 +820,11 @@ function assertSeedEnabled() {
       `Development seeding is disabled. Set ${ENABLE_FLAG}=true on the intended dev deployment.`,
     );
   }
+  if (process.env[ERASE_FLAG] !== 'ERASE_DISPOSABLE_DEPLOYMENT') {
+    throw new Error(
+      `Development reset is locked. Set ${ERASE_FLAG}=ERASE_DISPOSABLE_DEPLOYMENT only on an isolated disposable deployment.`,
+    );
+  }
 }
 
 function mustGet<Key, Value>(map: Map<Key, Value>, key: Key, label: string) {
@@ -894,6 +900,9 @@ export const resetAndSeed = internalMutation({
     assertSeedEnabled();
 
     for (const table of resetOrder) {
+      // Staff profiles own protected identities and sessions. Development
+      // fixture resets must never orphan those credentials by replacing IDs.
+      if (table === 'staffProfiles') continue;
       await clearTable(ctx, table);
     }
 
@@ -1408,14 +1417,25 @@ export const resetAndSeed = internalMutation({
     }
 
     const staffIds = new Map<string, Id<'staffProfiles'>>();
+    const existingStaff = await ctx.db
+      .query('staffProfiles')
+      .withIndex('by_status_name', (query) => query.eq('status', 'active'))
+      .take(51);
+    if (existingStaff.length > 50) {
+      throw new Error('Staff list has reached the 50-profile limit.');
+    }
     for (const profile of staffSeeds) {
-      const id = await ctx.db.insert('staffProfiles', {
-        name: profile.name,
-        role: profile.role,
-        status: 'active',
-        revision: 1,
-        updatedAt: SEED_AT,
-      });
+      const saved = existingStaff.find((row) => row.name === profile.name);
+      if (saved && saved.role !== profile.role) {
+        throw new Error(`Seeded staff role changed for ${profile.name}.`);
+      }
+      const id = saved?._id ?? await ctx.db.insert('staffProfiles', {
+          name: profile.name,
+          role: profile.role,
+          status: 'active',
+          revision: 1,
+          updatedAt: SEED_AT,
+        });
       staffIds.set(profile.key, id);
       counts.staffProfiles += 1;
     }
@@ -1531,7 +1551,9 @@ export const verify = internalQuery({
       sampleMovements.length !== 2 ||
       !sampleMetric ||
       sampleMetric.orderCount < 2 ||
-      seededStaff.length !== 2 ||
+      !staffSeeds.every((profile) =>
+        seededStaff.some((saved) =>
+          saved.name === profile.name && saved.role === profile.role)) ||
       seededCompensation?.monthlyAmountCentimes !== 550000
     ) {
       throw new Error('Development seed relationship verification failed.');

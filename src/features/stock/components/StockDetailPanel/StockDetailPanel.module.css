@@ -21,9 +21,6 @@
   height: 42px;
 }
 
-.heading,
-.identityCopy,
-.onHand,
 .field,
 .level,
 .movement > span {
@@ -31,18 +28,7 @@
   flex-direction: column;
 }
 
-.heading {
-  gap: 3px;
-}
-
-.heading small {
-  color: var(--olaso-copy);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.heading h2 {
+.header h2 {
   margin: 0;
   color: var(--olaso-text);
   font-size: 16px;
@@ -95,68 +81,12 @@
   opacity: 0.4;
 }
 
-.identity {
-  position: absolute;
-  top: 66px;
-  left: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 356px;
-  height: 52px;
-}
-
-.identityCopy {
-  gap: 4px;
-  min-width: 0;
-}
-
-.identityCopy strong {
-  overflow: hidden;
-  color: var(--olaso-text);
-  font-size: 15px;
-  line-height: 1.1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.identityCopy small,
-.onHand small {
-  color: var(--olaso-text-meta);
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.onHand {
-  align-items: flex-end;
-  gap: 3px;
-}
-
-.onHand strong {
-  color: var(--olaso-text);
-  font-size: 18px;
-  line-height: 1;
-}
-
 .divider {
   position: absolute;
   left: 22px;
   width: 356px;
   height: 1px;
   background: var(--olaso-order-divider);
-}
-
-.identityDivider {
-  top: 126px;
-}
-
-.infoTitle {
-  position: absolute;
-  top: 140px;
-  left: 22px;
-  margin: 0;
-  color: var(--olaso-text);
-  font-size: 12px;
 }
 
 .field {
@@ -180,7 +110,7 @@
 }
 
 .nameField {
-  top: 164px;
+  top: 68px;
   left: 22px;
 }
 
@@ -189,7 +119,7 @@
 }
 
 .thresholdField {
-  top: 164px;
+  top: 68px;
   left: 244px;
 }
 
@@ -198,7 +128,7 @@
 }
 
 .infoDivider {
-  top: 234px;
+  top: 138px;
 }
 
 .levelHeader,
@@ -212,13 +142,12 @@
 
 .levelHeader {
   position: absolute;
-  top: 248px;
+  top: 150px;
   left: 22px;
 }
 
 .levelHeader h3,
-.sectionHeader h3,
-.infoTitle {
+.sectionHeader h3 {
   margin: 0;
   color: var(--olaso-text);
   font-size: 12px;
@@ -233,7 +162,7 @@
 
 .levelStrip {
   position: absolute;
-  top: 276px;
+  top: 178px;
   left: 22px;
   display: flex;
   align-items: center;
@@ -281,56 +210,26 @@
   color: var(--olaso-green);
 }
 
-.costSummary {
-  position: absolute;
-  top: 346px;
-  left: 22px;
-  width: 356px;
-  margin: 0;
-  color: var(--olaso-text-meta);
-  font-size: 11px;
-}
-
-.recipes {
-  position: absolute;
-  top: 370px;
-  left: 22px;
-  width: 356px;
-  height: 92px;
-}
-
-.recipeList {
-  margin-top: 6px;
-}
-
-.recipe,
 .movement {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 356px;
-  height: 28px;
+  height: 36px;
 }
 
-.recipe strong,
 .movement strong {
   color: var(--olaso-text);
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.recipe > small {
-  color: var(--olaso-copy);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .movements {
   position: absolute;
-  top: 466px;
+  top: 254px;
   left: 22px;
   width: 356px;
-  height: 86px;
+  height: 296px;
 }
 
 .sectionHeader button {
@@ -347,7 +246,7 @@
 }
 
 .movementList {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .movement > span {
@@ -356,7 +255,7 @@
 
 .movement small {
   color: var(--olaso-text-faint);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
 }
 
@@ -376,12 +275,12 @@
 
 .actions {
   position: absolute;
-  top: 556px;
+  top: 562px;
   left: 22px;
   display: flex;
   width: 356px;
-  height: 40px;
-  gap: 8px;
+  height: 42px;
+  gap: 10px;
 }
 
 .actions button {
@@ -389,11 +288,11 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  height: 40px;
+  height: 42px;
   gap: 6px;
   padding: 0 10px;
-  border-radius: 20px;
-  font-size: 11px;
+  border-radius: 21px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -413,7 +312,7 @@
 
 .notice {
   position: absolute;
-  top: 598px;
+  top: 608px;
   left: 22px;
   width: 356px;
   margin: 0;
@@ -425,7 +324,7 @@
 
 .save {
   position: absolute;
-  top: 620px;
+  top: 628px;
   left: 22px;
   display: flex;
   align-items: center;

@@ -1,21 +1,34 @@
 import { User } from '@boxicons/react';
 import { useEffect, useRef, useState } from 'react';
 import type { StaffRole } from '../../../../data/permissions.ts';
+import type { AppLanguage } from '../../../../lib/locale';
+import { useT } from '../../../../lib/locale';
 import styles from './ProfileControl.module.css';
+
+const ROLE_LABEL: Record<StaffRole, string> = {
+  owner: 'Owner',
+  manager: 'Manager',
+  cashier: 'Cashier',
+};
 
 export function ProfileControl({
   name,
   role,
   canOpenSettings,
+  language,
+  onLanguageChange,
   onOpenSettings,
   onSwitchStaff,
 }: {
   name: string;
   role: StaffRole;
   canOpenSettings: boolean;
+  language: AppLanguage;
+  onLanguageChange: (language: AppLanguage) => Promise<void>;
   onOpenSettings?: () => void;
   onSwitchStaff: () => Promise<boolean>;
 }) {
+  const t = useT();
   const root = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -43,7 +56,7 @@ export function ProfileControl({
     try {
       if (await onSwitchStaff()) setOpen(false);
     } catch {
-      setError('The terminal could not be locked.');
+      setError(t('The terminal could not be locked.'));
     } finally {
       setSwitching(false);
     }
@@ -54,7 +67,7 @@ export function ProfileControl({
       <button
         className={styles.profile}
         type="button"
-        aria-label="Open staff menu"
+        aria-label={t('Open staff menu')}
         aria-expanded={open}
         aria-controls="staff-profile-menu"
         onClick={() => {
@@ -65,17 +78,30 @@ export function ProfileControl({
         <span className={styles.avatar}><User width={22} height={22} /></span>
         <span className={styles.profileCopy}>
           <strong>{name}</strong>
-          <small>{role}</small>
+          <small>{t(ROLE_LABEL[role])}</small>
         </span>
       </button>
       {open ? (
         <div className={styles.menu} id="staff-profile-menu" role="menu">
+          <div className={styles.language} role="group" aria-label={t('Application')}>
+            {(['en', 'fr'] as const).map((value) => (
+              <button
+                type="button"
+                className={language === value ? styles.languageOn : ''}
+                aria-pressed={language === value}
+                onClick={() => void onLanguageChange(value)}
+                key={value}
+              >
+                {value === 'en' ? 'EN' : 'FR'}
+              </button>
+            ))}
+          </div>
           {canOpenSettings ? (
             <button type="button" role="menuitem" onClick={() => {
               setOpen(false);
               onOpenSettings?.();
             }}>
-              Settings
+              {t('Settings')}
             </button>
           ) : null}
           <button
@@ -84,7 +110,7 @@ export function ProfileControl({
             disabled={switching}
             onClick={() => void switchStaff()}
           >
-            {switching ? 'Locking…' : 'Lock / switch staff'}
+            {switching ? t('Locking…') : t('Lock / switch staff')}
           </button>
           {error ? <p role="alert">{error}</p> : null}
         </div>

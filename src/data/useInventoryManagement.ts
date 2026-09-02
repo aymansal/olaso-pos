@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useConvex } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import type {
   IngredientSaveInput,
   InventoryMetrics,
@@ -14,9 +16,11 @@ import {
   saveLocalIngredient,
   setLocalIngredientArchived,
 } from './localInventory.ts';
+import { useConnectionStatus } from './connectionContext';
 import {
   loadOfflineIngredientDetail,
   loadOfflineInventory,
+  overlayCloudUsedToday,
 } from './offlineViews.ts';
 import { useReconnect } from './reconnectContext.tsx';
 import { useStaffSession } from './sessionContext.tsx';
@@ -31,12 +35,14 @@ const emptyMetrics: InventoryMetrics = {
 export function useInventoryManagement(selectedIngredientId?: string) {
   const session = useStaffSession();
   const reconnect = useReconnect();
+  const { available, foreground } = useConnectionStatus();
+  const convex = useConvex();
   const [inventory, setInventory] =
     useState<Awaited<ReturnType<typeof loadOfflineInventory>>>();
   const [detail, setDetail] = useState<ManagedIngredientDetail>();
   const [error, setError] = useState('');
   const [detailLoading, setDetailLoading] = useState(false);
-  const loadedRevision = useRef<number | undefined>(undefined);
+  const loadedKey = useRef<string | undefined>(undefined);
   const loadedDetail = useRef<string | undefined>(undefined);
   const businessDate = localBusinessDate();
   const context = {
@@ -52,15 +58,38 @@ export function useInventoryManagement(selectedIngredientId?: string) {
     const saved = await loadOfflineInventory();
     setInventory(saved);
     setError('');
+    if (available === true && foreground) {
+      try {
+        const cloud = await convex.query(api.reports.getSummary, {
+          fromDate: businessDate,
+          toDate: businessDate,
+          sessionToken: session.token,
+          deviceId: session.deviceId,
+        });
+        const merged = overlayCloudUsedToday(saved, cloud.current.ingredientTotals);
+        setInventory(merged);
+        return merged;
+      } catch {
+        return saved;
+      }
+    }
     return saved;
-  }, []);
+  }, [
+    available,
+    businessDate,
+    convex,
+    foreground,
+    session.deviceId,
+    session.token,
+  ]);
 
   useEffect(() => {
-    if (loadedRevision.current === reconnect.revision) return;
+    const requestKey = `${reconnect.revision}:${businessDate}:${available}:${foreground}`;
+    if (loadedKey.current === requestKey) return;
     void reload().then(() => {
-      loadedRevision.current = reconnect.revision;
+      loadedKey.current = requestKey;
     }).catch(() => setError('Saved stock is unavailable on this tablet.'));
-  }, [reconnect.revision, reload]);
+  }, [available, businessDate, foreground, reconnect.revision, reload]);
 
   useEffect(() => {
     if (!selectedIngredientId) {

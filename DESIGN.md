@@ -341,15 +341,15 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | Component | Required content | Variants and behavior |
 | --- | --- | --- |
 | `PosShell` | header, menu content, receipt rail | Full-bleed landscape application root at the target size; cream gutters may adapt on wider screens. |
-| `HeaderBar` | logo asset, live date/time, report action, cashier | One horizontal line. Use the real OLASO asset; date and time never wrap and time follows the terminal clock-format preference. Carries no notification control until real alerts exist. |
+| `HeaderBar` | logo asset, live date/time, report action, cashier | One horizontal line. Use the real OLASO asset; date and time never wrap and time follows the terminal clock-format preference. The Report pill appears only for the owner, prints today's report, and shows its busy state without moving the layout. Carries no notification control until real alerts exist. |
 | `ProfileControl` | staff name, role, profile menu | Preserve the 178 by 50 Header control. Every role sees one 44-pixel `Lock / switch staff` action; only the owner sees Settings, and Settings is omitted when already open. |
 | `SearchField` | query, search action | 320 by 50 at the target viewport. The magnifier and the input sit on one line in explicit grid columns. Visible focus state. Never use placeholder text as the only accessible label. A clear control stays visible whenever the query is not empty, including after the keyboard is dismissed. POS, Orders, Products, and Stock search fields follow that rule. |
 | `QuickAddRow` | best-seller chips | Up to three equal-width 50-pixel-tall chips carrying a product name only at 15px, filling the remaining width beside the search field. Chips come from saved tablet sales, never a fixed list, and the row renders nothing when there are none. An unusually long name may ellipsis. |
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
 | `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image is 72 by 92 at x 51, y 10. Add control is 44 by 44 at x 122, y 107. A long name or price ellipsises before that control. The price is 11px in a slightly softer ink than the name. Only the add control adds to the order. |
-| `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. Orders, Products, and Stock table row highlights use the same vertical slide and cream selected fill. Products and Stock keep the green mark; Orders does not. Column headers on those three tables are centered over their values. |
+| `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. Products sidebar category names stay 12px, one line, and ellipsis; they never wrap or push the product count out of the row. Orders, Products, and Stock table row highlights use the same vertical slide and cream selected fill. Products and Stock keep the green mark; Orders does not. Column headers on those three tables are centered over their values. |
 | `LabeledField` | visible label, current value | Text and in-app `MenuSelect` list. Control is 129 by 48 on Lock; compact form lists are 36px tall. |
-| `MenuSelect` | options, current value | One in-app list from Lock. Lock size keeps the 54px identity control; every other list menu uses the compact size. Do not use the Android native select. Date and month stay native until the custom calendar. |
+| `MenuSelect` | options, current value | One in-app list from Lock. Lock size keeps the 54px identity control; ordinary lists use the compact size, while a form field may match its neighboring input height (the Staff role field is 48px). Do not use the Android native select. Dates use the shared period calendar attached to the field. Reports and Orders range pickers keep quick periods on the left and the month grid on the right; Costs uses the Reports global period instead of a second month picker. Orders opens on Today and offers Today, Yesterday, This week, Last week, This month, Last month, and All. Date-only fields (Add expense, Add monthly pay) omit the quick-period column and use a 248px month grid. The opener toggles: a second tap on the same button closes it. It opens below the button when there is room, otherwise above. Only the quick period the operator actually chose stays highlighted. A first tap selects a day; a second tap on another day selects the range and keeps the first day when the month changes. |
 | `OrderLine` | product, unit price, quantity, size, note, total, Offert | Keep the total right-aligned. Gift and trash keep 44-pixel hits with 36-pixel circles and 8-pixel gaps; green when Offert is active; charged total 0,00. A note is optional. |
 | `QuantityStepper` | decrement, quantity, increment | Cart line uses a 100 by 36 pill; plus and minus keep independent 44-pixel hits. Disable decrement at the minimum and expose an accessible value. |
 | `PaymentSummary` | total, optional Offert | Pin Total at the bottom of the 115-pixel block, just above Place order. Show Subtotal and Offert only when an Offert amount is greater than zero; those rows expand upward between Payment Details and Total so Total does not move. When they are hidden, the cart list uses that empty space so three lines fit, and keeps a 16-pixel gap above Payment Details. Use tabular figures; the confirmed policy has no tax row. |
@@ -465,6 +465,10 @@ Do not split ordinary markup into meaningless components. A component earns a fi
 - The accepted initial receipt is French/English with checked CP858 behavior.
   Arabic and other unsupported-script bitmap rendering are deferred until the
   owner requires them.
+- Printed item detail uses one product-and-size heading and one indented,
+  middle-dot-separated choices line that wraps cleanly. Do not prefix every
+  choice with `+`, and never render Offert as a choice; its zero line charge and
+  single totals deduction communicate it.
 
 The application is not production-approved until the real tablet and printer
 pass LAN connection, print, cut, recovery, and endurance testing.
@@ -516,10 +520,11 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   scrolls at 136px so they never cover Reprint or Cancel. Payment and
   actions stay at the bottom of the card for both completed and cancelled
   receipts.
-- The profile-owned Printer settings panel uses persistent IPv4/port labels,
-  `Test printer`, and a secondary `Restore saved logo` setup action. The logo
-  action requires an explicit replacement warning. Both keep 44-pixel targets
-  and ask the operator to inspect paper rather than claiming it.
+- The profile-owned Settings left card keeps language, clock, one printer
+  host:port field, Test printer, Sync, and Check for update. Staff & access is
+  the right card. There is no Settings lock control and no Restore saved logo
+  action. Both keep 44-pixel targets and ask the operator to inspect paper
+  rather than claiming it.
 - The owner-only Staff & access panel lists name, role, and quiet `Ready` or
   `Waiting to sync` state. Its Add staff dialog uses only persistent labels for
   name, role, six-digit PIN, and PIN confirmation plus Cancel and Add staff;
@@ -584,7 +589,7 @@ Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-laye
 - Maintain a minimum 44 by 44 CSS-pixel interactive target; prefer 48 by 48 for Android controls where the approved layout permits it.
 - Keep at least 8 pixels between independent touch targets.
 - Preserve visible keyboard focus with a 2-pixel Operational Green outline and sufficient offset.
-- Native buttons and inputs are preferred beneath Astryx styling. List menus use the shared in-app `MenuSelect` (Lock appearance); date and month stay native until the custom calendar.
+- Native buttons and inputs are preferred beneath Astryx styling. List menus use the shared in-app `MenuSelect` (Lock appearance). Dates use the shared period calendar.
 - Form fields have persistent visible labels. Placeholders are examples, not labels.
 - Meaningful product images have useful alt text; decorative category artwork has empty alt text.
 - Status never relies on color alone. Pair danger and availability colors with text or an icon.

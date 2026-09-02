@@ -20,14 +20,12 @@ import {
   describePrinterFailure,
   testPrinterConnection,
 } from '../printing/testPrinter.ts';
-import { installResidentLogo } from '../printing/printerTransport.ts';
 
 export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
   const reconnect = useReconnect();
   const [settings, setSettings] = useState<TerminalSettings>();
   const loaded = useRef(false);
   const [isTestingPrinter, setIsTestingPrinter] = useState(false);
-  const [isInstallingPrinterLogo, setIsInstallingPrinterLogo] = useState(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [isInstallingUpdate, setIsInstallingUpdate] = useState(false);
   const [installedApp, setInstalledApp] = useState<InstalledAppInfo | null>(null);
@@ -126,32 +124,6 @@ export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
     [refresh],
   );
 
-  const installPrinterLogo = useCallback(
-    async (input: PrinterPreferences) => {
-      setIsInstallingPrinterLogo(true);
-      setError('');
-      setMessage('');
-      try {
-        const printer = await savePrinterPreferences(input);
-        await refresh();
-        const result = await installResidentLogo({
-          host: printer.printerHost,
-          port: printer.printerPort,
-        });
-        setMessage(
-          `Logo setup data sent (${result.bytesWritten} bytes in ${result.totalMs} ms). Print a receipt to confirm the saved logo.`,
-        );
-      } catch (caught) {
-        const printerError = describePrinterFailure(caught);
-        setError(printerError);
-        throw caught;
-      } finally {
-        setIsInstallingPrinterLogo(false);
-      }
-    },
-    [refresh],
-  );
-
   const checkUpdate = useCallback(async () => {
     setIsCheckingUpdate(true);
     setError('');
@@ -212,7 +184,6 @@ export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
     isLoading: !settings,
     isSyncing: reconnect.isSyncing,
     isTestingPrinter,
-    isInstallingPrinterLogo,
     isCheckingUpdate,
     isInstallingUpdate,
     installedApp,
@@ -224,7 +195,6 @@ export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
     save,
     syncNow,
     testPrinter,
-    installPrinterLogo,
     checkUpdate,
     installUpdate,
     dismissUpdate,

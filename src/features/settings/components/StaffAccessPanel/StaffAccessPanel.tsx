@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { useStaffManagement } from '../../../../data/useStaffManagement.ts';
 import { StaffDialog } from '../StaffDialog/StaffDialog.tsx';
+import { useT } from '../../../../lib/locale';
 import styles from './StaffAccessPanel.module.css';
 
 type StaffManagement = ReturnType<typeof useStaffManagement>;
@@ -10,43 +11,44 @@ function roleLabel(role: string) {
 }
 
 export function StaffAccessPanel({ management }: { management: StaffManagement }) {
+  const t = useT();
   const [adding, setAdding] = useState(false);
   return (
     <section className={styles.panel} aria-labelledby="staff-heading">
-      <header>
+      <header className={styles.header}>
         <div>
-          <h2 id="staff-heading">Staff & access</h2>
-          <p>People who can use this tablet</p>
+          <h2 id="staff-heading">{t('Staff & access')}</h2>
+          <p>{t('People who can use this tablet')}</p>
         </div>
-        <button type="button" onClick={() => setAdding(true)}>Add staff</button>
+        <button type="button" onClick={() => setAdding(true)}>{t('Add staff')}</button>
       </header>
       <div className={styles.list}>
-        {management.isLoading ? <p>Loading staff…</p> : management.staff.map((profile) => (
+        {management.isLoading ? <p>{t('Loading staff…')}</p> : management.staff.map((profile) => (
           <article key={profile.id}>
             <span>
               <strong>{profile.name}</strong>
-              <small>{roleLabel(profile.role)}</small>
+              <small>{t(roleLabel(profile.role))}</small>
             </span>
             <div className={styles.actions}>
-              <b>{profile.pending ? 'Waiting to sync' : 'Ready'}</b>
+              <b>{profile.pending ? t('Waiting to sync') : t('Ready')}</b>
               {profile.id !== management.currentStaffId ? (
                 <button
                   type="button"
                   onClick={() => {
-                    if (window.confirm(`Delete ${profile.name}? Past records will be preserved.`)) {
+                    if (window.confirm(t('Delete {name}? Past records will be preserved.', { name: profile.name }))) {
                       void management.remove(profile).catch(() => undefined);
                     }
                   }}
                 >
-                  Delete
+                  {t('Delete')}
                 </button>
               ) : null}
             </div>
           </article>
         ))}
       </div>
-      {management.message ? <p className={styles.message} role="status">{management.message}</p> : null}
-      {management.error ? <p className={styles.error} role="alert">{management.error}</p> : null}
+      {management.message ? <p className={styles.message} role="status">{t(management.message)}</p> : null}
+      {management.error ? <p className={styles.error} role="alert">{t(management.error)}</p> : null}
       {adding ? <StaffDialog onClose={() => setAdding(false)} onSave={management.create} /> : null}
     </section>
   );

@@ -54,6 +54,7 @@ import {
 } from './localCostViews';
 import {
   cleanupAcknowledgedStaffProvisioning,
+  loadStaffPreferredLanguage,
 } from './localStaff';
 import {
   dispatchStaffOperation,
@@ -64,6 +65,7 @@ import { operationSessionArgs } from './operationSession.ts';
 import {
   loadTerminalSettings,
   recordSyncFailure,
+  clearSyncError,
 } from './terminalSettings';
 
 type ReconnectMode = 'automatic' | 'manual';
@@ -79,6 +81,7 @@ type ReconnectState = {
   isSyncing: boolean;
   revision: number;
   run: (mode?: ReconnectMode) => Promise<ReconnectResult>;
+  notifyLocalWrite: () => void;
 };
 
 const ReconnectContext = createContext<ReconnectState | undefined>(undefined);
@@ -166,7 +169,9 @@ export function ReconnectProvider({
   const addExpenseMutation = useMutation(api.expenses.add);
   const correctExpenseMutation = useMutation(api.expenses.correct);
   const addCompensationMutation = useMutation(api.staff.addCompensationPeriod);
+  const removeCompensationMutation = useMutation(api.staff.removePeriod);
   const deleteStaffMutation = useMutation(api.staff.remove);
+  const setPreferredLanguageMutation = useMutation(api.identity.setPreferredLanguage);
   const checkSession = useAction(api.identity.checkSession);
   const createStaffAction = useAction(api.identity.createStaff);
   const inFlight = useRef<Promise<ReconnectResult> | undefined>(undefined);
@@ -174,6 +179,9 @@ export function ReconnectProvider({
   const previousAvailable = useRef<boolean | undefined>(undefined);
   const [isSyncing, setIsSyncing] = useState(false);
   const [revision, setRevision] = useState(0);
+  const notifyLocalWrite = useCallback(() => {
+    setRevision((value) => value + 1);
+  }, []);
 
   const perform = useCallback(async (mode: ReconnectMode) => {
     if (available !== true || !foreground) {
@@ -497,6 +505,7 @@ export function ReconnectProvider({
             addExpense: (args) => addExpenseMutation(args as any),
             correctExpense: (args) => correctExpenseMutation(args as any),
             addCompensation: (args) => addCompensationMutation(args as any),
+            removeCompensation: (args) => removeCompensationMutation(args as any),
           }));
         synced += costs.synced;
         failed += costs.failed;
@@ -505,6 +514,14 @@ export function ReconnectProvider({
       }
 
       await cleanupAcknowledgedStaffProvisioning();
+      const preferredLanguage = await loadStaffPreferredLanguage(
+        session.staffProfileId,
+      );
+      await setPreferredLanguageMutation({
+        sessionToken: session.token,
+        deviceId: session.deviceId,
+        language: preferredLanguage,
+      });
       const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
         deviceId: session.deviceId,
       });
@@ -516,6 +533,7 @@ export function ReconnectProvider({
               role: profile.role,
               revision: Number(profile.revision),
               identityRevision: Number(profile.identityRevision),
+              preferredLanguage: profile.preferredLanguage === 'fr' ? 'fr' as const : 'en' as const,
             }]
           : [],
       );
@@ -572,6 +590,7 @@ export function ReconnectProvider({
         })));
       }
       setRevision((value) => value + 1);
+      await clearSyncError();
       return {
         synced,
         failed,
@@ -594,11 +613,11 @@ export function ReconnectProvider({
     deleteChoiceSectionMutation, deleteIngredientMutation,
     deleteProductMutation, deleteProductSizeMutation, deleteStaffMutation,
     foreground, onSessionUnavailable, receivePurchaseMutation,
-    recordAdjustmentMutation, saveCategoryMutation, saveChoiceSectionMutation,
+    recordAdjustmentMutation, removeCompensationMutation, saveCategoryMutation, saveChoiceSectionMutation,
     saveIngredientMutation, saveProductMutation, saveProductSizeMutation,
     saveRecipeMutation, session.deviceId, session.name,
     session.provisioningState, session.role, session.staffProfileId,
-    session.token, setProductStatusMutation]);
+    session.token, setPreferredLanguageMutation, setProductStatusMutation]);
 
   const run = useCallback((mode: ReconnectMode = 'automatic') => {
     requestedMode.current = mode === 'manual' || requestedMode.current === 'manual'
@@ -659,7 +678,7 @@ export function ReconnectProvider({
   }, [available, foreground, run]);
 
   return (
-    <ReconnectContext.Provider value={{ isSyncing, revision, run }}>
+    <ReconnectContext.Provider value={{ isSyncing, revision, run, notifyLocalWrite }}>
       {children}
     </ReconnectContext.Provider>
   );

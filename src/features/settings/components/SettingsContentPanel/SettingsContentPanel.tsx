@@ -1,4 +1,4 @@
-import { RotateCw, CheckCircle, Cloud, Database, Tablet, Image, InfoCircle, Printer as PrinterIcon, AlertCircle } from '@boxicons/react';
+import { RotateCw, CheckCircle, Cloud, Printer as PrinterIcon } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import type { InstalledAppInfo } from '../../../../data/appUpdate';
 import type {
@@ -6,24 +6,56 @@ import type {
   PrinterPreferences,
   TerminalSettings,
 } from '../../../../data/terminalSettings';
-import type { SettingsSection } from '../SettingsNavigationPanel/SettingsNavigationPanel';
+import {
+  formatPrinterEndpoint,
+  parsePrinterEndpoint,
+} from '../../../../data/terminalSettings';
+import { useLanguage, useT } from '../../../../lib/locale';
 import styles from './SettingsContentPanel.module.css';
 
-function formatTimestamp(value?: number) {
-  if (!value) return 'Not yet';
-  return new Intl.DateTimeFormat('en-GB', {
+function formatTimestamp(value: number | undefined, language: 'en' | 'fr') {
+  if (!value) return undefined;
+  return new Intl.DateTimeFormat(language === 'fr' ? 'fr-FR' : 'en-GB', {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(value);
 }
 
+function localizeNotice(
+  t: (english: string, vars?: Record<string, string | number>) => string,
+  text: string,
+) {
+  const waiting = text.match(/^(\d+) saved orders? still need synchronization\.$/);
+  if (waiting) {
+    return waiting[1] === '1'
+      ? t('1 saved order still needs synchronization.')
+      : t('{count} saved orders still need synchronization.', { count: waiting[1] });
+  }
+  const synced = text.match(/^(\d+) saved orders? and the menu synchronized\.$/);
+  if (synced) {
+    return synced[1] === '1'
+      ? t('1 saved order and the menu synchronized.')
+      : t('{count} saved orders and the menu synchronized.', { count: synced[1] });
+  }
+  const test = text.match(/^Test data sent \((\d+) bytes in (\d+) ms\)\. Confirm paper\.$/);
+  if (test) {
+    return t('Test data sent ({bytes} bytes in {ms} ms). Confirm paper.', {
+      bytes: test[1],
+      ms: test[2],
+    });
+  }
+  const version = text.match(/^Version (.+) is ready to install\.$/);
+  if (version) {
+    return t('Version {version} is ready to install.', { version: version[1] });
+  }
+  return t(text);
+}
+
 interface SettingsContentPanelProps {
-  section: SettingsSection;
   settings?: TerminalSettings;
   isLoading: boolean;
   isSyncing: boolean;
   isTestingPrinter: boolean;
-  isInstallingPrinterLogo: boolean;
   isCheckingUpdate: boolean;
   isInstallingUpdate: boolean;
   installedApp: InstalledAppInfo | null;
@@ -34,21 +66,19 @@ interface SettingsContentPanelProps {
   message: string;
   error: string;
   onSave: (input: TerminalPreferences) => Promise<void>;
+  onLanguageChange: (language: TerminalPreferences['applicationLanguage']) => Promise<void>;
   onSync: () => Promise<void>;
   onTestPrinter: (input: PrinterPreferences) => Promise<void>;
-  onInstallPrinterLogo: (input: PrinterPreferences) => Promise<void>;
   onCheckUpdate: () => Promise<void>;
   onInstallUpdate: () => Promise<void>;
   onDismissUpdate: () => void;
 }
 
 export function SettingsContentPanel({
-  section,
   settings,
   isLoading,
   isSyncing,
   isTestingPrinter,
-  isInstallingPrinterLogo,
   isCheckingUpdate,
   isInstallingUpdate,
   installedApp,
@@ -59,448 +89,238 @@ export function SettingsContentPanel({
   message,
   error,
   onSave,
+  onLanguageChange,
   onSync,
   onTestPrinter,
-  onInstallPrinterLogo,
   onCheckUpdate,
   onInstallUpdate,
   onDismissUpdate,
 }: SettingsContentPanelProps) {
-  const [terminalName, setTerminalName] = useState('');
+  const t = useT();
+  const language = useLanguage();
   const [clockFormat, setClockFormat] =
     useState<TerminalPreferences['clockFormat']>('24-hour');
   const [receiptLanguage, setReceiptLanguage] =
     useState<TerminalPreferences['receiptLanguage']>('en');
-  const [isSaving, setIsSaving] = useState(false);
-  const [printerHost, setPrinterHost] = useState('');
-  const [printerPort, setPrinterPort] = useState('9100');
+  const [printerEndpoint, setPrinterEndpoint] = useState('');
 
   useEffect(() => {
     if (!settings) return;
-    setTerminalName(settings.terminalName);
     setClockFormat(settings.clockFormat);
     setReceiptLanguage(settings.receiptLanguage);
-    setPrinterHost(settings.printerHost);
-    setPrinterPort(String(settings.printerPort));
+    setPrinterEndpoint(
+      formatPrinterEndpoint(settings.printerHost, settings.printerPort),
+    );
   }, [settings]);
 
-  async function save() {
-    setIsSaving(true);
-    try {
-      await onSave({ terminalName, clockFormat, receiptLanguage });
-    } catch {
-      // The data hook owns the actionable error message.
-    } finally {
-      setIsSaving(false);
-    }
+  async function savePreferences(
+    next: Partial<Pick<TerminalPreferences, 'clockFormat' | 'receiptLanguage'>>,
+  ) {
+    if (!settings) return;
+    const clock = next.clockFormat ?? clockFormat;
+    const receipt = next.receiptLanguage ?? receiptLanguage;
+    setClockFormat(clock);
+    setReceiptLanguage(receipt);
+    await onSave({
+      terminalName: settings.terminalName,
+      clockFormat: clock,
+      receiptLanguage: receipt,
+      applicationLanguage: language,
+    });
   }
 
   async function testPrinter() {
     try {
-      await onTestPrinter({
-        printerHost,
-        printerPort: Number(printerPort),
-      });
+      const printer = parsePrinterEndpoint(printerEndpoint);
+      setPrinterEndpoint(
+        formatPrinterEndpoint(printer.printerHost, printer.printerPort),
+      );
+      await onTestPrinter(printer);
     } catch {
       // The data hook owns the actionable error message.
     }
   }
 
-  async function installPrinterLogo() {
-    const approved = window.confirm(
-      'This replaces every image saved in the printer. Continue only during printer setup.',
-    );
-    if (!approved) return;
-    try {
-      await onInstallPrinterLogo({
-        printerHost,
-        printerPort: Number(printerPort),
-      });
-    } catch {
-      // The data hook owns the actionable error message.
-    }
-  }
+  const versionLabel = installedApp?.versionName ?? '1.1';
+  const lastSync = formatTimestamp(settings?.lastSyncAt, language);
 
-  if (section === 'printer') {
-    const printerBusy = isTestingPrinter || isInstallingPrinterLogo;
-    return (
-      <section className={styles.panel} aria-labelledby="printer-heading">
-        <div className={styles.header}>
+  return (
+    <section className={styles.panel} aria-labelledby="settings-heading">
+      <header className={styles.header}>
+        <h1 id="settings-heading">{t('Settings')}</h1>
+        <small>{t('Language, printer, sync, and updates')}</small>
+      </header>
+
+      <div className={styles.choices}>
+        <fieldset className={styles.choice}>
+          <legend>{t('Application')}</legend>
           <div>
-            <h2 id="printer-heading">Printer & hardware</h2>
-            <p>Configure this tablet's Ethernet receipt printer</p>
+            {(['en', 'fr'] as const).map((value) => (
+              <button
+                className={language === value ? styles.selected : ''}
+                type="button"
+                aria-pressed={language === value}
+                disabled={isLoading}
+                onClick={() => void onLanguageChange(value)}
+                key={`app-${value}`}
+              >
+                {value === 'en' ? t('English') : t('Français')}
+              </button>
+            ))}
           </div>
-          <div className={styles.headerActions}>
-            <button
-              className={`${styles.primary} ${styles.secondary}`}
-              type="button"
-              disabled={printerBusy || isLoading}
-              onClick={installPrinterLogo}
-            >
-              <Image width={17} height={17} aria-hidden="true" />
-              <span>{isInstallingPrinterLogo ? 'Restoring…' : 'Restore saved logo'}</span>
-            </button>
-            <button
-              className={styles.primary}
-              type="button"
-              disabled={printerBusy || isLoading}
-              onClick={testPrinter}
-            >
-              <PrinterIcon width={17} height={17} aria-hidden="true" />
-              <span>{isTestingPrinter ? 'Testing…' : 'Test printer'}</span>
-            </button>
-          </div>
-        </div>
-
-        <div className={styles.identity}>
-          <span className={styles.deviceIcon}>
-            <PrinterIcon width={24} height={24} aria-hidden="true" />
-          </span>
+        </fieldset>
+        <fieldset className={styles.choice}>
+          <legend>{t('Receipts')}</legend>
           <div>
-            <span>LAN receipt printer</span>
-            <strong>
-              {settings?.printerHost
-                ? `${settings.printerHost}:${settings.printerPort}`
-                : 'Not configured'}
-            </strong>
-            <small>USB remains a separate desktop receipt-lab path.</small>
+            {(['en', 'fr'] as const).map((value) => (
+              <button
+                className={receiptLanguage === value ? styles.selected : ''}
+                type="button"
+                aria-pressed={receiptLanguage === value}
+                disabled={isLoading}
+                onClick={() => void savePreferences({ receiptLanguage: value })}
+                key={`receipt-${value}`}
+              >
+                {value === 'en' ? t('English') : t('Français')}
+              </button>
+            ))}
           </div>
-        </div>
+        </fieldset>
+        <fieldset className={styles.choice}>
+          <legend>{t('Clock')}</legend>
+          <div>
+            {(['12-hour', '24-hour'] as const).map((value) => (
+              <button
+                className={clockFormat === value ? styles.selected : ''}
+                type="button"
+                aria-pressed={clockFormat === value}
+                disabled={isLoading}
+                onClick={() => void savePreferences({ clockFormat: value })}
+                key={value}
+              >
+                {value === '12-hour' ? t('12 hour') : t('24 hour')}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      </div>
 
-        <div className={styles.formGrid}>
-          <label>
-            <span>Printer IPv4 address</span>
-            <input
-              value={printerHost}
-              inputMode="decimal"
-              autoComplete="off"
-              placeholder="192.168.1.100"
-              disabled={isLoading || printerBusy}
-              onChange={(event) => setPrinterHost(event.target.value)}
-            />
-            <small>Use the address reserved on the installation router.</small>
-          </label>
-          <label>
-            <span>Raw TCP port</span>
-            <input
-              value={printerPort}
-              inputMode="numeric"
-              autoComplete="off"
-              disabled={isLoading || printerBusy}
-              onChange={(event) => setPrinterPort(event.target.value)}
-            />
-            <small>The verified WD8260 lab endpoint uses port 9100.</small>
-          </label>
+      <section className={styles.printer} aria-labelledby="printer-heading">
+        <header>
+          <h2 id="printer-heading">{t('Printer')}</h2>
+          <small>{t('IPv4 address and port')}</small>
+        </header>
+        <div className={styles.printerRow}>
+          <input
+            value={printerEndpoint}
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="192.168.1.100:9100"
+            disabled={isLoading || isTestingPrinter}
+            onChange={(event) => setPrinterEndpoint(event.target.value)}
+          />
+          <button
+            className={styles.primary}
+            type="button"
+            disabled={isTestingPrinter || isLoading}
+            onClick={() => void testPrinter()}
+          >
+            <PrinterIcon width={16} height={16} aria-hidden="true" />
+            <span>{isTestingPrinter ? t('Testing…') : t('Test printer')}</span>
+          </button>
         </div>
-
-        <div className={`${styles.notice} ${styles.printerNotice}`}>
-          <InfoCircle width={18} height={18} aria-hidden="true" />
-          <p>
-            Test printer sends a marked non-sale diagnostic. Restore saved logo
-            replaces every image stored in the printer with the approved OLASO
-            logo. A completed TCP write does not confirm paper or logo storage;
-            inspect a receipt separately.
-          </p>
-        </div>
-
-        <Feedback message={message} error={error} />
       </section>
-    );
-  }
 
-  if (section === 'sync') {
-    const syncLabel = error
-      ? 'Needs attention'
-      : settings?.pendingSyncCount
-        ? `${settings.pendingSyncCount} waiting`
-        : settings?.lastSyncAt
-          ? 'Up to date'
-          : 'Not synced yet';
-
-    return (
-      <section className={styles.panel} aria-labelledby="sync-heading">
-        <div className={styles.header}>
-          <div>
-            <h2 id="sync-heading">Data & sync</h2>
-            <p>Review local work and synchronize with the cloud</p>
-          </div>
-          <div className={styles.headerActions}>
-            <button
-              className={styles.primary}
-              type="button"
-              disabled={isSyncing || !online || isLoading}
-              onClick={onSync}
-            >
-              <Cloud width={17} height={17} aria-hidden="true" />
-              <span>{isSyncing ? 'Syncing…' : 'Sync now'}</span>
-            </button>
-          </div>
-        </div>
-
-        <div className={styles.statusHero}>
-          <span className={styles.statusIcon}>
-            {error
-              ? <AlertCircle width={24} height={24} aria-hidden="true" />
-              : <CheckCircle width={24} height={24} aria-hidden="true" />}
+      <section className={styles.sync} aria-labelledby="sync-heading">
+        <header>
+          <span>
+            <h2 id="sync-heading">{t('Sync')}</h2>
           </span>
-          <div>
-            <span>Synchronization state</span>
-            <strong>{syncLabel}</strong>
-            <small>
-              {online
-                ? 'This action sends saved sales before refreshing menu data.'
-                : 'Reconnect to use Sync now. Local checkout remains available.'}
-            </small>
-          </div>
-        </div>
-
-        <div className={styles.metrics}>
+          <button
+            className={styles.primary}
+            type="button"
+            disabled={isSyncing || !online || isLoading}
+            onClick={() => void onSync()}
+          >
+            <Cloud width={16} height={16} aria-hidden="true" />
+            <span>{isSyncing ? t('Syncing…') : t('Sync now')}</span>
+          </button>
+        </header>
+        <div className={styles.syncFacts}>
           <article>
-            <span>Connection</span>
-            <strong>{online ? 'Online' : 'Offline'}</strong>
+            <small>{t('Connection')}</small>
+            <strong>{online ? t('Online') : t('Offline')}</strong>
           </article>
           <article>
-            <span>Waiting sales</span>
+            <small>{t('Waiting sales')}</small>
             <strong>{settings?.pendingSyncCount ?? '—'}</strong>
           </article>
           <article>
-            <span>Last successful sync</span>
-            <strong>{formatTimestamp(settings?.lastSyncAt)}</strong>
+            <small>{t('Last successful sync')}</small>
+            <strong>{lastSync ?? t('Not yet')}</strong>
           </article>
         </div>
-
-        <div className={styles.detailList}>
-          <div>
-            <Database width={18} height={18} aria-hidden="true" />
-            <span>
-              <strong>Saved operational menu</strong>
-              <small>{formatTimestamp(settings?.menuUpdatedAt)}</small>
-            </span>
-          </div>
-          <div>
-            <Tablet width={18} height={18} aria-hidden="true" />
-            <span>
-              <strong>Device ID</strong>
-              <small>{settings?.deviceId ?? 'Loading…'}</small>
-            </span>
-          </div>
-        </div>
-
-        <div className={styles.notice}>
-          <InfoCircle width={18} height={18} aria-hidden="true" />
-          <p>
-            Online tablets synchronize saved work automatically while the app is
-            open. Sync now retries failed rows and processes at most 10 saved
-            sales per click without duplicating orders. Convex keeps the
-            synchronized cloud copy for this shop.
-          </p>
-        </div>
-
-        <Feedback message={message} error={error} />
       </section>
-    );
-  }
 
-  if (section === 'about') {
-    const versionLabel = installedApp?.versionName ?? '1.1';
-    return (
-      <section className={styles.panel} aria-labelledby="about-heading">
-        <div className={styles.header}>
-          <div>
-            <h2 id="about-heading">About Olaso</h2>
-            <p>Installed version and guided tablet updates</p>
-          </div>
-        </div>
-        <div className={styles.aboutLead}>
-          <span className={styles.olasoMark}>O</span>
-          <div>
-            <strong>Olaso POS</strong>
-            <span>Version {versionLabel}</span>
-          </div>
-        </div>
-        <div className={styles.updateBlock}>
-          <p>
-            {updateChannelConfigured
-              ? 'You can check anytime. If nothing is published for the shop, Olaso simply says no update is available. When a release is open, choose Update or Later. Android confirms installation. An open order blocks Update.'
-              : 'This build has no HTTPS update channel configured. Signed releases still install with the same application ID and signing key.'}
-          </p>
+      <section className={styles.update} aria-labelledby="update-heading">
+        <header>
+          <span>
+            <h2 id="update-heading">{t('Update')}</h2>
+            <small>{t('Olaso POS')} {versionLabel}</small>
+          </span>
+          <button
+            className={styles.primary}
+            type="button"
+            disabled={
+              isCheckingUpdate
+              || isInstallingUpdate
+              || !updateChannelConfigured
+              || !online
+            }
+            onClick={() => void onCheckUpdate()}
+          >
+            <RotateCw width={16} height={16} aria-hidden="true" />
+            <span>{isCheckingUpdate ? t('Checking…') : t('Check for update')}</span>
+          </button>
+        </header>
+        {pendingUpdateVersion ? (
           <div className={styles.updateActions}>
             <button
               className={styles.primary}
               type="button"
-              disabled={
-                isCheckingUpdate ||
-                isInstallingUpdate ||
-                !updateChannelConfigured ||
-                !online
-              }
-              onClick={() => void onCheckUpdate()}
+              disabled={isInstallingUpdate || isCheckingUpdate || hasUnfinishedCart}
+              onClick={() => void onInstallUpdate()}
             >
-              <RotateCw width={17} height={17} aria-hidden="true" />
+              <CheckCircle width={16} height={16} aria-hidden="true" />
               <span>
-                {isCheckingUpdate ? 'Checking…' : 'Check for update'}
+                {isInstallingUpdate
+                  ? t('Starting…')
+                  : t('Update to {version}', { version: pendingUpdateVersion })}
               </span>
             </button>
-            {pendingUpdateVersion ? (
-              <>
-                <button
-                  className={styles.primary}
-                  type="button"
-                  disabled={
-                    isInstallingUpdate ||
-                    isCheckingUpdate ||
-                    hasUnfinishedCart
-                  }
-                  onClick={() => void onInstallUpdate()}
-                >
-                  <CheckCircle width={17} height={17} aria-hidden="true" />
-                  <span>
-                    {isInstallingUpdate
-                      ? 'Starting…'
-                      : `Update to ${pendingUpdateVersion}`}
-                  </span>
-                </button>
-                <button
-                  className={`${styles.primary} ${styles.secondary}`}
-                  type="button"
-                  disabled={isInstallingUpdate}
-                  onClick={onDismissUpdate}
-                >
-                  Later
-                </button>
-              </>
+            <button
+              className={styles.secondary}
+              type="button"
+              disabled={isInstallingUpdate}
+              onClick={onDismissUpdate}
+            >
+              {t('Later')}
+            </button>
+            {hasUnfinishedCart ? (
+              <p>{t('Finish or clear the open order before installing.')}</p>
             ) : null}
           </div>
-          {hasUnfinishedCart && pendingUpdateVersion ? (
-            <p className={styles.updateHint}>
-              Finish or clear the open order before installing an update.
-            </p>
-          ) : null}
-        </div>
-        <dl className={styles.aboutList}>
-          <div>
-            <dt>Operational record</dt>
-            <dd>Local SQLite with idempotent Convex synchronization</dd>
-          </div>
-          <div>
-            <dt>Authentication</dt>
-            <dd>Separate staff PINs with protected offline tablet access</dd>
-          </div>
-          <div>
-            <dt>Receipts</dt>
-            <dd>Saved snapshots with printing and safe reprinting</dd>
-          </div>
-          <div>
-            <dt>Printer integration</dt>
-            <dd>LAN checkout printing, diagnostics, and saved-logo setup</dd>
-          </div>
-        </dl>
-        <Feedback message={message} error={error} />
+        ) : null}
       </section>
-    );
-  }
 
-  return (
-    <section className={styles.panel} aria-labelledby="general-heading">
-      <div className={styles.header}>
-        <div>
-          <h2 id="general-heading">General</h2>
-          <p>Name this terminal and choose its local time display</p>
-        </div>
-        <button
-          className={styles.primary}
-          type="button"
-          disabled={isSaving || isLoading}
-          onClick={save}
+      {message || error ? (
+        <p
+          className={`${styles.feedback} ${error ? styles.feedbackError : ''}`}
+          role={error ? 'alert' : 'status'}
         >
-          <CheckCircle width={17} height={17} aria-hidden="true" />
-          <span>{isSaving ? 'Saving…' : 'Save settings'}</span>
-        </button>
-      </div>
-
-      <div className={styles.identity}>
-        <span className={styles.deviceIcon}>
-          <Tablet width={24} height={24} aria-hidden="true" />
-        </span>
-        <div>
-          <span>This tablet</span>
-          <strong>{settings?.terminalName ?? 'Loading settings…'}</strong>
-          <small>Device identity stays fixed after the first local setup.</small>
-        </div>
-      </div>
-
-      <div className={styles.formGrid}>
-        <label>
-          <span>Terminal name</span>
-          <input
-            value={terminalName}
-            maxLength={40}
-            disabled={isLoading}
-            onChange={(event) => setTerminalName(event.target.value)}
-          />
-          <small>Shown on the local lock screen.</small>
-        </label>
-        <label>
-          <span>Device ID</span>
-          <input value={settings?.deviceId ?? ''} readOnly />
-          <small>Read-only to preserve sale retry identity.</small>
-        </label>
-      </div>
-
-      <fieldset className={styles.clock}>
-        <legend>Clock format</legend>
-        <p>Used on the local terminal lock screen.</p>
-        <div>
-          {(['12-hour', '24-hour'] as const).map((value) => (
-            <button
-              className={clockFormat === value ? styles.selected : ''}
-              type="button"
-              aria-pressed={clockFormat === value}
-              onClick={() => setClockFormat(value)}
-              key={value}
-            >
-              {value === '12-hour' ? '12 hour' : '24 hour'}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <fieldset className={styles.language}>
-        <legend>Receipt language</legend>
-        <p>Each new saved receipt and print follows this staff-app language.</p>
-        <div>
-          {(['en', 'fr'] as const).map((value) => (
-            <button
-              className={receiptLanguage === value ? styles.selected : ''}
-              type="button"
-              aria-pressed={receiptLanguage === value}
-              onClick={() => setReceiptLanguage(value)}
-              key={value}
-            >
-              {value === 'en' ? 'English' : 'Français'}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <div className={styles.notice}>
-        <InfoCircle width={18} height={18} aria-hidden="true" />
-        <p>
-          These preferences stay only on this tablet. They contain no password,
-          PIN, cloud secret, or production login policy.
+          {localizeNotice(t, error || message)}
         </p>
-      </div>
-
-      <Feedback message={message} error={error} />
+      ) : null}
     </section>
-  );
-}
-
-function Feedback({ message, error }: { message: string; error: string }) {
-  if (!message && !error) return null;
-  return (
-    <p className={`${styles.feedback} ${error ? styles.feedbackError : ''}`} role={error ? 'alert' : 'status'}>
-      {error || message}
-    </p>
   );
 }

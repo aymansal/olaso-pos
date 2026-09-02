@@ -214,6 +214,31 @@
   margin-top: 16px;
 }
 
+.methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 16px;
+  padding: 4px;
+  border-radius: 24px;
+  background: var(--olaso-soft);
+}
+
+.methods button {
+  height: 40px;
+  border: 0;
+  border-radius: 20px;
+  color: var(--olaso-copy);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.methods button[aria-pressed='true'] {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
 .quick button {
   height: 44px;
   border: 1px solid var(--olaso-control-border);

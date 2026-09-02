@@ -16,16 +16,22 @@ import {
   type StockUnitGroup,
   unitGroup as ingredientUnitGroup,
 } from './stockPresentation';
+import { useT } from '../../lib/locale';
 import styles from './StockScreen.module.css';
 
 const PAGE_SIZE = 7;
 
-export function StockScreen() {
+export function StockScreen({
+  initialLevelFilter = 'all',
+}: {
+  initialLevelFilter?: StockLevelFilter;
+}) {
+  const t = useT();
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>();
   const [search, setSearch] = useState('');
   const [unitGroup, setUnitGroup] = useState<StockUnitGroup>('all');
   const [levelFilter, setLevelFilter] =
-    useState<StockLevelFilter>('all');
+    useState<StockLevelFilter>(initialLevelFilter);
   const [page, setPage] = useState(0);
   const [showAddIngredient, setShowAddIngredient] = useState(false);
   const [adjustment, setAdjustment] = useState<{
@@ -34,6 +40,10 @@ export function StockScreen() {
   }>();
   const [purchaseIngredient, setPurchaseIngredient] = useState<ManagedIngredient>();
   const inventory = useInventoryManagement(selectedIngredientId);
+
+  useEffect(() => {
+    setLevelFilter(initialLevelFilter);
+  }, [initialLevelFilter]);
 
   const visibleIngredients = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase();
@@ -84,9 +94,8 @@ export function StockScreen() {
   }
 
   return (
-    <main className={styles.screen} aria-label="Olaso stock">
+    <main className={styles.screen} aria-label={t('Olaso stock')}>
       <StockInventoryPanel
-        metrics={inventory.metrics}
         ingredients={pageIngredients}
         totalItems={visibleIngredients.length}
         selectedIngredientId={selectedIngredientId}

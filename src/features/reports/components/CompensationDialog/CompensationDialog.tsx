@@ -1,9 +1,11 @@
-import { X } from '@boxicons/react';
+import { X, ChevronDown } from '@boxicons/react';
 import { useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
+import { PeriodCalendar } from '../../../../components/PeriodCalendar/PeriodCalendar';
 import { localBusinessDate } from '../../../../lib/date.ts';
 import type { SavedCostManagement } from '../../../../data/localCosts.ts';
+import { useT } from '../../../../lib/locale';
 import styles from './CompensationDialog.module.css';
 
 export function CompensationDialog({
@@ -17,20 +19,21 @@ export function CompensationDialog({
     staffProfileId: string;
     monthlyAmountCentimes: number;
     effectiveStartMonth: string;
-    effectiveEndMonth?: string;
+    effectiveStartDate: string;
   }) => Promise<void>;
 }) {
+  const t = useT();
   const [staffProfileId, setStaffProfileId] = useState(staff[0]?.id ?? '');
   const [amountMad, setAmountMad] = useState('');
-  const [startMonth, setStartMonth] = useState(localBusinessDate().slice(0, 7));
-  const [endMonth, setEndMonth] = useState('');
+  const [paidOn, setPaidOn] = useState(localBusinessDate());
+  const [calendarAnchor, setCalendarAnchor] = useState<DOMRect>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const monthlyAmountCentimes = Math.round(Number(amountMad) * 100);
-  const valid = Boolean(staffProfileId && startMonth)
+  const paidMonth = paidOn.slice(0, 7);
+  const valid = Boolean(staffProfileId && paidOn)
     && Number.isSafeInteger(monthlyAmountCentimes)
-    && monthlyAmountCentimes >= 0
-    && (!endMonth || endMonth >= startMonth);
+    && monthlyAmountCentimes >= 0;
 
   async function submit() {
     if (!valid) return;
@@ -40,8 +43,8 @@ export function CompensationDialog({
       await onSave({
         staffProfileId,
         monthlyAmountCentimes,
-        effectiveStartMonth: startMonth,
-        ...(endMonth ? { effectiveEndMonth: endMonth } : {}),
+        effectiveStartMonth: paidMonth,
+        effectiveStartDate: paidOn,
       });
       onClose();
     } catch (caught) {
@@ -59,15 +62,44 @@ export function CompensationDialog({
       onPointerDown={(event) => closeOnBackdrop(event, onClose)}
     >
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="compensation-title">
-        <header><h2 id="compensation-title">Add compensation</h2><button type="button" onClick={onClose} aria-label="Close compensation"><X width={18} height={18} /></button></header>
+        <header><h2 id="compensation-title">{t('Add compensation')}</h2><button type="button" onClick={onClose} aria-label={t('Close compensation')}><X width={18} height={18} /></button></header>
         <div className={styles.grid}>
-          <label>Staff<MenuSelect ariaLabel="Staff" value={staffProfileId} placeholder="Select staff" onChange={setStaffProfileId} options={staff.map((profile) => ({ id: profile.id, label: profile.name }))} /></label>
-          <label>Monthly amount · MAD<input type="number" min="0" step="0.01" placeholder="0" value={amountMad} onChange={(event) => setAmountMad(event.target.value)} /></label>
-          <label>Starts<input type="month" value={startMonth} onChange={(event) => setStartMonth(event.target.value)} /></label>
-          <label>Ends (optional)<input type="month" min={startMonth} value={endMonth} onChange={(event) => setEndMonth(event.target.value)} /></label>
+          <label>{t('Staff')}<MenuSelect size="field" ariaLabel="Staff" value={staffProfileId} placeholder="Select staff" onChange={setStaffProfileId} options={staff.map((profile) => ({ id: profile.id, label: profile.name }))} /></label>
+          <label>{t('Monthly amount')} · {t('MAD')}<input type="number" min="0" step="0.01" placeholder="0" value={amountMad} onChange={(event) => setAmountMad(event.target.value)} /></label>
+          <label>{t('Paid on')}
+            <span className={styles.dateField}>
+              <button
+                type="button"
+                aria-expanded={Boolean(calendarAnchor)}
+                onClick={(event) => {
+                  if (calendarAnchor) {
+                    setCalendarAnchor(undefined);
+                    return;
+                  }
+                  setCalendarAnchor(event.currentTarget.getBoundingClientRect());
+                }}
+              >{paidOn}</button>
+              <ChevronDown width={14} height={14} aria-hidden="true" />
+            </span>
+          </label>
         </div>
-        {error ? <p className={styles.error}>{error}</p> : null}
-        <footer><button type="button" onClick={onClose}>Cancel</button><button type="button" disabled={!valid || saving} onClick={submit}>{saving ? 'Saving…' : 'Save compensation'}</button></footer>
+        {calendarAnchor ? (
+          <PeriodCalendar
+            mode="day"
+            fromDate={paidOn}
+            toDate={paidOn}
+            anchor={calendarAnchor}
+            onChange={(range) => {
+              setPaidOn(range.fromDate);
+            }}
+            onClose={() => setCalendarAnchor(undefined)}
+          />
+        ) : null}
+        {error ? <p className={styles.error}>{t(error)}</p> : null}
+        <footer className={styles.actions}>
+          <button className={styles.ghost} type="button" onClick={onClose}>{t('Cancel')}</button>
+          <button className={styles.solid} type="button" disabled={!valid || saving} onClick={submit}>{saving ? t('Saving…') : t('Save compensation')}</button>
+        </footer>
       </section>
     </div>
     </OverlayPortal>

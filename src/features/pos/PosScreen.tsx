@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { usePosData } from '../../data/usePosData';
 import { useConnectionStatus } from '../../data/connectionContext';
+import { useT } from '../../lib/locale';
 import type { ReceiptLanguage } from '../../data/terminalSettings';
 import type { OperationalCacheSnapshot } from '../../data/operationalCache.ts';
 import { categoryArtworkUrl } from '../../lib/categoryArtwork.ts';
@@ -23,7 +24,8 @@ import {
 } from './components/ModifierSelectionDialog/ModifierSelectionDialog';
 import { PaymentDialog } from './components/PaymentDialog/PaymentDialog';
 import type { Category } from './data/categories';
-import { productImage, type Product } from './data/products';
+import type { Product } from './data/products';
+import { productImage } from '../../lib/productImage';
 import {
   addProduct,
   complimentaryCentimes,
@@ -161,6 +163,7 @@ export function PosScreen({
   onSessionChange,
   receiptLanguage,
 }: PosScreenProps) {
+  const t = useT();
   const { available } = useConnectionStatus();
   const {
     menu,
@@ -458,8 +461,8 @@ export function PosScreen({
   }
 
   return (
-    <main className={styles.screen} aria-label="Olaso point of sale">
-      <section className={styles.menu} aria-label="Product menu">
+    <main className={styles.screen} aria-label={t('Olaso point of sale')}>
+      <section className={styles.menu} aria-label={t('Product menu')}>
         <SearchField
           value={session.query}
           onChange={(query) => editSession((current) => ({ ...current, query }))}

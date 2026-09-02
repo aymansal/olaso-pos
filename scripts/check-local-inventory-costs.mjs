@@ -17,6 +17,7 @@ import {
   addLocalCompensationPeriod,
   addLocalExpense,
   correctLocalExpense,
+  deleteLocalCompensationPeriod,
 } from '../src/data/localCosts.ts';
 import {
   loadLocalCostManagementFromDatabase,
@@ -25,6 +26,7 @@ import {
 } from '../src/data/localCostViews.ts';
 import { listPendingOutboxFromDatabase } from '../src/data/outbox.ts';
 import { localMigrations } from '../src/data/schema.ts';
+import { operatingCostsForRange } from '../src/lib/costs.ts';
 import { matchesLevelFilter } from '../src/features/stock/stockPresentation.ts';
 
 const activeIngredient = {
@@ -35,7 +37,8 @@ const activeIngredient = {
 const archivedIngredient = { ...activeIngredient, id: 'archived', status: 'archived' };
 assert.equal(matchesLevelFilter(activeIngredient, 'all'), true);
 assert.equal(matchesLevelFilter(archivedIngredient, 'all'), false);
-assert.equal(matchesLevelFilter(archivedIngredient, 'archived'), true);
+assert.equal(matchesLevelFilter(activeIngredient, 'healthy'), true);
+assert.equal(matchesLevelFilter(activeIngredient, 'low'), false);
 
 const database = new DatabaseSync(':memory:');
 database.exec('PRAGMA foreign_keys = ON');
@@ -154,6 +157,18 @@ await assert.rejects(
   /cannot make this change/,
 );
 assert.equal(database.prepare('SELECT COUNT(*) count FROM compensation_periods').get().count, 1);
+const extraPay = await addLocalCompensationPeriod(owner, {
+  staffProfileId: 'manager-local',
+  monthlyAmountCentimes: 1_000,
+  effectiveStartMonth: '2026-07',
+  effectiveEndMonth: '2026-07',
+}, transaction);
+await deleteLocalCompensationPeriod(owner, extraPay, transaction);
+assert.equal(database.prepare('SELECT COUNT(*) count FROM compensation_periods').get().count, 2);
+assert.equal(
+  database.prepare('SELECT effective_end_month FROM compensation_periods WHERE id = ?').get(extraPay.id).effective_end_month,
+  '2026-07',
+);
 
 await correctLocalExpense(manager, { id: expense.id, revision: 1 }, {
   category: 'Rent',
@@ -283,7 +298,7 @@ assert.equal(database.prepare(
 ).get().count, 3);
 assert.equal(database.prepare(
   'SELECT COUNT(*) count FROM compensation_periods',
-).get().count, 1);
+).get().count, 2);
 const category = await saveLocalCategory(manager, {
   name: 'Delete test', artworkKey: 'coffee', sortOrder: 10,
 }, transaction);
@@ -360,6 +375,24 @@ removedIngredient.operationId,
 assert.equal(database.prepare(
   'SELECT product_name_snapshot FROM sale_items WHERE id = ?',
 ).get('delete-sale-item').product_name_snapshot, 'Delete test drink');
+assert.deepEqual(
+  operatingCostsForRange(
+    [{
+      amountCentimes: 3100,
+      recurrence: 'monthly',
+      effectiveStartMonth: '2026-08',
+      effectiveEndMonth: '2026-08',
+    }],
+    [{
+      monthlyAmountCentimes: 31000,
+      effectiveStartMonth: '2026-08',
+      effectiveEndMonth: '2026-08',
+    }],
+    '2026-08-01',
+    '2026-08-10',
+  ),
+  { otherExpenseCentimes: 1000, compensationCentimes: 10000 },
+);
 assert.equal((await loadLocalCostManagementFromDatabase(
   adapter, '2026-08', 'owner',
 )).purchaseCashCentimes, 14_000);

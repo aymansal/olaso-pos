@@ -147,3 +147,132 @@ export function occursInMonth(
   }
   return targetMonth >= startMonth && (!endMonth || targetMonth <= endMonth);
 }
+
+export function daysInCalendarMonth(month: string) {
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+    throw new Error('Months must use YYYY-MM.');
+  }
+  const [year, calendarMonth] = month.split('-').map(Number);
+  return new Date(Date.UTC(year, calendarMonth, 0)).getUTCDate();
+}
+
+export function monthsInDateRange(fromDate: string, toDate: string) {
+  if (fromDate > toDate) throw new Error('Date range is invalid.');
+  const months: string[] = [];
+  let cursor = fromDate.slice(0, 7);
+  const last = toDate.slice(0, 7);
+  while (cursor <= last) {
+    months.push(cursor);
+    const [year, calendarMonth] = cursor.split('-').map(Number);
+    cursor = calendarMonth === 12
+      ? `${year + 1}-01`
+      : `${year}-${String(calendarMonth + 1).padStart(2, '0')}`;
+  }
+  return months;
+}
+
+export function overlappingDaysInMonth(
+  month: string,
+  fromDate: string,
+  toDate: string,
+) {
+  const lastDay = String(daysInCalendarMonth(month)).padStart(2, '0');
+  const start = fromDate > `${month}-01` ? fromDate : `${month}-01`;
+  const end = toDate < `${month}-${lastDay}` ? toDate : `${month}-${lastDay}`;
+  if (start > end) return 0;
+  return Math.floor(
+    (Date.parse(`${end}T00:00:00.000Z`) - Date.parse(`${start}T00:00:00.000Z`))
+      / 86_400_000,
+  ) + 1;
+}
+
+export function allocateMonthlyAmountForRange(
+  monthlyAmountCentimes: number,
+  month: string,
+  fromDate: string,
+  toDate: string,
+) {
+  const overlap = overlappingDaysInMonth(month, fromDate, toDate);
+  if (overlap === 0) return 0;
+  return allocateCentimes(
+    monthlyAmountCentimes,
+    daysInCalendarMonth(month),
+    overlap,
+  );
+}
+
+export function operatingCostsForRange(
+  expenses: Array<{
+    amountCentimes: number;
+    recurrence: 'one-time' | 'monthly';
+    transactionType?: 'recorded' | 'reversal';
+    effectiveDate?: string;
+    effectiveStartMonth?: string;
+    effectiveEndMonth?: string;
+    effectiveStartDate?: string;
+    effectiveEndDate?: string;
+  }>,
+  compensation: Array<{
+    monthlyAmountCentimes: number;
+    effectiveStartMonth: string;
+    effectiveEndMonth?: string;
+    effectiveStartDate?: string;
+    effectiveEndDate?: string;
+  }>,
+  fromDate: string,
+  toDate: string,
+) {
+  const sign = (type?: 'recorded' | 'reversal') =>
+    type === 'reversal' ? -1 : 1;
+  let otherExpenseCentimes = expenses.reduce((sum, expense) => {
+    if (expense.recurrence === 'one-time') {
+      const date = expense.effectiveDate;
+      return date && date >= fromDate && date <= toDate
+        ? sum + sign(expense.transactionType) * expense.amountCentimes
+        : sum;
+    }
+    return sum;
+  }, 0);
+  let compensationCentimes = 0;
+  for (const month of monthsInDateRange(fromDate, toDate)) {
+    const monthStart = `${month}-01`;
+    const monthEnd = `${month}-${String(daysInCalendarMonth(month)).padStart(2, '0')}`;
+    for (const expense of expenses) {
+      if (expense.recurrence !== 'monthly' || !expense.effectiveStartMonth) {
+        continue;
+      }
+      if (!occursInMonth(month, expense.effectiveStartMonth, expense.effectiveEndMonth)) {
+        continue;
+      }
+      const activeFrom = [fromDate, monthStart, expense.effectiveStartDate ?? monthStart]
+        .sort().at(-1)!;
+      const activeTo = [toDate, monthEnd, expense.effectiveEndDate ?? monthEnd]
+        .sort()[0];
+      if (activeFrom > activeTo) continue;
+      otherExpenseCentimes += sign(expense.transactionType)
+        * allocateMonthlyAmountForRange(
+          expense.amountCentimes,
+          month,
+          activeFrom,
+          activeTo,
+        );
+    }
+    for (const period of compensation) {
+      if (!occursInMonth(month, period.effectiveStartMonth, period.effectiveEndMonth)) {
+        continue;
+      }
+      const activeFrom = [fromDate, monthStart, period.effectiveStartDate ?? monthStart]
+        .sort().at(-1)!;
+      const activeTo = [toDate, monthEnd, period.effectiveEndDate ?? monthEnd]
+        .sort()[0];
+      if (activeFrom > activeTo) continue;
+      compensationCentimes += allocateMonthlyAmountForRange(
+        period.monthlyAmountCentimes,
+        month,
+        activeFrom,
+        activeTo,
+      );
+    }
+  }
+  return { otherExpenseCentimes, compensationCentimes };
+}

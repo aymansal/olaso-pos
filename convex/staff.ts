@@ -25,6 +25,21 @@ function month(value: string, label: string) {
   return value;
 }
 
+function date(value: string, label: string) {
+  const parsed = Date.parse(`${value}T00:00:00.000Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)
+      || !Number.isFinite(parsed)
+      || new Date(parsed).toISOString().slice(0, 10) !== value) {
+    throw new Error(`${label} must use YYYY-MM-DD.`);
+  }
+  return value;
+}
+
+function previousDate(value: string) {
+  return new Date(Date.parse(`${value}T00:00:00.000Z`) - 86_400_000)
+    .toISOString().slice(0, 10);
+}
+
 export const list = query({
   args: { ...sessionArgs },
   handler: async (ctx, args) => {
@@ -134,6 +149,8 @@ export const listCompensation = query({
       monthlyAmountCentimes: row.monthlyAmountCentimes,
       effectiveStartMonth: row.effectiveStartMonth,
       ...(row.effectiveEndMonth ? { effectiveEndMonth: row.effectiveEndMonth } : {}),
+      ...(row.effectiveStartDate ? { effectiveStartDate: row.effectiveStartDate } : {}),
+      ...(row.effectiveEndDate ? { effectiveEndDate: row.effectiveEndDate } : {}),
       revision: row.revision,
     }));
   },
@@ -145,6 +162,8 @@ export const remove = mutation({
     id: v.id('staffProfiles'),
     expectedRevision: v.number(),
     clientMutationId: v.string(),
+    compensationEndMonth: v.optional(v.string()),
+    compensationEndDate: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const actor = await requirePermission(ctx, args, 'staff');
@@ -183,10 +202,26 @@ export const remove = mutation({
         || compensation.length > 100) {
       throw new Error('Staff history exceeds its safe deletion limit.');
     }
+    const endMonth = args.compensationEndMonth
+      ? month(args.compensationEndMonth, 'Compensation end month')
+      : undefined;
+    const endDate = args.compensationEndDate
+      ? date(args.compensationEndDate, 'Compensation end date')
+      : undefined;
     for (const period of compensation) {
+      const closedEnd = endMonth
+        && (!period.effectiveEndMonth || period.effectiveEndMonth > endMonth)
+        ? endMonth
+        : period.effectiveEndMonth;
       await ctx.db.patch(period._id, {
         staffNameSnapshot: profile.name,
         staffRoleSnapshot: profile.role,
+        ...(closedEnd && closedEnd !== period.effectiveEndMonth
+          ? { effectiveEndMonth: closedEnd }
+          : {}),
+        ...(endDate && (!period.effectiveEndDate || period.effectiveEndDate > endDate)
+          ? { effectiveEndDate: endDate }
+          : {}),
       });
     }
     for (const row of [...identities, ...sessions, ...attempts]) {
@@ -225,6 +260,8 @@ export const addCompensationPeriod = mutation({
     monthlyAmountCentimes: v.number(),
     effectiveStartMonth: v.string(),
     effectiveEndMonth: v.optional(v.string()),
+    effectiveStartDate: v.optional(v.string()),
+    effectiveEndDate: v.optional(v.string()),
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -237,11 +274,18 @@ export const addCompensationPeriod = mutation({
     if (existing) return { id: existing._id, revision: existing.revision };
     const profile = await ctx.db.get(args.staffProfileId);
     if (!profile) return notFound('Staff profile');
-    const effectiveStartMonth = month(args.effectiveStartMonth, 'Effective start month');
+    const effectiveStartDate = args.effectiveStartDate
+      ? date(args.effectiveStartDate, 'Effective start date')
+      : `${month(args.effectiveStartMonth, 'Effective start month')}-01`;
+    const effectiveEndDate = args.effectiveEndDate
+      ? date(args.effectiveEndDate, 'Effective end date')
+      : undefined;
+    const effectiveStartMonth = effectiveStartDate.slice(0, 7);
     const effectiveEndMonth = args.effectiveEndMonth
       ? month(args.effectiveEndMonth, 'Effective end month')
-      : undefined;
-    if (effectiveEndMonth && effectiveEndMonth < effectiveStartMonth) {
+      : effectiveEndDate?.slice(0, 7);
+    if ((effectiveEndDate && effectiveEndDate < effectiveStartDate)
+        || (effectiveEndMonth && effectiveEndMonth < effectiveStartMonth)) {
       return conflict('Compensation cannot end before it starts.');
     }
     const periods = await ctx.db
@@ -249,11 +293,23 @@ export const addCompensationPeriod = mutation({
       .withIndex('by_staff_start_month', (index) => index.eq('staffProfileId', profile._id))
       .take(101);
     if (periods.length > 100) throw new Error('Compensation history exceeds the 100-period limit.');
-    if (periods.some((period) =>
-      period.effectiveStartMonth <= (effectiveEndMonth ?? '9999-12')
-      && (period.effectiveEndMonth ?? '9999-12') >= effectiveStartMonth,
-    )) {
-      return conflict('Compensation periods cannot overlap.');
+    const priorDay = previousDate(effectiveStartDate);
+    for (const period of periods) {
+      const periodStart = period.effectiveStartDate
+        ?? `${period.effectiveStartMonth}-01`;
+      const periodEnd = period.effectiveEndDate
+        ?? (period.effectiveEndMonth ? `${period.effectiveEndMonth}-31` : '9999-12-31');
+      if (periodStart >= effectiveStartDate
+          && periodStart <= (effectiveEndDate ?? '9999-12-31')) {
+        return conflict('Compensation periods cannot overlap.');
+      }
+      if (periodStart < effectiveStartDate && periodEnd >= effectiveStartDate) {
+        await ctx.db.patch(period._id, {
+          effectiveEndMonth: priorDay.slice(0, 7),
+          effectiveEndDate: priorDay,
+          revision: period.revision + 1,
+        });
+      }
     }
     const id = await ctx.db.insert('compensationPeriods', {
       staffProfileId: profile._id,
@@ -262,11 +318,42 @@ export const addCompensationPeriod = mutation({
       monthlyAmountCentimes: boundedInteger(args.monthlyAmountCentimes, 'Monthly compensation', 0, 100_000_000),
       effectiveStartMonth,
       ...(effectiveEndMonth ? { effectiveEndMonth } : {}),
+      effectiveStartDate,
+      ...(effectiveEndDate ? { effectiveEndDate } : {}),
       revision: 1,
       createdAt: Date.now(),
       updatedBy: actor,
       clientMutationId,
     });
     return { id, revision: 1 };
+  },
+});
+
+export const removePeriod = mutation({
+  args: {
+    ...sessionArgs,
+    id: v.id('compensationPeriods'),
+    expectedRevision: v.number(),
+    effectiveEndDate: v.string(),
+    clientMutationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await requireOwner(ctx, args);
+    mutationId(args.clientMutationId);
+    const period = await ctx.db.get(args.id);
+    if (!period) return { id: args.id, deleted: true as const };
+    expectRevision(args.expectedRevision, period.revision);
+    const requestedEndDate = date(args.effectiveEndDate, 'Effective end date');
+    const savedEndDate = period.effectiveEndDate
+      ?? (period.effectiveEndMonth ? `${period.effectiveEndMonth}-31` : undefined);
+    const effectiveEndDate = savedEndDate && savedEndDate < requestedEndDate
+      ? savedEndDate
+      : requestedEndDate;
+    await ctx.db.patch(period._id, {
+      effectiveEndMonth: effectiveEndDate.slice(0, 7),
+      effectiveEndDate,
+      revision: period.revision + 1,
+    });
+    return { id: args.id, stopped: true as const };
   },
 });

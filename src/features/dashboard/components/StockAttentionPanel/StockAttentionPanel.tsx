@@ -1,5 +1,6 @@
-import { WaterDrop, Flask, Leaf, Package, AlertTriangle } from '@boxicons/react';
+import { WaterDrop, Flask, Leaf, Package, ArrowRight } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
+import { useT } from '../../../../lib/locale';
 import { formatStockQuantity } from '../../../../lib/stock';
 import styles from './StockAttentionPanel.module.css';
 
@@ -34,34 +35,35 @@ export function StockAttentionPanel({
   warnings,
   isLoading,
   error,
+  onViewAll,
 }: {
   warnings: DashboardSnapshot['warnings'];
   isLoading: boolean;
   error: string;
+  onViewAll: () => void;
 }) {
+  const t = useT();
   return (
     <section className={styles.panel} aria-labelledby="stock-attention-title">
       <header className={styles.header}>
         <span>
-          <h2 id="stock-attention-title">Needs attention</h2>
-          <small>Ingredients below their threshold</small>
+          <h2 id="stock-attention-title">{t('Needs attention')}</h2>
+          <small>{t('Ingredients below their threshold')}</small>
         </span>
-        <span className={styles.warning}>
-          <AlertTriangle width={14} height={14} aria-hidden="true" />
-          <strong>
-            {isLoading ? 'Loading' : error ? 'Unavailable' : `${warnings.length} items`}
-          </strong>
-        </span>
+        <button type="button" className={styles.viewAll} onClick={onViewAll}>
+          <span>{t('View all')}</span>
+          <ArrowRight width={13} height={13} aria-hidden="true" />
+        </button>
       </header>
 
       <div className={styles.list}>
         {error || isLoading || warnings.length === 0 ? (
           <p className={styles.state} role={error ? 'alert' : 'status'}>
             {error
-              ? 'Stock warnings are unavailable.'
+              ? t('Stock warnings are unavailable.')
               : isLoading
-                ? 'Loading current stock…'
-                : 'All active ingredients are above their thresholds.'}
+                ? t('Loading current stock…')
+                : t('All active ingredients are above their thresholds.')}
           </p>
         ) : warnings.map((warning, index) => {
           const presentation = warningPresentation(warning);
@@ -75,14 +77,16 @@ export function StockAttentionPanel({
               <span className={styles.copy}>
                 <strong>{warning.name}</strong>
                 <small>
-                  {formatStockQuantity(
-                    warning.currentStockQuantity,
-                    warning.baseUnit,
-                  )} left
+                  {t('{qty} left', {
+                    qty: formatStockQuantity(
+                      warning.currentStockQuantity,
+                      warning.baseUnit,
+                    ),
+                  })}
                 </small>
               </span>
               <span className={`${styles.status} ${styles[presentation.tone]}`}>
-                {presentation.status}
+                {t(presentation.status)}
               </span>
               {index < warnings.length - 1 ? <span className={styles.divider} /> : null}
             </article>

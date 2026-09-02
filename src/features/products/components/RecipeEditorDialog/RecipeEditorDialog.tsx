@@ -2,6 +2,7 @@ import { Save, Plus, Trash, X } from '@boxicons/react';
 import { Fragment, useEffect, useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
+import { useT } from '../../../../lib/locale';
 import type {
   ManagedIngredient,
   ManagedProduct,
@@ -48,6 +49,7 @@ export function RecipeEditorDialog({
   onClose,
   onSave,
 }: RecipeEditorDialogProps) {
+  const t = useT();
   const [items, setItems] = useState<RecipeDraftItem[]>([]);
   const [sizeQuantities, setSizeQuantities] = useState(data.sizeQuantities);
   const [error, setError] = useState('');
@@ -129,10 +131,10 @@ export function RecipeEditorDialog({
         >
           <header className={styles.header}>
             <span className={styles.heading}>
-              <small>RECIPE</small>
+              <small>{t('RECIPE')}</small>
               <h2 id="recipe-dialog-title">{product.name}</h2>
             </span>
-            <button type="button" onClick={onClose} aria-label="Close recipe editor">
+            <button type="button" onClick={onClose} aria-label={t('Close recipe editor')}>
               <X width={18} height={18} aria-hidden="true" />
             </button>
           </header>
@@ -143,11 +145,11 @@ export function RecipeEditorDialog({
               const empty = COLUMNS - row.length;
               return (
                 <div className={styles.block} key={start}>
-                  <span className={styles.rowLabel}>Ingredient</span>
+                  <span className={styles.rowLabel}>{t('Ingredient')}</span>
                   {row.map((item, offset) => (
                     <MenuSelect
                       key={`ingredient-${start + offset}`}
-                      ariaLabel={`Ingredient ${start + offset + 1}`}
+                      ariaLabel={t('Ingredient {name}', { name: start + offset + 1 })}
                       value={item.ingredientId}
                       onChange={(id) =>
                         updateItem(start + offset, { ingredientId: id })
@@ -160,7 +162,7 @@ export function RecipeEditorDialog({
                   ))}
                   {pads(empty, `pad-ingredient-${start}`)}
 
-                  <span className={styles.rowLabel}>Amount</span>
+                  <span className={styles.rowLabel}>{t('Amount')}</span>
                   {row.map((item, offset) => {
                     const ingredient = data.ingredients.find(
                       (candidate) => candidate.id === item.ingredientId,
@@ -173,7 +175,7 @@ export function RecipeEditorDialog({
                             min="1"
                             step="1"
                             placeholder="0"
-                            aria-label={`${ingredient?.name ?? 'Ingredient'} amount`}
+                            aria-label={t('{name} amount', { name: ingredient?.name ?? t('Ingredient') })}
                             value={item.quantity || ''}
                             onChange={(event) =>
                               updateItem(start + offset, {
@@ -181,7 +183,7 @@ export function RecipeEditorDialog({
                               })
                             }
                           />
-                          <small>{ingredient ? unitLabel(ingredient.baseUnit) : ''}</small>
+                          <small>{ingredient ? t(unitLabel(ingredient.baseUnit)) : ''}</small>
                         </span>
                         <button
                           type="button"
@@ -191,7 +193,7 @@ export function RecipeEditorDialog({
                               current.filter((_, itemIndex) => itemIndex !== start + offset),
                             )
                           }
-                          aria-label={`Remove ${ingredient?.name ?? 'ingredient'}`}
+                          aria-label={t('Remove {name}', { name: ingredient?.name ?? t('Ingredient') })}
                         >
                           <Trash width={14} height={14} aria-hidden="true" />
                         </button>
@@ -210,7 +212,7 @@ export function RecipeEditorDialog({
                           min="0"
                           step="1"
                           placeholder="0"
-                          aria-label={`${size.name} amount`}
+                          aria-label={t('{name} amount', { name: size.name })}
                           value={quantityFor(item.ingredientId, size.id!, item.quantity) || ''}
                           onChange={(event) => {
                             const quantity = Number(event.target.value);
@@ -244,14 +246,14 @@ export function RecipeEditorDialog({
             disabled={items.length >= data.ingredients.length}
           >
             <Plus width={15} height={15} aria-hidden="true" />
-            Add ingredient
+            {t('Add ingredient')}
           </button>
 
-          {error ? <p className={styles.error}>{error}</p> : null}
+          {error ? <p className={styles.error}>{t(error)}</p> : null}
 
           <footer className={styles.footer}>
             <button type="button" className={styles.cancel} onClick={onClose}>
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="button"
@@ -260,7 +262,7 @@ export function RecipeEditorDialog({
               disabled={saving || items.length === 0}
             >
               <Save width={16} height={16} aria-hidden="true" />
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? t('Saving…') : t('Save')}
             </button>
           </footer>
         </section>

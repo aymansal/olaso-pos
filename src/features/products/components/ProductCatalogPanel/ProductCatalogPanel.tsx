@@ -1,5 +1,6 @@
 import { Search, Plus, X } from '@boxicons/react';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
+import { useT } from '../../../../lib/locale';
 import type {
   ManagedCategory,
   ManagedProduct,
@@ -44,7 +45,6 @@ interface ProductCatalogPanelProps {
   onSelectProduct: (productId: string) => void;
   onAddCategory: () => void;
   onRenameCategory: () => void;
-  onSetCategoryArchived: () => void;
   onDeleteCategory: () => void;
   onAddProduct: () => void;
   page: number;
@@ -72,7 +72,6 @@ export function ProductCatalogPanel({
   onSelectProduct,
   onAddCategory,
   onRenameCategory,
-  onSetCategoryArchived,
   onDeleteCategory,
   onAddProduct,
   page,
@@ -80,6 +79,7 @@ export function ProductCatalogPanel({
   totalItems,
   onPageChange,
 }: ProductCatalogPanelProps) {
+  const t = useT();
   const selectedCategory = categories.find(
     (category) => category.id === selectedCategoryId,
   );
@@ -88,14 +88,14 @@ export function ProductCatalogPanel({
     <section className={styles.panel} aria-labelledby="products-title">
       <header className={styles.header}>
         <h1 className={styles.heading} id="products-title">
-          Products
+          {t('Products')}
         </h1>
         <label className={styles.search}>
           <Search width={14} height={14} aria-hidden="true" />
           <input
             type="search"
-            aria-label="Search products"
-            placeholder="Search product"
+            aria-label={t('Search products')}
+            placeholder={t('Search product')}
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
           />
@@ -103,7 +103,7 @@ export function ProductCatalogPanel({
             <button
               type="button"
               className={styles.clear}
-              aria-label="Clear search"
+              aria-label={t('Clear search')}
               onClick={() => onSearchChange('')}
             >
               <X width={12} height={12} aria-hidden="true" />
@@ -132,7 +132,7 @@ export function ProductCatalogPanel({
           onClick={onAddProduct}
         >
           <Plus width={15} height={15} aria-hidden="true" />
-          <span>Add product</span>
+          <span>{t('Add product')}</span>
         </button>
       </header>
 
@@ -148,8 +148,8 @@ export function ProductCatalogPanel({
         category={selectedCategory}
         categoryName={
           selectedCategoryId === UNCATEGORIZED_ID
-            ? 'Uncategorized'
-            : selectedCategory?.name ?? 'All products'
+            ? t('Uncategorized')
+            : selectedCategory?.name ?? t('All products')
         }
         products={products}
         selectedProductId={selectedProductId}
@@ -161,7 +161,6 @@ export function ProductCatalogPanel({
         onSelect={onSelectProduct}
         onPageChange={onPageChange}
         onRenameCategory={onRenameCategory}
-        onSetCategoryArchived={onSetCategoryArchived}
         onDeleteCategory={onDeleteCategory}
       />
     </section>

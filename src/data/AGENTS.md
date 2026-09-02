@@ -22,8 +22,13 @@ tablet's local SQLite operational record.
 - `useReportsData.ts` makes one saved-summary range request only while Reports
   is mounted or its period changes, and exposes explicit retry state.
 - `useInventoryManagement.ts` and `useCostManagement.ts` render from SQLite,
-  commit authorized writes locally first, refresh after the shared worker, and
-  never call Convex directly.
+  commit authorized writes locally first, and refresh after the shared worker.
+  Stock used-today is today’s recipe deductions grouped by ingredient name and
+  unit; while online it keeps the larger of that local total and today’s
+  one-call saved-summary plus still-unsynced local sales so the column survives
+  reinstall without shrinking behind a stale cloud figure. Displayed on-hand
+  includes stock deltas from a mapped local duplicate of the same ingredient.
+  Cost management never calls Convex directly.
 - `useSettingsData.ts` loads local device/sync state, saves validated non-secret
   preferences, delegates deliberate Sync to the shared worker, coordinates
   explicit printer test/logo-setup actions without claiming paper state, and
@@ -47,7 +52,9 @@ tablet's local SQLite operational record.
   An immediate browser offline hint may close transport early, while Android
   validated state remains authoritative for application behavior.
 - `reconnectContext.tsx` owns the authenticated single-flight outbox worker,
-  cache refresh gate, and visible-hook completion revision. Automatic runs
+  cache refresh gate, and visible-hook completion revision. A local sale or
+  cancellation bumps that revision so Stock used-today and other retained
+  screens reload when shown. Automatic runs
   start only after local POS paint (double rAF + idle callback); manual Sync
   remains immediate. Each batch still attempts eligible sales after staff,
   catalog, and inventory work. `perform` throws the existing connection or
@@ -56,7 +63,11 @@ tablet's local SQLite operational record.
   sync.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail,
  Dashboard/Reports fallback reads, and the POS quick-add ranking over the last
- seven business days; it never performs management writes. Quick add ranks by
+ seven business days; it never performs management writes. Stock used-today
+ groups completed-sale movements by live ingredient name and unit, then keeps
+ `max(local, cloud + unsynced)`. On-hand folds mapped local-duplicate
+ `local_stock_delta` into the visible row. Report used-ingredient on-hand is
+ looked up by name and unit, not the movement’s ID. Quick add ranks by
  units sold, the same rule as the Dashboard best seller. Offert lines still
  count units; product and category money use the charged 0, not catalog line
  totals.
@@ -65,6 +76,9 @@ tablet's local SQLite operational record.
   sign-in; it also promotes an offline-created profile's protected verifier and
   returned cloud session without retaining the raw PIN. It never exposes those
   values through ordinary local data contracts.
+- Profile application language is saved locally first. Reconnect pushes that
+  local value before pulling the cloud directory, and offline staff
+  provisioning carries the same value through the local-ID/cloud-ID promotion.
 - `localStaff.ts` owns owner-only local profile creation/deletion plus its
   PIN-free management operations; `staffSync.ts` owns protected credential
   provisioning, cloud acknowledgement, local/cloud profile-session promotion,
@@ -75,7 +89,8 @@ tablet's local SQLite operational record.
   immutable receipt snapshots, and outbox acknowledgement/failure state.
   Offert lines keep catalog prices on the snapshot, write 0 charged money to
   `sale_items`, and set `discountCentimes`. Optional tenders store each
-  payment's due, amount given, and change; their dues must sum to the sale total.
+  payment's method and due, plus amount given/change for cash; their dues must
+  sum to the sale total.
 - `localManagement.ts` owns the shared local-first management operation
   persistence: atomic outbox enqueue, optional parent dependency, cloud
   acknowledgement plus local/cloud record mappings, and safe retry/failure
@@ -85,9 +100,13 @@ tablet's local SQLite operational record.
 - `localInventory.ts` owns ingredient, purchase, valuation, and stock-
   adjustment transactions. Opening quantity with a paid price is committed as
   the first purchase in the same transaction. `localCosts.ts` owns
-  expense/compensation writes; `localCostViews.ts` owns bounded role-scoped
+- `localCosts.ts` owns exact-date expense/compensation writes, including owner
+  stop of an open monthly-pay period; `localCostViews.ts` owns bounded role-scoped
   reads and cloud snapshot merging. `inventorySync.ts` and `costSync.ts` own
   their reconnect dispatch boundaries.
+- `dailyOwnerReport.ts` composes the owner-only current-day report from bounded
+  saved SQLite/report data and sends its deterministic bytes through the shared
+  printer transport.
 - `managementOperation.ts` owns the plain operation envelope, bounded payload
   and protected-field validation, actor/role permission validation, saved-row
   parsing, and safe operator-facing sync-failure classification.
@@ -108,7 +127,10 @@ tablet's local SQLite operational record.
 - Keep React components free of SQL, synchronization, and secret handling.
 - Evolve SQLite only through ordered migrations; never rewrite a released
   migration. Schema 22 stores an optional compressed product JPEG data URL
-  (`image_jpeg`); do not queue raw camera files.
+  (`image_jpeg`); do not queue raw camera files. A cloud catalog snapshot that
+  omits a product JPEG must not clear a JPEG already saved on this tablet.
+  Schema 23 stores each staff profile's preferred application language.
+  Schema 24 adds exact start/end dates for recurring expenses and compensation.
 - Store money in integer centimes and ingredient quantities in integer base
   units.
 - Commit related local sale, stock, and outbox effects in one transaction.
@@ -147,10 +169,13 @@ tablet's local SQLite operational record.
   while the screen is hidden.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry, with a one-to-31-day saved-tablet fallback offline; tab
-  switches remain local and never start another query.
-- Online Dashboard and Reports use Convex saved summaries; still-unsynced
-  tablet sales are not mixed into those totals; `offlineViews` remain the
-  offline tablet-only path.
+  switches remain local and never start another query. The selected range
+  prefers this tablet’s saved receipts when they contain more completed sales
+  than the cloud snapshot, so unsynced today sales still appear. Used-ingredient
+  bars overlay this tablet’s on-hand stock by name and unit.
+- Online Dashboard uses Convex saved summaries; still-unsynced tablet sales
+  are not mixed into those totals; `offlineViews` remain the offline
+  tablet-only path.
 - Retained visible-screen hooks reload only for their first safe snapshot,
   an actual authenticated reconnect revision, changed request inputs, or a
   deliberate user action. Showing an already-loaded React Activity never

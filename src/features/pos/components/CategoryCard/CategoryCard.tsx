@@ -1,4 +1,5 @@
 import { Card } from '@astryxdesign/core/Card';
+import { useT } from '../../../../lib/locale';
 import type { Category } from '../../data/categories';
 import styles from './CategoryCard.module.css';
 
@@ -16,6 +17,7 @@ export function CategoryCard({
   selected,
   onSelect,
 }: CategoryCardProps) {
+  const t = useT();
   return (
     <button
       className={styles.button}
@@ -30,9 +32,9 @@ export function CategoryCard({
         padding={0}
       >
         <span className={styles.fill} aria-hidden="true" />
-        <span className={styles.status}>{status}</span>
-        <strong className={styles.name}>{name}</strong>
-        <span className={styles.count}>{count} items</span>
+        <span className={styles.status}>{t(status)}</span>
+        <strong className={styles.name}>{t(name)}</strong>
+        <span className={styles.count}>{t('{count} items', { count })}</span>
         <img
           className={styles.illustration}
           src={image}

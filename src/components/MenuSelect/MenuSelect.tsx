@@ -1,6 +1,7 @@
 import { ChevronDown } from '@boxicons/react';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { useT } from '../../lib/locale';
 import styles from './MenuSelect.module.css';
 
 export type MenuOption = {
@@ -27,13 +28,14 @@ export function MenuSelect({
   ariaLabel?: string;
   placeholder?: string;
   disabled?: boolean;
-  size?: 'lock' | 'compact';
+  size?: 'lock' | 'compact' | 'field';
   className?: string;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const listId = useId();
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
+  const t = useT();
   const selected = options.find((option) => option.id === value);
 
   useLayoutEffect(() => {
@@ -71,21 +73,21 @@ export function MenuSelect({
 
   return (
     <div
-      className={`${styles.wrap} ${size === 'lock' ? styles.lock : styles.compact}${className ? ` ${className}` : ''}`}
+      className={`${styles.wrap} ${size === 'lock' ? styles.lock : size === 'field' ? styles.field : styles.compact}${className ? ` ${className}` : ''}`}
       ref={root}
     >
       <button
         className={styles.trigger}
         type="button"
         disabled={disabled}
-        aria-label={ariaLabel}
+        aria-label={ariaLabel ? t(ariaLabel) : undefined}
         aria-labelledby={labelledBy}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => setOpen((current) => !current)}
       >
-        <span>{selected?.label ?? placeholder}</span>
+        <span>{selected ? t(selected.label) : t(placeholder)}</span>
         <ChevronDown
           className={open ? styles.caretOpen : undefined}
           width={size === 'lock' ? 18 : 14}
@@ -109,7 +111,7 @@ export function MenuSelect({
                   setOpen(false);
                 }}
               >
-                {option.label}
+                {t(option.label)}
               </button>
             </li>
           ))}

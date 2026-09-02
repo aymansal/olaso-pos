@@ -1,5 +1,6 @@
 import { Card } from '@astryxdesign/core/Card';
 import { Plus } from '@boxicons/react';
+import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import type { Product } from '../../data/products';
 import styles from './ProductCard.module.css';
@@ -9,6 +10,7 @@ type ProductCardProps = Product & {
 };
 
 export function ProductCard({ name, priceCentimes, image, onAdd }: ProductCardProps) {
+  const t = useT();
   return (
     <Card className={styles.card} width={174} height={162} padding={0}>
       <img
@@ -24,7 +26,7 @@ export function ProductCard({ name, priceCentimes, image, onAdd }: ProductCardPr
       <button
         className={styles.add}
         type="button"
-        aria-label={`Add ${name}`}
+        aria-label={t('Add {name}', { name })}
         onClick={onAdd}
       >
         <Plus width={20} height={20} />

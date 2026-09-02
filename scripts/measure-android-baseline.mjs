@@ -183,8 +183,8 @@ async function unlockOwner(session) {
   await session.evaluate(`(()=>{const input=document.querySelector('input[type="password"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(ownerPin)});input.dispatchEvent(new Event('input',{bubbles:true}));return true})()`);
   await sleep(25);
   const started = performance.now();
-  await session.evaluate(`(()=>{const button=[...document.querySelectorAll('button')].find(item=>item.innerText.includes('Unlock POS'));if(!button)throw Error('Unlock button missing');button.click();return true})()`);
-  await session.waitFor(`(()=>document.querySelector('main[aria-label="Olaso point of sale"]')&&document.querySelector('[aria-label^="Add "]')?true:false)()`, 20_000);
+  await session.evaluate(`(()=>{const button=[...document.querySelectorAll('button')].find(item=>/Unlock|Déverrouiller/.test(item.innerText)&&!item.innerText.includes('/'));if(!button)throw Error('Unlock button missing');button.click();return true})()`);
+  await session.waitFor(`(()=>document.querySelector('[data-olaso-nav="primary"]')&&document.querySelector('[aria-label^="Add "],[aria-label^="Ajouter "]')?true:false)()`, 20_000);
   return Math.round(performance.now() - started);
 }
 
@@ -226,7 +226,7 @@ async function measureNavigation(session) {
       const before = await session.evaluate(snapshot);
       if (before.active === screen) continue;
       const started = performance.now();
-      await session.evaluate(`(()=>{const button=[...document.querySelectorAll('nav[aria-label="Primary navigation"] button')].find(item=>item.getClientRects().length&&item.innerText.trim()===${JSON.stringify(screen)});if(!button)throw Error('Navigation is unavailable');button.click();return true})()`);
+      await session.evaluate(`(()=>{const button=document.querySelector('[data-olaso-nav="primary"] [data-page=${JSON.stringify(screen)}]');if(!button||!button.getClientRects().length)throw Error('Navigation is unavailable');button.click();return true})()`);
       await session.waitFor(`(()=>{const active=[...document.querySelectorAll('[aria-current="page"]')].find(node=>node.getClientRects().length)?.textContent.trim();if(active!==${JSON.stringify(screen)})return false;const text=[...document.querySelectorAll('main')].find(node=>node.getClientRects().length)?.innerText??'';return /Loading (?:the saved menu|saved costs|products|ingredients|orders|report|dashboard)/i.test(text)?false:true})()`);
       await sleep(80);
       const after = await session.evaluate(snapshot);

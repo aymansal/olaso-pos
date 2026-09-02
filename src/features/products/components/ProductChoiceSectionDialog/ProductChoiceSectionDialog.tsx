@@ -2,6 +2,7 @@ import { Save, Plus, Trash, X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
+import { useT } from '../../../../lib/locale';
 import type {
   ManagedChoiceEffect,
   ManagedChoiceSection,
@@ -89,6 +90,7 @@ export function ProductChoiceSectionDialog({
   onDelete,
   onCopy,
 }: ProductChoiceSectionDialogProps) {
+  const t = useT();
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? 'new');
   const selected = sections.find((section) => section.id === selectedId);
   const [draft, setDraft] = useState<ManagedChoiceSection>(
@@ -248,15 +250,15 @@ export function ProductChoiceSectionDialog({
         >
           <header className={styles.header}>
             <span className={styles.heading}>
-              <small>CHOICES</small>
+              <small>{t('CHOICES')}</small>
               <h2 id="choice-dialog-title">{product.name}</h2>
             </span>
-            <button type="button" onClick={onClose} aria-label="Close choices editor">
+            <button type="button" onClick={onClose} aria-label={t('Close choices editor')}>
               <X width={18} height={18} aria-hidden="true" />
             </button>
           </header>
 
-          <div className={styles.tabs} role="tablist" aria-label="Groups">
+          <div className={styles.tabs} role="tablist" aria-label={t('Groups')}>
             {sections.map((section) => (
               <button
                 key={section.id}
@@ -277,14 +279,14 @@ export function ProductChoiceSectionDialog({
               onClick={() => setSelectedId('new')}
             >
               <Plus width={13} height={13} aria-hidden="true" />
-              New group
+              {t('New group')}
             </button>
           </div>
 
           <div className={styles.body}>
             <div className={styles.setup}>
               <label className={styles.nameField}>
-                <span>Group</span>
+                <span>{t('Group')}</span>
                 <input
                   value={draft.name}
                   onChange={(event) =>
@@ -292,20 +294,20 @@ export function ProductChoiceSectionDialog({
                   }
                 />
               </label>
-              <div className={styles.mode} role="group" aria-label="How many choices">
+              <div className={styles.mode} role="group" aria-label={t('How many choices')}>
                 <button
                   type="button"
                   aria-pressed={draft.selectionMode === 'single'}
                   onClick={() => setMode('single')}
                 >
-                  One
+                  {t('One')}
                 </button>
                 <button
                   type="button"
                   aria-pressed={draft.selectionMode === 'multiple'}
                   onClick={() => setMode('multiple')}
                 >
-                  Several
+                  {t('Several')}
                 </button>
               </div>
               <button
@@ -324,12 +326,12 @@ export function ProductChoiceSectionDialog({
                   }))
                 }
               >
-                Required
+                {t('Required')}
               </button>
               {draft.selectionMode === 'multiple' ? (
                 <>
                   <label className={styles.limit}>
-                    <span>At least</span>
+                    <span>{t('At least')}</span>
                     <input
                       type="number"
                       min="0"
@@ -344,7 +346,7 @@ export function ProductChoiceSectionDialog({
                     />
                   </label>
                   <label className={styles.limit}>
-                    <span>At most</span>
+                    <span>{t('At most')}</span>
                     <input
                       type="number"
                       min="1"
@@ -364,7 +366,7 @@ export function ProductChoiceSectionDialog({
 
             {activeSizes.length > 1 ? (
               <div className={styles.sizes}>
-                <span>Sizes</span>
+                <span>{t('Sizes')}</span>
                 <div>
                   {activeSizes.map((size) => {
                     const exclusive = draft.productSizeIds.includes(size.id!);
@@ -382,13 +384,13 @@ export function ProductChoiceSectionDialog({
                   })}
                 </div>
                 <small>
-                  {draft.productSizeIds.length === 0 ? 'All sizes' : 'Selected sizes only'}
+                  {draft.productSizeIds.length === 0 ? t('All sizes') : t('Selected sizes only')}
                 </small>
               </div>
             ) : null}
 
             <div className={styles.valuesHead}>
-              <strong>Choices</strong>
+              <strong>{t('Choices')}</strong>
               <button
                 type="button"
                 disabled={!ingredients[0]}
@@ -403,7 +405,7 @@ export function ProductChoiceSectionDialog({
                 }
               >
                 <Plus width={13} height={13} aria-hidden="true" />
-                Add
+                {t('Add')}
               </button>
             </div>
 
@@ -419,16 +421,16 @@ export function ProductChoiceSectionDialog({
                   <div className={styles.valueRow}>
                     <label className={styles.valueName}>
                       <input
-                        aria-label="Choice name"
+                        aria-label={t('Choice name')}
                         value={value.name}
-                        placeholder="Choice"
+                        placeholder={t('Choice')}
                         onChange={(event) =>
                           updateValue(valueIndex, { name: event.target.value })
                         }
                       />
                     </label>
                     <label className={styles.extra}>
-                      <span>Extra</span>
+                      <span>{t('Extra')}</span>
                       <span className={styles.extraBox}>
                         <input
                           type="number"
@@ -441,7 +443,7 @@ export function ProductChoiceSectionDialog({
                             })
                           }
                         />
-                        <small>DH</small>
+                        <small>{t('DH')}</small>
                       </span>
                     </label>
                     <button
@@ -461,7 +463,7 @@ export function ProductChoiceSectionDialog({
                         }))
                       }
                     >
-                      Usual
+                      {t('Usual')}
                     </button>
                     <button
                       type="button"
@@ -470,7 +472,7 @@ export function ProductChoiceSectionDialog({
                         setOpenStock((current) => ({ ...current, [valueIndex]: !stockOpen }))
                       }
                     >
-                      Stock
+                      {t('Stock')}
                     </button>
                     {activeSizes.length > 1 ? (
                       <button
@@ -480,13 +482,13 @@ export function ProductChoiceSectionDialog({
                           setOpenSizes((current) => ({ ...current, [valueIndex]: !sizesOpen }))
                         }
                       >
-                        By size
+                        {t('By size')}
                       </button>
                     ) : null}
                     <button
                       type="button"
                       className={styles.remove}
-                      aria-label={`Remove ${value.name || 'choice'}`}
+                      aria-label={t('Remove {name}', { name: value.name || t('Choice') })}
                       disabled={saving}
                       onClick={() => void removeValue(valueIndex)}
                     >
@@ -524,9 +526,9 @@ export function ProductChoiceSectionDialog({
                               }
                             />
                             <input
-                              aria-label={`${size.name} extra`}
+                              aria-label={t('{name} extra', { name: size.name })}
                               type="number"
-                              placeholder="DH"
+                              placeholder={t('DH')}
                               step="0.01"
                               value={
                                 rule?.priceDeltaCentimes
@@ -611,7 +613,7 @@ export function ProductChoiceSectionDialog({
                           ) : null}
                           {effect.effectType !== 'remove' ? (
                             <input
-                              aria-label="Amount"
+                            aria-label={t('Amount')}
                               type="number"
                               min="0"
                               placeholder="0"
@@ -626,7 +628,7 @@ export function ProductChoiceSectionDialog({
                           <button
                             type="button"
                             className={styles.effectRemove}
-                            aria-label="Remove stock change"
+                            aria-label={t('Remove stock change')}
                             onClick={() =>
                               updateValue(valueIndex, {
                                 effects: value.effects.filter((_, index) => index !== effectIndex),
@@ -654,7 +656,7 @@ export function ProductChoiceSectionDialog({
                         }
                       >
                         <Plus width={12} height={12} aria-hidden="true" />
-                        Stock change
+                        {t('Stock change')}
                       </button>
                     </div>
                   ) : null}
@@ -713,7 +715,7 @@ export function ProductChoiceSectionDialog({
                   }
                 }}
               >
-                Copy
+                {t('Copy')}
               </button>
             </div>
           ) : (
@@ -722,11 +724,11 @@ export function ProductChoiceSectionDialog({
               className={styles.copyToggle}
               onClick={() => setCopyOpen(true)}
             >
-              Copy choices from another product
+              {t('Copy choices from another product')}
             </button>
           )}
 
-          {error ? <p className={styles.error}>{error}</p> : null}
+          {error ? <p className={styles.error}>{t(error)}</p> : null}
 
           <footer className={styles.footer}>
             {draft.id ? (
@@ -736,11 +738,11 @@ export function ProductChoiceSectionDialog({
                 disabled={saving}
                 onClick={() => void removeSection()}
               >
-                Delete
+                {t('Delete')}
               </button>
             ) : (
               <button type="button" className={styles.cancel} onClick={onClose}>
-                Cancel
+                {t('Cancel')}
               </button>
             )}
             <button
@@ -750,7 +752,7 @@ export function ProductChoiceSectionDialog({
               disabled={saving || !draft.name.trim()}
             >
               <Save width={16} height={16} aria-hidden="true" />
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? t('Saving…') : t('Save')}
             </button>
           </footer>
         </section>

@@ -2,6 +2,7 @@ import { Save, X } from '@boxicons/react';
 import { useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
+import { useT } from '../../../../lib/locale';
 import type { ManagedCategory, ProductSaveInput } from '../../productManagementTypes';
 import { ProductImageButton } from '../ProductImageButton/ProductImageButton';
 import styles from './ProductDialog.module.css';
@@ -21,6 +22,7 @@ export function ProductDialog({
   onClose,
   onSave,
 }: ProductDialogProps) {
+  const t = useT();
   const [name, setName] = useState('');
   const [imageJpeg, setImageJpeg] = useState<string>();
   const [categoryId, setCategoryId] = useState(
@@ -69,17 +71,17 @@ export function ProductDialog({
       >
         <header>
           <span>
-            <small>MENU ITEM</small>
-            <h2 id="product-dialog-title">Add product</h2>
+            <small>{t('MENU ITEM')}</small>
+            <h2 id="product-dialog-title">{t('Add product')}</h2>
           </span>
-          <button type="button" onClick={onClose} aria-label="Close product editor">
+          <button type="button" onClick={onClose} aria-label={t('Close product editor')}>
             <X width={16} height={16} aria-hidden="true" />
           </button>
         </header>
 
         <div className={styles.nameRow}>
           <label>
-            <span>Product name</span>
+            <span>{t('Product name')}</span>
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
@@ -99,7 +101,7 @@ export function ProductDialog({
         </div>
         <div className={styles.pair}>
           <label>
-            <span>Category</span>
+            <span>{t('Category')}</span>
             <MenuSelect
               className={styles.categoryMenu}
               ariaLabel="Category"
@@ -116,10 +118,10 @@ export function ProductDialog({
             />
           </label>
           <label>
-            <span>Price</span>
+            <span>{t('Price')}</span>
             <span className={styles.price}>
               <input
-                aria-label="Price in MAD"
+                aria-label={t('Price in MAD')}
                 type="number"
                 min="0"
                 step="0.01"
@@ -127,15 +129,15 @@ export function ProductDialog({
                 placeholder="0"
                 onChange={(event) => setPriceMad(event.target.value)}
               />
-              <small>MAD</small>
+              <small>{t('MAD')}</small>
             </span>
           </label>
         </div>
 
-        {error ? <p>{error}</p> : null}
+        {error ? <p>{t(error)}</p> : null}
         <footer>
           <button type="button" className={styles.cancel} onClick={onClose}>
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
@@ -144,7 +146,7 @@ export function ProductDialog({
             disabled={saving || !name.trim() || invalidPrice}
           >
             <Save width={14} height={14} aria-hidden="true" />
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? t('Saving…') : t('Save')}
           </button>
         </footer>
       </section>

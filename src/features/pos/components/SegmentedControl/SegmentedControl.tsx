@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useT } from '../../../../lib/locale';
 import type { ServiceMode } from '../../posSession';
 import styles from './SegmentedControl.module.css';
 
@@ -10,13 +11,14 @@ type SegmentedControlProps = {
 };
 
 export function SegmentedControl({ value, onChange }: SegmentedControlProps) {
+  const t = useT();
   const index = options.indexOf(value);
   return (
     <div
       className={styles.control}
       style={{ '--count': options.length, '--index': index } as CSSProperties}
       role="group"
-      aria-label="Service type"
+      aria-label={t('Service type')}
     >
       <span className={styles.indicator} aria-hidden="true" />
       {options.map((option) => (
@@ -27,7 +29,7 @@ export function SegmentedControl({ value, onChange }: SegmentedControlProps) {
           aria-pressed={option === value}
           onClick={() => onChange(option)}
         >
-          {option}
+          {t(option)}
         </button>
       ))}
     </div>

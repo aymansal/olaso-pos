@@ -62,7 +62,9 @@ assert(
   report.current.ingredientTotals.every(
     (ingredient) =>
       Number.isSafeInteger(ingredient.quantity)
-      && ingredient.quantity > 0,
+      && ingredient.quantity > 0
+      && Number.isSafeInteger(ingredient.currentStockQuantity)
+      && ingredient.currentStockQuantity >= 0,
   ),
 );
 assert.equal(report.previous.netCentimes, 0);

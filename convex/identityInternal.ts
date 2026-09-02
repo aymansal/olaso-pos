@@ -203,6 +203,7 @@ export const createStaffWithCredential = internalMutation({
     deviceId: v.string(),
     name: v.string(),
     role: staffRole,
+    preferredLanguage: v.union(v.literal('en'), v.literal('fr')),
     pinSalt: v.string(),
     pinHash: v.string(),
     clientMutationId: v.string(),
@@ -218,6 +219,12 @@ export const createStaffWithCredential = internalMutation({
       )
       .unique();
     if (previous) {
+      if (previous.preferredLanguage !== args.preferredLanguage) {
+        await ctx.db.patch(previous._id, {
+          preferredLanguage: args.preferredLanguage,
+          updatedAt: args.now,
+        });
+      }
       const identity = await ctx.db
         .query('staffIdentities')
         .withIndex('by_staff_profile', (index) =>
@@ -247,6 +254,7 @@ export const createStaffWithCredential = internalMutation({
       updatedAt: args.now,
       updatedBy: actor.name,
       lastMutationId: clientMutationId,
+      preferredLanguage: args.preferredLanguage,
     });
     await ctx.db.insert('staffIdentities', {
       staffProfileId: id,

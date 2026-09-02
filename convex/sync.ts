@@ -350,14 +350,17 @@ export const getOperationalSnapshot = query({
         lowStockThreshold: ingredient.lowStockThreshold,
         revision: ingredient.revision,
       })),
-      staffProfiles: staffProfiles.map((staff) => ({
-        id: staff._id,
-        name: staff.name,
-        role: staff.role,
-        revision: staff.revision,
-        identityRevision:
-          identityByProfile.get(String(staff._id))?.credentialVersion ?? 0,
-      })),
+      staffProfiles: staffProfiles.flatMap((staff) => {
+        const identity = identityByProfile.get(String(staff._id));
+        return identity ? [{
+          id: staff._id,
+          name: staff.name,
+          role: staff.role,
+          revision: staff.revision,
+          identityRevision: identity.credentialVersion,
+          preferredLanguage: staff.preferredLanguage === 'fr' ? 'fr' as const : 'en' as const,
+        }] : [];
+      }),
     };
   },
 });

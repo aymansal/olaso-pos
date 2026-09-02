@@ -41,20 +41,22 @@
   font-weight: 500;
 }
 
-.warning {
+.viewAll {
   display: flex;
   align-items: center;
-  height: 28px;
+  height: 30px;
   gap: 6px;
-  padding: 0 10px;
-  border-radius: 14px;
-  color: var(--olaso-danger-icon);
-  background: var(--olaso-danger-soft);
+  padding: 0 11px;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 15px;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
 }
 
-.warning strong {
-  color: var(--olaso-danger-ink);
-  font-size: 9px;
+.viewAll svg {
+  color: var(--olaso-green);
 }
 
 .list {

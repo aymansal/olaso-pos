@@ -215,6 +215,12 @@
   background: var(--olaso-green-icon);
 }
 
+.itemIcon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .itemCopy {
   position: absolute;
   top: 10px;

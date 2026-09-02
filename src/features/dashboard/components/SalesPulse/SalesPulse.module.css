@@ -271,7 +271,7 @@
   left: 0;
   width: 52px;
   color: var(--olaso-axis);
-  font-size: 7px;
+  font-size: 9px;
   font-weight: 600;
 }
 
@@ -341,17 +341,6 @@
   border-radius: 8px 8px 2px 2px;
 }
 
-.peakCap {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  width: 7px;
-  height: 7px;
-  border-radius: 4px;
-  background: var(--olaso-white);
-  transform: translateX(-50%);
-}
-
 .tone1 { background: var(--olaso-chart-1); }
 .tone2 { background: var(--olaso-chart-2); }
 .tone3 { background: var(--olaso-chart-3); }
@@ -371,7 +360,7 @@
 .axis span {
   flex: 1;
   color: var(--olaso-axis);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   text-align: center;
 }

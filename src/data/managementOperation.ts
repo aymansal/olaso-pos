@@ -73,6 +73,7 @@ export const EXPENSE_MANAGEMENT_OPERATION_TYPES = [
 
 export const COMPENSATION_MANAGEMENT_OPERATION_TYPES = [
   'management.compensation.add',
+  'management.compensation.delete',
 ] as const;
 
 export const FINANCE_MANAGEMENT_OPERATION_TYPES = [

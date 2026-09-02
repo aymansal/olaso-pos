@@ -159,14 +159,12 @@ repeat the check after material Android, WebView, or native-shell changes.
 - USB is the standalone desktop receipt-laboratory path. The production Android
   application prints through Ethernet/LAN via the router using a configurable
   printer address and a verified raw TCP port.
-- Printer settings validate and persist that endpoint locally. A clearly marked
-  Test printer action saves the configuration and sends a non-sale diagnostic;
-  successful socket write feedback never claims paper was observed.
-- A separate deliberate Restore saved logo action sends the bundled approved
-  logo only during printer setup. It warns that the operation replaces all
-  images stored in the printer and never claims storage or paper confirmation
-  from a successful socket write.
-- The accepted initial receipt is French/English and uses the printer-resident
+- Printer settings validate and persist that endpoint locally as one
+  host:port field. A clearly marked Test printer action saves the configuration
+  and sends a non-sale diagnostic; successful socket write feedback never
+  claims paper was observed.
+- Printer-resident logo setup is not an everyday Settings action. The accepted
+  initial receipt is French/English and uses the printer-resident
   300-dot OLASO logo. It has no QR code until a real owner-approved destination
   exists. Arabic receipt output is deferred for the initial deployment.
 - Generic ESC/POS is used instead of a proprietary driver while the verified
@@ -281,7 +279,7 @@ top-level groups:
 4. **Bakery & Savoury** — croissants, filled croissants, brioche, and savoury
    food.
 
-The owner can later rename, reorder, hide, add, archive, or delete categories.
+The owner can later rename, reorder, hide, add, or delete categories.
 Deleting a category never deletes its products; they become uncategorized.
 
 ### Product availability
@@ -389,7 +387,8 @@ reduce inventory value using that cost; a count increase uses the last known
 cost and is flagged if no cost is available.
 
 Purchase cash spending and ingredient cost consumed are different measures.
-The Costs report shows both but never adds both into the same profit subtotal.
+Receiving stock updates inventory value only. Profit uses the recipe amount
+consumed when the drink is sold, never the full purchase cash at receive.
 
 ### Exact deduction
 
@@ -445,7 +444,8 @@ Each completed sale keeps a permanent snapshot of:
 - Product names and prices at the time of sale.
 - Recipe version used for each line.
 - Ingredient-cost snapshot and cost-completeness state for each line and sale.
-- Subtotal, total, payment method, and each payment's amount given and change.
+- Subtotal, Offert when present, each payment method and due amount, cash amount
+  given and change when applicable, then total last.
 - Printing and synchronization state.
 - Cancellation references.
 
@@ -457,8 +457,9 @@ plus a custom amount given, then shows change to return. Card takes the exact
 due. Split is hidden unless two or more paid units remain; Offert drinks stay
 off the split lists. With two or more paid units it assigns remaining products
 to the next payer in that same overlay;
-the overlay stays until every product is paid. One sale and one ticket record
-each payment's amount given and change. This is not a 50/50 tender split
+the overlay stays until every product is paid. Each payer chooses Cash or Card;
+one sale and one ticket record every method and amount. Only cash records amount
+given and change. This is not a 50/50 tender split
 without product assignment, and unpaid products do not remain in the cart as a
 later sale.
 
@@ -466,10 +467,25 @@ A cart line may be marked Offert for the physical ninth-drink stamp card: the
 drink is real, stock still deducts, and the charged price is 0 DH. The app does
 not track stamps or customers. Other discounts remain unavailable.
 
+Customer receipts present the product and size as one item heading, followed
+by the selected choices as one compact subordinate list that wraps when
+needed. Choices do not repeat a decorative `+` prefix. Offert is a price
+treatment, never a product option: an Offert line is charged at 0 DH and the
+receipt totals show the Offert deduction once.
+
 Receipts use the approved Olaso logo-only header until legal details are
-requested, render in the currently selected French or English staff language,
+requested, render in the tablet-wide French or English receipt language set
+by the owner in Settings,
 and use `MMYY-0001` numbers (for example `0826-0001`). The sequence resets to
 `0001` each month and is generated safely on the one local-first tablet.
+
+The Header Report action is visible only to the owner and prints a bilingual
+summary for the current local business day using that same receipt-language
+setting. It includes orders/items, subtotal/Offert/net/average, payment and
+service splits, cancellations and reasons, product performance, ingredient
+cost, gross profit, effective-dated wages and expenses, operating profit,
+cost-completeness warning, stock value/low stock, unsynced work, and print
+failures. It reads bounded saved tablet data so it remains available offline.
 
 A completed sale is never deleted. A cashier may make an offline, whole-sale,
 same-calendar-day correction with a required reason, then enter a replacement
@@ -536,11 +552,16 @@ consumed, which would count the same stock twice.
 
 - A staff profile identifies whether the person is an owner, manager, or
   worker independently of whether that profile can authenticate.
-- Monthly compensation is optional. An owner or unpaid profile leaves it blank.
-- Compensation is effective-dated so a later change does not rewrite previous
-  months.
+- Monthly compensation is recorded with the staff profile, monthly amount, and
+  exact effective start/end dates. It is divided across each calendar month's
+  days so a shorter report period receives only its active days.
+- Changing or stopping compensation closes the prior period and creates or
+  preserves later history; deleting a staff profile stops open pay from that
+  day forward without rewriting earlier days.
 - Compensation and profitability details are owner-only. Development overrides
   never imply production access control.
+- The Costs tab is only for adding expenses and monthly pay. Profit lives on
+  the Sales report for the selected dates.
 - The Costs report reads the compensation schedule directly; it does not create
   a second manually duplicated salary expense.
 
@@ -548,18 +569,22 @@ consumed, which would count the same stock twice.
 
 - An expense has a category, integer-centime amount, description, and effective
   date.
-- It is either one-time or monthly recurring with optional end month.
+- It is either one-time, counted on that date, or monthly, divided across the
+  days of each month it covers.
 - Editing a recurring amount creates a new effective period so historical
   reports remain stable.
+- Stopping or correcting a recurring expense affects only its exact effective
+  date forward; earlier report days retain the old amount.
 - The first release provides an operational management report, not payroll,
   tax filing, bookkeeping, or an accounting-system replacement.
 
-### Monthly reporting boundary
+### Reporting period for profit
 
-Costs and profitability are monthly first because compensation, rent, and most
-overhead are monthly commitments. Existing sales reports may retain day, week,
-month, and custom periods. A profitability result is marked incomplete when any
-sale ingredient cost or required expense input is incomplete.
+Sales reports keep day, week, month, and custom periods of 1 to 31 days.
+Monthly wages and monthly bills are split by the days in each calendar month
+and included for the days inside the selected period. One-time expenses count
+on their recorded date. A profitability result is marked incomplete when any
+sale ingredient cost in the period is incomplete.
 
 ## Offline and synchronization behavior
 

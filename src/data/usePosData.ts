@@ -66,6 +66,7 @@ export function usePosData() {
       void reloadLocal().catch(() =>
         setLocalError('The order is saved locally. Menu refresh failed.'),
       );
+      reconnect.notifyLocalWrite();
       void reconnect.run('automatic').catch(() =>
         setLocalError('The order is saved locally and waiting to synchronize.'),
       );

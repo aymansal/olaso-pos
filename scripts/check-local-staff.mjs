@@ -153,8 +153,9 @@ const cache = readFileSync('src/data/operationalCache.ts', 'utf8');
 const staffSync = readFileSync('src/data/staffSync.ts', 'utf8');
 const identity = readFileSync('convex/identity.ts', 'utf8');
 const identityInternal = readFileSync('convex/identityInternal.ts', 'utf8');
-const settingsNav = readFileSync(
-  'src/features/settings/components/SettingsNavigationPanel/SettingsNavigationPanel.tsx',
+const seed = readFileSync('convex/seed.ts', 'utf8');
+const settingsScreen = readFileSync(
+  'src/features/settings/SettingsScreen.tsx',
   'utf8',
 );
 const staffPanelStyles = readFileSync(
@@ -173,15 +174,23 @@ assert.ok(
 );
 assert.match(cache, /management\.staff\.create/);
 assert.match(staffSync, /loadPendingStaffCredential/);
+assert.match(staffSync, /loadStaffPreferredLanguage/);
+assert.match(staffSync, /preferredLanguage/);
 assert.match(staffSync, /saveProvisionedStaffSession/);
 assert.doesNotMatch(staffSync, /\bsignIn\b/);
 assert.match(identity, /export const createStaff = action/);
 assert.doesNotMatch(identity.match(/export const createStaff[\s\S]*?export const checkSession/)?.[0] ?? '', /\bpin:\s*v\.string/);
 assert.match(identity, /pinHash: args\.pinHash/);
+assert.match(identity, /preferredLanguage: args\.preferredLanguage/);
 assert.match(identityInternal, /createStaffWithCredential/);
+assert.match(identityInternal, /preferredLanguage: args\.preferredLanguage/);
 assert.doesNotMatch(identityInternal, /\bpin:\s*v\.string/);
-assert.match(settingsNav, /id: 'staff', label: 'Staff & access'/);
-assert.match(staffPanelStyles, /\.panel>header\{/);
+assert.match(seed, /if \(table === 'staffProfiles'\) continue/);
+assert.match(seed, /const saved = existingStaff\.find/);
+assert.match(seed, /OLASO_ALLOW_DESTRUCTIVE_DEV_RESET/);
+assert.match(seed, /ERASE_DISPOSABLE_DEPLOYMENT/);
+assert.match(settingsScreen, /StaffAccessPanel/);
+assert.match(staffPanelStyles, /\.header \{/);
 assert.doesNotMatch(staffPanelStyles, /\.panel header\{/);
 
 console.log('Local offline staff creation, PIN isolation, permission, and sync-boundary checks passed.');

@@ -1,4 +1,5 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { localBusinessDate, shiftBusinessDate } from '../lib/date.ts';
 import type { StaffRole } from './permissions.ts';
 import { withLocalTransaction } from './localDatabase.ts';
 import {
@@ -23,6 +24,8 @@ export type ExpenseInput = {
   effectiveDate?: string;
   effectiveStartMonth?: string;
   effectiveEndMonth?: string;
+  effectiveStartDate?: string;
+  effectiveEndDate?: string;
 };
 
 export type SavedExpense = ExpenseInput & {
@@ -41,6 +44,8 @@ export type SavedCompensationPeriod = {
   monthlyAmountCentimes: number;
   effectiveStartMonth: string;
   effectiveEndMonth?: string;
+  effectiveStartDate?: string;
+  effectiveEndDate?: string;
   revision: number;
   createdAt: number;
 };
@@ -51,6 +56,7 @@ export type SavedCostManagement = {
   staff: Array<{ id: string; name: string; role: StaffRole }>;
   compensation: SavedCompensationPeriod[];
   purchaseCashCentimes: number;
+  inventoryValueCentimes: number;
   otherExpenseCentimes: number;
   profitability?: {
     revenueCentimes: number;
@@ -107,21 +113,36 @@ function cleanExpense(input: ExpenseInput) {
     if (!input.effectiveDate || input.effectiveStartMonth || input.effectiveEndMonth) {
       throw new Error('One-time expenses require only an effective date.');
     }
-    return { ...base, effectiveDate: date(input.effectiveDate) };
+    return { ...base, recurrence: 'one-time' as const,
+      effectiveDate: date(input.effectiveDate) };
   }
-  if (input.recurrence !== 'monthly'
-      || !input.effectiveStartMonth || input.effectiveDate) {
-    throw new Error('Monthly expenses require an effective start month.');
+  if (input.recurrence !== 'monthly' || input.effectiveDate) {
+    throw new Error('Monthly expenses require an effective start date.');
   }
-  const effectiveStartMonth = month(input.effectiveStartMonth, 'Effective start month');
-  const effectiveEndMonth = input.effectiveEndMonth
-    ? month(input.effectiveEndMonth, 'Effective end month')
-    : undefined;
-  if (effectiveEndMonth && effectiveEndMonth < effectiveStartMonth) {
+  const effectiveStartDate = input.effectiveStartDate
+    ? date(input.effectiveStartDate)
+    : input.effectiveStartMonth
+      ? `${month(input.effectiveStartMonth, 'Effective start month')}-01`
+      : undefined;
+  if (!effectiveStartDate) {
+    throw new Error('Monthly expenses require an effective start date.');
+  }
+  const effectiveEndDate = input.effectiveEndDate
+    ? date(input.effectiveEndDate)
+    : input.effectiveEndMonth
+      ? `${month(input.effectiveEndMonth, 'Effective end month')}-31`
+      : undefined;
+  if (effectiveEndDate && effectiveEndDate < effectiveStartDate) {
     throw new Error('Expense cannot end before it starts.');
   }
-  return { ...base, effectiveStartMonth,
-    ...(effectiveEndMonth ? { effectiveEndMonth } : {}) };
+  return {
+    ...base,
+    recurrence: 'monthly' as const,
+    effectiveStartMonth: effectiveStartDate.slice(0, 7),
+    ...(effectiveEndDate ? { effectiveEndMonth: effectiveEndDate.slice(0, 7) } : {}),
+    effectiveStartDate,
+    ...(effectiveEndDate ? { effectiveEndDate } : {}),
+  };
 }
 
 function insertExpense(
@@ -139,14 +160,17 @@ function insertExpense(
   return database.run(
     `INSERT INTO operating_expenses
       (id, category, description, amount_centimes, recurrence, effective_date,
-       effective_start_month, effective_end_month, status, revision, created_at,
+       effective_start_month, effective_end_month, effective_start_date,
+       effective_end_date, status, revision, created_at,
        transaction_type, correction_of_expense_id, updated_by,
        client_mutation_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', 1, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 1, ?, ?, ?, ?, ?)`,
     [input.id, expense.category, expense.description, expense.amountCentimes,
       expense.recurrence, 'effectiveDate' in expense ? expense.effectiveDate : null,
       'effectiveStartMonth' in expense ? expense.effectiveStartMonth : null,
       'effectiveEndMonth' in expense ? expense.effectiveEndMonth ?? null : null,
+      'effectiveStartDate' in expense ? expense.effectiveStartDate : null,
+      'effectiveEndDate' in expense ? expense.effectiveEndDate ?? null : null,
       input.createdAt, input.transactionType, input.correctionOfExpenseId ?? null,
       input.actor, input.clientMutationId],
     false,
@@ -225,13 +249,29 @@ export function correctLocalExpense(
       ...(row.effective_end_month
         ? { effectiveEndMonth: String(row.effective_end_month) }
         : {}),
+      ...(row.effective_start_date
+        ? { effectiveStartDate: String(row.effective_start_date) }
+        : {}),
+      ...(row.effective_end_date
+        ? { effectiveEndDate: String(row.effective_end_date) }
+        : {}),
     });
     const now = Date.now();
     const operationId = crypto.randomUUID();
     const reversalId = id('expense-reversal');
     const replacementId = id('expense');
+    const correctionDate = replacement.recurrence === 'monthly'
+      ? replacement.effectiveStartDate
+      : replacement.effectiveDate;
+    const reversal = prior.recurrence === 'monthly'
+      ? {
+          ...prior,
+          effectiveStartMonth: correctionDate.slice(0, 7),
+          effectiveStartDate: correctionDate,
+        }
+      : prior;
     await insertExpense(database, {
-      ...prior,
+      ...reversal,
       description: `Correction reversal: ${prior.description}`,
     }, {
       id: reversalId,
@@ -275,6 +315,8 @@ export function addLocalCompensationPeriod(
     monthlyAmountCentimes: number;
     effectiveStartMonth: string;
     effectiveEndMonth?: string;
+    effectiveStartDate?: string;
+    effectiveEndDate?: string;
   },
   transact: Transaction = withLocalTransaction,
 ) {
@@ -287,25 +329,50 @@ export function addLocalCompensationPeriod(
     if (!profile) {
       throw new Error('Staff profile is unavailable.');
     }
-    const effectiveStartMonth = month(input.effectiveStartMonth, 'Effective start month');
-    const effectiveEndMonth = input.effectiveEndMonth
-      ? month(input.effectiveEndMonth, 'Effective end month')
-      : undefined;
-    if (effectiveEndMonth && effectiveEndMonth < effectiveStartMonth) {
+    const effectiveStartDate = input.effectiveStartDate
+      ? date(input.effectiveStartDate)
+      : `${month(input.effectiveStartMonth, 'Effective start month')}-01`;
+    const effectiveEndDate = input.effectiveEndDate
+      ? date(input.effectiveEndDate)
+      : input.effectiveEndMonth
+        ? `${month(input.effectiveEndMonth, 'Effective end month')}-31`
+        : undefined;
+    if (effectiveEndDate && effectiveEndDate < effectiveStartDate) {
       throw new Error('Compensation cannot end before it starts.');
     }
+    const effectiveStartMonth = effectiveStartDate.slice(0, 7);
+    const effectiveEndMonth = effectiveEndDate?.slice(0, 7);
     const periods = await database.query(
-      `SELECT effective_start_month, effective_end_month
+      `SELECT id, effective_start_month, effective_end_month,
+        effective_start_date, effective_end_date
        FROM compensation_periods WHERE staff_profile_id = ? LIMIT 101`,
       [input.staffProfileId],
     );
     if ((periods.values?.length ?? 0) > 100) {
       throw new Error('Compensation history exceeds the saved limit.');
     }
-    if ((periods.values ?? []).some((period) =>
-      String(period.effective_start_month) <= (effectiveEndMonth ?? '9999-12')
-      && String(period.effective_end_month ?? '9999-12') >= effectiveStartMonth)) {
-      throw new Error('Compensation periods cannot overlap.');
+    const priorDay = shiftBusinessDate(effectiveStartDate, -1);
+    for (const period of periods.values ?? []) {
+      const periodStart = String(
+        period.effective_start_date ?? `${period.effective_start_month}-01`,
+      );
+      const periodEnd = String(
+        period.effective_end_date ?? (period.effective_end_month
+          ? `${period.effective_end_month}-31`
+          : '9999-12-31'),
+      );
+      if (periodStart >= effectiveStartDate && periodStart <= (effectiveEndDate ?? '9999-12-31')) {
+        throw new Error('Compensation periods cannot overlap.');
+      }
+      if (periodStart < effectiveStartDate && periodEnd >= effectiveStartDate) {
+        await database.run(
+          `UPDATE compensation_periods
+           SET effective_end_month = ?, effective_end_date = ?, revision = revision + 1
+           WHERE id = ?`,
+          [priorDay.slice(0, 7), priorDay, String(period.id)],
+          false,
+        );
+      }
     }
     const monthlyAmountCentimes = integer(
       input.monthlyAmountCentimes,
@@ -318,12 +385,14 @@ export function addLocalCompensationPeriod(
       `INSERT INTO compensation_periods
         (id, staff_profile_id, staff_name_snapshot, staff_role_snapshot,
          monthly_amount_centimes, effective_start_month,
-         effective_end_month, revision, created_at, updated_by,
+         effective_end_month, effective_start_date, effective_end_date,
+         revision, created_at, updated_by,
          client_mutation_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)`,
       [periodId, input.staffProfileId, String(profile.name), String(profile.role),
         monthlyAmountCentimes,
-        effectiveStartMonth, effectiveEndMonth ?? null, now,
+        effectiveStartMonth, effectiveEndMonth ?? null,
+        effectiveStartDate, effectiveEndDate ?? null, now,
         context.actor.name, operationId],
       false,
     );
@@ -339,9 +408,59 @@ export function addLocalCompensationPeriod(
       requiredPermission: 'compensation',
       actor: context.actor,
       payload: { staffProfileId: input.staffProfileId, monthlyAmountCentimes,
-        effectiveStartMonth, ...(effectiveEndMonth ? { effectiveEndMonth } : {}) },
+        effectiveStartMonth, ...(effectiveEndMonth ? { effectiveEndMonth } : {}),
+        effectiveStartDate, ...(effectiveEndDate ? { effectiveEndDate } : {}) },
       createdAt: now,
     });
     return { id: periodId, revision: 1, operationId: operation.operationId };
+  });
+}
+
+export function deleteLocalCompensationPeriod(
+  context: Context,
+  period: { id: string; revision: number },
+  transact: Transaction = withLocalTransaction,
+) {
+  return transact(async (database) => {
+    const existing = (await database.query(
+      `SELECT id, revision, effective_end_month, effective_end_date
+       FROM compensation_periods WHERE id = ? LIMIT 1`,
+      [period.id],
+    )).values?.[0];
+    if (!existing || Number(existing.revision) !== period.revision) {
+      throw new Error('Monthly pay changed. Refresh it before deleting.');
+    }
+    const now = Date.now();
+    const effectiveEndDate = shiftBusinessDate(localBusinessDate(), -1);
+    const savedEndDate = existing.effective_end_date
+      ? String(existing.effective_end_date)
+      : existing.effective_end_month
+        ? `${String(existing.effective_end_month)}-31`
+        : undefined;
+    if (savedEndDate && savedEndDate <= effectiveEndDate) {
+      return { id: period.id };
+    }
+    await database.run(
+      `UPDATE compensation_periods
+       SET effective_end_month = ?, effective_end_date = ?, revision = revision + 1
+       WHERE id = ?`,
+      [effectiveEndDate.slice(0, 7), effectiveEndDate, period.id],
+      false,
+    );
+    const operation = await enqueueManagementOperation(database, {
+      deviceId: context.deviceId,
+      operationType: 'management.compensation.delete',
+      localRecordId: period.id,
+      dependsOnOperationId: await latestPendingManagementOperationIdFromDatabase(
+        database,
+        COMPENSATION_MANAGEMENT_OPERATION_TYPES,
+      ),
+      requiredPermission: 'compensation',
+      actor: context.actor,
+      expectedRevision: period.revision,
+      payload: { periodId: period.id, effectiveEndDate },
+      createdAt: now,
+    });
+    return { id: period.id, operationId: operation.operationId };
   });
 }

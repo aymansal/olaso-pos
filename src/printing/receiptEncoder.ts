@@ -12,7 +12,7 @@ const CP858 = new Map(
   [...CP858_HIGH].map((character, index) => [character, index + 0x80]),
 );
 
-type ReceiptRow = {
+export type PrinterRow = {
   text: string;
   align?: 'left' | 'center' | 'right';
   bold?: boolean;
@@ -86,16 +86,19 @@ function wrap(value: string, width: number) {
   return lines.length ? lines : [''];
 }
 
-function itemRows(model: ReceiptModel): ReceiptRow[] {
+function itemRows(model: ReceiptModel): PrinterRow[] {
   const labels = model.receiptLanguage === 'fr'
-    ? { item: 'ARTICLE', quantity: 'QTÉ', payment: 'Paiement', subtotal: 'Sous-total', discount: 'Offert', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
-    : { item: 'ITEM', quantity: 'QTY', payment: 'Payment', subtotal: 'Subtotal', discount: 'Offert', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
-  const rows: ReceiptRow[] = [{
+    ? { item: 'ARTICLE', quantity: 'QTÉ', payment: 'Paiement', subtotal: 'Sous-total', discount: 'Offert', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
+    : { item: 'ITEM', quantity: 'QTY', payment: 'Payment', subtotal: 'Subtotal', discount: 'Offert', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
+  const rows: PrinterRow[] = [{
     text: `${labels.item.padEnd(ITEM_WIDTH)}${labels.quantity.padEnd(QUANTITY_WIDTH)}${'MAD'.padStart(MONEY_WIDTH)}`,
     bold: true,
   }];
   for (const line of model.lines) {
-    const names = wrap(line.name, ITEM_WIDTH);
+    const displayName = line.sizeName
+      ? `${line.name} · ${line.sizeName}`
+      : line.name;
+    const names = wrap(displayName, ITEM_WIDTH);
     names.forEach((name, index) => {
       const quantity = index ? '' : ` ${line.quantity}`.padEnd(QUANTITY_WIDTH);
       const money = index
@@ -105,8 +108,8 @@ function itemRows(model: ReceiptModel): ReceiptRow[] {
         text: `${name.padEnd(ITEM_WIDTH)}${quantity}${money.padStart(MONEY_WIDTH)}`,
       });
     });
-    for (const modifier of line.modifiers) {
-      for (const modifierLine of wrap(`+ ${modifier}`, ITEM_WIDTH)) {
+    if (line.modifiers.length) {
+      for (const modifierLine of wrap(`  ${line.modifiers.join(' · ')}`, ITEM_WIDTH)) {
         rows.push({ text: modifierLine });
       }
     }
@@ -114,19 +117,19 @@ function itemRows(model: ReceiptModel): ReceiptRow[] {
   return rows;
 }
 
-function detailRows(label: string, value: string): ReceiptRow[] {
+function detailRows(label: string, value: string): PrinterRow[] {
   const row = columns(label, value);
   return row ? [{ text: row }] : wrap(`${label}: ${value}`, WIDTH).map((text) => ({ text }));
 }
 
-function receiptRows(model: ReceiptModel): ReceiptRow[] {
+function receiptRows(model: ReceiptModel): PrinterRow[] {
   const labels = model.receiptLanguage === 'fr'
-    ? { payment: 'Paiement', subtotal: 'Sous-total', discount: 'Offert', tax: 'Sans taxe', total: 'TOTAL', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
-    : { payment: 'Payment', subtotal: 'Subtotal', discount: 'Offert', tax: 'No tax', total: 'TOTAL', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
+    ? { payment: 'Paiement', cash: 'Espèces', card: 'Carte', subtotal: 'Sous-total', discount: 'Offert', total: 'TOTAL', given: 'Reçu', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
+    : { payment: 'Payment', cash: 'Cash', card: 'Card', subtotal: 'Subtotal', discount: 'Offert', total: 'TOTAL', given: 'Given', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
   const date = formatReceiptDate(model.completedAt);
   const order = `${labels.order} ${model.receiptNumber}`;
   const orderRow = columns(order, date);
-  const meta: ReceiptRow[] = orderRow
+  const meta: PrinterRow[] = orderRow
     ? [{ text: orderRow, bold: true }]
     : [
         ...wrap(order, WIDTH).map((text) => ({ text, bold: true })),
@@ -145,13 +148,16 @@ function receiptRows(model: ReceiptModel): ReceiptRow[] {
 
   const payment = model.tenders?.length
     ? model.tenders.flatMap((tender) => [
-        ...detailRows(model.paymentMethod, formatReceiptMoney(tender.amountCentimes)),
-        ...detailRows(labels.change, formatReceiptMoney(tender.changeCentimes)),
+        ...detailRows(tender.paymentMethod === 'Cash' ? labels.cash : labels.card, formatReceiptMoney(tender.dueCentimes)),
+        ...(tender.paymentMethod === 'Cash' ? [
+          ...detailRows(labels.given, formatReceiptMoney(tender.amountCentimes)),
+          ...detailRows(labels.change, formatReceiptMoney(tender.changeCentimes)),
+        ] : []),
       ])
     : [
         ...(model.paymentAmountCentimes === undefined
-          ? detailRows(labels.payment, model.paymentMethod)
-          : detailRows(model.paymentMethod, formatReceiptMoney(model.paymentAmountCentimes))),
+          ? detailRows(labels.payment, model.paymentMethod === 'Cash' ? labels.cash : model.paymentMethod === 'Card' ? labels.card : model.paymentMethod)
+          : detailRows(model.paymentMethod === 'Cash' ? labels.cash : model.paymentMethod === 'Card' ? labels.card : model.paymentMethod, formatReceiptMoney(model.paymentAmountCentimes))),
         ...(model.changeCentimes === undefined
           ? []
           : detailRows(labels.change, formatReceiptMoney(model.changeCentimes))),
@@ -163,17 +169,18 @@ function receiptRows(model: ReceiptModel): ReceiptRow[] {
     { text: '-'.repeat(WIDTH) },
     ...itemRows(model),
     { text: '-'.repeat(WIDTH) },
-    ...detailRows(labels.subtotal, formatReceiptMoney(model.subtotalCentimes)),
     ...(model.discountCentimes
-      ? detailRows(labels.discount, `-${formatReceiptMoney(model.discountCentimes)}`)
+      ? [
+          ...detailRows(labels.subtotal, formatReceiptMoney(model.subtotalCentimes)),
+          ...detailRows(labels.discount, `-${formatReceiptMoney(model.discountCentimes)}`),
+        ]
       : []),
-    ...detailRows(labels.tax, formatReceiptMoney(model.taxCentimes)),
+    ...payment,
     {
       text: columns(labels.total, formatReceiptMoney(model.totalCentimes), WIDTH / 2) ?? labels.total,
       bold: true,
       doubleWidth: true,
     },
-    ...payment,
     { text: '-'.repeat(WIDTH) },
     { text: labels.thanks, align: 'center', bold: true, doubleWidth: true },
     { text: model.receiptLanguage === 'fr' ? 'À bientôt' : 'See you soon', align: 'center' },
@@ -185,6 +192,10 @@ export function renderReceiptText(model: ReceiptModel) {
 }
 
 export function encodeWd8260Receipt(model: ReceiptModel) {
+  return encodeWd8260Rows(receiptRows(model));
+}
+
+export function encodeWd8260Rows(rows: PrinterRow[]) {
   const bytes: number[] = [
     ESC, 0x40,
     ESC, 0x74, 0x13,
@@ -192,7 +203,7 @@ export function encodeWd8260Receipt(model: ReceiptModel) {
     FS, 0x70, 0x01, 0x00,
     0x0a,
   ];
-  for (const row of receiptRows(model)) {
+  for (const row of rows) {
     bytes.push(
       ESC, 0x61, row.align === 'center' ? 1 : row.align === 'right' ? 2 : 0,
       ESC, 0x45, row.bold ? 1 : 0,

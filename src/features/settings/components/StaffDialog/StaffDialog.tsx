@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import type { StaffCreationInput } from '../../../../data/localStaff.ts';
+import { useT } from '../../../../lib/locale';
 import styles from './StaffDialog.module.css';
 
 export function StaffDialog({
@@ -12,6 +13,7 @@ export function StaffDialog({
   onClose: () => void;
   onSave: (input: StaffCreationInput) => Promise<unknown>;
 }) {
+  const t = useT();
   const [name, setName] = useState('');
   const [role, setRole] = useState<StaffCreationInput['role']>('cashier');
   const [pin, setPin] = useState('');
@@ -49,17 +51,18 @@ export function StaffDialog({
     >
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="staff-dialog-title">
         <header>
-          <h2 id="staff-dialog-title">Add staff</h2>
-          <button type="button" onClick={onClose} aria-label="Close staff form"><X width={18} height={18} /></button>
+          <h2 id="staff-dialog-title">{t('Add staff')}</h2>
+          <button type="button" onClick={onClose} aria-label={t('Close staff form')}><X width={18} height={18} /></button>
         </header>
         <div className={styles.form}>
           <label>
-            <span>Name</span>
+            <span>{t('Name')}</span>
             <input maxLength={100} value={name} onChange={(event) => setName(event.target.value)} />
           </label>
           <label>
-            <span>Role</span>
+            <span>{t('Role')}</span>
             <MenuSelect
+              className={styles.roleSelect}
               ariaLabel="Role"
               value={role}
               onChange={(id) => setRole(id as StaffCreationInput['role'])}
@@ -71,18 +74,18 @@ export function StaffDialog({
             />
           </label>
           <label>
-            <span>Six-digit PIN</span>
+            <span>{t('Six-digit PIN')}</span>
             <input type="password" inputMode="numeric" autoComplete="new-password" value={pin} onChange={(event) => setPin(event.target.value.replace(/\D/g, '').slice(0, 6))} />
           </label>
           <label>
-            <span>Confirm PIN</span>
+            <span>{t('Confirm PIN')}</span>
             <input type="password" inputMode="numeric" autoComplete="new-password" value={confirmPin} onChange={(event) => setConfirmPin(event.target.value.replace(/\D/g, '').slice(0, 6))} />
           </label>
         </div>
-        {error ? <p className={styles.error} role="alert">{error}</p> : null}
+        {error ? <p className={styles.error} role="alert">{t(error)}</p> : null}
         <footer>
-          <button type="button" onClick={onClose}>Cancel</button>
-          <button type="button" disabled={!valid || saving} onClick={submit}>{saving ? 'Adding…' : 'Add staff'}</button>
+          <button type="button" onClick={onClose}>{t('Cancel')}</button>
+          <button type="button" disabled={!valid || saving} onClick={submit}>{saving ? t('Adding…') : t('Add staff')}</button>
         </footer>
       </section>
     </div>

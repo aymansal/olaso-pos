@@ -26,6 +26,7 @@ export type ReceiptSnapshotForPrint = {
   paymentMethod: string;
   receiptLanguage?: 'en' | 'fr';
   tenders?: Array<{
+    paymentMethod?: 'Cash' | 'Card';
     dueCentimes: number;
     amountCentimes: number;
     changeCentimes: number;
@@ -44,6 +45,7 @@ export type ReceiptModel = {
     quantity: number;
     unitPriceCentimes: number;
     lineTotalCentimes: number;
+    sizeName?: string;
     modifiers: string[];
     complimentary?: boolean;
   }>;
@@ -57,6 +59,8 @@ export type ReceiptModel = {
   paymentAmountCentimes?: number;
   changeCentimes?: number;
   tenders?: Array<{
+    paymentMethod: 'Cash' | 'Card';
+    dueCentimes: number;
     amountCentimes: number;
     changeCentimes: number;
   }>;
@@ -124,14 +128,11 @@ export function createReceiptModel(
       quantity: lineQuantity,
       unitPriceCentimes,
       lineTotalCentimes,
-      modifiers: [
-        ...(line.complimentary === true ? ['Offert'] : []),
-        ...(typeof line.sizeName === 'string' && line.sizeName.trim()
-          ? [text(line.sizeName.trim(), 'size', 80)]
-          : []),
-        ...line.modifiers.map((modifier) =>
-          text(modifier.optionName, 'modifier', 80)),
-      ],
+      ...(typeof line.sizeName === 'string' && line.sizeName.trim()
+        ? { sizeName: text(line.sizeName.trim(), 'size', 80) }
+        : {}),
+      modifiers: line.modifiers.map((modifier) =>
+        text(modifier.optionName, 'modifier', 80)),
       ...(line.complimentary === true ? { complimentary: true } : {}),
     };
   });
@@ -185,7 +186,14 @@ export function createReceiptModel(
         throw new Error('Receipt change does not match amount and due.');
       }
       dueSum += dueCentimes;
-      return { amountCentimes, changeCentimes: tenderChange };
+      return {
+        paymentMethod: tender.paymentMethod === 'Card'
+          ? 'Card'
+          : snapshot.paymentMethod === 'Card' ? 'Card' : 'Cash',
+        dueCentimes,
+        amountCentimes,
+        changeCentimes: tenderChange,
+      };
     });
     if (dueSum !== totalCentimes) {
       throw new Error('Receipt payments do not add up to the total.');
@@ -200,11 +208,13 @@ export function createReceiptModel(
     throw new Error('Receipt language is invalid.');
   }
   const serviceLabel = snapshot.serviceType === 'dine-in'
-    ? `Dine in${tableLabel ? ` / Table ${tableLabel}` : ''}`
+    ? receiptLanguage === 'fr'
+      ? `Sur place${tableLabel ? ` / Table ${tableLabel}` : ''}`
+      : `Dine in${tableLabel ? ` / Table ${tableLabel}` : ''}`
     : snapshot.serviceType === 'take-away'
-      ? 'Take away'
+      ? receiptLanguage === 'fr' ? 'À emporter' : 'Take away'
       : snapshot.serviceType === 'order-online'
-        ? 'Order online'
+        ? receiptLanguage === 'fr' ? 'Commande en ligne' : 'Order online'
         : (() => { throw new Error('Receipt service type is invalid.'); })();
 
   return {

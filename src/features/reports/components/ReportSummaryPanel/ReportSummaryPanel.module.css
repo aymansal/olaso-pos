@@ -12,7 +12,7 @@
 
 .header {
   position: absolute;
-  top: 20px;
+  top: 22px;
   left: 22px;
   display: flex;
   align-items: center;
@@ -21,167 +21,350 @@
   height: 42px;
 }
 
-.heading,
-.salesSummary > span {
-  display: flex;
-  flex-direction: column;
-}
-
-.heading {
-  gap: 3px;
-}
-
-.heading h2 {
+.header h2 {
   margin: 0;
   color: var(--olaso-text);
-  font-size: 10px;
+  font-size: 18px;
 }
 
-.heading small,
-.sectionHeader small {
-  color: var(--olaso-text-meta);
-  font-size: 8px;
-  font-weight: 500;
-}
-
-.period,
-.comparison {
+.chip {
   display: flex;
   align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
   color: var(--olaso-green);
   background: var(--olaso-green-icon);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
 }
 
-.period {
-  height: 26px;
-  gap: 5px;
-  padding: 0 9px;
-  border-radius: 13px;
-}
-
-.salesSummary {
-  position: absolute;
-  top: 78px;
-  left: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 356px;
-  height: 66px;
-}
-
-.salesSummary > span {
-  gap: 2px;
-}
-
-.salesSummary > span small {
-  color: var(--olaso-text-meta);
-  font-size: 7px;
-  font-weight: 700;
-  letter-spacing: 0.7px;
-}
-
-.salesSummary > span strong {
-  color: var(--olaso-text);
-  font-size: 24px;
-  line-height: 1.1;
-}
-
-.comparison {
-  height: 28px;
-  gap: 5px;
-  padding: 0 9px;
-  border-radius: 14px;
-}
-
-.comparison.negative {
+.chip.down {
   color: var(--olaso-stock-low);
   background: var(--olaso-stock-low-soft);
 }
 
-.divider {
+.profitList,
+.stack {
   position: absolute;
+  top: 148px;
   left: 22px;
   width: 356px;
-  height: 1px;
-  background: var(--olaso-order-divider);
 }
 
-.salesDivider {
-  top: 158px;
+.profitList article,
+.category,
+.used {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  border-bottom: 1px solid var(--olaso-order-divider);
 }
 
-.sectionHeader {
+.profitList small,
+.hint {
+  color: var(--olaso-text-meta);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.profitList strong,
+.category strong,
+.used strong,
+.facts strong,
+.result strong {
+  color: var(--olaso-text);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.facts strong {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emphasis {
+  color: var(--olaso-green);
+}
+
+.result {
+  position: absolute;
+  top: 568px;
+  left: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 356px;
+  height: 84px;
+  gap: 4px;
+  padding: 0 18px;
+  border-radius: 18px;
+  background: var(--olaso-stock-strip);
+}
+
+.result small {
+  color: var(--olaso-copy);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.result strong {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.loss {
+  color: var(--olaso-stock-low);
+}
+
+.hint {
+  position: absolute;
+  top: 78px;
+  left: 22px;
+  width: 356px;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.facts {
+  position: absolute;
+  top: 72px;
+  left: 22px;
+  display: grid;
+  width: 356px;
+  height: 58px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.facts article {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 8px;
+  border-radius: 14px;
+  background: var(--olaso-table-head);
+}
+
+.facts small {
+  color: var(--olaso-text-meta);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.panel > .empty {
+  position: absolute;
+  top: 72px;
+  left: 22px;
+  width: 356px;
+  margin: 0;
+  color: var(--olaso-text-meta);
+  font-size: 13px;
+}
+
+.railCard {
+  position: absolute;
+  left: 922px;
+  width: 400px;
+  height: 334px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--olaso-white);
+}
+
+.railTop {
+  top: 92px;
+}
+
+.railBottom {
+  top: 444px;
+}
+
+.railHeader {
+  position: absolute;
+  top: 20px;
+  left: 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 356px;
-  height: 20px;
+  height: 46px;
 }
 
-.sectionHeader h3,
-.stockHeader h3 {
+.railHeader > span,
+.railCopy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.railHeader h2 {
   margin: 0;
   color: var(--olaso-text);
-  font-size: 11px;
+  font-size: 17px;
+  line-height: 1;
 }
 
-.categorySection {
+.railHeader small,
+.railCopy small {
+  color: var(--olaso-copy);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.railChip {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 14px;
+  color: var(--olaso-green);
+  background: var(--olaso-green-icon);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.railList {
   position: absolute;
-  top: 176px;
+  top: 76px;
   left: 22px;
   width: 356px;
-  height: 178px;
+  height: 240px;
+  overflow: auto;
 }
 
-.categories {
-  margin-top: 12px;
+.railEmpty {
+  display: grid;
+  place-items: center;
+  width: 356px;
+  height: 240px;
+  margin: 0;
+  color: var(--olaso-copy);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.railRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 356px;
+  height: 60px;
+  gap: 12px;
+}
+
+.railRank {
+  display: grid;
+  flex: 0 0 36px;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--olaso-green);
+  background: var(--olaso-green-icon);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.railCopy {
+  flex: 1;
+}
+
+.railCopy strong {
+  overflow: hidden;
+  color: var(--olaso-text);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.railRow > b {
+  color: var(--olaso-text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.railDivider {
+  position: absolute;
+  bottom: 0;
+  left: 48px;
+  width: 308px;
+  height: 1px;
+  background: var(--olaso-line-soft);
+}
+
+.full {
+  top: 72px;
+  height: 580px;
+  overflow: auto;
+}
+
+.costsFacts {
+  top: 168px;
 }
 
 .category {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 100px 32px;
-  width: 356px;
-  height: 38px;
-  align-items: start;
+  min-height: 72px;
 }
 
-.category > strong,
-.category > span {
-  color: var(--olaso-text);
-  font-size: 8px;
-  font-weight: 600;
+.used {
+  position: relative;
+  min-height: 52px;
 }
 
-.category > span {
+.category > span,
+.used > span {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.used > span {
+  gap: 5px;
+}
+
+.full .used strong {
+  font-size: 14px;
+}
+
+.full .used b {
+  font-size: 14px;
+}
+
+.category b,
+.used b {
   color: var(--olaso-muted);
-  text-align: right;
-}
-
-.category > strong:nth-child(3) {
-  text-align: right;
-  font-weight: 700;
+  font-size: 16px;
 }
 
 .track {
-  position: absolute;
-  top: 22px;
-  left: 0;
   display: block;
-  width: 356px;
-  height: 4px;
+  width: 220px;
+  height: 6px;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: 3px;
   background: var(--olaso-report-track);
+}
+
+.used .track,
+.used .track > i {
+  height: 5px;
 }
 
 .track > i {
   display: block;
-  height: 4px;
-  border-radius: 2px;
+  height: 6px;
+  border-radius: 3px;
 }
 
 .primary {
@@ -196,189 +379,6 @@
   background: var(--olaso-report-category-cold);
 }
 
-.bakery,
-.online {
+.bakery {
   background: var(--olaso-report-category-bakery);
-}
-
-.empty,
-.stockEmpty {
-  display: grid;
-  place-items: center;
-  margin: 0;
-  color: var(--olaso-text-meta);
-  font-size: 8px;
-  font-weight: 600;
-}
-
-.empty {
-  height: 130px;
-}
-
-.paymentSection {
-  position: absolute;
-  top: 372px;
-  left: 22px;
-  width: 356px;
-  height: 72px;
-}
-
-.paymentBar {
-  display: flex;
-  width: 356px;
-  height: 10px;
-  margin-top: 12px;
-  overflow: hidden;
-  border-radius: 5px;
-}
-
-.cash {
-  background: var(--olaso-green);
-}
-
-.card {
-  background: var(--olaso-report-payment-card);
-}
-
-.paymentLegend {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 356px;
-  height: 18px;
-  margin-top: 12px;
-}
-
-.paymentLegend span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--olaso-muted);
-  font-size: 7px;
-  font-weight: 600;
-}
-
-.paymentLegend i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-.paymentDivider {
-  top: 458px;
-}
-
-.stockSection {
-  position: absolute;
-  top: 476px;
-  left: 22px;
-  width: 356px;
-  height: 130px;
-}
-
-.stockHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 356px;
-  height: 22px;
-}
-
-.stockHeader > strong {
-  display: flex;
-  align-items: center;
-  height: 22px;
-  gap: 4px;
-  padding: 0 8px;
-  border-radius: 11px;
-  color: var(--olaso-stock-low);
-  background: var(--olaso-stock-low-soft);
-  font-size: 7px;
-}
-
-.stockList {
-  margin-top: 10px;
-}
-
-.stockEmpty {
-  height: 94px;
-}
-
-.stockItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 356px;
-  height: 34px;
-}
-
-.stockItem > span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.stockItem i {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  color: var(--olaso-copy);
-  background: var(--olaso-neutral-icon);
-}
-
-.stockItem strong {
-  color: var(--olaso-text);
-  font-size: 8px;
-  font-weight: 600;
-}
-
-.stockItem > strong {
-  color: var(--olaso-muted);
-  font-weight: 700;
-}
-
-.actions {
-  position: absolute;
-  top: 620px;
-  left: 22px;
-  display: flex;
-  width: 356px;
-  height: 48px;
-  gap: 10px;
-}
-
-.actions button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 48px;
-  gap: 7px;
-  border-radius: 24px;
-  font-size: 9px;
-  font-weight: 700;
-}
-
-.actions button:disabled {
-  cursor: not-allowed;
-  opacity: 0.52;
-}
-
-.csv {
-  flex: 1;
-  min-width: 0;
-  padding: 0 8px;
-  border: 1px solid var(--olaso-green);
-  color: var(--olaso-green);
-  background: transparent;
-}
-
-.pdf {
-  flex: 1;
-  min-width: 0;
-  padding: 0 8px;
-  border: 0;
-  color: var(--olaso-white);
-  background: var(--olaso-green);
 }

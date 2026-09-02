@@ -3,7 +3,7 @@
   top: 228px;
   left: 24px;
   width: 838px;
-  height: 260px;
+  height: 434px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
   border-radius: 20px;
@@ -29,12 +29,12 @@
 .heading h2 {
   margin: 0;
   color: var(--olaso-text);
-  font-size: 11px;
+  font-size: 15px;
 }
 
 .heading small {
   color: var(--olaso-text-meta);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -51,7 +51,7 @@
 .legend > span {
   gap: 5px;
   color: var(--olaso-muted);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -69,37 +69,36 @@
   background: var(--olaso-green);
 }
 
-.previousDot {
-  background: var(--olaso-report-previous);
-}
-
 .guides {
   position: absolute;
   top: 72px;
   left: 16px;
-  width: 796px;
+  width: 806px;
 }
 
 .guides > span {
   position: relative;
   display: block;
-  height: 38px;
+  height: 64px;
 }
 
 .guides small {
   position: absolute;
   top: -5px;
   left: 0;
+  width: 40px;
+  overflow: hidden;
   color: var(--olaso-text-faint);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 600;
+  text-align: right;
 }
 
 .guides i {
   position: absolute;
   top: 6px;
-  left: 32px;
-  width: 764px;
+  left: 48px;
+  width: 750px;
   height: 1px;
   background: var(--olaso-report-guide);
 }
@@ -111,12 +110,12 @@
 .bars {
   position: absolute;
   top: 62px;
-  left: 54px;
+  left: 72px;
   display: flex;
   align-items: flex-end;
-  width: 752px;
-  height: 156px;
-  gap: 9px;
+  width: 734px;
+  height: 280px;
+  gap: 2px;
 }
 
 .barGroup {
@@ -125,7 +124,7 @@
   flex: 1;
   align-items: center;
   justify-content: flex-end;
-  height: 156px;
+  height: 280px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -149,7 +148,7 @@
   border-radius: 10px;
   color: var(--olaso-green-ink);
   background: var(--olaso-green-soft);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
   transform: translateX(-50%);
@@ -159,28 +158,22 @@
 .bar {
   position: relative;
   display: block;
-  width: 24px;
-  border-radius: 7px 7px 3px 3px;
+  width: 8px;
+  border-radius: 4px 4px 2px 2px;
   background: var(--olaso-report-bar);
+}
+
+.emptyBar {
+  background: transparent;
 }
 
 .peakBar {
   background: var(--olaso-green);
 }
 
-.peakCap {
-  position: absolute;
-  top: 8px;
-  left: 9px;
-  width: 7px;
-  height: 7px;
-  border-radius: 4px;
-  background: var(--olaso-white);
-}
-
 .barGroup small {
   color: var(--olaso-text-faint);
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 500;
 }
 
@@ -191,7 +184,7 @@
 
 .footer {
   position: absolute;
-  top: 228px;
+  top: 400px;
   left: 16px;
   display: flex;
   align-items: center;
@@ -199,7 +192,7 @@
   width: 806px;
   height: 20px;
   color: var(--olaso-muted);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -215,5 +208,5 @@
 
 .footer strong {
   color: var(--olaso-text);
-  font-size: 8px;
+  font-size: 13px;
 }

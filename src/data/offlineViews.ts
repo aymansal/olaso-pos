@@ -2,6 +2,24 @@ import { localBusinessDate, shiftBusinessDate } from '../lib/date.ts';
 import { openLocalDatabase } from './localDatabase.ts';
 import { loadOperationalCache } from './operationalCache.ts';
 
+const ALIAS_LOCAL_STOCK_DELTA = `COALESCE((
+  SELECT SUM(alias.local_stock_delta)
+  FROM local_cloud_mappings map
+  JOIN ingredients alias ON alias.id = map.local_record_id
+  WHERE map.record_type = 'ingredient'
+    AND map.cloud_record_id = i.id
+    AND map.local_record_id <> map.cloud_record_id
+), 0)`;
+
+const ALIAS_LOCAL_VALUE_DELTA = `COALESCE((
+  SELECT SUM(alias.local_inventory_value_delta)
+  FROM local_cloud_mappings map
+  JOIN ingredients alias ON alias.id = map.local_record_id
+  WHERE map.record_type = 'ingredient'
+    AND map.cloud_record_id = i.id
+    AND map.local_record_id <> map.cloud_record_id
+), 0)`;
+
 type SavedLine = {
   productId: string;
   productName: string;
@@ -15,6 +33,10 @@ type SavedLine = {
 type SavedReceipt = {
   completedAt: number;
   paymentMethod: string;
+  tenders?: Array<{
+    paymentMethod?: 'Cash' | 'Card';
+    dueCentimes: number;
+  }>;
   lines: SavedLine[];
 };
 
@@ -30,7 +52,8 @@ async function localSales(fromDate: string, toDate: string) {
   const database = await openLocalDatabase();
   const [result, savedCategories] = await Promise.all([database.query(
     `SELECT local_sale_id, receipt_number, status, service_type,
-      total_centimes, business_date, receipt_snapshot_json, created_at
+      total_centimes, business_date, receipt_snapshot_json, created_at,
+      ingredient_cost_centimes
      FROM sales
      WHERE business_date BETWEEN ? AND ?
      ORDER BY created_at DESC
@@ -67,6 +90,7 @@ async function localSales(fromDate: string, toDate: string) {
         ? 'take-away' as const
         : 'online' as const,
     totalCentimes: Number(row.total_centimes),
+    ingredientCostCentimes: Number(row.ingredient_cost_centimes ?? 0),
     businessDate: String(row.business_date),
     createdAt: Number(row.created_at),
     receipt: {
@@ -134,18 +158,28 @@ export function aggregateOfflineSales(
   }>();
   let netCentimes = 0;
   let itemCount = 0;
+  let ingredientCostCentimes = 0;
   const completed = rows.filter((row) => row.status === 'completed');
   for (const row of completed) {
     netCentimes += row.totalCentimes;
-    const paymentMethod = row.receipt.paymentMethod || 'Unknown';
-    const payment = payments.get(paymentMethod) ?? {
-      paymentMethod,
-      totalCentimes: 0,
-      orderCount: 0,
-    };
-    payment.totalCentimes += row.totalCentimes;
-    payment.orderCount += 1;
-    payments.set(paymentMethod, payment);
+    ingredientCostCentimes += row.ingredientCostCentimes ?? 0;
+    const salePayments = new Map<string, number>();
+    for (const tender of row.receipt.tenders?.length
+      ? row.receipt.tenders
+      : [{ paymentMethod: row.receipt.paymentMethod, dueCentimes: row.totalCentimes }]) {
+      const method = tender.paymentMethod ?? (row.receipt.paymentMethod || 'Unknown');
+      salePayments.set(method, (salePayments.get(method) ?? 0) + tender.dueCentimes);
+    }
+    for (const [paymentMethod, amount] of salePayments) {
+      const payment = payments.get(paymentMethod) ?? {
+        paymentMethod,
+        totalCentimes: 0,
+        orderCount: 0,
+      };
+      payment.totalCentimes += amount;
+      payment.orderCount += 1;
+      payments.set(paymentMethod, payment);
+    }
     for (const line of row.receipt.lines) {
       itemCount += line.quantity;
       const category = line.categoryIdSnapshot && line.categoryNameSnapshot
@@ -182,6 +216,8 @@ export function aggregateOfflineSales(
     netCentimes,
     orderCount: completed.length,
     itemCount,
+    ingredientCostCentimes,
+    incompleteSaleCount: 0,
     ingredientUsageEventCount: 0,
     productTotals: productList
       .slice()
@@ -204,34 +240,85 @@ export function aggregateOfflineSales(
 
 async function ingredientUsage(fromDate: string, toDate: string) {
   const database = await openLocalDatabase();
+  const [result, stockResult] = await Promise.all([
+    database.query(
+      `SELECT MIN(m.ingredient_id) AS ingredient_id,
+        COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')) AS name,
+        COALESCE(i.base_unit,
+          NULLIF(m.ingredient_base_unit_snapshot, '')) AS base_unit,
+        SUM(-m.quantity_delta) AS quantity
+       FROM stock_movements m
+       LEFT JOIN ingredients i ON i.id = m.ingredient_id
+       JOIN sales s ON s.local_sale_id = m.local_sale_id
+       WHERE m.business_date BETWEEN ? AND ?
+         AND m.movement_type = 'sale'
+         AND s.status = 'completed'
+       GROUP BY COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')),
+         COALESCE(i.base_unit, NULLIF(m.ingredient_base_unit_snapshot, ''))
+       ORDER BY name
+       LIMIT 21`,
+      [fromDate, toDate],
+    ),
+    database.query(
+      `SELECT name, base_unit,
+        current_stock_quantity + local_stock_delta
+          + ${ALIAS_LOCAL_STOCK_DELTA} AS current_stock_quantity
+       FROM ingredients i
+       WHERE i.status = 'active'
+         AND NOT EXISTS (
+           SELECT 1 FROM local_cloud_mappings m
+           JOIN ingredients cloud ON cloud.id = m.cloud_record_id
+           WHERE m.record_type = 'ingredient'
+             AND m.local_record_id = i.id
+             AND m.local_record_id <> m.cloud_record_id
+         )
+       LIMIT 101`,
+    ),
+  ]);
+  if ((result.values?.length ?? 0) > 20) {
+    throw new Error('Saved ingredient usage exceeds the offline report limit.');
+  }
+  if ((stockResult.values?.length ?? 0) > 100) {
+    throw new Error('Saved stock exceeds the offline inventory limit.');
+  }
+  const stockByName = new Map(
+    (stockResult.values ?? []).map((row) => [
+      `${row.name}\0${row.base_unit}`,
+      Number(row.current_stock_quantity),
+    ]),
+  );
+  return (result.values ?? []).map((row) => {
+    const ingredientName = String(row.name);
+    const baseUnit = String(row.base_unit) as
+      'millilitre' | 'gram' | 'milligram' | 'piece';
+    return {
+      ingredientId: String(row.ingredient_id),
+      ingredientName,
+      baseUnit,
+      quantity: Number(row.quantity),
+      currentStockQuantity: stockByName.get(`${ingredientName}\0${baseUnit}`) ?? 0,
+    };
+  });
+}
+
+async function dailyIngredientUsageEvents(fromDate: string, toDate: string) {
+  const database = await openLocalDatabase();
   const result = await database.query(
-    `SELECT m.ingredient_id,
-      COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')) AS name,
-      COALESCE(i.base_unit,
-        NULLIF(m.ingredient_base_unit_snapshot, '')) AS base_unit,
-      SUM(-m.quantity_delta) AS quantity
+    `SELECT m.business_date AS business_date, COUNT(*) AS event_count
      FROM stock_movements m
-     LEFT JOIN ingredients i ON i.id = m.ingredient_id
      JOIN sales s ON s.local_sale_id = m.local_sale_id
      WHERE m.business_date BETWEEN ? AND ?
        AND m.movement_type = 'sale'
        AND s.status = 'completed'
-     GROUP BY m.ingredient_id,
-       COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')),
-       COALESCE(i.base_unit, NULLIF(m.ingredient_base_unit_snapshot, ''))
-     ORDER BY name
-     LIMIT 21`,
+     GROUP BY m.business_date`,
     [fromDate, toDate],
   );
-  if ((result.values?.length ?? 0) > 20) {
-    throw new Error('Saved ingredient usage exceeds the offline report limit.');
-  }
-  return (result.values ?? []).map((row) => ({
-    ingredientId: String(row.ingredient_id),
-    ingredientName: String(row.name),
-    baseUnit: String(row.base_unit) as 'millilitre' | 'gram' | 'milligram' | 'piece',
-    quantity: Number(row.quantity),
-  }));
+  return new Map(
+    (result.values ?? []).map((row) => [
+      String(row.business_date),
+      Number(row.event_count),
+    ]),
+  );
 }
 
 export async function loadOfflineDashboard(businessDate: string) {
@@ -326,11 +413,12 @@ export async function loadOfflineReport(fromDate: string, toDate: string) {
   if (days < 1 || days > 31) throw new Error('Report periods must contain 1 to 31 days.');
   const previousTo = shiftBusinessDate(fromDate, -1);
   const previousFrom = shiftBusinessDate(previousTo, 1 - days);
-  const [currentRows, previousRows, cache, usage] = await Promise.all([
+  const [currentRows, previousRows, cache, usage, dailyUsage] = await Promise.all([
     localSales(fromDate, toDate),
     localSales(previousFrom, previousTo),
     loadOperationalCache(),
     ingredientUsage(fromDate, toDate),
+    dailyIngredientUsageEvents(fromDate, toDate),
   ]);
   const categories = new Map(cache.categories.map((category) => [category.id, category]));
   const categoryByProduct = new Map(
@@ -341,7 +429,10 @@ export async function loadOfflineReport(fromDate: string, toDate: string) {
   );
   const current = {
     ...aggregateOfflineSales(currentRows, categoryByProduct),
-    ingredientUsageEventCount: usage.length,
+    ingredientUsageEventCount: [...dailyUsage.values()].reduce(
+      (total, count) => total + count,
+      0,
+    ),
     ingredientTotals: usage,
   };
   const previous = {
@@ -363,7 +454,8 @@ export async function loadOfflineReport(fromDate: string, toDate: string) {
         businessDate: date,
         netCentimes: daily.netCentimes,
         itemCount: daily.itemCount,
-        ingredientUsageEventCount: 0,
+        ingredientCostCentimes: daily.ingredientCostCentimes,
+        ingredientUsageEventCount: dailyUsage.get(date) ?? 0,
       };
     }),
   };
@@ -375,9 +467,11 @@ export async function loadOfflineInventory() {
   const [ingredientResult, movementResult] = await Promise.all([
     database.query(
       `SELECT i.id, i.key, i.name, i.base_unit,
-        i.current_stock_quantity + i.local_stock_delta AS current_stock_quantity,
+        i.current_stock_quantity + i.local_stock_delta
+          + ${ALIAS_LOCAL_STOCK_DELTA} AS current_stock_quantity,
         CASE WHEN i.inventory_value_centimes IS NULL THEN NULL
-          ELSE i.inventory_value_centimes + i.local_inventory_value_delta END
+          ELSE i.inventory_value_centimes + i.local_inventory_value_delta
+            + ${ALIAS_LOCAL_VALUE_DELTA} END
           AS inventory_value_centimes,
         i.cost_status, i.valuation_revision, i.low_stock_threshold,
         i.status, i.revision, i.updated_at
@@ -394,12 +488,30 @@ export async function loadOfflineInventory() {
        LIMIT 1001`,
     ),
     database.query(
-      `SELECT ingredient_id, COUNT(*) AS movement_count,
-        SUM(CASE WHEN movement_type IN ('manual-adjustment', 'stock-addition') THEN 1 ELSE 0 END) AS adjustment_count,
-        SUM(CASE WHEN movement_type = 'sale' AND quantity_delta < 0 THEN -quantity_delta ELSE 0 END) AS used_today
-       FROM stock_movements
-       WHERE business_date = ?
-       GROUP BY ingredient_id
+      `SELECT COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')) AS name,
+        COALESCE(i.base_unit, NULLIF(m.ingredient_base_unit_snapshot, '')) AS base_unit,
+        COUNT(*) AS movement_count,
+        SUM(CASE WHEN m.movement_type IN ('manual-adjustment', 'stock-addition') THEN 1 ELSE 0 END)
+          AS adjustment_count,
+        SUM(CASE WHEN m.movement_type = 'sale' AND m.quantity_delta < 0
+          AND s.status = 'completed'
+          THEN -m.quantity_delta ELSE 0 END) AS used_today,
+        SUM(CASE WHEN m.movement_type = 'sale' AND m.quantity_delta < 0
+          AND s.status = 'completed' AND s.sync_state != 'synced'
+          THEN -m.quantity_delta ELSE 0 END) AS unsynced_used
+       FROM stock_movements m
+       LEFT JOIN ingredients i ON i.id = COALESCE(
+         (SELECT cloud_record_id FROM local_cloud_mappings
+          WHERE record_type = 'ingredient' AND local_record_id = m.ingredient_id
+          LIMIT 1),
+         (SELECT local_record_id FROM local_cloud_mappings
+          WHERE record_type = 'ingredient' AND cloud_record_id = m.ingredient_id
+          LIMIT 1),
+         m.ingredient_id
+       )
+       LEFT JOIN sales s ON s.local_sale_id = m.local_sale_id
+       WHERE m.business_date = ?
+       GROUP BY 1, 2
        LIMIT 1001`,
       [today],
     ),
@@ -408,27 +520,20 @@ export async function loadOfflineInventory() {
       || (movementResult.values?.length ?? 0) > 1_000) {
     throw new Error('Saved stock exceeds the offline inventory limit.');
   }
-  const mappedMovementId = new Map<string, string>();
-  const mappings = await database.query(
-    `SELECT local_record_id, cloud_record_id FROM local_cloud_mappings
-     WHERE record_type = 'ingredient' LIMIT 1001`,
-  );
-  for (const mapping of mappings.values ?? []) {
-    mappedMovementId.set(String(mapping.local_record_id), String(mapping.cloud_record_id));
-  }
-  const movements = new Map<string, { movement_count: number; adjustment_count: number; used_today: number }>();
+  const usedByName = new Map<string, number>();
+  const unsyncedUsedByName = new Map<string, number>();
+  let movementCount = 0;
+  let adjustmentCount = 0;
   for (const row of movementResult.values ?? []) {
-    const ingredientId = mappedMovementId.get(String(row.ingredient_id))
-      ?? String(row.ingredient_id);
-    const current = movements.get(ingredientId) ?? {
-      movement_count: 0,
-      adjustment_count: 0,
-      used_today: 0,
-    };
-    current.movement_count += Number(row.movement_count ?? 0);
-    current.adjustment_count += Number(row.adjustment_count ?? 0);
-    current.used_today += Number(row.used_today ?? 0);
-    movements.set(ingredientId, current);
+    movementCount += Number(row.movement_count ?? 0);
+    adjustmentCount += Number(row.adjustment_count ?? 0);
+    const key = `${row.name}\0${row.base_unit}`;
+    if (!row.name) continue;
+    usedByName.set(key, (usedByName.get(key) ?? 0) + Number(row.used_today ?? 0));
+    unsyncedUsedByName.set(
+      key,
+      (unsyncedUsedByName.get(key) ?? 0) + Number(row.unsynced_used ?? 0),
+    );
   }
   const ingredients = (ingredientResult.values ?? []).map((item) => ({
     id: String(item.id),
@@ -442,7 +547,7 @@ export async function loadOfflineInventory() {
     costStatus: item.cost_status === 'complete' ? 'complete' as const : 'incomplete' as const,
     valuationRevision: Number(item.valuation_revision),
     lowStockThreshold: Number(item.low_stock_threshold),
-    usedToday: movements.get(String(item.id))?.used_today ?? 0,
+    usedToday: usedByName.get(`${item.name}\0${item.base_unit}`) ?? 0,
     status: item.status === 'archived' ? 'archived' as const : 'active' as const,
     revision: Number(item.revision),
     updatedAt: Number(item.updated_at),
@@ -450,20 +555,43 @@ export async function loadOfflineInventory() {
   const active = ingredients.filter((item) => item.status === 'active');
   return {
     ingredients,
+    unsyncedUsedByName,
     metrics: {
       ingredientCount: active.length,
       lowStockCount: active.filter(
         (item) => item.currentStockQuantity <= item.lowStockThreshold,
       ).length,
-      movementCount: [...movements.values()].reduce(
-        (sum, row) => sum + Number(row.movement_count ?? 0),
-        0,
-      ),
-      adjustmentCount: [...movements.values()].reduce(
-        (sum, row) => sum + Number(row.adjustment_count ?? 0),
-        0,
-      ),
+      movementCount,
+      adjustmentCount,
     },
+  };
+}
+
+export function overlayCloudUsedToday(
+  inventory: Awaited<ReturnType<typeof loadOfflineInventory>>,
+  cloudTotals: Array<{
+    ingredientName: string;
+    baseUnit: string;
+    quantity: number;
+  }>,
+) {
+  const cloudByName = new Map(
+    cloudTotals.map((item) => [
+      `${item.ingredientName}\0${item.baseUnit}`,
+      item.quantity,
+    ]),
+  );
+  return {
+    ...inventory,
+    ingredients: inventory.ingredients.map((item) => {
+      const key = `${item.name}\0${item.baseUnit}`;
+      const cloud = cloudByName.get(key);
+      const unsynced = inventory.unsyncedUsedByName.get(key) ?? 0;
+      return {
+        ...item,
+        usedToday: Math.max(item.usedToday, (cloud ?? 0) + unsynced),
+      };
+    }),
   };
 }
 

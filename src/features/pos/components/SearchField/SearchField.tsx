@@ -1,4 +1,5 @@
 import { Search, X } from '@boxicons/react';
+import { useT } from '../../../../lib/locale';
 import styles from './SearchField.module.css';
 
 type SearchFieldProps = {
@@ -7,12 +8,13 @@ type SearchFieldProps = {
 };
 
 export function SearchField({ value, onChange }: SearchFieldProps) {
+  const t = useT();
   return (
     <label className={styles.search}>
       <Search width={18} height={18} aria-hidden="true" />
       <input
-        aria-label="Search products"
-        placeholder="Search products"
+        aria-label={t('Search products')}
+        placeholder={t('Search products')}
         type="search"
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -21,7 +23,7 @@ export function SearchField({ value, onChange }: SearchFieldProps) {
         <button
           type="button"
           className={styles.clear}
-          aria-label="Clear search"
+          aria-label={t('Clear search')}
           onClick={() => onChange('')}
         >
           <X width={16} height={16} aria-hidden="true" />

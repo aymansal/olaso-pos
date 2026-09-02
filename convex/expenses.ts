@@ -29,6 +29,8 @@ function expenseInput(args: {
   effectiveDate?: string;
   effectiveStartMonth?: string;
   effectiveEndMonth?: string;
+  effectiveStartDate?: string;
+  effectiveEndDate?: string;
 }) {
   const result = {
     category: cleanText(args.category, 'Expense category', 60),
@@ -40,22 +42,33 @@ function expenseInput(args: {
     if (!args.effectiveDate || args.effectiveStartMonth || args.effectiveEndMonth) {
       throw new Error('One-time expenses require only an effective date.');
     }
-    return { ...result, effectiveDate: businessDate(args.effectiveDate) };
+    return { ...result, recurrence: 'one-time' as const,
+      effectiveDate: businessDate(args.effectiveDate) };
   }
-  if (!args.effectiveStartMonth || args.effectiveDate) {
-    throw new Error('Monthly expenses require an effective start month.');
+  if ((!args.effectiveStartMonth && !args.effectiveStartDate) || args.effectiveDate) {
+    throw new Error('Monthly expenses require an effective start date.');
   }
-  const effectiveStartMonth = month(args.effectiveStartMonth, 'Effective start month');
+  const effectiveStartDate = args.effectiveStartDate
+    ? businessDate(args.effectiveStartDate)
+    : `${month(args.effectiveStartMonth!, 'Effective start month')}-01`;
+  const effectiveStartMonth = effectiveStartDate.slice(0, 7);
+  const effectiveEndDate = args.effectiveEndDate
+    ? businessDate(args.effectiveEndDate)
+    : undefined;
   const effectiveEndMonth = args.effectiveEndMonth
     ? month(args.effectiveEndMonth, 'Effective end month')
-    : undefined;
-  if (effectiveEndMonth && effectiveEndMonth < effectiveStartMonth) {
+    : effectiveEndDate?.slice(0, 7);
+  if ((effectiveEndDate && effectiveEndDate < effectiveStartDate)
+      || (effectiveEndMonth && effectiveEndMonth < effectiveStartMonth)) {
     throw new Error('Expense cannot end before it starts.');
   }
   return {
     ...result,
+    recurrence: 'monthly' as const,
     effectiveStartMonth,
     ...(effectiveEndMonth ? { effectiveEndMonth } : {}),
+    effectiveStartDate,
+    ...(effectiveEndDate ? { effectiveEndDate } : {}),
   };
 }
 
@@ -78,6 +91,8 @@ export const list = query({
       ...(row.effectiveDate ? { effectiveDate: row.effectiveDate } : {}),
       ...(row.effectiveStartMonth ? { effectiveStartMonth: row.effectiveStartMonth } : {}),
       ...(row.effectiveEndMonth ? { effectiveEndMonth: row.effectiveEndMonth } : {}),
+      ...(row.effectiveStartDate ? { effectiveStartDate: row.effectiveStartDate } : {}),
+      ...(row.effectiveEndDate ? { effectiveEndDate: row.effectiveEndDate } : {}),
       transactionType: row.transactionType,
       ...(row.correctionOfExpenseId
         ? { correctionOfExpenseId: row.correctionOfExpenseId }
@@ -97,6 +112,8 @@ export const add = mutation({
     effectiveDate: v.optional(v.string()),
     effectiveStartMonth: v.optional(v.string()),
     effectiveEndMonth: v.optional(v.string()),
+    effectiveStartDate: v.optional(v.string()),
+    effectiveEndDate: v.optional(v.string()),
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -133,6 +150,8 @@ export const correct = mutation({
     effectiveDate: v.optional(v.string()),
     effectiveStartMonth: v.optional(v.string()),
     effectiveEndMonth: v.optional(v.string()),
+    effectiveStartDate: v.optional(v.string()),
+    effectiveEndDate: v.optional(v.string()),
     clientMutationId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -171,6 +190,12 @@ export const correct = mutation({
       .take(1);
     if (prior.length) return conflict('This expense already has correction history.');
     const input = expenseInput(args);
+    const correctionDate = input.recurrence === 'monthly'
+      ? input.effectiveStartDate
+      : input.effectiveDate;
+    const reversalStartDate = original.recurrence === 'monthly'
+      ? correctionDate
+      : original.effectiveStartDate;
     const reversalId = await ctx.db.insert('operatingExpenses', {
       category: original.category,
       description: `Correction reversal: ${original.description}`,
@@ -179,6 +204,11 @@ export const correct = mutation({
       ...(original.effectiveDate ? { effectiveDate: original.effectiveDate } : {}),
       ...(original.effectiveStartMonth ? { effectiveStartMonth: original.effectiveStartMonth } : {}),
       ...(original.effectiveEndMonth ? { effectiveEndMonth: original.effectiveEndMonth } : {}),
+      ...(reversalStartDate ? {
+        effectiveStartDate: reversalStartDate,
+        effectiveStartMonth: reversalStartDate.slice(0, 7),
+      } : {}),
+      ...(original.effectiveEndDate ? { effectiveEndDate: original.effectiveEndDate } : {}),
       status: 'active',
       transactionType: 'reversal',
       correctionOfExpenseId: original._id,

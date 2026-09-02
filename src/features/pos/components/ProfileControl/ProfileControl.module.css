@@ -19,13 +19,14 @@
 }
 
 .profile:focus-visible,
-.menu button:focus-visible {
+.menu button:focus-visible,
+.language button:focus-visible {
   outline: 2px solid var(--olaso-green);
   outline-offset: 2px;
 }
 
 .profile:active,
-.menu button:active {
+.menu > button:active {
   background: var(--olaso-soft);
 }
 
@@ -77,7 +78,36 @@
   box-shadow: 0 10px 24px rgb(28 33 27 / 14%);
 }
 
-.menu button {
+.language {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 32px;
+  margin: 2px 4px 6px;
+  padding: 2px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 16px;
+  background: var(--olaso-soft);
+}
+
+.language button {
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  color: var(--olaso-copy);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-align: center;
+}
+
+.languageOn {
+  color: var(--olaso-text) !important;
+  background: var(--olaso-white) !important;
+}
+
+.menu > button {
   height: 44px;
   padding: 0 12px;
   border: 0;
@@ -89,7 +119,7 @@
   text-align: left;
 }
 
-.menu button:disabled {
+.menu > button:disabled {
   opacity: 0.55;
 }
 

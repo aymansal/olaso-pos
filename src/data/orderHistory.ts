@@ -16,6 +16,7 @@ export type OrderReceipt = {
   customerName?: string;
   tableLabel?: string;
   lines: Array<{
+    productId?: string;
     productName: string;
     quantity: number;
     unitPriceCentimes: number;
@@ -35,6 +36,7 @@ export type OrderReceipt = {
   taxPolicyLabel: string;
   paymentMethod: string;
   tenders?: Array<{
+    paymentMethod: 'Cash' | 'Card';
     dueCentimes: number;
     amountCentimes: number;
     changeCentimes: number;
@@ -67,7 +69,8 @@ export const ORDER_PAGE_SIZE = 8;
 
 export type OrderListFilter = {
   status?: OrderStatus;
-  businessDate?: string;
+  fromDate?: string;
+  toDate?: string;
   query?: string;
 };
 
@@ -79,13 +82,17 @@ function likeNeedle(query: string) {
 
 function filterBinds(filter?: OrderListFilter) {
   const status = filter?.status ?? null;
-  const businessDate = filter?.businessDate?.trim() || null;
+  const fromDate = filter?.fromDate?.trim() || null;
+  const toDate = filter?.toDate?.trim() || null;
   const like = likeNeedle(filter?.query ?? '');
   return {
     clause: `AND (? IS NULL OR s.status = ?)
-     AND (? IS NULL OR s.business_date = ?)
+     AND (? IS NULL OR s.business_date >= ?)
+     AND (? IS NULL OR s.business_date <= ?)
      AND (? IS NULL OR s.receipt_number LIKE ? OR IFNULL(s.customer_name, '') LIKE ?)`,
-    values: [status, status, businessDate, businessDate, like, like, like],
+    values: [
+      status, status, fromDate, fromDate, toDate, toDate, like, like, like,
+    ],
   };
 }
 
@@ -181,6 +188,9 @@ function parseReceipt(raw: unknown): OrderReceipt {
         throw new Error('A saved receipt has too many modifiers.');
       }
       return {
+        ...(typeof line.productId === 'string' && line.productId
+          ? { productId: line.productId }
+          : {}),
         productName: text(
           line.receiptName ?? line.productName,
           'product name',
@@ -212,12 +222,35 @@ function parseReceipt(raw: unknown): OrderReceipt {
     taxPolicyLabel: text(value.taxPolicyLabel, 'tax policy'),
     paymentMethod: text(value.paymentMethod, 'payment method'),
     ...(Array.isArray(value.tenders) && value.tenders.length
-      ? { tenders: parseTenders(value.tenders) }
+      ? { tenders: parseTenders(value.tenders, value.paymentMethod) }
       : {}),
   };
 }
 
-function parseTenders(raw: unknown[]): OrderReceipt['tenders'] {
+export async function loadCurrentProductImages(
+  connection?: OrderDatabase,
+) {
+  const database = connection ?? await openLocalDatabase();
+  const result = await database.query(
+    `SELECT p.id, p.image_asset_key, p.image_jpeg, c.artwork_key
+     FROM products p
+     LEFT JOIN categories c ON c.id = p.category_id
+     WHERE p.status != 'archived' LIMIT 501`,
+  );
+  if ((result.values?.length ?? 0) > 500) {
+    throw new Error('Saved product images exceed the local limit.');
+  }
+  return Object.fromEntries((result.values ?? []).map((row) => [String(row.id), {
+    ...(row.image_asset_key ? { imageAssetKey: String(row.image_asset_key) } : {}),
+    ...(row.artwork_key ? { artworkKey: String(row.artwork_key) } : {}),
+    ...(row.image_jpeg ? { imageJpeg: String(row.image_jpeg) } : {}),
+  }]));
+}
+
+function parseTenders(
+  raw: unknown[],
+  fallbackPaymentMethod: unknown,
+): OrderReceipt['tenders'] {
   if (raw.length > 20) {
     throw new Error('The saved receipt has too many payments.');
   }
@@ -232,7 +265,11 @@ function parseTenders(raw: unknown[]): OrderReceipt['tenders'] {
     if (changeCentimes !== amountCentimes - dueCentimes) {
       throw new Error('The saved receipt change is invalid.');
     }
-    return { dueCentimes, amountCentimes, changeCentimes };
+    const paymentMethod = tender.paymentMethod === 'Card'
+      || (tender.paymentMethod === undefined && fallbackPaymentMethod === 'Card')
+      ? 'Card'
+      : 'Cash';
+    return { paymentMethod, dueCentimes, amountCentimes, changeCentimes };
   });
 }
 

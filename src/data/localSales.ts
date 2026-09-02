@@ -134,6 +134,8 @@ function validateTenders(tenders: PaymentTender[], saleTotalCentimes: number) {
   let dueSum = 0;
   for (const tender of tenders) {
     if (
+      !['Cash', 'Card'].includes(tender.paymentMethod)
+      ||
       !Number.isSafeInteger(tender.dueCentimes)
       || tender.dueCentimes < 0
       || !Number.isSafeInteger(tender.amountCentimes)

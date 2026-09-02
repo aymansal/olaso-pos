@@ -24,6 +24,7 @@ import { isStaffRole, type StaffRole } from '../../data/permissions';
 import olasoLogo from '../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
 import lockBackground from '../../../assets/brand/olaso-lock-drink-note.jpg';
 import { LockStaffSelect } from './components/LockStaffSelect/LockStaffSelect';
+import { useLanguage, useT } from '../../lib/locale';
 import styles from './LockScreen.module.css';
 
 interface LockScreenProps {
@@ -50,9 +51,12 @@ type CachedStaff = {
   role: StaffRole;
   revision: number;
   identityRevision: number;
+  preferredLanguage: 'en' | 'fr';
 };
 
 export function LockScreen({ settings, onUnlock }: LockScreenProps) {
+  const t = useT();
+  const language = useLanguage();
   const [now, setNow] = useState(new Date());
   const { available, foreground } = useConnectionStatus();
   const online = available === true;
@@ -77,8 +81,8 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     setAuthoritativeStaff(undefined);
     loadOperationalCache().then((cache) => {
       if (!active) return;
-      const activeStaff = cache.staffProfiles.flatMap(({ id, name, role, revision, identityRevision }) =>
-        isStaffRole(role) ? [{ id, name, role, revision, identityRevision }] : [],
+      const activeStaff = cache.staffProfiles.flatMap(({ id, name, role, revision, identityRevision, preferredLanguage }) =>
+        isStaffRole(role) ? [{ id, name, role, revision, identityRevision, preferredLanguage }] : [],
       );
       setStaff(activeStaff);
       setStaffProfileId(activeStaff[0]?.id ?? '');
@@ -86,7 +90,10 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         void convex.query(api.identity.listActiveProfiles, { deviceId: settings.deviceId })
           .then((profiles) => {
             if (!active) return;
-            const remoteStaff = profiles.flatMap(({ id, name, role, revision, identityRevision }) =>
+            const localLanguage = new Map(
+              activeStaff.map((profile) => [profile.id, profile.preferredLanguage]),
+            );
+            const remoteStaff = profiles.flatMap(({ id, name, role, revision, identityRevision, preferredLanguage }) =>
               isStaffRole(role)
                 ? [{
                     id: String(id),
@@ -94,6 +101,8 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
                     role,
                     revision: Number(revision),
                     identityRevision: Number(identityRevision),
+                    preferredLanguage: localLanguage.get(String(id))
+                      ?? (preferredLanguage === 'fr' ? 'fr' as const : 'en' as const),
                   }]
                 : [],
             );
@@ -201,12 +210,13 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     }
   }
 
-  const time = new Intl.DateTimeFormat('en-GB', {
+  const locale = language === 'fr' ? 'fr-FR' : 'en-GB';
+  const time = new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
     hour12: settings.clockFormat === '12-hour',
   }).format(now);
-  const date = new Intl.DateTimeFormat('en-GB', {
+  const date = new Intl.DateTimeFormat(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -215,7 +225,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
 
   return (
     <main className={styles.screen}>
-      <section className={styles.brandSide} aria-label="Olaso terminal">
+      <section className={styles.brandSide} aria-label={t('Olaso terminal')}>
         <img className={styles.backdrop} src={lockBackground} alt="" aria-hidden="true" />
         <span className={styles.backdropWash} aria-hidden="true" />
         <img
@@ -227,18 +237,18 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         />
         <span className={styles.accent} />
         <div className={styles.brandMessage}>
-          <h1>Every sale.<br />Every gram.</h1>
-          <p>Your Olaso terminal is locked and ready for the next shift.</p>
+          <h1>{t('Every sale.')}<br />{t('Every gram.')}</h1>
+          <p>{t('Your Olaso terminal is locked and ready for the next shift.')}</p>
         </div>
         <div className={styles.connection}>
           {online
             ? <Wifi width={14} height={14} aria-hidden="true" />
             : <WifiSlash width={14} height={14} aria-hidden="true" />}
           <span>{available === undefined
-            ? 'Checking connection…'
+            ? t('Checking connection…')
             : online
-              ? 'Terminal online'
-              : 'Terminal offline · local service ready'}</span>
+              ? t('Terminal online')
+              : t('Terminal offline · local service ready')}</span>
         </div>
         <div className={styles.dateTime}>
           <span>{date.toUpperCase()}</span>
@@ -247,10 +257,10 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       </section>
 
       <section className={styles.unlockSide} aria-labelledby="unlock-title">
-        <h2 id="unlock-title">Unlock Olaso</h2>
+        <h2 id="unlock-title">{t('Unlock Olaso')}</h2>
 
         <div className={styles.field}>
-          <span id="lock-staff-label">Staff member</span>
+          <span id="lock-staff-label">{t('Staff member')}</span>
           <LockStaffSelect
             staff={staff}
             value={staffProfileId}
@@ -260,7 +270,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
           />
         </div>
         <label className={styles.field}>
-          <span>PIN</span>
+          <span>{t('PIN')}</span>
           <input value={pin} onChange={(event) => setPin(event.target.value.replace(/\D/g, '').slice(0, 6))} inputMode="numeric" type="password" autoComplete="current-password" disabled={unlocking} />
         </label>
 
@@ -270,9 +280,9 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
           disabled={unlocking}
           onClick={unlock}
         >
-          {unlocking ? 'Unlocking…' : 'Unlock'}
+          {unlocking ? t('Unlocking…') : t('Unlock')}
         </button>
-        {error ? <p className={styles.error} role="alert">{error}</p> : null}
+        {error ? <p className={styles.error} role="alert">{t(error)}</p> : null}
       </section>
     </main>
   );

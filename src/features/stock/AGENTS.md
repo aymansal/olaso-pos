@@ -49,13 +49,19 @@ history.
   Ingredient names sit at the left without an icon; remaining headers,
   including STATUS, sit centered over their values. Selected rows use the
   same green leading mark as Products. Rows show the ingredient name only;
-  the unit group column already names the family. Title-row counts sit
-  beside Add ingredient as Active items, Low stock, Used today, and
-  Corrections. The search field matches the 36-pixel All units / All stock
+  the unit group column already names the family. Used today is this café’s
+  recipe deductions for the current business date only: the larger of this
+  tablet’s saved completed-sale movements by ingredient name and unit, or
+  today’s cloud summary plus still-unsynced local sales. On-hand includes
+  deductions queued on a mapped local duplicate of the same ingredient.
+  Title-row counts are
+  not shown. The search field matches the 36-pixel All units / All stock
   levels outline with 12-pixel type. Edit ingredient is the right card:
-  name and threshold fields, Save and Delete, no archive, no base-unit menu,
-  and no decorative ingredient icons. Add ingredient stays a create overlay
-  whose base-unit menu matches the other 47-pixel fields.
+  Ingredient title aligned with Healthy/Delete, name and threshold fields,
+  stock level, several recent movements, then Adjust count / Receive with
+  padding above Save. It does not show a Stock details or Ingredient
+  information heading, inventory value, linked recipes, or per-sale recipe
+  quantities.
 
 ## Work Guidance
 

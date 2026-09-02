@@ -3,43 +3,65 @@ import { useReportsData } from '../../data/useReportsData';
 import { useCostManagement } from '../../data/useCostManagement';
 import { hasPermission } from '../../data/permissions';
 import { useStaffSession } from '../../data/sessionContext';
-import { localBusinessDate, shiftBusinessDate } from '../../lib/date';
+import {
+  calendarMonthEnd,
+  calendarMonthOf,
+  calendarMonthStart,
+  localBusinessDate,
+} from '../../lib/date';
+import {
+  presetRange,
+  type PeriodPreset,
+} from '../../components/PeriodCalendar/PeriodCalendar';
 import { ReportSummaryPanel } from './components/ReportSummaryPanel/ReportSummaryPanel';
 import { ReportsAnalyticsPanel } from './components/ReportsAnalyticsPanel/ReportsAnalyticsPanel';
 import type { ReportTab } from './reportTypes';
+import { useT } from '../../lib/locale';
 import styles from './ReportsScreen.module.css';
 
 export function ReportsScreen() {
-  const [range, setRange] = useState(() => {
-    const toDate = localBusinessDate();
-    return { fromDate: shiftBusinessDate(toDate, -6), toDate };
-  });
+  const t = useT();
+  const [range, setRange] = useState<{
+    fromDate: string;
+    toDate: string;
+    preset?: PeriodPreset;
+  }>(() => ({ ...presetRange('thisWeek'), preset: 'thisWeek' }));
   const [tab, setTab] = useState<ReportTab>('sales');
-  const [costMonth, setCostMonth] = useState(() => localBusinessDate().slice(0, 7));
   const session = useStaffSession();
+  const today = localBusinessDate();
+  const month = calendarMonthOf(today);
+  const monthRange = {
+    fromDate: calendarMonthStart(month),
+    toDate: calendarMonthEnd(month),
+  };
   const data = useReportsData(range.fromDate, range.toDate);
-  const costs = useCostManagement(costMonth);
+  const monthData = useReportsData(monthRange.fromDate, monthRange.toDate);
+  const costs = useCostManagement(range.toDate.slice(0, 7));
   return (
-    <main className={styles.screen} aria-label="Olaso reports">
+    <main className={styles.screen} aria-label={t('Olaso reports')}>
       <ReportsAnalyticsPanel
         tab={tab}
         onTabChange={setTab}
         fromDate={range.fromDate}
         toDate={range.toDate}
+        preset={range.preset}
         onRangeChange={setRange}
         snapshot={data.snapshot}
+        monthSnapshot={monthData.snapshot}
         isLoading={data.isLoading}
         error={data.error}
         onRetry={data.retry}
         showCosts={hasPermission(session.role, 'expenses')}
-        costMonth={costMonth}
-        onCostMonthChange={setCostMonth}
+        showCompensation={hasPermission(session.role, 'compensation')}
         costManagement={costs}
       />
       <ReportSummaryPanel
+        tab={tab}
         snapshot={data.snapshot}
-        isLoading={data.isLoading}
-        error={data.error}
+        fromDate={range.fromDate}
+        toDate={range.toDate}
+        costManagement={costs}
+        showCompensation={hasPermission(session.role, 'compensation')}
       />
     </main>
   );

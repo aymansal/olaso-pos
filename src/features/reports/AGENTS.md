@@ -9,20 +9,37 @@ performance, ingredient usage, and bounded period controls.
 
 - `ReportsScreen.tsx` composes the summary and analytics panels.
 - `ReportsAnalyticsPanel` owns local Sales, Products, Stock Usage, and
-  role-appropriate Costs tab selection plus native date/period controls.
-- `CostsPanel` owns saved monthly costs and opens the separate expense and
-  compensation dialogs. Managers see expenses and purchase cash; owners also
-  see compensation and profitability.
-- `ReportSummaryPanel`, `ReportsKpiStrip`, `SalesTrendChart`, and
-  `ProductPerformanceTable` own prop-driven analytics regions.
+  role-appropriate Costs tab selection plus the shared period calendar.
+- `CostsPanel` owns adding expenses and monthly pay. Managers see expenses;
+  owners also add compensation. Profit is not shown on this tab.
+- `ReportSummaryPanel` and `SalesTrendChart` own the right-card facts and the
+  current-month chart. The Products right rail is two Dashboard-like cards
+  (categories and products) on the cream surface. Stock usage lists used
+  ingredients once per ingredient, summed. Used-ingredient rows are compact
+  (between the original tall rows and the extra-tight size) and the card
+  scrolls when they overflow. Bars are that ingredient’s period usage
+  against remaining on-hand stock (`used / (used + on-hand)`), never against
+  another ingredient.
+  The chart always shows the current calendar month with thin day bars, no
+  peak photograph, round Y-axis numbers (integer ticks for units and usage),
+  and a daily average divided by days elapsed this month; the period calendar filters the hero and
+  right-card facts. The Sales profit card shows stock value, orders, and
+  average. Costs stay add-only on the left card and use the shared global report
+  period rather than a second month picker. Monthly pay rows can be stopped.
+  Deleting a staff profile ends open wage on the prior day and keeps already-
+  recorded wage history.
 
 ## Local Contracts
 
 - Report metrics and charts read bounded summaries; they must not trigger
   unbounded historical scans.
-- One application data hook requests a one-to-31-day saved-summary range;
-  tabs change presentation locally without another backend call.
-- Export actions remain disabled until a real format and destination are
+- Reports opens on This week (Monday through today). One application data hook
+  requests a one-to-31-day saved-summary range for the selected calendar
+  period; a second bounded read fills the current-month chart. If this tablet
+  has more completed sales in that range than the cloud snapshot, the tablet
+  receipts win so today’s unsynced sales still appear. Changing the calendar
+  does not keep the previous period’s totals on screen.
+- Export stays off the report until a real format and destination are
   approved.
 - Stock-usage and product tabs must share the established report shell rather
   than duplicate it.
@@ -31,11 +48,15 @@ performance, ingredient usage, and bounded period controls.
   tablet receipts and movements and never remain on a cloud loading state.
   Offert drinks still count as units sold; their product and category money is
   0. Daily net uses the charged sale total.
-- Online Reports use Convex saved summaries; still-unsynced tablet sales are
-  not mixed into those totals; `offlineViews` remain the offline tablet-only
-  path.
+  Online Reports use Convex saved summaries, then prefer this tablet’s saved
+  receipts when they contain more completed sales for the selected range.
 - Expense and compensation saves appear immediately from SQLite. Compensation
   and profitability are never rendered for a non-owner role.
+- Monthly wages and monthly expenses are divided across the days of each
+  calendar month and included for the days inside the selected report period.
+  One-time expenses count on their recorded date.
+- Wage and recurring-expense changes use exact effective dates. A correction or
+  stop never recalculates days before that date.
 - Historical ingredient/category reports and worker compensation keep their
   saved names after the corresponding live record is permanently deleted.
 

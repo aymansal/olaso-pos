@@ -1,4 +1,5 @@
 import { Gift, Trash } from '@boxicons/react';
+import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import type { Product } from '../../data/products';
 import { QuantityStepper } from '../QuantityStepper/QuantityStepper';
@@ -25,10 +26,11 @@ export function OrderItemCard({
   onRemove,
   onToggleOffert,
 }: OrderItemCardProps) {
+  const t = useT();
   const chargedCentimes = complimentary ? 0 : product.priceCentimes * quantity;
   const meta = [
     modifierSummary,
-    complimentary ? 'Offert' : '',
+    complimentary ? t('Offert') : '',
     `${formatMoney(product.priceCentimes)} × ${quantity}`,
   ].filter(Boolean).join(' · ');
 
@@ -61,8 +63,8 @@ export function OrderItemCard({
         aria-pressed={complimentary}
         aria-label={
           complimentary
-            ? `Remove Offert from ${product.name}`
-            : `Mark ${product.name} Offert`
+            ? t('Remove Offert from {name}', { name: product.name })
+            : t('Mark {name} Offert', { name: product.name })
         }
         onClick={onToggleOffert}
       >
@@ -71,7 +73,7 @@ export function OrderItemCard({
       <button
         className={styles.remove}
         type="button"
-        aria-label={`Remove ${product.name}`}
+        aria-label={t('Remove {name}', { name: product.name })}
         onClick={onRemove}
       >
         <Trash width={16} height={16} aria-hidden="true" />

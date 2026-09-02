@@ -1,6 +1,7 @@
 import { Plus, X } from '@boxicons/react';
 import { useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import styles from './ModifierSelectionDialog.module.css';
 
@@ -88,6 +89,7 @@ export function ModifierSelectionDialog({
   onClose,
   onAdd,
 }: ModifierSelectionDialogProps) {
+  const t = useT();
   const [sizeId, setSizeId] = useState(() => defaultSizeId(sizes));
   const [selected, setSelected] = useState(() =>
     defaultChoiceIds(defaultSizeId(sizes), sections),
@@ -153,10 +155,10 @@ export function ModifierSelectionDialog({
       >
         <header>
           <span>
-            <small>CUSTOMIZE ORDER</small>
+            <small>{t('CUSTOMIZE ORDER')}</small>
             <h2 id="modifier-selection-title">{productName}</h2>
           </span>
-          <button type="button" onClick={onClose} aria-label="Close selection">
+          <button type="button" onClick={onClose} aria-label={t('Close selection')}>
             <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
@@ -164,8 +166,8 @@ export function ModifierSelectionDialog({
           {sizes.length > 1 ? (
             <fieldset>
               <legend>
-                <strong>Size</strong>
-                <span>Required · pick one</span>
+                <strong>{t('Size')}</strong>
+                <span>{t('Required · pick one')}</span>
               </legend>
               <div className={styles.options}>
                 {sizes.map((candidate) => (
@@ -193,10 +195,10 @@ export function ModifierSelectionDialog({
                   <strong>{section.name}</strong>
                   <span>
                     {section.required || section.min > 0
-                      ? 'Required'
-                      : 'Optional'}
+                      ? t('Required')
+                      : t('Optional')}
                     {' · '}
-                    up to {section.max}
+                    {t('up to {max}', { max: section.max })}
                   </span>
                 </legend>
                 <div className={styles.options}>
@@ -213,7 +215,7 @@ export function ModifierSelectionDialog({
                         <span>{value.name}</span>
                         <strong>
                           {delta === 0
-                            ? 'Included'
+                            ? t('Included')
                             : `+ ${formatMoney(delta)}`}
                         </strong>
                       </label>
@@ -226,7 +228,7 @@ export function ModifierSelectionDialog({
         </div>
         <footer>
           <button type="button" className={styles.cancel} onClick={onClose}>
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
@@ -243,7 +245,7 @@ export function ModifierSelectionDialog({
               })}
           >
             <Plus width={16} height={16} aria-hidden="true" />
-            Add to order · {formatMoney(priceCentimes)}
+            {t('Add to order')} · {formatMoney(priceCentimes)}
           </button>
         </footer>
       </section>

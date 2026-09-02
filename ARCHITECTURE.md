@@ -345,10 +345,12 @@ management record/effect.
 - Archived operational records remain restorable. Permanently deleted records
   disappear from bounded replacement snapshots; local pending deletions remain
   authoritative until their ordered cloud acknowledgement.
-- Product images and the curated category-art gallery are versioned APK assets
-  for the initial release. Categories persist an artwork key and resolve an
-  unknown/missing key to one neutral bundled fallback. Dynamic owner-uploaded
-  images and runtime AI generation are deferred until they are required.
+- Curated category art and fallback product art are versioned APK assets.
+  Owner-selected product photos are reduced before persistence to a bounded
+  96 by 96 JPEG data URL (at most 16,384 characters), stored in SQLite and
+  synchronized as `products.imageJpeg`. A cloud snapshot that omits a photo
+  cannot clear the tablet copy. Categories persist an artwork key and resolve
+  an unknown/missing key to one neutral bundled fallback.
 - Ingredient synchronization includes the current valuation revision needed to
   reproduce offline sale costs. Salary and general-expense data never enter
   the cashier operational cache.
@@ -591,8 +593,8 @@ entry rather than rewriting historical valuation.
 
 - Staff display identity, cashier/manager/owner classification, active state,
   and the required authentication-subject link.
-- Optional integer-centime monthly compensation with effective start month and
-  optional end month.
+- Optional integer-centime monthly compensation with exact effective start and
+  optional end date; month fields remain compatibility/index aids.
 - Compensation changes create a new effective period.
 - Salary fields are returned only through owner-authorized functions and are
   excluded from cashier snapshots and ordinary staff reads.
@@ -603,7 +605,8 @@ production session boundary before ID-02 persists it.
 ### `operatingExpenses`
 
 - Category, description, and integer-centime amount.
-- One-time effective date or monthly recurrence with start and optional end.
+- One-time effective date or monthly recurrence with exact start and optional
+  end date; corrections close the old period rather than rewriting past days.
 - Status, revision, actor, and retry identifier.
 - Optional compensation reference only when needed for traceability; salary
   totals are read from compensation periods and are never duplicated manually.
@@ -1089,6 +1092,11 @@ staff PIN
   profile's protected offline record. Every reconnect validates the active
   session before outbox work; an invalid session locks the app through a
   structured result rather than a logged server exception.
+- **Profile language:** the profile's SQLite language is the tablet source of
+  truth and is pushed before a reconnect pulls the bounded cloud directory.
+  Cloud acknowledgement of an offline-created profile preserves that saved
+  language instead of resetting it to English. Lock/restart and install-over
+  update keep the local value; a later reinstall can restore the cloud value.
 - **Offline:** after an online sign-in, or immediately after owner-authorized
   local creation, the tablet can verify a registered staff PIN and continue a
   local session indefinitely while offline. Local creation saves only the
@@ -1099,6 +1107,9 @@ staff PIN
   The next successful synchronization also applies archived/revoked identities
   and invalidates their protected local material. This is an explicit
   availability choice: an offline tablet cannot learn a new revocation.
+  If an active cloud profile temporarily lacks a usable credential record, a
+  matching protected local verifier may still authenticate it; a profile with
+  no protected verifier remains locked and requires authorized provisioning.
 - **Protected logging:** Capacitor native and redirected JavaScript logging is
   disabled in every build. The generic plugin bridge carries protected session
   and verifier values, so debug plugin-call logging is not an acceptable QA
@@ -1211,9 +1222,16 @@ Rules:
   state. Reprint is enabled only when the immutable local sale row exists, calls
   the same `printReceipt` boundary with current settings, and updates only
   attempt state/diagnostics.
-- The receipt language follows the selected French or English staff language;
-  unsupported-script bitmap rendering remains deferred until another language
-  is required.
+- Orders may decorate immutable historical lines with the current saved product
+  photo when that product still exists, falling back to the normal icon. The
+  sale name, price, size, choices, quantities, and money remain immutable.
+- The owner-only Header report builds one bounded current-day model from saved
+  SQLite sales, corrections, costs, stock, and sync/print state, then uses the
+  same CP858 row encoder and LAN transport as receipts. It never requires a
+  cloud round trip and uses the tablet-wide receipt language.
+- The receipt language is a tablet-wide owner setting, independent of each
+  staff profile's application language; unsupported-script bitmap rendering
+  remains deferred until another language is required.
 - The production transport is Ethernet/LAN through the router. USB remains a
   standalone desktop laboratory path and Android USB/Bluetooth transports are
   not implemented.
@@ -1409,6 +1427,9 @@ The smallest runnable tests must cover:
 - Finance failures do not block independent sales; catalog/inventory parents
   still block only dependent sales.
 - A missing protected cloud-test PIN stops before any development reseed.
+- A development seed reset is refused unless the deployment explicitly carries
+  the disposable-reset acknowledgement. Even then it preserves staff profile
+  IDs so identities and PIN credentials cannot be orphaned.
 - Offline initial PIN setup leaves no raw PIN in SQLite/outbox/logs and permits
   the new profile to sign in locally before later protected provisioning.
 - Recipe edits do not change historical sale snapshots.

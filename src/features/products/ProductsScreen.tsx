@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useProductManagement } from '../../data/useProductManagement';
+import { useT } from '../../lib/locale';
 import { CategoryDialog } from './components/CategoryDialog/CategoryDialog';
 import { ProductCatalogPanel } from './components/ProductCatalogPanel/ProductCatalogPanel';
 import { ProductDialog } from './components/ProductDialog/ProductDialog';
@@ -24,6 +25,7 @@ function productInCategory(product: ManagedProduct, categoryId: string) {
 }
 
 export function ProductsScreen() {
+  const t = useT();
   const [selectedCategoryId, setSelectedCategoryId] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState<string>();
   const [search, setSearch] = useState('');
@@ -125,21 +127,6 @@ export function ProductsScreen() {
     if (categoryEditor === 'new') setSelectedProductId(undefined);
   }
 
-  async function setCategoryArchived() {
-    if (!selectedCategory) return;
-    try {
-      await management.setCategoryArchived(
-        selectedCategory.id,
-        selectedCategory.status !== 'archived',
-        selectedCategory.revision,
-      );
-    } catch (caught) {
-      window.alert(
-        caught instanceof Error ? caught.message : 'Category status failed.',
-      );
-    }
-  }
-
   async function saveProduct(input: ProductSaveInput) {
     const result = await management.saveProduct(input);
     setSelectedProductId(result.id);
@@ -147,7 +134,7 @@ export function ProductsScreen() {
   }
 
   return (
-    <main className={styles.screen} aria-label="Olaso products">
+    <main className={styles.screen} aria-label={t('Olaso products')}>
       <ProductCatalogPanel
         categories={visibleCategories}
         uncategorizedCount={management.products.filter((product) => !product.categoryId).length}
@@ -178,18 +165,19 @@ export function ProductsScreen() {
         onRenameCategory={() =>
           selectedCategory && setCategoryEditor(selectedCategory)
         }
-        onSetCategoryArchived={setCategoryArchived}
         onDeleteCategory={async () => {
           if (!selectedCategory || !window.confirm(
-            `Delete ${selectedCategory.name}? Its products will remain uncategorized.`,
+            t('Delete {name}? Its products will remain uncategorized.', {
+              name: selectedCategory.name,
+            }),
           )) return;
           try {
             await management.deleteCategory(selectedCategory);
             setSelectedCategoryId('all');
           } catch (caught) {
             window.alert(caught instanceof Error
-              ? caught.message
-              : 'Category could not be deleted.');
+              ? t(caught.message)
+              : t('Category could not be deleted.'));
           }
         }}
         onAddProduct={() => setProductEditor('new')}

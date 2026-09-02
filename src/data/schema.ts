@@ -894,6 +894,33 @@ export const localMigrations = [
       `ALTER TABLE products ADD COLUMN image_jpeg TEXT`,
     ],
   },
+  {
+    toVersion: 23,
+    statements: [
+      `ALTER TABLE staff_profiles
+        ADD COLUMN preferred_language TEXT NOT NULL DEFAULT 'en'`,
+    ],
+  },
+  {
+    toVersion: 24,
+    statements: [
+      `ALTER TABLE compensation_periods ADD COLUMN effective_start_date TEXT`,
+      `ALTER TABLE compensation_periods ADD COLUMN effective_end_date TEXT`,
+      `UPDATE compensation_periods
+       SET effective_start_date = effective_start_month || '-01',
+           effective_end_date = CASE WHEN effective_end_month IS NULL THEN NULL
+             ELSE date(effective_end_month || '-01', '+1 month', '-1 day') END`,
+      `ALTER TABLE operating_expenses ADD COLUMN effective_start_date TEXT`,
+      `ALTER TABLE operating_expenses ADD COLUMN effective_end_date TEXT`,
+      `UPDATE operating_expenses
+       SET effective_start_date = CASE WHEN recurrence = 'monthly'
+             THEN effective_start_month || '-01' ELSE NULL END,
+           effective_end_date = CASE
+             WHEN recurrence = 'monthly' AND effective_end_month IS NOT NULL
+               THEN date(effective_end_month || '-01', '+1 month', '-1 day')
+             ELSE NULL END`,
+    ],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

@@ -7,6 +7,7 @@ import {
   unitGroupLabel,
 } from '../../stockPresentation';
 import { visiblePageIndexes } from '../../../../lib/pagination';
+import { useT } from '../../../../lib/locale';
 import styles from './StockTable.module.css';
 
 const columns = [
@@ -41,6 +42,7 @@ export function StockTable({
   onSelect,
   onPageChange,
 }: StockTableProps) {
+  const t = useT();
   const selectedIndex = ingredients.findIndex(
     (ingredient) => ingredient.id === selectedIngredientId,
   );
@@ -48,22 +50,22 @@ export function StockTable({
   return (
     <section className={styles.table} aria-labelledby="inventory-table-title">
       <header className={styles.header}>
-        <h2 id="inventory-table-title">Inventory</h2>
-        <small>Updated after every saved movement</small>
+        <h2 id="inventory-table-title">{t('Inventory')}</h2>
+        <small>{t('Updated after every saved movement')}</small>
       </header>
 
       <div className={styles.columns} aria-hidden="true">
-        {columns.map((column) => <span key={column}>{column}</span>)}
+        {columns.map((column) => <span key={column}>{t(column)}</span>)}
       </div>
 
       <div
         className={styles.rows}
         style={{ '--index': Math.max(0, selectedIndex) } as CSSProperties}
       >
-        {isLoading ? <p className={styles.state}>Loading live stock…</p> : null}
-        {error ? <p className={styles.state}>{error}</p> : null}
+        {isLoading ? <p className={styles.state}>{t('Loading live stock…')}</p> : null}
+        {error ? <p className={styles.state}>{t(error)}</p> : null}
         {!isLoading && !error && ingredients.length === 0 ? (
-          <p className={styles.state}>No ingredients match these filters.</p>
+          <p className={styles.state}>{t('No ingredients match these filters.')}</p>
         ) : null}
         {!isLoading && !error && selectedIndex >= 0 ? (
           <span className={styles.indicator} aria-hidden="true" />
@@ -84,7 +86,7 @@ export function StockTable({
                     <strong>{ingredient.name}</strong>
                   </span>
                   <span className={styles.cell}>
-                    {unitGroupLabel(ingredient.baseUnit)}
+                    {t(unitGroupLabel(ingredient.baseUnit))}
                   </span>
                   <strong
                     className={`${styles.cell} ${level === 'Low' ? styles.lowValue : ''}`}
@@ -111,7 +113,7 @@ export function StockTable({
                       className={`${styles.status} ${styles[level.toLowerCase()]}`}
                     >
                       <span aria-hidden="true" />
-                      {level}
+                      {t(level)}
                     </strong>
                   </span>
                 </button>
@@ -122,13 +124,20 @@ export function StockTable({
 
       <footer className={styles.footer}>
         <span>
-          Showing {ingredients.length} of {totalItems} live record
-          {totalItems === 1 ? '' : 's'}
+          {totalItems === 1
+            ? t('Showing {shown} of {total} live record', {
+                shown: ingredients.length,
+                total: totalItems,
+              })
+            : t('Showing {shown} of {total} live records', {
+                shown: ingredients.length,
+                total: totalItems,
+              })}
         </span>
-        <nav className={styles.pagination} aria-label="Stock pagination">
+        <nav className={styles.pagination} aria-label={t('Stock pagination')}>
           <button
             type="button"
-            aria-label="Previous stock page"
+            aria-label={t('Previous stock page')}
             disabled={isLoading || page <= 0}
             onClick={() => onPageChange(page - 1)}
             key="prev"
@@ -142,7 +151,7 @@ export function StockTable({
               type="button"
               className={index === page ? styles.current : undefined}
               aria-current={index === page ? 'page' : undefined}
-              aria-label={`Page ${index + 1}`}
+              aria-label={t('Page {page}', { page: index + 1 })}
               onClick={() => onPageChange(index)}
               key={index}
             >
@@ -151,7 +160,7 @@ export function StockTable({
           ))}
           <button
             type="button"
-            aria-label="Next stock page"
+            aria-label={t('Next stock page')}
             disabled={isLoading || page >= pageCount - 1}
             onClick={() => onPageChange(page + 1)}
             key="next"

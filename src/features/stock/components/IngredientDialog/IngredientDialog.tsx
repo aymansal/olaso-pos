@@ -7,6 +7,7 @@ import type {
   StockBaseUnit,
 } from '../../stockManagementTypes';
 import { baseUnitLabel } from '../../stockPresentation';
+import { useT } from '../../../../lib/locale';
 import styles from './IngredientDialog.module.css';
 
 interface IngredientDialogProps {
@@ -22,6 +23,7 @@ const units: StockBaseUnit[] = [
 ];
 
 export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
+  const t = useT();
   const [name, setName] = useState('');
   const [baseUnit, setBaseUnit] = useState<StockBaseUnit>('gram');
   const [threshold, setThreshold] = useState('');
@@ -77,21 +79,21 @@ export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
       >
         <header>
           <span>
-            <small>STOCK RECORD</small>
-            <h2 id="ingredient-dialog-title">Add ingredient</h2>
+            <small>{t('STOCK RECORD')}</small>
+            <h2 id="ingredient-dialog-title">{t('Add ingredient')}</h2>
           </span>
-          <button type="button" onClick={onClose} aria-label="Close ingredient editor">
+          <button type="button" onClick={onClose} aria-label={t('Close ingredient editor')}>
             <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
 
         <div className={styles.fields}>
           <label>
-            <span>Ingredient name</span>
+            <span>{t('Ingredient name')}</span>
             <input value={name} onChange={(event) => setName(event.target.value)} />
           </label>
           <label>
-            <span>Base unit</span>
+            <span>{t('Base unit')}</span>
             <MenuSelect
               className={styles.unitMenu}
               ariaLabel="Base unit"
@@ -104,7 +106,7 @@ export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
             />
           </label>
           <label>
-            <span>Low-stock threshold</span>
+            <span>{t('Low-stock threshold')}</span>
             <input
               type="number"
               min="0"
@@ -115,7 +117,7 @@ export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
             />
           </label>
           <label>
-            <span>Opening quantity</span>
+            <span>{t('Opening quantity')}</span>
             <input
               type="number"
               min="0"
@@ -126,7 +128,7 @@ export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
             />
           </label>
           <label>
-            <span>Price paid · MAD</span>
+            <span>{t('Price paid')} · {t('MAD')}</span>
             <input
               type="number"
               min="0.01"
@@ -140,12 +142,11 @@ export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
         </div>
 
         <p className={styles.helper}>
-          Quantities stay as whole {baseUnitLabel(baseUnit).toLowerCase()}.
-          If the shelf already has stock, enter quantity and what you paid.
-          Leave quantity at 0 when the shelf is empty. Base units cannot change
-          after creation.
+          {t('Quantities stay as whole {unit}. If the shelf already has stock, enter quantity and what you paid. Leave quantity at 0 when the shelf is empty. Base units cannot change after creation.', {
+            unit: t(baseUnitLabel(baseUnit)).toLowerCase(),
+          })}
         </p>
-        {error ? <p className={styles.error}>{error}</p> : null}
+        {error ? <p className={styles.error}>{t(error)}</p> : null}
 
         <footer>
           <span />
@@ -156,7 +157,7 @@ export function IngredientDialog({ onClose, onSave }: IngredientDialogProps) {
             disabled={saving || !name.trim() || invalidNumber}
           >
             <Save width={16} height={16} aria-hidden="true" />
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? t('Saving…') : t('Save')}
           </button>
         </footer>
       </section>

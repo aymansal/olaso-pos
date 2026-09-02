@@ -1,11 +1,16 @@
 import { Calendar, ChevronDown, ChartLine, Package, Layers, Wallet } from '@boxicons/react';
 import { useState, type CSSProperties } from 'react';
+import {
+  PeriodCalendar,
+  type PeriodPreset,
+} from '../../../../components/PeriodCalendar/PeriodCalendar';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import type { useCostManagement } from '../../../../data/useCostManagement';
-import { shiftBusinessDate } from '../../../../lib/date';
+import { formatPeriodLabel } from '../../../../lib/date';
+import { formatMoney } from '../../../../lib/money';
+import { useT } from '../../../../lib/locale';
+import { buildPeriodProfit } from '../../reportProfit';
 import type { ReportTab } from '../../reportTypes';
-import { ProductPerformanceTable } from '../ProductPerformanceTable/ProductPerformanceTable';
-import { ReportsKpiStrip } from '../ReportsKpiStrip/ReportsKpiStrip';
 import { SalesTrendChart } from '../SalesTrendChart/SalesTrendChart';
 import { CostsPanel } from '../CostsPanel/CostsPanel';
 import styles from './ReportsAnalyticsPanel.module.css';
@@ -17,146 +22,110 @@ const reportTabs = [
   { value: 'costs', label: 'Costs', icon: Wallet },
 ] as const;
 
-function dateRangeLabel(fromDate: string, toDate: string) {
-  const from = new Date(`${fromDate}T12:00:00`);
-  const to = new Date(`${toDate}T12:00:00`);
-  return `${from.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-  })} – ${to.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })}`;
-}
-
 export function ReportsAnalyticsPanel({
   tab,
   onTabChange,
   fromDate,
   toDate,
+  preset,
   onRangeChange,
   snapshot,
+  monthSnapshot,
   isLoading,
   error,
   onRetry,
   showCosts,
-  costMonth,
-  onCostMonthChange,
+  showCompensation,
   costManagement,
 }: {
   tab: ReportTab;
   onTabChange: (tab: ReportTab) => void;
   fromDate: string;
   toDate: string;
-  onRangeChange: (range: { fromDate: string; toDate: string }) => void;
+  preset?: PeriodPreset;
+  onRangeChange: (range: { fromDate: string; toDate: string; preset?: PeriodPreset }) => void;
   snapshot?: ReportsSnapshot;
+  monthSnapshot?: ReportsSnapshot;
   isLoading: boolean;
   error: string;
   onRetry: () => void;
   showCosts: boolean;
-  costMonth: string;
-  onCostMonthChange: (month: string) => void;
+  showCompensation: boolean;
   costManagement: ReturnType<typeof useCostManagement>;
 }) {
-  const [dateOpen, setDateOpen] = useState(false);
-  const [draftFrom, setDraftFrom] = useState(fromDate);
-  const [draftTo, setDraftTo] = useState(toDate);
-  const draftDays =
-    Math.floor(
-      (
-        Date.parse(`${draftTo}T00:00:00.000Z`)
-        - Date.parse(`${draftFrom}T00:00:00.000Z`)
-      ) / 86_400_000,
-    ) + 1;
-  const validDraft = draftDays >= 1 && draftDays <= 31;
+  const t = useT();
+  const [dateAnchor, setDateAnchor] = useState<DOMRect>();
   const visibleTabs = reportTabs.filter((item) => item.value !== 'costs' || showCosts);
   const tabIndex = Math.max(0, visibleTabs.findIndex((item) => item.value === tab));
-
-  function setQuickPeriod(days: number) {
-    const next = {
-      fromDate: shiftBusinessDate(toDate, 1 - days),
-      toDate,
-    };
-    setDraftFrom(next.fromDate);
-    setDraftTo(next.toDate);
-    onRangeChange(next);
-    setDateOpen(false);
-  }
+  const profit = buildPeriodProfit(
+    snapshot,
+    costManagement.saved,
+    fromDate,
+    toDate,
+    showCompensation,
+  );
+  const current = snapshot?.current;
+  const heroLabel = tab === 'sales'
+    ? 'SALES'
+    : tab === 'products'
+      ? 'UNITS SOLD'
+      : 'INGREDIENT TYPES USED';
+  const heroValue = tab === 'sales'
+    ? formatMoney(profit.revenueCentimes)
+    : tab === 'products'
+      ? String(current?.itemCount ?? 0)
+      : String(current?.ingredientTotals.length ?? 0);
 
   return (
     <section className={styles.panel} aria-labelledby="reports-title">
       <header className={styles.header}>
         <span className={styles.heading}>
-          <h1 id="reports-title">Reports</h1>
-          <small>Historical sales, products and stock performance</small>
+          <h1 id="reports-title">{t('Reports')}</h1>
+          <small>{t('Sales, products, stock, and costs')}</small>
         </span>
         <button
           className={styles.dateRange}
           type="button"
-          aria-expanded={dateOpen}
-          onClick={() => {
-            setDraftFrom(fromDate);
-            setDraftTo(toDate);
-            setDateOpen((open) => !open);
+          aria-expanded={Boolean(dateAnchor)}
+          onClick={(event) => {
+            if (dateAnchor) {
+              setDateAnchor(undefined);
+              return;
+            }
+            setDateAnchor(event.currentTarget.getBoundingClientRect());
           }}
         >
           <Calendar width={15} height={15} aria-hidden="true" />
-          <span>{dateRangeLabel(fromDate, toDate)}</span>
+          <span>{formatPeriodLabel(fromDate, toDate)}</span>
           <ChevronDown width={12} height={12} aria-hidden="true" />
         </button>
       </header>
 
-      {dateOpen ? (
-        <div className={styles.dateMenu} aria-label="Report period">
-          <span className={styles.quickPeriods}>
-            <button type="button" onClick={() => setQuickPeriod(7)}>
-              7 days
-            </button>
-            <button type="button" onClick={() => setQuickPeriod(30)}>
-              30 days
-            </button>
-          </span>
-          <label>
-            <span>From</span>
-            <input
-              type="date"
-              value={draftFrom}
-              max={draftTo}
-              onChange={(event) => setDraftFrom(event.target.value)}
-            />
-          </label>
-          <label>
-            <span>To</span>
-            <input
-              type="date"
-              value={draftTo}
-              min={draftFrom}
-              onChange={(event) => setDraftTo(event.target.value)}
-            />
-          </label>
-          <button
-            type="button"
-            className={styles.applyPeriod}
-            disabled={!validDraft}
-            title={validDraft ? undefined : 'Choose a period of 1 to 31 days'}
-            onClick={() => {
-              onRangeChange({
-                fromDate: draftFrom,
-                toDate: draftTo,
-              });
-              setDateOpen(false);
-            }}
-          >
-            Apply
-          </button>
-        </div>
+      {dateAnchor ? (
+        <PeriodCalendar
+          mode="range"
+          fromDate={fromDate}
+          toDate={toDate}
+          activePreset={preset}
+          anchor={dateAnchor}
+          presets={[
+            'today',
+            'yesterday',
+            'thisWeek',
+            'lastWeek',
+            'thisMonth',
+            'lastMonth',
+            'all',
+          ]}
+          onChange={(range, nextPreset) => onRangeChange({ ...range, preset: nextPreset })}
+          onClose={() => setDateAnchor(undefined)}
+        />
       ) : null}
 
       <nav
         className={styles.tabs}
         style={{ '--count': visibleTabs.length, '--index': tabIndex } as CSSProperties}
-        aria-label="Report type"
+        aria-label={t('Report type')}
       >
         <span className={styles.indicator} aria-hidden="true" />
         {visibleTabs.map(({ value, label, icon: Icon }) => {
@@ -170,28 +139,28 @@ export function ReportsAnalyticsPanel({
             key={label}
           >
             <Icon width={14} height={14} aria-hidden="true" />
-            <span>{label}</span>
+            <span>{t(label)}</span>
           </button>
         )})}
       </nav>
 
       {tab === 'costs' ? (
         <CostsPanel
-          month={costMonth}
-          onMonthChange={onCostMonthChange}
           management={costManagement}
+          showCompensation={showCompensation}
         />
       ) : (
         <>
-          <ReportsKpiStrip
-            tab={tab}
-            snapshot={snapshot}
-            isLoading={isLoading}
-            error={error}
-            onRetry={onRetry}
-          />
-          <SalesTrendChart tab={tab} snapshot={snapshot} />
-          <ProductPerformanceTable tab={tab} snapshot={snapshot} />
+          <section className={styles.hero} aria-label={t('Period total')}>
+            <small>{t(heroLabel)}</small>
+            <strong>
+              {isLoading ? t('Loading…') : error ? t('Unavailable') : heroValue}
+            </strong>
+            {error ? (
+              <button type="button" onClick={onRetry}>{t('Retry')}</button>
+            ) : null}
+          </section>
+          <SalesTrendChart tab={tab} snapshot={monthSnapshot ?? snapshot} fillMonth />
         </>
       )}
     </section>

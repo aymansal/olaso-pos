@@ -56,6 +56,7 @@ const modifierSnapshot = v.object({
   priceDeltaCentimes: v.number(),
 });
 const receiptLine = v.object({
+  productId: v.optional(v.id('products')),
   productName: v.string(),
   quantity: v.number(),
   unitPriceCentimes: v.number(),
@@ -332,6 +333,7 @@ export default defineSchema({
       paymentMethod: v.string(),
       receiptLanguage: v.optional(v.union(v.literal('en'), v.literal('fr'))),
       tenders: v.optional(v.array(v.object({
+        paymentMethod: v.optional(v.union(v.literal('Cash'), v.literal('Card'))),
         dueCentimes: v.number(),
         amountCentimes: v.number(),
         changeCentimes: v.number(),
@@ -431,6 +433,7 @@ export default defineSchema({
     updatedAt: v.number(),
     updatedBy: v.optional(v.string()),
     lastMutationId: v.optional(v.string()),
+    preferredLanguage: v.optional(v.union(v.literal('en'), v.literal('fr'))),
   })
     .index('by_status_name', ['status', 'name'])
     .index('by_updated_at', ['updatedAt'])
@@ -472,6 +475,8 @@ export default defineSchema({
     monthlyAmountCentimes: v.number(),
     effectiveStartMonth: v.string(),
     effectiveEndMonth: v.optional(v.string()),
+    effectiveStartDate: v.optional(v.string()),
+    effectiveEndDate: v.optional(v.string()),
     revision: v.number(),
     createdAt: v.number(),
     updatedBy: v.optional(v.string()),
@@ -488,6 +493,8 @@ export default defineSchema({
     effectiveDate: v.optional(v.string()),
     effectiveStartMonth: v.optional(v.string()),
     effectiveEndMonth: v.optional(v.string()),
+    effectiveStartDate: v.optional(v.string()),
+    effectiveEndDate: v.optional(v.string()),
     status: activeStatus,
     transactionType: expenseTransactionType,
     correctionOfExpenseId: v.optional(v.id('operatingExpenses')),

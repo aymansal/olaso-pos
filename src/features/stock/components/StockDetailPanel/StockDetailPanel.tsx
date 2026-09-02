@@ -7,12 +7,11 @@ import type {
   StockAdjustmentMode,
 } from '../../stockManagementTypes';
 import {
-  baseUnitLabel,
   formatStockQuantity,
   ingredientLevel,
   movementLabel,
 } from '../../stockPresentation';
-import { formatMoney } from '../../../../lib/money';
+import { useT } from '../../../../lib/locale';
 import styles from './StockDetailPanel.module.css';
 
 interface StockDetailPanelProps {
@@ -46,6 +45,7 @@ export function StockDetailPanel({
   onAdjust,
   onReceivePurchase,
 }: StockDetailPanelProps) {
+  const t = useT();
   const [name, setName] = useState('');
   const [threshold, setThreshold] = useState('');
   const [saving, setSaving] = useState(false);
@@ -65,8 +65,8 @@ export function StockDetailPanel({
     return (
       <aside className={styles.panel} aria-labelledby="stock-item-title">
         <div className={styles.empty}>
-          <h2 id="stock-item-title">Select an ingredient</h2>
-          <p>Choose a live stock record to review its balance and movements.</p>
+          <h2 id="stock-item-title">{t('Select an ingredient')}</h2>
+          <p>{t('Choose a live stock record to review its balance and movements.')}</p>
         </div>
       </aside>
     );
@@ -76,11 +76,7 @@ export function StockDetailPanel({
   const level = ingredientLevel(current);
   const difference =
     ingredient.currentStockQuantity - ingredient.lowStockThreshold;
-  const recentMovements = detail?.movements.slice(0, 2) ?? [];
-  const linkedRecipes = detail?.linkedRecipes.slice(0, 3) ?? [];
-  const inventoryValue = ingredient.inventoryValueCentimes;
-  const averageCost = inventoryValue === undefined || ingredient.currentStockQuantity === 0
-    ? undefined : Math.round(inventoryValue / ingredient.currentStockQuantity);
+  const recentMovements = detail?.movements.slice(0, 7) ?? [];
   const invalidThreshold =
     !Number.isSafeInteger(Number(threshold)) || Number(threshold) < 0;
 
@@ -106,14 +102,11 @@ export function StockDetailPanel({
   return (
     <aside className={styles.panel} aria-labelledby="stock-item-title">
       <header className={styles.header}>
-        <span className={styles.heading}>
-          <small>STOCK DETAILS</small>
-          <h2 id="stock-item-title">Edit ingredient</h2>
-        </span>
+        <h2 id="stock-item-title">{t('Ingredient')}</h2>
         <span className={styles.headerActions}>
           <strong className={`${styles.stockStatus} ${styles[level.toLowerCase()]}`}>
             <span aria-hidden="true" />
-            {level}
+            {t(level)}
           </strong>
           <button
             type="button"
@@ -121,7 +114,9 @@ export function StockDetailPanel({
             disabled={saving}
             onClick={async () => {
               if (!window.confirm(
-                `Delete ${ingredient.name}? Drinks using it will need updating.`,
+                t('Delete {name}? Drinks using it will need updating.', {
+                  name: ingredient.name,
+                }),
               )) return;
               setSaving(true);
               setMessage('');
@@ -136,41 +131,20 @@ export function StockDetailPanel({
               }
             }}
           >
-            Delete
+            {t('Delete')}
           </button>
         </span>
       </header>
 
-      <div className={styles.identity}>
-        <span className={styles.identityCopy}>
-          <strong>{name || ingredient.name}</strong>
-          <small>
-            {ingredient.key.toUpperCase()} · {baseUnitLabel(ingredient.baseUnit)}
-          </small>
-        </span>
-        <span className={styles.onHand}>
-          <strong>
-            {formatStockQuantity(
-              ingredient.currentStockQuantity,
-              ingredient.baseUnit,
-            )}
-          </strong>
-          <small>On hand</small>
-        </span>
-      </div>
-
-      <span className={`${styles.divider} ${styles.identityDivider}`} aria-hidden="true" />
-      <h3 className={styles.infoTitle}>Ingredient information</h3>
-
       <label className={`${styles.field} ${styles.nameField}`}>
-        <span>Ingredient name</span>
+        <span>{t('Ingredient name')}</span>
         <input
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
       </label>
       <label className={`${styles.field} ${styles.thresholdField}`}>
-        <span>Low-stock threshold</span>
+        <span>{t('Low-stock threshold')}</span>
         <input
           type="number"
           min="0"
@@ -185,13 +159,13 @@ export function StockDetailPanel({
 
       <section className={styles.levelSection} aria-labelledby="stock-level-title">
         <header className={styles.levelHeader}>
-          <h3 id="stock-level-title">Stock level</h3>
-          <small>Exact saved balance</small>
+          <h3 id="stock-level-title">{t('Stock level')}</h3>
+          <small>{t('Exact saved balance')}</small>
         </header>
         <div className={styles.levelStrip}>
           {[
             {
-              label: 'ON HAND',
+              label: t('ON HAND'),
               value: formatStockQuantity(
                 ingredient.currentStockQuantity,
                 ingredient.baseUnit,
@@ -199,7 +173,7 @@ export function StockDetailPanel({
               tone: level === 'Low' ? 'low' : 'default',
             },
             {
-              label: 'MINIMUM',
+              label: t('MINIMUM'),
               value: formatStockQuantity(
                 ingredient.lowStockThreshold,
                 ingredient.baseUnit,
@@ -207,7 +181,7 @@ export function StockDetailPanel({
               tone: 'default',
             },
             {
-              label: 'DIFFERENCE',
+              label: t('DIFFERENCE'),
               value: formatStockQuantity(difference, ingredient.baseUnit),
               tone: difference >= 0 ? 'green' : 'low',
             },
@@ -219,57 +193,28 @@ export function StockDetailPanel({
             </span>
           ))}
         </div>
-        <p className={styles.costSummary}>
-          {ingredient.costStatus === 'complete' && inventoryValue !== undefined
-            ? `Inventory value ${formatMoney(inventoryValue)} · average ${formatMoney(averageCost ?? 0)} / ${formatStockQuantity(1, ingredient.baseUnit)}`
-            : 'Cost incomplete — receive a priced package before claiming inventory value.'}
-        </p>
-      </section>
-
-      <section className={styles.recipes} aria-labelledby="linked-recipes-title">
-        <header className={styles.sectionHeader}>
-          <h3 id="linked-recipes-title">Linked recipes</h3>
-          <small>
-            {detail?.linkedRecipes.length ?? 0} product
-            {(detail?.linkedRecipes.length ?? 0) === 1 ? '' : 's'}
-          </small>
-        </header>
-        <div className={styles.recipeList}>
-          {isLoading ? <p className={styles.state}>Loading recipe links…</p> : null}
-          {!isLoading && linkedRecipes.length === 0 ? (
-            <p className={styles.state}>No active recipes use this ingredient.</p>
-          ) : null}
-          {linkedRecipes.map((recipe) => (
-            <article className={styles.recipe} key={recipe.productId}>
-              <strong>{recipe.productName}</strong>
-              <small>
-                {formatStockQuantity(recipe.quantity, ingredient.baseUnit)} / sale
-              </small>
-            </article>
-          ))}
-        </div>
       </section>
 
       <section className={styles.movements} aria-labelledby="recent-movements-title">
         <header className={styles.sectionHeader}>
-          <h3 id="recent-movements-title">Recent movements</h3>
+          <h3 id="recent-movements-title">{t('Recent movements')}</h3>
           <button
             type="button"
             disabled={!detail?.movements.length}
             onClick={() => setShowHistory(true)}
           >
-            View all
+            {t('View all')}
           </button>
         </header>
         <div className={styles.movementList}>
-          {isLoading ? <p className={styles.state}>Loading movements…</p> : null}
+          {isLoading ? <p className={styles.state}>{t('Loading movements…')}</p> : null}
           {!isLoading && recentMovements.length === 0 ? (
-            <p className={styles.state}>No movements recorded.</p>
+            <p className={styles.state}>{t('No movements recorded.')}</p>
           ) : null}
           {recentMovements.map((movement) => (
             <article className={styles.movement} key={movement.id}>
               <span>
-                <strong>{movementLabel(movement.movementType)}</strong>
+                <strong>{t(movementLabel(movement.movementType))}</strong>
                 <small>{movementTime(movement.createdAt)}</small>
               </span>
               <strong
@@ -293,7 +238,7 @@ export function StockDetailPanel({
           type="button"
           onClick={() => onAdjust(ingredient, 'set-count')}
         >
-          Adjust count
+          {t('Adjust count')}
         </button>
         <button
           className={styles.receive}
@@ -301,11 +246,11 @@ export function StockDetailPanel({
           onClick={() => onReceivePurchase(ingredient)}
         >
           <ArrowDown width={15} height={15} aria-hidden="true" />
-          Receive
+          {t('Receive')}
         </button>
       </footer>
 
-      {message ? <p className={styles.notice}>{message}</p> : null}
+      {message ? <p className={styles.notice}>{t(message)}</p> : null}
       <button
         type="button"
         className={styles.save}
@@ -313,7 +258,7 @@ export function StockDetailPanel({
         disabled={saving || !name.trim() || invalidThreshold}
       >
         <Save width={16} height={16} aria-hidden="true" />
-        <span>{saving ? 'Saving…' : 'Save changes'}</span>
+        <span>{saving ? t('Saving…') : t('Save changes')}</span>
       </button>
 
       {showHistory && detail ? (
@@ -325,13 +270,13 @@ export function StockDetailPanel({
         >
           <header>
             <span>
-              <small>APPEND-ONLY RECORD</small>
-              <h3 id="movement-history-title">Movement history</h3>
+              <small>{t('APPEND-ONLY RECORD')}</small>
+              <h3 id="movement-history-title">{t('Movement history')}</h3>
             </span>
             <button
               type="button"
               onClick={() => setShowHistory(false)}
-              aria-label="Close movement history"
+              aria-label={t('Close movement history')}
             >
               <X width={17} height={17} aria-hidden="true" />
             </button>
@@ -340,9 +285,9 @@ export function StockDetailPanel({
             {detail.movements.map((movement) => (
               <article key={movement.id}>
                 <span>
-                  <strong>{movementLabel(movement.movementType)}</strong>
+                  <strong>{t(movementLabel(movement.movementType))}</strong>
                   <small>
-                    {movement.reason} · {movement.actorLabel ?? 'Unknown actor'} ·{' '}
+                    {movement.reason} · {movement.actorLabel ?? t('Unknown actor')} ·{' '}
                     {movementTime(movement.createdAt)}
                   </small>
                 </span>

@@ -5,7 +5,9 @@ import { localMigrations } from '../src/data/schema.ts';
 import { serializeLocalTransaction } from '../src/data/localDatabase.ts';
 import {
   describeSyncFailure,
+  formatPrinterEndpoint,
   loadTerminalSettingsFromDatabase,
+  parsePrinterEndpoint,
   savePrinterPreferencesToDatabase,
   saveTerminalPreferencesToDatabase,
   setTerminalLockedInDatabase,
@@ -55,13 +57,14 @@ assert.equal(initial.deviceId, 'device-settings-check');
 assert.equal(initial.terminalName, 'Olaso POS');
 assert.equal(initial.clockFormat, '24-hour');
 assert.equal(initial.receiptLanguage, 'en');
+assert.equal(initial.applicationLanguage, 'en');
 assert.equal(initial.isLocked, false);
 assert.equal(initial.printerHost, '');
 assert.equal(initial.printerPort, 9100);
 
 await saveTerminalPreferencesToDatabase(
   adapter,
-  { terminalName: '  Front   Counter  ', clockFormat: '12-hour', receiptLanguage: 'fr' },
+  { terminalName: '  Front   Counter  ', clockFormat: '12-hour', receiptLanguage: 'fr', applicationLanguage: 'fr' },
   now + 1,
 );
 await savePrinterPreferencesToDatabase(
@@ -96,6 +99,7 @@ assert.equal(restarted.deviceId, initial.deviceId);
 assert.equal(restarted.terminalName, 'Front Counter');
 assert.equal(restarted.clockFormat, '12-hour');
 assert.equal(restarted.receiptLanguage, 'fr');
+assert.equal(restarted.applicationLanguage, 'fr');
 assert.equal(restarted.isLocked, true);
 assert.equal(restarted.printerHost, '192.168.11.100');
 assert.equal(restarted.printerPort, 9100);
@@ -153,7 +157,7 @@ assert.equal(
 await assert.rejects(
   saveTerminalPreferencesToDatabase(
     adapter,
-    { terminalName: ' ', clockFormat: '24-hour', receiptLanguage: 'en' },
+    { terminalName: ' ', clockFormat: '24-hour', receiptLanguage: 'en', applicationLanguage: 'en' },
   ),
   /1 to 40 characters/,
 );
@@ -182,14 +186,24 @@ assert.equal(
   describePrinterFailure(Object.assign(new Error('unavailable'), { code: 'UNAVAILABLE' })),
   'Printer actions are available in the installed Android app.',
 );
+assert.deepEqual(
+  parsePrinterEndpoint('192.168.11.100:9100'),
+  { printerHost: '192.168.11.100', printerPort: 9100 },
+);
+assert.equal(
+  formatPrinterEndpoint('192.168.11.100', 9100),
+  '192.168.11.100:9100',
+);
 const printerPanel = readFileSync(
   'src/features/settings/components/SettingsContentPanel/SettingsContentPanel.tsx',
   'utf8',
 );
-assert.match(printerPanel, /Restore saved logo/);
-assert.match(printerPanel, /replaces every image saved in the printer/i);
-assert.match(printerPanel, /does not confirm paper or logo storage/i);
-assert.match(printerPanel, /window\.confirm/);
+assert.match(printerPanel, /Test printer/);
+assert.doesNotMatch(printerPanel, /Restore saved logo/);
+assert.doesNotMatch(printerPanel, /Device ID/);
+assert.doesNotMatch(printerPanel, /Lock application/);
+assert.match(printerPanel, /Application/);
+assert.match(printerPanel, /192\.168\.1\.100:9100/);
 
 database.close();
 console.log('Terminal and printer setup persistence, validation, and warning checks passed.');

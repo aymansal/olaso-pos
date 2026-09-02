@@ -156,6 +156,7 @@ export type OperationalCacheSnapshot = {
     role: 'owner' | 'manager' | 'cashier';
     revision: number;
     identityRevision: number;
+    preferredLanguage: 'en' | 'fr';
   }>;
 };
 
@@ -394,11 +395,11 @@ export async function replaceOperationalCache(
            status = excluded.status,
            key = excluded.key,
            image_asset_key = excluded.image_asset_key,
-           image_jpeg = excluded.image_jpeg,
+           image_jpeg = COALESCE(excluded.image_jpeg, products.image_jpeg),
            sort_order = excluded.sort_order,
            current_recipe_version_id = excluded.current_recipe_version_id,
            revision = excluded.revision,
-           updated_at = excluded.updated_at`,
+           updated_at = MAX(products.updated_at, excluded.updated_at)`,
         [
           product.id,
           product.categoryId || null,
@@ -412,7 +413,7 @@ export async function replaceOperationalCache(
           product.sortOrder,
           product.currentRecipeVersionId ?? null,
           product.revision,
-          snapshot.updatedAt,
+          product.updatedAt,
         ],
         false,
       );
@@ -528,15 +529,16 @@ export async function replaceOperationalCache(
     for (const staff of snapshot.staffProfiles) {
       await database.run(
         `INSERT INTO staff_profiles
-          (id, name, role, status, revision, updated_at, identity_revision)
-         VALUES (?, ?, ?, 'active', ?, ?, ?)
+          (id, name, role, status, revision, updated_at, identity_revision, preferred_language)
+         VALUES (?, ?, ?, 'active', ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            name = excluded.name,
            role = excluded.role,
            status = 'active',
            revision = excluded.revision,
            updated_at = excluded.updated_at,
-           identity_revision = excluded.identity_revision`,
+           identity_revision = excluded.identity_revision,
+           preferred_language = excluded.preferred_language`,
         [
           staff.id,
           staff.name,
@@ -544,6 +546,7 @@ export async function replaceOperationalCache(
           staff.revision,
           snapshot.updatedAt,
           staff.identityRevision,
+          staff.preferredLanguage === 'fr' ? 'fr' : 'en',
         ],
         false,
       );
@@ -796,15 +799,17 @@ export async function saveAuthenticatedStaffProfile(profile: ActiveStaffProfile)
   return withLocalTransaction(async (database) => {
     await database.run(
       `INSERT INTO staff_profiles
-        (id, name, role, status, revision, updated_at, identity_revision)
-       VALUES (?, ?, ?, 'active', ?, ?, ?)
+        (id, name, role, status, revision, updated_at, identity_revision,
+         preferred_language)
+       VALUES (?, ?, ?, 'active', ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          name = excluded.name,
          role = excluded.role,
          status = 'active',
          revision = excluded.revision,
          updated_at = excluded.updated_at,
-         identity_revision = excluded.identity_revision`,
+         identity_revision = excluded.identity_revision,
+         preferred_language = excluded.preferred_language`,
       [
         profile.id,
         profile.name,
@@ -812,6 +817,7 @@ export async function saveAuthenticatedStaffProfile(profile: ActiveStaffProfile)
         profile.revision,
         updatedAt,
         profile.identityRevision,
+        profile.preferredLanguage === 'fr' ? 'fr' : 'en',
       ],
       false,
     );
@@ -889,15 +895,16 @@ export async function reconcileAuthenticatedStaffProfiles(
     for (const profile of acceptedProfiles) {
       await database.run(
         `INSERT INTO staff_profiles
-          (id, name, role, status, revision, updated_at, identity_revision)
-         VALUES (?, ?, ?, 'active', ?, ?, ?)
+          (id, name, role, status, revision, updated_at, identity_revision, preferred_language)
+         VALUES (?, ?, ?, 'active', ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            name = excluded.name,
            role = excluded.role,
            status = 'active',
            revision = excluded.revision,
            updated_at = excluded.updated_at,
-           identity_revision = excluded.identity_revision`,
+           identity_revision = excluded.identity_revision,
+           preferred_language = excluded.preferred_language`,
         [
           profile.id,
           profile.name,
@@ -905,6 +912,7 @@ export async function reconcileAuthenticatedStaffProfiles(
           profile.revision,
           updatedAt,
           profile.identityRevision,
+          profile.preferredLanguage === 'fr' ? 'fr' : 'en',
         ],
         false,
       );
@@ -1080,7 +1088,7 @@ export async function loadOperationalCache(
          LIMIT ${LIMITS.ingredients}`,
       ),
       database.query(
-        `SELECT id, name, role, revision, identity_revision
+        `SELECT id, name, role, revision, identity_revision, preferred_language
          FROM staff_profiles
          WHERE status = 'active'
          ORDER BY updated_at DESC
@@ -1266,6 +1274,7 @@ export async function loadOperationalCache(
       role: row.role,
       revision: Number(row.revision),
       identityRevision: Number(row.identity_revision),
+      preferredLanguage: row.preferred_language === 'fr' ? 'fr' as const : 'en' as const,
     })),
   };
 }

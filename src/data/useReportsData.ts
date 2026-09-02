@@ -20,23 +20,57 @@ export function useReportsData(fromDate: string, toDate: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const loadedKey = useRef<string | undefined>(undefined);
+  const rangeKey = useRef(`${fromDate}:${toDate}`);
   const hasSnapshot = useRef(false);
 
   useEffect(() => {
     if (available === undefined || !foreground) return;
+    const nextRange = `${fromDate}:${toDate}`;
+    if (rangeKey.current !== nextRange) {
+      rangeKey.current = nextRange;
+      hasSnapshot.current = false;
+      setSnapshot(undefined);
+    }
     const requestKey = `${session.staffProfileId}:${available}:${fromDate}:${toDate}:${reconnect.revision}:${reload}`;
     if (loadedKey.current === requestKey) return;
     let cancelled = false;
     if (!hasSnapshot.current) setIsLoading(true);
     setError('');
+    const localRequest = loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
     const request = available
-      ? convex.query(api.reports.getSummary, {
+      ? Promise.all([
+        convex.query(api.reports.getSummary, {
           fromDate,
           toDate,
           sessionToken: session.token,
           deviceId: session.deviceId,
-        })
-      : loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
+        }),
+        localRequest.catch(() => undefined),
+      ]).then(([cloud, local]) => {
+        const snapshot = local && local.current.orderCount > cloud.current.orderCount
+          ? local
+          : cloud;
+        if (!local) return snapshot;
+        const stockByName = new Map(
+          local.current.ingredientTotals.map((item) => [
+            `${item.ingredientName}\0${item.baseUnit}`,
+            item.currentStockQuantity ?? 0,
+          ]),
+        );
+        return {
+          ...snapshot,
+          current: {
+            ...snapshot.current,
+            ingredientTotals: snapshot.current.ingredientTotals.map((item) => ({
+              ...item,
+              currentStockQuantity:
+                stockByName.get(`${item.ingredientName}\0${item.baseUnit}`)
+                ?? item.currentStockQuantity,
+            })),
+          },
+        };
+      })
+      : localRequest;
     void request
       .then((result) => {
         if (!cancelled) {

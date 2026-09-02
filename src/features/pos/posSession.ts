@@ -225,6 +225,7 @@ export function paidUnitCount(cart: CartLine[]) {
 }
 
 export type PaymentTender = {
+  paymentMethod: PaymentMethod;
   dueCentimes: number;
   amountCentimes: number;
   changeCentimes: number;

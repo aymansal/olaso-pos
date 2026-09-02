@@ -3,12 +3,14 @@ import { withLocalTransaction } from './localDatabase.ts';
 
 export type ClockFormat = '12-hour' | '24-hour';
 export type ReceiptLanguage = 'en' | 'fr';
+export type ApplicationLanguage = 'en' | 'fr';
 
 export type TerminalSettings = {
   deviceId: string;
   terminalName: string;
   clockFormat: ClockFormat;
   receiptLanguage: ReceiptLanguage;
+  applicationLanguage: ApplicationLanguage;
   isLocked: boolean;
   pendingSyncCount: number;
   lastSyncAt?: number;
@@ -20,7 +22,7 @@ export type TerminalSettings = {
 
 export type TerminalPreferences = Pick<
   TerminalSettings,
-  'terminalName' | 'clockFormat' | 'receiptLanguage'
+  'terminalName' | 'clockFormat' | 'receiptLanguage' | 'applicationLanguage'
 >;
 
 export type PrinterPreferences = Pick<
@@ -53,6 +55,14 @@ function assertReceiptLanguage(value: string): asserts value is ReceiptLanguage 
   }
 }
 
+function assertApplicationLanguage(
+  value: string,
+): asserts value is ApplicationLanguage {
+  if (value !== 'en' && value !== 'fr') {
+    throw new Error('Application language must be English or French.');
+  }
+}
+
 function isValidIpv4(value: string) {
   const parts = value.split('.');
   return parts.length === 4 && parts.every((part) => {
@@ -74,6 +84,25 @@ export function validatePrinterPreferences(
     throw new Error('Printer port must be from 1 to 65535.');
   }
   return { printerHost, printerPort: input.printerPort };
+}
+
+export function parsePrinterEndpoint(value: string): PrinterPreferences {
+  const trimmed = value.trim();
+  const separator = trimmed.lastIndexOf(':');
+  if (separator === -1) {
+    return validatePrinterPreferences({
+      printerHost: trimmed,
+      printerPort: DEFAULT_PRINTER_PORT,
+    });
+  }
+  return validatePrinterPreferences({
+    printerHost: trimmed.slice(0, separator),
+    printerPort: Number(trimmed.slice(separator + 1)),
+  });
+}
+
+export function formatPrinterEndpoint(host: string, port: number) {
+  return host ? `${host}:${port}` : '';
 }
 
 async function upsertSetting(
@@ -106,12 +135,13 @@ export async function loadTerminalSettingsFromDatabase(
        'terminal_name',
        'clock_format',
        'receipt_language',
+       'application_language',
        'session_locked',
        'operational_cache_updated_at',
        'printer_host',
        'printer_port'
      )
-     LIMIT 8`,
+     LIMIT 9`,
   );
   const values = new Map(
     (settings.values ?? []).map((row) => [String(row.key), String(row.value)]),
@@ -120,14 +150,17 @@ export async function loadTerminalSettingsFromDatabase(
   const terminalName = values.get('terminal_name') ?? DEFAULT_TERMINAL_NAME;
   const clockFormat = values.get('clock_format') ?? '24-hour';
   const receiptLanguage = values.get('receipt_language') ?? 'en';
+  const applicationLanguage = values.get('application_language') ?? 'en';
   assertClockFormat(clockFormat);
   assertReceiptLanguage(receiptLanguage);
+  assertApplicationLanguage(applicationLanguage);
 
   for (const [key, value] of [
     ['device_id', deviceId],
     ['terminal_name', terminalName],
     ['clock_format', clockFormat],
     ['receipt_language', receiptLanguage],
+    ['application_language', applicationLanguage],
     ['session_locked', values.get('session_locked') ?? '0'],
   ]) {
     if (!values.has(key)) await upsertSetting(database, key, value, now);
@@ -158,6 +191,7 @@ export async function loadTerminalSettingsFromDatabase(
     terminalName: cleanTerminalName(terminalName),
     clockFormat,
     receiptLanguage,
+    applicationLanguage,
     isLocked: values.get('session_locked') === '1',
     pendingSyncCount: Number(pending.values?.[0]?.count ?? 0),
     printerHost: values.get('printer_host') ?? '',
@@ -188,10 +222,22 @@ export async function saveTerminalPreferencesToDatabase(
   const terminalName = cleanTerminalName(input.terminalName);
   assertClockFormat(input.clockFormat);
   assertReceiptLanguage(input.receiptLanguage);
+  assertApplicationLanguage(input.applicationLanguage);
   await upsertSetting(database, 'terminal_name', terminalName, now);
   await upsertSetting(database, 'clock_format', input.clockFormat, now);
   await upsertSetting(database, 'receipt_language', input.receiptLanguage, now);
-  return { terminalName, clockFormat: input.clockFormat, receiptLanguage: input.receiptLanguage };
+  await upsertSetting(
+    database,
+    'application_language',
+    input.applicationLanguage,
+    now,
+  );
+  return {
+    terminalName,
+    clockFormat: input.clockFormat,
+    receiptLanguage: input.receiptLanguage,
+    applicationLanguage: input.applicationLanguage,
+  };
 }
 
 export function saveTerminalPreferences(input: TerminalPreferences) {
@@ -258,5 +304,15 @@ export function recordSyncFailure(error: unknown) {
       false,
     );
     return message;
+  });
+}
+
+export function clearSyncError() {
+  return withLocalTransaction(async (database) => {
+    await database.run(
+      `UPDATE sync_state SET last_error = NULL WHERE id = 1`,
+      [],
+      false,
+    );
   });
 }

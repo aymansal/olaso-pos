@@ -1,1 +1,146 @@
-.costs{position:absolute;top:136px;left:24px;width:838px;height:526px}.toolbar,.toolbar label,.toolbar>span,.kpis,.lists,.rows article,.rows article>span{display:flex}.toolbar{align-items:center;justify-content:space-between;height:44px}.toolbar label{align-items:center;gap:8px;color:var(--olaso-copy);font-size:9px;font-weight:700}.toolbar input,.toolbar button{height:44px;border-radius:22px;font:inherit}.toolbar input{width:132px;padding:0 12px;border:1px solid var(--olaso-control-border);background:var(--olaso-white)}.toolbar>span{gap:8px}.toolbar button{padding:0 15px;border:1px solid var(--olaso-green);color:var(--olaso-green);background:transparent;font-size:9px;font-weight:700}.toolbar button:last-child{color:var(--olaso-white);background:var(--olaso-green)}.toolbar button:disabled{opacity:.45}.kpis{gap:8px;margin-top:12px}.kpis article{flex:1;min-width:0;padding:13px;border-radius:16px;background:var(--olaso-table-head)}.kpis small,.kpis strong{display:block}.kpis small{color:var(--olaso-text-meta);font-size:8px;font-weight:700}.kpis strong{margin-top:5px;color:var(--olaso-text);font-size:14px;font-variant-numeric:tabular-nums}.incomplete{margin:10px 0 0;color:var(--olaso-danger);font-size:8px}.lists{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.lists.single{grid-template-columns:1fr}.lists>section{height:324px;padding:14px;border:1px solid var(--olaso-panel-border);border-radius:18px;overflow:hidden}.lists h3{margin:0 0 8px;font-size:11px}.rows article{align-items:center;min-height:38px;border-top:1px solid var(--olaso-order-divider);font-size:8px}.rows article:first-child{border-top:0}.rows article>span{min-width:0;flex:1;flex-direction:column;gap:2px}.rows strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rows small{color:var(--olaso-text-meta)}.rows b{margin-left:8px;font-variant-numeric:tabular-nums}.rows button{height:30px;margin-left:8px;padding:0 9px;border:1px solid var(--olaso-control-border);border-radius:15px;background:transparent;font-size:7px;font-weight:700}.rows p,.state{color:var(--olaso-text-meta);font-size:9px}.state{position:absolute;top:180px;left:24px;width:838px;text-align:center}.toolbar input:focus-visible,.toolbar button:focus-visible,.rows button:focus-visible{outline:2px solid var(--olaso-green);outline-offset:2px}
+.costs {
+  position: absolute;
+  top: 136px;
+  left: 24px;
+  width: 838px;
+  height: 526px;
+}
+
+.toolbar,
+.toolbar label,
+.toolbar > span,
+.lists,
+.rows article,
+.rows article > span {
+  display: flex;
+}
+
+.toolbar {
+  align-items: center;
+  justify-content: flex-end;
+  height: 48px;
+}
+
+.toolbar input,
+.toolbar button {
+  height: 44px;
+  border-radius: 22px;
+  font: inherit;
+}
+
+.toolbar > span {
+  gap: 10px;
+}
+
+.toolbar button {
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ghost {
+  border: 1px solid var(--olaso-green);
+  color: var(--olaso-green);
+  background: transparent;
+}
+
+.solid {
+  border: 0;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.toolbar button:disabled {
+  opacity: 0.45;
+}
+
+.lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  height: 462px;
+  margin-top: 16px;
+}
+
+.lists.single {
+  grid-template-columns: 1fr;
+}
+
+.lists > section {
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 20px;
+}
+
+.lists h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.rows article {
+  align-items: center;
+  min-height: 52px;
+  border-top: 1px solid var(--olaso-order-divider);
+}
+
+.rows article:first-child {
+  border-top: 0;
+}
+
+.rows article > span {
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rows strong {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rows small {
+  color: var(--olaso-text-meta);
+  font-size: 12px;
+}
+
+.rows b {
+  margin-left: 10px;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rows button {
+  height: 36px;
+  margin-left: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 18px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rows p,
+.state {
+  color: var(--olaso-text-meta);
+  font-size: 13px;
+}
+
+.state {
+  position: absolute;
+  top: 180px;
+  left: 24px;
+  width: 838px;
+  text-align: center;
+}
+
+.toolbar input:focus-visible,
+.toolbar button:focus-visible,
+.rows button:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}

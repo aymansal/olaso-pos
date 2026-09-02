@@ -4,6 +4,7 @@ import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPo
 import type { ManagedIngredient } from '../../stockManagementTypes';
 import { formatMoney } from '../../../../lib/money';
 import { formatStockQuantity } from '../../stockPresentation';
+import { useT } from '../../../../lib/locale';
 import styles from './PurchaseDialog.module.css';
 
 interface PurchaseDialogProps {
@@ -20,6 +21,7 @@ interface PurchaseDialogProps {
 }
 
 export function PurchaseDialog({ ingredient, onClose, onSave }: PurchaseDialogProps) {
+  const t = useT();
   const [packageLabel, setPackageLabel] = useState('Carton');
   const [packageCount, setPackageCount] = useState('1');
   const [quantityPerPackage, setQuantityPerPackage] = useState('');
@@ -58,18 +60,18 @@ export function PurchaseDialog({ ingredient, onClose, onSave }: PurchaseDialogPr
   const totalQuantity = valid ? count * quantity : 0;
   const totalCost = valid ? count * priceCentimes : 0;
   return <OverlayPortal><div className={styles.overlay} role="presentation" onPointerDown={(event) => closeOnBackdrop(event, onClose)}><section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="purchase-title">
-    <header><span><small>PACKAGE RECEIPT</small><h2 id="purchase-title">Receive purchase</h2></span><button type="button" onClick={onClose} aria-label="Close purchase receipt"><X width={18} height={18} /></button></header>
-    <p className={styles.ingredient}><strong>{ingredient.name}</strong><span>On hand {formatStockQuantity(ingredient.currentStockQuantity, ingredient.baseUnit)}</span></p>
+    <header><span><small>{t('PACKAGE RECEIPT')}</small><h2 id="purchase-title">{t('Receive purchase')}</h2></span><button type="button" onClick={onClose} aria-label={t('Close purchase receipt')}><X width={18} height={18} /></button></header>
+    <p className={styles.ingredient}><strong>{ingredient.name}</strong><span>{t('On hand {quantity}', { quantity: formatStockQuantity(ingredient.currentStockQuantity, ingredient.baseUnit) })}</span></p>
     <div className={styles.grid}>
-      <label>Package label<input value={packageLabel} onChange={(event) => setPackageLabel(event.target.value)} /></label>
-      <label>Packages<input type="number" min="1" step="1" value={packageCount} onChange={(event) => setPackageCount(event.target.value)} /></label>
-      <label>Quantity per package<input type="number" min="1" step="1" placeholder="0" value={quantityPerPackage} onChange={(event) => setQuantityPerPackage(event.target.value)} /></label>
-      <label>Price per package · MAD<input type="number" min="0.01" step="0.01" placeholder="0" value={priceMad} onChange={(event) => setPriceMad(event.target.value)} /></label>
-      <label>Supplier (optional)<input value={supplierLabel} onChange={(event) => setSupplierLabel(event.target.value)} /></label>
-      <label>Note (optional)<input value={note} onChange={(event) => setNote(event.target.value)} /></label>
+      <label>{t('Package label')}<input value={packageLabel} onChange={(event) => setPackageLabel(event.target.value)} /></label>
+      <label>{t('Packages')}<input type="number" min="1" step="1" value={packageCount} onChange={(event) => setPackageCount(event.target.value)} /></label>
+      <label>{t('Quantity per package')}<input type="number" min="1" step="1" placeholder="0" value={quantityPerPackage} onChange={(event) => setQuantityPerPackage(event.target.value)} /></label>
+      <label>{t('Price per package')} · {t('MAD')}<input type="number" min="0.01" step="0.01" placeholder="0" value={priceMad} onChange={(event) => setPriceMad(event.target.value)} /></label>
+      <label>{t('Supplier (optional)')}<input value={supplierLabel} onChange={(event) => setSupplierLabel(event.target.value)} /></label>
+      <label>{t('Note (optional)')}<input value={note} onChange={(event) => setNote(event.target.value)} /></label>
     </div>
-    <p className={styles.summary}>Adds {formatStockQuantity(totalQuantity, ingredient.baseUnit)} · purchase cash {formatMoney(totalCost)}</p>
-    {error ? <p className={styles.error}>{error}</p> : null}
-    <footer><button type="button" onClick={onClose}>Cancel</button><button type="button" onClick={submit} disabled={saving || !valid}>{saving ? 'Saving…' : 'Save purchase'}</button></footer>
+    <p className={styles.summary}>{t('Adds {quantity} · purchase cash {amount}', { quantity: formatStockQuantity(totalQuantity, ingredient.baseUnit), amount: formatMoney(totalCost) })}</p>
+    {error ? <p className={styles.error}>{t(error)}</p> : null}
+    <footer><button type="button" onClick={onClose}>{t('Cancel')}</button><button type="button" onClick={submit} disabled={saving || !valid}>{saving ? t('Saving…') : t('Save purchase')}</button></footer>
   </section></div></OverlayPortal>;
 }

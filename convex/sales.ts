@@ -21,6 +21,7 @@ const serviceMode = v.union(
 const paymentMethod = v.union(v.literal('Cash'), v.literal('Card'));
 const receiptLanguage = v.union(v.literal('en'), v.literal('fr'));
 const receiptTender = v.object({
+  paymentMethod: v.optional(paymentMethod),
   dueCentimes: v.number(),
   amountCentimes: v.number(),
   changeCentimes: v.number(),
@@ -79,11 +80,13 @@ function checkedTotal(value: number, label: string) {
 
 function readTenders(
   tenders: Array<{
+    paymentMethod?: 'Cash' | 'Card';
     dueCentimes: number;
     amountCentimes: number;
     changeCentimes: number;
   }> | undefined,
   saleTotalCentimes: number,
+  fallbackPaymentMethod: 'Cash' | 'Card',
 ) {
   if (tenders === undefined) return undefined;
   if (tenders.length < 1 || tenders.length > 20) {
@@ -105,7 +108,28 @@ function readTenders(
   if (dueSum !== saleTotalCentimes) {
     return invalid('Split payments do not add up to the sale total.');
   }
-  return tenders;
+  return tenders.map((tender) => ({
+    ...tender,
+    paymentMethod: tender.paymentMethod ?? fallbackPaymentMethod,
+  }));
+}
+
+function salePaymentTotals(
+  paymentMethodValue: 'Cash' | 'Card',
+  totalCentimes: number,
+  tenders?: Array<{
+    paymentMethod?: 'Cash' | 'Card';
+    dueCentimes: number;
+  }>,
+) {
+  const totals = new Map<string, number>();
+  for (const tender of tenders?.length
+    ? tenders
+    : [{ paymentMethod: paymentMethodValue, dueCentimes: totalCentimes }]) {
+    const method = tender.paymentMethod ?? paymentMethodValue;
+    totals.set(method, (totals.get(method) ?? 0) + tender.dueCentimes);
+  }
+  return totals;
 }
 
 function snapshotCost(
@@ -543,7 +567,7 @@ export const accept = mutation({
       subtotalCentimes - discountCentimes,
       'Sale total',
     );
-    const tenders = readTenders(args.tenders, totalCentimes);
+    const tenders = readTenders(args.tenders, totalCentimes, args.paymentMethod);
     const completeLineCosts = preparedLines.every(
       (line) => line.costStatus === 'complete',
     );
@@ -663,6 +687,7 @@ export const accept = mutation({
         completedAt,
         serviceMode: args.serviceMode,
         lines: preparedLines.map((line) => ({
+          productId: line.product._id,
           productName: line.product.receiptName,
           quantity: line.quantity,
           unitPriceCentimes: line.unitPriceCentimes,
@@ -792,18 +817,24 @@ export const accept = mutation({
     const totalsByPaymentMethod = metric
       ? metric.totalsByPaymentMethod.map((row) => ({ ...row }))
       : [];
-    const payment = totalsByPaymentMethod.find(
-      (row) => row.paymentMethod === args.paymentMethod,
-    );
-    if (payment) {
-      payment.totalCentimes += totalCentimes;
-      payment.orderCount += 1;
-    } else {
-      totalsByPaymentMethod.push({
-        paymentMethod: args.paymentMethod,
-        totalCentimes,
-        orderCount: 1,
-      });
+    for (const [method, amount] of salePaymentTotals(
+      args.paymentMethod,
+      totalCentimes,
+      tenders,
+    )) {
+      const payment = totalsByPaymentMethod.find(
+        (row) => row.paymentMethod === method,
+      );
+      if (payment) {
+        payment.totalCentimes += amount;
+        payment.orderCount += 1;
+      } else {
+        totalsByPaymentMethod.push({
+          paymentMethod: method,
+          totalCentimes: amount,
+          orderCount: 1,
+        });
+      }
     }
     const totalsByServiceMode = metric
       ? metric.totalsByServiceMode.map((row) => ({ ...row }))
@@ -1070,10 +1101,16 @@ export const cancel = mutation({
     }
 
     const totalsByPaymentMethod = metric.totalsByPaymentMethod.map((row) => ({ ...row }));
-    const payment = totalsByPaymentMethod.find((row) => row.paymentMethod === original.paymentMethod);
-    if (!payment) return conflict('Saved payment summary is incomplete.');
-    payment.totalCentimes = subtractMetric(payment.totalCentimes, original.totalCentimes, 'payment total');
-    payment.orderCount = subtractMetric(payment.orderCount, 1, 'payment count');
+    for (const [method, amount] of salePaymentTotals(
+      original.paymentMethod === 'Card' ? 'Card' : 'Cash',
+      original.totalCentimes,
+      original.receiptSnapshot.tenders,
+    )) {
+      const payment = totalsByPaymentMethod.find((row) => row.paymentMethod === method);
+      if (!payment) return conflict('Saved payment summary is incomplete.');
+      payment.totalCentimes = subtractMetric(payment.totalCentimes, amount, 'payment total');
+      payment.orderCount = subtractMetric(payment.orderCount, 1, 'payment count');
+    }
     const totalsByServiceMode = metric.totalsByServiceMode.map((row) => ({ ...row }));
     const service = totalsByServiceMode.find((row) => row.serviceMode === original.serviceMode);
     if (!service) return conflict('Saved service summary is incomplete.');

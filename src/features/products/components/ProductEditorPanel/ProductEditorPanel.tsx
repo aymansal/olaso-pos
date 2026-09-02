@@ -11,6 +11,7 @@ import type {
   ProductSaveInput,
 } from '../../productManagementTypes';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
+import { useT } from '../../../../lib/locale';
 import { ProductChoiceSectionDialog } from '../ProductChoiceSectionDialog/ProductChoiceSectionDialog';
 import { ProductImageButton } from '../ProductImageButton/ProductImageButton';
 import { RecipeEditorDialog } from '../RecipeEditorDialog/RecipeEditorDialog';
@@ -72,6 +73,7 @@ export function ProductEditorPanel({
   onDeleteChoiceSection,
   onCopyChoiceSections,
 }: ProductEditorPanelProps) {
+  const t = useT();
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [priceMad, setPriceMad] = useState('');
@@ -112,10 +114,10 @@ export function ProductEditorPanel({
   );
   const archived = product?.status === 'archived';
   const statusLabel = archived
-    ? 'Archived'
+    ? t('Archived')
     : available
-      ? 'Active'
-      : 'Unavailable';
+      ? t('Active')
+      : t('Unavailable');
   const priceCentimes = Math.round(Number(priceMad) * 100);
   const sizes = productSizes.filter((size) => size.productId === product?.id && size.status !== 'archived');
 
@@ -146,8 +148,8 @@ export function ProductEditorPanel({
       <aside className={styles.panel} aria-labelledby="product-editor-title">
         <div className={styles.empty}>
           <Leaf width={28} height={28} aria-hidden="true" />
-          <h2 id="product-editor-title">Select a product</h2>
-          <p>Choose a live menu record or add a new product.</p>
+          <h2 id="product-editor-title">{t('Select a product')}</h2>
+          <p>{t('Choose a live menu record or add a new product.')}</p>
         </div>
       </aside>
     );
@@ -156,12 +158,7 @@ export function ProductEditorPanel({
   return (
     <aside className={styles.panel} aria-labelledby="product-editor-title">
       <header className={styles.header}>
-        <span className={styles.heading}>
-          <small>PRODUCT DETAILS</small>
-          <h2 id="product-editor-title">
-            Edit product
-          </h2>
-        </span>
+        <h2 id="product-editor-title">{t('Edit product')}</h2>
         <span className={styles.headerActions}>
           <span
             className={`${styles.activeStatus} ${archived || !available ? styles.inactiveStatus : ''}`}
@@ -176,7 +173,9 @@ export function ProductEditorPanel({
               disabled={saving}
               onClick={async () => {
                 if (!window.confirm(
-                  `Delete ${product.name}? Past orders will be preserved.`,
+                  t('Delete {name}? Past orders will be preserved.', {
+                    name: product.name,
+                  }),
                 )) return;
                 setSaving(true);
                 setMessage('');
@@ -191,7 +190,7 @@ export function ProductEditorPanel({
                 }
               }}
             >
-              Delete
+              {t('Delete')}
             </button>
           ) : null}
         </span>
@@ -209,10 +208,10 @@ export function ProductEditorPanel({
             fallback={<Leaf width={25} height={25} aria-hidden="true" />}
           />
           <span className={styles.identityCopy}>
-            <strong>{name || 'New product'}</strong>
+            <strong>{name || t('New product')}</strong>
             <small>
-              {(product?.key ?? 'NEW').toUpperCase()} ·{' '}
-              {category?.name ?? 'Uncategorized'}
+              {(product?.key ?? t('NEW')).toUpperCase()} ·{' '}
+              {category?.name ?? t('Uncategorized')}
             </small>
           </span>
         </span>
@@ -220,15 +219,15 @@ export function ProductEditorPanel({
           <strong>
             {formatMad(Math.round((Number(priceMad) || 0) * 100))}
           </strong>
-          <small>Base price</small>
+          <small>{t('Base price')}</small>
         </span>
       </div>
 
       <div className={`${styles.divider} ${styles.identityDivider}`} />
-      <h3 className={styles.infoTitle}>Product information</h3>
+      <h3 className={styles.infoTitle}>{t('Product information')}</h3>
 
       <label className={`${styles.field} ${styles.nameField}`}>
-        <span>Product name</span>
+        <span>{t('Product name')}</span>
         <input
           value={name}
           disabled={archived}
@@ -236,14 +235,14 @@ export function ProductEditorPanel({
         />
       </label>
       <label className={`${styles.field} ${styles.codeField}`}>
-        <span>Product code</span>
-        <input value={(product?.key ?? 'Generated on save').toUpperCase()} readOnly />
+        <span>{t('Product code')}</span>
+        <input value={(product?.key ?? t('Generated on save')).toUpperCase()} readOnly />
       </label>
       <label className={`${styles.field} ${styles.priceField}`}>
-        <span>Price</span>
+        <span>{t('Price')}</span>
         <span className={styles.priceInput}>
           <input
-            aria-label="Price in MAD"
+            aria-label={t('Price in MAD')}
             type="number"
             min="0"
             step="0.01"
@@ -252,12 +251,13 @@ export function ProductEditorPanel({
             disabled={archived}
             onChange={(event) => setPriceMad(event.target.value)}
           />
-          <small>MAD</small>
+          <small>{t('MAD')}</small>
         </span>
       </label>
       <label className={`${styles.field} ${styles.categoryField}`}>
-        <span>Category</span>
+        <span>{t('Category')}</span>
         <MenuSelect
+          className={styles.categoryMenu}
           ariaLabel="Category"
           value={categoryId}
           disabled={archived}
@@ -273,7 +273,7 @@ export function ProductEditorPanel({
         />
       </label>
       <div className={`${styles.field} ${styles.availabilityField}`}>
-        <span>POS availability</span>
+        <span>{t('POS availability')}</span>
         <button
           type="button"
           className={`${styles.availability} ${!available ? styles.availabilityOff : ''}`}
@@ -281,17 +281,17 @@ export function ProductEditorPanel({
           disabled={archived}
           onClick={() => setAvailable((current) => !current)}
         >
-          <strong>{available ? 'On' : 'Off'}</strong>
+          <strong>{available ? t('On') : t('Off')}</strong>
           <span><span /></span>
         </button>
       </div>
 
       <div className={`${styles.divider} ${styles.infoDivider}`} />
       <div className={styles.optionsHeader}>
-        <strong>Sizes &amp; options</strong>
+        <strong>{t('Sizes & options')}</strong>
         <span>
-          <button type="button" disabled={!product || archived} onClick={() => setShowSizes(true)}>Sizes</button>
-          <button type="button" disabled={!product || archived} onClick={() => setShowChoices(true)}>Choices</button>
+          <button type="button" disabled={!product || archived} onClick={() => setShowSizes(true)}>{t('Sizes')}</button>
+          <button type="button" disabled={!product || archived} onClick={() => setShowChoices(true)}>{t('Choices')}</button>
         </span>
       </div>
       <div className={styles.options}>
@@ -300,7 +300,9 @@ export function ProductEditorPanel({
             <strong>{size.name}</strong>
             <small>
               {formatMad(size.priceCentimes)}
-              {size.status !== 'active' ? ` · ${size.status}` : ''}
+              {size.status !== 'active'
+                ? ` · ${t(size.status === 'unavailable' ? 'Unavailable' : 'Archived')}`
+                : ''}
             </small>
           </span>
         ))}
@@ -308,24 +310,26 @@ export function ProductEditorPanel({
           <span className={styles.option} key={section.id}>
             <strong>{section.name}</strong>
             <small>
-              {section.values.length} choice{section.values.length === 1 ? '' : 's'}
+              {section.values.length === 1
+                ? t('1 choice')
+                : t('{count} choices', { count: section.values.length })}
             </small>
           </span>
         ))}
-        {!sizes.length && !choiceSections.length ? <small className={styles.emptyOptions}>Save the product, then add a size before it can be sold.</small> : null}
+        {!sizes.length && !choiceSections.length ? <small className={styles.emptyOptions}>{t('Save the product, then add a size before it can be sold.')}</small> : null}
       </div>
 
       <div className={`${styles.divider} ${styles.optionsDivider}`} />
       <div className={styles.recipeHeader}>
-        <strong>Recipe &amp; stock</strong>
+        <strong>{t('Recipe & stock')}</strong>
         <span>
           <span className={recipeData?.versionNumber ? styles.recipeDotLinked : ''} />
           <small>
             {isRecipeLoading
-              ? 'Loading'
+              ? t('Loading')
               : recipeData?.versionNumber
-                ? `Version ${recipeData.versionNumber}`
-                : 'Not linked'}
+                ? t('Version {number}', { number: recipeData.versionNumber })
+                : t('Not linked')}
           </small>
         </span>
       </div>
@@ -340,13 +344,17 @@ export function ProductEditorPanel({
         <span className={styles.recipeCopy}>
           <strong>
             {recipeData?.versionNumber
-              ? `${recipeData.items.length} linked ingredients`
-              : 'Fiche technique not added'}
+              ? recipeData.items.length === 1
+                ? t('1 linked ingredient')
+                : t('{count} linked ingredients', { count: recipeData.items.length })
+              : t('Fiche technique not added')}
           </strong>
           <small>
             {recipeData?.versionNumber
-              ? `${recipeData.versions.length} immutable version${recipeData.versions.length === 1 ? '' : 's'} saved.`
-              : 'Link exact base-unit quantities when ready.'}
+              ? recipeData.versions.length === 1
+                ? t('1 immutable version saved.')
+                : t('{count} immutable versions saved.', { count: recipeData.versions.length })
+              : t('Link exact base-unit quantities when ready.')}
           </small>
         </span>
         <button
@@ -354,7 +362,7 @@ export function ProductEditorPanel({
           disabled={!product || !recipeData || isRecipeLoading}
           onClick={() => setShowRecipe(true)}
         >
-          <span>{recipeData?.versionNumber ? 'Edit' : 'Set up'}</span>
+          <span>{recipeData?.versionNumber ? t('Edit') : t('Set up')}</span>
           <ArrowRight width={11} height={11} aria-hidden="true" />
         </button>
       </div>
@@ -364,12 +372,15 @@ export function ProductEditorPanel({
             && productCost.minimumCostCentimes !== undefined
             && productCost.maximumCostCentimes !== undefined
             ? productCost.minimumCostCentimes === productCost.maximumCostCentimes
-              ? `Ingredient cost ${formatMad(productCost.minimumCostCentimes)}`
-              : `Ingredient cost ${formatMad(productCost.minimumCostCentimes)}–${formatMad(productCost.maximumCostCentimes)}`
-            : 'Ingredient cost incomplete'}
+              ? t('Ingredient cost {amount}', { amount: formatMad(productCost.minimumCostCentimes) })
+              : t('Ingredient cost {min}–{max}', {
+                  min: formatMad(productCost.minimumCostCentimes),
+                  max: formatMad(productCost.maximumCostCentimes),
+                })
+            : t('Ingredient cost incomplete')}
         </p>
       ) : null}
-      {message ? <p className={styles.notice}>{message}</p> : null}
+      {message ? <p className={styles.notice}>{t(message)}</p> : null}
       <button
         type="button"
         className={styles.save}
@@ -383,7 +394,7 @@ export function ProductEditorPanel({
         }
       >
         <Save width={16} height={16} aria-hidden="true" />
-        <span>{saving ? 'Saving…' : 'Save changes'}</span>
+        <span>{saving ? t('Saving…') : t('Save changes')}</span>
       </button>
 
       {showRecipe && product && recipeData ? (

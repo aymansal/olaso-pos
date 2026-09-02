@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useT } from '../../../../lib/locale';
 import type { PaymentMethod } from '../../posSession';
 import styles from './PaymentMethodControl.module.css';
 
@@ -11,12 +12,13 @@ export function PaymentMethodControl({
   value: PaymentMethod;
   onChange: (value: PaymentMethod) => void;
 }) {
+  const t = useT();
   return (
     <div
       className={styles.control}
       style={{ '--count': methods.length, '--index': methods.indexOf(value) } as CSSProperties}
       role="group"
-      aria-label="Payment method"
+      aria-label={t('Payment method')}
     >
       <span className={styles.indicator} aria-hidden="true" />
       {methods.map((method) => (
@@ -27,7 +29,7 @@ export function PaymentMethodControl({
           aria-pressed={value === method}
           onClick={() => onChange(method)}
         >
-          {method}
+          {t(method)}
         </button>
       ))}
     </div>

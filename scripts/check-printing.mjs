@@ -10,6 +10,10 @@ import {
 import { createReceiptModel } from '../src/printing/receiptModel.ts';
 import { createSavedReceiptBytes } from '../src/printing/printReceipt.ts';
 import { attemptSaleReceiptPrint } from '../src/data/receiptPrinting.ts';
+import {
+  encodeDailyOwnerReport,
+  renderDailyOwnerReport,
+} from '../src/printing/dailyReportEncoder.ts';
 
 const snapshot = {
   receiptNumber: '000123',
@@ -47,7 +51,7 @@ const model = createReceiptModel(snapshot, {
 });
 const text = renderReceiptText(model);
 const raw = encodeWd8260Receipt(model);
-const goldenSha256 = 'BBE616450ECFDC5DDDE6CA7FDC3BA6EFB0E84754DA468593D1DC411572C511CE';
+const goldenSha256 = '4562E870CB21AB32F9A378494941396A882CA4540B620CB4C5E3BCAF93CD6237';
 
 const outputIndex = process.argv.indexOf('--output');
 if (outputIndex >= 0) {
@@ -63,6 +67,40 @@ assert.match(text, /ORDER 000123\s+21\/08\/2026 14:35/);
 assert.match(text, /Cashier: Alex\s+Dine in \/ Table T4/);
 assert.match(text, /Café crème double\s+2\s+36\.00/);
 assert.match(text, /THANK YOU\.\nSee you soon/);
+assert.ok(text.indexOf('TOTAL') > text.indexOf('Change'));
+assert.doesNotMatch(text, /No tax/);
+assert.doesNotMatch(text, /Subtotal|Offert/);
+const offertText = renderReceiptText(createReceiptModel({
+  ...snapshot,
+  discountCentimes: 1800,
+  totalCentimes: 5150,
+}, {
+  amountCentimes: 5150,
+  changeCentimes: 0,
+}));
+assert.match(offertText, /Subtotal\s+69\.50/);
+assert.match(offertText, /Offert\s+-18\.00/);
+assert.doesNotMatch(offertText, /No tax/);
+const professionalOptionText = renderReceiptText(createReceiptModel({
+  ...snapshot,
+  serviceType: 'take-away',
+  receiptLanguage: 'fr',
+  lines: [{
+    ...line('Latte', 1, 1800, ['Lait d’amande', 'Vanille', 'Extra shot']),
+    sizeName: 'Regular',
+    complimentary: true,
+  }],
+  subtotalCentimes: 1800,
+  discountCentimes: 1800,
+  totalCentimes: 0,
+  paymentMethod: 'Card',
+}));
+assert.match(professionalOptionText, /Latte · Regular\s+1\s+0\.00/);
+assert.match(professionalOptionText, /Lait d.amande · Vanille/);
+assert.match(professionalOptionText, /Extra shot/);
+assert.match(professionalOptionText, /À emporter/);
+assert.equal((professionalOptionText.match(/Offert/g) ?? []).length, 1);
+assert.doesNotMatch(professionalOptionText, /^\+ /m);
 assert.doesNotMatch(text, /example\.com|QR/i);
 assert.deepEqual(
   [...raw.subarray(0, 10)],
@@ -83,7 +121,7 @@ assert.deepEqual(
 );
 assert.match(
   Buffer.from(savedSaleBytes).toString('latin1'),
-  /Paiement\s+Card/,
+  /Paiement\s+Carte/,
 );
 
 const successfulOrder = [];
@@ -159,7 +197,9 @@ const splitSnapshot = {
 const splitText = renderReceiptText(createReceiptModel(splitSnapshot));
 assert.match(splitText, /Change\s+14\.00/);
 assert.match(splitText, /Change\s+16\.50/);
-assert.equal((splitText.match(/Cash\s+50\.00/g) || []).length, 2);
+assert.match(splitText, /Cash\s+36\.00/);
+assert.match(splitText, /Cash\s+33\.50/);
+assert.equal((splitText.match(/Given\s+50\.00/g) || []).length, 2);
 const splitBytes = createSavedReceiptBytes(splitSnapshot);
 assert.equal(
   Buffer.from(splitBytes).subarray(0, 10).equals(Buffer.from(raw.subarray(0, 10))),
@@ -170,6 +210,60 @@ assert.match(
   renderReceiptText(createReceiptModel(JSON.parse(JSON.stringify(splitSnapshot)))),
   /Change\s+14\.00/,
 );
+const mixedText = renderReceiptText(createReceiptModel({
+  ...snapshot,
+  tenders: [
+    { paymentMethod: 'Card', dueCentimes: 3600, amountCentimes: 3600, changeCentimes: 0 },
+    { paymentMethod: 'Cash', dueCentimes: 3350, amountCentimes: 5000, changeCentimes: 1650 },
+  ],
+}));
+assert.match(mixedText, /Card\s+36\.00/);
+assert.match(mixedText, /Cash\s+33\.50/);
+assert.equal((mixedText.match(/Given/g) ?? []).length, 1);
+assert.equal((mixedText.match(/Change/g) ?? []).length, 1);
+
+const dailyReport = {
+  language: 'fr',
+  businessDate: '2026-09-02',
+  printedAt: Date.parse('2026-09-02T18:30:00.000Z'),
+  ownerName: 'Olaso Owner',
+  terminalName: 'Comptoir',
+  orderCount: 2,
+  itemCount: 4,
+  subtotalCentimes: 8500,
+  offertCentimes: 1000,
+  netCentimes: 7500,
+  averageCentimes: 3750,
+  paymentTotals: [
+    { label: 'Card', totalCentimes: 4000, orderCount: 1 },
+    { label: 'Cash', totalCentimes: 3500, orderCount: 2 },
+  ],
+  serviceTotals: [
+    { service: 'dine-in', orderCount: 1 },
+    { service: 'take-away', orderCount: 1 },
+  ],
+  cancellations: [{ receiptNumber: '000122', reason: 'Erreur caisse', actorName: 'Olaso Owner' }],
+  products: [{ name: 'Latte · Regular', quantity: 3, totalCentimes: 5400 }],
+  ingredientCostCentimes: 1800,
+  grossProfitCentimes: 5700,
+  compensationCentimes: 900,
+  expenseCentimes: 300,
+  operatingProfitCentimes: 4500,
+  incompleteCostCount: 0,
+  inventoryValueCentimes: 125000,
+  lowStockCount: 2,
+  pendingSyncCount: 1,
+  failedPrintCount: 0,
+};
+const dailyText = renderDailyOwnerReport(dailyReport);
+const dailyBytes = encodeDailyOwnerReport(dailyReport);
+assert.match(dailyText, /RAPPORT QUOTIDIEN DU PROPRIÉTAIRE/);
+assert.match(dailyText, /Carte \(1\)\s+40\.00 MAD/);
+assert.match(dailyText, /Espèces \(2\)\s+35\.00 MAD/);
+assert.match(dailyText, /À emporter\s+1/);
+assert.match(dailyText, /Résultat opérationnel\s+45\.00 MAD/);
+assert(dailyText.split('\n').every((row) => row.length <= 48));
+assert.deepEqual([...dailyBytes.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
 assert.deepEqual(
   [...encodeCp858('TÉTOUAN Café Thé À bientôt')],
   [84, 144, 84, 79, 85, 65, 78, 32, 67, 97, 102, 130, 32, 84, 104, 130, 32, 183, 32, 98, 105, 101, 110, 116, 147, 116],

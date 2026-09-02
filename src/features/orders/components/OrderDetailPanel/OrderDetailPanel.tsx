@@ -1,6 +1,7 @@
-import { Clock, DotsHorizontalRounded, InfoCircle, Package, Printer, Receipt, RotateCcw, Store } from '@boxicons/react';
+import { Clock, InfoCircle, Package, Printer, Receipt, RotateCcw, ShoppingBag, Store } from '@boxicons/react';
 import { useState } from 'react';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
+import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrderDetailPanel.module.css';
 import { CancellationDialog } from '../CancellationDialog/CancellationDialog';
@@ -22,25 +23,28 @@ function stateLabel(order: OrderHistoryRecord) {
 
 export function OrderDetailPanel({
   order,
+  productImages,
   reprinting,
   cancelling,
   onReprint,
   onCancel,
 }: {
   order?: OrderHistoryRecord;
+  productImages: Record<string, string>;
   reprinting: boolean;
   cancelling: boolean;
   onReprint: (order: OrderHistoryRecord) => Promise<void>;
   onCancel: (order: OrderHistoryRecord, reason: string) => Promise<void>;
 }) {
+  const t = useT();
   const [cancellationOpen, setCancellationOpen] = useState(false);
 
   if (!order) {
     return (
       <aside className={`${styles.panel} ${styles.empty}`} aria-live="polite">
         <Receipt width={28} height={28} aria-hidden="true" />
-        <strong>No order selected</strong>
-        <span>Choose a saved order to inspect its receipt snapshot.</span>
+        <strong>{t('No order selected')}</strong>
+        <span>{t('Choose a saved order to inspect its receipt snapshot.')}</span>
       </aside>
     );
   }
@@ -59,66 +63,83 @@ export function OrderDetailPanel({
     ? styles.statusAttention
     : styles.statusComplete;
   const printNote = order.printState === 'failed'
-    ? 'Printer unavailable · reprint available'
+    ? `${t('Printer unavailable')} · ${t('reprint available')}`
     : order.printState === 'pending'
-      ? 'Receipt pending · reprint available'
+      ? `${t('Receipt pending')} · ${t('reprint available')}`
       : order.printState === 'printed'
-        ? `Receipt sent · ${order.printAttemptCount} attempt${order.printAttemptCount === 1 ? '' : 's'}`
-        : 'Reprint unavailable on this tablet';
-  const syncStateNote = order.syncState === 'synced'
-    ? 'Cloud synced'
-    : order.syncState === 'failed'
-      ? 'Needs sync'
-      : 'Waiting to sync';
+        ? t(
+            order.printAttemptCount === 1
+              ? 'Receipt sent · {count} attempt'
+              : 'Receipt sent · {count} attempts',
+            { count: order.printAttemptCount },
+          )
+        : t('Reprint unavailable on this tablet');
+  const syncStateNote = t(
+    order.syncState === 'synced'
+      ? 'Cloud synced'
+      : order.syncState === 'failed'
+        ? 'Needs sync'
+        : 'Waiting to sync',
+  );
+  const ServiceIcon = order.receipt.serviceType === 'take-away'
+    ? ShoppingBag
+    : Store;
+  const tenderMethods = new Set(
+    order.receipt.tenders?.map((tender) => tender.paymentMethod) ?? [],
+  );
+  const paymentLabel = tenderMethods.size > 1
+    ? 'Mixed'
+    : order.receipt.tenders?.[0]?.paymentMethod ?? order.receipt.paymentMethod;
 
   return (
     <aside className={styles.panel} aria-labelledby="selected-order-title">
       <header className={styles.header}>
         <span className={styles.heading}>
-          <small>SELECTED ORDER</small>
+          <small>{t('SELECTED ORDER')}</small>
           <h2 id="selected-order-title">{order.receipt.receiptNumber}</h2>
         </span>
         <span className={styles.headerActions}>
           <span className={`${styles.orderStatus} ${statusTone}`}>
             <span />
-            <strong>{stateLabel(order)}</strong>
+            <strong>{t(stateLabel(order))}</strong>
           </span>
-          <button type="button" aria-label="Cancel order" title={canCancel ? 'Cancel this whole sale' : 'This order cannot be corrected'} disabled={!canCancel || cancelling} onClick={() => setCancellationOpen(true)}>
-            {canCancel ? <RotateCcw width={16} height={16} aria-hidden="true" /> : <DotsHorizontalRounded width={16} height={16} aria-hidden="true" />}
-          </button>
         </span>
       </header>
 
       <div className={styles.metadata}>
         <span className={styles.metaItem}>
-          <Store width={16} height={16} aria-hidden="true" />
-          <small>Service</small>
-          <strong>{serviceLabel(order)}</strong>
+          <ServiceIcon width={16} height={16} aria-hidden="true" />
+          <small>{t('Service')}</small>
+          <strong>{t(serviceLabel(order))}</strong>
         </span>
         <span className={styles.metaItem}>
           <Clock width={16} height={16} aria-hidden="true" />
-          <small>Created</small>
+          <small>{t('Created')}</small>
           <strong>{createdAt}</strong>
         </span>
       </div>
 
       <div className={styles.body}>
       <div className={styles.itemsHeader}>
-        <strong>Order items</strong>
-        <small>{itemCount} {itemCount === 1 ? 'item' : 'items'}</small>
+        <strong>{t('Order items')}</strong>
+        <small>{itemCount} {t(itemCount === 1 ? 'item' : 'items')}</small>
       </div>
 
       <div className={styles.items}>
         {order.receipt.lines.map((item, index) => {
           const options = [
-            item.complimentary ? 'Offert' : '',
+            item.complimentary ? t('Offert') : '',
             item.sizeName,
             ...item.modifiers.map((modifier) => modifier.optionName),
           ].filter(Boolean).join(', ');
           return (
             <article className={styles.item} key={`${item.productName}-${index}`}>
               <span className={`${styles.itemIcon} ${index === 0 ? styles.itemIconActive : ''}`}>
-                <Package width={17} height={17} aria-hidden="true" />
+                {item.productId && productImages[item.productId] ? (
+                  <img src={productImages[item.productId]} alt="" />
+                ) : (
+                  <Package width={17} height={17} aria-hidden="true" />
+                )}
               </span>
               <span className={styles.itemCopy}>
                 <strong>{item.productName}</strong>
@@ -141,41 +162,51 @@ export function OrderDetailPanel({
       <div className={`${styles.divider} ${styles.paySplit}`} />
 
       <div className={styles.paymentHeader}>
-        <strong>Payment</strong>
+        <strong>{t('Payment')}</strong>
         <span>
           <span />
-          <small>{order.receipt.paymentMethod}</small>
+          <small>{t(paymentLabel)}</small>
         </span>
       </div>
 
       <dl className={styles.payment}>
-        <div>
-          <dt>Subtotal</dt>
-          <dd>{formatMoney(order.receipt.subtotalCentimes)}</dd>
-        </div>
         {order.receipt.discountCentimes > 0 ? (
-          <div>
-            <dt>Offert</dt>
-            <dd>-{formatMoney(order.receipt.discountCentimes)}</dd>
-          </div>
+          <>
+            <div>
+              <dt>{t('Subtotal')}</dt>
+              <dd>{formatMoney(order.receipt.subtotalCentimes)}</dd>
+            </div>
+            <div>
+              <dt>{t('Offert')}</dt>
+              <dd>-{formatMoney(order.receipt.discountCentimes)}</dd>
+            </div>
+          </>
         ) : null}
-        <div className={styles.total}>
-          <dt>Total</dt>
-          <dd>{formatMoney(order.receipt.totalCentimes)}</dd>
-        </div>
         {order.receipt.tenders?.flatMap((tender, index) => {
           const many = (order.receipt.tenders?.length ?? 0) > 1;
           return [
-            <div key={`given-${index}`}>
-              <dt>{many ? `Given ${index + 1}` : 'Given'}</dt>
-              <dd>{formatMoney(tender.amountCentimes)}</dd>
+            <div key={`method-${index}`}>
+              <dt>{many
+                ? `${index + 1} · ${t(tender.paymentMethod)}`
+                : t(tender.paymentMethod)}</dt>
+              <dd>{formatMoney(tender.dueCentimes)}</dd>
             </div>,
-            <div key={`change-${index}`}>
-              <dt>{many ? `Change ${index + 1}` : 'Change'}</dt>
-              <dd>{formatMoney(tender.changeCentimes)}</dd>
-            </div>,
+            ...(tender.paymentMethod === 'Cash' ? [
+              <div key={`given-${index}`}>
+                <dt>{t('Given')}</dt>
+                <dd>{formatMoney(tender.amountCentimes)}</dd>
+              </div>,
+              <div key={`change-${index}`}>
+                <dt>{t('Change')}</dt>
+                <dd>{formatMoney(tender.changeCentimes)}</dd>
+              </div>,
+            ] : []),
           ];
         })}
+        <div className={styles.total}>
+          <dt>{t('Total')}</dt>
+          <dd>{formatMoney(order.receipt.totalCentimes)}</dd>
+        </div>
       </dl>
 
       <div className={styles.divider} />
@@ -185,19 +216,19 @@ export function OrderDetailPanel({
           type="button"
           className={styles.reprint}
           disabled={!canReprint || reprinting}
-          title={canReprint ? 'Print the immutable saved receipt' : printNote}
+          title={canReprint ? t('Print the immutable saved receipt') : printNote}
           onClick={() => void onReprint(order)}
         >
           <Printer width={17} height={17} aria-hidden="true" />
-          <span>{reprinting ? 'Printing…' : 'Reprint'}</span>
+          <span>{reprinting ? t('Printing…') : t('Reprint')}</span>
         </button>
         <button type="button" className={styles.cancelOrder} disabled={!canCancel || cancelling} onClick={() => setCancellationOpen(true)}>
           <RotateCcw width={17} height={17} aria-hidden="true" />
-          <span>{cancelling ? 'Cancelling…' : 'Cancel'}</span>
+          <span>{cancelling ? t('Cancelling…') : t('Cancel')}</span>
         </button>
       </div>
 
-      <div className={styles.stockNote} title={order.printError ?? printNote}>
+      <div className={styles.stockNote} title={order.printError ? t(order.printError) : printNote}>
         <InfoCircle width={13} height={13} aria-hidden="true" />
         <span>{printNote} · {syncStateNote}</span>
       </div>

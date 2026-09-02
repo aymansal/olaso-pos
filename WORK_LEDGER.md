@@ -125,6 +125,237 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 release handoff (2 Sep 2026): the owner authorized committing and
+  pushing the complete pending polish set to `main`, then installing it over
+  the existing Galaxy Tab A9 app for hands-on testing. Official Android ADB
+  guidance and the repository tablet handoff both confirm `adb install -r` as
+  the data-preserving update path; no uninstall or data reset is allowed.
+  Pre-commit evidence: identity, local staff, local inventory/costs, exact
+  costs, local database, local catalog, product configuration, receipt
+  printing, POS, navigation, offline views, reconnect, Settings, CSS scope,
+  TypeScript, production build, and Convex codegen/typecheck all pass. Reports
+  also passes its local section and stops only at the intentionally unavailable
+  `OLASO_OWNER_PIN` cloud gate. Graphify code refresh completed at 3,025 nodes
+  and 5,956 edges, followed by clustering at 184 communities. Exact next
+  action: commit and push this POLISH-01 set, build the Android beta, install it
+  with `adb install -r`, restart once, and inspect the visible screen plus
+  focused startup errors.
+
+- POLISH-01 mandatory identity/data/payment/report repair (2 Sep 2026): traced
+  the lost staff PIN to `seed:resetAndSeed` deleting `staffProfiles` while
+  leaving `staffIdentities`, which orphaned the credential from the visible
+  profile ID. Development reset now requires the explicit disposable-deployment
+  acknowledgement, preserves staff IDs, reuses matching staff, and hides any
+  identity-less cloud profile from sign-in/sync. The same shared reset was the
+  credible catalog/photo loss path; product photos remain bounded 96×96 JPEG
+  data URLs in SQLite + Convex, save-without-photo preserves the cloud image,
+  and snapshot-without-photo preserves the tablet image. Split checkout now
+  lets each assigned payer choose Cash or Card; card is exact, cash alone shows
+  Given/Change, and receipts/Orders/daily metrics retain each method and due.
+  Orders decorates saved lines with the current saved product photo and uses a
+  Take-away bag icon. French Header/calendar abbreviations, larger Dashboard
+  axes, clear recipe-deduction wording, global Reports period for Costs, exact-
+  date salary/recurring-expense history, and the 48px Staff role field/12px
+  footer controls are implemented. The owner-only Header Report button now
+  prints a bounded bilingual current-day accounting summary through the shared
+  WD8260 transport. Focused passes: `tsc -b`, `check:convex` (functions
+  published; seed not run), `check:identity`, `check:local-staff`,
+  `check:local-inventory-costs`, `check:costs`, `check:local`,
+  `check:local-catalog`, `check:product-configuration`, `check:printing`,
+  `check:pos`, `check:navigation`, `check:offline`, `check:reconnect`,
+  `check:settings`, and production `build`. Local sections of `check:sales` and
+  `check:orders` pass before their protected cloud gate; `check:permissions`,
+  `check:sales`, `check:orders`, `check:dashboard`, `check:reports`,
+  `check:staff`, `check:expenses`, and `check:monthly-costs` cannot run their
+  cloud sections because `OLASO_OWNER_PIN` is absent. Per owner instruction,
+  no tablet/app launch, install, restart, browser QA, or physical print was
+  performed after resuming. Uncommitted. Exact next action: refresh Graphify,
+  review the diff, then hand the build to the owner for hands-on acceptance.
+
+- POLISH-01 mandatory bug repair (1 Sep 2026): professional receipt item
+  formatting now keeps product + size together, consolidates choices without
+  repeated `+`, never renders Offert as an option, and translates French
+  service as `Sur place` / `À emporter`. Profile language is local-first,
+  pushed before cloud directory refresh, and preserved through offline staff
+  provisioning. The physical reconnect failure was an ambiguous
+  `local_record_id` in compensation-delete reconciliation; it is qualified and
+  the installed beta now restarts with no console/logcat error. Protected
+  offline verification may recover an active profile whose cloud identity is
+  temporarily unavailable. Focused printing/identity/local-staff/local-cost/
+  reconnect/settings/lock/offline checks, TypeScript, Convex deployment,
+  production build, Android checks, 140-task beta, install-over, exact
+  1340 × 800 Lock, and clean startup pass. `check:sales` / `check:orders`
+  remain unrun because no protected `OLASO_OWNER_PIN` is present. Uncommitted.
+  Exact next action: owner unlocks once, verifies FR survives lock/restart and
+  the affected staff profile; then print one Offert receipt with size plus
+  several choices and inspect the real WD8260 paper.
+
+- POLISH-01 (1 Sep 2026): Settings no longer shows a leftover
+  `Synchronization failed` banner when waiting sales is 0. Application
+  language is per staff profile (SQLite schema 23 + Convex
+  `preferredLanguage`); receipt language stays tablet-wide. Header EN|FR
+  matches Settings Application. Lock keeps the last UI language. Professional
+  French café chrome via `src/lib/fr.ts`. Checks: `tsc -b`, `check:css-scope`,
+  `check:settings`, `check:identity`, `check:local-staff`, `check:lock-switch`,
+  `check:navigation`, `check:reconnect`, `check:staff`, `npm run build`,
+  Convex `dev --once`, graphify update (2993 nodes), `android:beta`.
+  Install-over SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next
+  action: owner unlocks, confirms Settings has no false sync failure when
+  waiting is 0, switches FR from the profile EN|FR control and Settings,
+  locks (Unlock stays French), then signs in an English profile.
+
+- POLISH-01 (1 Sep 2026): Stock used-today keeps `max(local, cloud + unsynced)`
+  so Reports Today 3 L is not replaced by a smaller cloud 1 L. On-hand folds
+  mapped local-duplicate `local_stock_delta` into the visible row. Category ⋮
+  is Rename/Delete only. Edit Product has no PRODUCT DETAILS; title aligns
+  with Active/Delete; category menu is 40px like price. Checks: `tsc -b`,
+  `check:css-scope`, `check:offline`, `check:navigation`, `android:beta`,
+  graphify update (2975 nodes). Install-over SM-X115 `R8YX91AKWXJ` and
+  relaunched. Uncommitted. Exact next action: owner unlocks, checks Stock
+  whole milk used-today vs Reports Today, on-hand, category ⋮, and Edit
+  Product title/category height.
+
+- POLISH-01 (1 Sep 2026): Stock used-today is today’s usage by ingredient
+  name/unit, plus today’s cloud summary so it survives reinstall; unsynced
+  local sales still add. Used-ingredient rows are mid-size (~52px). Needs
+  attention uses View all → Stock on Low stock; title-row Active/Low/Used/
+  Corrections counts are gone. Checks: `tsc -b`, `check:css-scope`,
+  `check:offline`, `check:navigation`, `android:beta`. Install-over SM-X115
+  `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next action: owner unlocks,
+  checks Stock used-today for today’s milk/beans (including earlier sales),
+  Reports used-row size, Dashboard View all → Low stock, and the empty
+  Stock title row.
+
+- POLISH-01 (1 Sep 2026): Stock used-today matches local/cloud ingredient IDs
+  and reloads after a local sale or cancellation. Reports used-ingredient bars
+  use `used / (used + on-hand)` with on-hand by name+unit (tablet overlay when
+  present); the used list scrolls and rows are compact (~32px). Receipts and
+  Orders payment match POS: Total only, Subtotal+Offert only when Offert,
+  never a tax line. Checks: `tsc -b`, `check:css-scope`, `check:printing`
+  (SHA `4562E870…CD6237`), `check:offline`, `check:reconnect`, `check:reports`,
+  `check:orders`, Convex `dev --once`, graphify update, `android:beta`.
+  Install-over SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next
+  action: owner unlocks, checks Stock used-today for milk/caramel/beans, Stock
+  usage bars (not full for 2 L of 33.48 L), compact used rows, and a receipt
+  without Offert showing Total only. Say if the tighter used rows should revert.
+
+- POLISH-01 (1 Sep 2026): Reports peak white dot removed. Products/Stock Y-axis
+  uses distinct integer ticks; stock-usage daily events fill the month chart;
+  used-ingredient bars compare usage to that ingredient’s on-hand stock.
+  Catalog snapshot COALESCE keeps tablet product JPEGs. Dashboard 12-day chart
+  already ends on today (left day drops tomorrow). Checks: `tsc -b`,
+  `check:css-scope`, `check:offline`, `check:reports`, Convex codegen,
+  graphify update, `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and
+  relaunched. Uncommitted. Exact next action: owner unlocks, checks Reports
+  Products/Stock graphs and used bars, then re-saves a product photo.
+
+- POLISH-01 (1 Sep 2026): Reports graph uses 8px bars, plot inset so day 1
+  does not cover Y labels, 1-2-5-10 ticks, blank zero days, and daily average
+  ÷ elapsed days this month. Profit card adds Stock value. Stock usage merges
+  the same ingredient. Staff delete ends open wage this month. Orders defaults
+  to Today with week/month/all presets, no header Cancel, tenders then TOTAL.
+  Checks: `tsc -b`, `check:css-scope`, `check:printing`, `check:orders`,
+  `check:offline`, `check:reports`, `check:local-inventory-costs`,
+  `check:local-staff`, Convex codegen (staff.remove compensationEndMonth),
+  graphify update, `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and
+  relaunched. Uncommitted. Exact next action: owner unlocks, opens Reports,
+  and checks the September graph (thin bar, 10/20/30/40 ticks, average ≈
+  peak on day 1), Stock value, merged stock-usage rows, Orders Today, and
+  receipt total last.
+
+- POLISH-01 (1 Sep 2026): Add expense / Add monthly pay calendars drop the
+  quick-period column (248px month grid). Calendar opener toggles closed on
+  the second tap (overlay closes on click, not pointerdown, so the click
+  cannot reopen it). Reports default is This week. Checks: `tsc -b`,
+  `check:css-scope`, graphify update, `android:beta`. Install-over SM-X115
+  `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next action: owner opens
+  Reports (This week highlighted), taps the date button twice, then Add
+  expense / Add monthly pay Date/Paid on twice and confirms no left quick
+  periods.
+
+- POLISH-01 (31 Aug 2026): Calendar highlights only the quick period that was
+  tapped (Today no longer lights This week on Monday; This month no longer
+  lights All). Popover is smaller and opens from the field, down if there is
+  room, up in Add expense / Add monthly pay. Reports selected-period totals
+  reload instead of keeping the previous range, and this tablet’s saved
+  receipts win when they have more completed sales than the cloud so today
+  sales still show. Graph remains the current calendar month. Checks:
+  `tsc -b`, `check:css-scope`, `check:offline`, graphify update,
+  `android:beta`. Install-over SM-X115 `R8YX91AKWXJ` and relaunched.
+  Uncommitted. Exact next action: owner opens Reports, taps Today only,
+  Last week, Last month, and Today’s sales; then Add expense Date for the
+  upward popover.
+
+- POLISH-01 (31 Aug 2026): Monthly pay has Delete (does not require deleting
+  the staff profile). Stock purchase cash does not dump into report cost;
+  profit uses per-sale recipe ingredient cost. Stock right card is Ingredient
+  aligned with Healthy/Delete, no Stock details / Ingredient information.
+  Reports Products is two Dashboard-like cream-gap cards. Shared period
+  calendar (quick periods left, month grid right; first tap day, second tap
+  range; first pick survives month change) is used on Reports, Orders,
+  expense/pay dates, and Costs month. Reports graph is always the current
+  calendar month and ignores the selected period. Checks: `tsc -b`,
+  `check:css-scope`, `check:local-inventory-costs`, `check:reports`, Convex
+  codegen (includes `staff.removePeriod`), graphify update, `android:beta`.
+  Install-over SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next
+  action: owner checks monthly-pay Delete, Stock chrome, Products cards,
+  calendar (including cross-month range), and the August-only graph.
+
+- POLISH-01 (31 Aug 2026): Products sidebar category names are 12px, one line,
+  and ellipsis; they never wrap or clip the product count. Recorded in
+  DESIGN.md and products AGENTS.md. Install-over SM-X115 `R8YX91AKWXJ` and
+  relaunched. Uncommitted. Exact next action: owner checks Bakery & Savory
+  and a long category name on Products.
+
+- POLISH-01 (31 Aug 2026): Add expense Date uses the same Staff caret as Paid
+  on; native calendar arrow hidden. Install-over SM-X115 `R8YX91AKWXJ` and
+  relaunched. Uncommitted. Exact next action: owner opens Add expense and
+  confirms one green caret on Date.
+
+- POLISH-01 (31 Aug 2026): Paid on keeps one green caret; the native
+  calendar arrow is hidden. Install-over SM-X115 `R8YX91AKWXJ` and relaunched.
+  Uncommitted. Exact next action: owner opens Add monthly pay and confirms one
+  arrow on Paid on.
+
+- POLISH-01 (31 Aug 2026): Products right rail is two equal inner cards
+  (categories top, products bottom). Empty copy sits under those titles and
+  under Used ingredients. Paid on is still a native date calendar, styled like
+  Staff (44px field, green caret on the right). Chart legend is Previous
+  period. Checks: `tsc -b`, `check:css-scope`, graphify update, `android:beta`.
+  Install-over SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next
+  action: owner checks Products two cards, Stock empty copy, Paid on caret, and
+  Previous period on the chart.
+
+- POLISH-01 (31 Aug 2026): Reports charts fill the left card. Sales right card
+  holds Orders, Average, and a smaller operating-profit total. Products right
+  card splits category vs product rows. Stock usage keeps used ingredients only.
+  Expense/pay dialogs use 44px menus and centered 48px actions. Debug APK
+  install-over SM-X115 `R8YX91AKWXJ` and relaunched. Uncommitted. Exact next
+  action: owner checks Sales/Products/Stock/Costs plus Add expense and Add
+  monthly pay.
+
+- POLISH-01 (31 Aug 2026): Owner was still on the previous APK. Debug
+  `app-debug.apk` install-over SM-X115 `R8YX91AKWXJ` succeeded and MainActivity
+  relaunched. Convex `dev --once` pushed the reports aggregate. Uncommitted
+  Stock/Settings/Reports source is now on the tablet. Exact next action: owner
+  unlocks and checks Stock movements, Settings (no tabs), and Reports Sales/Costs.
+
+- POLISH-01 (30 Aug 2026): Stock right card drops inventory-value / linked-recipe
+  chrome and shows five recent movements; Adjust count / Receive sit above Save
+  with padding. Products category names are 13px. Settings is one page: left
+  languages/clock/printer/sync/update, right Staff & access; no tabs, no Lock
+  application, no Restore saved logo, no device ID. Reports Sales uses Dashboard
+  48px type and a taller chart; Costs is add-only (one-time vs split-by-days
+  expenses, monthly pay by staff + date); profit is on Sales for the selected
+  dates with daily wage/expense allocation. Android research: React/CSS plus
+  existing SQLite cost rows; no native plugin. Checks: `check:css-scope`,
+  `tsc -b`, `check:settings`, `check:local-staff`, `check:lock-switch`,
+  `check:local-inventory-costs`, `check:reports`, `npm run build`, graphify
+  update. Browser lock on a fresh jeep-sqlite had no staff list so authenticated
+  1340×800 screenshots were not taken. Uncommitted. Exact next action: owner
+  reviews Stock movements, Products categories, Settings, and Reports on the
+  Tab A9.
+
 - POLISH-01 (30 Aug 2026): Ingredient editing is the Stock right card (name +
   threshold, Save/Delete). Add ingredient is create-only; its base-unit menu
   matches the 47px fields. Product archive UI and ingredient archive UI are
@@ -1607,6 +1838,21 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-09-01 — POLISH-01 receipt, language, and delayed staff reliability
+
+- Professional POS research separates variants, modifiers, and discounts.
+  Olaso now prints product + size as one heading, selected choices as one
+  wrapping middle-dot list, and Offert only as a zero line charge plus totals
+  deduction. French receipt service labels are translated.
+- Root cause review found profile language pulled from cloud before the local
+  preference was pushed, offline staff acknowledgement hardcoded English, and
+  an ambiguous compensation-delete SQL column repeatedly aborting reconnect.
+  Fixed all three at their shared data boundaries and retained protected
+  offline fallback when an active cloud identity is temporarily unavailable.
+- Deployed the Convex functions, built and installed the development beta over
+  the existing tablet data, and verified a clean exact-size Lock restart. Final
+  profile/PIN and paper acceptance still require the owner's physical action.
 
 ### 2026-08-30 — POLISH-01 overlay keyboard vs backdrop close
 

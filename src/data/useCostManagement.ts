@@ -3,8 +3,10 @@ import {
   addLocalCompensationPeriod,
   addLocalExpense,
   correctLocalExpense,
+  deleteLocalCompensationPeriod,
   type ExpenseInput,
   type SavedCostManagement,
+  type SavedCompensationPeriod,
   type SavedExpense,
 } from './localCosts.ts';
 import { loadLocalCostManagement } from './localCostViews.ts';
@@ -57,6 +59,10 @@ export function useCostManagement(month: string) {
       monthlyAmountCentimes: number;
       effectiveStartMonth: string;
       effectiveEndMonth?: string;
+      effectiveStartDate?: string;
+      effectiveEndDate?: string;
     }) => save(addLocalCompensationPeriod(context, input)),
+    deleteCompensation: (period: SavedCompensationPeriod) =>
+      save(deleteLocalCompensationPeriod(context, period)),
   };
 }

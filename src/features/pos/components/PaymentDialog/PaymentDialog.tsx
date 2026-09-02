@@ -1,6 +1,7 @@
 import { X } from '@boxicons/react';
 import { useEffect, useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
+import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import {
   changeCentimes,
@@ -61,7 +62,8 @@ function ShareRows({
   disabled: boolean;
   onPick: (lineId: string) => void;
 }) {
-  if (lines.length === 0) return <p className={styles.shareEmpty}>{empty}</p>;
+  const t = useT();
+  if (lines.length === 0) return <p className={styles.shareEmpty}>{t(empty)}</p>;
   return (
     <>
       {lines.map((line) => (
@@ -74,7 +76,7 @@ function ShareRows({
         >
           <span className={styles.shareCopy}>
             <span className={styles.shareName}>
-              {labels[line.id]?.name ?? 'Product'}
+              {labels[line.id]?.name ?? t('Product')}
             </span>
             {labels[line.id]?.detail ? (
               <small>{labels[line.id]?.detail}</small>
@@ -101,18 +103,20 @@ export function PaymentDialog({
   onCancel,
   onConfirm,
 }: PaymentDialogProps) {
+  const t = useT();
   const [split, setSplit] = useState(false);
   const [splitFade, setSplitFade] = useState<'idle' | 'prepare' | 'run'>('idle');
   const [remaining, setRemaining] = useState(() => payableCart(cart));
   const [pick, setPick] = useState<CartLine[]>([]);
   const [recorded, setRecorded] = useState<PaymentTender[]>([]);
+  const [activeMethod, setActiveMethod] = useState<PaymentMethod>(paymentMethod);
   const [customText, setCustomText] = useState('');
   const [tendered, setTendered] = useState<number | undefined>(
     paymentMethod === 'Card' ? chargedCentimes(cart, sizes, choiceValues) : undefined,
   );
 
   const locked = recorded.length > 0;
-  const cash = paymentMethod === 'Cash';
+  const cash = activeMethod === 'Cash';
   const activeCart = split ? pick : cart;
   const due = chargedCentimes(activeCart, sizes, choiceValues);
   const received = cash ? (tendered ?? (due === 0 ? 0 : undefined)) : due;
@@ -144,11 +148,14 @@ export function PaymentDialog({
       setSplitFade('idle');
       setRemaining(payableCart(cart));
       setPick([]);
+      setActiveMethod(paymentMethod);
+      setTendered(paymentMethod === 'Card' ? chargedCentimes(cart, sizes, choiceValues) : undefined);
       return;
     }
     setSplit(true);
     setRemaining(payableCart(cart));
     setPick([]);
+    setActiveMethod(paymentMethod);
     resetCashAmount();
     setSplitFade('prepare');
   }
@@ -158,6 +165,7 @@ export function PaymentDialog({
       return;
     }
     const tender: PaymentTender = {
+      paymentMethod: activeMethod,
       dueCentimes: due,
       amountCentimes: received,
       changeCentimes: change,
@@ -188,11 +196,11 @@ export function PaymentDialog({
         >
           <header>
             <span>
-              <small>PAYMENT</small>
+              <small>{t('PAYMENT')}</small>
               <h2 id="payment-dialog-title">{formatMoney(due)}</h2>
             </span>
             {locked || processing ? null : (
-              <button type="button" onClick={onCancel} aria-label="Close payment">
+              <button type="button" onClick={onCancel} aria-label={t('Close payment')}>
                 <X width={18} height={18} aria-hidden="true" />
               </button>
             )}
@@ -207,7 +215,7 @@ export function PaymentDialog({
                 disabled={locked || processing}
                 onClick={toggleSplit}
               >
-                Split
+                {t('Split')}
               </button>
             ) : null}
 
@@ -215,7 +223,7 @@ export function PaymentDialog({
               <p className={styles.paid}>
                 {recorded.map((tender, index) => (
                   <span key={`${tender.dueCentimes}-${index}`}>
-                    {index + 1} · {formatMoney(tender.amountCentimes)}
+                    {index + 1} · {t(tender.paymentMethod)} · {formatMoney(tender.dueCentimes)}
                   </span>
                 ))}
               </p>
@@ -225,8 +233,8 @@ export function PaymentDialog({
               <div className={styles.shares} data-fade={splitFade}>
                 <div>
                   <p className={styles.shareHead}>
-                    Remaining
-                    <span>Tap to add</span>
+                    {t('Remaining')}
+                    <span>{t('Tap to add')}</span>
                   </p>
                   <ShareRows
                     lines={remaining}
@@ -242,8 +250,8 @@ export function PaymentDialog({
                 </div>
                 <div>
                   <p className={styles.shareHead}>
-                    This payment
-                    <span>Tap to return</span>
+                    {t('This payment')}
+                    <span>{t('Tap to return')}</span>
                   </p>
                   <ShareRows
                     lines={pick}
@@ -260,9 +268,28 @@ export function PaymentDialog({
               </div>
             ) : null}
 
+            {split ? (
+              <div className={styles.methods} role="group" aria-label={t('Payment method')}>
+                {(['Cash', 'Card'] as const).map((method) => (
+                  <button
+                    type="button"
+                    aria-pressed={activeMethod === method}
+                    disabled={processing}
+                    onClick={() => {
+                      setActiveMethod(method);
+                      resetCashAmount();
+                    }}
+                    key={method}
+                  >
+                    {t(method)}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
             {cash ? (
               <>
-                <div className={styles.quick} role="group" aria-label="Quick amounts">
+                <div className={styles.quick} role="group" aria-label={t('Quick amounts')}>
                   {QUICK_TENDER_CENTIMES.map((amount) => (
                     <button
                       key={amount}
@@ -276,14 +303,14 @@ export function PaymentDialog({
                   ))}
                 </div>
                 <label className={styles.custom}>
-                  <span>Custom</span>
+                  <span>{t('Custom')}</span>
                   <input
                     type="text"
                     inputMode="decimal"
                     autoComplete="off"
                     disabled={processing}
                     value={customText}
-                    placeholder="Amount given"
+                    placeholder={t('Amount given')}
                     onChange={(event) => {
                       const next = event.target.value;
                       setCustomText(next);
@@ -293,18 +320,18 @@ export function PaymentDialog({
                 </label>
               </>
             ) : (
-              <p className={styles.cardNote}>Card · exact amount</p>
+              <p className={styles.cardNote}>{t('Card · exact amount')}</p>
             )}
           </div>
 
-          <dl className={styles.change}>
+          {cash ? <dl className={styles.change}>
             <div>
-              <dt>Given</dt>
+              <dt>{t('Given')}</dt>
               <dd>{received === undefined ? '—' : formatMoney(received)}</dd>
             </div>
             <div>
               <dt>
-                {received !== undefined && received < due ? 'Need' : 'Change'}
+                {received !== undefined && received < due ? t('Need') : t('Change')}
               </dt>
               <dd>
                 {received === undefined
@@ -314,12 +341,12 @@ export function PaymentDialog({
                     : formatMoney(change ?? 0)}
               </dd>
             </div>
-          </dl>
+          </dl> : null}
 
           <footer>
             {locked || processing ? null : (
               <button type="button" className={styles.cancel} onClick={onCancel}>
-                Cancel
+                {t('Cancel')}
               </button>
             )}
             <button
@@ -328,7 +355,7 @@ export function PaymentDialog({
               disabled={!canPay || processing}
               onClick={() => void takePayment()}
             >
-              {processing ? 'Saving…' : confirmLabel}
+              {processing ? t('Saving…') : t(confirmLabel)}
             </button>
           </footer>
         </section>

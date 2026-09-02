@@ -1,4 +1,5 @@
 import { Minus, Plus } from '@boxicons/react';
+import { useT } from '../../../../lib/locale';
 import styles from './QuantityStepper.module.css';
 
 type QuantityStepperProps = {
@@ -14,11 +15,12 @@ export function QuantityStepper({
   onDecrement,
   onIncrement,
 }: QuantityStepperProps) {
+  const t = useT();
   return (
-    <div className={styles.stepper} aria-label={`${productName} quantity: ${quantity}`}>
+    <div className={styles.stepper} aria-label={t('{name} quantity: {quantity}', { name: productName, quantity })}>
       <button
         type="button"
-        aria-label={`Decrease ${productName} quantity`}
+        aria-label={t('Decrease {name} quantity', { name: productName })}
         disabled={quantity === 1}
         onClick={onDecrement}
       >
@@ -27,7 +29,7 @@ export function QuantityStepper({
       <strong>{quantity}</strong>
       <button
         type="button"
-        aria-label={`Increase ${productName} quantity`}
+        aria-label={t('Increase {name} quantity', { name: productName })}
         onClick={onIncrement}
       >
         <Plus width={16} height={16} />

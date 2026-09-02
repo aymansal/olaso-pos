@@ -21,6 +21,11 @@ assert.match(app, /const ProductsScreen = lazy\(/);
 assert.match(app, /const ReportsScreen = lazy\(/);
 assert.match(app, /const SettingsScreen = lazy\(/);
 assert.match(app, /const StockScreen = lazy\(/);
+assert.match(app, /initialLevelFilter=\{stockLevelFilter\}/);
+assert.match(
+  readFileSync('src/features/dashboard/DashboardScreen.tsx', 'utf8'),
+  /stockLevel: 'low'/,
+);
 assert.match(app, /import \{ PosScreen \} from '\.\/features\/pos\/PosScreen'/);
 assert.match(app, /import \{ LockScreen \} from '\.\/features\/settings\/LockScreen'/);
 assert.doesNotMatch(app, /import \{ DashboardScreen \}/);
@@ -49,7 +54,8 @@ for (const file of [
 }
 
 const reports = readFileSync('src/data/useReportsData.ts', 'utf8');
-assert.doesNotMatch(reports, /setSnapshot\(undefined\)/);
+assert.match(reports, /rangeKey\.current !== nextRange/);
+assert.match(reports, /setSnapshot\(undefined\)/);
 const pos = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
 assert.match(pos, /const validation = isLoading[\s\S]*?Loading the saved menu[\s\S]*?: validatePosSession/);
 assert.match(pos, /const \[visitedCategoryIds, setVisitedCategoryIds\] = useState<string\[\]>\(/);

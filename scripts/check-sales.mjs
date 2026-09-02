@@ -271,8 +271,8 @@ const tenderedSale = prepareSale(
     ...input,
     paymentMethod: 'Cash',
     tenders: [
-      { dueCentimes: 1000, amountCentimes: 2000, changeCentimes: 1000 },
-      { dueCentimes: 1100, amountCentimes: 2000, changeCentimes: 900 },
+      { paymentMethod: 'Card', dueCentimes: 1000, amountCentimes: 1000, changeCentimes: 0 },
+      { paymentMethod: 'Cash', dueCentimes: 1100, amountCentimes: 2000, changeCentimes: 900 },
     ],
   },
   'local-tender-check',
@@ -285,7 +285,7 @@ assert.throws(
     {
       ...input,
       tenders: [
-        { dueCentimes: 2100, amountCentimes: 1000, changeCentimes: 0 },
+        { paymentMethod: 'Cash', dueCentimes: 2100, amountCentimes: 1000, changeCentimes: 0 },
       ],
     },
     'local-bad-tender-check',

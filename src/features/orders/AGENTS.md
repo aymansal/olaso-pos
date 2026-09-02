@@ -22,21 +22,24 @@ Provides bounded order history and a selected order's receipt-style detail.
   (`dd/mm/yy` then time), with the DATE header centered over that pair; the
   order-number cell is the receipt number only. The list and selected-order
   detail do not show customer or table. Service and created time sit on one
-  line in the detail card. Payment shows subtotal and total, plus Offert when
-  the saved discount is greater than zero, and each saved tender's amount
-  given and change. Those rows hug the totals on a simple receipt and grow
+  line in the detail card. Payment shows Total only, plus Subtotal and Offert
+  when the saved discount is greater than zero, then each saved tender’s method
+  and due; only Cash shows amount given/change. There is no tax line. Those rows hug the totals on a simple receipt and grow
   only for split tenders, then scroll above Reprint and Cancel. Payment and
   actions stay pinned to the bottom of the card so completed and cancelled
   receipts do not shift the layout.
-- The date picker and quick periods remain compact and open toward available
-  screen space. Search, All/Completed/Cancelled, and All dates share one
-  42-pixel outline with 12-pixel type.
+- The date picker is the shared period calendar. Orders opens on Today.
+  Range mode includes Today, Yesterday, This week, Last week, This month,
+  Last month, and All. Search, All/Completed/Cancelled, and the date control
+  share one 42-pixel outline with 12-pixel type.
+- Cancel lives only at the bottom of the selected-order card.
 - History reads are bounded and paginated. The pager uses the saved SQLite
   order count; each page click loads that OFFSET window of eight equal-height
   rows. The showing-count and pager sit on one line near the card bottom.
   Next on the last page stays there.
-- Show immutable receipt snapshots and the local/cloud sync state without
-  reconstructing current product data.
+- Show immutable receipt snapshots and the local/cloud sync state. A line may
+  use the current saved product photo strictly as decoration, with an icon
+  fallback; never reconstruct historical names, choices, quantities, or money.
 - Reprint and whole-sale cancellation are the detail actions. Receipt preview
   stays on POS after checkout. Failed sync is visible as status copy; Settings
   Manual Sync is the recovery action. Cancellation is not deletion.

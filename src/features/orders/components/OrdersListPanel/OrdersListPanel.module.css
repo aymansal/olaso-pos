@@ -206,43 +206,6 @@
   color: var(--olaso-copy);
 }
 
-.dateMenu {
-  position: absolute;
-  z-index: 3;
-  top: 48px;
-  right: 0;
-  width: 190px;
-  padding: 10px;
-  border: 1px solid var(--olaso-control-border);
-  border-radius: 16px;
-  background: var(--olaso-white);
-}
-
-.dateMenu > span {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.dateMenu button,
-.dateMenu input {
-  min-height: 36px;
-  border: 1px solid var(--olaso-divider);
-  border-radius: 10px;
-  color: var(--olaso-text);
-  background: var(--olaso-white);
-  font-size: 12px;
-}
-
-.dateMenu button {
-  flex: 1;
-}
-
-.dateMenu input {
-  width: 100%;
-  padding: 0 8px;
-}
-
 .footer {
   position: absolute;
   top: 630px;

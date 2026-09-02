@@ -7,6 +7,7 @@ import { completeLocalSaleCancellation } from './localSales.ts';
 import {
   countLocalOrders,
   loadLocalOrderPage,
+  loadCurrentProductImages,
   loadLocalSyncSummary,
   ORDER_PAGE_SIZE,
   type OrderHistoryRecord,
@@ -17,11 +18,13 @@ import {
 import { attemptSaleReceiptPrint } from './receiptPrinting.ts';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
+import { productImage } from '../lib/productImage.ts';
 
 export type OrdersListQuery = {
   page: number;
   status: OrderStatusFilter;
-  businessDate: string;
+  fromDate: string;
+  toDate: string;
   query: string;
 };
 
@@ -30,7 +33,8 @@ function listFilter(list: OrdersListQuery): OrderListFilter {
     ...(list.status === 'All'
       ? {}
       : { status: list.status.toLocaleLowerCase() as OrderStatus }),
-    ...(list.businessDate ? { businessDate: list.businessDate } : {}),
+    ...(list.fromDate ? { fromDate: list.fromDate } : {}),
+    ...(list.toDate ? { toDate: list.toDate } : {}),
     ...(list.query.trim() ? { query: list.query } : {}),
   };
 }
@@ -91,7 +95,13 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
       totalCentimes: snapshot.totalCentimes,
       taxPolicyLabel: snapshot.taxPolicyLabel,
       paymentMethod: snapshot.paymentMethod,
-      ...(snapshot.tenders ? { tenders: snapshot.tenders } : {}),
+      ...(snapshot.tenders ? {
+        tenders: snapshot.tenders.map((tender) => ({
+          ...tender,
+          paymentMethod: tender.paymentMethod
+            ?? (snapshot.paymentMethod === 'Card' ? 'Card' : 'Cash'),
+        })),
+      } : {}),
     },
   };
 }
@@ -103,6 +113,7 @@ export function useOrdersData(list: OrdersListQuery) {
   const convex = useConvex();
   const [orders, setOrders] = useState<OrderHistoryRecord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [productImages, setProductImages] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [reprintingId, setReprintingId] = useState<string>();
   const [cancellingId, setCancellingId] = useState<string>();
@@ -127,7 +138,7 @@ export function useOrdersData(list: OrdersListQuery) {
           limit: ORDER_PAGE_SIZE,
         })
       : undefined;
-    const [localResult, countResult, summaryResult] = await Promise.allSettled([
+    const [localResult, countResult, summaryResult, imageResult] = await Promise.allSettled([
       loadLocalOrderPage({
         limit: ORDER_PAGE_SIZE,
         offset,
@@ -135,6 +146,7 @@ export function useOrdersData(list: OrdersListQuery) {
       }),
       countLocalOrders(filter),
       loadLocalSyncSummary(),
+      loadCurrentProductImages(),
     ]);
     if (!mounted.current || generation !== fetchGeneration.current) return;
     const pageOrders =
@@ -154,6 +166,11 @@ export function useOrdersData(list: OrdersListQuery) {
       if (summaryResult.value.lastError) {
         errors.push('Some saved orders still need synchronization.');
       }
+    }
+    if (imageResult.status === 'fulfilled') {
+      setProductImages(Object.fromEntries(Object.entries(imageResult.value).map(
+        ([id, image]) => [id, productImage(image.imageAssetKey, image.artworkKey, image.imageJpeg)],
+      )));
     }
     setOrders(pageOrders);
     hasOrdersSnapshot.current = true;
@@ -186,7 +203,8 @@ export function useOrdersData(list: OrdersListQuery) {
     available,
     convex,
     foreground,
-    list.businessDate,
+    list.fromDate,
+    list.toDate,
     list.page,
     list.query,
     list.status,
@@ -235,6 +253,7 @@ export function useOrdersData(list: OrdersListQuery) {
           actorProfileId: session.staffProfileId,
           actorName: session.name,
         });
+        reconnect.notifyLocalWrite();
         await refresh();
         setMessage('Correction saved locally and waiting to synchronize.');
         void reconnect.run('automatic').catch(() => undefined);
@@ -256,6 +275,7 @@ export function useOrdersData(list: OrdersListQuery) {
     cancellingId,
     message,
     lastSuccessAt,
+    productImages,
     reprintReceipt,
     cancelOrder,
   };

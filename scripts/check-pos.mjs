@@ -134,8 +134,8 @@ const header = readFileSync('src/features/pos/components/Header/Header.tsx', 'ut
 assert.doesNotMatch(header, /Bell|badge/);
 const rail = readFileSync('src/features/pos/components/ReceiptRail/ReceiptRail.tsx', 'utf8');
 assert.doesNotMatch(rail, /ReceiptHeader|Purchase Receipt|Local draft|Order list|start the order/);
-assert.match(rail, /aria-label="Clear cart"/);
-assert.match(rail, /<h2 className=\{styles\.title\}>Current order<\/h2>/);
+assert.match(rail, /aria-label=\{t\('Clear cart'\)\}/);
+assert.match(rail, /<h2 className=\{styles\.title\}>\{t\('Current order'\)\}<\/h2>/);
 assert.match(rail, /disabled=\{lines\.length === 0 \|\| checkoutProcessing\}/);
 assert.match(screen, /onClearCart=/);
 const segmented = readFileSync(
@@ -236,7 +236,7 @@ const card = readFileSync(
   'src/features/pos/components/OrderItemCard/OrderItemCard.tsx',
   'utf8',
 );
-assert.match(card, /Mark \$\{product.name\} Offert/);
+assert.match(card, /t\('Mark \{name\} Offert'/);
 assert.match(card, /onToggleOffert/);
 const cardCss = readFileSync(
   'src/features/pos/components/OrderItemCard/OrderItemCard.module.css',

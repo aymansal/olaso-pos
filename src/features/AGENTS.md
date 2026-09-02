@@ -22,7 +22,8 @@ The shared profile control opens Settings.
 
 - Permanent-navigation screens no longer each mount Header. App owns the
   shared Header and its `NavigationPage`. Dashboard still receives
-  `onNavigate` for View all. Settings reuses that Header with no active
+  `onNavigate` for View all (Orders, and Needs attention → Stock on low
+  stock). Settings reuses that Header with no active
   top-level item.
 - A screen module places regions; child modules style child internals.
 - Keep any remaining static screen data in the feature's `data/` folder instead

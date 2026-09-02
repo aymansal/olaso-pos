@@ -1,5 +1,5 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
-import { occursInMonth } from '../lib/costs.ts';
+import { daysInCalendarMonth, operatingCostsForRange } from '../lib/costs.ts';
 import type { StaffRole } from './permissions.ts';
 import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
 import type {
@@ -30,6 +30,12 @@ function expenseFromRow(row: Record<string, unknown>): SavedExpense {
     ...(row.effective_end_month
       ? { effectiveEndMonth: String(row.effective_end_month) }
       : {}),
+    ...(row.effective_start_date
+      ? { effectiveStartDate: String(row.effective_start_date) }
+      : {}),
+    ...(row.effective_end_date
+      ? { effectiveEndDate: String(row.effective_end_date) }
+      : {}),
     transactionType: row.transaction_type === 'reversal' ? 'reversal' : 'recorded',
     ...(row.correction_of_expense_id
       ? { correctionOfExpenseId: String(row.correction_of_expense_id) }
@@ -59,20 +65,8 @@ export async function loadLocalCostManagementFromDatabase(
     throw new Error('Saved expenses exceed the local report limit.');
   }
   const expenses = (expenseRows.values ?? []).map(expenseFromRow);
-  const otherExpenseCentimes = expenses.reduce((sum, expense) => {
-    const applies = expense.recurrence === 'one-time'
-      ? expense.effectiveDate?.slice(0, 7) === selectedMonth
-      : occursInMonth(
-          selectedMonth,
-          expense.effectiveStartMonth!,
-          expense.effectiveEndMonth,
-        );
-    return applies
-      ? sum + (expense.transactionType === 'reversal'
-          ? -expense.amountCentimes
-          : expense.amountCentimes)
-      : sum;
-  }, 0);
+  const monthStart = `${selectedMonth}-01`;
+  const monthEnd = `${selectedMonth}-${String(daysInCalendarMonth(selectedMonth)).padStart(2, '0')}`;
   const purchaseRows = await database.query(
     `SELECT transaction_type, total_cost_centimes FROM inventory_purchases
      WHERE business_date BETWEEN ? AND ? LIMIT 1001`,
@@ -86,9 +80,18 @@ export async function loadLocalCostManagementFromDatabase(
       * Number(purchase.total_cost_centimes),
     0,
   );
+  const inventoryRows = await database.query(
+    `SELECT SUM(CASE WHEN inventory_value_centimes IS NULL THEN 0
+      ELSE inventory_value_centimes + local_inventory_value_delta END) AS value
+     FROM ingredients WHERE status = 'active'`,
+  );
+  const inventoryValueCentimes = Number(inventoryRows.values?.[0]?.value ?? 0);
   if (role !== 'owner') {
+    const { otherExpenseCentimes } = operatingCostsForRange(
+      expenses, [], monthStart, monthEnd,
+    );
     return { month: selectedMonth, expenses, staff: [], compensation: [],
-      purchaseCashCentimes, otherExpenseCentimes };
+      purchaseCashCentimes, inventoryValueCentimes, otherExpenseCentimes };
   }
   const [staffRows, periodRows, saleRows] = await Promise.all([
     database.query(
@@ -137,6 +140,12 @@ export async function loadLocalCostManagementFromDatabase(
     ...(row.effective_end_month
       ? { effectiveEndMonth: String(row.effective_end_month) }
       : {}),
+    ...(row.effective_start_date
+      ? { effectiveStartDate: String(row.effective_start_date) }
+      : {}),
+    ...(row.effective_end_date
+      ? { effectiveEndDate: String(row.effective_end_date) }
+      : {}),
     revision: Number(row.revision),
     createdAt: Number(row.created_at),
   }));
@@ -151,17 +160,19 @@ export async function loadLocalCostManagementFromDatabase(
   const incompleteSaleCount = (saleRows.values ?? []).filter(
     (row) => row.cost_status !== 'complete',
   ).length;
-  const compensationCentimes = compensation.reduce((sum, period) =>
-    occursInMonth(selectedMonth, period.effectiveStartMonth,
-      period.effectiveEndMonth)
-      ? sum + period.monthlyAmountCentimes
-      : sum, 0);
+  const { otherExpenseCentimes, compensationCentimes } = operatingCostsForRange(
+    expenses,
+    compensation,
+    monthStart,
+    monthEnd,
+  );
   return {
     month: selectedMonth,
     expenses,
     staff,
     compensation,
     purchaseCashCentimes,
+    inventoryValueCentimes,
     otherExpenseCentimes,
     profitability: {
       revenueCentimes,
@@ -227,7 +238,9 @@ export async function pruneSavedCompensationFromDatabase(
          SELECT m.local_record_id
          FROM management_operations m
          JOIN outbox o ON o.operation_id = m.operation_id
-         WHERE m.operation_type = 'management.compensation.add'
+         WHERE m.operation_type IN (
+           'management.compensation.add', 'management.compensation.delete'
+         )
        )`,
     incomingIds,
     false,
@@ -244,6 +257,8 @@ export function replaceSavedExpenses(
     effectiveDate?: string;
     effectiveStartMonth?: string;
     effectiveEndMonth?: string;
+    effectiveStartDate?: string;
+    effectiveEndDate?: string;
     transactionType: 'recorded' | 'reversal';
     correctionOfExpenseId?: string;
     revision: number;
@@ -261,8 +276,9 @@ export function replaceSavedExpenses(
         `INSERT INTO operating_expenses
           (id, category, description, amount_centimes, recurrence,
            effective_date, effective_start_month, effective_end_month, status,
-           revision, created_at, transaction_type, correction_of_expense_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?)
+           effective_start_date, effective_end_date, revision, created_at,
+           transaction_type, correction_of_expense_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET category = excluded.category,
            description = excluded.description,
            amount_centimes = excluded.amount_centimes,
@@ -270,12 +286,15 @@ export function replaceSavedExpenses(
            effective_date = excluded.effective_date,
            effective_start_month = excluded.effective_start_month,
            effective_end_month = excluded.effective_end_month,
+           effective_start_date = excluded.effective_start_date,
+           effective_end_date = excluded.effective_end_date,
            transaction_type = excluded.transaction_type,
            correction_of_expense_id = excluded.correction_of_expense_id,
            revision = excluded.revision`,
         [row.id, row.category, row.description, row.amountCentimes,
           row.recurrence, row.effectiveDate ?? null,
           row.effectiveStartMonth ?? null, row.effectiveEndMonth ?? null,
+          row.effectiveStartDate ?? null, row.effectiveEndDate ?? null,
           row.revision, now, row.transactionType,
           row.correctionOfExpenseId ?? null],
         false,
@@ -294,19 +313,31 @@ export function replaceSavedCompensation(
     monthlyAmountCentimes: number;
     effectiveStartMonth: string;
     effectiveEndMonth?: string;
+    effectiveStartDate?: string;
+    effectiveEndDate?: string;
     revision: number;
   }>,
 ) {
   if (rows.length > 100) throw new Error('Compensation snapshot exceeds its limit.');
   return withLocalTransaction(async (database) => {
     const now = Date.now();
+    const blocked = await database.query(
+      `SELECT m.local_record_id FROM management_operations m
+       JOIN outbox o ON o.operation_id = m.operation_id
+       WHERE m.operation_type = 'management.compensation.delete' LIMIT 101`,
+    );
+    const pendingDelete = new Set(
+      (blocked.values ?? []).map((row) => String(row.local_record_id)),
+    );
     for (const row of rows) {
+      if (pendingDelete.has(row.id)) continue;
       await database.run(
         `INSERT INTO compensation_periods
           (id, staff_profile_id, staff_name_snapshot, staff_role_snapshot,
            monthly_amount_centimes,
-           effective_start_month, effective_end_month, revision, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+           effective_start_month, effective_end_month, effective_start_date,
+           effective_end_date, revision, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            staff_name_snapshot = CASE
              WHEN excluded.staff_name_snapshot <> ''
@@ -319,10 +350,13 @@ export function replaceSavedCompensation(
            monthly_amount_centimes = excluded.monthly_amount_centimes,
            effective_start_month = excluded.effective_start_month,
            effective_end_month = excluded.effective_end_month,
+           effective_start_date = excluded.effective_start_date,
+           effective_end_date = excluded.effective_end_date,
            revision = excluded.revision`,
         [row.id, row.staffProfileId, row.staffNameSnapshot ?? '',
           row.staffRoleSnapshot ?? '', row.monthlyAmountCentimes,
           row.effectiveStartMonth, row.effectiveEndMonth ?? null,
+          row.effectiveStartDate ?? null, row.effectiveEndDate ?? null,
           row.revision, now],
         false,
       );

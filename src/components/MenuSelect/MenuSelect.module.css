@@ -112,6 +112,26 @@
   font-weight: 600;
 }
 
+.field .trigger {
+  height: 44px;
+  border: 1px solid var(--olaso-control-border);
+  border-radius: 22px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field .menu {
+  max-height: 220px;
+  border-radius: 18px;
+}
+
+.field .menu button {
+  height: 44px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .menu button:disabled {
   opacity: 0.4;
   cursor: not-allowed;

@@ -19,6 +19,7 @@ type Services = {
   addExpense: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
   correctExpense: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
   addCompensation: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
+  removeCompensation: (args: Record<string, unknown>) => Promise<Record<string, unknown>>;
 };
 
 function expensePayload(payload: Record<string, unknown>) {
@@ -33,6 +34,12 @@ function expensePayload(payload: Record<string, unknown>) {
       : {}),
     ...(payload.effectiveEndMonth
       ? { effectiveEndMonth: String(payload.effectiveEndMonth) }
+      : {}),
+    ...(payload.effectiveStartDate
+      ? { effectiveStartDate: String(payload.effectiveStartDate) }
+      : {}),
+    ...(payload.effectiveEndDate
+      ? { effectiveEndDate: String(payload.effectiveEndDate) }
       : {}),
   };
 }
@@ -86,6 +93,26 @@ export async function dispatchCostOperation(
       ...(payload.effectiveEndMonth
         ? { effectiveEndMonth: String(payload.effectiveEndMonth) }
         : {}),
+      ...(payload.effectiveStartDate
+        ? { effectiveStartDate: String(payload.effectiveStartDate) }
+        : {}),
+      ...(payload.effectiveEndDate
+        ? { effectiveEndDate: String(payload.effectiveEndDate) }
+        : {}),
+      clientMutationId: operation.operationId,
+    });
+    return {
+      recordType: 'compensation-period',
+      cloudRecordId: String(result.id),
+      acknowledgedAt,
+    };
+  }
+  if (operation.operationType === 'management.compensation.delete') {
+    const result = await services.removeCompensation({
+      ...services.sessionArgs,
+      id: await services.resolve('compensation-period', operation.localRecordId),
+      expectedRevision: operation.expectedRevision,
+      effectiveEndDate: String(payload.effectiveEndDate),
       clientMutationId: operation.operationId,
     });
     return {

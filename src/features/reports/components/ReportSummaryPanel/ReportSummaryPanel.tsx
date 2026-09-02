@@ -1,240 +1,243 @@
-import { CalendarCheck, Coffee, WaterDrop, File, Minus, Package, TrendingDown, TrendingUp } from '@boxicons/react';
-import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import { formatMoney } from '../../../../lib/money';
 import { formatStockQuantity } from '../../../../lib/stock';
+import type { useCostManagement } from '../../../../data/useCostManagement';
+import type { ReportsSnapshot } from '../../../../data/useReportsData';
+import { useT } from '../../../../lib/locale';
+import { buildPeriodProfit } from '../../reportProfit';
+import type { ReportTab } from '../../reportTypes';
 import styles from './ReportSummaryPanel.module.css';
 
-const categoryTones = ['primary', 'coffee', 'cold', 'bakery'] as const;
-const paymentTones = ['cash', 'card', 'online'] as const;
-
-function dateLabel(from: string, to: string) {
-  const fromDate = new Date(`${from}T12:00:00`);
-  const toDate = new Date(`${to}T12:00:00`);
-  return `${fromDate.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-  })} – ${toDate.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })}`;
-}
-
 export function ReportSummaryPanel({
+  tab,
   snapshot,
-  isLoading,
-  error,
+  fromDate,
+  toDate,
+  costManagement,
+  showCompensation,
 }: {
+  tab: ReportTab;
   snapshot?: ReportsSnapshot;
-  isLoading: boolean;
-  error: string;
+  fromDate: string;
+  toDate: string;
+  costManagement: ReturnType<typeof useCostManagement>;
+  showCompensation: boolean;
 }) {
+  const t = useT();
   const current = snapshot?.current;
   const previous = snapshot?.previous;
-  const categories = current?.categoryTotals.slice(0, 4) ?? [];
-  const payments = current?.paymentTotals.slice(0, 3) ?? [];
-  const ingredientTotals = current?.ingredientTotals ?? [];
-  const ingredients = ingredientTotals.slice(0, 3);
+  const profit = buildPeriodProfit(
+    snapshot,
+    costManagement.saved,
+    fromDate,
+    toDate,
+    showCompensation,
+  );
   const difference = previous?.netCentimes
-    ? (
-        ((current?.netCentimes ?? 0) - previous.netCentimes)
-        / previous.netCentimes
-      ) * 100
+    ? ((current?.netCentimes ?? 0) - previous.netCentimes) / previous.netCentimes * 100
     : undefined;
-  const ComparisonIcon = difference === undefined
-    ? Minus
-    : difference >= 0
-      ? TrendingUp
-      : TrendingDown;
+  const average = current?.orderCount
+    ? Math.round(current.netCentimes / current.orderCount)
+    : 0;
+  const categories = current?.categoryTotals.slice(0, 4) ?? [];
+  const products = current?.productTotals.slice(0, 6) ?? [];
+  const ingredients = current?.ingredientTotals.slice(0, 10) ?? [];
+
+  if (tab === 'products') {
+    return (
+      <>
+        <aside className={`${styles.railCard} ${styles.railTop}`} aria-labelledby="report-category-title">
+          <header className={styles.railHeader}>
+            <span>
+              <h2 id="report-category-title">{t('By category')}</h2>
+              <small>{t('Share of period sales')}</small>
+            </span>
+            <strong className={styles.railChip}>{categories.length}</strong>
+          </header>
+          <div className={styles.railList}>
+            {categories.length === 0 ? (
+              <p className={styles.railEmpty}>{t('No category sales.')}</p>
+            ) : categories.map((category, index) => {
+              const share = current?.netCentimes
+                ? category.totalCentimes / current.netCentimes * 100
+                : 0;
+              return (
+                <article className={styles.railRow} key={category.categoryId}>
+                  <span className={styles.railRank} aria-hidden="true">{index + 1}</span>
+                  <span className={styles.railCopy}>
+                    <strong>{category.categoryName}</strong>
+                    <small>{formatMoney(category.totalCentimes)}</small>
+                  </span>
+                  <b>{share.toFixed(0)}%</b>
+                  {index < categories.length - 1 ? <span className={styles.railDivider} /> : null}
+                </article>
+              );
+            })}
+          </div>
+        </aside>
+        <aside className={`${styles.railCard} ${styles.railBottom}`} aria-label={t('Products')}>
+          <header className={styles.railHeader}>
+            <span>
+              <h2>{t('Products')}</h2>
+              <small>{t('Units and share of sales')}</small>
+            </span>
+            <strong className={styles.railChip}>{products.length}</strong>
+          </header>
+          <div className={styles.railList}>
+            {products.length === 0 ? (
+              <p className={styles.railEmpty}>{t('No product sales.')}</p>
+            ) : products.map((product, index) => {
+              const share = current?.netCentimes
+                ? product.totalCentimes / current.netCentimes * 100
+                : 0;
+              return (
+                <article className={styles.railRow} key={product.productId}>
+                  <span className={styles.railRank} aria-hidden="true">{index + 1}</span>
+                  <span className={styles.railCopy}>
+                    <strong>{product.productName}</strong>
+                    <small>
+                      {product.quantity}
+                      {' · '}
+                      {formatMoney(product.totalCentimes)}
+                    </small>
+                  </span>
+                  <b>{share.toFixed(0)}%</b>
+                  {index < products.length - 1 ? <span className={styles.railDivider} /> : null}
+                </article>
+              );
+            })}
+          </div>
+        </aside>
+      </>
+    );
+  }
+
+  if (tab === 'stock') {
+    return (
+      <aside className={styles.panel} aria-labelledby="report-summary-title">
+        <header className={styles.header}>
+          <h2 id="report-summary-title">{t('Used ingredients')}</h2>
+        </header>
+        {ingredients.length === 0 ? (
+          <p className={styles.empty}>{t('No recipe usage.')}</p>
+        ) : (
+        <div className={`${styles.stack} ${styles.full}`}>
+          {ingredients.map((ingredient) => {
+            const onHand = ingredient.currentStockQuantity ?? 0;
+            const used = ingredient.quantity;
+            const share = used / Math.max(used + onHand, 1);
+            return (
+            <article className={styles.used} key={ingredient.ingredientId}>
+              <span>
+                <strong>{ingredient.ingredientName}</strong>
+                <i className={styles.track}>
+                  <i
+                    className={styles.primary}
+                    style={{ width: `${share * 100}%` }}
+                  />
+                </i>
+              </span>
+              <b>
+                {formatStockQuantity(ingredient.quantity, ingredient.baseUnit)}
+              </b>
+            </article>
+            );
+          })}
+        </div>
+        )}
+      </aside>
+    );
+  }
+
+  if (tab === 'costs') {
+    return (
+      <aside className={styles.panel} aria-labelledby="report-summary-title">
+        <header className={styles.header}>
+          <h2 id="report-summary-title">{t('This period')}</h2>
+        </header>
+        <p className={styles.hint}>
+          {t('Wages and monthly bills are split across the days in each month. One-time costs count on the day they were recorded.')}
+        </p>
+        <div className={`${styles.profitList} ${styles.costsFacts}`}>
+          <article>
+            <small>{t('Ingredient cost')}</small>
+            <strong>{formatMoney(profit.ingredientCostCentimes)}</strong>
+          </article>
+          {showCompensation ? (
+            <article>
+              <small>{t('Wages')}</small>
+              <strong>{formatMoney(profit.compensationCentimes)}</strong>
+            </article>
+          ) : null}
+          <article>
+            <small>{t('Other expenses')}</small>
+            <strong>{formatMoney(profit.otherExpenseCentimes)}</strong>
+          </article>
+        </div>
+      </aside>
+    );
+  }
+
+  const rows = [
+    ['Sales', profit.revenueCentimes],
+    ['Ingredient cost', -profit.ingredientCostCentimes],
+    ['Gross profit', profit.grossProfitCentimes],
+    ...(showCompensation
+      ? [['Wages', -profit.compensationCentimes] as const]
+      : []),
+    ['Expenses', -profit.otherExpenseCentimes],
+  ] as const;
 
   return (
     <aside className={styles.panel} aria-labelledby="report-summary-title">
       <header className={styles.header}>
-        <span className={styles.heading}>
-          <h2 id="report-summary-title">Report summary</h2>
-          <small>
-            {snapshot
-              ? dateLabel(snapshot.range.from, snapshot.range.to)
-              : 'Selected report period'}
-          </small>
-        </span>
-        <strong className={styles.period}>
-          <CalendarCheck width={12} height={12} aria-hidden="true" />
-          <span>{snapshot?.range.days ?? 0} days</span>
+        <h2 id="report-summary-title">{t('Profit')}</h2>
+        <strong className={`${styles.chip} ${difference !== undefined && difference < 0 ? styles.down : ''}`}>
+          {difference === undefined
+            ? t('No prior period')
+            : `${difference >= 0 ? '+' : '−'}${Math.abs(difference).toFixed(1)}%`}
         </strong>
       </header>
-
-      <section className={styles.salesSummary} aria-label="Report net sales">
-        <span>
-          <small>NET SALES</small>
-          <strong>
-            {isLoading
-              ? 'Loading…'
-              : error
-                ? 'Unavailable'
-                : formatMoney(current?.netCentimes ?? 0)}
-          </strong>
-        </span>
-        <strong
-          className={`${styles.comparison} ${
-            difference !== undefined && difference < 0
-              ? styles.negative
-              : ''
-          }`}
-        >
-          <ComparisonIcon width={12} height={12} aria-hidden="true" />
-          <span>
-            {difference === undefined
-              ? 'No prior data'
-              : `${difference >= 0 ? '+' : '−'}${Math.abs(
-                  difference,
-                ).toFixed(1)}% vs prior`}
-          </span>
+      <div className={styles.facts}>
+        <article>
+          <small>{t('Stock value')}</small>
+          <strong>{formatMoney(costManagement.saved?.inventoryValueCentimes ?? 0)}</strong>
+        </article>
+        <article>
+          <small>{t('Orders')}</small>
+          <strong>{current?.orderCount ?? 0}</strong>
+        </article>
+        <article>
+          <small>{t('Average')}</small>
+          <strong>{formatMoney(average)}</strong>
+        </article>
+      </div>
+      <div className={styles.profitList}>
+        {rows.map(([label, value]) => (
+          <article key={label}>
+            <small>{t(label)}</small>
+            <strong className={label === 'Gross profit' ? styles.emphasis : ''}>
+              {formatMoney(value)}
+            </strong>
+          </article>
+        ))}
+      </div>
+      <div className={styles.result}>
+        <small>{t(showCompensation ? 'Operating profit' : 'Gross profit')}</small>
+        <strong className={
+          (showCompensation ? profit.operatingProfitCentimes : profit.grossProfitCentimes) < 0
+            ? styles.loss
+            : ''
+        }>
+          {formatMoney(
+            showCompensation
+              ? profit.operatingProfitCentimes
+              : profit.grossProfitCentimes,
+          )}
         </strong>
-      </section>
-
-      <span
-        className={`${styles.divider} ${styles.salesDivider}`}
-        aria-hidden="true"
-      />
-
-      <section
-        className={styles.categorySection}
-        aria-labelledby="sales-category-title"
-      >
-        <header className={styles.sectionHeader}>
-          <h3 id="sales-category-title">Sales by category</h3>
-          <small>{formatMoney(current?.netCentimes ?? 0)}</small>
-        </header>
-        <div className={styles.categories}>
-          {categories.map((category, index) => {
-            const share = current?.netCentimes
-              ? category.totalCentimes / current.netCentimes * 100
-              : 0;
-            return (
-              <article
-                className={styles.category}
-                key={category.categoryId}
-              >
-                <strong>{category.categoryName}</strong>
-                <span>{formatMoney(category.totalCentimes)}</span>
-                <strong>{share.toFixed(0)}%</strong>
-                <i className={styles.track}>
-                  <i
-                    className={styles[categoryTones[index]]}
-                    style={{ width: `${share}%` }}
-                  />
-                </i>
-              </article>
-            );
-          })}
-          {categories.length === 0 ? (
-            <p className={styles.empty}>No saved category sales.</p>
-          ) : null}
-        </div>
-      </section>
-
-      <section
-        className={styles.paymentSection}
-        aria-labelledby="payment-methods-title"
-      >
-        <header className={styles.sectionHeader}>
-          <h3 id="payment-methods-title">Payment methods</h3>
-          <small>{current?.orderCount ?? 0} orders</small>
-        </header>
-        <div className={styles.paymentBar} aria-label="Payment method share">
-          {payments.map((method, index) => (
-            <i
-              className={styles[paymentTones[index]]}
-              style={{
-                width: `${current?.netCentimes
-                  ? method.totalCentimes / current.netCentimes * 100
-                  : 0}%`,
-              }}
-              key={method.paymentMethod}
-            />
-          ))}
-        </div>
-        <div className={styles.paymentLegend}>
-          {payments.map((method, index) => (
-            <span key={method.paymentMethod}>
-              <i className={styles[paymentTones[index]]} />
-              {method.paymentMethod}{' '}
-              {current?.netCentimes
-                ? `${Math.round(
-                    method.totalCentimes / current.netCentimes * 100,
-                  )}%`
-                : '0%'}
-            </span>
-          ))}
-          {payments.length === 0 ? <span>No saved payments</span> : null}
-        </div>
-      </section>
-
-      <span
-        className={`${styles.divider} ${styles.paymentDivider}`}
-        aria-hidden="true"
-      />
-
-      <section
-        className={styles.stockSection}
-        aria-labelledby="stock-consumed-title"
-      >
-        <header className={styles.stockHeader}>
-          <h3 id="stock-consumed-title">Stock consumed</h3>
-          <strong>{ingredientTotals.length} used</strong>
-        </header>
-        <div className={styles.stockList}>
-          {ingredients.map((ingredient) => {
-            const Icon = ingredient.baseUnit === 'millilitre'
-              ? WaterDrop
-              : ingredient.baseUnit === 'piece'
-                ? Package
-                : Coffee;
-            return (
-              <article
-                className={styles.stockItem}
-                key={ingredient.ingredientId}
-              >
-                <span>
-                  <i><Icon width={13} height={13} aria-hidden="true" /></i>
-                  <strong>{ingredient.ingredientName}</strong>
-                </span>
-                <strong>
-                  {formatStockQuantity(
-                    ingredient.quantity,
-                    ingredient.baseUnit,
-                  )}
-                </strong>
-              </article>
-            );
-          })}
-          {ingredients.length === 0 ? (
-            <p className={styles.stockEmpty}>No saved recipe usage.</p>
-          ) : null}
-        </div>
-      </section>
-
-      <footer className={styles.actions}>
-        <button
-          className={styles.csv}
-          type="button"
-          disabled
-          title="Export destination pending owner confirmation"
-        >
-          <File width={15} height={15} aria-hidden="true" />
-          <span>Export CSV</span>
-        </button>
-        <button
-          className={styles.pdf}
-          type="button"
-          disabled
-          title="Export destination pending owner confirmation"
-        >
-          <File width={15} height={15} aria-hidden="true" />
-          <span>Export PDF report</span>
-        </button>
-      </footer>
+        {showCompensation && !profit.complete ? (
+          <small>{t('Some sales are missing ingredient cost.')}</small>
+        ) : null}
+      </div>
     </aside>
   );
 }

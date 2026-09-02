@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { CheckCircle, ChevronsRight } from '@boxicons/react';
 import { formatMoney } from '../../../../lib/money';
+import { useT } from '../../../../lib/locale';
 import styles from './PrimaryAction.module.css';
 
 const THUMB = 42;
@@ -22,6 +23,7 @@ export function PrimaryAction({
   processing,
   onPlaceOrder,
 }: PrimaryActionProps) {
+  const t = useT();
   const amount = formatMoney(totalCentimes);
   const trackRef = useRef<HTMLDivElement>(null);
   const originX = useRef(0);
@@ -107,7 +109,7 @@ export function PrimaryAction({
         disabled || processing ? styles.locked : ''
       } ${disabled && offset === 0 ? styles.faded : ''}`}
       role="slider"
-      aria-label={`Slide to place order, ${amount}`}
+      aria-label={t('Slide to place order, {amount}', { amount })}
       aria-orientation="horizontal"
       aria-valuemin={0}
       aria-valuemax={100}
@@ -122,7 +124,7 @@ export function PrimaryAction({
           transition: animate ? `clip-path ${SNAP}, opacity ${SNAP}` : 'none',
         }}
       >
-        Place Order&nbsp;&nbsp;&nbsp; {amount}
+        {t('Place Order')}&nbsp;&nbsp;&nbsp; {amount}
       </span>
       <span
         className={styles.thumb}

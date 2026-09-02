@@ -206,8 +206,10 @@ try {
   database = new DatabaseSync(databasePath);
   database.exec('PRAGMA foreign_keys = ON');
   assert.equal(migrate(database), LOCAL_SCHEMA_VERSION);
-  assert.equal(LOCAL_SCHEMA_VERSION, 21);
-  assert.equal(schemaVersion(database), 21);
+  assert.equal(LOCAL_SCHEMA_VERSION, 24);
+  assert.equal(schemaVersion(database), 24);
+  assert.ok(database.prepare("SELECT 1 FROM pragma_table_info('compensation_periods') WHERE name = 'effective_start_date'").get());
+  assert.ok(database.prepare("SELECT 1 FROM pragma_table_info('operating_expenses') WHERE name = 'effective_end_date'").get());
   assert.equal(
     database.prepare('SELECT name FROM products WHERE id = ?').get(
       'product-espresso',

@@ -1,12 +1,25 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp } from '@boxicons/react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
-import { formatCompactMoney, formatMoney } from '../../../../lib/money';
+import {
+  calendarMonthEnd,
+  calendarMonthOf,
+  calendarMonthStart,
+  inclusiveDayCount,
+  localBusinessDate,
+  shiftBusinessDate,
+} from '../../../../lib/date';
+import { formatMoney } from '../../../../lib/money';
+import { useT } from '../../../../lib/locale';
 import type { ReportTab } from '../../reportTypes';
 import styles from './SalesTrendChart.module.css';
 
 function metricValue(
-  point: ReportsSnapshot['daily'][number],
+  point: {
+    netCentimes: number;
+    itemCount: number;
+    ingredientUsageEventCount: number;
+  },
   tab: ReportTab,
 ) {
   if (tab === 'sales') return point.netCentimes;
@@ -14,13 +27,22 @@ function metricValue(
   return point.ingredientUsageEventCount;
 }
 
-function compactValue(value: number, tab: ReportTab) {
-  if (tab !== 'sales') return String(Math.round(value));
-  return formatCompactMoney(value);
+function niceMaximum(value: number, ticks = 4, integer = false) {
+  if (value <= 0) return ticks;
+  const rough = Math.max(value / ticks, integer ? 1 : 0);
+  const exp = 10 ** Math.floor(Math.log10(rough || 1));
+  const n = rough / exp;
+  const step = (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * exp;
+  return step * ticks;
 }
 
-function averageValue(value: number, tab: ReportTab) {
-  if (tab === 'sales') return compactValue(value, tab);
+function axisLabel(value: number, tab: ReportTab) {
+  if (tab === 'sales') return String(Math.round(value / 100));
+  return String(Math.round(value));
+}
+
+function averageLabel(value: number, tab: ReportTab) {
+  if (tab === 'sales') return formatMoney(Math.round(value));
   return new Intl.NumberFormat('en-MA', {
     maximumFractionDigits: 1,
   }).format(value);
@@ -29,32 +51,45 @@ function averageValue(value: number, tab: ReportTab) {
 export function SalesTrendChart({
   tab,
   snapshot,
+  fillMonth = false,
 }: {
   tab: ReportTab;
   snapshot?: ReportsSnapshot;
+  fillMonth?: boolean;
 }) {
-  const daily = snapshot?.daily ?? [];
-  const bucketSize = Math.max(1, Math.ceil(daily.length / 12));
-  const points = Array.from(
-    { length: Math.ceil(daily.length / bucketSize) },
-    (_, index) => {
-      const days = daily.slice(
-        index * bucketSize,
-        (index + 1) * bucketSize,
-      );
-      return {
-        label: days.at(-1)?.businessDate.slice(8) ?? '—',
-        fromDate: days[0]?.businessDate,
-        toDate: days.at(-1)?.businessDate,
-        value: days.reduce(
-          (total, point) => total + metricValue(point, tab),
-          0,
-        ),
-      };
-    },
+  const t = useT();
+  const today = localBusinessDate();
+  const month = calendarMonthOf(today);
+  const monthStart = calendarMonthStart(month);
+  const monthEnd = calendarMonthEnd(month);
+  const byDate = new Map(
+    (snapshot?.daily ?? []).map((point) => [point.businessDate, point]),
   );
+  const daily = fillMonth
+    ? Array.from(
+        { length: inclusiveDayCount(monthStart, monthEnd) },
+        (_, index) => {
+          const businessDate = shiftBusinessDate(monthStart, index);
+          return byDate.get(businessDate) ?? {
+            businessDate,
+            netCentimes: 0,
+            itemCount: 0,
+            ingredientUsageEventCount: 0,
+          };
+        },
+      )
+    : snapshot?.daily ?? [];
+  const elapsed = fillMonth
+    ? inclusiveDayCount(monthStart, today < monthEnd ? today : monthEnd)
+    : daily.length;
+  const points = daily.map((day) => ({
+    label: String(Number(day.businessDate.slice(8))),
+    fromDate: day.businessDate,
+    toDate: day.businessDate,
+    value: metricValue(day, tab),
+  }));
   const maximum = Math.max(...points.map((point) => point.value), 0);
-  const scaleMaximum = Math.max(maximum, 1);
+  const scaleMaximum = niceMaximum(maximum, 4, tab !== 'sales');
   const peak = points.reduce(
     (highest, point) => point.value > highest.value ? point : highest,
     {
@@ -64,64 +99,81 @@ export function SalesTrendChart({
       toDate: undefined as string | undefined,
     },
   );
-  const average = daily.length
-    ? daily.reduce(
+  const average = elapsed
+    ? daily.slice(0, elapsed).reduce(
         (total, point) => total + metricValue(point, tab),
         0,
-      ) / daily.length
+      ) / elapsed
     : 0;
+  const monthTitle = new Date(`${month}-01T12:00:00`).toLocaleDateString(
+    'en-GB',
+    { month: 'long', year: 'numeric' },
+  );
   const title = tab === 'sales'
-    ? 'Net sales trend'
+    ? t('Net sales trend')
     : tab === 'products'
-      ? 'Units sold trend'
-      : 'Recipe usage activity';
-  const metricSubtitle = tab === 'sales'
-    ? 'Daily saved net sales'
-    : tab === 'products'
-      ? 'Daily saved item quantities'
-      : 'Daily ingredient deduction events';
-  const subtitle = bucketSize === 1
-    ? metricSubtitle
-    : `${bucketSize}-day buckets · ${metricSubtitle}`;
+      ? t('Units sold trend')
+      : t('Recipe deductions');
+  const subtitle = fillMonth ? monthTitle : t('Daily saved totals');
+  const barHeight = 260;
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
   useEffect(() => {
     setSelectedKey(null);
   }, [tab]);
 
+  const peakWhen = peak.fromDate !== peak.toDate
+    ? `${new Date(
+        `${peak.fromDate}T12:00:00`,
+      ).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+      })}–${new Date(
+        `${peak.toDate}T12:00:00`,
+      ).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+      })}`
+    : new Date(
+        `${peak.toDate}T12:00:00`,
+      ).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+      });
+
   return (
-    <section className={styles.chart} aria-labelledby="report-trend-title">
+    <section
+      className={styles.chart}
+      aria-labelledby="report-trend-title"
+    >
       <header className={styles.header}>
         <span className={styles.heading}>
           <h2 id="report-trend-title">{title}</h2>
           <small>{subtitle}</small>
         </span>
         <span className={styles.legend}>
-          <span><i className={styles.currentDot} />Current period</span>
-          <span><i className={styles.previousDot} />Saved summaries</span>
+          <span><i className={styles.currentDot} />{t('This month')}</span>
         </span>
       </header>
 
       <div className={styles.guides} aria-hidden="true">
         {[1, 0.75, 0.5, 0.25].map((ratio) => (
           <span key={ratio}>
-            <small>{compactValue(maximum * ratio, tab)}</small><i />
+            <small>{axisLabel(scaleMaximum * ratio, tab)}</small><i />
           </span>
         ))}
       </div>
 
       <div
         className={styles.bars}
-        aria-label={`${title} by saved ${
-          bucketSize === 1 ? 'day' : 'period bucket'
-        }`}
+        aria-label={t('{title} by day', { title })}
       >
         {points.map((point) => {
           const isPeak = point.value > 0 && point === peak;
           const selected = selectedKey === point.toDate;
           const amount = tab === 'sales'
             ? formatMoney(point.value)
-            : compactValue(point.value, tab);
+            : axisLabel(point.value, tab);
           return (
           <button
             type="button"
@@ -132,20 +184,19 @@ export function SalesTrendChart({
             onClick={() => setSelectedKey(selected ? null : point.toDate ?? null)}
           >
             <i
-              className={`${styles.bar} ${isPeak ? styles.peakBar : ''}`}
+              className={`${styles.bar} ${isPeak ? styles.peakBar : ''} ${
+                point.value ? '' : styles.emptyBar
+              }`}
               style={{
                 height: point.value
                   ? Math.max(
-                      8,
-                      Math.round((point.value / scaleMaximum) * 124),
+                      4,
+                      Math.round((point.value / scaleMaximum) * barHeight),
                     )
-                  : 4,
+                  : 0,
               }}
             >
               {selected ? <span className={styles.tip}>{amount}</span> : null}
-              {isPeak ? (
-                <span className={styles.peakCap} aria-hidden="true" />
-              ) : null}
             </i>
             <small className={isPeak ? styles.peakLabel : ''}>
               {point.label}
@@ -158,33 +209,15 @@ export function SalesTrendChart({
         <span>
           <TrendingUp width={12} height={12} aria-hidden="true" />
           {peak.value && peak.toDate
-            ? `Peak ${
-                peak.fromDate !== peak.toDate
-                  ? `${new Date(
-                      `${peak.fromDate}T12:00:00`,
-                    ).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                    })}–${new Date(
-                      `${peak.toDate}T12:00:00`,
-                    ).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                    })}`
-                  : new Date(
-                      `${peak.toDate}T12:00:00`,
-                    ).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                    })
-              } · ${
-                tab === 'sales'
+            ? t('Peak {when} · {amount}', {
+                when: peakWhen,
+                amount: tab === 'sales'
                   ? formatMoney(peak.value)
-                  : compactValue(peak.value, tab)
-              }`
-            : 'No saved activity in this period'}
+                  : axisLabel(peak.value, tab),
+              })
+            : t('No saved activity in this period')}
         </span>
-        <strong>Daily average {averageValue(average, tab)}</strong>
+        <strong>{t('Daily average {value}', { value: averageLabel(average, tab) })}</strong>
       </footer>
     </section>
   );

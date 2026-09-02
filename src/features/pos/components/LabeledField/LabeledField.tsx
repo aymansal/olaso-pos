@@ -1,3 +1,4 @@
+import { useT } from '../../../../lib/locale';
 import styles from './LabeledField.module.css';
 
 type LabeledFieldProps = {
@@ -13,14 +14,15 @@ export function LabeledField({
   onChange,
   placeholder,
 }: LabeledFieldProps) {
+  const t = useT();
   return (
     <label className={styles.field}>
-      <span>{label}</span>
+      <span>{t(label)}</span>
       <span className={styles.control}>
         <input
-          aria-label={label}
+          aria-label={t(label)}
           autoComplete="off"
-          placeholder={placeholder}
+          placeholder={placeholder ? t(placeholder) : undefined}
           type="text"
           value={value}
           onChange={(event) => onChange(event.target.value)}

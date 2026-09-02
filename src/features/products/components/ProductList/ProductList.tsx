@@ -5,6 +5,7 @@ import type {
   ManagedProduct,
 } from '../../productManagementTypes';
 import { visiblePageIndexes } from '../../../../lib/pagination';
+import { useT } from '../../../../lib/locale';
 import styles from './ProductList.module.css';
 
 interface ProductListProps {
@@ -20,7 +21,6 @@ interface ProductListProps {
   onSelect: (productId: string) => void;
   onPageChange: (page: number) => void;
   onRenameCategory: () => void;
-  onSetCategoryArchived: () => void;
   onDeleteCategory: () => void;
 }
 
@@ -45,9 +45,9 @@ export function ProductList({
   onSelect,
   onPageChange,
   onRenameCategory,
-  onSetCategoryArchived,
   onDeleteCategory,
 }: ProductListProps) {
+  const t = useT();
   const selectedIndex = products.findIndex(
     (product) => product.id === selectedProductId,
   );
@@ -58,23 +58,22 @@ export function ProductList({
         <span>
           <h2 id="category-products-title">{categoryName}</h2>
           <small>
-            {products.length} product{products.length === 1 ? '' : 's'}
+            {products.length === 1
+              ? t('1 product')
+              : t('{count} products', { count: products.length })}
           </small>
         </span>
         {category ? (
           <details className={styles.manage}>
-            <summary aria-label={`Manage ${category.name}`}>
+            <summary aria-label={t('Manage {name}', { name: category.name })}>
               <DotsHorizontalRounded width={15} height={15} aria-hidden="true" />
             </summary>
             <span>
               <button type="button" onClick={onRenameCategory}>
-                Rename
-              </button>
-              <button type="button" onClick={onSetCategoryArchived}>
-                {category.status === 'archived' ? 'Restore' : 'Archive'}
+                {t('Rename')}
               </button>
               <button type="button" onClick={onDeleteCategory}>
-                Delete
+                {t('Delete')}
               </button>
             </span>
           </details>
@@ -82,20 +81,20 @@ export function ProductList({
       </header>
 
       <div className={styles.columns} aria-hidden="true">
-        <span>PRODUCT</span>
-        <span>PRICE</span>
-        <span>AVAILABILITY</span>
-        <span>STOCK RECIPE</span>
+        <span>{t('PRODUCT')}</span>
+        <span>{t('PRICE')}</span>
+        <span>{t('AVAILABILITY')}</span>
+        <span>{t('STOCK RECIPE')}</span>
       </div>
 
       <div
         className={styles.rows}
         style={{ '--index': Math.max(0, selectedIndex) } as CSSProperties}
       >
-        {isLoading ? <p className={styles.state}>Loading live menu…</p> : null}
-        {error ? <p className={styles.state}>{error}</p> : null}
+        {isLoading ? <p className={styles.state}>{t('Loading live menu…')}</p> : null}
+        {error ? <p className={styles.state}>{t(error)}</p> : null}
         {!isLoading && !error && products.length === 0 ? (
-          <p className={styles.state}>No products match these filters.</p>
+          <p className={styles.state}>{t('No products match these filters.')}</p>
         ) : null}
         {!isLoading && !error && selectedIndex >= 0 ? (
           <span className={styles.indicator} aria-hidden="true" />
@@ -138,10 +137,10 @@ export function ProductList({
                     <span />
                     <strong>
                       {product.status === 'active'
-                        ? 'Available'
+                        ? t('Available')
                         : product.status === 'unavailable'
-                          ? 'Unavailable'
-                          : 'Archived'}
+                          ? t('Unavailable')
+                          : t('Archived')}
                     </strong>
                   </span>
                   <span
@@ -153,7 +152,7 @@ export function ProductList({
                       aria-hidden="true"
                     />
                     <strong>
-                      {product.currentRecipeVersionId ? 'Linked' : 'Not linked'}
+                      {product.currentRecipeVersionId ? t('Linked') : t('Not linked')}
                     </strong>
                   </span>
                 </button>
@@ -164,13 +163,20 @@ export function ProductList({
 
       <footer className={styles.footer}>
         <span>
-          Showing {products.length} of {totalItems} live record
-          {totalItems === 1 ? '' : 's'}
+          {totalItems === 1
+            ? t('Showing {shown} of {total} live record', {
+                shown: products.length,
+                total: totalItems,
+              })
+            : t('Showing {shown} of {total} live records', {
+                shown: products.length,
+                total: totalItems,
+              })}
         </span>
-        <nav className={styles.pagination} aria-label="Products pagination">
+        <nav className={styles.pagination} aria-label={t('Products pagination')}>
           <button
             type="button"
-            aria-label="Previous product page"
+            aria-label={t('Previous product page')}
             disabled={isLoading || page <= 0}
             onClick={() => onPageChange(page - 1)}
             key="prev"
@@ -184,7 +190,7 @@ export function ProductList({
               type="button"
               className={index === page ? styles.current : undefined}
               aria-current={index === page ? 'page' : undefined}
-              aria-label={`Page ${index + 1}`}
+              aria-label={t('Page {number}', { number: index + 1 })}
               onClick={() => onPageChange(index)}
               key={index}
             >
@@ -193,7 +199,7 @@ export function ProductList({
           ))}
           <button
             type="button"
-            aria-label="Next product page"
+            aria-label={t('Next product page')}
             disabled={isLoading || page >= pageCount - 1}
             onClick={() => onPageChange(page + 1)}
             key="next"

@@ -1,10 +1,13 @@
 import { Activity, lazy, startTransition, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   loadTerminalSettings,
+  saveTerminalPreferences,
   setTerminalLocked,
   type TerminalPreferences,
   type TerminalSettings,
 } from './data/terminalSettings';
+import { loadStaffPreferredLanguage, saveStaffPreferredLanguage } from './data/localStaff';
+import { LocaleProvider, translate, type AppLanguage } from './lib/locale';
 import { PosScreen } from './features/pos/PosScreen';
 import { Header } from './features/pos/components/Header/Header';
 import type { NavigationPage } from './features/pos/components/TopNavigation/TopNavigation';
@@ -21,6 +24,7 @@ import { hasPermission, type Permission } from './data/permissions';
 import olasoLogo from '../assets/brand/olaso-wordmark-operational-green-transparent.png';
 import { StartupDots } from './components/StartupDots/StartupDots';
 import startupStyles from './data/AppDataProvider.module.css';
+import { printDailyOwnerReport } from './data/dailyOwnerReport.ts';
 
 const loadDashboard = () => import('./features/dashboard/DashboardScreen');
 const loadOrders = () => import('./features/orders/OrdersScreen');
@@ -71,6 +75,8 @@ const screenLoaders: Record<Exclude<AppScreen, 'POS'>, () => Promise<unknown>> =
 
 const SCREEN_FADE_MS = 420;
 
+type StockLevelFilter = 'all' | 'low' | 'healthy';
+
 export function App() {
   const [screen, setScreen] = useState<AppScreen>('POS');
   const [contentScreen, setContentScreen] = useState<AppScreen>('POS');
@@ -82,6 +88,8 @@ export function App() {
   const [sessionReady, setSessionReady] = useState(false);
   const [startupError, setStartupError] = useState<string>();
   const [staffSession, setStaffSession] = useState<StaffSession>();
+  const [stockLevelFilter, setStockLevelFilter] = useState<StockLevelFilter>('all');
+  const [language, setLanguage] = useState<AppLanguage>('en');
   const contentScreenRef = useRef<AppScreen>('POS');
 
   function resetScreens() {
@@ -91,6 +99,7 @@ export function App() {
     contentScreenRef.current = 'POS';
     setLeavingScreen(undefined);
     setFade('idle');
+    setStockLevelFilter('all');
   }
 
   function openScreen(page: AppScreen) {
@@ -112,7 +121,11 @@ export function App() {
     });
   }
 
-  function navigate(page: NavigationPage) {
+  function navigate(
+    page: NavigationPage,
+    options?: { stockLevel?: StockLevelFilter },
+  ) {
+    setStockLevelFilter(page === 'Stock' ? options?.stockLevel ?? 'all' : 'all');
     openScreen(page);
   }
 
@@ -123,9 +136,13 @@ export function App() {
     try {
       const restored = await loadTerminalSettings();
       await setTerminalLocked(true);
+      setLanguage(restored.applicationLanguage);
       setTerminal({ ...restored, isLocked: true });
     } catch {
-      setStartupError('Terminal settings could not be verified. POS remains locked. Retry or restore this terminal before serving orders.');
+      setStartupError(translate(
+        language,
+        'Terminal settings could not be verified. POS remains locked. Retry or restore this terminal before serving orders.',
+      ));
     } finally {
       setSessionReady(true);
     }
@@ -197,11 +214,43 @@ export function App() {
     loadTerminalSettings().then(setTerminal).catch(() => undefined);
   }
 
+  async function applyLanguage(next: AppLanguage) {
+    const current = terminal;
+    if (staffSession) {
+      await saveStaffPreferredLanguage(staffSession.staffProfileId, next);
+    }
+    if (current) {
+      await saveTerminalPreferences({
+        terminalName: current.terminalName,
+        clockFormat: current.clockFormat,
+        receiptLanguage: current.receiptLanguage,
+        applicationLanguage: next,
+      });
+    }
+    setLanguage(next);
+    setTerminal((value) =>
+      value ? { ...value, applicationLanguage: next } : value,
+    );
+  }
+
   async function unlock(session: StaffSession) {
+    const current = terminal;
+    const preferred = await loadStaffPreferredLanguage(session.staffProfileId);
+    if (current) {
+      await saveTerminalPreferences({
+        terminalName: current.terminalName,
+        clockFormat: current.clockFormat,
+        receiptLanguage: current.receiptLanguage,
+        applicationLanguage: preferred,
+      });
+    }
     await setTerminalLocked(false);
+    setLanguage(preferred);
     setStaffSession(session);
-    setTerminal((current) =>
-      current ? { ...current, isLocked: false } : current,
+    setTerminal((value) =>
+      value
+        ? { ...value, isLocked: false, applicationLanguage: preferred }
+        : value,
     );
     resetScreens();
   }
@@ -212,22 +261,27 @@ export function App() {
 
   if (!sessionReady) {
     return (
+      <LocaleProvider language={language}>
       <main
         className={startupStyles.startup}
         data-olaso-startup="access"
-        aria-label="Loading Olaso"
+        aria-label={translate(language, 'Loading Olaso')}
         aria-busy="true"
         role="status"
       >
         <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
         <StartupDots />
       </main>
+      </LocaleProvider>
     );
   }
 
   async function requestStaffSwitch() {
     if (hasUnfinishedCart(posSession) && !window.confirm(
-      'Switch staff? The current order will stay for the next staff member.',
+      translate(
+        language,
+        'Switch staff? The current order will stay for the next staff member.',
+      ),
     )) return false;
     await lock();
     return true;
@@ -235,12 +289,16 @@ export function App() {
 
   if (startupError || !terminal) {
     return (
-      <main className={startupStyles.startup} aria-label="Terminal recovery" role="alert">
+      <LocaleProvider language={language}>
+      <main className={startupStyles.startup} aria-label={translate(language, 'Terminal recovery')} role="alert">
         <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
-        <strong>Terminal locked</strong>
-        <span>{startupError ?? 'Terminal settings are unavailable. POS remains locked.'}</span>
-        <button type="button" onClick={() => void restoreTerminal()}>Retry terminal check</button>
+        <strong>{translate(language, 'Terminal locked')}</strong>
+        <span>{startupError ?? translate(language, 'Terminal settings are unavailable. POS remains locked.')}</span>
+        <button type="button" onClick={() => void restoreTerminal()}>
+          {translate(language, 'Retry terminal check')}
+        </button>
       </main>
+      </LocaleProvider>
     );
   }
 
@@ -248,18 +306,35 @@ export function App() {
     openScreen('Settings');
   }
 
+  async function printDailyReport() {
+    if (!staffSession) return;
+    const result = await printDailyOwnerReport(staffSession.name);
+    window.alert(translate(
+      language,
+      result.ok ? 'Daily report sent; confirm paper.' : result.message,
+    ));
+  }
+
   if (terminal.isLocked) {
-    return <LockScreen settings={terminal} onUnlock={unlock} />;
+    return (
+      <LocaleProvider language={language}>
+        <LockScreen settings={terminal} onUnlock={unlock} />
+      </LocaleProvider>
+    );
   }
 
   if (!staffSession) {
     return (
-      <main className={startupStyles.startup} aria-label="Terminal locked" role="alert">
+      <LocaleProvider language={language}>
+      <main className={startupStyles.startup} aria-label={translate(language, 'Terminal locked')} role="alert">
         <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
-        <strong>Terminal locked</strong>
-        <span>Staff session is unavailable. Lock and sign in again.</span>
-        <button type="button" onClick={() => void lock()}>Lock terminal</button>
+        <strong>{translate(language, 'Terminal locked')}</strong>
+        <span>{translate(language, 'Staff session is unavailable. Lock and sign in again.')}</span>
+        <button type="button" onClick={() => void lock()}>
+          {translate(language, 'Lock terminal')}
+        </button>
       </main>
+      </LocaleProvider>
     );
   }
 
@@ -275,6 +350,7 @@ export function App() {
       : undefined;
 
   return (
+    <LocaleProvider language={language}>
     <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
       <ReconnectProvider onSessionUnavailable={lock}>
         <div className={appStyles.shell}>
@@ -284,6 +360,9 @@ export function App() {
             onNavigate={navigate}
             onOpenSettings={activeScreen === 'Settings' ? undefined : openSettings}
             onSwitchStaff={requestStaffSwitch}
+            language={language}
+            onLanguageChange={applyLanguage}
+            onPrintDailyReport={staffSession.role === 'owner' ? printDailyReport : undefined}
           />
           {visitedScreens.map((visited) => {
             if (!hasPermission(staffSession.role, screenPermission[visited])) return null;
@@ -302,8 +381,8 @@ export function App() {
                   {visited === 'Settings' ? (
                     <SettingsScreen
                       hasUnfinishedCart={hasUnfinishedCart(posSession)}
-                      onLock={requestStaffSwitch}
                       onPreferencesChange={updatePreferences}
+                      onLanguageChange={applyLanguage}
                     />
                   ) : visited === 'Dashboard' ? (
                     <DashboardScreen onNavigate={navigate} />
@@ -312,7 +391,7 @@ export function App() {
                   ) : visited === 'Products' ? (
                     <ProductsScreen />
                   ) : visited === 'Stock' ? (
-                    <StockScreen />
+                    <StockScreen initialLevelFilter={stockLevelFilter} />
                   ) : visited === 'Reports' ? (
                     <ReportsScreen />
                   ) : (
@@ -330,5 +409,6 @@ export function App() {
         </div>
       </ReconnectProvider>
     </StaffSessionProvider>
+    </LocaleProvider>
   );
 }

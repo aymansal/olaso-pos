@@ -1,0 +1,145 @@
+.overlay {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+}
+
+.dialog {
+  position: fixed;
+  display: flex;
+  width: 400px;
+  overflow: hidden;
+  border: 1px solid var(--olaso-panel-border);
+  border-radius: 20px;
+  background: var(--olaso-white);
+}
+
+.compact {
+  width: 248px;
+}
+
+.presets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 112px;
+  padding: 10px 8px;
+  border-right: 1px solid var(--olaso-order-divider);
+}
+
+.preset,
+.presetOn {
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.preset {
+  color: var(--olaso-text);
+  background: transparent;
+}
+
+.presetOn {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.month {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 10px 12px 8px;
+}
+
+.monthHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+}
+
+.monthHeader strong {
+  color: var(--olaso-text);
+  font-size: 13px;
+}
+
+.monthHeader button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--olaso-divider);
+  border-radius: 50%;
+  color: var(--olaso-green);
+  background: transparent;
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.weekdays {
+  margin-top: 6px;
+}
+
+.weekdays span {
+  color: var(--olaso-text-meta);
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.grid {
+  margin-top: 2px;
+}
+
+.day {
+  height: 32px;
+  border: 0;
+  border-radius: 16px;
+  color: var(--olaso-text);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.outside {
+  color: var(--olaso-text-faint);
+}
+
+.inRange {
+  background: var(--olaso-green-icon);
+}
+
+.selected,
+.selected.inRange {
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+}
+
+.today:not(.selected) {
+  box-shadow: inset 0 0 0 1px var(--olaso-green);
+}
+
+.hint {
+  margin: 4px 0 0;
+  color: var(--olaso-text-meta);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.preset:focus-visible,
+.presetOn:focus-visible,
+.monthHeader button:focus-visible,
+.day:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}

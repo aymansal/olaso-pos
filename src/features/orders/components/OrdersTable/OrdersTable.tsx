@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
+import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrdersTable.module.css';
 
@@ -60,13 +61,14 @@ export function OrdersTable({
   onSelect: (key: string) => void;
   emptyMessage: string;
 }) {
+  const t = useT();
   const selectedIndex = orders.findIndex((order) => order.key === selectedKey);
 
   return (
-    <div className={styles.table} role="table" aria-label="Orders">
+    <div className={styles.table} role="table" aria-label={t('Orders')}>
       <div className={styles.head} role="row">
         {columns.map((column) => (
-          <span role="columnheader" key={column}>{column}</span>
+          <span role="columnheader" key={column}>{t(column)}</span>
         ))}
       </div>
 
@@ -99,7 +101,7 @@ export function OrdersTable({
           <strong className={styles.order} role="cell" title={order.receipt.receiptNumber}>
             {compactReceiptNumber(order.receipt.receiptNumber)}
           </strong>
-          <span className={styles.service} role="cell">{serviceLabel(order)}</span>
+          <span className={styles.service} role="cell">{t(serviceLabel(order))}</span>
           <strong className={styles.num} role="cell">{itemCount}</strong>
           <strong className={styles.total} role="cell">
             {formatMoney(order.receipt.totalCentimes)}
@@ -111,7 +113,7 @@ export function OrdersTable({
           <span className={styles.statusCol} role="cell">
             <span className={`${styles.status} ${styles[status.tone]}`}>
               <span />
-              <strong>{status.label}</strong>
+              <strong>{t(status.label)}</strong>
             </span>
           </span>
         </button>

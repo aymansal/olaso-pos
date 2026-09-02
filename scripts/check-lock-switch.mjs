@@ -41,7 +41,10 @@ assert.match(profile, /Lock \/ switch staff/);
 assert.match(profile, /await onSwitchStaff\(\)/);
 assert.match(app, /<Header[\s\S]*?onSwitchStaff=\{requestStaffSwitch\}/);
 assert.match(app, /onOpenSettings=\{activeScreen === 'Settings' \? undefined : openSettings\}/);
-assert.match(settings, /onLock=\{lock\}/);
+assert.match(app, /onPreferencesChange=\{updatePreferences\}/);
+assert.match(settings, /onPreferencesChange\(input\)/);
+assert.doesNotMatch(settings, /onLock=/);
+assert.doesNotMatch(settings, /Lock application/);
 assert.doesNotMatch(settings, /onOpenSettings=/);
 assert.doesNotMatch(settings, /<Header/);
 

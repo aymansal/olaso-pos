@@ -29,8 +29,10 @@ recent orders.
 - Today’s best seller is the product with the most units sold, online and
   offline. A quiet today still compares against yesterday when yesterday had
   sales.
-- `View all` opens Orders; detailed stock and reporting work remains in its
-  owning screen.
+- The pulse chart is the latest 12 calendar days ending today. Tomorrow the
+  leftmost day drops off and today stays on the right.
+- `View all` on recent orders opens Orders. `View all` on Needs attention
+  opens Stock filtered to Low stock.
 
 ## Work Guidance
 

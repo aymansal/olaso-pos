@@ -27,7 +27,9 @@ recipe management with saved tablet presentation during an outage.
 - Keep category, product, availability, price, and recipe presentation in one
   coherent editing workspace.
 - The catalog opens on All products. Category selection is an explicit operator
-  action. Uncategorized is always the last sidebar row, even at count 0; it is
+  action. Category, All products, and Uncategorized names stay at 12px on one
+  line and ellipsis; they never wrap or clip the product count. Uncategorized is always the last sidebar
+  row, even at count 0; it is
   a filter for products with no category, not a saved menu group, and cannot
   be renamed, archived, or deleted. Edit Product size and choice chips are
   one compact line and fill two rows, then scroll sideways.
@@ -42,8 +44,13 @@ recipe management with saved tablet presentation during an outage.
   Add product is name plus photo on one row, category and price on the next.
   Sizes keeps name, price, order, availability, default, and delete on one
   line with a shared header row. Photos are
-  compressed to a small JPEG on the tablet before SQLite or Convex. The Edit
+  compressed to a small JPEG on the tablet before SQLite or Convex. They
+  survive lock and install-over; a cloud snapshot that omits a photo does not
+  wipe the tablet copy. The Edit
   Product artwork pill stays in place and opens the same photo picker.
+  Edit Product has no PRODUCT DETAILS label; the Edit product title aligns
+  with Active and Delete. The category menu is the same 40-pixel height as
+  the price field.
 - Keep leaf components prop-driven; only the application data hook imports
   Convex.
 - Category, product, size, choice, and recipe writes use validated local domain
@@ -63,8 +70,8 @@ recipe management with saved tablet presentation during an outage.
   incomplete state.
 - Delete permanently removes a live category or product. Do not archive a
   product from Edit Product or the availability filter; ordinary lists still
-  exclude leftover archived rows. Category archive/restore stays on the
-  category manage menu. Historical orders and recipes stay intact; deleting a
+  exclude leftover archived rows. The category manage menu is Rename and
+  Delete only. Historical orders and recipes stay intact; deleting a
   category leaves its products uncategorized.
 - Offline reads and authorized writes use the saved operational cache and must
   never remain on a live loading state. Cloud acknowledgement follows later in

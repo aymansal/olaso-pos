@@ -23,12 +23,16 @@ data, reporting summaries, and development seeding.
   recent-order snapshot.
 - `reports.ts` owns the one-call current/prior saved-summary range and bounded
   product, category, payment, service, and exact-unit ingredient aggregates.
-- `expenses.ts` owns retry-safe append-only expense creation/correction;
-  `staff.ts` owns owner-only bounded compensation reads and period creation.
+- `expenses.ts` owns retry-safe exact-date expense creation/correction;
+  `staff.ts` owns owner-only bounded compensation reads, period creation, and
+  forward-only stops.
 - `identity.ts` and `identityInternal.ts` own PIN verification, device sessions,
   and retry-safe owner-authorized staff credential provisioning. Public staff
   creation receives only a derived credential and returns the new device
-  session; no raw PIN is queued for later synchronization.
+  session; no raw PIN is queued for later synchronization. Signed-in staff may
+  update their own `preferredLanguage` through `setPreferredLanguage`.
+  Offline staff provisioning also carries the profile's saved language so the
+  first cloud acknowledgement cannot reset it to English.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts
@@ -46,6 +50,7 @@ data, reporting summaries, and development seeding.
   warnings, and four recent sales.
 - Report snapshots read at most 32 indexed daily summaries per current/prior
   range, accept no more than 31 days, and cap each detail aggregate at 20.
+  Used-ingredient on-hand is the live active stock for that name and unit.
 - Store money as integer centimes and stock in integer ingredient base units.
 - Product photos are optional compressed JPEG data URLs (`imageJpeg`), never
   bundled-key replacements and never uncompressed camera files.
@@ -61,10 +66,11 @@ data, reporting summaries, and development seeding.
   and deductions before writing any effect. Size/choice resolution must match
   `src/lib/productConfiguration.ts`. An optional complimentary flag charges 0
   while still deducting recipe stock; daily metrics use the charged total.
-  Optional tenders on the receipt snapshot store amount given and change;
-  their dues must sum to the charged sale total.
-- Seed/reset work is internal, development-only, deterministic, and runnable
-  through the CLI.
+  Optional tenders on the receipt snapshot store Cash/Card method and due plus
+  cash amount given/change; their dues must sum to the charged sale total.
+- Seed/reset work is internal, development-only, deterministic, refuses to run
+  without the disposable-deployment acknowledgement, and never replaces staff
+  profile IDs that own credentials.
 - Do not add actions for ordinary database work or import backend clients into
   React components.
 

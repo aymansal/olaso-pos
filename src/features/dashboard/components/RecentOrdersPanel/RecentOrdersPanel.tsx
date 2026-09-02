@@ -1,6 +1,7 @@
 import { ArrowRight, Receipt } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { formatMoney } from '../../../../lib/money';
+import { useT } from '../../../../lib/locale';
 import styles from './RecentOrdersPanel.module.css';
 
 function serviceLabel(service: 'dine-in' | 'take-away' | 'online') {
@@ -20,15 +21,16 @@ export function RecentOrdersPanel({
   error: string;
   onViewAll: () => void;
 }) {
+  const t = useT();
   return (
     <section className={styles.panel} aria-labelledby="recent-orders-title">
       <header className={styles.header}>
         <span>
-          <h2 id="recent-orders-title">Recent orders</h2>
-          <small>Latest activity from the counter</small>
+          <h2 id="recent-orders-title">{t('Recent orders')}</h2>
+          <small>{t('Latest activity from the counter')}</small>
         </span>
         <button type="button" className={styles.viewAll} onClick={onViewAll}>
-          <span>View all</span>
+          <span>{t('View all')}</span>
           <ArrowRight width={13} height={13} aria-hidden="true" />
         </button>
       </header>
@@ -37,10 +39,10 @@ export function RecentOrdersPanel({
         {error || isLoading || orders.length === 0 ? (
           <p className={styles.state} role={error ? 'alert' : 'status'}>
             {error
-              ? 'Recent orders are unavailable.'
+              ? t('Recent orders are unavailable.')
               : isLoading
-                ? 'Loading recent orders…'
-                : 'No saved orders yet.'}
+                ? t('Loading recent orders…')
+                : t('No saved orders yet.')}
           </p>
         ) : orders.map((order, index) => (
           <article className={styles.row} key={order.id}>
@@ -51,8 +53,8 @@ export function RecentOrdersPanel({
               {order.receiptNumber.replace(/^[A-Z]+-/, '#')}
             </strong>
             <small className={styles.meta}>
-              {serviceLabel(order.serviceMode)} · {order.itemCount}{' '}
-              {order.itemCount === 1 ? 'item' : 'items'}
+              {t(serviceLabel(order.serviceMode))} · {order.itemCount}{' '}
+              {t(order.itemCount === 1 ? 'item' : 'items')}
             </small>
             <strong className={styles.amount}>
               {formatMoney(order.totalCentimes)}
@@ -64,9 +66,7 @@ export function RecentOrdersPanel({
             >
               <span />
               <small>
-                {order.status === 'completed'
-                  ? 'Completed'
-                  : 'Cancelled'}{' '}
+                {t(order.status === 'completed' ? 'Completed' : 'Cancelled')}{' '}
                 · {new Intl.DateTimeFormat('en-GB', {
                   day: 'numeric',
                   month: 'short',

@@ -19,6 +19,10 @@ assert.deepEqual(nextOfflinePinResult(locked, true, { elapsedRealtime: 1, bootCo
 
 assert.equal(isServiceUnavailable(new TypeError('network failed')), true);
 assert.equal(isServiceUnavailable(new Error('Failed to fetch')), true);
+assert.equal(
+  isServiceUnavailable(new Error('Sign-in is temporarily unavailable.')),
+  true,
+);
 for (const rejection of ['PIN is incorrect.', 'Too many failed PIN attempts. Try again later.', 'Staff access is unavailable.', 'Sign-in details are invalid.']) {
   assert.equal(isServiceUnavailable(new Error(rejection)), false);
 }
@@ -65,6 +69,7 @@ assert.doesNotMatch(lockScreen, /setError\(\s*caught instanceof Error/);
 assert.match(lockScreen, /saved\.name !== cached\.name \|\| saved\.role !== cached\.role/);
 assert.match(lockScreen, /loadStaffSession\(staffProfileId\)/);
 assert.match(lockScreen, /verifyOfflinePin\(staffProfileId, pin\)/);
+assert.match(lockScreen, /localLanguage\.get\(String\(id\)\)/);
 assert.match(lockScreen, /saveAuthenticatedStaffProfile/);
 assert.match(lockScreen, /reconcileAuthenticatedStaffProfiles/);
 assert.ok(
@@ -115,8 +120,10 @@ assert.match(identity, /session\.deviceId !== args\.deviceId/);
 assert.match(identityAction, /export const validateSession/);
 assert.match(identityAction, /export const checkSession/);
 assert.match(identityAction, /identityRevision: record\.credentialVersion/);
-assert.match(sync, /credentialVersion \?\? 0/);
-assert.doesNotMatch(sync, /identityRevision: 0/);
+assert.match(sync, /const identity = identityByProfile\.get/);
+assert.match(sync, /return identity \? \[\{/);
+assert.doesNotMatch(sync, /identityRevision:\s*0/);
+assert.match(identityAction, /return profiles\.flatMap/);
 assert.match(sessionBoundary, /session\.deviceId !== args\.deviceId/);
 assert.match(sessionBoundary, /identity\.credentialVersion !== session\.credentialVersion/);
 assert.doesNotMatch(management + operational, /OLASO_ALLOW_DEV/);

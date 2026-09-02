@@ -2,6 +2,7 @@ import {
   CATEGORY_ARTWORK_OPTIONS,
   type CategoryArtworkKey,
 } from '../../../../lib/categoryArtwork.ts';
+import { useT } from '../../../../lib/locale';
 import styles from './CategoryArtworkPicker.module.css';
 
 export function CategoryArtworkPicker({
@@ -11,9 +12,10 @@ export function CategoryArtworkPicker({
   value: CategoryArtworkKey;
   onChange: (value: CategoryArtworkKey) => void;
 }) {
+  const t = useT();
   return (
     <fieldset className={styles.picker}>
-      <legend>Artwork</legend>
+      <legend>{t('Artwork')}</legend>
       <div>
         {CATEGORY_ARTWORK_OPTIONS.map((option) => (
           <button
@@ -23,7 +25,7 @@ export function CategoryArtworkPicker({
             onClick={() => onChange(option.key)}
           >
             <img src={option.image} alt="" width={36} height={36} decoding="async" />
-            <span>{option.label}</span>
+            <span>{t(option.label)}</span>
           </button>
         ))}
       </div>

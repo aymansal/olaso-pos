@@ -1,6 +1,5 @@
 import { Search, Plus, X } from '@boxicons/react';
 import type {
-  InventoryMetrics,
   ManagedIngredient,
 } from '../../stockManagementTypes';
 import type {
@@ -9,10 +8,10 @@ import type {
 } from '../../stockPresentation';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import { StockTable } from '../StockTable/StockTable';
+import { useT } from '../../../../lib/locale';
 import styles from './StockInventoryPanel.module.css';
 
 interface StockInventoryPanelProps {
-  metrics: InventoryMetrics;
   ingredients: ManagedIngredient[];
   totalItems: number;
   selectedIngredientId?: string;
@@ -32,7 +31,6 @@ interface StockInventoryPanelProps {
 }
 
 export function StockInventoryPanel({
-  metrics,
   ingredients,
   totalItems,
   selectedIngredientId,
@@ -50,34 +48,20 @@ export function StockInventoryPanel({
   onPageChange,
   onAddIngredient,
 }: StockInventoryPanelProps) {
-  const summaries = [
-    { value: metrics.ingredientCount, label: 'Active items' },
-    { value: metrics.lowStockCount, label: 'Low stock' },
-    { value: metrics.movementCount, label: 'Used today' },
-    { value: metrics.adjustmentCount, label: 'Corrections' },
-  ] as const;
-
+  const t = useT();
   return (
     <section className={styles.panel} aria-labelledby="stock-inventory-title">
       <header className={styles.header}>
         <h1 className={styles.heading} id="stock-inventory-title">
-          Stock inventory
+          {t('Stock inventory')}
         </h1>
-        <div className={styles.metrics} aria-label="Stock summary">
-          {summaries.map(({ value, label }) => (
-            <span className={styles.metric} key={label}>
-              <strong>{value}</strong>
-              <small>{label}</small>
-            </span>
-          ))}
-        </div>
         <button
           className={styles.addIngredient}
           type="button"
           onClick={onAddIngredient}
         >
           <Plus width={15} height={15} aria-hidden="true" />
-          <span>Add ingredient</span>
+          <span>{t('Add ingredient')}</span>
         </button>
       </header>
 
@@ -86,8 +70,8 @@ export function StockInventoryPanel({
           <Search width={15} height={15} aria-hidden="true" />
           <input
             type="search"
-            aria-label="Search stock"
-            placeholder="Search ingredients or packaging"
+            aria-label={t('Search stock')}
+            placeholder={t('Search ingredients or packaging')}
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
           />
@@ -95,7 +79,7 @@ export function StockInventoryPanel({
             <button
               type="button"
               className={styles.clear}
-              aria-label="Clear search"
+              aria-label={t('Clear search')}
               onClick={() => onSearchChange('')}
             >
               <X width={14} height={14} aria-hidden="true" />

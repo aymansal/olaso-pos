@@ -1,8 +1,9 @@
 import { v } from 'convex/values';
-import { action, query } from './_generated/server';
+import { action, mutation, query } from './_generated/server';
 import { internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
 import { isStaffRole, type StaffRole } from './lib/permissions';
+import { requireStaffSession, sessionArgs } from './lib/session';
 
 const PIN_PATTERN = /^\d{6}$/;
 const DEVICE_PATTERN = /^[A-Za-z0-9._-]{1,120}$/;
@@ -170,6 +171,14 @@ export const supportSetPin = action({
 
 export const listActiveProfiles = query({
   args: { deviceId: v.string() },
+  returns: v.array(v.object({
+    id: v.id('staffProfiles'),
+    name: v.string(),
+    role: staffRole,
+    revision: v.number(),
+    identityRevision: v.number(),
+    preferredLanguage: v.union(v.literal('en'), v.literal('fr')),
+  })),
   handler: async (ctx, args) => {
     if (!DEVICE_PATTERN.test(args.deviceId)) throw new Error('Sign-in details are invalid.');
     const profiles = await ctx.db
@@ -192,14 +201,39 @@ export const listActiveProfiles = query({
         identity ? [[String(identity.staffProfileId), identity] as const] : [],
       ),
     );
-    return profiles.map((profile) => ({
-      id: profile._id,
-      name: profile.name,
-      role: profile.role,
-      revision: profile.revision,
-      identityRevision:
-        identityByProfile.get(String(profile._id))?.credentialVersion ?? 0,
-    }));
+    return profiles.flatMap((profile) => {
+      const identity = identityByProfile.get(String(profile._id));
+      return identity ? [{
+        id: profile._id,
+        name: profile.name,
+        role: profile.role,
+        revision: profile.revision,
+        identityRevision: identity.credentialVersion,
+        preferredLanguage: profile.preferredLanguage === 'fr' ? 'fr' as const : 'en' as const,
+      }] : [];
+    });
+  },
+});
+
+export const setPreferredLanguage = mutation({
+  args: {
+    ...sessionArgs,
+    language: v.union(v.literal('en'), v.literal('fr')),
+  },
+  returns: v.object({
+    language: v.union(v.literal('en'), v.literal('fr')),
+  }),
+  handler: async (ctx, args) => {
+    const session = await requireStaffSession(ctx, args);
+    const profile = await ctx.db.get(session.staffProfileId as Id<'staffProfiles'>);
+    if (!profile || profile.status !== 'active') {
+      throw new Error('Staff profile is unavailable.');
+    }
+    await ctx.db.patch(profile._id, {
+      preferredLanguage: args.language,
+      updatedAt: Date.now(),
+    });
+    return { language: args.language };
   },
 });
 
@@ -224,6 +258,7 @@ export const createStaff = action({
     deviceId: v.string(),
     name: v.string(),
     role: staffRole,
+    preferredLanguage: v.union(v.literal('en'), v.literal('fr')),
     pinSalt: v.string(),
     pinHash: v.string(),
     clientMutationId: v.string(),
@@ -241,6 +276,7 @@ export const createStaff = action({
       deviceId: args.deviceId,
       name: args.name,
       role: args.role,
+      preferredLanguage: args.preferredLanguage,
       pinSalt: args.pinSalt,
       pinHash: args.pinHash,
       clientMutationId: args.clientMutationId,

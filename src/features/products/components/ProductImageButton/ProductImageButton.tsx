@@ -1,6 +1,7 @@
 import { Plus } from '@boxicons/react';
 import { type ReactNode, useRef } from 'react';
 import { compressProductImage } from '../../../../lib/compressProductImage.ts';
+import { useT } from '../../../../lib/locale';
 import styles from './ProductImageButton.module.css';
 
 export function ProductImageButton({
@@ -20,6 +21,7 @@ export function ProductImageButton({
   label: string;
   fallback?: ReactNode;
 }) {
+  const t = useT();
   const input = useRef<HTMLInputElement>(null);
 
   return (
@@ -27,7 +29,7 @@ export function ProductImageButton({
       <button
         type="button"
         className={`${styles.button}${className ? ` ${className}` : ''}`}
-        aria-label={label}
+        aria-label={t(label)}
         disabled={disabled}
         onClick={() => input.current?.click()}
       >
@@ -49,9 +51,9 @@ export function ProductImageButton({
           if (!file) return;
           void compressProductImage(file).then(onChange, (caught) => {
             onError?.(
-              caught instanceof Error
+              t(caught instanceof Error
                 ? caught.message
-                : 'Could not use that photo.',
+                : 'Could not use that photo.'),
             );
           });
         }}

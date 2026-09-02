@@ -304,6 +304,8 @@ assert.ok(
   'Android connection truth must exist before the Convex client boundary.',
 );
 assert.match(html, /<link rel="icon" href="data:," \/>/);
+assert.match(pos, /notifyLocalWrite\(\)/);
+assert.match(orders, /notifyLocalWrite\(\)/);
 assert.ok(
   orders.indexOf('await refresh();')
     < orders.indexOf("void reconnect.run('automatic')"),

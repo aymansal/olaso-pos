@@ -16,8 +16,8 @@ owns the shared Header and TopNavigation currently used across the application.
 - `Header` and `TopNavigation` are cross-screen contracts despite their current
   POS location. App mounts one Header for every screen.
 - `ProfileControl` is the shared role-safe Header menu: every role can lock or
-  switch staff, while only an owner outside the Settings screen can open
-  Settings from it.
+  switch staff and switch application language with a compact EN|FR control,
+  while only an owner outside the Settings screen can open Settings from it.
 - `data/categories.ts` and `data/products.ts` map approved content assets onto
   the live local operational menu.
 - `src/lib/categoryArtwork.ts` is the shared Products/POS gallery registry and
@@ -61,8 +61,9 @@ owns the shared Header and TopNavigation currently used across the application.
   not. A fully Offert cart skips the overlay. Cash shows 20 / 50 / 100 / 200 DH
   plus custom given and change; Split is hidden unless two or more paid units
   remain. Offert lines stay off the split lists. With two or more paid units it
-  fades in on that overlay and cannot close after the first recorded payer. One
-  sale records every tender on the ticket.
+  fades in on that overlay and cannot close after the first recorded payer.
+  Each split payer chooses Cash or Card; Card is exact and only Cash shows
+  Given/Change. One sale records every tender on the ticket.
   A cashier may empty the current draft from the always-visible trash next to
   the Current order title; it stays gray while the cart is empty. The cart list
   itself stays blank until a product is added; each line uses the same compact
@@ -72,6 +73,11 @@ owns the shared Header and TopNavigation currently used across the application.
 - Checkout prints the saved ticket. POS does not open an on-screen receipt
   preview. Do not expose printer settings, permissions, bytes, or transport
   from this feature.
+- The Header Report action appears only for an owner and delegates one
+  current-day print request to App; Header owns only its busy presentation.
+- The printed ticket joins product and size as one heading and renders actual
+  choices as one compact, wrapping detail list. It never prints repeated `+`
+  prefixes or treats Offert as a choice.
 - Checkout, persistence, stock deduction, sync, and printing do not belong in
   leaf components.
 - Changing Header or TopNavigation requires visual verification of all six

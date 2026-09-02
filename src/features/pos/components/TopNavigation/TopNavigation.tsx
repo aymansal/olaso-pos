@@ -2,6 +2,7 @@ import { useRef, type CSSProperties } from 'react';
 import { ChartLine, Package, Receipt, Cart, Grid, Layers } from '@boxicons/react';
 import styles from './TopNavigation.module.css';
 import { hasPermission, type StaffRole } from '../../../../data/permissions';
+import { useT } from '../../../../lib/locale';
 
 const navigationItems = [
   { label: 'Dashboard', icon: Grid, permission: 'dashboard' },
@@ -21,6 +22,7 @@ interface TopNavigationProps {
 }
 
 export function TopNavigation({ activePage, onNavigate, role }: TopNavigationProps) {
+  const t = useT();
   const visible = navigationItems.filter((item) => hasPermission(role, item.permission));
   const index = visible.findIndex((item) => item.label === activePage);
   const lastIndex = useRef(0);
@@ -34,7 +36,8 @@ export function TopNavigation({ activePage, onNavigate, role }: TopNavigationPro
         '--index': lastIndex.current,
         '--show': index < 0 ? 0 : 1,
       } as CSSProperties}
-      aria-label="Primary navigation"
+      aria-label={t('Primary navigation')}
+      data-olaso-nav="primary"
     >
       <span className={styles.indicator} aria-hidden="true" />
       {visible.map(({ label, icon: Icon }) => {
@@ -45,11 +48,12 @@ export function TopNavigation({ activePage, onNavigate, role }: TopNavigationPro
             className={`${styles.item} ${isActive ? styles.active : ''}`}
             type="button"
             aria-current={isActive ? 'page' : undefined}
+            data-page={label}
             onClick={() => onNavigate?.(label)}
             key={label}
           >
             <Icon width={16} height={16} aria-hidden="true" />
-            <span>{label}</span>
+            <span>{t(label)}</span>
           </button>
         );
       })}

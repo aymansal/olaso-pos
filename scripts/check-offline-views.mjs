@@ -129,7 +129,6 @@ assert.match(stock, /loadOfflineInventory/);
 assert.match(stock, /loadOfflineIngredientDetail/);
 assert.match(dashboard, /loadOfflineDashboard/);
 assert.doesNotMatch(dashboard, /useState\(localBusinessDate\)/);
-assert.match(reports, /loadOfflineReport/);
 const dashboardOnline = dashboard.match(
   /const request = available\s*\?\s*([\s\S]*?)\s*:\s*loadOffline/,
 );
@@ -138,12 +137,9 @@ assert.match(dashboardOnline[1], /api\.dashboard\.getSnapshot/);
 assert.doesNotMatch(dashboardOnline[1], /loadOfflineDashboard|pendingSyncCount/);
 assert.doesNotMatch(dashboard, /pendingSyncCount/);
 assert.match(dashboard, /available === undefined \|\| !foreground/);
-const reportsOnline = reports.match(
-  /const request = available\s*\?\s*([\s\S]*?)\s*:\s*loadOffline/,
-);
-assert.ok(reportsOnline, 'useReportsData must choose cloud vs offline by available');
-assert.match(reportsOnline[1], /api\.reports\.getSummary/);
-assert.doesNotMatch(reportsOnline[1], /loadOfflineReport|pendingSyncCount/);
+assert.match(reports, /loadOfflineReport/);
+assert.match(reports, /api\.reports\.getSummary/);
+assert.match(reports, /local\.current\.orderCount > cloud\.current\.orderCount/);
 assert.doesNotMatch(reports, /pendingSyncCount/);
 assert.match(reports, /available === undefined \|\| !foreground/);
 assert.doesNotMatch(products + stock, /useQuery_experimental|useMutation/);
@@ -161,6 +157,18 @@ assert.match(quickAdd, /ORDER BY quantity DESC/);
 assert.match(quickAdd, /sale\.status = 'completed'/);
 assert.match(quickAdd, /LIMIT \$\{QUICK_ADD_LIMIT\}/);
 assert.match(views, /const QUICK_ADD_LIMIT = 3/);
+assert.match(views, /overlayCloudUsedToday/);
+assert.match(views, /Math\.max\(item\.usedToday/);
+assert.match(views, /alias\.local_stock_delta/);
+assert.match(views, /COALESCE\(i\.name, NULLIF\(m\.ingredient_name_snapshot/);
+assert.match(views, /ingredient_name_snapshot/);
+assert.match(views, /unsyncedUsedByName/);
+assert.equal(Math.max(3, (1 ?? 0) + 0), 3);
+assert.equal(Math.max(0, (3 ?? 0) + 0), 3);
+assert.equal(Math.max(0, (3 ?? 0) + 0.2), 3.2);
+assert.match(views, /stockByName\.get\(`\$\{ingredientName\}\\0\$\{baseUnit\}`\)/);
+assert.match(stock, /overlayCloudUsedToday/);
+assert.match(stock, /api\.reports\.getSummary/);
 const pos = readFileSync('src/data/usePosData.ts', 'utf8');
 assert.match(pos, /topSellingProductIds/);
 

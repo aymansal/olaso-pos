@@ -1,5 +1,6 @@
 import { Card } from '@astryxdesign/core/Card';
 import { Trash } from '@boxicons/react';
+import { useT } from '../../../../lib/locale';
 import type { Product } from '../../data/products';
 import type { PaymentMethod, ServiceMode } from '../../posSession';
 import { OrderItemCard } from '../OrderItemCard/OrderItemCard';
@@ -8,6 +9,17 @@ import { PaymentSummary } from '../PaymentSummary/PaymentSummary';
 import { PrimaryAction } from '../PrimaryAction/PrimaryAction';
 import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
 import styles from './ReceiptRail.module.css';
+
+function localizeCheckout(
+  t: (english: string, vars?: Record<string, string | number>) => string,
+  text: string,
+) {
+  if (text.startsWith('Sale saved. ') && text.endsWith(' Reprint remains available.')) {
+    const detail = text.slice('Sale saved. '.length, -' Reprint remains available.'.length);
+    return `${t('Sale saved.')} ${t(detail)} ${t('Reprint remains available.')}`;
+  }
+  return t(text);
+}
 
 type ReceiptLine = {
   id: string;
@@ -59,14 +71,15 @@ export function ReceiptRail({
   onPaymentMethodChange,
   onPlaceOrder,
 }: ReceiptRailProps) {
+  const t = useT();
   return (
     <Card className={styles.rail} width={320} height={688} padding={0}>
       <div className={styles.heading}>
-        <h2 className={styles.title}>Current order</h2>
+        <h2 className={styles.title}>{t('Current order')}</h2>
         <button
           className={styles.clearCart}
           type="button"
-          aria-label="Clear cart"
+          aria-label={t('Clear cart')}
           disabled={lines.length === 0 || checkoutProcessing}
           onClick={onClearCart}
         >
@@ -79,7 +92,7 @@ export function ReceiptRail({
         className={styles.orderSection}
         data-offert={offertCentimes > 0 ? '' : undefined}
         role="region"
-        aria-label="Cart"
+        aria-label={t('Cart')}
       >
         <div className={styles.orderList}>
           {lines.map(({ id, product, quantity, modifierSummary, complimentary }) => (
@@ -106,7 +119,7 @@ export function ReceiptRail({
         className={`${styles.feedback} ${styles[checkoutFeedback.kind]}`}
         role={checkoutFeedback.kind === 'error' ? 'alert' : 'status'}
       >
-        {checkoutFeedback.message}
+        {localizeCheckout(t, checkoutFeedback.message)}
       </p>
       <PrimaryAction
         totalCentimes={totalCentimes}

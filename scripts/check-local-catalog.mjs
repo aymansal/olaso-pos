@@ -333,6 +333,10 @@ const localSalesSource = readFileSync('src/data/localSales.ts', 'utf8');
 const reconnectSource = readFileSync('src/data/reconnectContext.tsx', 'utf8');
 const productHookSource = readFileSync('src/data/useProductManagement.ts', 'utf8');
 const operationalCacheSource = readFileSync('src/data/operationalCache.ts', 'utf8');
+assert.match(
+  operationalCacheSource,
+  /image_jpeg = COALESCE\(excluded\.image_jpeg, products\.image_jpeg\)/,
+);
 assert.match(localSalesSource, /depends_on_operation_id/);
 assert.match(localSalesSource, /latestPendingManagementOperationIdFromDatabase/);
 assert.ok(
@@ -355,7 +359,7 @@ const productScreenSource = readFileSync(
   'utf8',
 );
 assert.match(productScreenSource, /product\.status !== 'archived'/);
-assert.match(productScreenSource, /category\.status !== 'archived'/);
+assert.match(productScreenSource, /selectedCategory\?\.status === 'active'/);
 assert.match(productScreenSource, /UNCATEGORIZED_ID = 'uncategorized'/);
 assert.match(productScreenSource, /!product\.categoryId/);
 assert.match(
@@ -363,7 +367,7 @@ assert.match(
     'src/features/products/components/CategorySidebar/CategorySidebar.tsx',
     'utf8',
   ),
-  /name: 'Uncategorized'/,
+  /name: t\('Uncategorized'\)/,
 );
 assert.match(
   readFileSync(

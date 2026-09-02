@@ -15,7 +15,7 @@ export type OfflinePinResult =
 export function isServiceUnavailable(error: unknown) {
   if (error instanceof TypeError) return true;
   const message = error instanceof Error ? error.message : String(error);
-  return /^(?:failed to fetch|network request failed|network error|offline|connection (?:failed|refused|reset|timed out))$/i.test(message.trim());
+  return /^(?:failed to fetch|network request failed|network error|offline|sign-in is temporarily unavailable\.?|connection (?:failed|refused|reset|timed out))$/i.test(message.trim());
 }
 
 export function nextOfflinePinResult(

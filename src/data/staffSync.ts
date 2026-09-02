@@ -9,6 +9,7 @@ import { isStaffRole } from './permissions.ts';
 import { saveAuthenticatedStaffProfile } from './operationalCache.ts';
 import { withLocalTransaction } from './localDatabase.ts';
 import { syncPendingManagementOperations } from './catalogSync.ts';
+import { loadStaffPreferredLanguage } from './localStaff.ts';
 
 type Result = {
   recordType: string;
@@ -34,6 +35,12 @@ export async function dispatchStaffOperation(
       id: cloudId,
       expectedRevision: operation.expectedRevision,
       clientMutationId: operation.operationId,
+      ...(typeof operation.payload.compensationEndMonth === 'string'
+        ? { compensationEndMonth: operation.payload.compensationEndMonth }
+        : {}),
+      ...(typeof operation.payload.compensationEndDate === 'string'
+        ? { compensationEndDate: operation.payload.compensationEndDate }
+        : {}),
     });
     await withLocalTransaction(async (database) => {
       await database.run(
@@ -54,10 +61,14 @@ export async function dispatchStaffOperation(
     throw new Error('Staff synchronization operation is unsupported.');
   }
   const credential = await loadPendingStaffCredential(operation.localRecordId);
+  const preferredLanguage = await loadStaffPreferredLanguage(
+    operation.localRecordId,
+  );
   const created = await services.createStaff({
     ...services.sessionArgs,
     name: String(operation.payload.name),
     role: operation.payload.role,
+    preferredLanguage,
     ...credential,
     clientMutationId: operation.operationId,
   });
@@ -80,7 +91,10 @@ export async function dispatchStaffOperation(
       || profile.identityRevision < 1) {
     throw new Error('Staff synchronization revision is invalid.');
   }
-  await saveAuthenticatedStaffProfile(profile);
+  await saveAuthenticatedStaffProfile({
+    ...profile,
+    preferredLanguage,
+  });
   await saveProvisionedStaffSession(operation.localRecordId, {
     token: created.token,
     staffProfileId: profile.id,

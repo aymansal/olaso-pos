@@ -281,10 +281,10 @@ async function unlock(role, existingSession) {
   );
   await sleep(40);
   await session.evaluate(
-    `(()=>{const button=[...document.querySelectorAll('button')].find(item=>item.innerText.includes('Unlock POS'));if(!button||button.disabled)throw Error('Unlock button missing');button.click();return true})()`,
+    `(()=>{const button=[...document.querySelectorAll('button')].find(item=>/Unlock|Déverrouiller/.test(item.innerText)&&!item.innerText.includes('/'));if(!button||button.disabled)throw Error('Unlock button missing');button.click();return true})()`,
   );
   await session.waitFor(
-    `(()=>document.querySelector('main[aria-label="Olaso point of sale"]')||document.querySelector('nav[aria-label="Primary navigation"]')?true:false)()`,
+    `(()=>document.querySelector('main[aria-label="Olaso point of sale"],main[aria-label="Caisse Olaso"]')||document.querySelector('[data-olaso-nav="primary"]')?true:false)()`,
     45_000,
   );
   return session;

@@ -9,6 +9,7 @@ import {
   baseUnitLabel,
   formatStockQuantity,
 } from '../../stockPresentation';
+import { useT } from '../../../../lib/locale';
 import styles from './StockAdjustmentDialog.module.css';
 
 interface StockAdjustmentDialogProps {
@@ -29,6 +30,7 @@ export function StockAdjustmentDialog({
   onClose,
   onSave,
 }: StockAdjustmentDialogProps) {
+  const t = useT();
   const receiving = mode === 'receive';
   const [quantity, setQuantity] = useState(
     receiving
@@ -76,12 +78,12 @@ export function StockAdjustmentDialog({
       >
         <header>
           <span>
-            <small>{receiving ? 'STOCK ADDITION' : 'PHYSICAL COUNT'}</small>
+            <small>{t(receiving ? 'STOCK ADDITION' : 'PHYSICAL COUNT')}</small>
             <h2 id="adjustment-dialog-title">
-              {receiving ? 'Receive stock' : 'Adjust count'}
+              {t(receiving ? 'Receive stock' : 'Adjust count')}
             </h2>
           </span>
-          <button type="button" onClick={onClose} aria-label="Close stock adjustment">
+          <button type="button" onClick={onClose} aria-label={t('Close stock adjustment')}>
             <X width={18} height={18} aria-hidden="true" />
           </button>
         </header>
@@ -90,10 +92,12 @@ export function StockAdjustmentDialog({
           <span>
             <strong>{ingredient.name}</strong>
             <small>
-              Current: {formatStockQuantity(
-                ingredient.currentStockQuantity,
-                ingredient.baseUnit,
-              )}
+              {t('Current: {quantity}', {
+                quantity: formatStockQuantity(
+                  ingredient.currentStockQuantity,
+                  ingredient.baseUnit,
+                ),
+              })}
             </small>
           </span>
         </div>
@@ -101,8 +105,8 @@ export function StockAdjustmentDialog({
         <div className={styles.fields}>
           <label>
             <span>
-              {receiving ? 'Quantity received' : 'Counted on hand'} ·{' '}
-              {baseUnitLabel(ingredient.baseUnit)}
+              {t(receiving ? 'Quantity received' : 'Counted on hand')} ·{' '}
+              {t(baseUnitLabel(ingredient.baseUnit))}
             </span>
             <input
               type="number"
@@ -114,11 +118,11 @@ export function StockAdjustmentDialog({
             />
           </label>
           <label>
-            <span>Reason</span>
+            <span>{t('Reason')}</span>
             <input
               value={reason}
               placeholder={
-                receiving ? 'Delivery or transfer' : 'Count, spoilage or breakage'
+                t(receiving ? 'Delivery or transfer' : 'Count, spoilage or breakage')
               }
               onChange={(event) => setReason(event.target.value)}
             />
@@ -126,12 +130,12 @@ export function StockAdjustmentDialog({
         </div>
 
         <p className={styles.helper}>
-          Saving appends one movement and updates the balance atomically.
+          {t('Saving appends one movement and updates the balance atomically.')}
         </p>
-        {error ? <p className={styles.error}>{error}</p> : null}
+        {error ? <p className={styles.error}>{t(error)}</p> : null}
         <footer>
           <button type="button" className={styles.cancel} onClick={onClose}>
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
@@ -142,7 +146,7 @@ export function StockAdjustmentDialog({
             }
           >
             <Save width={16} height={16} aria-hidden="true" />
-            {saving ? 'Saving…' : receiving ? 'Receive stock' : 'Save count'}
+            {saving ? t('Saving…') : t(receiving ? 'Receive stock' : 'Save count')}
           </button>
         </footer>
       </section>
