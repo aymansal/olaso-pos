@@ -1,7 +1,8 @@
 import { Clock, InfoCircle, Package, Printer, Receipt, RotateCcw, ShoppingBag, Store } from '@boxicons/react';
 import { useState } from 'react';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
-import { useT } from '../../../../lib/locale';
+import { useLanguage, useT } from '../../../../lib/locale';
+import { formatTime } from '../../../../lib/date';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrderDetailPanel.module.css';
 import { CancellationDialog } from '../CancellationDialog/CancellationDialog';
@@ -37,6 +38,7 @@ export function OrderDetailPanel({
   onCancel: (order: OrderHistoryRecord, reason: string) => Promise<void>;
 }) {
   const t = useT();
+  const language = useLanguage();
   const [cancellationOpen, setCancellationOpen] = useState(false);
 
   if (!order) {
@@ -53,10 +55,7 @@ export function OrderDetailPanel({
     (total, line) => total + line.quantity,
     0,
   );
-  const createdAt = new Date(order.receipt.completedAt).toLocaleTimeString(
-    'en-GB',
-    { hour: '2-digit', minute: '2-digit' },
-  );
+  const createdAt = formatTime(order.receipt.completedAt, language);
   const canReprint = order.status === 'completed' && Boolean(order.printState);
   const canCancel = order.status === 'completed' && Boolean(order.printState);
   const statusTone = order.syncState !== 'synced' || order.status !== 'completed'

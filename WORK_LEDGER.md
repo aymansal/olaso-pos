@@ -129,6 +129,27 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- PR-03 recovery checkpoint (2 Sep 2026): began only after PR-02's pushed
+  completion. Graphify traced the existing date helper, report chart, calendar,
+  and Dashboard/Orders/Stock date views. Official Android internationalization
+  and Capacitor guidance select the existing React formatting/query boundary;
+  no native change, app, tablet, browser, ADB, PIN, seed, or live data action
+  occurred. Exact next action: implement PR-03's shared date locale and chart
+  month selection helpers, then focused checks.
+
+- PR-03 implementation checkpoint (2 Sep 2026): shared date/time formatting
+  now uses the active English/French language across the required Reports,
+  Dashboard, Orders, and Stock views. The reports chart selects its current,
+  historical, dominant, or later-tied month by the approved rule. Focused
+  date/month checks, TypeScript, saved offline checks, and diff check pass.
+  Exact next action: remaining safe checks, Graphify, review, commit/push.
+
+- PR-03 verification checkpoint (2 Sep 2026): Settings, navigation, CSS scope,
+  TypeScript, production build, and diff checks passed; Graphify refreshed to
+  3,032 nodes, 6,006 edges, and 186 communities. The protected reports check
+  stopped before any reset because its owner test PIN is unavailable. Exact next
+  action: review, commit, and push PR-03 only.
+
 - PR-02 implementation checkpoint (2 Sep 2026): Reports now separates the full
   ingredient-type count from its 20 visible rows. The All preset has a bounded
   cloud daily-summary pager and SQLite aggregate path that does not load the

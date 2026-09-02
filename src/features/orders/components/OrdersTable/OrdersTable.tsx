@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
-import { useT } from '../../../../lib/locale';
+import { useLanguage, useT } from '../../../../lib/locale';
+import { formatDate, formatTime } from '../../../../lib/date';
 import { formatMoney } from '../../../../lib/money';
 import styles from './OrdersTable.module.css';
 
@@ -17,16 +18,11 @@ function compactReceiptNumber(receiptNumber: string) {
   return receiptNumber.replace(/^[A-Z]+-/, '#');
 }
 
-function formatOrderWhen(completedAt: number) {
-  const date = new Date(completedAt);
-  const dd = String(date.getDate()).padStart(2, '0');
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const yy = String(date.getFullYear()).slice(-2);
-  const time = date.toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-  return { date: `${dd}/${mm}/${yy}`, time };
+function formatOrderWhen(completedAt: number, language: 'en' | 'fr') {
+  return {
+    date: formatDate(completedAt, language, { day: '2-digit', month: '2-digit', year: '2-digit' }),
+    time: formatTime(completedAt, language),
+  };
 }
 
 function serviceLabel(order: OrderHistoryRecord) {
@@ -62,6 +58,7 @@ export function OrdersTable({
   emptyMessage: string;
 }) {
   const t = useT();
+  const language = useLanguage();
   const selectedIndex = orders.findIndex((order) => order.key === selectedKey);
 
   return (
@@ -88,7 +85,7 @@ export function OrdersTable({
           (total, line) => total + line.quantity,
           0,
         );
-        const when = formatOrderWhen(order.receipt.completedAt);
+        const when = formatOrderWhen(order.receipt.completedAt, language);
         return (
         <button
           type="button"

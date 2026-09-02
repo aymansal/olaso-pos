@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { aggregateOfflineSales } from '../src/data/offlineViews.ts';
+import { formatPeriodLabel, reportChartMonth } from '../src/lib/date.ts';
+
+assert.equal(reportChartMonth('2026-08-25', '2026-09-02', '2026-09-02'), '2026-09');
+assert.equal(reportChartMonth('2026-08-01', '2026-08-31', '2026-09-02'), '2026-08');
+assert.equal(reportChartMonth('2026-03-01', '2026-04-10', '2026-09-02'), '2026-03');
+assert.equal(reportChartMonth('2026-03-16', '2026-04-16', '2026-09-02'), '2026-04');
+assert.equal(reportChartMonth('', '', '2026-09-02'), '2026-09');
+assert.match(formatPeriodLabel('2026-03-01', '2026-03-01', 'en'), /Mar/);
+assert.match(formatPeriodLabel('2026-03-01', '2026-03-01', 'fr'), /mars/);
 
 const rows = [
   {

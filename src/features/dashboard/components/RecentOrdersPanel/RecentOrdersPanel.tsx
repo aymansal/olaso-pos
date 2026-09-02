@@ -2,6 +2,8 @@ import { ArrowRight, Receipt } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { formatMoney } from '../../../../lib/money';
 import { useT } from '../../../../lib/locale';
+import { useLanguage } from '../../../../lib/locale';
+import { formatDate } from '../../../../lib/date';
 import styles from './RecentOrdersPanel.module.css';
 
 function serviceLabel(service: 'dine-in' | 'take-away' | 'online') {
@@ -22,6 +24,7 @@ export function RecentOrdersPanel({
   onViewAll: () => void;
 }) {
   const t = useT();
+  const language = useLanguage();
   return (
     <section className={styles.panel} aria-labelledby="recent-orders-title">
       <header className={styles.header}>
@@ -67,7 +70,7 @@ export function RecentOrdersPanel({
               <span />
               <small>
                 {t(order.status === 'completed' ? 'Completed' : 'Cancelled')}{' '}
-                · {new Intl.DateTimeFormat('en-GB', {
+                · {new Intl.DateTimeFormat(language === 'fr' ? 'fr-FR' : 'en-GB', {
                   day: 'numeric',
                   month: 'short',
                   hour: '2-digit',

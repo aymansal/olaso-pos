@@ -11,7 +11,7 @@ import {
   ingredientLevel,
   movementLabel,
 } from '../../stockPresentation';
-import { useT } from '../../../../lib/locale';
+import { useLanguage, useT } from '../../../../lib/locale';
 import styles from './StockDetailPanel.module.css';
 
 interface StockDetailPanelProps {
@@ -27,8 +27,8 @@ interface StockDetailPanelProps {
   onReceivePurchase: (ingredient: ManagedIngredient) => void;
 }
 
-function movementTime(timestamp: number) {
-  return new Intl.DateTimeFormat('en-GB', {
+function movementTime(timestamp: number, language: 'en' | 'fr') {
+  return new Intl.DateTimeFormat(language === 'fr' ? 'fr-FR' : 'en-GB', {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
@@ -46,6 +46,7 @@ export function StockDetailPanel({
   onReceivePurchase,
 }: StockDetailPanelProps) {
   const t = useT();
+  const language = useLanguage();
   const [name, setName] = useState('');
   const [threshold, setThreshold] = useState('');
   const [saving, setSaving] = useState(false);
@@ -215,7 +216,7 @@ export function StockDetailPanel({
             <article className={styles.movement} key={movement.id}>
               <span>
                 <strong>{t(movementLabel(movement.movementType))}</strong>
-                <small>{movementTime(movement.createdAt)}</small>
+                <small>{movementTime(movement.createdAt, language)}</small>
               </span>
               <strong
                 className={
@@ -288,7 +289,7 @@ export function StockDetailPanel({
                   <strong>{t(movementLabel(movement.movementType))}</strong>
                   <small>
                     {movement.reason} · {movement.actorLabel ?? t('Unknown actor')} ·{' '}
-                    {movementTime(movement.createdAt)}
+                    {movementTime(movement.createdAt, language)}
                   </small>
                 </span>
                 <strong

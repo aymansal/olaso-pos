@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { RotateCw, Calculator, Coffee, Bolt, Pulse, Receipt, Star, TrendingDown, TrendingUp } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { useT } from '../../../../lib/locale';
+import { formatDate } from '../../../../lib/date';
+import { useLanguage } from '../../../../lib/locale';
 import { formatCompactMoney, formatMoney } from '../../../../lib/money';
 import styles from './SalesPulse.module.css';
 
@@ -17,6 +19,7 @@ export function SalesPulse({
   onRetry: () => void;
 }) {
   const t = useT();
+  const language = useLanguage();
   const today = snapshot?.today;
   const yesterday = snapshot?.yesterday;
   const metrics = [
@@ -88,9 +91,7 @@ export function SalesPulse({
               : isLoading
                 ? t('Loading')
                 : t('Saved · {date}', {
-                    date: new Date(
-                      `${snapshot?.businessDate}T12:00:00`,
-                    ).toLocaleDateString('en-GB', {
+                    date: formatDate(snapshot?.businessDate ?? '', language, {
                       day: 'numeric',
                       month: 'short',
                     }),
@@ -147,9 +148,7 @@ export function SalesPulse({
           <strong>
             {peak?.netCentimes
               ? t('Peak {date}', {
-                  date: new Date(
-                    `${peak.businessDate}T12:00:00`,
-                  ).toLocaleDateString('en-GB', {
+                  date: formatDate(peak.businessDate, language, {
                     day: 'numeric',
                     month: 'short',
                   }),

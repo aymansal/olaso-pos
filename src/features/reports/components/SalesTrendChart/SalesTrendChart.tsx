@@ -3,14 +3,14 @@ import { TrendingUp } from '@boxicons/react';
 import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import {
   calendarMonthEnd,
-  calendarMonthOf,
   calendarMonthStart,
   inclusiveDayCount,
+  formatDate,
   localBusinessDate,
   shiftBusinessDate,
 } from '../../../../lib/date';
 import { formatMoney } from '../../../../lib/money';
-import { useT } from '../../../../lib/locale';
+import { useLanguage, useT } from '../../../../lib/locale';
 import type { ReportTab } from '../../reportTypes';
 import styles from './SalesTrendChart.module.css';
 
@@ -51,15 +51,17 @@ function averageLabel(value: number, tab: ReportTab) {
 export function SalesTrendChart({
   tab,
   snapshot,
+  month,
   fillMonth = false,
 }: {
   tab: ReportTab;
   snapshot?: ReportsSnapshot;
+  month: string;
   fillMonth?: boolean;
 }) {
   const t = useT();
+  const language = useLanguage();
   const today = localBusinessDate();
-  const month = calendarMonthOf(today);
   const monthStart = calendarMonthStart(month);
   const monthEnd = calendarMonthEnd(month);
   const byDate = new Map(
@@ -105,10 +107,7 @@ export function SalesTrendChart({
         0,
       ) / elapsed
     : 0;
-  const monthTitle = new Date(`${month}-01T12:00:00`).toLocaleDateString(
-    'en-GB',
-    { month: 'long', year: 'numeric' },
-  );
+  const monthTitle = formatDate(`${month}-01`, language, { month: 'long', year: 'numeric' });
   const title = tab === 'sales'
     ? t('Net sales trend')
     : tab === 'products'
@@ -125,18 +124,18 @@ export function SalesTrendChart({
   const peakWhen = peak.fromDate !== peak.toDate
     ? `${new Date(
         `${peak.fromDate}T12:00:00`,
-      ).toLocaleDateString('en-GB', {
+      ).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB', {
         day: 'numeric',
         month: 'short',
       })}–${new Date(
         `${peak.toDate}T12:00:00`,
-      ).toLocaleDateString('en-GB', {
+      ).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB', {
         day: 'numeric',
         month: 'short',
       })}`
     : new Date(
         `${peak.toDate}T12:00:00`,
-      ).toLocaleDateString('en-GB', {
+      ).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB', {
         day: 'numeric',
         month: 'short',
       });

@@ -8,7 +8,7 @@ import type { ReportsSnapshot } from '../../../../data/useReportsData';
 import type { useCostManagement } from '../../../../data/useCostManagement';
 import { formatPeriodLabel } from '../../../../lib/date';
 import { formatMoney } from '../../../../lib/money';
-import { useT } from '../../../../lib/locale';
+import { useLanguage, useT } from '../../../../lib/locale';
 import { buildPeriodProfit } from '../../reportProfit';
 import type { ReportTab } from '../../reportTypes';
 import { SalesTrendChart } from '../SalesTrendChart/SalesTrendChart';
@@ -31,6 +31,7 @@ export function ReportsAnalyticsPanel({
   onRangeChange,
   snapshot,
   monthSnapshot,
+  chartMonth,
   isLoading,
   error,
   onRetry,
@@ -46,6 +47,7 @@ export function ReportsAnalyticsPanel({
   onRangeChange: (range: { fromDate: string; toDate: string; preset?: PeriodPreset }) => void;
   snapshot?: ReportsSnapshot;
   monthSnapshot?: ReportsSnapshot;
+  chartMonth: string;
   isLoading: boolean;
   error: string;
   onRetry: () => void;
@@ -54,6 +56,7 @@ export function ReportsAnalyticsPanel({
   costManagement: ReturnType<typeof useCostManagement>;
 }) {
   const t = useT();
+  const language = useLanguage();
   const [dateAnchor, setDateAnchor] = useState<DOMRect>();
   const visibleTabs = reportTabs.filter((item) => item.value !== 'costs' || showCosts);
   const tabIndex = Math.max(0, visibleTabs.findIndex((item) => item.value === tab));
@@ -96,7 +99,7 @@ export function ReportsAnalyticsPanel({
           }}
         >
           <Calendar width={15} height={15} aria-hidden="true" />
-          <span>{fromDate || toDate ? formatPeriodLabel(fromDate, toDate) : t('All dates')}</span>
+          <span>{fromDate || toDate ? formatPeriodLabel(fromDate, toDate, language) : t('All dates')}</span>
           <ChevronDown width={12} height={12} aria-hidden="true" />
         </button>
       </header>
@@ -161,7 +164,7 @@ export function ReportsAnalyticsPanel({
               <button type="button" onClick={onRetry}>{t('Retry')}</button>
             ) : null}
           </section>
-          <SalesTrendChart tab={tab} snapshot={monthSnapshot ?? snapshot} fillMonth />
+          <SalesTrendChart tab={tab} snapshot={monthSnapshot ?? snapshot} month={chartMonth} fillMonth />
         </>
       )}
     </section>

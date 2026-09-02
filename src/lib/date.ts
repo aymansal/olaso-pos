@@ -1,5 +1,28 @@
 const DAY_MS = 86_400_000;
 
+export type DateLanguage = 'en' | 'fr';
+
+export function dateLocale(language: DateLanguage) {
+  return language === 'fr' ? 'fr-FR' : 'en-GB';
+}
+
+export function formatDate(
+  value: string | number | Date,
+  language: DateLanguage,
+  options: Intl.DateTimeFormatOptions,
+) {
+  const date = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T12:00:00`)
+    : new Date(value);
+  return date.toLocaleDateString(dateLocale(language), options);
+}
+
+export function formatTime(value: number | Date, language: DateLanguage) {
+  return new Date(value).toLocaleTimeString(dateLocale(language), {
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
 export function localBusinessDate(now = new Date()) {
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -39,25 +62,43 @@ export function startOfIsoWeek(date: string) {
   return shiftBusinessDate(date, offset);
 }
 
-export function formatPeriodLabel(fromDate: string, toDate: string) {
+export function formatPeriodLabel(
+  fromDate: string,
+  toDate: string,
+  language: DateLanguage = 'en',
+) {
   if (!fromDate) return 'All dates';
-  const from = new Date(`${fromDate}T12:00:00`);
   if (!toDate || fromDate === toDate) {
-    return from.toLocaleDateString('en-GB', {
+    return formatDate(fromDate, language, {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
     });
   }
-  const to = new Date(`${toDate}T12:00:00`);
-  return `${from.toLocaleDateString('en-GB', {
+  return `${formatDate(fromDate, language, {
     day: '2-digit',
     month: 'short',
-  })} – ${to.toLocaleDateString('en-GB', {
+  })} – ${formatDate(toDate, language, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
   })}`;
+}
+
+export function reportChartMonth(fromDate: string, toDate: string, today = localBusinessDate()) {
+  if (!fromDate || !toDate || (fromDate <= today && today <= toDate)) {
+    return calendarMonthOf(today);
+  }
+  const totals = new Map<string, number>();
+  for (let day = fromDate; day <= toDate; day = shiftBusinessDate(day, 1)) {
+    const month = calendarMonthOf(day);
+    totals.set(month, (totals.get(month) ?? 0) + 1);
+  }
+  return [...totals].reduce(
+    (selected, [month, days]) =>
+      days >= (totals.get(selected) ?? 0) ? month : selected,
+    calendarMonthOf(fromDate),
+  );
 }
 
 export function inclusiveDayCount(fromDate: string, toDate: string) {

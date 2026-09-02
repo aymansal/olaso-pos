@@ -137,29 +137,29 @@ These decisions are final for this batch and must not be reopened:
 | --- | --- | --- |
 | PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | done — `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main` |
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
-| PR-03 | Select the correct graph month and localize every visible application date | pending |
+| PR-03 | Select the correct graph month and localize every visible application date | in progress |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | pending |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** none — wait for owner before `PR-03`
+**Active card:** `PR-03`
 
-**Active status:** PR-02 complete and pushed
+**Active status:** in progress — final checks and Graphify refresh passed; commit pending
 
-**Last completed step:** committed and pushed PR-02
+**Last completed step:** added active-language date formatting and selected chart month
 
 **Current facts:**
 
 - `PR-02` is `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main`.
-- Graphify identifies the PR-02 flow as `convex/reports.ts` saved summaries,
-  `src/data/useReportsData.ts`, `src/data/offlineViews.ts`, and `src/lib/costs.ts`.
-- Official Android data-layer/offline-first guidance supports the existing local
-  SQLite source and bounded synchronization path. Capacitor's official
-  web-native guidance confirms no native or plugin change is needed.
+- Graphify identifies the PR-03 flow as `src/lib/date.ts`, `ReportsScreen`,
+  `SalesTrendChart`, `PeriodCalendar`, and the Dashboard/Orders/Stock date views.
+- Official Android internationalization guidance and Capacitor's web-native
+  boundary confirm active-language date formatting belongs in the existing React
+  formatting layer; no native, plugin, dependency, or Kotlin change is needed.
 
-**Exact next action:** wait for the owner; on authorization, follow Recovery
-Protocol and begin PR-03 only.
+**Exact next action:** review, commit, and push the PR-03-only diff without
+beginning PR-04.
 
 ## PR-01 — Exact compensation and expense correction dates
 
@@ -771,3 +771,41 @@ Do not claim physical acceptance. The owner performs it.
   tablet, browser, ADB, printer, PIN, seed, or live data was touched.
 - Exact next action: wait for owner authorization and begin PR-03 only after
   the complete Recovery Protocol.
+
+### 2026-09-02 — PR-03 recovery and native-boundary checkpoint
+
+- Re-read the complete Recovery Protocol, State Pointer, active PR-03 contract,
+  newest checkpoints, repository instructions, plan, and project ledger; `main`
+  is clean and synchronized at `8ecd767e8c7b12de02d733c6e783c82835a5be4b`.
+- Graphify traced the exact date/chart callers. Official Android
+  internationalization guidance and Capacitor's web-native model select the
+  current React formatter/data-query boundary: locale selection and chart-month
+  selection remain in TypeScript/React; no Android, Capacitor plugin,
+  dependency, Kotlin, app, tablet, browser, ADB, PIN, seed, or live-data action
+  is needed or permitted.
+- Exact next action: implement the small shared date locale/month-selection
+  helpers, wire the named report, Dashboard, Orders, and Stock views, and add
+  focused no-PIN checks.
+
+### 2026-09-02 — PR-03 implementation checkpoint
+
+- Added shared active-language date/time formatting and a pure report chart-month
+  selector. Reports now queries and labels the selected calendar month; Dashboard,
+  Orders, and Stock use the active English/French format. The chart geometry and
+  selected report totals remain unchanged.
+- Focused checks cover current-month, historical, dominant-month, later tie, All,
+  and English/French formatting. Corrected one initially mistaken non-tie fixture;
+  `npx tsc -b`, `npm run check:offline`, and `git diff --check` now pass.
+- Exact next action: complete the remaining safe PR-03 checks, refresh Graphify,
+  then review, commit, and push without starting PR-04.
+
+### 2026-09-02 — PR-03 verification checkpoint
+
+- Passed `npm run check:settings`, `npm run check:navigation`,
+  `npm run check:css-scope`, `npx tsc -b`, `npm run build`, and `git diff --check`.
+  The build retained only its existing `jeep-sqlite` browser-compatibility warning.
+- `npm run check:reports` stopped at the required missing owner test PIN before
+  its seed/reset step; it was not bypassed. Graphify incremental refresh passed:
+  3,032 nodes, 6,006 edges, and 186 communities. No app, tablet, browser, ADB,
+  printer, PIN, seed, or live data was touched. Exact next action: review,
+  commit, and push PR-03 only.

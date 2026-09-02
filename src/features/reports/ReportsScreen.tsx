@@ -8,6 +8,7 @@ import {
   calendarMonthOf,
   calendarMonthStart,
   localBusinessDate,
+  reportChartMonth,
 } from '../../lib/date';
 import {
   presetRange,
@@ -29,7 +30,7 @@ export function ReportsScreen() {
   const [tab, setTab] = useState<ReportTab>('sales');
   const session = useStaffSession();
   const today = localBusinessDate();
-  const month = calendarMonthOf(today);
+  const month = reportChartMonth(range.fromDate, range.toDate, today);
   const monthRange = {
     fromDate: calendarMonthStart(month),
     toDate: calendarMonthEnd(month),
@@ -48,6 +49,7 @@ export function ReportsScreen() {
         onRangeChange={setRange}
         snapshot={data.snapshot}
         monthSnapshot={monthData.snapshot}
+        chartMonth={month}
         isLoading={data.isLoading}
         error={data.error}
         onRetry={data.retry}

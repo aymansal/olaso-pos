@@ -8,8 +8,8 @@ import {
   ORDER_PAGE_SIZE,
   type OrderHistoryRecord,
 } from '../../../../data/orderHistory';
-import { formatPeriodLabel } from '../../../../lib/date';
-import { useT } from '../../../../lib/locale';
+import { formatPeriodLabel, formatTime } from '../../../../lib/date';
+import { useLanguage, useT } from '../../../../lib/locale';
 import { OrdersTable } from '../OrdersTable/OrdersTable';
 import { visiblePageIndexes } from '../../../../lib/pagination';
 import styles from './OrdersListPanel.module.css';
@@ -60,6 +60,7 @@ export function OrdersListPanel({
   onPageChange: (page: number) => void;
 }) {
   const t = useT();
+  const language = useLanguage();
   const [dateAnchor, setDateAnchor] = useState<DOMRect>();
   const start = orders.length === 0 ? 0 : page * ORDER_PAGE_SIZE + 1;
   const end = page * ORDER_PAGE_SIZE + orders.length;
@@ -76,10 +77,7 @@ export function OrdersListPanel({
           <strong>
             {lastSuccessAt
               ? t('Last sync {time}', {
-                  time: new Date(lastSuccessAt).toLocaleTimeString(
-                    'en-GB',
-                    { hour: '2-digit', minute: '2-digit' },
-                  ),
+                  time: formatTime(lastSuccessAt, language),
                 })
               : t('{count} orders', { count: totalCount })}
           </strong>
@@ -141,7 +139,7 @@ export function OrdersListPanel({
             }}
           >
             <Calendar width={15} height={15} aria-hidden="true" />
-            <span>{formatPeriodLabel(fromDate, toDate)}</span>
+            <span>{formatPeriodLabel(fromDate, toDate, language)}</span>
             <ChevronDown width={13} height={13} aria-hidden="true" />
           </button>
           {dateAnchor ? (
