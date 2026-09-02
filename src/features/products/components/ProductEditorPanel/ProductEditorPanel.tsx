@@ -11,6 +11,7 @@ import type {
   ProductSaveInput,
 } from '../../productManagementTypes';
 import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
+import { productImage } from '../../../../lib/productImage';
 import { useT } from '../../../../lib/locale';
 import { ProductChoiceSectionDialog } from '../ProductChoiceSectionDialog/ProductChoiceSectionDialog';
 import { ProductImageButton } from '../ProductImageButton/ProductImageButton';
@@ -200,7 +201,11 @@ export function ProductEditorPanel({
         <span className={styles.identityLeft}>
           <ProductImageButton
             className={styles.artwork}
-            previewUrl={imageJpeg}
+            previewUrl={productImage(
+              product?.imageAssetKey,
+              category?.artworkKey,
+              imageJpeg,
+            )}
             onChange={setImageJpeg}
             onError={setMessage}
             disabled={archived || saving}

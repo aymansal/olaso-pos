@@ -309,10 +309,9 @@ export function App() {
   async function printDailyReport() {
     if (!staffSession) return;
     const result = await printDailyOwnerReport(staffSession.name);
-    window.alert(translate(
-      language,
-      result.ok ? 'Daily report sent; confirm paper.' : result.message,
-    ));
+    if (!result.ok) {
+      window.alert(translate(language, result.message));
+    }
   }
 
   if (terminal.isLocked) {

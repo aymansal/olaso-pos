@@ -76,7 +76,13 @@ data, reporting summaries, and development seeding.
 
 ## Verification
 
-- Run `npm run check:convex`.
+- `npm run check:convex` only runs codegen and typecheck; it never publishes
+  functions. Every Convex schema, validator, or function change must be
+  followed by `npx convex dev --once` before any tablet can synchronize.
+  A tablet sale whose snapshot field the deployed validator does not accept
+  fails with `Cloud rejected this saved order.` and stays failed until Manual
+  Sync — this exact deployment gap broke sale sync three times
+  (receipt number, size/choice fields, then tenders).
 - Run `npm run check:management` after category, product, modifier, recipe, or
   management-authorization changes.
 - Run `npm run check:inventory` after ingredient, stock balance, movement, or

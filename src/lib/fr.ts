@@ -320,7 +320,6 @@ export const fr: Record<string, string> = {
   'Printer': 'Imprimante',
   'Printer unavailable': 'Imprimante indisponible',
   'Printing…': 'Impression…',
-  'Daily report sent; confirm paper.': 'Rapport quotidien envoyé ; vérifiez le papier.',
   'PRODUCT': 'PRODUIT',
   'Product': 'Produit',
   'Product categories': 'Catégories',

@@ -210,6 +210,50 @@ Protocol and begin PR-05 only.
   install over the connected SM-X115 with `adb install -r`, record the
   owner's physical print verification, then commit and push.
 
+### 2026-09-02 — POLISH-01: sync root cause, no-popup report, product images
+
+- Owner authorized ADB install and physical device inspection. A read-only
+  copy of the tablet database (`run-as com.olaso.pos cat`, pulled to the
+  workstation scratchpad, never modified or written back) showed today's six
+  sales `0926-0015`–`0926-0020` all `failed` with
+  `Cloud rejected this saved order. Use Sync now to retry.` while every sale
+  through `0926-0014` (1 Sep) was `synced`.
+- Root cause: the failed snapshots carry the new `tenders` array
+  (single Cash tender with `paymentMethod`, `dueCentimes`, `amountCentimes`,
+  `changeCentimes`); the pre-tenders snapshots do not. `tenders` support
+  entered the Convex schema/function source in `bb5a499`/`fc79d1e`, but
+  `check:convex` only runs codegen and typecheck and never publishes, so the
+  deployed `colorful-newt-937` validator still rejected the field. This is
+  the third occurrence of the same deployment-gap class (receipt number,
+  size/choice fields, now tenders).
+- Fix: deployed the current functions with `npx convex dev --once`
+  (functions ready on colorful-newt-937; no data change). `convex/AGENTS.md`
+  now records the contract that every schema/validator change requires an
+  explicit `npx convex dev --once` before a tablet can synchronize. The six
+  failed rows stay honestly `failed` until the owner presses Manual Sync,
+  which resets them to pending and drains them against the corrected
+  validator.
+- Also removed the `Daily report sent; confirm paper.` success alert from
+  `App.tsx` (failure feedback kept, unused French translation deleted).
+- Product images: the tablet's products have built-in `image_asset_key`
+  artwork (americano, cappuccino, …) with null `image_jpeg`, which POS and
+  Orders resolve through the shared `productImage` helper but Products
+  replaced with Boxicons. `ProductList` rows and the
+  `ProductEditorPanel` identity card now use `productImage(
+  imageAssetKey, categoryArtworkKey, imageJpeg)` so the actual product image
+  shows, a custom compressed photo overrides it, and the neutral category
+  artwork is the final fallback. Compression is already enforced twice
+  (`compressProductImage` 96×96 JPEG ≤16 KB at pick, `productImageJpeg`
+  validation at the local/Cloud persistence boundary); no change needed.
+- Passed `npx tsc -b`, `npm run check:offline`, `npm run check:navigation`,
+  `npm run check:css-scope`, `npm run build`, `check:android`, and the debug
+  beta build. Graphify refreshed (3,040 nodes, 6,013 edges). The rebuilt APK
+  was installed over SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`),
+  preserving data. No PIN, seed, reset, or data write occurred. Exact next
+  action: owner presses Manual Sync for today's sales and physically verifies
+  the report print and product images; PR-05 remains pending owner
+  authorization.
+
 ## PR-01 — Exact compensation and expense correction dates
 
 **Status:** pending — first implementation card

@@ -1,10 +1,11 @@
-import { ChevronLeft, ChevronRight, Coffee, DotsHorizontalRounded, Leaf, Link, Unlink } from '@boxicons/react';
+import { ChevronLeft, ChevronRight, DotsHorizontalRounded, Link, Unlink } from '@boxicons/react';
 import type { CSSProperties } from 'react';
 import type {
   ManagedCategory,
   ManagedProduct,
 } from '../../productManagementTypes';
 import { visiblePageIndexes } from '../../../../lib/pagination';
+import { productImage } from '../../../../lib/productImage';
 import { useT } from '../../../../lib/locale';
 import styles from './ProductList.module.css';
 
@@ -102,7 +103,6 @@ export function ProductList({
         {!isLoading && !error
           ? products.map((product) => {
               const selected = product.id === selectedProductId;
-              const Icon = product.key.includes('matcha') ? Leaf : Coffee;
               const RecipeIcon = product.currentRecipeVersionId
                 ? Link
                 : Unlink;
@@ -118,11 +118,14 @@ export function ProductList({
                     <span
                       className={`${styles.productIcon} ${selected ? styles.productIconActive : ''}`}
                     >
-                      {product.imageJpeg ? (
-                        <img src={product.imageJpeg} alt="" />
-                      ) : (
-                        <Icon width={17} height={17} aria-hidden="true" />
-                      )}
+                      <img
+                        src={productImage(
+                          product.imageAssetKey,
+                          category?.artworkKey,
+                          product.imageJpeg,
+                        )}
+                        alt=""
+                      />
                     </span>
                     <span className={styles.productCopy}>
                       <strong>{product.name}</strong>

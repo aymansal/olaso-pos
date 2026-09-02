@@ -129,6 +129,26 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 sync repair + polish batch (2 Sep 2026): pulled a read-only copy
+  of the tablet database and found today's six sales (`0926-0015`–`0020`)
+  failed with `Cloud rejected this saved order.` — their snapshots carry the
+  new `tenders` array that the deployed Convex validator (never republished
+  since `bb5a499`/`fc79d1e`) rejects; `check:convex` does not deploy. Root
+  cause fixed by `npx convex dev --once` (functions ready on
+  colorful-newt-937, no data change) and by recording the deploy contract in
+  `convex/AGENTS.md`; the six rows stay failed until the owner's Manual Sync.
+  Also removed the `Daily report sent; confirm paper.` success popup
+  (failure alert kept), and Products rows plus the Edit Product identity card
+  now show the real product image through the shared `productImage` resolver
+  (asset artwork or compressed custom JPEG; compression verified at pick and
+  at the persistence boundary). Checks: `tsc -b`, `check:offline`,
+  `check:navigation`, `check:css-scope`, `npm run build`, `check:android`,
+  debug beta, Graphify (3,040 nodes, 6,013 edges). Rebuilt APK installed over
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), data preserved; no
+  PIN, seed, reset, or data write. Exact next action: owner presses Manual
+  Sync and verifies report print + product images; then commit/push and
+  await owner authorization for PR-05.
+
 - POLISH-01 daily-report print repair (2 Sep 2026): owner-reported bug — the
   Header Reports button showed `Printer action failed. Check the settings and
   try again.` while sale receipts printed fine. Root cause:
