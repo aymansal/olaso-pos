@@ -36,7 +36,7 @@ export function ReportsScreen() {
   };
   const data = useReportsData(range.fromDate, range.toDate);
   const monthData = useReportsData(monthRange.fromDate, monthRange.toDate);
-  const costs = useCostManagement(range.toDate.slice(0, 7));
+  const costs = useCostManagement((range.toDate || today).slice(0, 7));
   return (
     <main className={styles.screen} aria-label={t('Olaso reports')}>
       <ReportsAnalyticsPanel

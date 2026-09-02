@@ -60,8 +60,8 @@ export function ReportsAnalyticsPanel({
   const profit = buildPeriodProfit(
     snapshot,
     costManagement.saved,
-    fromDate,
-    toDate,
+    snapshot?.range.from ?? fromDate,
+    snapshot?.range.to ?? toDate,
     showCompensation,
   );
   const current = snapshot?.current;
@@ -74,7 +74,7 @@ export function ReportsAnalyticsPanel({
     ? formatMoney(profit.revenueCentimes)
     : tab === 'products'
       ? String(current?.itemCount ?? 0)
-      : String(current?.ingredientTotals.length ?? 0);
+      : String(current?.ingredientTypeCount ?? 0);
 
   return (
     <section className={styles.panel} aria-labelledby="reports-title">
@@ -96,7 +96,7 @@ export function ReportsAnalyticsPanel({
           }}
         >
           <Calendar width={15} height={15} aria-hidden="true" />
-          <span>{formatPeriodLabel(fromDate, toDate)}</span>
+          <span>{fromDate || toDate ? formatPeriodLabel(fromDate, toDate) : t('All dates')}</span>
           <ChevronDown width={12} height={12} aria-hidden="true" />
         </button>
       </header>
@@ -117,6 +117,7 @@ export function ReportsAnalyticsPanel({
             'lastMonth',
             'all',
           ]}
+          allowEmpty
           onChange={(range, nextPreset) => onRangeChange({ ...range, preset: nextPreset })}
           onClose={() => setDateAnchor(undefined)}
         />

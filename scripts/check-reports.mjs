@@ -69,6 +69,11 @@ assert(
 );
 assert.equal(report.previous.netCentimes, 0);
 
+const all = await query(api.reports.getAllSummary, {});
+assert.equal(all.daily.length, 0);
+assert.equal(all.previous.netCentimes, 0);
+assert.equal(all.current.ingredientTypeCount >= all.current.ingredientTotals.length, true);
+
 const empty = await query(api.reports.getSummary, {
   fromDate: '2026-08-01',
   toDate: '2026-08-07',

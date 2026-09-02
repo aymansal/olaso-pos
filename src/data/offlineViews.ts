@@ -240,7 +240,7 @@ export function aggregateOfflineSales(
 
 async function ingredientUsage(fromDate: string, toDate: string) {
   const database = await openLocalDatabase();
-  const [result, stockResult] = await Promise.all([
+  const [result, countResult, stockResult] = await Promise.all([
     database.query(
       `SELECT MIN(m.ingredient_id) AS ingredient_id,
         COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')) AS name,
@@ -256,7 +256,21 @@ async function ingredientUsage(fromDate: string, toDate: string) {
        GROUP BY COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')),
          COALESCE(i.base_unit, NULLIF(m.ingredient_base_unit_snapshot, ''))
        ORDER BY name
-       LIMIT 21`,
+        LIMIT 20`,
+       [fromDate, toDate],
+     ),
+    database.query(
+      `SELECT COUNT(*) AS count FROM (
+        SELECT 1
+        FROM stock_movements m
+        LEFT JOIN ingredients i ON i.id = m.ingredient_id
+        JOIN sales s ON s.local_sale_id = m.local_sale_id
+        WHERE m.business_date BETWEEN ? AND ?
+          AND m.movement_type = 'sale'
+          AND s.status = 'completed'
+        GROUP BY COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')),
+          COALESCE(i.base_unit, NULLIF(m.ingredient_base_unit_snapshot, ''))
+      )`,
       [fromDate, toDate],
     ),
     database.query(
@@ -275,9 +289,6 @@ async function ingredientUsage(fromDate: string, toDate: string) {
        LIMIT 101`,
     ),
   ]);
-  if ((result.values?.length ?? 0) > 20) {
-    throw new Error('Saved ingredient usage exceeds the offline report limit.');
-  }
   if ((stockResult.values?.length ?? 0) > 100) {
     throw new Error('Saved stock exceeds the offline inventory limit.');
   }
@@ -287,7 +298,9 @@ async function ingredientUsage(fromDate: string, toDate: string) {
       Number(row.current_stock_quantity),
     ]),
   );
-  return (result.values ?? []).map((row) => {
+  return {
+    ingredientTypeCount: Number(countResult.values?.[0]?.count ?? 0),
+    ingredientTotals: (result.values ?? []).map((row) => {
     const ingredientName = String(row.name);
     const baseUnit = String(row.base_unit) as
       'millilitre' | 'gram' | 'milligram' | 'piece';
@@ -298,7 +311,8 @@ async function ingredientUsage(fromDate: string, toDate: string) {
       quantity: Number(row.quantity),
       currentStockQuantity: stockByName.get(`${ingredientName}\0${baseUnit}`) ?? 0,
     };
-  });
+    }),
+  };
 }
 
 async function dailyIngredientUsageEvents(fromDate: string, toDate: string) {
@@ -319,6 +333,82 @@ async function dailyIngredientUsageEvents(fromDate: string, toDate: string) {
       Number(row.event_count),
     ]),
   );
+}
+
+async function loadOfflineAllReport() {
+  const database = await openLocalDatabase();
+  const today = localBusinessDate();
+  const dates = await database.query(
+    `SELECT MIN(date) AS earliest FROM (
+       SELECT business_date AS date FROM sales WHERE status = 'completed'
+       UNION ALL SELECT COALESCE(effective_date, effective_start_date,
+         effective_start_month || '-01') FROM operating_expenses WHERE status = 'active'
+       UNION ALL SELECT COALESCE(effective_start_date,
+         effective_start_month || '-01') FROM compensation_periods
+     )`,
+  );
+  const fromDate = String(dates.values?.[0]?.earliest ?? today);
+  const [summary, products, categories, payments, usage] = await Promise.all([
+    database.query(
+      `SELECT COALESCE(SUM(total_centimes), 0) AS net_centimes,
+        COUNT(*) AS order_count,
+        COALESCE(SUM(ingredient_cost_centimes), 0) AS ingredient_cost_centimes,
+        COALESCE(SUM(CASE WHEN cost_status <> 'complete' THEN 1 ELSE 0 END), 0) AS incomplete_sale_count
+       FROM sales WHERE status = 'completed'`,
+    ),
+    database.query(
+      `SELECT item.product_id, item.product_name_snapshot AS product_name,
+        SUM(item.quantity) AS quantity, SUM(item.line_total_centimes) AS total_centimes
+       FROM sale_items item JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+       WHERE sale.status = 'completed' GROUP BY item.product_id, item.product_name_snapshot
+       ORDER BY total_centimes DESC, quantity DESC, product_name LIMIT 20`,
+    ),
+    database.query(
+      `SELECT item.category_id_snapshot AS category_id, item.category_name_snapshot AS category_name,
+        SUM(item.quantity) AS quantity, SUM(item.line_total_centimes) AS total_centimes
+       FROM sale_items item JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+       WHERE sale.status = 'completed' AND item.category_id_snapshot <> ''
+       GROUP BY item.category_id_snapshot, item.category_name_snapshot
+       ORDER BY total_centimes DESC, category_name LIMIT 20`,
+    ),
+    database.query(
+      `SELECT COALESCE(json_extract(sale.receipt_snapshot_json, '$.paymentMethod'), 'Unknown') AS payment_method,
+        SUM(sale.total_centimes) AS total_centimes, COUNT(*) AS order_count
+       FROM sales sale WHERE sale.status = 'completed'
+       GROUP BY payment_method ORDER BY total_centimes DESC, payment_method LIMIT 20`,
+    ),
+    ingredientUsage(fromDate, today),
+  ]);
+  const row = summary.values?.[0] ?? {};
+  const productTotals = (products.values ?? []).map((item) => ({
+    productId: String(item.product_id), productName: String(item.product_name),
+    quantity: Number(item.quantity), totalCentimes: Number(item.total_centimes),
+  }));
+  return {
+    range: { from: fromDate, to: today, days: 0 },
+    comparisonRange: undefined,
+    current: {
+      netCentimes: Number(row.net_centimes ?? 0), orderCount: Number(row.order_count ?? 0),
+      itemCount: productTotals.reduce((total, item) => total + item.quantity, 0),
+      ingredientCostCentimes: Number(row.ingredient_cost_centimes ?? 0),
+      incompleteSaleCount: Number(row.incomplete_sale_count ?? 0),
+      ingredientUsageEventCount: 0, ingredientTypeCount: usage.ingredientTypeCount,
+      productTotals,
+      categoryTotals: (categories.values ?? []).map((item) => ({
+        categoryId: String(item.category_id), categoryName: String(item.category_name),
+        quantity: Number(item.quantity), totalCentimes: Number(item.total_centimes),
+      })),
+      paymentTotals: (payments.values ?? []).map((item) => ({
+        paymentMethod: String(item.payment_method), totalCentimes: Number(item.total_centimes),
+        orderCount: Number(item.order_count),
+      })),
+      ingredientTotals: usage.ingredientTotals,
+    },
+    previous: { netCentimes: 0, orderCount: 0, itemCount: 0, ingredientCostCentimes: 0,
+      incompleteSaleCount: 0, ingredientUsageEventCount: 0, ingredientTypeCount: 0,
+      productTotals: [], categoryTotals: [], paymentTotals: [], ingredientTotals: [] },
+    daily: [],
+  };
 }
 
 export async function loadOfflineDashboard(businessDate: string) {
@@ -406,6 +496,7 @@ export async function loadOfflineDashboard(businessDate: string) {
 }
 
 export async function loadOfflineReport(fromDate: string, toDate: string) {
+  if (!fromDate && !toDate) return loadOfflineAllReport();
   const days = Math.floor(
     (Date.parse(`${toDate}T00:00:00Z`) - Date.parse(`${fromDate}T00:00:00Z`))
       / 86_400_000,
@@ -429,11 +520,12 @@ export async function loadOfflineReport(fromDate: string, toDate: string) {
   );
   const current = {
     ...aggregateOfflineSales(currentRows, categoryByProduct),
+    ingredientTypeCount: usage.ingredientTypeCount,
     ingredientUsageEventCount: [...dailyUsage.values()].reduce(
       (total, count) => total + count,
       0,
     ),
-    ingredientTotals: usage,
+    ingredientTotals: usage.ingredientTotals,
   };
   const previous = {
     ...aggregateOfflineSales(previousRows, categoryByProduct),

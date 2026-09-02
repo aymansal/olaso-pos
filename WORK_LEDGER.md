@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 done `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main`; PR-02 next |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 done `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main`; PR-02 checks pending |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -128,6 +128,24 @@ remaining goal and card sequence.
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- PR-02 implementation checkpoint (2 Sep 2026): Reports now separates the full
+  ingredient-type count from its 20 visible rows. The All preset has a bounded
+  cloud daily-summary pager and SQLite aggregate path that does not load the
+  existing 1,000 saved receipts. All shows the localized All-dates label and
+  suppresses prior comparison; normal ranges keep their 31-day guard. Passed
+  TypeScript, the safe offline view check, and diff check. No app, tablet,
+  browser, ADB, printer, PIN, seed, or live data was touched. Exact next
+  action: remaining safe PR-02 checks, Graphify refresh, review, commit/push.
+
+- PR-02 verification checkpoint (2 Sep 2026): costs, saved local costs,
+  Convex type/code checks, TypeScript, saved offline reports, production build,
+  and diff checks passed; Graphify refreshed to 3,027 nodes, 5,965 edges, and
+  186 communities. Protected reports/monthly-cost checks stopped before their
+  reset action because the required owner test PIN is unavailable. No app,
+  tablet, browser, ADB, printer, PIN, seed, or live data was touched. Exact
+  next action: commit and push the reviewed PR-02-only diff, record its SHA,
+  and wait for the owner before PR-03.
 
 - POLISH-01 durable reliability handoff (2 Sep 2026): created
   `goals/GOAL-06-POLISH-RELIABILITY.md` as the permanent, context-safe plan and

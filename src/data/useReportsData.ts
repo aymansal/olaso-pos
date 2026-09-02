@@ -36,12 +36,12 @@ export function useReportsData(fromDate: string, toDate: string) {
     let cancelled = false;
     if (!hasSnapshot.current) setIsLoading(true);
     setError('');
+    const allTime = !fromDate && !toDate;
     const localRequest = loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
     const request = available
       ? Promise.all([
-        convex.query(api.reports.getSummary, {
-          fromDate,
-          toDate,
+        convex.query(allTime ? api.reports.getAllSummary : api.reports.getSummary, {
+          ...(allTime ? {} : { fromDate, toDate }),
           sessionToken: session.token,
           deviceId: session.deviceId,
         }),
@@ -59,6 +59,7 @@ export function useReportsData(fromDate: string, toDate: string) {
         );
         return {
           ...snapshot,
+          ...(allTime ? { range: local.range } : {}),
           current: {
             ...snapshot.current,
             ingredientTotals: snapshot.current.ingredientTotals.map((item) => ({

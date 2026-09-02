@@ -28,13 +28,13 @@ export function ReportSummaryPanel({
   const profit = buildPeriodProfit(
     snapshot,
     costManagement.saved,
-    fromDate,
-    toDate,
+    snapshot?.range.from ?? fromDate,
+    snapshot?.range.to ?? toDate,
     showCompensation,
   );
-  const difference = previous?.netCentimes
+  const difference = fromDate || toDate ? previous?.netCentimes
     ? ((current?.netCentimes ?? 0) - previous.netCentimes) / previous.netCentimes * 100
-    : undefined;
+    : undefined : undefined;
   const average = current?.orderCount
     ? Math.round(current.netCentimes / current.orderCount)
     : 0;
@@ -191,11 +191,13 @@ export function ReportSummaryPanel({
     <aside className={styles.panel} aria-labelledby="report-summary-title">
       <header className={styles.header}>
         <h2 id="report-summary-title">{t('Profit')}</h2>
-        <strong className={`${styles.chip} ${difference !== undefined && difference < 0 ? styles.down : ''}`}>
-          {difference === undefined
-            ? t('No prior period')
-            : `${difference >= 0 ? '+' : '−'}${Math.abs(difference).toFixed(1)}%`}
-        </strong>
+        {fromDate || toDate ? (
+          <strong className={`${styles.chip} ${difference !== undefined && difference < 0 ? styles.down : ''}`}>
+            {difference === undefined
+              ? t('No prior period')
+              : `${difference >= 0 ? '+' : '−'}${Math.abs(difference).toFixed(1)}%`}
+          </strong>
+        ) : null}
       </header>
       <div className={styles.facts}>
         <article>

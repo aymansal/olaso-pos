@@ -136,7 +136,7 @@ These decisions are final for this batch and must not be reopened:
 | Card | Scope | Status |
 | --- | --- | --- |
 | PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | done — `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main` |
-| PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | pending — next card |
+| PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | in progress |
 | PR-03 | Select the correct graph month and localize every visible application date | pending |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | pending |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
@@ -145,35 +145,22 @@ These decisions are final for this batch and must not be reopened:
 
 **Active card:** `PR-02`
 
-**Active status:** pending implementation
+**Active status:** in progress — checks and Graphify refresh passed; commit pending
 
-**Last completed step:** PR-01 committed and pushed to `origin/main`
+**Last completed step:** added paged cloud daily-summary and SQL-only local All paths
 
 **Current facts:**
 
-- `convex/staff.ts` `listAllCompensation` returns optional exact start/end
-  dates, matching the per-profile compensation query.
-- Local and cloud recurring-expense correction reject a date earlier than the
-  exact original start (or the original start-month fallback) before writes.
-- The tablet was not touched.
-- `main` is clean at the owner-supplied starting commit
-  `6f261da3891fd5b3cb0569692b9f85a81a4fbe67`.
-- Graphify identifies the PR-01 path as `convex/staff.ts`
-  `listAllCompensation` through `reconnectContext.tsx` to
-  `localCostViews.ts` replacement, plus the paired local
-  `localCosts.ts` and cloud `convex/expenses.ts` correction paths.
-- Official Android SQLite guidance confirms the required all-or-nothing
-  correction write belongs in the existing SQLite transaction; Capacitor's
-  official platform guidance confirms no native/plugin change is needed for
-  this React/SQLite/Convex data validation repair.
-- `listAllCompensation` now returns exact optional start/end dates, preserving
-  them through the existing reconnect spread and local replacement.
-- Both expense-correction paths now reject an earlier correction before either
-  paired correction row is inserted; the existing translated dialog presents
-  the approved English/French meaning.
+- `main` has only PR-02 changes: `convex/reports.ts`, `src/data/offlineViews.ts`,
+  `src/data/useReportsData.ts`, Reports components, and focused offline checks.
+- Graphify identifies the PR-02 flow as `convex/reports.ts` saved summaries,
+  `src/data/useReportsData.ts`, `src/data/offlineViews.ts`, and `src/lib/costs.ts`.
+- Official Android data-layer/offline-first guidance supports the existing local
+  SQLite source and bounded synchronization path. Capacitor's official
+  web-native guidance confirms no native or plugin change is needed.
 
-**Exact next action:** do not begin implementation until the next owner request;
-then follow the full Recovery Protocol and start PR-02 only.
+**Exact next action:** commit the reviewed PR-02-only diff, push `main` to
+`origin/main`, record its full SHA, and do not begin PR-03.
 
 ## PR-01 — Exact compensation and expense correction dates
 
@@ -740,3 +727,36 @@ Do not claim physical acceptance. The owner performs it.
 - PR-01 is done. PR-02 is the next pending card; it has not been inspected or
   started. Exact next action: wait for the owner, then follow this ledger's
   Recovery Protocol and begin PR-02 only.
+
+### 2026-09-02 — PR-02 all-time report implementation checkpoint
+
+- Recovered from the permanent ledger, re-read the active PR-02 contract, and
+  queried Graphify before continuing. Existing Android SQLite and Capacitor
+  boundaries remain sufficient: no app, native, dependency, tablet, browser,
+  ADB, PIN, seed, or live-data action occurred.
+- Added full cloud/offline ingredient-type counts while retaining the 20-row
+  detail limit. The local view now uses a separate SQL count rather than its
+  former 21-row failure probe.
+- Added a dedicated All selection: cloud reads daily summaries in fixed 31-row
+  pages, and local SQLite aggregates saved sales/line/ingredient records
+  without using the 1,000-receipt reader. All hides the prior comparison and
+  leaves the current-month chart request unchanged. Normal selected ranges
+  retain their 1-to-31-day limit.
+- Passed `npx tsc -b`, `npm run check:offline`, and `git diff --check`.
+  Exact next action: run the other non-destructive PR-02 checks, refresh
+  Graphify, then review, commit, push, and record the full SHA.
+
+### 2026-09-02 — PR-02 automated-check and Graphify checkpoint
+
+- Passed: `npm run check:costs`, `npm run check:local-inventory-costs`,
+  `npm run check:convex`, `npx tsc -b`, `npm run check:offline`, `npm run build`,
+  and `git diff --check`. The production build retained only its existing
+  `jeep-sqlite` browser-compatibility warning.
+- `npm run check:reports` and `npm run check:monthly-costs` stopped at their
+  required missing owner test PIN before either script seeded or reset data;
+  they were not bypassed. The reports script now also covers the All endpoint
+  when that protected gate is available.
+- Graphify incremental code refresh passed: 3,027 nodes, 5,965 edges, and 186
+  communities. Reviewed the PR-02-only diff. No app, tablet, browser, ADB,
+  printer, PIN, seed, or live data action occurred. Exact next action: commit
+  and push PR-02, then record the full SHA without starting PR-03.
