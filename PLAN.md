@@ -242,6 +242,12 @@ contracts live in [Goal 06 Sale-Sync Ledger](goals/GOAL-06-SALE-SYNC.md).
 SYNC-09 closed that override: online Dashboard/Reports stay Convex-only
 after uploaded 0826 sales; POLISH-01 is the exact next action.
 
+The owner's approved Reports, Costs, Dashboard, date, and reliability repairs
+live in the durable [Goal 06 POLISH Reliability Ledger](goals/GOAL-06-POLISH-RELIABILITY.md).
+Its Recovery Protocol, State Pointer, active card, and checkpoint journal are
+the permanent authority for PR-01 through PR-05 and must be reread after every
+context compaction, handoff, or resumed session.
+
 ## First-production-release exit
 
 The project is finished only when every remaining card is done and pushed and
@@ -258,6 +264,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-POLISH-01: Walk through the now fully functional app with the owner and
-record every disliked, verbose, redundant, or “AI-ish” element.
-[goals/GOAL-06-PRODUCTION-HARDENING.md](goals/GOAL-06-PRODUCTION-HARDENING.md).
+POLISH-01 / PR-01: preserve exact compensation and expense dates by following
+the Recovery Protocol and active-card contract in
+[goals/GOAL-06-POLISH-RELIABILITY.md](goals/GOAL-06-POLISH-RELIABILITY.md).

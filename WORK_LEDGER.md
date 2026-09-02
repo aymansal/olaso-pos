@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — `f3eadb1a0af16bcaa1deac4b03767b20319cad50` on `origin/main` |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — durable reliability ledger created; PR-01 is next |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -118,12 +118,27 @@ remaining goal and card sequence.
 - [Goal 06 — Sale-sync ledger](goals/GOAL-06-SALE-SYNC.md) — SYNC-01 through
   SYNC-09 done; tablet POS sales insert into Convex; online Dashboard/Reports
   stay Convex-only. Exact next action is POLISH-01.
+- [Goal 06 — POLISH Reliability Ledger](goals/GOAL-06-POLISH-RELIABILITY.md)
+  — permanent PR-01 through PR-05 repair authority. Its complete Recovery
+  Protocol, State Pointer, active card, and newest checkpoint must be reread
+  after every context compaction, handoff, pause, or resumed session.
 - [Goal 06 — Product Configuration Blueprint](goals/GOAL-06-PRODUCT-CONFIGURATION.md)
   — approved product-owned sizes, freely named choices, exact ingredient
   effects, mandatory independent copying, honest ingredient-only costing,
   offline migration safeguards, and OPTIONS-01 through OPTIONS-04 contracts.
 
 ## Current Checkpoint
+
+- POLISH-01 durable reliability handoff (2 Sep 2026): created
+  `goals/GOAL-06-POLISH-RELIABILITY.md` as the permanent, context-safe plan and
+  journal for the owner's approved Reports, Costs, Dashboard, calendar, and
+  date-reliability repairs. The ledger records every settled decision, the two
+  intentional non-fixes, PR-01 through PR-05, exact acceptance rules, a State
+  Pointer, and a mandatory Recovery Protocol that requires a complete reread
+  after every context summary or handoff. No application code changed and the
+  app, tablet, ADB, browser, printer, PINs, and live data were not touched.
+  Exact next action: begin PR-01 only from the linked ledger after its complete
+  Recovery Protocol and mandatory official Android/Capacitor boundary check.
 
 - POLISH-01 release handoff (2 Sep 2026): the owner authorized committing and
   pushing the complete pending polish set to `main`, then installing it over
