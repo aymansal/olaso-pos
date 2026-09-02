@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 done `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main`; PR-02 checks pending |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 `0bea66ae496e3ecc24efea13aa195903d3358aa6` and PR-02 `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` done on `origin/main`; PR-03 waits for owner |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -146,6 +146,15 @@ remaining goal and card sequence.
   tablet, browser, ADB, printer, PIN, seed, or live data was touched. Exact
   next action: commit and push the reviewed PR-02-only diff, record its SHA,
   and wait for the owner before PR-03.
+
+- PR-02 complete (2 Sep 2026): committed and pushed
+  `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e`
+  (`PR-02: make reports all-time`) to `origin/main`. It records complete
+  ingredient-type headlines despite the 20-row detail cap, a bounded paged
+  cloud All summary, and a saved-tablet SQL All summary that avoids the raw
+  receipt cap. Owner physical acceptance and protected reset/PIN checks were
+  not attempted. Exact next action: wait for owner authorization, then use the
+  reliability ledger Recovery Protocol and begin PR-03 only.
 
 - POLISH-01 durable reliability handoff (2 Sep 2026): created
   `goals/GOAL-06-POLISH-RELIABILITY.md` as the permanent, context-safe plan and

@@ -136,31 +136,30 @@ These decisions are final for this batch and must not be reopened:
 | Card | Scope | Status |
 | --- | --- | --- |
 | PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | done — `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main` |
-| PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | in progress |
+| PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
 | PR-03 | Select the correct graph month and localize every visible application date | pending |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | pending |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** `PR-02`
+**Active card:** none — wait for owner before `PR-03`
 
-**Active status:** in progress — checks and Graphify refresh passed; commit pending
+**Active status:** PR-02 complete and pushed
 
-**Last completed step:** added paged cloud daily-summary and SQL-only local All paths
+**Last completed step:** committed and pushed PR-02
 
 **Current facts:**
 
-- `main` has only PR-02 changes: `convex/reports.ts`, `src/data/offlineViews.ts`,
-  `src/data/useReportsData.ts`, Reports components, and focused offline checks.
+- `PR-02` is `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main`.
 - Graphify identifies the PR-02 flow as `convex/reports.ts` saved summaries,
   `src/data/useReportsData.ts`, `src/data/offlineViews.ts`, and `src/lib/costs.ts`.
 - Official Android data-layer/offline-first guidance supports the existing local
   SQLite source and bounded synchronization path. Capacitor's official
   web-native guidance confirms no native or plugin change is needed.
 
-**Exact next action:** commit the reviewed PR-02-only diff, push `main` to
-`origin/main`, record its full SHA, and do not begin PR-03.
+**Exact next action:** wait for the owner; on authorization, follow Recovery
+Protocol and begin PR-03 only.
 
 ## PR-01 — Exact compensation and expense correction dates
 
@@ -760,3 +759,15 @@ Do not claim physical acceptance. The owner performs it.
   communities. Reviewed the PR-02-only diff. No app, tablet, browser, ADB,
   printer, PIN, seed, or live data action occurred. Exact next action: commit
   and push PR-02, then record the full SHA without starting PR-03.
+
+### 2026-09-02 — PR-02 committed and pushed
+
+- Committed the complete PR-02 implementation, focused checks, and checkpoint
+  evidence as `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e`
+  (`PR-02: make reports all-time`) and pushed it directly to `origin/main`.
+- The card is complete except for the owner-required physical tablet acceptance,
+  which was not attempted under the no-app/no-tablet instruction. Protected
+  reset/PIN checks remain honestly unavailable as recorded above. No app,
+  tablet, browser, ADB, printer, PIN, seed, or live data was touched.
+- Exact next action: wait for owner authorization and begin PR-03 only after
+  the complete Recovery Protocol.
