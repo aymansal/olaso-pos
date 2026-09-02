@@ -139,52 +139,57 @@ These decisions are final for this batch and must not be reopened:
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
-| AUDIT-01 | Repair five confirmed post-implementation correctness findings | pending — next |
+| AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — SHA recorded in the checkpoint below |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** `AUDIT-01`
+**Active card:** none — wait for owner before `PR-05`
 
-**Active status:** owner authorized the repair plan; implementation has not started
+**Active status:** AUDIT-01 complete and pushed
 
-**Last completed step:** completed a read-only post-implementation audit and
-captured the five confirmed findings below
+**Last completed step:** implemented the five AUDIT-01 repairs plus the
+mandatory Reports All crash guard
 
 **Current facts:**
 
-- Current audited source is `5bf0c15d3da21d49acff302653c963a25a840793`
-  on synchronized `main` and `origin/main`. The only worktree item before this
-  documentation update was the owner's untracked `.commandcode/` directory;
-  it must remain untouched and unstaged.
-- Confirmed finding 1: the cloud All report repeatedly invokes Convex
-  `.paginate()` inside one query. Convex permits one paginated database query
-  per function call, so All can fail after its first 31-day page.
-- Confirmed finding 2: offline All derives `itemCount` from a top-20 product
-  result, so more than 20 distinct products undercount total units sold.
-- Confirmed finding 3: the local legacy recurring-expense correction guard
-  reads only `effectiveStartDate`; month-only legacy rows need the same
-  `effectiveStartMonth + '-01'` fallback already used by the cloud path.
-- Confirmed finding 4: offline All groups a whole mixed-tender sale under its
-  top-level payment method instead of splitting exact Cash and Card amounts
-  from the saved receipt tenders.
-- Confirmed finding 5: Orders detail still places `Offert` in the product
-  option text even though the Payment summary already reports the Offert
-  amount. Printed receipts already use the approved behavior.
-- Safe read-only audit checks passed: POS, CSS scope, local management, local
-  catalog, local inventory/costs, local staff, lock switching, navigation,
-  costs, local data, product configuration, reconnect, offline views,
-  settings, printing, TypeScript, production build, printing endurance, and
-  Android project checks. The build retained only the existing jeep-sqlite
-  browser crypto warning. Protected cloud checks were not run because they
-  require the owner's PIN and may reset or seed live test data.
-- Cloud-only Orders restoration, optimistic numeric profit with its missing-
-  ingredient-cost warning, and Reports graph geometry remain intentional
-  non-changes.
+- AUDIT-01 repair A: `convex/reports.ts` `getAllSummary` was replaced by
+  `getAllSummaryPage` (one `.paginate(paginationOpts)` call) and
+  `getAllSummaryStock` (bounded live-ingredient overlay). The Reports data
+  layer collects pages with the documented manual cursor loop only for
+  explicit All mode via the new `src/data/cloudAllReport.ts` aggregator,
+  producing the unchanged report shape.
+- Repair B: offline All `itemCount` comes from an independent SQL unit sum
+  (`loadAllProductSummary`) instead of the top-20 product list.
+- Repair C: offline All payments split mixed-tender sales by their exact
+  saved tenders (`loadAllPaymentTotals`, two bounded JSON queries); legacy
+  receipts keep their top-level method.
+- Repair D: the local correction guard falls back to
+  `effectiveStartMonth + '-01'` for legacy month-only recurring expenses
+  before rejecting or writing.
+- Repair E: Orders detail no longer lists `Offert` among product options;
+  the Offert amount stays in the Payment summary. Printed receipts were
+  never touched (golden receipt SHA unchanged).
+- Mandatory bug repair (owner-authorized diagnosis, see the checkpoint
+  above): `buildPeriodProfit` no longer passes All's empty dates into
+  `operatingCostsForRange` when no snapshot is loaded, root-fixing the
+  reproduced blank-screen crash.
+- Focused coverage added: 40-row three-page cloud All collection and merge
+  assertions, 21-product offline All unit count with a 20-row ranked cap,
+  mixed-tender payment split with a legacy control, legacy month-only
+  correction rejection/permission with zero partial writes, and the crash
+  guard. All safe AUDIT-01 checks pass (`check:offline`,
+  `check:local-inventory-costs`, `check:printing` with the unchanged golden
+  SHA, `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
+  `tsc -b`, `npm run build`, `git diff --check`); the protected cloud
+  reports check remains gated on the absent owner test PIN and was not run.
+- Convex functions were deployed with `npx convex dev --once` (code only;
+  no seed, reset, or data change). Graphify refreshed to 3,061 nodes and
+  6,050 edges. DOX updates: `convex/AGENTS.md` pagination contract and
+  `data/AGENTS.md` All-mode contracts.
 
-**Exact next action:** follow the Recovery Protocol, read the applicable DOX
-chain, query Graphify, verify current official Convex pagination guidance, and
-implement `AUDIT-01` only. Do not start PR-05 or menu creation.
+**Exact next action:** wait for owner authorization; then follow Recovery
+Protocol and begin PR-05 only.
 
 ### 2026-09-02 — PR-04 committed and pushed
 
@@ -350,6 +355,114 @@ implement `AUDIT-01` only. Do not start PR-05 or menu creation.
   `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving data. Exact
   next action: owner verifies the dimmed reload behavior; then discuss the
   profile-performance design; PR-05 remains pending owner authorization.
+
+### 2026-09-02 — Diagnosed: Reports All blank-screen crash (owner-authorized ADB/CDP debugging)
+
+- The owner authorized ADB control of the tablet and provided the device/
+  owner PIN for debugging. The crash was reproduced on the physical SM-X115
+  (Reports → calendar → All → blank cream screen) and captured live through
+  the WebView Chrome DevTools protocol (`adb forward tcp:9222
+  localabstract:webview_devtools_remote_<pid>`), including a breakpoint on
+  the minified `buildPeriodProfit` frame. A read-only fresh database copy
+  was pulled; no data was written, reset, or seeded, and no PIN was stored
+  in the repository.
+- Captured exception, thrown during React render:
+  `Error: Months must use YYYY-MM.` at
+  `src/lib/costs.ts` `daysInCalendarMonth` ← `operatingCostsForRange` ←
+  `buildPeriodProfit` ← `ReportsAnalyticsPanel`.
+- Debugger scope evidence: `buildPeriodProfit` was invoked with
+  `snapshot === undefined` and `fromDate === ''`, `toDate === ''` (All
+  mode). `snapshot?.range.from ?? fromDate` therefore fell through to the
+  empty strings, `operatingCostsForRange([], [], '', '')` made
+  `monthsInDateRange('', '')` yield the invalid month `''`, and
+  `daysInCalendarMonth('')` threw, unmounting the whole React tree.
+- Why the snapshot was undefined in All mode: any All render before a
+  snapshot exists — a fresh Reports mount while the All request is still in
+  flight, after a failed load, or (on pre-stale builds) immediately after
+  changing the range — has no snapshot, and nothing guards the empty All
+  dates. The stale-while-reload behavior only protects a transition that
+  already had a loaded snapshot.
+- Underlying data-path failure (the AUDIT-01 finding): the cloud All
+  request itself did not deliver data in the repro window, consistent with
+  `convex/reports.ts` `getAllSummary`'s repeated in-function pagination
+  being rejected by Convex limits. The offline All producer and the tablet
+  expense/compensation rows were verified well-formed from the fresh
+  database copy, ruling out malformed local data.
+- No fix was implemented, per the owner instruction; the AUDIT-01 card owns
+  the repair. Exact next action: follow the Recovery Protocol and implement
+  AUDIT-01 only.
+
+### 2026-09-02 — AUDIT-01 implemented, checked, and deployed
+
+- Repair A: `convex/reports.ts` — removed the looping `.paginate()`
+  `getAllSummary`; added `getAllSummaryPage` (one `.paginate()` per call with
+  `paginationOptsValidator`) and `getAllSummaryStock` (bounded live-ingredient
+  overlay). `src/data/cloudAllReport.ts` (new) collects pages with the
+  documented manual cursor loop for explicit All mode and aggregates them
+  into the unchanged report shape; `useReportsData` uses it only for All.
+  Ordinary 1–31-day ranges and the graph-month behavior are untouched.
+- Repair B: `src/data/offlineViews.ts` — new exported
+  `loadAllProductSummary` sums every completed unit by SQL; the ranked
+  product display keeps its 20-row cap; `loadOfflineAllReport` uses it for
+  `itemCount`.
+- Repair C: new exported `loadAllPaymentTotals` splits mixed-tender sales by
+  exact saved tenders (two bounded JSON queries, order counted once per
+  participating method) and keeps legacy receipts on their top-level method;
+  `loadOfflineAllReport` uses it for `paymentTotals`.
+- Repair D: `src/data/localCosts.ts` — the correction guard falls back to
+  `effectiveStartMonth + '-01'` for legacy month-only monthly expenses.
+- Repair E: `OrderDetailPanel.tsx` no longer prepends `Offert` to the item
+  option text; the Payment summary keeps the Offert amount. No printed
+  receipt or snapshot change.
+- Mandatory bug repair (reproduced during the owner-authorized diagnosis):
+  `reportProfit.ts` `buildPeriodProfit` no longer passes All's empty dates
+  into `operatingCostsForRange` when no snapshot is loaded — this was the
+  exact blank-screen crash captured on the tablet.
+- Focused coverage: `check:offline` (40-row three-page cloud All collection
+  and merge, per-page contribution totals, 20-row ranked cap, payment split
+  totals, crash guard zeros, Offert source guards), `check:local-inventory-costs`
+  (21-product offline All unit count with baseline, mixed-tender split with
+  legacy control, legacy month-only rejection with zero partial writes and
+  permitted first-day correction).
+- All safe checks pass: `check:offline`, `check:local-inventory-costs`,
+  `check:printing` (golden 800-byte receipt SHA unchanged),
+  `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
+  `npx tsc -b`, `npm run build` (existing jeep-sqlite warning only), and
+  `git diff --check`. Protected `check:reports`/`check:dashboard`-style
+  cloud checks were not run: they require the owner test PIN and reset or
+  seed data; recorded honestly, not bypassed.
+- Convex functions deployed with `npx convex dev --once` (code only; no
+  seed, reset, or data change). Graphify refreshed to 3,061 nodes, 6,050
+  edges, 183 communities. DOX updates: `convex/AGENTS.md` pagination
+  contract, `data/AGENTS.md` All-mode contracts. No app launch, install,
+  print, PIN use, seed, reset, or live-data change occurred during
+  implementation. Exact next action: review the diff, stage only AUDIT-01
+  files, commit, push, and record the SHA.
+
+### 2026-09-02 — AUDIT-01 recovery and official Convex pagination research
+
+- Re-read the repository instruction chain, `PLAN.md`, the updated
+  `WORK_LEDGER.md`, this complete ledger including the AUDIT-01 contract,
+  and the `convex/`, `src/data/`, `src/features/reports/`, and
+  `src/features/orders/` DOX. `main` is clean and synchronized.
+- Graphify traced the affected flows (`getAllSummary`, `aggregate()`,
+  `dailyMetrics`, `OrderDetailPanel`, `correctExpense` guard paths).
+- Official Convex pagination guidance (docs.convex.dev/database/pagination):
+  a paginated query function takes `paginationOpts` (validated with
+  `paginationOptsValidator` from `convex/server`) and calls `.paginate()`
+  exactly once; clients collecting more data call the function again with
+  the returned `continueCursor` until `isDone` (the documented manual
+  collection pattern). This confirms the audit finding: the current
+  `getAllSummary` loops `.paginate()` inside one query, which is illegal.
+- Research decision: replace `getAllSummary` with `getAllSummaryPage` (one
+  `.paginate(paginationOpts)` call over `dailyMetrics` by the existing
+  `by_business_date` index) plus a small `getAllSummaryStock` query for the
+  bounded live-ingredient overlay; the Reports data layer collects pages
+  with the documented manual cursor loop only for explicit All mode and
+  aggregates them client-side into the unchanged report shape. No
+  dependency, no second reporting architecture, no server wall-clock dates.
+- Exact next action: implement repairs A-E plus the mandatory crash guard,
+  then focused checks.
 
 ## PR-01 — Exact compensation and expense correction dates
 

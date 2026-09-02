@@ -179,6 +179,14 @@ tablet's local SQLite operational record.
   prefers this tablet’s saved receipts when they contain more completed sales
   than the cloud snapshot, so unsynced today sales still appear. Used-ingredient
   bars overlay this tablet’s on-hand stock by name and unit.
+- Online All reports collect cloud daily summaries through legal page-by-page
+  pagination (`getAllSummaryPage`, one `.paginate()` per call, the data layer
+  follows cursors to `isDone`) and aggregate them into the unchanged report
+  shape; `getAllSummaryStock` supplies the bounded live-ingredient overlay.
+  Offline All counts every completed unit from an independent SQL aggregate
+  (never the top-20 product list), splits mixed-tender sales by their exact
+  saved tenders, and keeps legacy single-method receipts on their top-level
+  payment method.
 - Online Dashboard uses Convex saved summaries, with the saved-tablet
   snapshot shown temporarily while a newer local completed sale still waits
   for acknowledgement; totals are never mixed by addition; `offlineViews`

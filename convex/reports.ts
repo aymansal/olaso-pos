@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 import type { Doc } from './_generated/dataModel';
 import { query } from './_generated/server';
+import { paginationOptsValidator } from 'convex/server';
 import {
   businessDate,
   invalid,
@@ -12,7 +13,6 @@ import { operatingCostsForRange } from '../src/lib/costs';
 
 const MAX_RANGE_DAYS = 31;
 const MAX_DETAIL_ROWS = 20;
-const ALL_TIME_PAGE_SIZE = 31;
 const DAY_MS = 86_400_000;
 
 function shiftBusinessDate(value: string, days: number) {
@@ -244,22 +244,22 @@ export const getSummary = query({
   },
 });
 
-export const getAllSummary = query({
+export const getAllSummaryPage = query({
+  args: { ...sessionArgs, paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    await requireManagement(ctx, args);
+    const page = await ctx.db
+      .query('dailyMetrics')
+      .withIndex('by_business_date')
+      .paginate(args.paginationOpts);
+    return page;
+  },
+});
+
+export const getAllSummaryStock = query({
   args: { ...sessionArgs },
   handler: async (ctx, args) => {
     await requireManagement(ctx, args);
-    const rows: Doc<'dailyMetrics'>[] = [];
-    let cursor: string | null = null;
-    do {
-      const page = await ctx.db
-        .query('dailyMetrics')
-        .withIndex('by_business_date')
-        .paginate({ cursor, numItems: ALL_TIME_PAGE_SIZE });
-      rows.push(...page.page);
-      cursor = page.isDone ? null : page.continueCursor;
-    } while (cursor);
-
-    const current = aggregate(rows);
     const liveIngredients = await ctx.db
       .query('ingredients')
       .withIndex('by_status_name', (index) => index.eq('status', 'active'))
@@ -267,26 +267,11 @@ export const getAllSummary = query({
     if (liveIngredients.length > 100) {
       throw new Error('Report ingredient list exceeds its bounded limit.');
     }
-    const stockByName = new Map(liveIngredients.map((row) => [
-      `${row.name}\0${row.baseUnit}`,
-      row.currentStockQuantity,
-    ]));
-    const from = rows[0]?.businessDate ?? businessDate(new Date().toISOString());
-    const to = businessDate(new Date().toISOString());
-    return {
-      range: { from, to, days: rows.length },
-      comparisonRange: { from, to },
-      current: {
-        ...current,
-        ingredientTotals: current.ingredientTotals.map((item) => ({
-          ...item,
-          currentStockQuantity:
-            stockByName.get(`${item.ingredientName}\0${item.baseUnit}`) ?? 0,
-        })),
-      },
-      previous: aggregate([]),
-      daily: [],
-    };
+    return liveIngredients.map((row) => ({
+      ingredientName: row.name,
+      baseUnit: row.baseUnit,
+      currentStockQuantity: row.currentStockQuantity,
+    }));
   },
 });
 

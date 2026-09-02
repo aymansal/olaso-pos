@@ -2,6 +2,8 @@ import { useConvex } from 'convex/react';
 import type { FunctionReturnType } from 'convex/server';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../../convex/_generated/api';
+import { localBusinessDate } from '../lib/date';
+import { collectCloudAllReportPages } from './cloudAllReport';
 import { useConnectionStatus } from './connectionContext';
 import { loadOfflineReport } from './offlineViews';
 import { useReconnect } from './reconnectContext';
@@ -42,11 +44,25 @@ export function useReportsData(fromDate: string, toDate: string) {
     const localRequest = loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
     const request = available
       ? Promise.all([
-        convex.query(allTime ? api.reports.getAllSummary : api.reports.getSummary, {
-          ...(allTime ? {} : { fromDate, toDate }),
-          sessionToken: session.token,
-          deviceId: session.deviceId,
-        }),
+        allTime
+          ? collectCloudAllReportPages(
+            (paginationOpts) => convex.query(api.reports.getAllSummaryPage, {
+              sessionToken: session.token,
+              deviceId: session.deviceId,
+              paginationOpts,
+            }),
+            () => convex.query(api.reports.getAllSummaryStock, {
+              sessionToken: session.token,
+              deviceId: session.deviceId,
+            }),
+            localBusinessDate(),
+          )
+          : convex.query(api.reports.getSummary, {
+            fromDate,
+            toDate,
+            sessionToken: session.token,
+            deviceId: session.deviceId,
+          }),
         localRequest.catch(() => undefined),
       ]).then(([cloud, local]) => {
         const snapshot = local && local.current.orderCount > cloud.current.orderCount

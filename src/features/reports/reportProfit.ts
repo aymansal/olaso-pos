@@ -1,4 +1,4 @@
-import { operatingCostsForRange } from '../../lib/costs';
+import { operatingCostsForRange } from '../../lib/costs.ts';
 import type { SavedCostManagement } from '../../data/localCosts';
 import type { ReportsSnapshot } from '../../data/useReportsData';
 
@@ -11,12 +11,14 @@ export function buildPeriodProfit(
 ) {
   const revenueCentimes = snapshot?.current.netCentimes ?? 0;
   const ingredientCostCentimes = snapshot?.current.ingredientCostCentimes ?? 0;
-  const allocated = operatingCostsForRange(
-    costs?.expenses ?? [],
-    showCompensation ? costs?.compensation ?? [] : [],
-    fromDate,
-    toDate,
-  );
+  const allocated = fromDate && toDate
+    ? operatingCostsForRange(
+      costs?.expenses ?? [],
+      showCompensation ? costs?.compensation ?? [] : [],
+      fromDate,
+      toDate,
+    )
+    : { compensationCentimes: 0, otherExpenseCentimes: 0 };
   const grossProfitCentimes = revenueCentimes - ingredientCostCentimes;
   const incomplete = (snapshot?.current.incompleteSaleCount ?? 0) > 0;
   return {

@@ -265,6 +265,9 @@ export function correctLocalExpense(
       : replacement.effectiveDate;
     const originalStartDate = prior.recurrence === 'monthly'
       ? prior.effectiveStartDate
+        ?? (prior.effectiveStartMonth
+          ? `${prior.effectiveStartMonth}-01`
+          : undefined)
       : prior.effectiveDate;
     if (originalStartDate && correctionDate < originalStartDate) {
       throw new Error('The correction date cannot be before the original expense start date.');

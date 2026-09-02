@@ -134,6 +134,40 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- AUDIT-01 complete (2–3 Sep 2026): implemented the five audit repairs plus
+  the mandatory Reports All crash guard root-fixed during the
+  owner-authorized tablet diagnosis. Cloud All now uses legal page-by-page
+  pagination (`getAllSummaryPage` + `getAllSummaryStock`, client-collected
+  cursors via the new `src/data/cloudAllReport.ts`); offline All counts all
+  units by independent SQL and splits mixed tenders by exact saved dues;
+  legacy month-only expenses get the first-day fallback in the local
+  correction guard; Orders no longer lists Offert as a product option while
+  the Payment summary keeps its amount. Official Convex pagination guidance
+  verified and recorded. All safe checks pass (`check:offline`,
+  `check:local-inventory-costs`, `check:printing` golden unchanged,
+  `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
+  `tsc -b`, `npm run build`, `git diff --check`); protected PIN-gated cloud
+  checks remain unavailable and are recorded honestly. Convex functions
+  deployed (`npx convex dev --once`, code only). Graphify refreshed to
+  3,061 nodes, 6,050 edges. DOX updated (`convex/AGENTS.md`,
+  `data/AGENTS.md`). Committed and pushed to `origin/main` as
+  `AUDIT-01: repair report and order audit findings`. PR-05 remains pending
+  for the owner's physical acceptance and final closeout.
+
+- Reports All crash diagnosed (2 Sep 2026, owner-authorized ADB/CDP): the
+  blank-screen crash was reproduced on SM-X115 and captured via the WebView
+  DevTools protocol with a breakpoint on `buildPeriodProfit`. Evidence: the
+  function was called with `snapshot === undefined` and All's empty-string
+  dates, so `operatingCostsForRange([], [], '', '')` →
+  `monthsInDateRange('', '')` → `daysInCalendarMonth('')` threw
+  `Error: Months must use YYYY-MM.` during render and unmounted the app.
+  Any All render without a loaded snapshot crashes (fresh Reports mount
+  while the All request is in flight, after a failed load, or a range
+  change on pre-stale builds). The tablet's local expense/compensation rows
+  are well-formed; the cloud All path not delivering data matches AUDIT-01's
+  illegal-pagination finding. No fix applied — AUDIT-01 owns the repair.
+  Exact next action: implement AUDIT-01 per its durable contract.
+
 - AUDIT-01 planning and real-menu extraction (2 Sep 2026): a read-only audit of
   current `main` confirmed five remaining correctness problems: cloud All calls
   Convex pagination repeatedly in one query; offline All undercounts units when

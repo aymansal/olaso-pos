@@ -71,6 +71,12 @@ data, reporting summaries, and development seeding.
 - Seed/reset work is internal, development-only, deterministic, refuses to run
   without the disposable-deployment acknowledgement, and never replaces staff
   profile IDs that own credentials.
+ - Reports All never loops pagination inside one query: `getAllSummaryPage`
+   calls `.paginate()` exactly once with the official `paginationOpts`
+   validator, and the Reports data layer collects pages client-side with the
+   returned cursors until `isDone` (the documented manual collection pattern).
+   The live-ingredient stock overlay is a separate bounded
+   `getAllSummaryStock` query.
 - Do not add actions for ordinary database work or import backend clients into
   React components.
 

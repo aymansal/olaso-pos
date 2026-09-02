@@ -1,6 +1,9 @@
 import { localBusinessDate, shiftBusinessDate } from '../lib/date.ts';
+import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { openLocalDatabase } from './localDatabase.ts';
 import { loadOperationalCache } from './operationalCache.ts';
+
+type Database = Pick<SQLiteDBConnection, 'query'>;
 
 const ALIAS_LOCAL_STOCK_DELTA = `COALESCE((
   SELECT SUM(alias.local_stock_delta)
@@ -335,6 +338,65 @@ async function dailyIngredientUsageEvents(fromDate: string, toDate: string) {
   );
 }
 
+export async function loadAllProductSummary(database: Database) {
+  const [units, products] = await Promise.all([
+    database.query(
+      `SELECT COALESCE(SUM(item.quantity), 0) AS units
+       FROM sale_items item JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+       WHERE sale.status = 'completed'`,
+    ),
+    database.query(
+      `SELECT item.product_id, item.product_name_snapshot AS product_name,
+        SUM(item.quantity) AS quantity, SUM(item.line_total_centimes) AS total_centimes
+       FROM sale_items item JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+       WHERE sale.status = 'completed' GROUP BY item.product_id, item.product_name_snapshot
+       ORDER BY total_centimes DESC, quantity DESC, product_name LIMIT 20`,
+    ),
+  ]);
+  return {
+    itemCount: Number(units.values?.[0]?.units ?? 0),
+    products: (products.values ?? []).map((item) => ({
+      productId: String(item.product_id), productName: String(item.product_name),
+      quantity: Number(item.quantity), totalCentimes: Number(item.total_centimes),
+    })),
+  };
+}
+
+export async function loadAllPaymentTotals(database: Database) {
+  const [legacy, tendered] = await Promise.all([
+    database.query(
+      `SELECT COALESCE(json_extract(sale.receipt_snapshot_json, '$.paymentMethod'), 'Unknown') AS payment_method,
+        SUM(sale.total_centimes) AS total_centimes, COUNT(*) AS order_count
+       FROM sales sale
+       WHERE sale.status = 'completed'
+         AND json_extract(sale.receipt_snapshot_json, '$.tenders') IS NULL
+       GROUP BY payment_method ORDER BY total_centimes DESC, payment_method LIMIT 20`,
+    ),
+    database.query(
+      `SELECT COALESCE(json_extract(t.value, '$.paymentMethod'),
+          json_extract(sale.receipt_snapshot_json, '$.paymentMethod'), 'Unknown') AS payment_method,
+        SUM(COALESCE(json_extract(t.value, '$.dueCentimes'), 0)) AS total_centimes,
+        COUNT(DISTINCT sale.local_sale_id) AS order_count
+       FROM sales sale, json_each(sale.receipt_snapshot_json, '$.tenders') t
+       WHERE sale.status = 'completed'
+       GROUP BY payment_method ORDER BY total_centimes DESC, payment_method LIMIT 20`,
+    ),
+  ]);
+  const totals = new Map<string, { paymentMethod: string; totalCentimes: number; orderCount: number }>();
+  for (const row of [...(legacy.values ?? []), ...(tendered.values ?? [])]) {
+    const method = String(row.payment_method);
+    const total = totals.get(method) ?? { paymentMethod: method, totalCentimes: 0, orderCount: 0 };
+    total.totalCentimes += Number(row.total_centimes);
+    total.orderCount += Number(row.order_count);
+    totals.set(method, total);
+  }
+  return [...totals.values()].sort(
+    (left, right) =>
+      right.totalCentimes - left.totalCentimes
+      || left.paymentMethod.localeCompare(right.paymentMethod),
+  ).slice(0, 20);
+}
+
 async function loadOfflineAllReport() {
   const database = await openLocalDatabase();
   const today = localBusinessDate();
@@ -348,7 +410,7 @@ async function loadOfflineAllReport() {
      )`,
   );
   const fromDate = String(dates.values?.[0]?.earliest ?? today);
-  const [summary, products, categories, payments, usage] = await Promise.all([
+  const [summary, productSummary, categories, payments, usage] = await Promise.all([
     database.query(
       `SELECT COALESCE(SUM(total_centimes), 0) AS net_centimes,
         COUNT(*) AS order_count,
@@ -356,13 +418,7 @@ async function loadOfflineAllReport() {
         COALESCE(SUM(CASE WHEN cost_status <> 'complete' THEN 1 ELSE 0 END), 0) AS incomplete_sale_count
        FROM sales WHERE status = 'completed'`,
     ),
-    database.query(
-      `SELECT item.product_id, item.product_name_snapshot AS product_name,
-        SUM(item.quantity) AS quantity, SUM(item.line_total_centimes) AS total_centimes
-       FROM sale_items item JOIN sales sale ON sale.local_sale_id = item.local_sale_id
-       WHERE sale.status = 'completed' GROUP BY item.product_id, item.product_name_snapshot
-       ORDER BY total_centimes DESC, quantity DESC, product_name LIMIT 20`,
-    ),
+    loadAllProductSummary(database),
     database.query(
       `SELECT item.category_id_snapshot AS category_id, item.category_name_snapshot AS category_name,
         SUM(item.quantity) AS quantity, SUM(item.line_total_centimes) AS total_centimes
@@ -371,25 +427,17 @@ async function loadOfflineAllReport() {
        GROUP BY item.category_id_snapshot, item.category_name_snapshot
        ORDER BY total_centimes DESC, category_name LIMIT 20`,
     ),
-    database.query(
-      `SELECT COALESCE(json_extract(sale.receipt_snapshot_json, '$.paymentMethod'), 'Unknown') AS payment_method,
-        SUM(sale.total_centimes) AS total_centimes, COUNT(*) AS order_count
-       FROM sales sale WHERE sale.status = 'completed'
-       GROUP BY payment_method ORDER BY total_centimes DESC, payment_method LIMIT 20`,
-    ),
+    loadAllPaymentTotals(database),
     ingredientUsage(fromDate, today),
   ]);
   const row = summary.values?.[0] ?? {};
-  const productTotals = (products.values ?? []).map((item) => ({
-    productId: String(item.product_id), productName: String(item.product_name),
-    quantity: Number(item.quantity), totalCentimes: Number(item.total_centimes),
-  }));
+  const productTotals = productSummary.products;
   return {
     range: { from: fromDate, to: today, days: 0 },
     comparisonRange: undefined,
     current: {
       netCentimes: Number(row.net_centimes ?? 0), orderCount: Number(row.order_count ?? 0),
-      itemCount: productTotals.reduce((total, item) => total + item.quantity, 0),
+      itemCount: productSummary.itemCount,
       ingredientCostCentimes: Number(row.ingredient_cost_centimes ?? 0),
       incompleteSaleCount: Number(row.incomplete_sale_count ?? 0),
       ingredientUsageEventCount: 0, ingredientTypeCount: usage.ingredientTypeCount,
@@ -398,10 +446,7 @@ async function loadOfflineAllReport() {
         categoryId: String(item.category_id), categoryName: String(item.category_name),
         quantity: Number(item.quantity), totalCentimes: Number(item.total_centimes),
       })),
-      paymentTotals: (payments.values ?? []).map((item) => ({
-        paymentMethod: String(item.payment_method), totalCentimes: Number(item.total_centimes),
-        orderCount: Number(item.order_count),
-      })),
+      paymentTotals: payments,
       ingredientTotals: usage.ingredientTotals,
     },
     previous: { netCentimes: 0, orderCount: 0, itemCount: 0, ingredientCostCentimes: 0,

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { aggregateOfflineSales } from '../src/data/offlineViews.ts';
+import { collectCloudAllReportPages } from '../src/data/cloudAllReport.ts';
+import { buildPeriodProfit } from '../src/features/reports/reportProfit.ts';
 import { formatPeriodLabel, reportChartMonth } from '../src/lib/date.ts';
 
 assert.equal(reportChartMonth('2026-08-25', '2026-09-02', '2026-09-02'), '2026-09');
@@ -10,6 +12,67 @@ assert.equal(reportChartMonth('2026-03-16', '2026-04-16', '2026-09-02'), '2026-0
 assert.equal(reportChartMonth('', '', '2026-09-02'), '2026-09');
 assert.match(formatPeriodLabel('2026-03-01', '2026-03-01', 'en'), /Mar/);
 assert.match(formatPeriodLabel('2026-03-01', '2026-03-01', 'fr'), /mars/);
+
+// AUDIT-01 A: cloud All collects legal pages and merges first, middle, and
+// final pages into complete totals before capping ranked display lists.
+const cloudDailyRows = Array.from({ length: 40 }, (_, index) => ({
+  businessDate: new Date(Date.UTC(2026, 6, 1 + index)).toISOString().slice(0, 10),
+  netCentimes: 1000 + index,
+  orderCount: 1,
+  ingredientUsageEventCount: index,
+  ingredientCostCentimes: 10 + index,
+  incompleteCostSaleCount: index % 2,
+  productTotals: [{
+    productId: `p${index % 25}`, productName: `Product ${index % 25}`,
+    categoryName: 'Coffee', quantity: 2, totalCentimes: 500 + index,
+  }],
+  categoryTotals: [{
+    categoryId: 'c1', categoryName: 'Coffee', quantity: 2, totalCentimes: 500 + index,
+  }],
+  totalsByPaymentMethod: [{
+    paymentMethod: index % 2 ? 'Card' : 'Cash',
+    totalCentimes: 1000 + index, orderCount: 1,
+  }],
+  ingredientTotals: [{
+    ingredientId: `i${index % 3}`, ingredientName: `Ing ${index % 3}`,
+    baseUnit: 'gram', quantity: 5,
+  }],
+}));
+const cloudAll = await collectCloudAllReportPages(
+  async (paginationOpts) => {
+    const start = paginationOpts.cursor === null ? 0 : Number(paginationOpts.cursor);
+    const pageRows = cloudDailyRows.slice(start, start + paginationOpts.numItems);
+    return {
+      page: pageRows,
+      isDone: start + paginationOpts.numItems >= cloudDailyRows.length,
+      continueCursor: String(start + paginationOpts.numItems),
+    };
+  },
+  async () => [{ ingredientName: 'Ing 0', baseUnit: 'gram', currentStockQuantity: 7 }],
+  '2026-09-02',
+);
+assert.equal(cloudAll.range.from, '2026-07-01');
+assert.equal(cloudAll.range.to, '2026-09-02');
+assert.equal(cloudAll.current.netCentimes, cloudDailyRows.reduce((sum, row) => sum + row.netCentimes, 0));
+assert.equal(cloudAll.current.orderCount, 40);
+assert.equal(cloudAll.current.itemCount, 80);
+assert.equal(cloudAll.current.ingredientTypeCount, 3);
+assert.equal(cloudAll.current.productTotals.length, 20);
+assert.equal(cloudAll.current.productTotals[0].quantity, 4);
+const cloudCash = cloudAll.current.paymentTotals.find((row) => row.paymentMethod === 'Cash');
+const cloudCard = cloudAll.current.paymentTotals.find((row) => row.paymentMethod === 'Card');
+assert.equal(cloudCash.totalCentimes, cloudDailyRows.filter((row) => row.totalsByPaymentMethod[0].paymentMethod === 'Cash').reduce((sum, row) => sum + row.totalsByPaymentMethod[0].totalCentimes, 0));
+assert.equal(cloudCard.totalCentimes, cloudDailyRows.filter((row) => row.totalsByPaymentMethod[0].paymentMethod === 'Card').reduce((sum, row) => sum + row.totalsByPaymentMethod[0].totalCentimes, 0));
+assert.equal(cloudAll.current.ingredientTotals[0].currentStockQuantity, 7);
+assert.equal(cloudAll.daily.length, 0);
+assert.equal(cloudAll.previous.netCentimes, 0);
+
+// Mandatory bug repair: All mode with no loaded snapshot must not throw on
+// empty dates; profit stays numeric at zero until data arrives.
+const guardProfit = buildPeriodProfit(undefined, undefined, '', '');
+assert.equal(guardProfit.revenueCentimes, 0);
+assert.equal(guardProfit.ingredientCostCentimes, 0);
+assert.equal(guardProfit.operatingProfitCentimes, 0);
 
 const rows = [
   {
@@ -175,9 +238,16 @@ assert.match(costsCss, /flex-direction: column/);
 const dailyReport = readFileSync('src/data/dailyOwnerReport.ts', 'utf8');
 assert.doesNotMatch(dailyReport, /discount_centimes/);
 assert.match(dailyReport, /subtotalCentimes - report\.current\.netCentimes/);
+const orderDetail = readFileSync(
+  'src/features/orders/components/OrderDetailPanel/OrderDetailPanel.tsx',
+  'utf8',
+);
+assert.doesNotMatch(orderDetail, /complimentary \? t\('Offert'\)/);
+assert.match(orderDetail, /\{t\('Offert'\)\}/);
 assert.match(reports, /loadOfflineReport/);
 assert.match(reports, /api\.reports\.getSummary/);
-assert.match(reports, /api\.reports\.getAllSummary/);
+assert.match(reports, /api\.reports\.getAllSummaryPage/);
+assert.match(reports, /collectCloudAllReportPages/);
 assert.match(reports, /local\.current\.orderCount > cloud\.current\.orderCount/);
 assert.doesNotMatch(reports, /pendingSyncCount/);
 assert.match(reports, /available === undefined \|\| !foreground/);

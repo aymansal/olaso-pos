@@ -27,6 +27,10 @@ import {
 } from '../src/data/localCostViews.ts';
 import { listPendingOutboxFromDatabase } from '../src/data/outbox.ts';
 import { loadDailySalesOverview } from '../src/data/dailyOwnerReport.ts';
+import {
+  loadAllPaymentTotals,
+  loadAllProductSummary,
+} from '../src/data/offlineViews.ts';
 import { localMigrations } from '../src/data/schema.ts';
 import { operatingCostsForRange } from '../src/lib/costs.ts';
 import { matchesLevelFilter } from '../src/features/stock/stockPresentation.ts';
@@ -498,6 +502,98 @@ assert.deepEqual(dailyOverview.cancellations, [{
   reason: 'Wrong order',
   actorName: 'Owner',
 }]);
+
+// AUDIT-01 B: offline All counts every completed unit while the ranked
+// product display stays capped at 20 rows.
+const baselineUnits = Number(database.prepare(
+  `SELECT COALESCE(SUM(item.quantity), 0) AS units
+   FROM sale_items item JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+   WHERE sale.status = 'completed'`,
+).get().units);
+database.prepare(`INSERT INTO sales
+  (local_sale_id, device_id, receipt_number, status, service_type,
+   subtotal_centimes, tax_centimes, total_centimes, currency, business_date,
+   receipt_snapshot_json, ingredient_cost_centimes, cost_status, sync_state,
+   created_at)
+  VALUES ('all-units-sale', 'tablet-local', '0902-units', 'completed',
+   'take-away', 23100, 0, 23100, 'MAD', '2026-09-02', '{}', 0,
+   'complete', 'synced', 1)`).run();
+const insertAllUnitsItem = database.prepare(`INSERT INTO sale_items
+  (id, local_sale_id, product_id, quantity, product_name_snapshot,
+   unit_price_centimes, modifier_snapshot_json, recipe_snapshot_json,
+   line_total_centimes)
+  VALUES (?, 'all-units-sale', ?, ?, ?, 100, '[]', '[]', ?)`);
+let expectedUnits = 0;
+for (let product = 0; product < 21; product += 1) {
+  const quantity = product + 1;
+  expectedUnits += quantity;
+  insertAllUnitsItem.run(
+    `units-item-${product}`, `units-product-${product}`, quantity,
+    100 * quantity, 100 * quantity,
+  );
+}
+const allProductSummary = await loadAllProductSummary(adapter);
+assert.equal(allProductSummary.itemCount, baselineUnits + expectedUnits);
+assert.equal(allProductSummary.products.length, 20);
+
+// AUDIT-01 C: offline All splits a mixed-tender sale by its exact saved
+// tenders and keeps legacy single-method receipts intact.
+database.prepare(`INSERT INTO sales
+  (local_sale_id, device_id, receipt_number, status, service_type,
+   subtotal_centimes, tax_centimes, total_centimes, currency, business_date,
+   receipt_snapshot_json, ingredient_cost_centimes, cost_status, sync_state,
+   created_at)
+  VALUES ('mixed-tender-sale', 'tablet-local', '0902-mixed', 'completed',
+   'dine-in', 5000, 0, 5000, 'MAD', '2026-09-02',
+   '{"paymentMethod":"Card","tenders":[{"paymentMethod":"Cash","dueCentimes":3000,"amountCentimes":3000,"changeCentimes":0},{"paymentMethod":"Card","dueCentimes":2000,"amountCentimes":2000,"changeCentimes":0}]}',
+   0, 'complete', 'synced', 1)`).run();
+database.prepare(`INSERT INTO sales
+  (local_sale_id, device_id, receipt_number, status, service_type,
+   subtotal_centimes, tax_centimes, total_centimes, currency, business_date,
+   receipt_snapshot_json, ingredient_cost_centimes, cost_status, sync_state,
+   created_at)
+  VALUES ('legacy-cash-sale', 'tablet-local', '0902-legacy', 'completed',
+   'take-away', 1500, 0, 1500, 'MAD', '2026-09-02',
+   '{"paymentMethod":"Cash"}', 0, 'complete', 'synced', 1)`).run();
+const allPaymentTotals = await loadAllPaymentTotals(adapter);
+const allCash = allPaymentTotals.find((row) => row.paymentMethod === 'Cash');
+const allCard = allPaymentTotals.find((row) => row.paymentMethod === 'Card');
+assert.equal(allCash.totalCentimes, 4500);
+assert.equal(allCash.orderCount, 2);
+assert.equal(allCard.totalCentimes, 2000);
+assert.equal(allCard.orderCount, 1);
+
+// AUDIT-01 D: a legacy month-only recurring expense rejects a correction
+// dated before its start month's first day, with zero partial writes.
+database.prepare(`INSERT INTO operating_expenses
+  (id, category, description, amount_centimes, recurrence, effective_date,
+   effective_start_month, effective_end_month, status, revision, created_at,
+   transaction_type)
+  VALUES ('legacy-monthly', 'Rent', 'Legacy monthly', 100000, 'monthly',
+   NULL, '2026-08', NULL, 'active', 1, 1, 'recorded')`).run();
+const legacyOutboxBefore = database.prepare(
+  'SELECT COUNT(*) count FROM outbox',
+).get().count;
+await assert.rejects(
+  correctLocalExpense(owner, { id: 'legacy-monthly', revision: 1 }, {
+    category: 'Rent', description: 'Legacy monthly correction', amountCentimes: 90000,
+    recurrence: 'monthly', effectiveStartDate: '2026-07-31',
+  }, transaction),
+  /before the original expense start date/,
+);
+assert.equal(database.prepare(
+  `SELECT COUNT(*) count FROM operating_expenses WHERE correction_of_expense_id = 'legacy-monthly'`,
+).get().count, 0);
+assert.equal(database.prepare(
+  'SELECT COUNT(*) count FROM outbox',
+).get().count, legacyOutboxBefore);
+await correctLocalExpense(owner, { id: 'legacy-monthly', revision: 1 }, {
+  category: 'Rent', description: 'Legacy monthly correction', amountCentimes: 90000,
+  recurrence: 'monthly', effectiveStartDate: '2026-08-01',
+}, transaction);
+assert.equal(database.prepare(
+  `SELECT COUNT(*) count FROM operating_expenses WHERE correction_of_expense_id = 'legacy-monthly'`,
+).get().count, 2);
 database.close();
 
 console.log('Local-first inventory, expense, compensation, and dependency checks passed.');

@@ -127,7 +127,6 @@ export function OrderDetailPanel({
       <div className={styles.items}>
         {order.receipt.lines.map((item, index) => {
           const options = [
-            item.complimentary ? t('Offert') : '',
             item.sizeName,
             ...item.modifiers.map((modifier) => modifier.optionName),
           ].filter(Boolean).join(', ');
