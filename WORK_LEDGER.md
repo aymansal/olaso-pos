@@ -141,10 +141,14 @@ remaining goal and card sequence.
   Android gate exposed only a stale assertion for deleted demo drink images;
   the obsolete assertion was removed because runtime photos now come from the
   saved product record. `check:android`, the production web build, Capacitor
-  sync, Android unit tasks, and the 140-task debug APK build then passed. Exact
-  next action: push this check correction, install the built APK with
-  `adb install -r`, restart once, and inspect the visible screen plus focused
-  startup errors.
+  sync, Android unit tasks, and the 140-task debug APK build then passed; check
+  correction `1786a213084ac86d989ef2e43d822e23c953a095` is on `origin/main`.
+  Installed the 26,478,777-byte debug APK over connected SM-X115
+  `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving app data. After
+  restart and the normal three-second initialization, the tablet showed the
+  Owner lock screen at exactly 1,340 by 800, online, with no browser-console or
+  focused Android startup error. Exact next action: owner unlocks and performs
+  the requested hands-on POLISH-01 feature review; HARD-08 remains pending.
 
 - POLISH-01 mandatory identity/data/payment/report repair (2 Sep 2026): traced
   the lost staff PIN to `seed:resetAndSeed` deleting `staffProfiles` while
