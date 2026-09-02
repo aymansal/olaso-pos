@@ -138,7 +138,7 @@ These decisions are final for this batch and must not be reopened:
 | PR-01 | Preserve exact compensation dates and reject invalid early expense corrections | done — `0bea66ae496e3ecc24efea13aa195903d3358aa6` on `origin/main` |
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
-| PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — SHA recorded below |
+| PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
@@ -168,6 +168,18 @@ These decisions are final for this batch and must not be reopened:
 
 **Exact next action:** wait for owner authorization; then follow Recovery
 Protocol and begin PR-05 only.
+
+### 2026-09-02 — PR-04 committed and pushed
+
+- Committed and pushed `2e3c96e8205f33f621612f9191169f12ff265758`
+  (`PR-04: complete costs lists and honest pending-sale dashboard`) directly
+  to `origin/main`. Verified `main...origin/main` is synchronized and the
+  worktree is clean apart from the untracked local `.commandcode/` directory.
+- PR-04 is complete. Owner physical acceptance (ninth expense/compensation
+  row via scrolling, Dashboard right after a local sale and again after sync)
+  and the protected reports/dashboard checks remain unavailable under the
+  no-app/no-PIN instruction.
+- Exact next action: wait for owner authorization, then begin PR-05 only.
 
 ## PR-01 — Exact compensation and expense correction dates
 
