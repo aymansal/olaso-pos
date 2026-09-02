@@ -12,6 +12,7 @@ export function ReportSummaryPanel({
   snapshot,
   fromDate,
   toDate,
+  isRefreshing,
   costManagement,
   showCompensation,
 }: {
@@ -19,10 +20,12 @@ export function ReportSummaryPanel({
   snapshot?: ReportsSnapshot;
   fromDate: string;
   toDate: string;
+  isRefreshing: boolean;
   costManagement: ReturnType<typeof useCostManagement>;
   showCompensation: boolean;
 }) {
   const t = useT();
+  const stale = isRefreshing ? 'true' : 'false';
   const current = snapshot?.current;
   const previous = snapshot?.previous;
   const profit = buildPeriodProfit(
@@ -53,7 +56,7 @@ export function ReportSummaryPanel({
             </span>
             <strong className={styles.railChip}>{categories.length}</strong>
           </header>
-          <div className={styles.railList}>
+          <div className={`${styles.railList} ${styles.data}`} data-stale={stale}>
             {categories.length === 0 ? (
               <p className={styles.railEmpty}>{t('No category sales.')}</p>
             ) : categories.map((category, index) => {
@@ -82,7 +85,7 @@ export function ReportSummaryPanel({
             </span>
             <strong className={styles.railChip}>{products.length}</strong>
           </header>
-          <div className={styles.railList}>
+          <div className={`${styles.railList} ${styles.data}`} data-stale={stale}>
             {products.length === 0 ? (
               <p className={styles.railEmpty}>{t('No product sales.')}</p>
             ) : products.map((product, index) => {
@@ -118,9 +121,9 @@ export function ReportSummaryPanel({
           <h2 id="report-summary-title">{t('Used ingredients')}</h2>
         </header>
         {ingredients.length === 0 ? (
-          <p className={styles.empty}>{t('No recipe usage.')}</p>
+          <p className={`${styles.empty} ${styles.data}`} data-stale={stale}>{t('No recipe usage.')}</p>
         ) : (
-        <div className={`${styles.stack} ${styles.full}`}>
+        <div className={`${styles.stack} ${styles.full} ${styles.data}`} data-stale={stale}>
           {ingredients.map((ingredient) => {
             const onHand = ingredient.currentStockQuantity ?? 0;
             const used = ingredient.quantity;
@@ -154,10 +157,10 @@ export function ReportSummaryPanel({
         <header className={styles.header}>
           <h2 id="report-summary-title">{t('This period')}</h2>
         </header>
-        <p className={styles.hint}>
+        <p className={`${styles.hint} ${styles.data}`} data-stale={stale}>
           {t('Wages and monthly bills are split across the days in each month. One-time costs count on the day they were recorded.')}
         </p>
-        <div className={`${styles.profitList} ${styles.costsFacts}`}>
+        <div className={`${styles.profitList} ${styles.costsFacts} ${styles.data}`} data-stale={stale}>
           <article>
             <small>{t('Ingredient cost')}</small>
             <strong>{formatMoney(profit.ingredientCostCentimes)}</strong>
@@ -199,7 +202,7 @@ export function ReportSummaryPanel({
           </strong>
         ) : null}
       </header>
-      <div className={styles.facts}>
+      <div className={`${styles.facts} ${styles.data}`} data-stale={stale}>
         <article>
           <small>{t('Stock value')}</small>
           <strong>{formatMoney(costManagement.saved?.inventoryValueCentimes ?? 0)}</strong>
@@ -213,7 +216,7 @@ export function ReportSummaryPanel({
           <strong>{formatMoney(average)}</strong>
         </article>
       </div>
-      <div className={styles.profitList}>
+      <div className={`${styles.profitList} ${styles.data}`} data-stale={stale}>
         {rows.map(([label, value]) => (
           <article key={label}>
             <small>{t(label)}</small>
@@ -223,7 +226,7 @@ export function ReportSummaryPanel({
           </article>
         ))}
       </div>
-      <div className={styles.result}>
+      <div className={`${styles.result} ${styles.data}`} data-stale={stale}>
         <small>{t(showCompensation ? 'Operating profit' : 'Gross profit')}</small>
         <strong className={
           (showCompensation ? profit.operatingProfitCentimes : profit.grossProfitCentimes) < 0

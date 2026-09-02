@@ -33,6 +33,7 @@ export function ReportsAnalyticsPanel({
   monthSnapshot,
   chartMonth,
   isLoading,
+  isRefreshing,
   error,
   onRetry,
   showCosts,
@@ -49,6 +50,7 @@ export function ReportsAnalyticsPanel({
   monthSnapshot?: ReportsSnapshot;
   chartMonth: string;
   isLoading: boolean;
+  isRefreshing: boolean;
   error: string;
   onRetry: () => void;
   showCosts: boolean;
@@ -154,7 +156,7 @@ export function ReportsAnalyticsPanel({
           showCompensation={showCompensation}
         />
       ) : (
-        <>
+        <div className={styles.dataArea} data-stale={isRefreshing ? 'true' : 'false'}>
           <section className={styles.hero} aria-label={t('Period total')}>
             <small>{t(heroLabel)}</small>
             <strong>
@@ -165,7 +167,7 @@ export function ReportsAnalyticsPanel({
             ) : null}
           </section>
           <SalesTrendChart tab={tab} snapshot={monthSnapshot ?? snapshot} month={chartMonth} fillMonth />
-        </>
+        </div>
       )}
     </section>
   );

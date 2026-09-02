@@ -39,8 +39,11 @@ performance, ingredient usage, and bounded period controls.
   requests a one-to-31-day saved-summary range for the selected calendar
   period; a second bounded read fills the current-month chart. If this tablet
   has more completed sales in that range than the cloud snapshot, the tablet
-  receipts win so today’s unsynced sales still appear. Changing the calendar
-  does not keep the previous period’s totals on screen.
+  receipts win so today’s unsynced sales still appear. Changing the
+  calendar keeps the previous totals visible but dimmed while the new range
+  loads, then swaps to the new totals with a soft fade on the data areas
+  only; panel chrome, headers, tabs, and the calendar never move. A failed
+  reload clears the stale snapshot to the error state.
 - Export stays off the report until a real format and destination are
   approved.
 - Stock-usage and product tabs must share the established report shell rather

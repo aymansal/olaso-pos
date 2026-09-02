@@ -129,6 +129,20 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 dimmed stale Reports totals (2 Sep 2026): owner rejected the
+  whole-content fade (loading state still flashed) and asked for
+  fade-on-data-only. Implemented stale-while-reload: changing the period
+  keeps previous totals visible but dimmed (opacity 0.5, 420 ms) while the
+  new range loads, then swaps to the new values; chrome never moves;
+  failures still clear to the honest error state. `useReportsData` exposes
+  `isRefreshing` and no longer clears the snapshot on range change; DOX
+  contracts updated to the owner-approved behavior. Passed `tsc -b`,
+  `check:css-scope`, `check:navigation`, `check:offline`, `npm run build`,
+  debug beta, Graphify (3,041 nodes, 6,013 edges). APK installed over
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), data preserved.
+  Exact next action: owner verifies the dimmed reload; then discuss
+  profile performance; PR-05 pending owner authorization.
+
 - POLISH-01 Reports reload fade (2 Sep 2026): owner deferred the
   performance-by-profile request (per-profile amounts in the printed daily
   report and on the Reports page) for a layout-safe design discussion after

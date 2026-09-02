@@ -306,6 +306,34 @@ Protocol and begin PR-05 only.
   behavior; then discuss the profile-performance design; PR-05 remains
   pending owner authorization.
 
+### 2026-09-02 — POLISH-01: dimmed stale totals replace the Reports loading flash
+
+- Owner feedback on the first fade attempt: replaying the fade over the
+  whole content still showed the loading state, and the whole screen should
+  not fade — only the data that changes. The approved behavior is
+  stale-while-reload: changing the Reports period keeps the previous totals
+  visible but dimmed (opacity 0.5, 420 ms transition) while the new range
+  loads, then swaps to the new values as the dim clears. Panel chrome,
+  headers, tabs, and the calendar never move or fade.
+- `useReportsData` no longer clears the snapshot on a range change; it
+  exposes `isRefreshing` while a new range loads and still clears the
+  snapshot on a genuine failure so the honest error/retry state remains.
+  ReportsScreen dropped the whole-content fade wrapper; the analytics hero
+  and chart share one dimmable data area, and the summary panel's data
+  blocks (category/product lists, used ingredients, profit facts and
+  result) each carry the dim transition. The initial load still shows the
+  ordinary loading state.
+- Updated `data/AGENTS.md` and `reports/AGENTS.md`: the previous
+  "changing the calendar does not keep the previous period's totals"
+  contract is replaced by the owner-approved dimmed stale-while-reload
+  behavior.
+- Passed `npx tsc -b`, `npm run check:css-scope`, `npm run check:navigation`,
+  `npm run check:offline`, and `npm run build`. Graphify refreshed (3,041
+  nodes, 6,013 edges). The rebuilt APK was installed over SM-X115
+  `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving data. Exact
+  next action: owner verifies the dimmed reload behavior; then discuss the
+  profile-performance design; PR-05 remains pending owner authorization.
+
 ## PR-01 — Exact compensation and expense correction dates
 
 **Status:** pending — first implementation card

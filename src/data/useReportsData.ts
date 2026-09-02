@@ -18,6 +18,7 @@ export function useReportsData(fromDate: string, toDate: string) {
   const [reload, setReload] = useState(0);
   const [snapshot, setSnapshot] = useState<ReportsSnapshot>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState('');
   const loadedKey = useRef<string | undefined>(undefined);
   const rangeKey = useRef(`${fromDate}:${toDate}`);
@@ -26,15 +27,16 @@ export function useReportsData(fromDate: string, toDate: string) {
   useEffect(() => {
     if (available === undefined || !foreground) return;
     const nextRange = `${fromDate}:${toDate}`;
-    if (rangeKey.current !== nextRange) {
-      rangeKey.current = nextRange;
-      hasSnapshot.current = false;
-      setSnapshot(undefined);
-    }
+    const rangeChanged = rangeKey.current !== nextRange;
+    if (rangeChanged) rangeKey.current = nextRange;
     const requestKey = `${session.staffProfileId}:${available}:${fromDate}:${toDate}:${reconnect.revision}:${reload}`;
     if (loadedKey.current === requestKey) return;
     let cancelled = false;
-    if (!hasSnapshot.current) setIsLoading(true);
+    if (hasSnapshot.current) {
+      if (rangeChanged) setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
     setError('');
     const allTime = !fromDate && !toDate;
     const localRequest = loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
@@ -78,15 +80,19 @@ export function useReportsData(fromDate: string, toDate: string) {
           setSnapshot(result);
           hasSnapshot.current = true;
           loadedKey.current = requestKey;
+          setIsRefreshing(false);
+          setIsLoading(false);
         }
       })
       .catch(() => {
         if (!cancelled) {
+          setSnapshot(undefined);
+          hasSnapshot.current = false;
+          loadedKey.current = requestKey;
+          setIsRefreshing(false);
+          setIsLoading(false);
           setError('Saved report data is unavailable on this tablet.');
         }
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
       });
     return () => {
       cancelled = true;
@@ -97,5 +103,5 @@ export function useReportsData(fromDate: string, toDate: string) {
     setReload((value) => value + 1);
   }, []);
 
-  return { snapshot, isLoading, error, retry };
+  return { snapshot, isLoading, isRefreshing, error, retry };
 }

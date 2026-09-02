@@ -130,6 +130,27 @@
   }
 }
 
+.dataArea {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dataArea > * {
+  pointer-events: auto;
+}
+
+.dataArea[data-stale='true'] {
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dataArea {
+    transition: none;
+  }
+}
+
 .hero {
   position: absolute;
   top: 136px;

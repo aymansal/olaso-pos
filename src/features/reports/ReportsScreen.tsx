@@ -40,36 +40,33 @@ export function ReportsScreen() {
   const costs = useCostManagement((range.toDate || today).slice(0, 7));
   return (
     <main className={styles.screen} aria-label={t('Olaso reports')}>
-      <div
-        key={`${range.fromDate}:${range.toDate}:${tab}:${data.isLoading ? 'loading' : 'ready'}`}
-        className={styles.fade}
-      >
-        <ReportsAnalyticsPanel
-          tab={tab}
-          onTabChange={setTab}
-          fromDate={range.fromDate}
-          toDate={range.toDate}
-          preset={range.preset}
-          onRangeChange={setRange}
-          snapshot={data.snapshot}
-          monthSnapshot={monthData.snapshot}
-          chartMonth={month}
-          isLoading={data.isLoading}
-          error={data.error}
-          onRetry={data.retry}
-          showCosts={hasPermission(session.role, 'expenses')}
-          showCompensation={hasPermission(session.role, 'compensation')}
-          costManagement={costs}
-        />
-        <ReportSummaryPanel
-          tab={tab}
-          snapshot={data.snapshot}
-          fromDate={range.fromDate}
-          toDate={range.toDate}
-          costManagement={costs}
-          showCompensation={hasPermission(session.role, 'compensation')}
-        />
-      </div>
+      <ReportsAnalyticsPanel
+        tab={tab}
+        onTabChange={setTab}
+        fromDate={range.fromDate}
+        toDate={range.toDate}
+        preset={range.preset}
+        onRangeChange={setRange}
+        snapshot={data.snapshot}
+        monthSnapshot={monthData.snapshot}
+        chartMonth={month}
+        isLoading={data.isLoading}
+        isRefreshing={data.isRefreshing || monthData.isRefreshing}
+        error={data.error}
+        onRetry={data.retry}
+        showCosts={hasPermission(session.role, 'expenses')}
+        showCompensation={hasPermission(session.role, 'compensation')}
+        costManagement={costs}
+      />
+      <ReportSummaryPanel
+        tab={tab}
+        snapshot={data.snapshot}
+        fromDate={range.fromDate}
+        toDate={range.toDate}
+        isRefreshing={data.isRefreshing}
+        costManagement={costs}
+        showCompensation={hasPermission(session.role, 'compensation')}
+      />
     </main>
   );
 }

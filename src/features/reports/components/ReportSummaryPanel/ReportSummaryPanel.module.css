@@ -310,6 +310,20 @@
   top: 168px;
 }
 
+.data {
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.data[data-stale='true'] {
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .data {
+    transition: none;
+  }
+}
+
 .category {
   position: relative;
   min-height: 72px;

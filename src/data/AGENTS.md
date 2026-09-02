@@ -172,7 +172,10 @@ tablet's local SQLite operational record.
   totals.
 - Reports reads use one bounded saved-summary request per selected range or
   deliberate retry, with a one-to-31-day saved-tablet fallback offline; tab
-  switches remain local and never start another query. The selected range
+  switches remain local and never start another query. Changing the range
+  keeps the previous totals visible but dimmed while the new range loads and
+  swaps to the new totals when they arrive; a failed reload clears the stale
+  snapshot to the error state. The selected range
   prefers this tablet’s saved receipts when they contain more completed sales
   than the cloud snapshot, so unsynced today sales still appear. Used-ingredient
   bars overlay this tablet’s on-hand stock by name and unit.
