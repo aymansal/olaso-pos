@@ -151,7 +151,9 @@ remaining goal and card sequence.
   deployed (`npx convex dev --once`, code only). Graphify refreshed to
   3,061 nodes, 6,050 edges. DOX updated (`convex/AGENTS.md`,
   `data/AGENTS.md`). Committed and pushed to `origin/main` as
-  `AUDIT-01: repair report and order audit findings`. PR-05 remains pending
+  `bca6d773eaa89147ce556cca09d61aa10414609c`
+  (`AUDIT-01: repair report and order audit findings`); `main` matches
+  `origin/main`. PR-05 remains pending
   for the owner's physical acceptance and final closeout.
 
 - Reports All crash diagnosed (2 Sep 2026, owner-authorized ADB/CDP): the

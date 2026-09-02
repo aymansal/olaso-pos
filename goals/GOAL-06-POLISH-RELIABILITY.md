@@ -139,7 +139,7 @@ These decisions are final for this batch and must not be reopened:
 | PR-02 | Correct ingredient-type totals and make Reports All genuinely all-time | done — `dc398efe4fb4c5c66ae03e47d33734d74cf6d02e` on `origin/main` |
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
-| AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — SHA recorded in the checkpoint below |
+| AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
@@ -438,6 +438,18 @@ Protocol and begin PR-05 only.
   print, PIN use, seed, reset, or live-data change occurred during
   implementation. Exact next action: review the diff, stage only AUDIT-01
   files, commit, push, and record the SHA.
+
+### 2026-09-03 — AUDIT-01 committed and pushed
+
+- Committed and pushed `bca6d773eaa89147ce556cca09d61aa10414609c`
+  (`AUDIT-01: repair report and order audit findings`, 13 files) directly to
+  `origin/main` after `git diff --cached --check` passed. Verified
+  `main...origin/main` synchronized and the worktree clean apart from the
+  untracked owner `.commandcode/` directory, which was never touched or
+  staged.
+- AUDIT-01 is done. PR-05 remains pending for the owner's physical
+  acceptance and final closeout. Exact next action: wait for owner
+  authorization, then begin PR-05 only.
 
 ### 2026-09-02 — AUDIT-01 recovery and official Convex pagination research
 
