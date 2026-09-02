@@ -221,6 +221,20 @@ assert.match(mixedText, /Card\s+36\.00/);
 assert.match(mixedText, /Cash\s+33\.50/);
 assert.equal((mixedText.match(/Given/g) ?? []).length, 1);
 assert.equal((mixedText.match(/Change/g) ?? []).length, 1);
+const cardSnapshotMixed = renderReceiptText(createReceiptModel({
+  ...snapshot,
+  paymentMethod: 'Card',
+  tenders: [
+    { paymentMethod: 'Cash', dueCentimes: 3350, amountCentimes: 5000, changeCentimes: 1650 },
+    { paymentMethod: 'Card', dueCentimes: 3600, amountCentimes: 3600, changeCentimes: 0 },
+  ],
+}));
+assert.match(cardSnapshotMixed, /Cash\s+33\.50/);
+assert.match(cardSnapshotMixed, /Given\s+50\.00/);
+assert.match(cardSnapshotMixed, /Change\s+16\.50/);
+assert.match(cardSnapshotMixed, /Card\s+36\.00/);
+assert.equal((cardSnapshotMixed.match(/Given/g) ?? []).length, 1);
+assert.equal((cardSnapshotMixed.match(/Change/g) ?? []).length, 1);
 
 const dailyReport = {
   language: 'fr',

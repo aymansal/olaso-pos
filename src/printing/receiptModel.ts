@@ -187,9 +187,11 @@ export function createReceiptModel(
       }
       dueSum += dueCentimes;
       return {
-        paymentMethod: tender.paymentMethod === 'Card'
-          ? 'Card'
-          : snapshot.paymentMethod === 'Card' ? 'Card' : 'Cash',
+        paymentMethod: tender.paymentMethod === 'Cash'
+          ? 'Cash'
+          : tender.paymentMethod === 'Card'
+            ? 'Card'
+            : snapshot.paymentMethod === 'Card' ? 'Card' : 'Cash',
         dueCentimes,
         amountCentimes,
         changeCentimes: tenderChange,

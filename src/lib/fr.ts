@@ -136,6 +136,7 @@ export const fr: Record<string, string> = {
   'DIFFERENCE': 'ÉCART',
   'Dine in': 'Sur place',
   'Dine In': 'Sur place',
+  'Does this order need to be split?': 'Cette commande doit-elle être payée séparément ?',
   'Edit product': 'Modifier le produit',
   'Ends (optional)': 'Fin (facultatif)',
   'English': 'English',
@@ -248,6 +249,7 @@ export const fr: Record<string, string> = {
   'No products match this category and search.':
     'Aucun produit ne correspond à cette catégorie et cette recherche.',
   'No recipe usage.': 'Aucune utilisation de recette.',
+  'No, one payment': 'Non, un seul paiement',
   'No saved activity in this period': 'Aucune activité enregistrée sur cette période',
   'No saved orders yet.': 'Aucune commande enregistrée.',
   'No sales in period': 'Aucune vente sur la période',
@@ -541,6 +543,7 @@ export const fr: Record<string, string> = {
   'WHOLE-SALE CORRECTION': 'ANNULATION DE COMMANDE',
   'Wrong PIN. Try again.': 'Code incorrect. Réessayez.',
   'Yesterday': 'Hier',
+  'Yes, split it': 'Oui, la séparer',
   'Your Olaso terminal is locked and ready for the next shift.':
     'Votre terminal Olaso est verrouillé et prêt pour le prochain service.',
   'local service ready': 'service local prêt',

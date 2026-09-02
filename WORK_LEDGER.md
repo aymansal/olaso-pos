@@ -129,6 +129,25 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 split-payment repair (2 Sep 2026): owner reported split receipts
+  printing every payment as Card and asked for an explicit bilingual split
+  question before payment. Root cause: `receiptModel.ts` coerced each
+  tender's method through the sale-level `paymentMethod` fallback, so a Cash
+  tender inside a Card-level sale printed Card with no Given/Change. Each
+  tender now keeps its own method; `check:printing` gained the previously
+  missing Card-level snapshot case (golden 800-byte receipt unchanged). Card
+  with a single payable unit now places the order directly from the POS
+  button; 2+ units open the payment dialog on the bilingual question
+  `Does this order need to be split?` with `No, one payment` /
+  `Yes, split it` (French translations added). The question reuses the
+  PaymentDialog chrome. Checks: `check:printing`, `check:pos`, `tsc -b`,
+  `check:css-scope`, `npm run build`, debug beta, Graphify (3,041 nodes,
+  6,013 edges). APK installed over SM-X115 `R8YX91AKWXJ` with
+  `adb install -r` (`Success`), data preserved. Exact next action: owner
+  physically verifies direct Card checkout, the split question in EN/FR, and
+  per-method receipt paper; commit/push this repair; PR-05 pending owner
+  authorization.
+
 - POLISH-01 sync repair + polish batch (2 Sep 2026): pulled a read-only copy
   of the tablet database and found today's six sales (`0926-0015`–`0020`)
   failed with `Cloud rejected this saved order.` — their snapshots carry the

@@ -428,6 +428,10 @@ export function PosScreen({
       await confirmPayment();
       return;
     }
+    if (session.paymentMethod === 'Card' && paidUnitCount(session.cart) <= 1) {
+      await confirmPayment();
+      return;
+    }
     setPaying(true);
   }
 
@@ -580,6 +584,7 @@ export function PosScreen({
           sizes={pricedSizes}
           choiceValues={pricedChoiceValues}
           canSplit={paidUnitCount(session.cart) > 1}
+          askSplit={paidUnitCount(session.cart) > 1}
           processing={session.checkoutStatus === 'processing'}
           onCancel={() => setPaying(false)}
           onConfirm={confirmPayment}

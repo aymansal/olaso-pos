@@ -254,6 +254,37 @@ Protocol and begin PR-05 only.
   the report print and product images; PR-05 remains pending owner
   authorization.
 
+### 2026-09-02 — POLISH-01: split receipt methods and split question
+
+- Owner-reported payment issues: split receipts printed every payment as
+  Card, and the split flow needed an explicit bilingual question before
+  payment instead of appearing only inside the payment dialog.
+- Receipt root cause: `receiptModel.ts` coerced each tender's method with
+  the sale-level `paymentMethod` fallback, so a Cash tender inside a sale
+  whose snapshot method was Card printed as Card with no cash Given/Change
+  rows. Each tender now keeps its own method; only a tender missing an
+  explicit method falls back to the sale-level value. The existing
+  mixed-tender check had only covered a Cash-level snapshot, which is why
+  this survived; `check:printing` now also covers a Card-level snapshot with
+  Cash+Card tenders asserting per-method rows and exactly one Given/Change
+  pair. The 800-byte golden receipt and its SHA are unchanged.
+- Flow: Card with a single payable unit now places the order directly from
+  the POS button (no payment dialog). With two or more payable units the
+  payment dialog opens on a bilingual question —
+  `Does this order need to be split?` /
+  `Cette commande doit-elle être payée séparément ?` — with
+  `No, one payment` / `Non, un seul paiement` continuing the ordinary
+  single-tender flow and `Yes, split it` / `Oui, la séparer` opening the
+  existing split editor. The question reuses the existing PaymentDialog
+  chrome and CSS Module rather than a new component.
+- Passed `npm run check:printing` (golden unchanged), `npm run check:pos`,
+  `npx tsc -b`, `npm run check:css-scope`, `npm run build`, and the debug
+  beta. Graphify refreshed (3,041 nodes, 6,013 edges). The rebuilt APK was
+  installed over SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`),
+  preserving data. Exact next action: owner physically verifies Card+single
+  product direct checkout, the split question (EN/FR), and per-method
+  receipt paper; PR-05 remains pending owner authorization.
+
 ## PR-01 — Exact compensation and expense correction dates
 
 **Status:** pending — first implementation card
