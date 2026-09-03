@@ -51,7 +51,7 @@ const model = createReceiptModel(snapshot, {
 });
 const text = renderReceiptText(model);
 const raw = encodeWd8260Receipt(model);
-const goldenSha256 = 'D8D3CA33889F1101F8624420F539F2BAC54A94008F39E67B025CD383870FD689';
+const goldenSha256 = 'F84EAA57B4B930D76A3410B56FE6128A1B3D2DF3F33CC33078B2CFE8567B847A';
 
 const outputIndex = process.argv.indexOf('--output');
 if (outputIndex >= 0) {
@@ -68,9 +68,11 @@ assert.match(text, /Cashier: Alex\s+Dine in \/ Table T4/);
 assert.match(text, /Café crème double\s+2\s+36\.00/);
 assert.match(text, /THANK YOU\.\nSee you soon/);
 assert.ok(text.indexOf('TOTAL') < text.indexOf('PAYMENT SUMMARY'));
-assert.match(text, /Cash received\s+100\.00/);
-assert.match(text, /Change returned\s+30\.50/);
-assert.match(text, /Total paid\s+69\.50/);
+assert.match(text, /CASH/);
+assert.match(text, /Cash received\s+\+100\.00/);
+assert.match(text, /Change given\s+-30\.50/);
+assert.match(text, /= Cash payment\s+69\.50/);
+assert.match(text, /TOTAL PAID\s+69\.50/);
 assert.doesNotMatch(text, /No tax/);
 assert.doesNotMatch(text, /Subtotal|Offert/);
 const offertText = renderReceiptText(createReceiptModel({
@@ -123,8 +125,8 @@ assert.deepEqual(
   encodeWd8260Receipt(createReceiptModel(savedSaleSnapshot)),
 );
 const savedSaleText = renderReceiptText(createReceiptModel(savedSaleSnapshot));
-assert.match(savedSaleText, /Carte réglée\s+69\.50/);
-assert.match(savedSaleText, /Total réglé\s+69\.50/);
+assert.match(savedSaleText, /Paiement carte\s+69\.50/);
+assert.match(savedSaleText, /TOTAL RÉGLÉ\s+69\.50/);
 
 const successfulOrder = [];
 const successfulAttempt = await attemptSaleReceiptPrint(
@@ -198,12 +200,13 @@ const splitSnapshot = {
 };
 const splitText = renderReceiptText(createReceiptModel(splitSnapshot));
 assert.match(splitText, /PAYMENT SUMMARY/);
-assert.match(splitText, /1\. Cash paid\s+36\.00/);
-assert.match(splitText, /2\. Cash paid\s+33\.50/);
-assert.equal((splitText.match(/Cash received\s+50\.00/g) || []).length, 2);
-assert.match(splitText, /Change returned\s+14\.00/);
-assert.match(splitText, /Change returned\s+16\.50/);
-assert.match(splitText, /Total paid\s+69\.50/);
+assert.match(splitText, /PAYMENT 1 - CASH/);
+assert.match(splitText, /PAYMENT 2 - CASH/);
+assert.equal((splitText.match(/Cash received\s+\+50\.00/g) || []).length, 2);
+assert.match(splitText, /Change given\s+-14\.00/);
+assert.match(splitText, /Change given\s+-16\.50/);
+assert.equal((splitText.match(/= Cash payment/g) || []).length, 2);
+assert.match(splitText, /TOTAL PAID\s+69\.50/);
 const splitBytes = createSavedReceiptBytes(splitSnapshot);
 assert.equal(
   Buffer.from(splitBytes).subarray(0, 10).equals(Buffer.from(raw.subarray(0, 10))),
@@ -212,7 +215,7 @@ assert.equal(
 assert.deepEqual([...splitBytes.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
 assert.match(
   renderReceiptText(createReceiptModel(JSON.parse(JSON.stringify(splitSnapshot)))),
-  /Change returned\s+14\.00/,
+  /Change given\s+-14\.00/,
 );
 const mixedText = renderReceiptText(createReceiptModel({
   ...snapshot,
@@ -221,13 +224,14 @@ const mixedText = renderReceiptText(createReceiptModel({
     { paymentMethod: 'Cash', dueCentimes: 3350, amountCentimes: 5000, changeCentimes: 1650 },
   ],
 }));
-assert.match(mixedText, /1\. Card paid\s+36\.00/);
-assert.match(mixedText, /2\. Cash paid\s+33\.50/);
+assert.match(mixedText, /PAYMENT 1 - CARD/);
+assert.match(mixedText, /Card payment\s+36\.00/);
+assert.match(mixedText, /PAYMENT 2 - CASH/);
 assert.equal((mixedText.match(/Cash received/g) ?? []).length, 1);
-assert.equal((mixedText.match(/Change returned/g) ?? []).length, 1);
-assert.ok(mixedText.indexOf('1. Card paid') < mixedText.indexOf('2. Cash paid'));
-assert.ok(mixedText.indexOf('2. Cash paid') < mixedText.indexOf('Cash received'));
-assert.ok(mixedText.indexOf('Cash received') < mixedText.indexOf('Change returned'));
+assert.equal((mixedText.match(/Change given/g) ?? []).length, 1);
+assert.ok(mixedText.indexOf('PAYMENT 1 - CARD') < mixedText.indexOf('PAYMENT 2 - CASH'));
+assert.ok(mixedText.indexOf('PAYMENT 2 - CASH') < mixedText.indexOf('Cash received'));
+assert.ok(mixedText.indexOf('Cash received') < mixedText.indexOf('Change given'));
 const cardSnapshotMixed = renderReceiptText(createReceiptModel({
   ...snapshot,
   paymentMethod: 'Card',
@@ -236,12 +240,30 @@ const cardSnapshotMixed = renderReceiptText(createReceiptModel({
     { paymentMethod: 'Card', dueCentimes: 3600, amountCentimes: 3600, changeCentimes: 0 },
   ],
 }));
-assert.match(cardSnapshotMixed, /1\. Cash paid\s+33\.50/);
-assert.match(cardSnapshotMixed, /Cash received\s+50\.00/);
-assert.match(cardSnapshotMixed, /Change returned\s+16\.50/);
-assert.match(cardSnapshotMixed, /2\. Card paid\s+36\.00/);
+assert.match(cardSnapshotMixed, /PAYMENT 1 - CASH/);
+assert.match(cardSnapshotMixed, /Cash received\s+\+50\.00/);
+assert.match(cardSnapshotMixed, /Change given\s+-16\.50/);
+assert.match(cardSnapshotMixed, /PAYMENT 2 - CARD/);
+assert.match(cardSnapshotMixed, /Card payment\s+36\.00/);
 assert.equal((cardSnapshotMixed.match(/Cash received/g) ?? []).length, 1);
-assert.equal((cardSnapshotMixed.match(/Change returned/g) ?? []).length, 1);
+assert.equal((cardSnapshotMixed.match(/Change given/g) ?? []).length, 1);
+
+const cardOnlyText = renderReceiptText(createReceiptModel({
+  ...snapshot,
+  paymentMethod: 'Card',
+  tenders: [{ paymentMethod: 'Card', dueCentimes: 6950, amountCentimes: 6950, changeCentimes: 0 }],
+}));
+assert.match(cardOnlyText, /CARD/);
+assert.match(cardOnlyText, /Card payment\s+69\.50/);
+assert.doesNotMatch(cardOnlyText, /Cash received|Change given/);
+
+const exactCashText = renderReceiptText(createReceiptModel({
+  ...snapshot,
+  tenders: [{ paymentMethod: 'Cash', dueCentimes: 6950, amountCentimes: 6950, changeCentimes: 0 }],
+}));
+assert.match(exactCashText, /CASH/);
+assert.match(exactCashText, /Cash payment\s+69\.50/);
+assert.doesNotMatch(exactCashText, /Cash received|Change given/);
 
 const dailyReport = {
   language: 'fr',

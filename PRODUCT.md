@@ -463,10 +463,14 @@ given and change. This is not a 50/50 tender split
 without product assignment, and unpaid products do not remain in the cart as a
 later sale.
 
-Every receipt shows the order total before a separate payment summary. Each
-card payment states the amount paid; each cash payment states the amount paid
-toward the order, cash received, and change returned. The summary ends with
-the total paid, so a mixed cash/card sale can be understood at a glance.
+Every receipt shows the order total before a separate payment summary. A Card
+payment shows its exact amount. A Cash payment with change shows the cashier's
+calculation directly on its own lines: cash received as `+`, change given as
+`-`, then `= Cash payment`; exact cash needs only its payment amount. Split
+payments retain the actual collection order as separate numbered Cash/Card
+sections and end with Total paid. The saved receipt records payment amounts,
+not a product-to-payment assignment, so it never claims that a particular
+item was paid by a particular tender.
 
 A cart line may be marked Offert for the physical ninth-drink stamp card: the
 drink is real, stock still deducts, and the charged price is 0 DH. The app does

@@ -142,20 +142,19 @@ These decisions are final for this batch and must not be reopened:
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
 | AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — `8e2b6bbeafc06d0884580df45fe44195586e89b5` on `origin/main` |
 | AUDIT-03 | Make the SplitRequired regression test prove the real request contract | pending — deferred by owner while receipt clarity is completed |
-| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | done — `5e76a9961f904b62c1f9fbc2e8020217c8183fc5` on `origin/main` |
+| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | in progress — approved calculation-layout follow-up |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** none — RECEIPT-01 complete; AUDIT-03 remains deferred
+**Active card:** RECEIPT-01 follow-up — approved payment-layout clarification; AUDIT-03 remains deferred
 
-**Active status:** waiting for the owner-directed whole-application bug audit
-and the owner's physical receipt check
+**Active status:** implementing the owner-approved cash/card calculation layout,
+then rebuilding the beta for the owner's physical receipt check
 
-**Last completed step:** rebuilt and installed the direct-card receipt repair
-from `4321e0ba8f078ac176e992f2644c0a1d6f2ce803` over the owner's existing
-tablet app with `adb install -r` (`Success`), without launching it or altering
-its data
+**Last completed step:** passed receipt, POS, TypeScript, production-build, and
+Graphify checks for the approved cash/card calculation layout; commit, push,
+beta rebuild, and owner paper check remain
 
 **Current facts:**
 
@@ -1357,6 +1356,35 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — RECEIPT-01 calculation-layout implementation checkpoint
+
+- The owner approved a more obvious on-paper layout for Cash, Card, and every
+  split sequence. The shared deterministic encoder now groups each tender as
+  Cash or Card; cash with change prints `Cash received +`, `Change given -`,
+  and `= Cash payment`, while Card prints its exact payment. Split receipts
+  retain their actual tender order as `PAYMENT 1 - ...`, `PAYMENT 2 - ...`.
+  Exact cash intentionally prints only Cash payment because received equals
+  kept. Product-to-tender claims remain absent because the immutable receipt
+  stores tender amounts, not an item assignment.
+- `scripts/check-printing.mjs` now covers cash with change, exact cash,
+  card-only, two cash tenders, and cash/card in both recorded orders. Its first
+  run correctly rejected the former golden byte hash after the approved layout
+  change; the expected hash was updated to
+  `F84EAA57B4B930D76A3410B56FE6128A1B3D2DF3F33CC33078B2CFE8567B847A`.
+  Android's official print framework emits a user-selected PDF document via a
+  `PrintDocumentAdapter`, which is not the existing raw ESC/POS path; official
+  Capacitor guidance supports retaining web-layer presentation with the
+  existing native boundary. Therefore this remains a transport-independent
+  TypeScript encoder change: no Android, Kotlin, Capacitor-plugin, dependency,
+  database, or live-data change is appropriate.
+- Passed `check:printing` (1,013 bytes, SHA
+  `F84EAA57B4B930D76A3410B56FE6128A1B3D2DF3F33CC33078B2CFE8567B847A`),
+  `check:pos`, `npx tsc -b`, and `npm run build`; the build kept only the
+  existing jeep-sqlite browser-compatibility warning. Graphify code-only
+  refresh completed with 3,065 nodes and 6,062 edges. Exact next action:
+  review the focused diff, commit/push, rebuild the beta, then leave real-paper
+  verification to the owner.
 
 ### 2026-09-03 — RECEIPT-01 direct-card receipt bug diagnosed and repaired
 

@@ -134,6 +134,17 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- RECEIPT-01 calculation-layout follow-up (3 Sep 2026): owner approved a
+  grouped receipt calculation: Cash received `+`, Change given `-`, and
+  `= Cash payment`, with a distinct Card payment and recorded-order headings
+  for split tenders. Source and focused scenarios are updated; the first
+  printing run correctly required a new golden byte hash. Passed
+  `check:printing` (1,013 bytes), `check:pos`, `tsc -b`, and `npm run build`;
+  Graphify refreshed to 3,065 nodes / 6,062 edges. Exact next action: review,
+  commit/push, then rebuild the beta for the owner to inspect on real paper.
+  No app, tablet, printer, PIN, seed, reset, or business data has been touched
+  in this follow-up.
+
 - RECEIPT-01 direct-card receipt bug (3 Sep 2026): owner reported that the
   installed paper still used the old payment wording. Root cause: direct Card
   checkout bypassed the payment dialog and saved no tender, so the encoder
