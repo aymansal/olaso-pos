@@ -270,6 +270,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-RECEIPT-01: commit and push the owner-approved clear split-payment receipt
-summary by following the Recovery Protocol and active-card contract in
+Owner-directed whole-application bug audit: identify only evidence-backed
+issues, then record and fix one approved issue at a time through the active
+card contract in
 [goals/GOAL-06-POLISH-RELIABILITY.md](goals/GOAL-06-POLISH-RELIABILITY.md).

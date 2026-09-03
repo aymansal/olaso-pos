@@ -142,17 +142,17 @@ These decisions are final for this batch and must not be reopened:
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
 | AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — `8e2b6bbeafc06d0884580df45fe44195586e89b5` on `origin/main` |
 | AUDIT-03 | Make the SplitRequired regression test prove the real request contract | pending — deferred by owner while receipt clarity is completed |
-| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | active |
+| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | done — `5e76a9961f904b62c1f9fbc2e8020217c8183fc5` on `origin/main` |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** `RECEIPT-01` — clarify receipt payment summary
+**Active card:** none — RECEIPT-01 complete; AUDIT-03 remains deferred
 
-**Active status:** implemented and verified; ready to commit
+**Active status:** waiting for the owner-directed whole-application bug audit
 
-**Last completed step:** receipt encoder and focused checks now prove the
-clear payment summary; the card is ready to commit.
+**Last completed step:** committed and pushed RECEIPT-01 payment-summary
+clarity repair
 
 **Current facts:**
 
@@ -194,8 +194,8 @@ clear payment summary; the card is ready to commit.
   `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
   `tsc -b`, `npm run build`, `git diff --check`). No `convex/` function
   changed in AUDIT-02, so no deployment was required. Graphify refreshed.
-- Exact next action: commit and push RECEIPT-01 only, record its full SHA,
-  then leave AUDIT-03 and PR-05 pending.
+- Exact next action: conduct the owner-directed whole-application bug audit;
+  keep AUDIT-03 deferred and PR-05 pending.
 
 ### 2026-09-03 — POLISH-01 mandatory bug repair: card split question behavior
 
@@ -1352,8 +1352,10 @@ Do not claim physical acceptance. The owner performs it.
   `tsc -b`, `npm run build`, and `git diff --check` pass; the build has only
   the existing jeep-sqlite browser-compatibility warning. No app, tablet, ADB,
   printer, PIN, seed, reset, or live data was touched.
-- Exact next action: stage only RECEIPT-01 files, commit and push, record the
-  full SHA, then leave AUDIT-03 and PR-05 pending.
+- Committed and pushed `5e76a9961f904b62c1f9fbc2e8020217c8183fc5`
+  (`RECEIPT-01: clarify payment summary`) directly to `origin/main`.
+  Exact next action: conduct the owner-directed whole-application bug audit;
+  keep AUDIT-03 deferred and PR-05 pending.
 
 ### 2026-09-03 — AUDIT-02 implemented and verified
 

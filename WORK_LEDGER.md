@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04, AUDIT-01, and AUDIT-02 done on `origin/main`; owner-approved RECEIPT-01 is ready to commit, then AUDIT-03 remains pending |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04, AUDIT-01, AUDIT-02, and RECEIPT-01 done on `origin/main`; AUDIT-03 remains deferred for the owner-directed bug audit |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -134,7 +134,7 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- RECEIPT-01 (3 Sep 2026): owner explicitly deferred the SplitRequired test
+- RECEIPT-01 complete (3 Sep 2026): owner explicitly deferred the SplitRequired test
   task and authorized clear receipt payment wording. The receipt now prints
   TOTAL before a separate payment summary: Card paid; Cash paid; Cash received;
   Change returned; and Total paid (with equivalent French labels). It preserves
@@ -146,8 +146,10 @@ remaining goal and card sequence.
   `git diff --check` pass; the new deterministic receipt is 941 bytes with SHA
   `D8D3CA33889F1101F8624420F539F2BAC54A94008F39E67B025CD383870FD689`.
   No app, tablet, printer, ADB, PIN, seed, reset, or business data was touched.
-  Exact next action: commit and push RECEIPT-01, record its full SHA, then
-  leave AUDIT-03 and PR-05 pending.
+  Committed and pushed `5e76a9961f904b62c1f9fbc2e8020217c8183fc5`
+  (`RECEIPT-01: clarify payment summary`) directly to `origin/main`.
+  Exact next action: conduct the owner-directed whole-application bug audit;
+  keep AUDIT-03 deferred and PR-05 pending.
 
 - POLISH-01 mandatory bug repair (3 Sep 2026): owner reported three card
   split-question defects after the compact rework — empty split lists on
