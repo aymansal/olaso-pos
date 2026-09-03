@@ -141,17 +141,18 @@ These decisions are final for this batch and must not be reopened:
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
 | AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — `8e2b6bbeafc06d0884580df45fe44195586e89b5` on `origin/main` |
-| AUDIT-03 | Make the SplitRequired regression test prove the real request contract | pending — active card |
+| AUDIT-03 | Make the SplitRequired regression test prove the real request contract | pending — deferred by owner while receipt clarity is completed |
+| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | active |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** `AUDIT-03` — strengthen the SplitRequired regression test
+**Active card:** `RECEIPT-01` — clarify receipt payment summary
 
-**Active status:** approved and ready to implement
+**Active status:** implemented and verified; ready to commit
 
-**Last completed step:** read-only post-completion review confirmed the runtime
-implementation and found one remaining weakness in its focused split test
+**Last completed step:** receipt encoder and focused checks now prove the
+clear payment summary; the card is ready to commit.
 
 **Current facts:**
 
@@ -193,8 +194,8 @@ implementation and found one remaining weakness in its focused split test
   `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
   `tsc -b`, `npm run build`, `git diff --check`). No `convex/` function
   changed in AUDIT-02, so no deployment was required. Graphify refreshed.
-- Exact next action: follow the Recovery Protocol, complete AUDIT-03 only, then
-  leave PR-05 pending.
+- Exact next action: commit and push RECEIPT-01 only, record its full SHA,
+  then leave AUDIT-03 and PR-05 pending.
 
 ### 2026-09-03 — POLISH-01 mandatory bug repair: card split question behavior
 
@@ -1328,6 +1329,31 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — RECEIPT-01 implemented and verified
+
+- Owner explicitly deferred AUDIT-03 and authorized this receipt-clarity repair.
+  Existing split-payment amounts and saved tender data remain unchanged.
+- Official Android printing guidance confirms the platform print framework is
+  for document-adapter jobs, while official Capacitor guidance keeps a web-first
+  presentation layer connected to existing native plugins. Olaso already has a
+  verified raw-ESC/POS Capacitor transport, so this is correctly a
+  transport-independent TypeScript encoder change: no Android, Kotlin,
+  Capacitor-plugin, dependency, database, or live-data change.
+- `receiptEncoder.ts` now prints the order TOTAL before a distinct payment
+  summary. Tenders say Card paid or Cash paid; cash additionally says Cash
+  received and Change returned; every tendered receipt ends Total paid. French
+  labels receive the equivalent wording. Legacy saved receipts retain their
+  payment-method row because their historical cash-received amount may not
+  exist.
+- `check-printing` now proves the total/payment-summary order, the cash labels,
+  the mixed Card-before-Cash sequence, every split cash change, and the new
+  deterministic 941-byte receipt SHA. `check:printing`, `check:pos`,
+  `tsc -b`, `npm run build`, and `git diff --check` pass; the build has only
+  the existing jeep-sqlite browser-compatibility warning. No app, tablet, ADB,
+  printer, PIN, seed, reset, or live data was touched.
+- Exact next action: stage only RECEIPT-01 files, commit and push, record the
+  full SHA, then leave AUDIT-03 and PR-05 pending.
 
 ### 2026-09-03 — AUDIT-02 implemented and verified
 

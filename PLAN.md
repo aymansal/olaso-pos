@@ -270,6 +270,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-AUDIT-03: repair the remaining `SplitRequired` regression-test gap by following
-the Recovery Protocol and active-card contract in
+RECEIPT-01: commit and push the owner-approved clear split-payment receipt
+summary by following the Recovery Protocol and active-card contract in
 [goals/GOAL-06-POLISH-RELIABILITY.md](goals/GOAL-06-POLISH-RELIABILITY.md).

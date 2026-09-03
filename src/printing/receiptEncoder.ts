@@ -124,8 +124,8 @@ function detailRows(label: string, value: string): PrinterRow[] {
 
 function receiptRows(model: ReceiptModel): PrinterRow[] {
   const labels = model.receiptLanguage === 'fr'
-    ? { payment: 'Paiement', cash: 'Espèces', card: 'Carte', subtotal: 'Sous-total', discount: 'Offert', total: 'TOTAL', given: 'Reçu', change: 'Monnaie', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
-    : { payment: 'Payment', cash: 'Cash', card: 'Card', subtotal: 'Subtotal', discount: 'Offert', total: 'TOTAL', given: 'Given', change: 'Change', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
+    ? { payment: 'Paiement', summary: 'RÉCAPITULATIF PAIEMENT', cash: 'Espèces', card: 'Carte', cashPaid: 'Espèces réglées', cardPaid: 'Carte réglée', cashReceived: 'Espèces reçues', changeReturned: 'Monnaie rendue', totalPaid: 'Total réglé', subtotal: 'Sous-total', discount: 'Offert', total: 'TOTAL', order: 'COMMANDE', cashier: 'Caissier', customer: 'Client', thanks: 'MERCI.' }
+    : { payment: 'Payment', summary: 'PAYMENT SUMMARY', cash: 'Cash', card: 'Card', cashPaid: 'Cash paid', cardPaid: 'Card paid', cashReceived: 'Cash received', changeReturned: 'Change returned', totalPaid: 'Total paid', subtotal: 'Subtotal', discount: 'Offert', total: 'TOTAL', order: 'ORDER', cashier: 'Cashier', customer: 'Customer', thanks: 'THANK YOU.' };
   const date = formatReceiptDate(model.completedAt);
   const order = `${labels.order} ${model.receiptNumber}`;
   const orderRow = columns(order, date);
@@ -147,20 +147,34 @@ function receiptRows(model: ReceiptModel): PrinterRow[] {
   }
 
   const payment = model.tenders?.length
-    ? model.tenders.flatMap((tender) => [
-        ...detailRows(tender.paymentMethod === 'Cash' ? labels.cash : labels.card, formatReceiptMoney(tender.dueCentimes)),
-        ...(tender.paymentMethod === 'Cash' ? [
-          ...detailRows(labels.given, formatReceiptMoney(tender.amountCentimes)),
-          ...detailRows(labels.change, formatReceiptMoney(tender.changeCentimes)),
-        ] : []),
-      ])
+    ? [
+        { text: labels.summary, align: 'center' as const, bold: true },
+        ...model.tenders.flatMap((tender) => [
+          ...detailRows(
+            tender.paymentMethod === 'Cash' ? labels.cashPaid : labels.cardPaid,
+            formatReceiptMoney(tender.dueCentimes),
+          ),
+          ...(tender.paymentMethod === 'Cash' ? [
+            ...detailRows(labels.cashReceived, formatReceiptMoney(tender.amountCentimes)),
+            ...detailRows(labels.changeReturned, formatReceiptMoney(tender.changeCentimes)),
+          ] : []),
+        ]),
+        ...detailRows(labels.totalPaid, formatReceiptMoney(model.totalCentimes)),
+      ]
     : [
+        { text: labels.summary, align: 'center' as const, bold: true },
         ...(model.paymentAmountCentimes === undefined
           ? detailRows(labels.payment, model.paymentMethod === 'Cash' ? labels.cash : model.paymentMethod === 'Card' ? labels.card : model.paymentMethod)
-          : detailRows(model.paymentMethod === 'Cash' ? labels.cash : model.paymentMethod === 'Card' ? labels.card : model.paymentMethod, formatReceiptMoney(model.paymentAmountCentimes))),
-        ...(model.changeCentimes === undefined
-          ? []
-          : detailRows(labels.change, formatReceiptMoney(model.changeCentimes))),
+          : [
+              ...detailRows(
+                model.paymentMethod === 'Cash' ? labels.cashReceived : labels.cardPaid,
+                formatReceiptMoney(model.paymentAmountCentimes),
+              ),
+              ...(model.paymentMethod === 'Cash' && model.changeCentimes !== undefined
+                ? detailRows(labels.changeReturned, formatReceiptMoney(model.changeCentimes))
+                : []),
+              ...detailRows(labels.totalPaid, formatReceiptMoney(model.totalCentimes)),
+            ]),
       ];
 
   return [
@@ -175,12 +189,13 @@ function receiptRows(model: ReceiptModel): PrinterRow[] {
           ...detailRows(labels.discount, `-${formatReceiptMoney(model.discountCentimes)}`),
         ]
       : []),
-    ...payment,
     {
       text: columns(labels.total, formatReceiptMoney(model.totalCentimes), WIDTH / 2) ?? labels.total,
       bold: true,
       doubleWidth: true,
     },
+    { text: '-'.repeat(WIDTH) },
+    ...payment,
     { text: '-'.repeat(WIDTH) },
     { text: labels.thanks, align: 'center', bold: true, doubleWidth: true },
     { text: model.receiptLanguage === 'fr' ? 'À bientôt' : 'See you soon', align: 'center' },

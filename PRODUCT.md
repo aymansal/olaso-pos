@@ -463,6 +463,11 @@ given and change. This is not a 50/50 tender split
 without product assignment, and unpaid products do not remain in the cart as a
 later sale.
 
+Every receipt shows the order total before a separate payment summary. Each
+card payment states the amount paid; each cash payment states the amount paid
+toward the order, cash received, and change returned. The summary ends with
+the total paid, so a mixed cash/card sale can be understood at a glance.
+
 A cart line may be marked Offert for the physical ninth-drink stamp card: the
 drink is real, stock still deducts, and the charged price is 0 DH. The app does
 not track stamps or customers. Other discounts remain unavailable.
