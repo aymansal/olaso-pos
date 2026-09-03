@@ -107,7 +107,9 @@ export function PaymentDialog({
 }: PaymentDialogProps) {
   const t = useT();
   const [split, setSplit] = useState(canSplit && startSplit === true);
-  const [splitFade, setSplitFade] = useState<'idle' | 'prepare' | 'run'>('idle');
+  const [splitFade, setSplitFade] = useState<'idle' | 'prepare' | 'run'>(
+    canSplit && startSplit === true ? 'run' : 'idle',
+  );
   const [remaining, setRemaining] = useState(() => payableCart(cart));
   const [pick, setPick] = useState<CartLine[]>([]);
   const [recorded, setRecorded] = useState<PaymentTender[]>([]);
@@ -209,7 +211,7 @@ export function PaymentDialog({
           </header>
 
           <div className={styles.body}>
-            {canSplit ? (
+            {canSplit && startSplit !== true ? (
               <button
                 type="button"
                 className={styles.split}

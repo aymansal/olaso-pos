@@ -134,6 +134,20 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- POLISH-01 mandatory bug repair (3 Sep 2026): owner reported three card
+  split-question defects after the compact rework — empty split lists on
+  "Yes, split it" (split-fade state never reached `'run'` on that entry path,
+  so `.shares` stayed at `opacity: 0`), "No, one payment" reopening the
+  single-tender dialog instead of processing immediately, and the in-dialog
+  Split button appearing inside the question-entered split popup. Root-fixed
+  in `PaymentDialog.tsx` (initial `splitFade='run'` when `startSplit`, Split
+  button only when `startSplit !== true`) and `PosScreen.tsx` (`onSingle`
+  calls `confirmPayment()` directly); `scripts/check-pos.mjs` gained three
+  pinning assertions. `check:pos`, `check:css-scope`, `tsc -b`,
+  `npm run build`, `git diff --check` all pass. Owner tablet acceptance is
+  pending. Exact next action: complete AUDIT-03 only, push it to
+  `origin/main`, and leave PR-05 pending.
+
 - AUDIT-03 planned from final read-only review (3 Sep 2026): the AUDIT-02
   runtime implementation matches Convex's ordered split contract, but its
   `SplitRequired` fake ignores every received pagination option and returns

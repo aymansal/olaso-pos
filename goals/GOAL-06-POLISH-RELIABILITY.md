@@ -196,6 +196,34 @@ implementation and found one remaining weakness in its focused split test
 - Exact next action: follow the Recovery Protocol, complete AUDIT-03 only, then
   leave PR-05 pending.
 
+### 2026-09-03 — POLISH-01 mandatory bug repair: card split question behavior
+
+- Owner-reported bug under the mandatory bug rule, which paused AUDIT-03:
+  after the compact card split question shipped, three behaviors were wrong.
+  1. Card + "Yes, split it" opened the split popup with invisible product
+     lists ("empty"). Root cause: `.shares` renders at `opacity: 0` unless the
+     split-fade state reaches `'run'`; the in-dialog Split button sets
+     `prepare → run`, but the `startSplit` entry path never did, so the lists
+     stayed invisible.
+  2. Card + "No, one payment" opened the ordinary single-tender dialog again
+     instead of processing the exact-amount card sale immediately.
+  3. The split popup entered from the question still showed the in-dialog
+     Split button, which toggled split off.
+- Repairs (three files, no new dependency, no production behavior beyond the
+  reported flow):
+  - `PaymentDialog.tsx`: initial `splitFade` is `'run'` when `startSplit` is
+    true, so the split lists are visible immediately; the Split button renders
+    only when `canSplit && startSplit !== true` (cash keeps its button).
+  - `PosScreen.tsx`: the question's `onSingle` now calls `confirmPayment()`
+    directly — the same path a single-unit card order already takes — so the
+    sale commits and the receipt prints without another popup.
+  - `scripts/check-pos.mjs`: three source-shape assertions pin all three
+    repairs.
+- Checks passed: `check:pos`, `check:css-scope`, `tsc -b`, `npm run build`,
+  `git diff --check`. No Convex function changed. Owner physical acceptance on
+  the tablet is pending (no ADB/install was performed by this repair).
+- Exact next action: AUDIT-03 remains the active card.
+
 ### 2026-09-02 — PR-04 committed and pushed
 
 - Committed and pushed `2e3c96e8205f33f621612f9191169f12ff265758`

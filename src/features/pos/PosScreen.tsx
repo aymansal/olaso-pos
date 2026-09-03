@@ -584,7 +584,7 @@ export function PosScreen({
           }}
           onSingle={() => {
             setSplitQuestion(false);
-            setPaying(true);
+            void confirmPayment();
           }}
         />
       ) : null}

@@ -224,6 +224,10 @@ assert.match(paymentDialog, /canSplit/);
 assert.match(paymentDialog, /Split/);
 assert.match(paymentDialog, /locked \|\| processing \? null/);
 assert.doesNotMatch(paymentDialog, /onClose=\{onCancel\}/);
+// Card "Yes, split it" entry: the split lists must be visible immediately and
+// the in-dialog Split button must not render (the question already chose split).
+assert.match(paymentDialog, /startSplit === true \? 'run' : 'idle'/);
+assert.match(paymentDialog, /canSplit && startSplit !== true \? \(/);
 const posScreen = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
 assert.match(posScreen, /PaymentDialog/);
 assert.match(posScreen, /total === 0/);
@@ -231,6 +235,12 @@ assert.match(posScreen, /setPaying\(true\)/);
 assert.match(posScreen, /paidUnitCount/);
 assert.match(posScreen, /tenders/);
 assert.doesNotMatch(posScreen, /ReceiptPreviewDialog|setReceiptPreview/);
+// Card "No, one payment" must process the sale immediately, not open the
+// single-tender dialog again.
+assert.match(
+  posScreen,
+  /onSingle=\{\(\) => \{\s*setSplitQuestion\(false\);\s*void confirmPayment\(\);/,
+);
 
 const card = readFileSync(
   'src/features/pos/components/OrderItemCard/OrderItemCard.tsx',
