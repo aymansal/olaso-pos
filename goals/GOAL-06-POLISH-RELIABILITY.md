@@ -152,7 +152,7 @@ These decisions are final for this batch and must not be reopened:
 **Active status:** waiting for the owner-directed whole-application bug audit
 
 **Last completed step:** committed and pushed RECEIPT-01 payment-summary
-clarity repair
+clarity repair; safe whole-application code audit found no new confirmed fault
 
 **Current facts:**
 
@@ -194,8 +194,9 @@ clarity repair
   `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
   `tsc -b`, `npm run build`, `git diff --check`). No `convex/` function
   changed in AUDIT-02, so no deployment was required. Graphify refreshed.
-- Exact next action: conduct the owner-directed whole-application bug audit;
-  keep AUDIT-03 deferred and PR-05 pending.
+- Exact next action: collect owner physical findings or a reproducible failure,
+  then add and repair only that confirmed issue; keep AUDIT-03 deferred and
+  PR-05 pending.
 
 ### 2026-09-03 — POLISH-01 mandatory bug repair: card split question behavior
 
@@ -1329,6 +1330,28 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — RECEIPT-01 follow-up and safe whole-application code audit
+
+- Follow-up commit `a70c462f8e77162a8875d8c5c0e4d615decfde35`
+  (`RECEIPT-01: number split payment rows`) is pushed on `origin/main`; it
+  numbers split tenders on paper while preserving the same tested 941-byte
+  single-cash fixture and all saved payment data.
+- Read-only Graphify-guided review and safe checks found no new confirmed
+  checkout, receipt, offline, stock/cost, staff-access, reconnect, Settings,
+  CSS-scope, or release-packaging defect. Passed: `check:printing`,
+  `check:printing-endurance`, `check:pos`, `check:local`, `check:offline`,
+  `check:navigation`, `check:local-management`, `check:local-catalog`,
+  `check:local-inventory-costs`, `check:local-staff`, `check:lock-switch`,
+  `check:product-configuration`, `check:android`, `check:identity`,
+  `check:reconnect`, `check:costs`, `check:settings`, `check:release`,
+  `check:css-scope`, `tsc -b`, `npm run build`, and `git diff --check`.
+- This is not a claim of bug-free physical operation: protected cloud checks
+  remain PIN/reset-gated and the owner alone performs tablet/printer testing.
+  No app, tablet, printer, ADB, PIN, seed, reset, or live data was touched.
+- Exact next action: collect owner physical findings or a reproducible failure,
+  then add and repair only that confirmed issue; keep AUDIT-03 deferred and
+  PR-05 pending.
 
 ### 2026-09-03 — RECEIPT-01 implemented and verified
 

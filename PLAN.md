@@ -270,7 +270,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-Owner-directed whole-application bug audit: identify only evidence-backed
-issues, then record and fix one approved issue at a time through the active
-card contract in
+Owner-directed whole-application bug follow-up: collect a physical finding or
+reproducible failure, then record and fix one confirmed issue at a time through
+the active-card contract in
 [goals/GOAL-06-POLISH-RELIABILITY.md](goals/GOAL-06-POLISH-RELIABILITY.md).

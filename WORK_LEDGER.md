@@ -153,6 +153,19 @@ remaining goal and card sequence.
   Exact next action: conduct the owner-directed whole-application bug audit;
   keep AUDIT-03 deferred and PR-05 pending.
 
+- Whole-application safe code audit (3 Sep 2026): follow-up
+  `a70c462f8e77162a8875d8c5c0e4d615decfde35`
+  (`RECEIPT-01: number split payment rows`) is pushed on `origin/main`; split
+  receipt rows are numbered without changing payment data. Graphify-guided
+  review plus checkout/printing, local/offline, inventory/costs, staff/lock,
+  reconnect, Settings, Android/release, TypeScript, build, and whitespace
+  checks found no new confirmed defect. This is not an assertion that physical
+  operation is bug-free: protected cloud checks remain PIN/reset-gated and the
+  owner performs tablet/printer acceptance. No live data or physical device was
+  touched. Exact next action: collect owner physical findings or a reproducible
+  failure, then repair only that confirmed issue; AUDIT-03 remains deferred and
+  PR-05 pending.
+
 - POLISH-01 mandatory bug repair (3 Sep 2026): owner reported three card
   split-question defects after the compact rework — empty split lists on
   "Yes, split it" (split-fade state never reached `'run'` on that entry path,
