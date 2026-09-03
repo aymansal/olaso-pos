@@ -140,7 +140,7 @@ These decisions are final for this batch and must not be reopened:
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
-| AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — SHA recorded in the checkpoint below |
+| AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — `8e2b6bbeafc06d0884580df45fe44195586e89b5` on `origin/main` |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
@@ -1282,6 +1282,17 @@ Do not claim physical acceptance. The owner performs it.
   changed, so no deployment was required. Graphify refreshed to 3,062 nodes,
   6,059 edges, and 189 communities. Exact next action: review the
   diff, stage only AUDIT-02 files, commit, push, and record the SHA.
+
+### 2026-09-03 — AUDIT-02 committed and pushed
+
+- Committed and pushed `8e2b6bbeafc06d0884580df45fe44195586e89b5`
+  (`AUDIT-02: finish all-report pagination safeguards`, 6 files) directly to
+  `origin/main` after `git diff --cached --check` passed. Verified
+  `main...origin/main` synchronized and the worktree clean apart from the
+  untracked owner `.commandcode/` directory.
+- AUDIT-02 is done. PR-05 remains pending for owner authorization, physical
+  acceptance, and final closeout. Exact next action: wait for owner
+  authorization, then begin PR-05 only.
 
 ### 2026-09-03 — AUDIT-02 planned from post-completion review
 
