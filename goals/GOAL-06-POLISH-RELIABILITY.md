@@ -1342,10 +1342,11 @@ Do not claim physical acceptance. The owner performs it.
   Capacitor-plugin, dependency, database, or live-data change.
 - `receiptEncoder.ts` now prints the order TOTAL before a distinct payment
   summary. Tenders say Card paid or Cash paid; cash additionally says Cash
-  received and Change returned; every tendered receipt ends Total paid. French
-  labels receive the equivalent wording. Legacy saved receipts retain their
-  payment-method row because their historical cash-received amount may not
-  exist.
+  received and Change returned; split tenders are numbered so each cash/change
+  pair stays visibly connected to its payment; every tendered receipt ends
+  Total paid. French labels receive the equivalent wording. Legacy saved
+  receipts retain their payment-method row because their historical
+  cash-received amount may not exist.
 - `check-printing` now proves the total/payment-summary order, the cash labels,
   the mixed Card-before-Cash sequence, every split cash change, and the new
   deterministic 941-byte receipt SHA. `check:printing`, `check:pos`,

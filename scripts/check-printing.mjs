@@ -199,8 +199,8 @@ const splitSnapshot = {
 };
 const splitText = renderReceiptText(createReceiptModel(splitSnapshot));
 assert.match(splitText, /PAYMENT SUMMARY/);
-assert.match(splitText, /Cash paid\s+36\.00/);
-assert.match(splitText, /Cash paid\s+33\.50/);
+assert.match(splitText, /1\. Cash paid\s+36\.00/);
+assert.match(splitText, /2\. Cash paid\s+33\.50/);
 assert.equal((splitText.match(/Cash received\s+50\.00/g) || []).length, 2);
 assert.match(splitText, /Change returned\s+14\.00/);
 assert.match(splitText, /Change returned\s+16\.50/);
@@ -222,12 +222,12 @@ const mixedText = renderReceiptText(createReceiptModel({
     { paymentMethod: 'Cash', dueCentimes: 3350, amountCentimes: 5000, changeCentimes: 1650 },
   ],
 }));
-assert.match(mixedText, /Card paid\s+36\.00/);
-assert.match(mixedText, /Cash paid\s+33\.50/);
+assert.match(mixedText, /1\. Card paid\s+36\.00/);
+assert.match(mixedText, /2\. Cash paid\s+33\.50/);
 assert.equal((mixedText.match(/Cash received/g) ?? []).length, 1);
 assert.equal((mixedText.match(/Change returned/g) ?? []).length, 1);
-assert.ok(mixedText.indexOf('Card paid') < mixedText.indexOf('Cash paid'));
-assert.ok(mixedText.indexOf('Cash paid') < mixedText.indexOf('Cash received'));
+assert.ok(mixedText.indexOf('1. Card paid') < mixedText.indexOf('2. Cash paid'));
+assert.ok(mixedText.indexOf('2. Cash paid') < mixedText.indexOf('Cash received'));
 assert.ok(mixedText.indexOf('Cash received') < mixedText.indexOf('Change returned'));
 const cardSnapshotMixed = renderReceiptText(createReceiptModel({
   ...snapshot,
@@ -237,10 +237,10 @@ const cardSnapshotMixed = renderReceiptText(createReceiptModel({
     { paymentMethod: 'Card', dueCentimes: 3600, amountCentimes: 3600, changeCentimes: 0 },
   ],
 }));
-assert.match(cardSnapshotMixed, /Cash paid\s+33\.50/);
+assert.match(cardSnapshotMixed, /1\. Cash paid\s+33\.50/);
 assert.match(cardSnapshotMixed, /Cash received\s+50\.00/);
 assert.match(cardSnapshotMixed, /Change returned\s+16\.50/);
-assert.match(cardSnapshotMixed, /Card paid\s+36\.00/);
+assert.match(cardSnapshotMixed, /2\. Card paid\s+36\.00/);
 assert.equal((cardSnapshotMixed.match(/Cash received/g) ?? []).length, 1);
 assert.equal((cardSnapshotMixed.match(/Change returned/g) ?? []).length, 1);
 

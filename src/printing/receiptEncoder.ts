@@ -149,9 +149,11 @@ function receiptRows(model: ReceiptModel): PrinterRow[] {
   const payment = model.tenders?.length
     ? [
         { text: labels.summary, align: 'center' as const, bold: true },
-        ...model.tenders.flatMap((tender) => [
+        ...model.tenders.flatMap((tender, index) => [
           ...detailRows(
-            tender.paymentMethod === 'Cash' ? labels.cashPaid : labels.cardPaid,
+            model.tenders!.length > 1
+              ? `${index + 1}. ${tender.paymentMethod === 'Cash' ? labels.cashPaid : labels.cardPaid}`
+              : tender.paymentMethod === 'Cash' ? labels.cashPaid : labels.cardPaid,
             formatReceiptMoney(tender.dueCentimes),
           ),
           ...(tender.paymentMethod === 'Cash' ? [

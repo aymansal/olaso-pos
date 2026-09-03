@@ -137,11 +137,13 @@ remaining goal and card sequence.
 - RECEIPT-01 complete (3 Sep 2026): owner explicitly deferred the SplitRequired test
   task and authorized clear receipt payment wording. The receipt now prints
   TOTAL before a separate payment summary: Card paid; Cash paid; Cash received;
-  Change returned; and Total paid (with equivalent French labels). It preserves
-  the exact saved tender amounts and the existing raw-ESC/POS transport; legacy
-  saved receipts retain their payment-method row when no historical amount was
-  recorded. Official Android/Capacitor research confirms this belongs entirely
-  in the existing TypeScript receipt encoder, not a native printing change.
+  Change returned; and Total paid (with equivalent French labels). Split
+  payments are numbered, so each cash/change pair stays with its own payment.
+  It preserves the exact saved tender amounts and the existing raw-ESC/POS
+  transport; legacy saved receipts retain their payment-method row when no
+  historical amount was recorded. Official Android/Capacitor research confirms
+  this belongs entirely in the existing TypeScript receipt encoder, not a
+  native printing change.
   `check:printing`, `check:pos`, `tsc -b`, `npm run build`, and
   `git diff --check` pass; the new deterministic receipt is 941 bytes with SHA
   `D8D3CA33889F1101F8624420F539F2BAC54A94008F39E67B025CD383870FD689`.
