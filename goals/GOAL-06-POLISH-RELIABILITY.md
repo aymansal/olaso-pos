@@ -142,19 +142,19 @@ These decisions are final for this batch and must not be reopened:
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
 | AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — `8e2b6bbeafc06d0884580df45fe44195586e89b5` on `origin/main` |
 | AUDIT-03 | Make the SplitRequired regression test prove the real request contract | pending — deferred by owner while receipt clarity is completed |
-| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | in progress — approved calculation-layout follow-up |
+| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | done — `c941dbcb55047e67ce65afacd5c9a66682585a09` on `origin/main` |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** RECEIPT-01 follow-up — approved payment-layout clarification; AUDIT-03 remains deferred
+**Active card:** none — RECEIPT-01 follow-up complete; AUDIT-03 remains deferred
 
-**Active status:** implementing the owner-approved cash/card calculation layout,
-then rebuilding the beta for the owner's physical receipt check
+**Active status:** waiting for the owner to inspect the newly installed receipt
+layout on real paper
 
-**Last completed step:** passed receipt, POS, TypeScript, production-build, and
-Graphify checks for the approved cash/card calculation layout; commit, push,
-beta rebuild, and owner paper check remain
+**Last completed step:** committed, pushed, rebuilt, and installed the approved
+cash/card calculation layout over the existing tablet app; owner paper check
+remains
 
 **Current facts:**
 
@@ -1356,6 +1356,24 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — RECEIPT-01 calculation-layout committed, pushed, and installed
+
+- Committed the approved source, documentation, focused checks, and first
+  checkpoint as `c941dbcb55047e67ce65afacd5c9a66682585a09`
+  (`RECEIPT-01: clarify tender calculations`) and pushed it directly to
+  `origin/main`.
+- Rebuilt the current beta with `npm run android:beta`: Android identity,
+  Capacitor sync, production web build, debug unit tasks, and APK assembly
+  passed. The only browser-build warning remains the pre-existing jeep-sqlite
+  compatibility warning. Connected Samsung SM-X115 `R8YX91AKWXJ` received
+  `android/app/build/outputs/apk/debug/app-debug.apk` using `adb install -r`
+  with `Success`; this preserved existing app data. The app was not launched;
+  no PIN, reset, seed, printer command, or live-data mutation occurred.
+- RECEIPT-01 is complete and AUDIT-03 stays deferred. Exact next action: owner
+  prints a cash-with-change, card-only, and mixed Card/Cash sale and checks the
+  calculation groups on paper; report only a concrete finding before another
+  code change.
 
 ### 2026-09-03 — RECEIPT-01 calculation-layout implementation checkpoint
 

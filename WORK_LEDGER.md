@@ -145,6 +145,13 @@ remaining goal and card sequence.
   No app, tablet, printer, PIN, seed, reset, or business data has been touched
   in this follow-up.
 
+  Committed/pushed `c941dbcb55047e67ce65afacd5c9a66682585a09`
+  (`RECEIPT-01: clarify tender calculations`) to `origin/main`. `npm run
+  android:beta` passed and the resulting debug APK installed over connected
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving app data;
+  the app was not launched. Owner paper check is now the exact next action:
+  cash-with-change, card-only, and mixed Card/Cash receipts.
+
 - RECEIPT-01 direct-card receipt bug (3 Sep 2026): owner reported that the
   installed paper still used the old payment wording. Root cause: direct Card
   checkout bypassed the payment dialog and saved no tender, so the encoder
