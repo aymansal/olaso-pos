@@ -134,6 +134,15 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- AUDIT-01 build installed (3 Sep 2026): rebuilt the debug beta from
+  synchronized `main` (AUDIT-01 included) and installed it over connected
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving data —
+  owner-requested post-card install (the AUDIT-01 card itself forbade ADB).
+  Exact next action: owner physically verifies Reports All (no crash),
+  offline All counts/payments, legacy month-only correction rejection,
+  Orders Offert option removal, plus the earlier split-report, report-print,
+  and product-image fixes; PR-05 remains pending owner authorization.
+
 - AUDIT-01 complete (2–3 Sep 2026): implemented the five audit repairs plus
   the mandatory Reports All crash guard root-fixed during the
   owner-authorized tablet diagnosis. Cloud All now uses legal page-by-page
