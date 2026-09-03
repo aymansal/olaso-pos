@@ -142,7 +142,12 @@ remaining goal and card sequence.
   Total paid without inventing unrecorded cash received/change. No data
   migration or Android/printer-transport change. `check:printing`,
   `check:pos`, `tsc -b`, `npm run build`, and `git diff --check` pass; rebuild,
-  install-over-update, and owner paper verification remain next.
+  install-over-update, and owner paper verification remain next. Committed and
+  pushed as `4321e0ba8f078ac176e992f2644c0a1d6f2ce803`
+  (`RECEIPT-01: save direct payment details`); rebuilt beta installed over
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`) preserving data.
+  No app launch, PIN, reset, seed, printer action, or live-data change
+  occurred. Owner paper verification is the exact next action.
 
 - Receipt beta installed for owner testing (3 Sep 2026): rebuilt synchronized
   `main` at `33373fdaea61c29f291d652f9a74ae1f9f05231f` with

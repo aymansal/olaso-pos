@@ -152,9 +152,10 @@ These decisions are final for this batch and must not be reopened:
 **Active status:** waiting for the owner-directed whole-application bug audit
 and the owner's physical receipt check
 
-**Last completed step:** rebuilt and installed the current RECEIPT-01 beta
-over the owner's existing tablet app with `adb install -r` (`Success`), without
-launching it or altering its data
+**Last completed step:** rebuilt and installed the direct-card receipt repair
+from `4321e0ba8f078ac176e992f2644c0a1d6f2ce803` over the owner's existing
+tablet app with `adb install -r` (`Success`), without launching it or altering
+its data
 
 **Current facts:**
 
@@ -196,9 +197,10 @@ launching it or altering its data
   `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
   `tsc -b`, `npm run build`, `git diff --check`). No `convex/` function
   changed in AUDIT-02, so no deployment was required. Graphify refreshed.
-- Exact next action: owner tests the newly installed receipt beta and reports
-  any physical finding or reproducible failure; then add and repair only that
-  confirmed issue. Keep AUDIT-03 deferred and PR-05 pending.
+- Exact next action: owner tests a fresh direct Card receipt and a mixed
+  Card/Cash receipt from the newly installed beta and reports any physical
+  finding or reproducible failure; then add and repair only that confirmed
+  issue. Keep AUDIT-03 deferred and PR-05 pending.
 
 ### 2026-09-03 — RECEIPT-01 mandatory bug repair: direct card receipt detail
 
@@ -215,9 +217,13 @@ launching it or altering its data
   dependency, PIN, seed, reset, or live-data change is involved.
 - Passed `check:printing`, `check:pos`, `tsc -b`, `npm run build`, and
   `git diff --check`; the only build warning remains the existing jeep-sqlite
-  browser-compatibility warning. Exact next action: refresh Graphify, commit,
-  push, rebuild and install the corrected beta over the existing tablet app,
-  then wait for owner paper verification.
+  browser-compatibility warning. Committed and pushed
+  `4321e0ba8f078ac176e992f2644c0a1d6f2ce803`
+  (`RECEIPT-01: save direct payment details`) on `origin/main`. The resulting
+  debug beta was installed over connected SM-X115 `R8YX91AKWXJ` using
+  `adb install -r` (`Success`), preserving existing app data. No app launch,
+  interaction, PIN, printer action, reset, seed, or live-data mutation
+  occurred. Exact next action: owner paper verification.
 
 ### 2026-09-03 — POLISH-01 mandatory bug repair: card split question behavior
 
@@ -1358,7 +1364,8 @@ Do not claim physical acceptance. The owner performs it.
   Card sale did not save a tender because it bypasses the payment dialog. That
   made the new encoder fall back to the old generic payment row. Fixed the
   shared checkout path and the legacy receipt display as described in the
-  State Pointer. Focused checks pass; corrected APK install is next.
+  State Pointer. Focused checks pass; the corrected APK is installed for owner
+  paper verification.
 
 ### 2026-09-03 — RECEIPT-01 beta installed for owner testing
 
