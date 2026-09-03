@@ -23,6 +23,7 @@ import {
   type PosProductSize,
 } from './components/ModifierSelectionDialog/ModifierSelectionDialog';
 import { PaymentDialog } from './components/PaymentDialog/PaymentDialog';
+import { SplitOrderQuestion } from './components/SplitOrderQuestion/SplitOrderQuestion';
 import type { Category } from './data/categories';
 import type { Product } from './data/products';
 import { productImage } from '../../lib/productImage';
@@ -175,6 +176,8 @@ export function PosScreen({
   } = usePosData();
   const [configuringProductId, setConfiguringProductId] = useState<string>();
   const [paying, setPaying] = useState(false);
+  const [payingSplit, setPayingSplit] = useState(false);
+  const [splitQuestion, setSplitQuestion] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
   const [visitedCategoryIds, setVisitedCategoryIds] = useState<string[]>(
     () => [session.selectedCategoryId],
@@ -432,6 +435,10 @@ export function PosScreen({
       await confirmPayment();
       return;
     }
+    if (session.paymentMethod === 'Card') {
+      setSplitQuestion(true);
+      return;
+    }
     setPaying(true);
   }
 
@@ -448,6 +455,7 @@ export function PosScreen({
         ...(tenders ? { tenders } : {}),
       });
       setPaying(false);
+      setPayingSplit(false);
       onSessionChange((current) => ({
         ...current,
         cart: [],
@@ -565,6 +573,21 @@ export function PosScreen({
           }}
         />
       ) : null}
+      {splitQuestion ? (
+        <SplitOrderQuestion
+          processing={session.checkoutStatus === 'processing'}
+          onCancel={() => setSplitQuestion(false)}
+          onSplit={() => {
+            setSplitQuestion(false);
+            setPayingSplit(true);
+            setPaying(true);
+          }}
+          onSingle={() => {
+            setSplitQuestion(false);
+            setPaying(true);
+          }}
+        />
+      ) : null}
       {paying ? (
         <PaymentDialog
           cart={session.cart}
@@ -584,9 +607,12 @@ export function PosScreen({
           sizes={pricedSizes}
           choiceValues={pricedChoiceValues}
           canSplit={paidUnitCount(session.cart) > 1}
-          askSplit={paidUnitCount(session.cart) > 1}
+          startSplit={payingSplit}
           processing={session.checkoutStatus === 'processing'}
-          onCancel={() => setPaying(false)}
+          onCancel={() => {
+            setPaying(false);
+            setPayingSplit(false);
+          }}
           onConfirm={confirmPayment}
         />
       ) : null}

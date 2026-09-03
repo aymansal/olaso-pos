@@ -36,7 +36,7 @@ type PaymentDialogProps = {
   sizes: readonly PricedSize[];
   choiceValues: readonly PricedChoiceValue[];
   canSplit: boolean;
-  askSplit?: boolean;
+  startSplit?: boolean;
   processing: boolean;
   onCancel: () => void;
   onConfirm: (tenders: PaymentTender[]) => Promise<void>;
@@ -100,14 +100,13 @@ export function PaymentDialog({
   sizes,
   choiceValues,
   canSplit,
-  askSplit,
+  startSplit,
   processing,
   onCancel,
   onConfirm,
 }: PaymentDialogProps) {
   const t = useT();
-  const [question, setQuestion] = useState(canSplit && askSplit === true);
-  const [split, setSplit] = useState(false);
+  const [split, setSplit] = useState(canSplit && startSplit === true);
   const [splitFade, setSplitFade] = useState<'idle' | 'prepare' | 'run'>('idle');
   const [remaining, setRemaining] = useState(() => payableCart(cart));
   const [pick, setPick] = useState<CartLine[]>([]);
@@ -210,10 +209,6 @@ export function PaymentDialog({
           </header>
 
           <div className={styles.body}>
-            {question ? (
-              <p className={styles.question}>{t('Does this order need to be split?')}</p>
-            ) : (
-            <>
             {canSplit ? (
               <button
                 type="button"
@@ -329,11 +324,9 @@ export function PaymentDialog({
             ) : (
               <p className={styles.cardNote}>{t('Card · exact amount')}</p>
             )}
-            </>
-            )}
           </div>
 
-          {question ? null : cash ? <dl className={styles.change}>
+          {cash ? <dl className={styles.change}>
             <div>
               <dt>{t('Given')}</dt>
               <dd>{received === undefined ? '—' : formatMoney(received)}</dd>
@@ -353,28 +346,6 @@ export function PaymentDialog({
           </dl> : null}
 
           <footer>
-            {question ? (
-              <>
-                <button
-                  type="button"
-                  className={styles.cancel}
-                  onClick={() => setQuestion(false)}
-                >
-                  {t('No, one payment')}
-                </button>
-                <button
-                  type="button"
-                  className={styles.confirm}
-                  onClick={() => {
-                    setQuestion(false);
-                    toggleSplit();
-                  }}
-                >
-                  {t('Yes, split it')}
-                </button>
-              </>
-            ) : (
-            <>
             {locked || processing ? null : (
               <button type="button" className={styles.cancel} onClick={onCancel}>
                 {t('Cancel')}
@@ -388,8 +359,6 @@ export function PaymentDialog({
             >
               {processing ? t('Saving…') : t(confirmLabel)}
             </button>
-            </>
-            )}
           </footer>
         </section>
       </div>

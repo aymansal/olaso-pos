@@ -134,6 +134,19 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Split question reworked (3 Sep 2026): owner feedback — the split question
+  must only appear for Card, and it was far too big inside the payment card.
+  Card with 2+ units now opens a compact 360px question dialog
+  (`SplitOrderQuestion`, app-styled) whose Yes opens the payment dialog
+  directly in split mode and No continues to the ordinary single-tender
+  dialog; Cash of any size goes straight to the normal payment popup with
+  its existing Split button; Card with one unit still places directly. The
+  question view was removed from `PaymentDialog` (replaced by a `startSplit`
+  prop), the unused question CSS was deleted, and the French strings remain.
+  Passed `tsc -b`, `check:css-scope`, `check:pos`, `npm run build`, and
+  `git diff --check`. Exact next action: commit this feedback fix, then
+  implement AUDIT-02 only; PR-05 remains pending.
+
 - AUDIT-02 planned (3 Sep 2026): read-only review found four gaps after
   AUDIT-01: the All collector ignores Convex `SplitRequired`, cleanup cannot
   stop later page/stock requests, a fixed 60-page ceiling contradicts true
