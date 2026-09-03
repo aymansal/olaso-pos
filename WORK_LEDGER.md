@@ -144,9 +144,12 @@ remaining goal and card sequence.
   button only when `startSplit !== true`) and `PosScreen.tsx` (`onSingle`
   calls `confirmPayment()` directly); `scripts/check-pos.mjs` gained three
   pinning assertions. `check:pos`, `check:css-scope`, `tsc -b`,
-  `npm run build`, `git diff --check` all pass. Owner tablet acceptance is
-  pending. Exact next action: complete AUDIT-03 only, push it to
-  `origin/main`, and leave PR-05 pending.
+  `npm run build`, `git diff --check` all pass. Pushed as `4615580` on
+  `origin/main`; the debug beta was rebuilt with the verified Java 21
+  toolchain (Gradle unit tests passed) and installed over connected SM-X115
+  `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving data. Owner
+  tablet acceptance of the three behaviors is pending. Exact next action:
+  complete AUDIT-03 only, push it to `origin/main`, and leave PR-05 pending.
 
 - AUDIT-03 planned from final read-only review (3 Sep 2026): the AUDIT-02
   runtime implementation matches Convex's ordered split contract, but its

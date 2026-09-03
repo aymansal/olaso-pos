@@ -220,8 +220,11 @@ implementation and found one remaining weakness in its focused split test
   - `scripts/check-pos.mjs`: three source-shape assertions pin all three
     repairs.
 - Checks passed: `check:pos`, `check:css-scope`, `tsc -b`, `npm run build`,
-  `git diff --check`. No Convex function changed. Owner physical acceptance on
-  the tablet is pending (no ADB/install was performed by this repair).
+  `git diff --check`. No Convex function changed.
+- Repair pushed as `4615580` on `origin/main`; the debug beta was rebuilt
+  (Java 21 toolchain, Gradle unit tests passed) and installed over connected
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving data.
+  Owner physical acceptance of the three behaviors is pending.
 - Exact next action: AUDIT-03 remains the active card.
 
 ### 2026-09-02 — PR-04 committed and pushed
