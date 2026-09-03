@@ -270,7 +270,6 @@ const dailyReport = {
   businessDate: '2026-09-02',
   printedAt: Date.parse('2026-09-02T18:30:00.000Z'),
   ownerName: 'Olaso Owner',
-  terminalName: 'Comptoir',
   orderCount: 2,
   itemCount: 4,
   subtotalCentimes: 8500,
@@ -305,6 +304,7 @@ assert.match(dailyText, /Carte \(1\)\s+40\.00 MAD/);
 assert.match(dailyText, /Espèces \(2\)\s+35\.00 MAD/);
 assert.match(dailyText, /À emporter\s+1/);
 assert.match(dailyText, /Résultat opérationnel\s+45\.00 MAD/);
+assert.doesNotMatch(dailyText, /Terminal|Comptoir/);
 assert(dailyText.split('\n').every((row) => row.length <= 48));
 assert.deepEqual([...dailyBytes.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
 assert.deepEqual(

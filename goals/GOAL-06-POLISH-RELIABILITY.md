@@ -142,19 +142,19 @@ These decisions are final for this batch and must not be reopened:
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
 | AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — `8e2b6bbeafc06d0884580df45fe44195586e89b5` on `origin/main` |
 | AUDIT-03 | Make the SplitRequired regression test prove the real request contract | pending — deferred by owner while receipt clarity is completed |
-| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | done — `c941dbcb55047e67ce65afacd5c9a66682585a09` on `origin/main` |
+| RECEIPT-01 | Make cash/card and split-payment receipt amounts immediately understandable | in progress — owner-approved daily-report cleanup and mixed-tender proof |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** none — RECEIPT-01 follow-up complete; AUDIT-03 remains deferred
+**Active card:** RECEIPT-01 follow-up — remove daily report terminal label and prove repeated mixed tenders; AUDIT-03 remains deferred
 
-**Active status:** waiting for the owner to inspect the newly installed receipt
-layout on real paper
+**Active status:** correcting the owner-reported daily-report label before one
+new beta build and install
 
-**Last completed step:** committed, pushed, rebuilt, and installed the approved
-cash/card calculation layout over the existing tablet app; owner paper check
-remains
+**Last completed step:** removed the unwanted daily-report terminal line and
+passed focused receipt/report aggregation checks for repeated mixed tenders;
+commit, push, rebuild, install, and owner paper check remain
 
 **Current facts:**
 
@@ -1356,6 +1356,21 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — RECEIPT-01 daily-report cleanup and mixed-tender proof
+
+- Owner reported unwanted terminal text on the printed daily report. Removed
+  the complete Terminal row from its report model, data composition, and
+  encoder; no terminal value is now available to print.
+- The existing shared report aggregation already sums every saved tender's
+  exact `dueCentimes` and counts each method once per sale. Added explicit
+  regressions for one Card plus two Cash tenders and one Cash plus two Card
+  tenders: each method total is the sum of its own tender dues, and each shows
+  one order for that sale. Cash received/change never enter report revenue.
+- Passed `check:printing`, `check:offline`, `npx tsc -b`, `npm run build`, and
+  `git diff --check`; Graphify code-only refresh completed with 3,067 nodes and
+  6,064 edges. Exact next action: commit/push, build/install one corrected beta,
+  then owner checks the printed daily report and receipt scenarios.
 
 ### 2026-09-03 — RECEIPT-01 calculation-layout committed, pushed, and installed
 

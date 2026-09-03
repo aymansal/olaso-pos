@@ -11,7 +11,6 @@ export type DailyOwnerReport = {
   businessDate: string;
   printedAt: number;
   ownerName: string;
-  terminalName: string;
   orderCount: number;
   itemCount: number;
   subtotalCentimes: number;
@@ -72,14 +71,14 @@ function money(value: number) {
 function reportRows(report: DailyOwnerReport): PrinterRow[] {
   const fr = report.language === 'fr';
   const l = fr ? {
-    title: 'RAPPORT QUOTIDIEN DU PROPRIÉTAIRE', date: 'Date', printed: 'Imprimé', owner: 'Propriétaire', terminal: 'Terminal',
+    title: 'RAPPORT QUOTIDIEN DU PROPRIÉTAIRE', date: 'Date', printed: 'Imprimé', owner: 'Propriétaire',
     sales: 'VENTES', orders: 'Commandes', items: 'Articles', subtotal: 'Sous-total', offert: 'Offert', net: 'Ventes nettes', average: 'Panier moyen',
     payments: 'PAIEMENTS', cash: 'Espèces', card: 'Carte', services: 'SERVICE', dineIn: 'Sur place', takeAway: 'À emporter', online: 'En ligne',
     cancellations: 'ANNULATIONS', none: 'Aucune', by: 'Par', products: 'PRODUITS',
     profit: 'RÉSULTAT', ingredients: 'Coût ingrédients', gross: 'Marge brute', wages: 'Salaires', expenses: 'Autres dépenses', operating: 'Résultat opérationnel', incomplete: 'Coûts incomplets',
     controls: 'STOCK ET CONTRÔLES', stockValue: 'Valeur du stock', lowStock: 'Stock faible', unsynced: 'Non synchronisé', printFailures: 'Échecs impression', end: 'FIN DU RAPPORT',
   } : {
-    title: 'OWNER DAILY REPORT', date: 'Date', printed: 'Printed', owner: 'Owner', terminal: 'Terminal',
+    title: 'OWNER DAILY REPORT', date: 'Date', printed: 'Printed', owner: 'Owner',
     sales: 'SALES', orders: 'Orders', items: 'Items', subtotal: 'Subtotal', offert: 'Offert', net: 'Net sales', average: 'Average order',
     payments: 'PAYMENTS', cash: 'Cash', card: 'Card', services: 'SERVICE', dineIn: 'Dine in', takeAway: 'Take away', online: 'Online',
     cancellations: 'CANCELLATIONS', none: 'None', by: 'By', products: 'PRODUCTS',
@@ -92,7 +91,7 @@ function reportRows(report: DailyOwnerReport): PrinterRow[] {
   const rows: PrinterRow[] = [
     { text: l.title, align: 'center', bold: true },
     ...pair(l.date, report.businessDate), ...pair(l.printed, printed),
-    ...pair(l.owner, report.ownerName), ...pair(l.terminal, report.terminalName),
+    ...pair(l.owner, report.ownerName),
     ...section(l.sales), ...pair(l.orders, String(report.orderCount)),
     ...pair(l.items, String(report.itemCount)), ...pair(l.subtotal, money(report.subtotalCentimes)),
     ...pair(l.offert, `-${money(report.offertCentimes)}`), ...pair(l.net, money(report.netCentimes)),

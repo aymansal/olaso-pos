@@ -236,6 +236,40 @@ assert.deepEqual(aggregate.paymentTotals, [{
   totalCentimes: 1000,
   orderCount: 1,
 }]);
+const repeatedMixedTenders = aggregateOfflineSales([{
+  ...rows[0],
+  id: 'sale-mixed-tenders',
+  receipt: {
+    ...rows[0].receipt,
+    paymentMethod: 'Cash',
+    tenders: [
+      { paymentMethod: 'Card', dueCentimes: 250, amountCentimes: 250, changeCentimes: 0 },
+      { paymentMethod: 'Cash', dueCentimes: 300, amountCentimes: 500, changeCentimes: 200 },
+      { paymentMethod: 'Cash', dueCentimes: 450, amountCentimes: 500, changeCentimes: 50 },
+    ],
+  },
+}], new Map());
+assert.deepEqual(repeatedMixedTenders.paymentTotals, [
+  { paymentMethod: 'Cash', totalCentimes: 750, orderCount: 1 },
+  { paymentMethod: 'Card', totalCentimes: 250, orderCount: 1 },
+]);
+const repeatedCardTenders = aggregateOfflineSales([{
+  ...rows[0],
+  id: 'sale-repeated-card-tenders',
+  receipt: {
+    ...rows[0].receipt,
+    paymentMethod: 'Card',
+    tenders: [
+      { paymentMethod: 'Cash', dueCentimes: 250, amountCentimes: 500, changeCentimes: 250 },
+      { paymentMethod: 'Card', dueCentimes: 300, amountCentimes: 300, changeCentimes: 0 },
+      { paymentMethod: 'Card', dueCentimes: 450, amountCentimes: 450, changeCentimes: 0 },
+    ],
+  },
+}], new Map());
+assert.deepEqual(repeatedCardTenders.paymentTotals, [
+  { paymentMethod: 'Card', totalCentimes: 750, orderCount: 1 },
+  { paymentMethod: 'Cash', totalCentimes: 250, orderCount: 1 },
+]);
 const volumeVsRevenue = aggregateOfflineSales([
   rows[0],
   {

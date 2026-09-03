@@ -134,6 +134,14 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- RECEIPT-01 report cleanup (3 Sep 2026): owner asked to remove the daily
+  report's Terminal text. The whole row is removed. Added exact report-total
+  checks for Card + Cash + Cash and Cash + Card + Card: repeated tenders of the
+  same method combine by their saved due amounts, while each method counts the
+  order once. Passed `check:printing`, `check:offline`, `tsc -b`, `build`, and
+  Graphify (3,067 nodes / 6,064 edges). Exact next action: commit/push, rebuild
+  and install the corrected beta, then owner prints and checks it.
+
 - RECEIPT-01 calculation-layout follow-up (3 Sep 2026): owner approved a
   grouped receipt calculation: Cash received `+`, Change given `-`, and
   `= Cash payment`, with a distinct Card payment and recorded-order headings

@@ -86,7 +86,6 @@ export async function createDailyOwnerReport(
     businessDate,
     printedAt,
     ownerName,
-    terminalName: settings.terminalName,
     orderCount: report.current.orderCount,
     itemCount: report.current.itemCount,
     subtotalCentimes,
