@@ -134,6 +134,17 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Receipt beta installed for owner testing (3 Sep 2026): rebuilt the current
+  synchronized `main` debug beta with `npm run android:beta` (Android identity,
+  Capacitor sync, web build, and APK build passed; only the existing
+  jeep-sqlite browser-compatibility warning appeared). Installed
+  `android/app/build/outputs/apk/debug/app-debug.apk` over connected Samsung
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving the
+  existing app data. No uninstall, clear, reset, seed, PIN, launch, app
+  interaction, printer action, or live-data change occurred. Owner physical
+  test pending: make a mixed Card/Cash receipt and report any finding; keep
+  AUDIT-03 deferred and PR-05 pending.
+
 - RECEIPT-01 complete (3 Sep 2026): owner explicitly deferred the SplitRequired test
   task and authorized clear receipt payment wording. The receipt now prints
   TOTAL before a separate payment summary: Card paid; Cash paid; Cash received;

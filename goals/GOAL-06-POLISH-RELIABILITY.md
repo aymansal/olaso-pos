@@ -150,9 +150,11 @@ These decisions are final for this batch and must not be reopened:
 **Active card:** none — RECEIPT-01 complete; AUDIT-03 remains deferred
 
 **Active status:** waiting for the owner-directed whole-application bug audit
+and the owner's physical receipt check
 
-**Last completed step:** committed and pushed RECEIPT-01 payment-summary
-clarity repair; safe whole-application code audit found no new confirmed fault
+**Last completed step:** rebuilt and installed the current RECEIPT-01 beta
+over the owner's existing tablet app with `adb install -r` (`Success`), without
+launching it or altering its data
 
 **Current facts:**
 
@@ -194,9 +196,9 @@ clarity repair; safe whole-application code audit found no new confirmed fault
   `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
   `tsc -b`, `npm run build`, `git diff --check`). No `convex/` function
   changed in AUDIT-02, so no deployment was required. Graphify refreshed.
-- Exact next action: collect owner physical findings or a reproducible failure,
-  then add and repair only that confirmed issue; keep AUDIT-03 deferred and
-  PR-05 pending.
+- Exact next action: owner tests the newly installed receipt beta and reports
+  any physical finding or reproducible failure; then add and repair only that
+  confirmed issue. Keep AUDIT-03 deferred and PR-05 pending.
 
 ### 2026-09-03 — POLISH-01 mandatory bug repair: card split question behavior
 
@@ -1330,6 +1332,22 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — RECEIPT-01 beta installed for owner testing
+
+- The current synchronized `main` beta was rebuilt with `npm run android:beta`.
+  Android identity checks, Capacitor sync, the production web build, and the
+  debug APK build completed successfully; the existing `jeep-sqlite` browser
+  compatibility warning remained the only build warning.
+- Connected physical tablet: Samsung SM-X115 `R8YX91AKWXJ`. Installed
+  `android/app/build/outputs/apk/debug/app-debug.apk` over the existing
+  `com.olaso.pos` installation with `adb install -r` and received `Success`.
+  `-r` preserves the existing application data; no uninstall, clear, reset,
+  seed, PIN, launch, app interaction, printer action, or live-data mutation
+  occurred.
+- Owner physical receipt verification is now pending. Exact next action:
+  owner tests a mixed Card/Cash receipt and reports any finding; AUDIT-03 stays
+  deferred and PR-05 stays pending.
 
 ### 2026-09-03 — RECEIPT-01 follow-up and safe whole-application code audit
 
