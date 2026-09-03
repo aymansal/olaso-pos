@@ -13,9 +13,9 @@ assert.equal(reportChartMonth('', '', '2026-09-02'), '2026-09');
 assert.match(formatPeriodLabel('2026-03-01', '2026-03-01', 'en'), /Mar/);
 assert.match(formatPeriodLabel('2026-03-01', '2026-03-01', 'fr'), /mars/);
 
-// AUDIT-01 A: cloud All collects legal pages and merges first, middle, and
-// final pages into complete totals before capping ranked display lists.
-const cloudDailyRows = Array.from({ length: 40 }, (_, index) => ({
+// AUDIT-02: cloud All collection over real multi-page pagination, with
+// split-required replacement, cancellation, and cursor-loop protection.
+const makeDailyRow = (index) => ({
   businessDate: new Date(Date.UTC(2026, 6, 1 + index)).toISOString().slice(0, 10),
   netCentimes: 1000 + index,
   orderCount: 1,
@@ -37,35 +37,143 @@ const cloudDailyRows = Array.from({ length: 40 }, (_, index) => ({
     ingredientId: `i${index % 3}`, ingredientName: `Ing ${index % 3}`,
     baseUnit: 'gram', quantity: 5,
   }],
-}));
-const cloudAll = await collectCloudAllReportPages(
-  async (paginationOpts) => {
-    const start = paginationOpts.cursor === null ? 0 : Number(paginationOpts.cursor);
-    const pageRows = cloudDailyRows.slice(start, start + paginationOpts.numItems);
-    return {
-      page: pageRows,
-      isDone: start + paginationOpts.numItems >= cloudDailyRows.length,
-      continueCursor: String(start + paginationOpts.numItems),
-    };
-  },
-  async () => [{ ingredientName: 'Ing 0', baseUnit: 'gram', currentStockQuantity: 7 }],
-  '2026-09-02',
-);
-assert.equal(cloudAll.range.from, '2026-07-01');
-assert.equal(cloudAll.range.to, '2026-09-02');
-assert.equal(cloudAll.current.netCentimes, cloudDailyRows.reduce((sum, row) => sum + row.netCentimes, 0));
-assert.equal(cloudAll.current.orderCount, 40);
-assert.equal(cloudAll.current.itemCount, 80);
-assert.equal(cloudAll.current.ingredientTypeCount, 3);
-assert.equal(cloudAll.current.productTotals.length, 20);
-assert.equal(cloudAll.current.productTotals[0].quantity, 4);
-const cloudCash = cloudAll.current.paymentTotals.find((row) => row.paymentMethod === 'Cash');
-const cloudCard = cloudAll.current.paymentTotals.find((row) => row.paymentMethod === 'Card');
-assert.equal(cloudCash.totalCentimes, cloudDailyRows.filter((row) => row.totalsByPaymentMethod[0].paymentMethod === 'Cash').reduce((sum, row) => sum + row.totalsByPaymentMethod[0].totalCentimes, 0));
-assert.equal(cloudCard.totalCentimes, cloudDailyRows.filter((row) => row.totalsByPaymentMethod[0].paymentMethod === 'Card').reduce((sum, row) => sum + row.totalsByPaymentMethod[0].totalCentimes, 0));
-assert.equal(cloudAll.current.ingredientTotals[0].currentStockQuantity, 7);
-assert.equal(cloudAll.daily.length, 0);
-assert.equal(cloudAll.previous.netCentimes, 0);
+});
+
+// 1. A fixture that genuinely needs three 60-row pages, asserting the exact
+// first, middle, and final request cursors plus the merged totals.
+{
+  const cloudDailyRows = Array.from({ length: 130 }, (_, index) => makeDailyRow(index));
+  const cursors = [];
+  const cloudAll = await collectCloudAllReportPages(
+    async (paginationOpts) => {
+      cursors.push(paginationOpts.cursor);
+      const start = paginationOpts.cursor === null ? 0 : Number(paginationOpts.cursor);
+      const pageRows = cloudDailyRows.slice(start, start + paginationOpts.numItems);
+      return {
+        page: pageRows,
+        isDone: start + paginationOpts.numItems >= cloudDailyRows.length,
+        continueCursor: String(Math.min(start + paginationOpts.numItems, cloudDailyRows.length)),
+      };
+    },
+    async () => [{ ingredientName: 'Ing 0', baseUnit: 'gram', currentStockQuantity: 7 }],
+    '2026-09-02',
+  );
+  assert.deepEqual(cursors, [null, '60', '120']);
+  assert.equal(cloudAll.range.from, '2026-07-01');
+  assert.equal(cloudAll.range.to, '2026-09-02');
+  assert.equal(cloudAll.current.netCentimes, cloudDailyRows.reduce((sum, row) => sum + row.netCentimes, 0));
+  assert.equal(cloudAll.current.orderCount, 130);
+  assert.equal(cloudAll.current.itemCount, 260);
+  assert.equal(cloudAll.current.ingredientTypeCount, 3);
+  assert.equal(cloudAll.current.productTotals.length, 20);
+  assert.equal(cloudAll.current.productTotals[0].quantity, 12);
+  const cloudCash = cloudAll.current.paymentTotals.find((row) => row.paymentMethod === 'Cash');
+  const cloudCard = cloudAll.current.paymentTotals.find((row) => row.paymentMethod === 'Card');
+  assert.equal(cloudCash.totalCentimes, cloudDailyRows.filter((row) => row.totalsByPaymentMethod[0].paymentMethod === 'Cash').reduce((sum, row) => sum + row.totalsByPaymentMethod[0].totalCentimes, 0));
+  assert.equal(cloudCard.totalCentimes, cloudDailyRows.filter((row) => row.totalsByPaymentMethod[0].paymentMethod === 'Card').reduce((sum, row) => sum + row.totalsByPaymentMethod[0].totalCentimes, 0));
+  assert.equal(cloudAll.current.ingredientTotals[0].currentStockQuantity, 7);
+  assert.equal(cloudAll.daily.length, 0);
+  assert.equal(cloudAll.previous.netCentimes, 0);
+}
+
+// 2. SplitRequired: the incomplete page contributes nothing and is replaced
+// by its two ordered halves covering every day exactly once.
+{
+  const cloudDailyRows = Array.from({ length: 100 }, (_, index) => makeDailyRow(index));
+  const responses = [
+    { page: cloudDailyRows.slice(0, 60), isDone: false, continueCursor: '60' },
+    {
+      page: cloudDailyRows.slice(60, 65),
+      isDone: true,
+      continueCursor: '100',
+      pageStatus: 'SplitRequired',
+      splitCursor: '75',
+    },
+    { page: cloudDailyRows.slice(60, 75), isDone: false, continueCursor: '75' },
+    { page: cloudDailyRows.slice(75, 100), isDone: true, continueCursor: '100' },
+  ];
+  const cursors = [];
+  let request = 0;
+  const cloudAll = await collectCloudAllReportPages(
+    async () => {
+      cursors.push(responses[request].page.length);
+      return responses[request++];
+    },
+    async () => [],
+    '2026-09-02',
+  );
+  assert.equal(request, 4);
+  assert.deepEqual(cursors, [60, 5, 15, 25]);
+  assert.equal(cloudAll.current.netCentimes, cloudDailyRows.reduce((sum, row) => sum + row.netCentimes, 0));
+  assert.equal(cloudAll.current.orderCount, 100);
+  assert.equal(new Set(cloudDailyRows.map((row) => row.businessDate)).size, 100);
+  assert.equal(cloudAll.current.itemCount, 200);
+  assert.equal(cloudAll.current.ingredientTypeCount, 3);
+}
+
+// 3. Cancellation after the first response stops every later request.
+{
+  const cloudDailyRows = Array.from({ length: 130 }, (_, index) => makeDailyRow(index));
+  const requests = { pages: 0, stock: 0 };
+  await assert.rejects(
+    collectCloudAllReportPages(
+      async (paginationOpts) => {
+        requests.pages += 1;
+        const start = paginationOpts.cursor === null ? 0 : Number(paginationOpts.cursor);
+        return {
+          page: cloudDailyRows.slice(start, start + paginationOpts.numItems),
+          isDone: start + paginationOpts.numItems >= cloudDailyRows.length,
+          continueCursor: String(Math.min(start + paginationOpts.numItems, cloudDailyRows.length)),
+        };
+      },
+      async () => {
+        requests.stock += 1;
+        return [];
+      },
+      '2026-09-02',
+      () => requests.pages >= 1,
+    ),
+    /cancelled/,
+  );
+  assert.equal(requests.pages, 1);
+  assert.equal(requests.stock, 0);
+}
+
+// 4. True all-time: 61 valid page requests complete with every row, and a
+// repeated continuation cursor fails immediately instead of looping.
+{
+  const cloudDailyRows = Array.from({ length: 61 }, (_, index) => makeDailyRow(index));
+  let requests = 0;
+  const sixtyOnePages = await collectCloudAllReportPages(
+    async (paginationOpts) => {
+      requests += 1;
+      const start = paginationOpts.cursor === null ? 0 : Number(paginationOpts.cursor);
+      return {
+        page: cloudDailyRows.slice(start, start + 1),
+        isDone: start + 1 >= cloudDailyRows.length,
+        continueCursor: String(start + 1),
+      };
+    },
+    async () => [],
+    '2026-09-02',
+  );
+  assert.equal(requests, 61);
+  assert.equal(sixtyOnePages.current.orderCount, 61);
+
+  let repeatedRequests = 0;
+  await assert.rejects(
+    collectCloudAllReportPages(
+      async () => {
+        repeatedRequests += 1;
+        return { page: cloudDailyRows.slice(0, 1), isDone: false, continueCursor: '60' };
+      },
+      async () => [],
+      '2026-09-02',
+    ),
+    /repeated a continuation cursor/,
+  );
+  assert.equal(repeatedRequests, 2);
+}
 
 // Mandatory bug repair: All mode with no loaded snapshot must not throw on
 // empty dates; profit stays numeric at zero until data arrives.

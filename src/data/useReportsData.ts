@@ -56,6 +56,7 @@ export function useReportsData(fromDate: string, toDate: string) {
               deviceId: session.deviceId,
             }),
             localBusinessDate(),
+            () => cancelled,
           )
           : convex.query(api.reports.getSummary, {
             fromDate,

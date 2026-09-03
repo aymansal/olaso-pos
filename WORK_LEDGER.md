@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04 and AUDIT-01 done on `origin/main`; AUDIT-02 is next; PR-05 follows |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04, AUDIT-01, and AUDIT-02 done on `origin/main`; PR-05 is next |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal

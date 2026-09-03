@@ -140,17 +140,18 @@ These decisions are final for this batch and must not be reopened:
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
-| AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | pending — next |
+| AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — SHA recorded in the checkpoint below |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** `AUDIT-02`
+**Active card:** none — wait for owner before `PR-05`
 
-**Active status:** owner authorized the follow-up repair plan; implementation has not started
+**Active status:** AUDIT-02 complete and pushed
 
-**Last completed step:** completed a read-only review of AUDIT-01 and its
-follow-up tablet-install checkpoint
+**Last completed step:** implemented the All-report pagination safeguards
+(split handling, cancellation, cursor-loop protection) and repaired the
+durable state pointers
 
 **Current facts:**
 
@@ -175,28 +176,25 @@ follow-up tablet-install checkpoint
   above): `buildPeriodProfit` no longer passes All's empty dates into
   `operatingCostsForRange` when no snapshot is loaded, root-fixing the
   reproduced blank-screen crash.
-- Focused coverage added: 40-row three-page cloud All collection and merge
-  assertions, 21-product offline All unit count with a 20-row ranked cap,
-  mixed-tender payment split with a legacy control, legacy month-only
-  correction rejection/permission with zero partial writes, and the crash
-  guard. All safe AUDIT-01 checks pass (`check:offline`,
-  `check:local-inventory-costs`, `check:printing` with the unchanged golden
-  SHA, `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
-  `tsc -b`, `npm run build`, `git diff --check`); the protected cloud
-  reports check remains gated on the absent owner test PIN and was not run.
-- Convex functions were deployed with `npx convex dev --once` (code only;
-  no seed, reset, or data change). Graphify refreshed to 3,061 nodes and
-  6,050 edges. DOX updates: `convex/AGENTS.md` pagination contract and
-  `data/AGENTS.md` All-mode contracts.
-- Follow-up review found four unclosed pagination/verification problems:
-  `SplitRequired` pages are not handled; cleanup does not stop later page and
-  stock requests; the arbitrary 60-page ceiling contradicts true All; and the
-  claimed 40-row three-page test actually completes in one 60-row request.
-- `PLAN.md` and the top Work Ledger card row also remained stale after
-  AUDIT-01 completion. AUDIT-02 owns those corrections.
-
-**Exact next action:** follow the Recovery Protocol and implement AUDIT-02
-only. Do not begin PR-05 or menu creation.
+- AUDIT-02 repairs: the All collector preserves Convex `pageStatus` /
+  `splitCursor` and `endCursor` pagination, replaces an incomplete
+  `SplitRequired` page with its two ordered halves (never aggregating the
+  incomplete rows), stops before every request when the Reports effect is
+  cancelled, and removes the 60-page ceiling in favor of cursor tracking
+  that rejects missing, unchanged, or repeated continuation cursors and
+  repeated split cursors. `useReportsData` passes its cleanup flag as the
+  cancellation predicate. The focused fixture now makes three real 60-row
+  page requests with exact cursor-sequence assertions and adds the
+  split-required, cancellation, 61-page, and repeated-cursor cases.
+- `PLAN.md` Exact next action and the top `WORK_LEDGER.md` Goal 06 card row
+  were repaired to PR-05.
+- All AUDIT-02 checks pass (`check:offline` with the new focused suite,
+  `check:local-inventory-costs`, `check:printing` golden unchanged,
+  `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
+  `tsc -b`, `npm run build`, `git diff --check`). No `convex/` function
+  changed in AUDIT-02, so no deployment was required. Graphify refreshed.
+- Exact next action: wait for owner authorization; then follow Recovery
+Protocol and begin PR-05 only.
 
 ### 2026-09-02 — PR-04 committed and pushed
 
@@ -1240,6 +1238,50 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — AUDIT-02 implemented and verified
+
+- Repair A: `src/data/cloudAllReport.ts` now preserves Convex `pageStatus`,
+  `splitCursor`, and `endCursor` pagination fields. A complete page is
+  aggregated once; a `SplitRequired` page is discarded and replaced by two
+  ordered half-interval requests (`cursor..splitCursor` with
+  `endCursor: splitCursor`, then `cursor: splitCursor` bounded by the
+  original `endCursor` or `continueCursor`), an interval is complete when
+  the query reports `isDone` or its cursor reaches that interval's
+  `endCursor`, an impossible split without a usable split cursor is
+  rejected, and an incomplete page never contributes rows.
+- Repair B: `collectCloudAllReportPages` takes a cancellation predicate;
+  `useReportsData` passes its cleanup flag. The collector checks
+  cancellation before the first request, before every page/split request,
+  and before the stock request; a cancelled run throws before any further
+  request and the existing `!cancelled` catch guard keeps the displayed
+  snapshot and shows no error.
+- Repair C: the 60-page ceiling was removed. Pagination continues until
+  Convex reports `isDone`, while a cursor set rejects a missing,
+  unchanged, or repeated continuation cursor and a repeated split cursor
+  with a clear bounded-pagination error.
+- Repair D: `check:offline` now makes three real 60-row requests for 130
+  daily rows with exact cursor-sequence assertions ([null, '60', '120']),
+  keeps the complete aggregate assertions, and adds the split-required
+  (incomplete page contributes nothing; two halves cover all 100 days
+  exactly once), cancellation (one page request, zero stock requests),
+  61-request all-time completion, and repeated-cursor rejection (fails on
+  the second identical request) cases.
+- Repair E: `PLAN.md` Exact next action now points to PR-05; the top
+  `WORK_LEDGER.md` Goal 06 card row records AUDIT-01 and AUDIT-02 as done
+  with PR-05 next. This Card Board and State Pointer were updated without
+  rewriting historical journal entries.
+- Separately, the owner's split-question feedback was completed first and
+  committed as its own POLISH-01 commit (`4a12312`): Card-only compact
+  question dialog, Cash straight to the payment popup, single-unit Card
+  direct placement.
+- All AUDIT-02 checks pass: `check:offline` (new suite),
+  `check:local-inventory-costs`, `check:printing` (golden unchanged),
+  `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
+  `npx tsc -b`, `npm run build`, `git diff --check`. No `convex/` function
+  changed, so no deployment was required. Graphify refreshed to 3,062 nodes,
+  6,059 edges, and 189 communities. Exact next action: review the
+  diff, stage only AUDIT-02 files, commit, push, and record the SHA.
 
 ### 2026-09-03 — AUDIT-02 planned from post-completion review
 

@@ -8,33 +8,81 @@ type AllSummaryStock = FunctionReturnType<typeof api.reports.getAllSummaryStock>
 type DailyRow = AllSummaryPage['page'][number];
 
 const MAX_DETAIL_ROWS = 20;
-const MAX_ALL_PAGES = 60;
+const PAGE_NUM_ITEMS = 60;
 
 export type CloudAllReportPage = {
   page: DailyRow[];
   isDone: boolean;
   continueCursor: string;
+  pageStatus?: 'PageReady' | 'SplitRequired' | 'SplitRecommended' | null;
+  splitCursor?: string | null;
 };
 
 export async function collectCloudAllReportPages(
   queryPage: (paginationOpts: PaginationOptions) => Promise<CloudAllReportPage>,
   queryStock: () => Promise<AllSummaryStock>,
   businessDate: string,
+  isCancelled: () => boolean = () => false,
 ): Promise<ReportsSnapshot> {
   const rows: DailyRow[] = [];
-  let cursor: string | null = null;
-  let isDone = false;
-  let pages = 0;
-  while (!isDone) {
-    pages += 1;
-    if (pages > MAX_ALL_PAGES) {
-      throw new Error('All-time report exceeded its bounded page count.');
+  const continuationCursors = new Set<string>();
+  const splitCursors = new Set<string>();
+  let requests = 0;
+
+  const throwIfCancelled = () => {
+    if (isCancelled()) {
+      throw new Error('All-time report loading was cancelled.');
     }
-    const page = await queryPage({ numItems: 60, cursor });
+  };
+
+  // Resolves one cursor interval, replacing incomplete SplitRequired pages
+  // with their two ordered halves so every row is aggregated exactly once.
+  // An interval is complete when the query reports isDone or its returned
+  // cursor reaches the interval's own endCursor.
+  async function collectInterval(paginationOpts: PaginationOptions): Promise<void> {
+    throwIfCancelled();
+    requests += 1;
+    const page = await queryPage(paginationOpts);
+    if (page.pageStatus === 'SplitRequired') {
+      if (!page.splitCursor || splitCursors.has(page.splitCursor)) {
+        throw new Error('All-time report page split did not return a usable split cursor.');
+      }
+      splitCursors.add(page.splitCursor);
+      await collectInterval({ ...paginationOpts, endCursor: page.splitCursor });
+      await collectInterval({
+        ...paginationOpts,
+        cursor: page.splitCursor,
+        endCursor: paginationOpts.endCursor ?? page.continueCursor,
+      });
+      if (page.isDone) return;
+      if (!page.continueCursor) {
+        throw new Error('All-time report pagination did not return a continuation cursor.');
+      }
+      if (continuationCursors.has(page.continueCursor)) {
+        throw new Error('All-time report pagination repeated a continuation cursor.');
+      }
+      continuationCursors.add(page.continueCursor);
+      await collectInterval({ ...paginationOpts, cursor: page.continueCursor });
+      return;
+    }
     rows.push(...page.page);
-    isDone = page.isDone;
-    cursor = page.continueCursor;
+    if (page.isDone) return;
+    if (!page.continueCursor) {
+      throw new Error('All-time report pagination did not return a continuation cursor.');
+    }
+    if (paginationOpts.endCursor !== undefined
+      && page.continueCursor === paginationOpts.endCursor) {
+      return;
+    }
+    if (continuationCursors.has(page.continueCursor)) {
+      throw new Error('All-time report pagination repeated a continuation cursor.');
+    }
+    continuationCursors.add(page.continueCursor);
+    await collectInterval({ ...paginationOpts, cursor: page.continueCursor });
   }
+
+  await collectInterval({ numItems: PAGE_NUM_ITEMS, cursor: null });
+  throwIfCancelled();
   const stock = await queryStock();
   return buildAllReportSnapshot(rows, stock, businessDate);
 }

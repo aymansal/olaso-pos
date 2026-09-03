@@ -270,7 +270,6 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-POLISH-01 / AUDIT-02: finish the All-report pagination, cancellation,
-verification, and durable-pointer repairs by following the Recovery Protocol
-and active-card contract in
+PR-05: run the full regression, documentation, clean main push, and owner
+handoff by following the Recovery Protocol and active-card contract in
 [goals/GOAL-06-POLISH-RELIABILITY.md](goals/GOAL-06-POLISH-RELIABILITY.md).
