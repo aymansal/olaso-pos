@@ -134,6 +134,15 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- AUDIT-02 + split-question build installed (3 Sep 2026): rebuilt the debug
+  beta from synchronized `main` (AUDIT-02 pagination safeguards and the
+  compact Card-only split question included) and installed it over connected
+  SM-X115 `R8YX91AKWXJ` with `adb install -r` (`Success`), preserving data —
+  owner-requested post-card install (the AUDIT-02 card itself forbade ADB).
+  Exact next action: owner physically tests the Card split question
+  (compact dialog, Yes/No), Cash going straight to the payment popup, and
+  Reports All loading without the crash; PR-05 remains pending.
+
 - Split question reworked (3 Sep 2026): owner feedback — the split question
   must only appear for Card, and it was far too big inside the payment card.
   Card with 2+ units now opens a compact 360px question dialog
