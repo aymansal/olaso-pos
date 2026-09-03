@@ -122,10 +122,9 @@ assert.deepEqual(
   savedSaleBytes,
   encodeWd8260Receipt(createReceiptModel(savedSaleSnapshot)),
 );
-assert.match(
-  Buffer.from(savedSaleBytes).toString('latin1'),
-  /Paiement\s+Carte/,
-);
+const savedSaleText = renderReceiptText(createReceiptModel(savedSaleSnapshot));
+assert.match(savedSaleText, /Carte réglée\s+69\.50/);
+assert.match(savedSaleText, /Total réglé\s+69\.50/);
 
 const successfulOrder = [];
 const successfulAttempt = await attemptSaleReceiptPrint(

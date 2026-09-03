@@ -234,6 +234,8 @@ assert.match(posScreen, /total === 0/);
 assert.match(posScreen, /setPaying\(true\)/);
 assert.match(posScreen, /paidUnitCount/);
 assert.match(posScreen, /tenders/);
+assert.match(posScreen, /const savedTenders = tenders \?\? \(total > 0 \? \[\{/);
+assert.match(posScreen, /paymentMethod: session\.paymentMethod,[\s\S]*dueCentimes: total,[\s\S]*amountCentimes: total,[\s\S]*changeCentimes: 0/);
 assert.doesNotMatch(posScreen, /ReceiptPreviewDialog|setReceiptPreview/);
 // Card "No, one payment" must process the sale immediately, not open the
 // single-tender dialog again.

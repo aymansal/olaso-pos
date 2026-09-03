@@ -447,12 +447,18 @@ export function PosScreen({
     setCheckoutError('');
     onSessionChange((current) => ({ ...current, checkoutStatus: 'processing' }));
     try {
+      const savedTenders = tenders ?? (total > 0 ? [{
+        paymentMethod: session.paymentMethod,
+        dueCentimes: total,
+        amountCentimes: total,
+        changeCentimes: 0,
+      }] : undefined);
       const result = await completeOrder({
         cart: session.cart,
         serviceType: localServiceType(session.serviceMode),
         paymentMethod: session.paymentMethod,
         receiptLanguage,
-        ...(tenders ? { tenders } : {}),
+        ...(savedTenders ? { tenders: savedTenders } : {}),
       });
       setPaying(false);
       setPayingSplit(false);

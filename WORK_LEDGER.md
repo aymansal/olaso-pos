@@ -134,6 +134,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- RECEIPT-01 direct-card receipt bug (3 Sep 2026): owner reported that the
+  installed paper still used the old payment wording. Root cause: direct Card
+  checkout bypassed the payment dialog and saved no tender, so the encoder
+  used its old no-tender payment row. Every new non-zero direct checkout now
+  saves one exact tender; old snapshots now show Cash paid or Card paid plus
+  Total paid without inventing unrecorded cash received/change. No data
+  migration or Android/printer-transport change. `check:printing`,
+  `check:pos`, `tsc -b`, `npm run build`, and `git diff --check` pass; rebuild,
+  install-over-update, and owner paper verification remain next.
+
 - Receipt beta installed for owner testing (3 Sep 2026): rebuilt synchronized
   `main` at `33373fdaea61c29f291d652f9a74ae1f9f05231f` with
   `npm run android:beta` (Android identity,

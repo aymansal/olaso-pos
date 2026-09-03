@@ -166,7 +166,15 @@ function receiptRows(model: ReceiptModel): PrinterRow[] {
     : [
         { text: labels.summary, align: 'center' as const, bold: true },
         ...(model.paymentAmountCentimes === undefined
-          ? detailRows(labels.payment, model.paymentMethod === 'Cash' ? labels.cash : model.paymentMethod === 'Card' ? labels.card : model.paymentMethod)
+          ? [
+              ...detailRows(
+                model.paymentMethod === 'Cash' ? labels.cashPaid : model.paymentMethod === 'Card' ? labels.cardPaid : labels.payment,
+                model.paymentMethod === 'Cash' || model.paymentMethod === 'Card'
+                  ? formatReceiptMoney(model.totalCentimes)
+                  : model.paymentMethod,
+              ),
+              ...detailRows(labels.totalPaid, formatReceiptMoney(model.totalCentimes)),
+            ]
           : [
               ...detailRows(
                 model.paymentMethod === 'Cash' ? labels.cashReceived : labels.cardPaid,

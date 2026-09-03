@@ -200,6 +200,25 @@ launching it or altering its data
   any physical finding or reproducible failure; then add and repair only that
   confirmed issue. Keep AUDIT-03 deferred and PR-05 pending.
 
+### 2026-09-03 — RECEIPT-01 mandatory bug repair: direct card receipt detail
+
+- Owner reported that the installed paper still had the old payment wording.
+  Root cause: direct Card checkout intentionally bypasses the payment dialog,
+  but `confirmPayment()` saved no tender for that path. The receipt encoder
+  therefore took its legacy no-tender branch and printed only the old payment
+  method instead of the new paid/total summary.
+- Repair: every non-zero direct checkout now saves one exact tender with the
+  selected method and the order total. The encoder also presents old no-tender
+  snapshots as Cash paid or Card paid plus Total paid; it does not invent Cash
+  received or change for historical receipts where those values were never
+  stored. No database migration, Android, Capacitor, printer transport,
+  dependency, PIN, seed, reset, or live-data change is involved.
+- Passed `check:printing`, `check:pos`, `tsc -b`, `npm run build`, and
+  `git diff --check`; the only build warning remains the existing jeep-sqlite
+  browser-compatibility warning. Exact next action: refresh Graphify, commit,
+  push, rebuild and install the corrected beta over the existing tablet app,
+  then wait for owner paper verification.
+
 ### 2026-09-03 — POLISH-01 mandatory bug repair: card split question behavior
 
 - Owner-reported bug under the mandatory bug rule, which paused AUDIT-03:
@@ -1332,6 +1351,14 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — RECEIPT-01 direct-card receipt bug diagnosed and repaired
+
+- The previously installed beta included the encoder wording, but a direct
+  Card sale did not save a tender because it bypasses the payment dialog. That
+  made the new encoder fall back to the old generic payment row. Fixed the
+  shared checkout path and the legacy receipt display as described in the
+  State Pointer. Focused checks pass; corrected APK install is next.
 
 ### 2026-09-03 — RECEIPT-01 beta installed for owner testing
 
