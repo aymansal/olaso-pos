@@ -134,8 +134,9 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
-- Receipt beta installed for owner testing (3 Sep 2026): rebuilt the current
-  synchronized `main` debug beta with `npm run android:beta` (Android identity,
+- Receipt beta installed for owner testing (3 Sep 2026): rebuilt synchronized
+  `main` at `33373fdaea61c29f291d652f9a74ae1f9f05231f` with
+  `npm run android:beta` (Android identity,
   Capacitor sync, web build, and APK build passed; only the existing
   jeep-sqlite browser-compatibility warning appeared). Installed
   `android/app/build/outputs/apk/debug/app-debug.apk` over connected Samsung

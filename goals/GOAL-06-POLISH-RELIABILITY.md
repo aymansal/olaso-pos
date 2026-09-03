@@ -1335,7 +1335,9 @@ Do not claim physical acceptance. The owner performs it.
 
 ### 2026-09-03 — RECEIPT-01 beta installed for owner testing
 
-- The current synchronized `main` beta was rebuilt with `npm run android:beta`.
+- The current synchronized `main` beta at
+  `33373fdaea61c29f291d652f9a74ae1f9f05231f` was rebuilt with
+  `npm run android:beta`.
   Android identity checks, Capacitor sync, the production web build, and the
   debug APK build completed successfully; the existing `jeep-sqlite` browser
   compatibility warning remained the only build warning.
