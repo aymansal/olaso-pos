@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04, AUDIT-01, and AUDIT-02 done on `origin/main`; PR-05 is next |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04, AUDIT-01, and AUDIT-02 done on `origin/main`; AUDIT-03 is next |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -133,6 +133,16 @@ remaining goal and card sequence.
   ingredients, proposed app mapping, and confirmations required before import.
 
 ## Current Checkpoint
+
+- AUDIT-03 planned from final read-only review (3 Sep 2026): the AUDIT-02
+  runtime implementation matches Convex's ordered split contract, but its
+  `SplitRequired` fake ignores every received pagination option and returns
+  hard-coded responses. The test therefore does not prove the exact cursors,
+  `endCursor` bounds, half order, or all totals required by the card. Added a
+  test-only AUDIT-03 contract to
+  `goals/GOAL-06-POLISH-RELIABILITY.md`; no application code, app, tablet,
+  printer, PIN, or business data was touched. Exact next action: complete
+  AUDIT-03 only, push it to `origin/main`, and leave PR-05 pending.
 
 - AUDIT-02 + split-question build installed (3 Sep 2026): rebuilt the debug
   beta from synchronized `main` (AUDIT-02 pagination safeguards and the

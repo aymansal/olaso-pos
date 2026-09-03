@@ -141,17 +141,17 @@ These decisions are final for this batch and must not be reopened:
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
 | AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | done — `8e2b6bbeafc06d0884580df45fe44195586e89b5` on `origin/main` |
+| AUDIT-03 | Make the SplitRequired regression test prove the real request contract | pending — active card |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** none — wait for owner before `PR-05`
+**Active card:** `AUDIT-03` — strengthen the SplitRequired regression test
 
-**Active status:** AUDIT-02 complete and pushed
+**Active status:** approved and ready to implement
 
-**Last completed step:** implemented the All-report pagination safeguards
-(split handling, cancellation, cursor-loop protection) and repaired the
-durable state pointers
+**Last completed step:** read-only post-completion review confirmed the runtime
+implementation and found one remaining weakness in its focused split test
 
 **Current facts:**
 
@@ -193,8 +193,8 @@ durable state pointers
   `check:pos`, `check:costs`, `check:navigation`, `check:css-scope`,
   `tsc -b`, `npm run build`, `git diff --check`). No `convex/` function
   changed in AUDIT-02, so no deployment was required. Graphify refreshed.
-- Exact next action: wait for owner authorization; then follow Recovery
-Protocol and begin PR-05 only.
+- Exact next action: follow the Recovery Protocol, complete AUDIT-03 only, then
+  leave PR-05 pending.
 
 ### 2026-09-02 — PR-04 committed and pushed
 
@@ -1145,6 +1145,65 @@ deploy code only with `npx convex dev --once` after local checks.
 8. Push immediately to `origin/main`, record the full SHA and remote location,
    and verify synchronized main before marking AUDIT-02 done.
 9. Leave PR-05 pending for owner authorization and physical acceptance.
+
+## AUDIT-03 — Prove the SplitRequired request contract
+
+**Status:** pending — active card
+
+### Objective
+
+Repair only the remaining verification gap found after AUDIT-02. The current
+runtime implementation matches Convex's ordered two-half split contract, but
+the focused fake ignores the pagination options and returns hard-coded
+responses. It can therefore pass even if future code sends the wrong cursor,
+wrong `endCursor`, or requests the halves in the wrong order.
+
+### Required implementation
+
+1. Change only the focused AUDIT-02 fixture in
+   `scripts/check-offline-views.mjs` unless the stronger test exposes a real
+   production defect.
+2. Record every `paginationOpts` received by the `SplitRequired` fake.
+3. Assert the exact four requests, in this exact order:
+   - root page: `cursor: null`, `numItems: 60`, no bounded `endCursor`;
+   - next page: `cursor: '60'`, `numItems: 60`, no bounded `endCursor`;
+   - first replacement half: `cursor: '60'`, `endCursor: '75'`,
+     `numItems: 60`;
+   - second replacement half: `cursor: '75'`, `endCursor: '100'`,
+     `numItems: 60`.
+4. Make the fake select or validate its response from the received pagination
+   options so a wrong request cannot accidentally receive the expected data.
+5. Keep the deliberately incomplete original page and prove that it contributes
+   nothing.
+6. Assert the completed result's exact sales, order, item/product, payment,
+   ingredient quantity/type, ingredient-cost, and incomplete-cost totals.
+7. Do not change report behavior, UI, payment behavior, Convex functions, or
+   any other production source merely to satisfy the test. If the stronger
+   fixture exposes a real runtime defect, stop, document the evidence in this
+   ledger, and do not widen the fix without owner approval.
+
+### Minimum verification
+
+- `npm run check:offline`
+- `npx tsc -b`
+- `npm run build`
+- `git diff --check`
+
+Do not launch the app, use ADB, install an APK, print, request a PIN, run a
+protected check, seed/reset data, or deploy Convex. Preserve `.commandcode/`.
+
+### Completion gate
+
+1. Re-query Graphify; refresh it only if structural source changed.
+2. Update this Card Board, State Pointer, checkpoint journal, `PLAN.md`, and
+   `WORK_LEDGER.md` with factual evidence.
+3. Stage only the AUDIT-03 test and ledger files; never stage `.commandcode/`.
+4. Run `git diff --cached --check`.
+5. Commit directly on `main` with
+   `AUDIT-03: prove split pagination requests`.
+6. Push immediately to `origin/main`, record the full SHA, and verify that
+   `main` matches `origin/main` before marking AUDIT-03 done.
+7. Leave PR-05 pending for owner authorization and physical acceptance.
 
 ## PR-05 — Regression and owner handoff
 
