@@ -142,6 +142,10 @@ remaining goal and card sequence.
   Graphify (3,067 nodes / 6,064 edges). Exact next action: commit/push, rebuild
   and install the corrected beta, then owner prints and checks it.
 
+  Committed/pushed `1a84a3a054d4d6202bea56e75ddbeddd590d5f03` and installed
+  the rebuilt beta over SM-X115 with `adb install -r` (`Success`), preserving
+  data. Owner tests the report with no Terminal row and both three-tender mixes.
+
 - RECEIPT-01 calculation-layout follow-up (3 Sep 2026): owner approved a
   grouped receipt calculation: Cash received `+`, Change given `-`, and
   `= Cash payment`, with a distinct Card payment and recorded-order headings
