@@ -140,16 +140,17 @@ These decisions are final for this batch and must not be reopened:
 | PR-03 | Select the correct graph month and localize every visible application date | done — `e9cc667e94505237ba04cab56d4e84468cdbe8f4` on `origin/main` |
 | PR-04 | Expose all Costs records and include newer pending local sales in online Dashboard | done — `2e3c96e8205f33f621612f9191169f12ff265758` on `origin/main` |
 | AUDIT-01 | Repair five confirmed post-implementation correctness findings | done — `bca6d773eaa89147ce556cca09d61aa10414609c` on `origin/main` |
+| AUDIT-02 | Close All-report pagination, cancellation, verification, and ledger gaps | pending — next |
 | PR-05 | Full regression, documentation, clean main push, and owner handoff | pending |
 
 ## State Pointer
 
-**Active card:** none — wait for owner before `PR-05`
+**Active card:** `AUDIT-02`
 
-**Active status:** AUDIT-01 complete and pushed
+**Active status:** owner authorized the follow-up repair plan; implementation has not started
 
-**Last completed step:** implemented the five AUDIT-01 repairs plus the
-mandatory Reports All crash guard
+**Last completed step:** completed a read-only review of AUDIT-01 and its
+follow-up tablet-install checkpoint
 
 **Current facts:**
 
@@ -187,9 +188,15 @@ mandatory Reports All crash guard
   no seed, reset, or data change). Graphify refreshed to 3,061 nodes and
   6,050 edges. DOX updates: `convex/AGENTS.md` pagination contract and
   `data/AGENTS.md` All-mode contracts.
+- Follow-up review found four unclosed pagination/verification problems:
+  `SplitRequired` pages are not handled; cleanup does not stop later page and
+  stock requests; the arbitrary 60-page ceiling contradicts true All; and the
+  claimed 40-row three-page test actually completes in one 60-row request.
+- `PLAN.md` and the top Work Ledger card row also remained stale after
+  AUDIT-01 completion. AUDIT-02 owns those corrections.
 
-**Exact next action:** wait for owner authorization; then follow Recovery
-Protocol and begin PR-05 only.
+**Exact next action:** follow the Recovery Protocol and implement AUDIT-02
+only. Do not begin PR-05 or menu creation.
 
 ### 2026-09-02 — PR-04 committed and pushed
 
@@ -974,6 +981,173 @@ repository contract; deploy code only and never seed, reset, or expose secrets.
    and verify synchronized main before changing AUDIT-01 to done.
 8. Leave PR-05 pending for the owner's physical acceptance and final closeout.
 
+## AUDIT-02 — Close All-report pagination and verification gaps
+
+**Status:** pending — active card
+
+### Objective
+
+Finish the AUDIT-01 All-report boundary correctly: never omit a Convex page,
+stop issuing new requests when Reports is hidden or superseded, remove the
+arbitrary history ceiling so All is genuinely all-time, make the focused test
+exercise those cases, and repair the stale plan pointers. Preserve all five
+working AUDIT-01 business fixes.
+
+### A. Handle Convex `SplitRequired` without missing or duplicating days
+
+Current failure:
+
+- `CloudAllReportPage` drops `pageStatus` and `splitCursor`.
+- When Convex cannot return a complete page it may return
+  `pageStatus: 'SplitRequired'`. The current collector appends that incomplete
+  page and advances to `continueCursor`, which can omit daily accounting rows.
+
+Required implementation:
+
+1. Extend the local page result type to preserve Convex's optional
+   `pageStatus` and `splitCursor` fields and accept `endCursor` in page
+   requests.
+2. Reuse the installed Convex client's split semantics; add no dependency.
+3. For a normal complete page, aggregate it once and continue from its returned
+   cursor.
+4. For `SplitRequired`, do not aggregate the incomplete original page. Resolve
+   the original interval as two ordered requests:
+   - first half: the original start cursor through `splitCursor` using
+     `endCursor: splitCursor`;
+   - second half: `cursor: splitCursor` through the original
+     `continueCursor` using that value as `endCursor`.
+5. Preserve first-half then second-half order, aggregate every resolved row
+   exactly once, and only then continue beyond the original interval.
+6. Reject an impossible required split with no usable split cursor. Never
+   silently accept an incomplete page.
+
+Acceptance:
+
+- A deterministic fake first returns `SplitRequired` with an intentionally
+  incomplete page. The collector replaces it with the two split intervals.
+- The result contains every expected day exactly once, in order, with exact
+  sales, order, product, payment, ingredient, and cost totals.
+- The incomplete original page contributes nothing.
+
+### B. Stop future requests after cleanup or replacement
+
+Current failure: the React effect sets its local `cancelled` flag, but the
+collector cannot see it. After the user changes period, leaves Reports, locks,
+or backgrounds the activity, the collector can still issue every remaining
+page request and the final stock request.
+
+Required implementation:
+
+1. Pass the collector a small cancellation predicate or equivalent native
+   `AbortSignal`; do not add a package.
+2. Check cancellation before the first request, before every subsequent page
+   or split request, and before the stock request.
+3. A request already in flight may finish, but no new request may start after
+   cleanup.
+4. Cancellation must not replace a newer result, show an error, or clear the
+   currently displayed safe snapshot.
+
+Acceptance:
+
+- A deterministic collector test cancels after the first response and proves
+  no second page and no stock request occurs.
+- Existing range-change stale-content behavior remains unchanged.
+
+### C. Make All truly all-time without an infinite-loop risk
+
+Current failure: `MAX_ALL_PAGES = 60` throws once valid history needs a
+sixty-first request. Convex can also return fewer than 60 documents when page
+splitting is needed, so this is not a reliable time span.
+
+Required implementation:
+
+1. Remove the fixed page-count ceiling.
+2. Continue valid pagination until Convex returns `isDone`.
+3. Prevent infinite loops by tracking completed request intervals/cursors and
+   rejecting a missing, unchanged, or repeated continuation cursor whenever
+   more data is claimed.
+4. Keep page reads bounded; do not replace pagination with `.collect()` or an
+   unbounded raw-sales request.
+
+Acceptance:
+
+- A lightweight fake requiring at least 61 valid page requests completes and
+  includes every row.
+- A fake that repeats a continuation cursor fails immediately with a clear
+  bounded-pagination error rather than looping.
+
+### D. Replace the false one-page test with real cursor coverage
+
+Current failure: `check-offline-views.mjs` builds 40 rows while the collector
+requests 60 rows, so the test performs one request even though the ledger calls
+it a three-page test.
+
+Required implementation:
+
+1. Make the basic collection fixture require at least three normal pages.
+2. Record every received cursor and assert the exact first, middle, and final
+   request sequence plus request count.
+3. Keep the existing complete aggregate assertions.
+4. Add the split-required, cancellation, 61-page, and repeated-cursor cases
+   from A through C to this same focused check unless an existing smaller check
+   already owns them.
+
+### E. Repair durable state pointers
+
+After the code and checks pass:
+
+- Change `PLAN.md` Exact next action from AUDIT-01 to PR-05.
+- Change the top `WORK_LEDGER.md` Goal 06 card row so AUDIT-01 and AUDIT-02 are
+  complete and PR-05 is next.
+- Update this Card Board and State Pointer, and append factual checkpoint
+  entries. Do not rewrite historical journal entries.
+
+### Non-goals and safeguards
+
+- Do not change the five working AUDIT-01 business repairs.
+- Do not change report layout, graph behavior, receipt formatting, profit
+  policy, payment semantics, Orders restoration, or live menu data.
+- Do not add a dependency or a second reporting architecture.
+- Do not launch the app, use ADB, install another APK, print, request a PIN,
+  seed, reset, or alter live business data. Owner physical acceptance remains
+  PR-05 work.
+- Preserve `.commandcode/` and every unrelated owner change.
+
+### Minimum verification
+
+- focused real three-page collection test
+- focused `SplitRequired` replacement test
+- focused cancellation test
+- focused 61-page completion and repeated-cursor rejection tests
+- `npm run check:offline`
+- `npm run check:local-inventory-costs`
+- `npm run check:printing`
+- `npm run check:pos`
+- `npm run check:costs`
+- `npm run check:navigation`
+- `npm run check:css-scope`
+- `npx tsc -b`
+- `npm run build`
+- `git diff --check`
+
+Do not run protected PIN/reset/seed checks. No Convex deployment is required
+unless a deployed `convex/` function changes; if one does, follow its DOX and
+deploy code only with `npx convex dev --once` after local checks.
+
+### Completion gate
+
+1. Re-query Graphify and refresh it if structural source changed.
+2. Update applicable DOX only if a durable subtree contract changed.
+3. Update this State Pointer and Checkpoint Ledger after each meaningful step.
+4. Update `WORK_LEDGER.md` and `PLAN.md` as specified above.
+5. Stage only AUDIT-02 files; never stage `.commandcode/`.
+6. Run `git diff --cached --check`.
+7. Commit directly on `main` with
+   `AUDIT-02: finish all-report pagination safeguards`.
+8. Push immediately to `origin/main`, record the full SHA and remote location,
+   and verify synchronized main before marking AUDIT-02 done.
+9. Leave PR-05 pending for owner authorization and physical acceptance.
+
 ## PR-05 — Regression and owner handoff
 
 **Status:** pending
@@ -986,8 +1160,8 @@ synchronized, and hand physical acceptance to the owner.
 ### Required review
 
 1. Re-read the full instruction chain and this ledger.
-2. Confirm the eight original approved repairs and all five AUDIT-01 repairs
-   are present.
+2. Confirm the eight original approved repairs, all five AUDIT-01 repairs, and
+   all AUDIT-02 pagination safeguards are present.
 3. Confirm cloud-only Orders code was not changed for this batch.
 4. Confirm profit remains numeric, its missing-cost warning remains, and no
    historical cost backfill was added.
@@ -1066,6 +1240,21 @@ Do not claim physical acceptance. The owner performs it.
   owner-approved optimistic figure with a warning, not a recalculated fact.
 
 ## Checkpoint Ledger
+
+### 2026-09-03 — AUDIT-02 planned from post-completion review
+
+- Owner required the full repair specification to live in this durable ledger,
+  with only a short recovery prompt supplied in chat.
+- Read-only review of AUDIT-01 found four follow-up gaps: required Convex page
+  splitting is ignored, hidden/superseded Reports work can continue requesting
+  pages, true All has an arbitrary 60-page ceiling, and the claimed three-page
+  test actually performs one request. The intended AUDIT-01 business fixes and
+  blank-screen guard otherwise passed review and safe automated checks.
+- Added AUDIT-02 before PR-05 with exact split, cancellation, unlimited-valid-
+  cursor, repeated-cursor, real-three-page, and durable-pointer acceptance
+  rules. No application code, app, ADB, printer, PIN, or live data was touched.
+- Exact next action: implementing agent follows the Recovery Protocol and
+  completes AUDIT-02 only, then leaves PR-05 pending.
 
 ### 2026-09-02 — AUDIT-01 planned from read-only post-implementation audit
 

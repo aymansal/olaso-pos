@@ -44,7 +44,7 @@ remaining goal and card sequence.
 | SYNC-07 — Settings waiting count/copy | done — `91a71642629fe36f39750955a92cb53543f80377` on `origin/main` |
 | SYNC-08 — Manual Sync silent no-op when worker gated | done — `0379d0c1011a8a820d71a9ac173e0e85bd7d4942` on `origin/main` |
 | SYNC-09 — Online Dashboard/Reports vs unsynced then synced sales | done — `590696ebe2ebd6776fec144bc4950808621242e0` on `origin/main` |
-| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04 done on `origin/main`; AUDIT-01 is the next authorized repair card; PR-05 follows |
+| POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04 and AUDIT-01 done on `origin/main`; AUDIT-02 is next; PR-05 follows |
 | HARD-08 — Final endurance and acceptance | pending |
 
 ## Most Recently Completed Goal
@@ -119,10 +119,10 @@ remaining goal and card sequence.
   SYNC-09 done; tablet POS sales insert into Convex; online Dashboard/Reports
   stay Convex-only. Exact next action is POLISH-01.
 - [Goal 06 — POLISH Reliability Ledger](goals/GOAL-06-POLISH-RELIABILITY.md)
-  — permanent PR-01 through PR-04, AUDIT-01, and PR-05 repair authority. Its
-  complete Recovery Protocol, State Pointer, active card, and newest checkpoint
-  must be reread after every context compaction, handoff, pause, or resumed
-  session.
+  — permanent PR-01 through PR-04, AUDIT-01, AUDIT-02, and PR-05 repair
+  authority. Its complete Recovery Protocol, State Pointer, active card, and
+  newest checkpoint must be reread after every context compaction, handoff,
+  pause, or resumed session.
 - [Goal 06 — Product Configuration Blueprint](goals/GOAL-06-PRODUCT-CONFIGURATION.md)
   — approved product-owned sizes, freely named choices, exact ingredient
   effects, mandatory independent copying, honest ingredient-only costing,
@@ -133,6 +133,18 @@ remaining goal and card sequence.
   ingredients, proposed app mapping, and confirmations required before import.
 
 ## Current Checkpoint
+
+- AUDIT-02 planned (3 Sep 2026): read-only review found four gaps after
+  AUDIT-01: the All collector ignores Convex `SplitRequired`, cleanup cannot
+  stop later page/stock requests, a fixed 60-page ceiling contradicts true
+  All, and the claimed 40-row three-page test actually makes one 60-row
+  request. The five AUDIT-01 business repairs and Reports All crash guard
+  otherwise reviewed correctly; all safe focused checks and the build passed.
+  Added the exact split, cancellation, 61-page, repeated-cursor, real-three-
+  page, and stale-pointer repair contract to
+  `goals/GOAL-06-POLISH-RELIABILITY.md`. No application code, app, ADB,
+  printer, PIN, or live data was touched. Exact next action: implement
+  AUDIT-02 only; PR-05 remains pending.
 
 - AUDIT-01 build installed (3 Sep 2026): rebuilt the debug beta from
   synchronized `main` (AUDIT-01 included) and installed it over connected

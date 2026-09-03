@@ -245,8 +245,8 @@ after uploaded 0826 sales; POLISH-01 is the exact next action.
 The owner's approved Reports, Costs, Dashboard, date, and reliability repairs
 live in the durable [Goal 06 POLISH Reliability Ledger](goals/GOAL-06-POLISH-RELIABILITY.md).
 Its Recovery Protocol, State Pointer, active card, and checkpoint journal are
-the permanent authority for PR-01 through PR-04, AUDIT-01, and PR-05 and must
-be reread after every context compaction, handoff, or resumed session.
+the permanent authority for PR-01 through PR-04, AUDIT-01, AUDIT-02, and PR-05
+and must be reread after every context compaction, handoff, or resumed session.
 
 The complete factual transcription of the seven owner-supplied café menu
 images lives in
@@ -270,6 +270,7 @@ and the owner accepts the production workflow.
 
 ## Exact next action
 
-POLISH-01 / AUDIT-01: repair the five confirmed post-implementation audit
-findings by following the Recovery Protocol and active-card contract in
+POLISH-01 / AUDIT-02: finish the All-report pagination, cancellation,
+verification, and durable-pointer repairs by following the Recovery Protocol
+and active-card contract in
 [goals/GOAL-06-POLISH-RELIABILITY.md](goals/GOAL-06-POLISH-RELIABILITY.md).
