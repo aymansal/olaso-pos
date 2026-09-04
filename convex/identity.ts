@@ -41,6 +41,10 @@ type CreatedStaffRecord = {
   identityRevision: number;
 };
 type CreatedStaff = CreatedStaffRecord & { token: string };
+type UpdatedStaffRecord = StaffIdentity & {
+  id: Id<'staffProfiles'>;
+  identityRevision: number;
+};
 type SignInFailure = { kind: 'invalid-pin' | 'locked' };
 
 function toBase64(bytes: Uint8Array) {
@@ -166,6 +170,31 @@ export const supportSetPin = action({
       pinHash: await pinHash(args.pin, pinSalt),
       now: Date.now(),
     }) as StaffIdentity;
+  },
+});
+
+export const updateStaffPin = action({
+  args: {
+    sessionToken: v.string(),
+    deviceId: v.string(),
+    staffProfileId: v.id('staffProfiles'),
+    pinSalt: v.string(),
+    pinHash: v.string(),
+  },
+  handler: async (ctx, args): Promise<UpdatedStaffRecord> => {
+    if (!DEVICE_PATTERN.test(args.deviceId)
+        || !hasDecodedLength(args.pinSalt, 16)
+        || !hasDecodedLength(args.pinHash, 32)) {
+      throw new Error('Staff details are invalid.');
+    }
+    return await ctx.runMutation(
+      internal.identityInternal.replaceCredentialAsOwner,
+      {
+        ...args,
+        currentTokenHash: await tokenHash(args.sessionToken),
+        now: Date.now(),
+      },
+    ) as UpdatedStaffRecord;
   },
 });
 

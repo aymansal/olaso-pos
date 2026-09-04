@@ -52,6 +52,10 @@ presentation.
 - Staff & access is owner-only. Its create dialog contains only name, role,
   six-digit PIN, PIN confirmation, Cancel, and Add staff; a successful offline
   save appears immediately as waiting to sync.
+- Every staff row lets the owner change that profile's six-digit PIN. The raw
+  PIN stays out of SQLite and the ordinary outbox; provisioned profiles update
+  cloud identity plus protected offline access, while a waiting profile updates
+  only its protected pending credential.
 - Owner-only confirmed staff deletion immediately removes the selectable
   profile, ends open monthly wage at the current month, and preserves
   historical names/wages and earlier queued work; the active profile and

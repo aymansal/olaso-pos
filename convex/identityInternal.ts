@@ -197,6 +197,59 @@ export const replaceCredential = internalMutation({
   },
 });
 
+export const replaceCredentialAsOwner = internalMutation({
+  args: {
+    sessionToken: v.string(),
+    deviceId: v.string(),
+    staffProfileId: v.id('staffProfiles'),
+    pinSalt: v.string(),
+    pinHash: v.string(),
+    currentTokenHash: v.string(),
+    now: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const actor = await requirePermission(ctx, args, 'staff');
+    const staff = await ctx.db.get(args.staffProfileId);
+    if (!staff || staff.status !== ACTIVE) throw new Error('Staff access is unavailable.');
+    const existing = await ctx.db
+      .query('staffIdentities')
+      .withIndex('by_staff_profile', (index) =>
+        index.eq('staffProfileId', args.staffProfileId),
+      )
+      .unique();
+    if (!existing) throw new Error('Staff access is unavailable.');
+    const credentialVersion = existing.credentialVersion + 1;
+    await ctx.db.patch(existing._id, {
+      pinSalt: args.pinSalt,
+      pinHash: args.pinHash,
+      credentialVersion,
+      updatedAt: args.now,
+    });
+    const sessions = await ctx.db
+      .query('staffSessions')
+      .withIndex('by_staff_profile', (index) =>
+        index.eq('staffProfileId', args.staffProfileId),
+      )
+      .take(101);
+    if (sessions.length > 100) throw new Error('Staff session limit exceeded.');
+    await Promise.all(sessions.map((session) => {
+      if (session.revokedAt) return undefined;
+      const keepCurrentOwner = actor.staffProfileId === String(args.staffProfileId)
+        && session.deviceId === args.deviceId
+        && session.tokenHash === args.currentTokenHash;
+      return keepCurrentOwner
+        ? ctx.db.patch(session._id, { credentialVersion })
+        : ctx.db.patch(session._id, { revokedAt: args.now });
+    }));
+    return {
+      id: staff._id,
+      name: staff.name,
+      role: staff.role,
+      identityRevision: credentialVersion,
+    };
+  },
+});
+
 export const createStaffWithCredential = internalMutation({
   args: {
     sessionToken: v.string(),

@@ -76,6 +76,8 @@ tablet's local SQLite operational record.
   sign-in; it also promotes an offline-created profile's protected verifier and
   returned cloud session without retaining the raw PIN. It never exposes those
   values through ordinary local data contracts.
+  Owner PIN changes reuse this protected boundary: pending credentials change
+  locally, and provisioned credentials change only after cloud acknowledgement.
 - Profile application language is saved locally first. Reconnect pushes that
   local value before pulling the cloud directory, and offline staff
   provisioning carries the same value through the local-ID/cloud-ID promotion.

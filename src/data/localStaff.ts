@@ -26,6 +26,11 @@ export type StaffCreationInput = {
   confirmPin: string;
 };
 
+export type StaffPinInput = {
+  pin: string;
+  confirmPin: string;
+};
+
 export type SavedStaffProfile = {
   id: string;
   name: string;
@@ -44,6 +49,26 @@ export function validateStaffCreation(input: StaffCreationInput) {
   if (!/^\d{6}$/.test(input.pin)) throw new Error('PIN must contain six digits.');
   if (input.pin !== input.confirmPin) throw new Error('PIN confirmation does not match.');
   return { name, role: input.role, pin: input.pin };
+}
+
+export function validateStaffPin(input: StaffPinInput) {
+  if (!/^\d{6}$/.test(input.pin)) throw new Error('PIN must contain six digits.');
+  if (input.pin !== input.confirmPin) throw new Error('PIN confirmation does not match.');
+  return input.pin;
+}
+
+export async function saveStaffIdentityRevision(
+  staffProfileId: string,
+  identityRevision: number,
+) {
+  await withLocalTransaction(async (database) => {
+    await database.run(
+      `UPDATE staff_profiles SET identity_revision = ?, updated_at = ?
+       WHERE id = ?`,
+      [identityRevision, Date.now(), staffProfileId],
+      false,
+    );
+  });
 }
 
 export async function insertLocalStaffOperation(

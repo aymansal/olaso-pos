@@ -33,6 +33,9 @@ data, reporting summaries, and development seeding.
   update their own `preferredLanguage` through `setPreferredLanguage`.
   Offline staff provisioning also carries the profile's saved language so the
   first cloud acknowledgement cannot reset it to English.
+  Owner-authorized PIN changes likewise receive only a derived credential,
+  revoke the target profile's other sessions, and preserve the current owner's
+  authenticated tablet session when changing their own PIN.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts

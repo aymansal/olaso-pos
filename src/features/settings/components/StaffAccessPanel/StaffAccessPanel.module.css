@@ -114,6 +114,10 @@
   font-weight: 700;
 }
 
+.actions .changePin {
+  color: var(--olaso-green);
+}
+
 .message,
 .error {
   position: absolute;

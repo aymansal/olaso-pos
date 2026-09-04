@@ -1,16 +1,27 @@
+import { useAction } from 'convex/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { api } from '../../convex/_generated/api';
+import type { Id } from '../../convex/_generated/dataModel';
 import {
   createLocalStaff,
   deleteLocalStaff,
   loadLocalStaffProfiles,
+  saveStaffIdentityRevision,
   type StaffCreationInput,
+  type StaffPinInput,
   type SavedStaffProfile,
+  validateStaffPin,
 } from './localStaff.ts';
+import {
+  createStaffPinCredential,
+  saveUpdatedStaffPin,
+} from './identitySession.ts';
 import { useReconnect } from './reconnectContext.tsx';
 import { useStaffSession } from './sessionContext.tsx';
 
 export function useStaffManagement() {
   const session = useStaffSession();
+  const updateStaffPin = useAction(api.identity.updateStaffPin);
   const reconnect = useReconnect();
   const [staff, setStaff] = useState<SavedStaffProfile[]>();
   const [error, setError] = useState('');
@@ -75,6 +86,36 @@ export function useStaffManagement() {
       throw caught;
     }
   };
+  const changePin = async (profile: SavedStaffProfile, input: StaffPinInput) => {
+    setError('');
+    setMessage('');
+    try {
+      const credential = await createStaffPinCredential(validateStaffPin(input));
+      let identityRevision = profile.identityRevision;
+      if (!profile.pending) {
+        const updated = await updateStaffPin({
+          sessionToken: session.token,
+          deviceId: session.deviceId,
+          staffProfileId: profile.id as Id<'staffProfiles'>,
+          ...credential,
+        });
+        identityRevision = updated.identityRevision;
+        await saveStaffIdentityRevision(profile.id, identityRevision);
+      }
+      await saveUpdatedStaffPin(
+        profile.id,
+        credential,
+        identityRevision,
+        profile.pending,
+      );
+      await reload();
+      setMessage('PIN changed.');
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : 'PIN could not be changed.';
+      setError(message);
+      throw caught;
+    }
+  };
   return {
     staff: staff ?? [],
     isLoading: !staff && !error,
@@ -82,6 +123,7 @@ export function useStaffManagement() {
     message,
     currentStaffId: session.staffProfileId,
     create,
+    changePin,
     remove,
   };
 }

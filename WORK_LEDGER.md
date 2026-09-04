@@ -134,6 +134,25 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Owner-directed staff PIN management (4 Sep 2026): added an owner-only
+  `Change PIN` action to every Staff & access row, including the active owner
+  and a locally waiting profile. Provisioned profiles send only a PBKDF2
+  salt/hash to Convex, update the profile-scoped protected offline verifier,
+  clear failed attempts, revoke the target's other cloud sessions, and retain
+  the current owner's authenticated tablet session when changing their own
+  PIN. Waiting profiles replace only their protected pending credential. No
+  raw PIN enters SQLite, the ordinary outbox, source, or Git. Android Keystore
+  and the existing Capacitor protected-storage plugin remain the correct native
+  boundary; no Kotlin, plugin, dependency, or schema change is needed.
+  `check:local-staff`, `check:settings`, TypeScript, the production build, and
+  `git diff --check` pass. The protected development permission check stopped
+  at its deliberately absent test PIN and was not bypassed. Graphify refreshed
+  in code-only incremental mode to 3,078 nodes / 6,114 edges because no
+  semantic-extraction key is configured. Exact next action: review, commit,
+  push, deploy the functions to the empty production deployment, create the
+  owner-specified first profile without storing its raw PIN, then build and
+  install the production-connected application.
+
 - Real-menu categories and artwork approved (4 Sep 2026): the owner reduced the
   seven source menu sections to four visible application categories — Coffee
   (23), Matcha (27), Cold Drinks (19), and Bakery & Desserts (23) — while
@@ -2316,6 +2335,22 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-09-04 — Owner-only staff PIN changes
+
+- The owner requested editable profile PINs and supplied the first production
+  owner's name and PIN. The PIN is treated as runtime-only secret input and is
+  never repeated in source, documentation, SQLite, the ordinary outbox, or Git.
+- Reused the existing staff dialog language, PBKDF2 credential format, protected
+  Android offline storage, owner permission, and credential-version/session
+  model. No new table, migration, native plugin, or dependency was introduced.
+- A current owner changing their own PIN keeps only the authenticated current
+  device session; changing another profile revokes that profile's existing
+  cloud sessions. Both paths replace the protected offline verifier and clear
+  local failed-attempt state after cloud acknowledgement.
+- Safe checks pass as recorded in Current Checkpoint. Production deployment,
+  first-profile creation, menu population, Android packaging, installation,
+  and physical acceptance remain to be completed and recorded separately.
 
 ### 2026-09-04 — Four-category menu and artwork approved
 

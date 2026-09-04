@@ -147,13 +147,13 @@ These decisions are final for this batch and must not be reopened:
 
 ## State Pointer
 
-**Active card:** none — RECEIPT-01 follow-up complete; AUDIT-03 remains deferred
+**Active card:** POLISH-01 owner-directed staff PIN management and production setup
 
-**Active status:** waiting for the owner to inspect the corrected daily report
-and receipt payments on real paper
+**Active status:** staff PIN change implementation verified locally; production
+deployment and first-profile setup remain
 
-**Last completed step:** committed, pushed, rebuilt, and installed the daily
-report cleanup and repeated mixed-tender proof; owner paper check remains
+**Last completed step:** added owner-only secure PIN changes, passed the safe
+local checks/build, and refreshed Graphify; no raw PIN was persisted
 
 **Current facts:**
 

@@ -5,6 +5,7 @@ import {
   insertLocalStaffOperation,
   deleteLocalStaff,
   validateStaffCreation,
+  validateStaffPin,
 } from '../src/data/localStaff.ts';
 import { offlineCredentialKeys } from '../src/data/offlineCredentials.ts';
 import { loadLocalCostManagementFromDatabase } from '../src/data/localCostViews.ts';
@@ -55,6 +56,8 @@ assert.deepEqual(validateStaffCreation({
 assert.throws(() => validateStaffCreation({
   name: 'Mismatch', role: 'cashier', pin: '123456', confirmPin: '654321',
 }), /does not match/);
+assert.equal(validateStaffPin({ pin: '654321', confirmPin: '654321' }), '654321');
+assert.throws(() => validateStaffPin({ pin: '654321', confirmPin: '123456' }), /does not match/);
 
 const created = await transaction((db) => insertLocalStaffOperation(db, owner, {
   localId: 'staff:local-cashier',
@@ -179,10 +182,14 @@ assert.match(staffSync, /preferredLanguage/);
 assert.match(staffSync, /saveProvisionedStaffSession/);
 assert.doesNotMatch(staffSync, /\bsignIn\b/);
 assert.match(identity, /export const createStaff = action/);
+assert.match(identity, /export const updateStaffPin = action/);
+assert.doesNotMatch(identity.match(/export const updateStaffPin[\s\S]*?export const listActiveProfiles/)?.[0] ?? '', /\bpin:\s*v\.string/);
 assert.doesNotMatch(identity.match(/export const createStaff[\s\S]*?export const checkSession/)?.[0] ?? '', /\bpin:\s*v\.string/);
 assert.match(identity, /pinHash: args\.pinHash/);
 assert.match(identity, /preferredLanguage: args\.preferredLanguage/);
 assert.match(identityInternal, /createStaffWithCredential/);
+assert.match(identityInternal, /replaceCredentialAsOwner/);
+assert.match(identityInternal, /keepCurrentOwner/);
 assert.match(identityInternal, /preferredLanguage: args\.preferredLanguage/);
 assert.doesNotMatch(identityInternal, /\bpin:\s*v\.string/);
 assert.match(seed, /if \(table === 'staffProfiles'\) continue/);

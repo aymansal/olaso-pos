@@ -83,6 +83,12 @@ function isStaffSession(value: unknown): value is StaffSession {
       || session.provisioningState === 'pending');
 }
 
+export async function createStaffPinCredential(pin: string) {
+  if (!/^\d{6}$/.test(pin)) throw new Error('PIN must contain six digits.');
+  const pinSalt = toBase64(crypto.getRandomValues(new Uint8Array(16)));
+  return { pinSalt, pinHash: await derivePinHash(pin, pinSalt) };
+}
+
 function normalizedSession(session: StaffSession) {
   return {
     ...session,
@@ -147,8 +153,7 @@ export async function savePendingStaffSession(
   pin: string,
 ) {
   if (!/^\d{6}$/.test(pin)) throw new Error('PIN must contain six digits.');
-  const pinSalt = toBase64(crypto.getRandomValues(new Uint8Array(16)));
-  const pinHash = await derivePinHash(pin, pinSalt);
+  const { pinSalt, pinHash } = await createStaffPinCredential(pin);
   const session: StaffSession = {
     token: `pending_${crypto.randomUUID()}`,
     staffProfileId: profile.id,
@@ -173,6 +178,39 @@ export async function savePendingStaffSession(
     await clearStaffSession(profile.id).catch(() => undefined);
     throw error;
   }
+}
+
+export async function saveUpdatedStaffPin(
+  staffProfileId: string,
+  credential: PendingStaffCredential,
+  identityRevision: number,
+  pending: boolean,
+) {
+  if (!isPendingStaffCredential(credential)) {
+    throw new Error('Protected staff credential is invalid.');
+  }
+  const keys = offlineCredentialKeys(staffProfileId);
+  const rawSession = await readSecureSessionValue(keys.session);
+  const session: unknown = rawSession ? JSON.parse(rawSession) : undefined;
+  if (session !== undefined && !isStaffSession(session)) {
+    throw new Error('Stored staff session is invalid.');
+  }
+  await Promise.all([
+    writeSecureSessionValue(
+      keys.pin,
+      `${credential.pinSalt}:${credential.pinHash}`,
+    ),
+    pending
+      ? writeSecureSessionValue(keys.provisioning, JSON.stringify(credential))
+      : removeSecureSessionValue(keys.provisioning),
+    session
+      ? writeSecureSessionValue(keys.session, JSON.stringify({
+          ...normalizedSession(session),
+          identityRevision,
+        }))
+      : Promise.resolve(),
+    removeSecureSessionValue(keys.attempts),
+  ]);
 }
 
 export async function loadPendingStaffCredential(staffProfileId: string) {
