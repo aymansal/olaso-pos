@@ -46,6 +46,9 @@ owns the shared Header and TopNavigation currently used across the application.
 - Preserve already visited live category grids and their prepared product
   images using the installed React Activity boundary; do not eagerly mount
   unvisited categories or retain a removed category's product grid.
+- The fixed menu area scrolls its uniform five-column product grid vertically
+  when a category has more rows than fit. Category cards keep artwork in a
+  strong right-side zone and wrap long names inside the reserved left text zone.
 - Products released by category deletion remain sellable under a neutral
   `Uncategorized` category while any such active product exists.
 - A deliberate staff switch confirms only a non-empty cart and preserves it for

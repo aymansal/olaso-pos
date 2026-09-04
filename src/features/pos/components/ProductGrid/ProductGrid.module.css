@@ -9,20 +9,10 @@
   width: 966px;
   height: 502px;
   row-gap: 8px;
-}
-
-.grid > :nth-child(n + 11) {
-  margin-right: 8px;
-}
-
-.grid > :nth-child(11) {
-  grid-column: 1;
-}
-
-.grid > :nth-child(12) {
-  grid-column: 2;
-  justify-self: start;
-  margin-left: -16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--olaso-green) transparent;
+  scrollbar-width: thin;
 }
 
 .empty {

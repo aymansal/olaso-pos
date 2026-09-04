@@ -10,6 +10,16 @@ choice, extra, recipe, and category tools.
 It is not authorization to import or change live menu data. Do not invent
 recipes, ingredient quantities, product availability, or corrected spellings.
 
+## Production import status
+
+On 4 September 2026, the owner separately authorized the first production menu
+import. Production now contains the four approved editable categories and all
+92 products below in their approved order. V60 is one product with Hot 45 MAD
+and Cold 55 MAD sizes. No category-wide Plus sizes, milk groups, syrups, extras,
+badges, or recipes were imported because their exact scope or ingredient facts
+remain unconfirmed. Category artwork keys are initial editable selections, not
+name-bound artwork.
+
 ## Source and interpretation rules
 
 - Prices are in MAD.

@@ -243,6 +243,18 @@ assert.match(
   posScreen,
   /onSingle=\{\(\) => \{\s*setSplitQuestion\(false\);\s*void confirmPayment\(\);/,
 );
+const categoryCardCss = readFileSync(
+  'src/features/pos/components/CategoryCard/CategoryCard.module.css',
+  'utf8',
+);
+assert.match(categoryCardCss, /\.name \{[\s\S]*max-width: 105px/);
+assert.match(categoryCardCss, /\.illustration \{[\s\S]*opacity: 0\.46/);
+const productGridCss = readFileSync(
+  'src/features/pos/components/ProductGrid/ProductGrid.module.css',
+  'utf8',
+);
+assert.match(productGridCss, /overflow-y: auto/);
+assert.doesNotMatch(productGridCss, /nth-child/);
 
 const card = readFileSync(
   'src/features/pos/components/OrderItemCard/OrderItemCard.tsx',

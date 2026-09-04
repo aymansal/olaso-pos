@@ -83,15 +83,18 @@
 }
 
 .name {
-  top: 72px;
+  top: auto;
+  bottom: 25px;
+  max-width: 105px;
   color: var(--olaso-text);
   font-size: 18px;
   font-weight: 700;
-  line-height: 22px;
+  line-height: 18px;
 }
 
 .count {
-  top: 98px;
+  top: auto;
+  bottom: 7px;
   color: var(--olaso-text);
   font-size: 10px;
   line-height: 12px;
@@ -105,17 +108,17 @@
 .illustration {
   position: absolute;
   z-index: 1;
-  top: 10px;
-  left: 108px;
-  width: 118px;
-  height: 108px;
+  top: 4px;
+  right: 2px;
+  width: 132px;
+  height: 112px;
   object-fit: contain;
-  opacity: 0.16;
+  opacity: 0.46;
 }
 
 .active .illustration {
-  left: 100px;
-  width: 126px;
+  right: 0;
+  width: 138px;
   opacity: 1;
   filter: brightness(0) invert(1);
 }

@@ -134,6 +134,33 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- First production setup and POS catalog follow-up (4 Sep 2026): deployed the
+  current Convex schema/functions to production `befitting-fox-181`, created
+  exactly one active owner named Yassine, established the owner-supplied
+  credential through a temporary recovery gate, and immediately removed that
+  gate. Production now has four editable categories and all 92 products:
+  Coffee 23, Matcha 27, Cold Drinks 19, and Bakery & Desserts 23. V60 alone
+  received its explicit Hot 45 MAD / Cold 55 MAD sizes; unconfirmed milk,
+  syrup, extra, badge, and recipe details were not invented.
+- Built and installed a production-connected debug beta on SM-X115
+  `R8YX91AKWXJ`. Only `com.olaso.pos` app data was cleared after the owner said
+  the development data was disposable; that old local test data is not
+  recoverable from the app. The clean tablet showed only Yassine, authenticated,
+  synchronized all four categories/92 products, and rendered with empty focused
+  console/logcat output. Settings showed the new Change PIN row/dialog without
+  clipping; no PIN change was executed during QA. This is a testing beta, not
+  the final signed client release.
+- Owner then reported faint/colliding category artwork and unreachable lower
+  product rows. Root causes were the inactive artwork's hardcoded 0.16 opacity,
+  shared artwork/title space, and a fixed 502-pixel grid with no vertical
+  overflow. The minimal repair raises inactive art to 0.46, reserves a narrow
+  left text column so Bakery & Desserts wraps away from the right-side art, and
+  makes the uniform five-column grid vertically scrollable without moving the
+  cart or page. `check:pos`, TypeScript, build, and `git diff --check` pass;
+  Graphify refreshed code-only to 3,080 nodes / 6,116 edges. Exact next action:
+  commit/push this POS repair, rebuild against production, install over the
+  tablet without clearing production data, and physically inspect/scroll it.
+
 - Owner-directed staff PIN management (4 Sep 2026): added an owner-only
   `Change PIN` action to every Staff & access row, including the active owner
   and a locally waiting profile. Provisioned profiles send only a PBKDF2
@@ -2335,6 +2362,24 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-09-04 — Production setup and large-menu POS repair
+
+- Production was empty before import. Deployed the committed backend, created
+  one Yassine owner identity, removed the temporary recovery environment value,
+  and verified one active production owner without recording the raw PIN.
+- Imported the four approved database-owned categories, their editable artwork
+  selections, all 92 source products, and only the explicit V60 Hot/Cold sizes.
+  Production count verification passed at 23/27/19/23.
+- Built the web bundle against the production deployment, synced Android, built
+  with the existing Java 21 toolchain, installed over the app, and cleared only
+  the disposable Olaso development data. The production Lock, authentication,
+  POS catalog, Settings staff row, and Change PIN dialog passed direct 1340 by
+  800 inspection with no focused console/logcat error.
+- The owner then identified weak artwork, Bakery title collision, and clipped
+  lower catalog rows. The CSS root cause and minimal repair are recorded in the
+  Current Checkpoint; no category asset, database row, business rule, or cart
+  geometry changed.
 
 ### 2026-09-04 — Owner-only staff PIN changes
 

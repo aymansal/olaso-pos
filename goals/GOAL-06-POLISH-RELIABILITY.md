@@ -147,13 +147,13 @@ These decisions are final for this batch and must not be reopened:
 
 ## State Pointer
 
-**Active card:** POLISH-01 owner-directed staff PIN management and production setup
+**Active card:** POLISH-01 production large-menu POS repair
 
-**Active status:** staff PIN change implementation verified locally; production
-deployment and first-profile setup remain
+**Active status:** CSS repair verified locally; production rebuild/install and
+owner visual acceptance remain
 
-**Last completed step:** added owner-only secure PIN changes, passed the safe
-local checks/build, and refreshed Graphify; no raw PIN was persisted
+**Last completed step:** diagnosed faint/colliding category art and the clipped
+product grid, added the minimal CSS repair/check, and refreshed Graphify
 
 **Current facts:**
 
