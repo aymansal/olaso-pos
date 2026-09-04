@@ -149,11 +149,13 @@ These decisions are final for this batch and must not be reopened:
 
 **Active card:** POLISH-01 production large-menu POS repair
 
-**Active status:** CSS repair verified locally; production rebuild/install and
-owner visual acceptance remain
+**Active status:** committed, pushed, redeployed, rebuilt, installed, and
+physically verified on SM-X115; owner visual acceptance remains
 
-**Last completed step:** diagnosed faint/colliding category art and the clipped
-product grid, added the minimal CSS repair/check, and refreshed Graphify
+**Last completed step:** verified stronger/non-overlapping category art and
+full product-grid scrolling at 1340 by 800 on the production-connected tablet
+
+**Repair commit:** `31e57f2e09d335bf06cd4096288590770455fe1c`
 
 **Current facts:**
 

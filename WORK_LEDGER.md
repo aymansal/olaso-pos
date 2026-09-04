@@ -157,9 +157,15 @@ remaining goal and card sequence.
   left text column so Bakery & Desserts wraps away from the right-side art, and
   makes the uniform five-column grid vertically scrollable without moving the
   cart or page. `check:pos`, TypeScript, build, and `git diff --check` pass;
-  Graphify refreshed code-only to 3,080 nodes / 6,116 edges. Exact next action:
-  commit/push this POS repair, rebuild against production, install over the
-  tablet without clearing production data, and physically inspect/scroll it.
+  Graphify refreshed code-only to 3,080 nodes / 6,116 edges. The repair was
+  committed and pushed as `31e57f2e09d335bf06cd4096288590770455fe1c`.
+  Production was redeployed, the beta was rebuilt and installed over the app
+  without clearing data, and direct 1340 by 800 tablet inspection confirmed
+  stronger category art, a two-line Bakery & Desserts title clear of its art,
+  and a working product-grid swipe that reaches the final Coffee row including
+  V60. The order panel stayed fixed and focused logcat remained empty. Exact
+  next action: owner visually accepts the installed result or gives the next
+  POLISH-01 adjustment.
 
 - Owner-directed staff PIN management (4 Sep 2026): added an owner-only
   `Change PIN` action to every Staff & access row, including the active owner
@@ -2380,6 +2386,15 @@ remaining goal and card sequence.
   lower catalog rows. The CSS root cause and minimal repair are recorded in the
   Current Checkpoint; no category asset, database row, business rule, or cart
   geometry changed.
+- Committed and pushed the repair as
+  `31e57f2e09d335bf06cd4096288590770455fe1c` (`POLISH-01: fix large production
+  menu layout`). Redeployed production, rebuilt/synced Android, and installed
+  over the existing production-connected app without clearing its data.
+- Physical SM-X115 evidence at 1340 by 800 confirms all four category cards
+  remain visible, inactive artwork is legible, Bakery & Desserts wraps in the
+  reserved text column without touching its illustration, and an in-grid swipe
+  reaches Coffee's final row including V60 while the order rail remains fixed.
+  Focused app logcat contains no error. Owner visual acceptance remains.
 
 ### 2026-09-04 — Owner-only staff PIN changes
 
