@@ -184,8 +184,10 @@ remaining goal and card sequence.
   deployed; focused offline/local/printing/TypeScript/CSS/build and production
   package checks pass. Protected cloud sales/report checks stopped before their
   seed/reset at the intentionally absent disposable test PIN. No tablet, sale,
-  profile, or PIN was touched. Exact next action: commit/push, then owner-led
-  install and visual/printed acceptance.
+  profile, or PIN was touched. Committed and pushed as
+  `30e655728d3b85abd03393fa2477379ca1118ba9`
+  (`POLISH-01: add profile sales reporting`) on `origin/main`. Exact next
+  action: owner-led install and visual/printed acceptance.
 
 - Owner-directed profile/PIN reliability audit (4 Sep 2026): traced creation,
   pending provisioning, online/offline unlock, retry, lockout, PIN replacement,

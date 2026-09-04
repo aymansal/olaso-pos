@@ -175,9 +175,11 @@ touched for this card
   production Android bundle was built successfully. Focused offline, local,
   printing, TypeScript, CSS-scope, and production packaging checks pass.
   Protected cloud sales/reports checks stopped at the missing disposable owner
-  test PIN before any development seed/reset and were not bypassed. Exact next
-  action: commit and push this POLISH-01 adjustment, then owner installs the
-  packaged build and checks the Reports Sales card and a printed daily report.
+  test PIN before any development seed/reset and were not bypassed. Committed
+  and pushed as `30e655728d3b85abd03393fa2477379ca1118ba9`
+  (`POLISH-01: add profile sales reporting`) on `origin/main`. Exact next
+  action: owner installs the packaged build and checks the Reports Sales card
+  and a printed daily report.
 - Production client recovery: the earlier APK was connected to the development
   Convex deployment, whose old active catalog has 15 products; production has
   the real 92-product menu. This was why reconnect replaced the tablet menu
@@ -1965,3 +1967,5 @@ Do not claim physical acceptance. The owner performs it.
   3,095 nodes / 6,142 edges / 194 communities after the normal mixed refresh
   correctly stopped for the absent semantic-extraction key. The tablet was not
   launched, installed, or operated for this card.
+- Committed and pushed as `30e655728d3b85abd03393fa2477379ca1118ba9`
+  (`POLISH-01: add profile sales reporting`) on `origin/main`.
