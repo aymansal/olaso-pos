@@ -157,10 +157,11 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
   acceptance remains part of the planned whole-app review and HARD-08.
 - The owner-approved real-menu set replaces the coffee, tea, cold-drinks, and
   bakery gallery files with four coordinated editorial illustrations: modern
-  iced coffee with portafilter motion, matcha with tea leaf and powder motion,
-  citrus cold drink, and filled croissant with soft serve. They keep the same
-  true-alpha 320 by 320 lossless WebP contract and existing artwork keys; no new
-  runtime image mechanism is introduced.
+  iced coffee with portafilter motion, matcha with tea leaf and whisk, citrus
+  cold drink, and croissant with soft serve. They use compact, bold, high-weight
+  Operational Green silhouettes so they remain visible at category-card size,
+  keep the true-alpha 320 by 320 lossless WebP contract and existing artwork
+  keys, and add no runtime image mechanism.
 
 ## 4. Color
 

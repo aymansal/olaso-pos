@@ -297,6 +297,10 @@ price, size, choice, recipe, and ingredient-cost snapshots.
 
 ### Sizes, options, and extras
 
+Saving a new product immediately creates one active default `Regular` size at
+the entered product price, so it can be sold without a second setup step.
+Additional sizes remain optional and editable per product.
+
 The supplied menu may include familiar choices such as:
 
 - Standard and plus sizes.

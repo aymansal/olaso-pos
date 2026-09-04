@@ -102,6 +102,9 @@ tablet's local SQLite operational record.
   updates. Domain cards still own their business validation and record changes.
 - `localProductConfiguration.ts` owns local-first product-size and choice-section
   replacement, safe size deletion, and independent choice copying.
+- `localCatalog.ts` creates a new product and its active default Regular size
+  in one local transaction; the size operation depends on the product operation
+  so a newly saved product is immediately sellable offline and after sync.
 - `localInventory.ts` owns ingredient, purchase, valuation, and stock-
   adjustment transactions. Opening quantity with a paid price is committed as
   the first purchase in the same transaction. `localCosts.ts` owns

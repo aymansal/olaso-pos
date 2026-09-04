@@ -41,7 +41,8 @@ recipe management with saved tablet presentation during an outage.
   icon stays in the leading gutter. Table rows show the product name only;
   the product code stays on Edit Product. Add product, Add category, and Add
   ingredient keep their compact layouts with larger type and 47-pixel fields.
-  Add product is name plus photo on one row, category and price on the next.
+  Add product is name plus photo on one row, category and price on the next;
+  saving creates its first active Regular size at that price automatically.
   Sizes keeps name, price, order, availability, default, and delete on one
   line with a shared header row. Photos are
   compressed to a small JPEG on the tablet before SQLite or Convex. They

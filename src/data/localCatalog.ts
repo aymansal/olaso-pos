@@ -251,6 +251,35 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
       },
       createdAt: now,
     });
+    if (!existing) {
+      const sizeId = `${localId}:size:regular`;
+      await database.run(
+        `INSERT INTO product_sizes
+          (id, product_id, key, name, price_centimes, sort_order, is_default,
+           status, revision, updated_at)
+         VALUES (?, ?, 'regular', 'Regular', ?, 10, 1, ?, 1, ?)`,
+        [sizeId, localId, input.basePriceCentimes, input.status, now],
+        false,
+      );
+      await enqueueManagementOperation(database, {
+        deviceId: context.deviceId,
+        operationType: 'management.product-size.save',
+        localRecordId: sizeId,
+        dependsOnOperationId: operation.operationId,
+        requiredPermission: 'products',
+        actor: context.actor,
+        payload: {
+          productId: localId,
+          key: 'regular',
+          name: 'Regular',
+          priceCentimes: input.basePriceCentimes,
+          sortOrder: 10,
+          isDefault: true,
+          status: input.status,
+        },
+        createdAt: now,
+      });
+    }
     return { id: localId, revision, operationId: operation.operationId };
   });
 }

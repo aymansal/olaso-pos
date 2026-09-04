@@ -79,6 +79,35 @@ assert.equal(
   database.prepare('SELECT image_jpeg FROM products WHERE id = ?').get(product.id).image_jpeg,
   jpeg,
 );
+assert.deepEqual(
+  { ...database.prepare(
+    `SELECT product_id, key, name, price_centimes, is_default, status
+     FROM product_sizes WHERE product_id = ?`,
+  ).get(product.id) },
+  {
+    product_id: product.id,
+    key: 'regular',
+    name: 'Regular',
+    price_centimes: 2200,
+    is_default: 1,
+    status: 'active',
+  },
+  'A newly created product must be immediately sellable.',
+);
+const createdProductOperations = database.prepare(
+  `SELECT operation_id, operation_type, depends_on_operation_id
+   FROM outbox WHERE local_record_id IN (?, ?) ORDER BY rowid`,
+).all(product.id, `${product.id}:size:regular`);
+assert.equal(createdProductOperations[0].operation_type, 'management.product.save');
+assert.deepEqual(
+  { ...createdProductOperations[1] },
+  {
+    operation_id: createdProductOperations[1].operation_id,
+    operation_type: 'management.product-size.save',
+    depends_on_operation_id: createdProductOperations[0].operation_id,
+  },
+  'The automatic Regular size must synchronize after its product.',
+);
 await assert.rejects(() => saveLocalProduct(context, {
   name: 'Huge photo', categoryId: category.id, basePriceCentimes: 1,
   status: 'active', sortOrder: 92,
@@ -130,7 +159,14 @@ const section = await saveLocalChoiceSection(context, {
   }],
 }, transaction);
 const copied = await copyLocalChoiceSections(
-  context, product.id, destination.id, { [sourceSize.id]: destinationSize.id }, transaction,
+  context,
+  product.id,
+  destination.id,
+  {
+    [`${product.id}:size:regular`]: `${destination.id}:size:regular`,
+    [sourceSize.id]: destinationSize.id,
+  },
+  transaction,
 );
 assert.equal(copied.sectionIds.length, 1);
 assert.equal(database.prepare('SELECT COUNT(*) count FROM product_choice_value_effects').get().count, 2);

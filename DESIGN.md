@@ -583,6 +583,9 @@ Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-laye
 - Artwork stays decorative, right-aligned behind the text layer, right-sized for
   the 234 by 120 card, and available offline. Do not generate it at runtime or
   use generic stock coffee imagery.
+- Artwork must retain a compact, bold silhouette with substantial opaque green
+  weight at card size. Do not use sparse technical line drawings that disappear
+  on the inactive white card.
 
 ## Accessibility and Operational Safety
 
