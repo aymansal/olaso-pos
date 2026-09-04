@@ -47,6 +47,26 @@ remaining goal and card sequence.
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04, AUDIT-01, AUDIT-02, and RECEIPT-01 done on `origin/main`; AUDIT-03 remains deferred for the owner-directed bug audit |
 | HARD-08 — Final endurance and acceptance | pending |
 
+### 2026-09-04 — POLISH-01 catalog sellability repair
+
+- Production review found 92 active products but just two active size records:
+  V60 alone had Hot/Cold, so the other 91 visible products could not be placed
+  in the POS cart. Checkout requires a real selected size; it was not a mock
+  product issue.
+- Created the missing active `Regular` size in production at each product's
+  existing price, leaving V60 unchanged. The temporary maintenance endpoint was
+  removed and production redeployed immediately after the one-time repair.
+- `c14b303` now makes every newly saved product create that same active default
+  size in its single local transaction and synchronizes the size after its
+  product. Focused catalog/POS/product-configuration checks and the Android
+  beta build pass. The beta was installed over the existing tablet data. A
+  read-only tablet database copy now confirms 92 active products, 93 active
+  sizes, and zero products without an active size.
+- Four category-art assets were replaced with bolder, compact offline artwork
+  under their existing artwork keys. The application remains locked, so the
+  visual card and add-to-cart proof is pending owner unlock; no PIN, sale, or
+  test product was used.
+
 ## Most Recently Completed Goal
 
 ### Goal 05 — Business Policy, Identity, and Permissions

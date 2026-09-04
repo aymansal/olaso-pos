@@ -147,18 +147,34 @@ These decisions are final for this batch and must not be reopened:
 
 ## State Pointer
 
-**Active card:** POLISH-01 profile creation and PIN-change reliability repair
+**Active card:** POLISH-01 reliability repairs (profile/PIN and catalog sale)
 
 **Active status:** implementation, deployment, existing-profile online/offline
 tablet proof, and safe checks pass; protected development cloud and complete
 two-profile PIN-change acceptance remain gated
 
-**Last completed step:** deployed and installed the profile/PIN repair without
-clearing tablet data, then proved the existing owner unlocks online and after
-an offline restart; no production identity or PIN value was modified
+**Last completed step:** repaired the production catalog's missing sellable
+sizes, installed the beta without clearing tablet data, and verified the
+tablet cache has 92 active products, 93 active sizes, and zero products without
+an active size; no sale, product, staff identity, or PIN value was created,
+changed, or deleted during device verification
 
 **Current facts:**
 
+- Catalog sale repair `c14b303` is on `origin/main`. Production had 92 active
+  products but only V60's two size records, leaving 91 visible products with no
+  active size; POS correctly refused those products because checkout requires a
+  selected size. The one-time production repair created an active `Regular`
+  size at each existing product's saved price for those 91 products only; V60
+  was unchanged. The temporary production maintenance endpoint was removed and
+  production redeployed immediately afterwards. New products now create their
+  own active default Regular size atomically and synchronize it after the
+  product, preventing the same failure for owner-created products. Focused
+  catalog/POS/product-configuration checks and the production build pass. The
+  beta was installed with `adb install -r`; a read-only tablet database copy
+  confirms 92 active products, 93 sellable sizes, and zero missing active sizes.
+  The app is at its lock screen, so the visual POS/add-to-cart check is pending
+  the owner unlocking it; no PIN was requested, guessed, or used.
 - Profile/PIN reliability repair `3172e9b3f42a782794113e340e76aa1a0a0c974c`
   is on `origin/main` and its Convex functions are deployed to production
   `befitting-fox-181`. The production-connected version 1.1 beta was installed
@@ -1868,3 +1884,32 @@ Do not claim physical acceptance. The owner performs it.
   seed, or live data was touched.
 - Exact next action: review, commit, and push PR-04 only, then record its
   full SHA here and in `WORK_LEDGER.md`.
+
+### 2026-09-04 — POLISH-01 catalog sale recovery and tablet install
+
+- Graphify traced the POS add path, local product catalog, product-size
+  configuration, and saved-sale validation. The POS intentionally refuses a
+  product with no active size because a sale must snapshot a real selected size.
+  Production had 92 active products but only V60's Hot and Cold sizes; 91
+  imported menu products therefore could not reach the cart.
+- A temporary production-only maintenance function added an active `Regular`
+  size at each affected product's existing base price. It created 91 records,
+  did not change V60, and was deleted before an immediate second production
+  deployment. No production sale, product name, price, image, staff row, or
+  credential was otherwise changed.
+- `c14b303` makes future locally created products write their active default
+  Regular size in the same SQLite transaction and queues that dependent size
+  operation only after the product operation. The focused local-catalog check
+  proves the exact price, active/default state, and parent-ordered sync.
+- Replaced the four existing offline category-art files with compact, bolder
+  artwork using the same keys and WebP/alpha contract. `check:local`,
+  `check:local-catalog`, `check:pos`, `check:product-configuration`,
+  `check:css-scope`, `npm run build`, and `android:beta` passed. Protected
+  checks stopped at the absent owner test PIN before reset/seed and were not
+  bypassed.
+- Installed the new beta with `adb install -r` on SM-X115 `R8YX91AKWXJ`.
+  A read-only tablet database copy reports 92 active products, 93 active sizes,
+  and zero active products missing a size. The app correctly sits at its lock
+  screen. Exact next action: owner unlocks the app, then inspect all four
+  category cards and add one imported product to the cart without placing a
+  sale.
