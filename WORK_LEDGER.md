@@ -141,8 +141,9 @@ remaining goal and card sequence.
   place with the approved coordinated Operational Green editorial artwork;
   each remains a true-alpha 320 by 320 lossless WebP and reuses the existing
   coffee, tea, cold-drinks, and bakery keys. The production catalog and tablet
-  data were not changed. Exact next action is owner review in the application
-  before any production menu import.
+  data were not changed. Committed and pushed as
+  `2113043d82eb37133a9a3127dd36289007e0f406` on `origin/main`. Exact next
+  action is owner review in the application before any production menu import.
 
 - Owner beverage technical sheet extracted (4 Sep 2026): the five category
   tabs reconcile exactly to the combined `Toutes les boissons` tab: 181
@@ -2337,6 +2338,9 @@ remaining goal and card sequence.
 - Exact next action: commit and push this owner-approved artwork step, then the
   owner reviews the four cards in the application before any production menu
   import.
+- Committed and pushed the approved asset and documentation step as
+  `2113043d82eb37133a9a3127dd36289007e0f406`
+  (`POLISH-01: refresh real menu category artwork`) on `origin/main`.
 
 ### 2026-09-01 — POLISH-01 receipt, language, and delayed staff reliability
 
