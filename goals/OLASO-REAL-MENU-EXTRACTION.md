@@ -26,18 +26,18 @@ recipes, ingredient quantities, product availability, or corrected spellings.
   `Vanille Madagascar / Yogurt` is one listing and V60 is one product with two
   variants. Splitting either ambiguous listing would increase that count.
 
-## Proposed categories
+## Approved application categories
 
-1. Soft Ice Cream
-2. Matcha / Hojicha / Ube
-3. Croissants
-4. Brioche
-5. Lemonades / Iced Tea
-6. Frappé
-7. Coffee / V60
+The owner approved four top-level categories so the complete category row stays
+visible without scrolling:
 
-These names follow the source sections. Category naming and ordering remain an
-owner decision before any import.
+1. Coffee — hot coffee, iced coffee, and V60 (23 products)
+2. Matcha — matcha, hojicha, and ube (27 products)
+3. Cold Drinks — lemonades, iced tea, and frappés (19 products)
+4. Bakery & Desserts — soft ice cream, croissants, and brioche (23 products)
+
+The seven source sections below remain unchanged as factual menu evidence. They
+are grouped into these four application categories only at import time.
 
 ## 1. Soft Ice Cream — 11 listings
 
@@ -312,8 +312,13 @@ Sizes:
 
 This is a proposed configuration shape, not an instruction to import data:
 
-- Create the seven source sections as categories after the owner confirms their
-  names and order.
+- Create only the four approved application categories in the documented order.
+- Within Coffee, order hot coffee first, then iced coffee, then V60.
+- Within Matcha, order hot matcha/hojicha first, then iced matcha, iced hojicha,
+  and iced ube.
+- Within Cold Drinks, order lemonades first, then iced tea, then frappés.
+- Within Bakery & Desserts, order croissants first, then brioche, then soft ice
+  cream.
 - Keep each named and priced menu listing as a product. Do not duplicate a
   flavor as a product choice when the menu already prices it as a separate
   product.

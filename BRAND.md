@@ -155,6 +155,12 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
   normalized to 320 by 320 lossless WebP for the fixed POS card. The neutral
   botanical is the fallback for every absent or future key. Final owner visual
   acceptance remains part of the planned whole-app review and HARD-08.
+- The owner-approved real-menu set replaces the coffee, tea, cold-drinks, and
+  bakery gallery files with four coordinated editorial illustrations: modern
+  iced coffee with portafilter motion, matcha with tea leaf and powder motion,
+  citrus cold drink, and filled croissant with soft serve. They keep the same
+  true-alpha 320 by 320 lossless WebP contract and existing artwork keys; no new
+  runtime image mechanism is introduced.
 
 ## 4. Color
 

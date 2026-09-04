@@ -134,6 +134,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Real-menu categories and artwork approved (4 Sep 2026): the owner reduced the
+  seven source menu sections to four visible application categories — Coffee
+  (23), Matcha (27), Cold Drinks (19), and Bakery & Desserts (23) — while
+  retaining all 92 products. Replaced the four existing gallery assets in
+  place with the approved coordinated Operational Green editorial artwork;
+  each remains a true-alpha 320 by 320 lossless WebP and reuses the existing
+  coffee, tea, cold-drinks, and bakery keys. The production catalog and tablet
+  data were not changed. Exact next action is owner review in the application
+  before any production menu import.
+
 - Owner beverage technical sheet extracted (4 Sep 2026): the five category
   tabs reconcile exactly to the combined `Toutes les boissons` tab: 181
   populated, non-duplicate ingredient rows covering 50 products and 47 source
@@ -2305,6 +2315,28 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-09-04 — Four-category menu and artwork approved
+
+- Owner approved four top-level categories so all category cards remain visible
+  without scrolling: Coffee, Matcha, Cold Drinks, and Bakery & Desserts.
+- Preserved all 92 extracted products and recorded the exact source-section and
+  within-category order mapping in the real-menu extraction ledger.
+- Owner approved a new artistic direction based on expressive product and
+  ingredient linework rather than literal stock icons. Replaced only
+  `coffee.webp`, `tea.webp`, `cold-drinks.webp`, and `bakery.webp`; neutral and
+  snacks/sweets remain untouched.
+- The generated drafts incorrectly contained a painted checkerboard despite
+  requesting transparency. The approved visible green artwork was isolated
+  mechanically, recolored to exact Operational Green `#006A2B`, centered on a
+  true-alpha 320 by 320 canvas, and saved as lossless WebP. No application code,
+  production database, tablet, PIN, seed, reset, or live catalog was touched.
+- Exact-size, alpha-range, and visible-color checks passed for all four files.
+  `npm run build` and `git diff --check` passed; the build retained only the
+  existing jeep-sqlite browser-compatibility warning.
+- Exact next action: commit and push this owner-approved artwork step, then the
+  owner reviews the four cards in the application before any production menu
+  import.
 
 ### 2026-09-01 — POLISH-01 receipt, language, and delayed staff reliability
 
