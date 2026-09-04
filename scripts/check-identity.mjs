@@ -86,6 +86,7 @@ assert.ok(
 );
 assert.match(lockScreen, /saved\.identityRevision !== cached\.identityRevision/);
 assert.match(lockScreen, /await clearStaffSession\(staffProfileId\)/);
+assert.match(lockScreen, /staffProfileId\.startsWith\('staff:'\)/);
 assert.doesNotMatch(lockScreen, /reconcileActiveStaffProfiles/);
 assert.match(app, /startupError \|\| !terminal/);
 assert.match(app, /className=\{startupStyles\.startup\}/);
@@ -130,6 +131,7 @@ assert.doesNotMatch(management + operational, /OLASO_ALLOW_DEV/);
 assert.match(reconnect, /sessionToken: session\.token/);
 assert.match(posData, /reconnect\.run\('automatic'\)/);
 assert.match(identitySession, /offlineCredentialKeys/);
+assert.match(identitySession, /replaceSecureSessionValues/);
 assert.match(identitySession, /migrateLegacyStaffSession/);
 assert.match(identitySession, /export async function clearLegacyStaffSession/);
 assert.match(operationalCache, /export async function saveAuthenticatedStaffProfile/);

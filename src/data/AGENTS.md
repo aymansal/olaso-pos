@@ -78,6 +78,9 @@ tablet's local SQLite operational record.
   values through ordinary local data contracts.
   Owner PIN changes reuse this protected boundary: pending credentials change
   locally, and provisioned credentials change only after cloud acknowledgement.
+  All per-profile protected values are replaced in one native encrypted commit;
+  after a cloud PIN acknowledgement, any local persistence failure clears that
+  profile's protected copy rather than leaving the old PIN usable offline.
 - Profile application language is saved locally first. Reconnect pushes that
   local value before pulling the cloud directory, and offline staff
   provisioning carries the same value through the local-ID/cloud-ID promotion.
@@ -225,6 +228,9 @@ tablet's local SQLite operational record.
   the local staff directory and remove stale protected access. If that result
   is unavailable, upsert only the authenticated profile and preserve all
   others.
+- When internet is validated, a corrupt protected record for an already-cloud
+  profile may be cleared and rebuilt by successful online PIN authentication.
+  Never clear a corrupt still-local pending profile as an online fallback.
 - Persist only safe operator sync-failure descriptions; never store raw server
   responses in SQLite or surface them to the application. Convex extra-field /
   validator rejects persist `Cloud rejected this saved order. Use Sync now to retry.`

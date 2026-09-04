@@ -90,15 +90,62 @@ class SecureSessionPlugin : Plugin() {
             call.reject("Secure value must contain at most $MAX_VALUE_LENGTH characters.")
             return
         }
-        preferences().edit().putString(key, encrypt(value)).apply()
-        call.resolve()
+        if (preferences().edit().putString(key, encrypt(value)).commit()) call.resolve()
+        else call.reject("Secure value could not be saved.")
     }
 
     @PluginMethod
     fun remove(call: PluginCall) {
         val key = key(call) ?: return
-        preferences().edit().remove(key).apply()
-        call.resolve()
+        if (preferences().edit().remove(key).commit()) call.resolve()
+        else call.reject("Secure value could not be removed.")
+    }
+
+    @PluginMethod
+    fun replace(call: PluginCall) {
+        val values = call.getObject("values") ?: JSObject()
+        val removeKeys = call.getArray("removeKeys")
+        if (values.length() + (removeKeys?.length() ?: 0) > MAX_BUNDLE_ENTRIES) {
+            call.reject("Secure session update is too large.")
+            return
+        }
+        val editor = preferences().edit()
+        try {
+            for (key in values.keys()) {
+                if (!isValidKey(key)) {
+                    call.reject("Secure session key is invalid.")
+                    return
+                }
+                val value = values.getString(key)
+                if (value == null) {
+                    call.reject("Secure value is invalid.")
+                    return
+                }
+                if (value.length > MAX_VALUE_LENGTH) {
+                    call.reject("Secure value is too long.")
+                    return
+                }
+                editor.putString(key, encrypt(value))
+            }
+            if (removeKeys != null) {
+                for (index in 0 until removeKeys.length()) {
+                    val key = removeKeys.getString(index)
+                    if (key == null) {
+                        call.reject("Secure session key is invalid.")
+                        return
+                    }
+                    if (!isValidKey(key)) {
+                        call.reject("Secure session key is invalid.")
+                        return
+                    }
+                    editor.remove(key)
+                }
+            }
+            if (editor.commit()) call.resolve()
+            else call.reject("Secure session update could not be saved.")
+        } catch (error: Exception) {
+            call.reject("Secure session update could not be saved.", error)
+        }
     }
 
     @PluginMethod
@@ -189,6 +236,7 @@ class SecureSessionPlugin : Plugin() {
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val TAG_LENGTH_BITS = 128
         private const val MAX_VALUE_LENGTH = 8_192
+        private const val MAX_BUNDLE_ENTRIES = 16
         private const val NETWORK_STATUS_CHANGED = "networkStatusChanged"
 
         internal fun isValidKey(value: String) = value.matches(Regex("[A-Za-z0-9._-]{1,100}"))

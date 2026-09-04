@@ -13,6 +13,7 @@ import {
   validateStaffPin,
 } from './localStaff.ts';
 import {
+  clearStaffSession,
   createStaffPinCredential,
   saveUpdatedStaffPin,
 } from './identitySession.ts';
@@ -100,14 +101,23 @@ export function useStaffManagement() {
           ...credential,
         });
         identityRevision = updated.identityRevision;
-        await saveStaffIdentityRevision(profile.id, identityRevision);
       }
-      await saveUpdatedStaffPin(
-        profile.id,
-        credential,
-        identityRevision,
-        profile.pending,
-      );
+      try {
+        await saveUpdatedStaffPin(
+          profile.id,
+          credential,
+          identityRevision,
+          profile.pending,
+        );
+        if (!profile.pending) {
+          await saveStaffIdentityRevision(profile.id, identityRevision);
+        }
+      } catch (storageError) {
+        if (!profile.pending) {
+          await clearStaffSession(profile.id).catch(() => undefined);
+        }
+        throw storageError;
+      }
       await reload();
       setMessage('PIN changed.');
     } catch (caught) {

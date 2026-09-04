@@ -24,6 +24,9 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   identity-session tokens and offline PIN verifiers. It stores encrypted values
   only; plaintext credentials never enter SharedPreferences, logs, or plugin
   return values beyond an explicit read to the authenticated web runtime.
+  Related per-profile values are encrypted first and applied through one
+  checked SharedPreferences commit so process death or a failed write cannot
+  persist a half-old, half-new credential bundle.
 - Application Auto Backup is disabled; `data_extraction_rules` and
   `fullBackupContent` exclude database, shared preferences, and related domains
   from cloud and device-to-device transfer.

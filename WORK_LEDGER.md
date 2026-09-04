@@ -134,6 +134,31 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Owner-directed profile/PIN reliability audit (4 Sep 2026): traced creation,
+  pending provisioning, online/offline unlock, retry, lockout, PIN replacement,
+  protected storage, reconciliation, deletion, restart, and update survival.
+  Found four shared defects: separate asynchronous protected writes could leave
+  mixed credential state; a corrupt protected copy blocked online recovery; a
+  PIN replacement retained cloud lockout attempts; and a creation retry after
+  changing a waiting profile's PIN retained the first cloud credential. The
+  repair uses one checked encrypted native commit per profile, permits online
+  re-provisioning of a corrupt cloud profile while pending/offline profiles
+  fail closed, clears cloud/offline attempts and other sessions on PIN change,
+  and makes creation retry adopt the latest protected credential. Add-staff and
+  Change-PIN dialogs also block close/double-submit while saving. Production
+  profiles and PINs were not mutated. Focused identity/local staff/Settings/
+  Android checks, Convex codegen/typecheck, TypeScript, web build, and the full
+  140-task Android beta passed. The destructive development cloud regression
+  stopped before reset because its required disposable owner PIN is absent and
+  was not bypassed. The first Android build caught nullable native bundle input;
+  that boundary was corrected and the complete rebuild passed. Normal Graphify
+  refresh stopped without changing the graph because 144 non-code files require
+  an unavailable semantic key; the supported code-only refresh passed at 3,087
+  nodes / 6,132 edges. Exact next action: review/commit/push, deploy the backend,
+  install over the production-connected tablet without
+  clearing data, verify Yassine still unlocks, and leave a two-profile create/
+  PIN-change/offline matrix for explicit safe test-profile authorization.
+
 - First production setup and POS catalog follow-up (4 Sep 2026): deployed the
   current Convex schema/functions to production `befitting-fox-181`, created
   exactly one active owner named Yassine, established the owner-supplied
@@ -2368,6 +2393,29 @@ remaining goal and card sequence.
   clean/synchronized, and leave Goal 04 inactive until explicit activation.
 
 ## Planning Journal
+
+### 2026-09-04 — Profile creation and PIN-change reliability audit
+
+- Audited every profile credential boundary instead of treating the prior
+  delayed-unlock symptom as the only defect. The production owner/profile was
+  read-only throughout; no PIN, session token, verifier, or secret was printed.
+- Android research confirmed that related preference edits can be atomically
+  committed, while separate asynchronous writes cannot report durable failure.
+  Reused the existing Keystore/AES-GCM Capacitor plugin and added no dependency.
+- Repaired protected credential atomicity, safe online recovery from corrupt
+  provisioned storage, lockout cleanup, latest-PIN staff-creation retries, and
+  save-dialog double execution/close races. Added focused checks for the new
+  invariants and a cloud test covering old-PIN rejection, new-PIN acceptance,
+  session revocation, lockout reset, and changed-credential creation retry.
+- Safe checks passed as recorded in Current Checkpoint. `check:staff` correctly
+  stopped at its missing development owner PIN before seed/reset, so its new
+  live cloud scenarios remain unexecuted. Physical two-profile acceptance also
+  remains pending because production test-profile mutation was not assumed.
+- The first native build rejected nullable bundle values at Kotlin compile time.
+  Added the explicit rejection, then the full 140-task beta passed. Graphify's
+  normal mixed-content refresh stopped at its missing semantic-key gate without
+  replacing the graph; its documented code-only refresh indexed the changed
+  source successfully at 3,087 nodes / 6,132 edges.
 
 ### 2026-09-04 — Production setup and large-menu POS repair
 

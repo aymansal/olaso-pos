@@ -150,6 +150,8 @@ const keys = offlineCredentialKeys('staff:local-cashier');
 assert.equal(new Set(Object.values(keys)).size, 4);
 assert.ok(keys.provisioning.endsWith('.provisioning_credential'));
 const identitySession = readFileSync('src/data/identitySession.ts', 'utf8');
+const secureSession = readFileSync('src/data/secureSession.ts', 'utf8');
+const staffManagement = readFileSync('src/data/useStaffManagement.ts', 'utf8');
 const lock = readFileSync('src/features/settings/LockScreen.tsx', 'utf8');
 const worker = readFileSync('src/data/reconnectContext.tsx', 'utf8');
 const cache = readFileSync('src/data/operationalCache.ts', 'utf8');
@@ -165,9 +167,24 @@ const staffPanelStyles = readFileSync(
   'src/features/settings/components/StaffAccessPanel/StaffAccessPanel.module.css',
   'utf8',
 );
+const staffDialog = readFileSync(
+  'src/features/settings/components/StaffDialog/StaffDialog.tsx',
+  'utf8',
+);
+const staffPinDialog = readFileSync(
+  'src/features/settings/components/StaffPinDialog/StaffPinDialog.tsx',
+  'utf8',
+);
 assert.match(identitySession, /savePendingStaffSession/);
 assert.match(identitySession, /loadPendingStaffCredential/);
 assert.match(identitySession, /saveProvisionedStaffSession/);
+assert.match(identitySession, /replaceSecureSessionValues/);
+assert.match(secureSession, /nativeSecureSession\.replace/);
+assert.ok(
+  staffManagement.indexOf('await saveUpdatedStaffPin(')
+    < staffManagement.indexOf('await saveStaffIdentityRevision('),
+);
+assert.match(staffManagement, /await clearStaffSession\(profile\.id\)/);
 assert.doesNotMatch(identitySession, /writeSecureSessionValue\(keys\.provisioning, pin\)/);
 assert.match(lock, /isPendingStaffSession/);
 assert.match(lock, /pendingLocal/);
@@ -190,6 +207,8 @@ assert.match(identity, /preferredLanguage: args\.preferredLanguage/);
 assert.match(identityInternal, /createStaffWithCredential/);
 assert.match(identityInternal, /replaceCredentialAsOwner/);
 assert.match(identityInternal, /keepCurrentOwner/);
+assert.match(identityInternal, /attempts\.map\(\(attempt\) => ctx\.db\.delete/);
+assert.match(identityInternal, /identity\.pinSalt !== args\.pinSalt/);
 assert.match(identityInternal, /preferredLanguage: args\.preferredLanguage/);
 assert.doesNotMatch(identityInternal, /\bpin:\s*v\.string/);
 assert.match(seed, /if \(table === 'staffProfiles'\) continue/);
@@ -199,5 +218,9 @@ assert.match(seed, /ERASE_DISPOSABLE_DEPLOYMENT/);
 assert.match(settingsScreen, /StaffAccessPanel/);
 assert.match(staffPanelStyles, /\.header \{/);
 assert.doesNotMatch(staffPanelStyles, /\.panel header\{/);
+for (const dialog of [staffDialog, staffPinDialog]) {
+  assert.match(dialog, /savingRef\.current/);
+  assert.match(dialog, /disabled=\{saving\}/);
+}
 
 console.log('Local offline staff creation, PIN isolation, permission, and sync-boundary checks passed.');

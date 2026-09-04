@@ -56,6 +56,10 @@ presentation.
   PIN stays out of SQLite and the ordinary outbox; provisioned profiles update
   cloud identity plus protected offline access, while a waiting profile updates
   only its protected pending credential.
+- Add-staff and Change-PIN dialogs cannot close or submit twice while their
+  protected save is in flight. A completed PIN change resets that profile's
+  failed-attempt lockout, invalidates its other sessions, and makes only the new
+  PIN valid online and in the tablet's protected offline copy.
 - Owner-only confirmed staff deletion immediately removes the selectable
   profile, ends open monthly wage at the current month, and preserves
   historical names/wages and earlier queued work; the active profile and

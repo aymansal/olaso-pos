@@ -2,6 +2,7 @@ import {
   readSecureSessionValue,
   readSecureSessionClock,
   removeSecureSessionValue,
+  replaceSecureSessionValues,
   writeSecureSessionValue,
 } from './secureSession.ts';
 import {
@@ -123,29 +124,29 @@ async function migrateLegacyStaffSession(staffProfileId: string) {
   ]);
   if (!pin) return;
   const keys = offlineCredentialKeys(staffProfileId);
-  await Promise.all([
-    writeSecureSessionValue(keys.session, raw),
-    writeSecureSessionValue(keys.pin, pin),
-    attempts
-      ? writeSecureSessionValue(keys.attempts, attempts)
-      : removeSecureSessionValue(keys.attempts),
-  ]);
-  await Promise.all([
-    removeSecureSessionValue(LEGACY_SESSION_KEY),
-    removeSecureSessionValue(LEGACY_OFFLINE_PIN_KEY),
-    removeSecureSessionValue(LEGACY_OFFLINE_ATTEMPTS_KEY),
-  ]);
+  await replaceSecureSessionValues(
+    {
+      [keys.session]: raw,
+      [keys.pin]: pin,
+      ...(attempts ? { [keys.attempts]: attempts } : {}),
+    },
+    [
+      ...(!attempts ? [keys.attempts] : []),
+      LEGACY_SESSION_KEY,
+      LEGACY_OFFLINE_PIN_KEY,
+      LEGACY_OFFLINE_ATTEMPTS_KEY,
+    ],
+  );
 }
 
 export async function saveStaffSession(session: StaffSession, pin: string) {
   if (!/^\d{6}$/.test(pin)) throw new Error('PIN must contain six digits.');
   const salt = toBase64(crypto.getRandomValues(new Uint8Array(16)));
   const keys = offlineCredentialKeys(session.staffProfileId);
-  await Promise.all([
-    writeSecureSessionValue(keys.session, JSON.stringify(session)),
-    writeSecureSessionValue(keys.pin, `${salt}:${await derivePinHash(pin, salt)}`),
-    removeSecureSessionValue(keys.attempts),
-  ]);
+  await replaceSecureSessionValues({
+    [keys.session]: JSON.stringify(session),
+    [keys.pin]: `${salt}:${await derivePinHash(pin, salt)}`,
+  }, [keys.attempts, keys.provisioning]);
 }
 
 export async function savePendingStaffSession(
@@ -164,15 +165,13 @@ export async function savePendingStaffSession(
   };
   const keys = offlineCredentialKeys(profile.id);
   try {
-    await Promise.all([
-      writeSecureSessionValue(keys.session, JSON.stringify(session)),
-      writeSecureSessionValue(keys.pin, `${pinSalt}:${pinHash}`),
-      writeSecureSessionValue(
-        keys.provisioning,
-        JSON.stringify({ pinSalt, pinHash } satisfies PendingStaffCredential),
+    await replaceSecureSessionValues({
+      [keys.session]: JSON.stringify(session),
+      [keys.pin]: `${pinSalt}:${pinHash}`,
+      [keys.provisioning]: JSON.stringify(
+        { pinSalt, pinHash } satisfies PendingStaffCredential,
       ),
-      removeSecureSessionValue(keys.attempts),
-    ]);
+    }, [keys.attempts]);
     return session;
   } catch (error) {
     await clearStaffSession(profile.id).catch(() => undefined);
@@ -195,22 +194,16 @@ export async function saveUpdatedStaffPin(
   if (session !== undefined && !isStaffSession(session)) {
     throw new Error('Stored staff session is invalid.');
   }
-  await Promise.all([
-    writeSecureSessionValue(
-      keys.pin,
-      `${credential.pinSalt}:${credential.pinHash}`,
-    ),
-    pending
-      ? writeSecureSessionValue(keys.provisioning, JSON.stringify(credential))
-      : removeSecureSessionValue(keys.provisioning),
-    session
-      ? writeSecureSessionValue(keys.session, JSON.stringify({
-          ...normalizedSession(session),
-          identityRevision,
-        }))
-      : Promise.resolve(),
-    removeSecureSessionValue(keys.attempts),
-  ]);
+  await replaceSecureSessionValues({
+    [keys.pin]: `${credential.pinSalt}:${credential.pinHash}`,
+    ...(pending ? { [keys.provisioning]: JSON.stringify(credential) } : {}),
+    ...(session ? {
+      [keys.session]: JSON.stringify({
+        ...normalizedSession(session),
+        identityRevision,
+      }),
+    } : {}),
+  }, [keys.attempts, ...(!pending ? [keys.provisioning] : [])]);
 }
 
 export async function loadPendingStaffCredential(staffProfileId: string) {
@@ -244,17 +237,12 @@ export async function saveProvisionedStaffSession(
     throw new Error('Protected staff access is unavailable.');
   }
   try {
-    await Promise.all([
-      writeSecureSessionValue(cloudKeys.session, JSON.stringify(session)),
-      writeSecureSessionValue(cloudKeys.pin, verifier!),
-      removeSecureSessionValue(cloudKeys.attempts),
-    ]);
+    await replaceSecureSessionValues({
+      [cloudKeys.session]: JSON.stringify(session),
+      [cloudKeys.pin]: verifier!,
+    }, [cloudKeys.attempts, cloudKeys.provisioning]);
   } catch (error) {
-    await Promise.all([
-      removeSecureSessionValue(cloudKeys.session),
-      removeSecureSessionValue(cloudKeys.pin),
-      removeSecureSessionValue(cloudKeys.attempts),
-    ]).catch(() => undefined);
+    await clearStaffSession(session.staffProfileId).catch(() => undefined);
     throw error;
   }
 }
@@ -337,18 +325,13 @@ export async function verifyOfflinePin(
 
 export async function clearStaffSession(staffProfileId: string) {
   const keys = offlineCredentialKeys(staffProfileId);
-  await Promise.all([
-    removeSecureSessionValue(keys.session),
-    removeSecureSessionValue(keys.pin),
-    removeSecureSessionValue(keys.attempts),
-    removeSecureSessionValue(keys.provisioning),
-  ]);
+  await replaceSecureSessionValues({}, Object.values(keys));
 }
 
 export async function clearLegacyStaffSession() {
-  await Promise.all([
-    removeSecureSessionValue(LEGACY_SESSION_KEY),
-    removeSecureSessionValue(LEGACY_OFFLINE_PIN_KEY),
-    removeSecureSessionValue(LEGACY_OFFLINE_ATTEMPTS_KEY),
+  await replaceSecureSessionValues({}, [
+    LEGACY_SESSION_KEY,
+    LEGACY_OFFLINE_PIN_KEY,
+    LEGACY_OFFLINE_ATTEMPTS_KEY,
   ]);
 }

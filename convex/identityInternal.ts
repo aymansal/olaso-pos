@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
-import { internalMutation, internalQuery } from './_generated/server';
+import { internalMutation, internalQuery, type MutationCtx } from './_generated/server';
+import type { Id } from './_generated/dataModel';
 import {
   cleanText,
   mutationId,
@@ -14,6 +15,30 @@ const staffRole = v.union(
   v.literal('manager'),
   v.literal('cashier'),
 );
+
+async function credentialState(
+  ctx: MutationCtx,
+  staffProfileId: Id<'staffProfiles'>,
+) {
+  const [sessions, attempts] = await Promise.all([
+    ctx.db
+      .query('staffSessions')
+      .withIndex('by_staff_profile', (index) =>
+        index.eq('staffProfileId', staffProfileId),
+      )
+      .take(101),
+    ctx.db
+      .query('staffPinAttempts')
+      .withIndex('by_staff_device', (index) =>
+        index.eq('staffProfileId', staffProfileId),
+      )
+      .take(101),
+  ]);
+  if (sessions.length > 100 || attempts.length > 100) {
+    throw new Error('Staff credential history exceeds its safe limit.');
+  }
+  return { sessions, attempts };
+}
 
 export const getSignInRecord = internalQuery({
   args: { staffProfileId: v.id('staffProfiles'), deviceId: v.string() },
@@ -167,6 +192,7 @@ export const replaceCredential = internalMutation({
       )
       .unique();
     const credentialVersion = (existing?.credentialVersion ?? 0) + 1;
+    const { sessions, attempts } = await credentialState(ctx, args.staffProfileId);
     if (existing) {
       await ctx.db.patch(existing._id, {
         pinSalt: args.pinSalt,
@@ -183,16 +209,12 @@ export const replaceCredential = internalMutation({
         updatedAt: args.now,
       });
     }
-    const sessions = await ctx.db
-      .query('staffSessions')
-      .withIndex('by_staff_profile', (index) =>
-        index.eq('staffProfileId', args.staffProfileId),
-      )
-      .take(101);
-    if (sessions.length > 100) throw new Error('Staff session limit exceeded.');
-    await Promise.all(sessions.map((session) =>
-      session.revokedAt ? undefined : ctx.db.patch(session._id, { revokedAt: args.now }),
-    ));
+    await Promise.all([
+      ...sessions.map((session) =>
+        session.revokedAt ? undefined : ctx.db.patch(session._id, { revokedAt: args.now }),
+      ),
+      ...attempts.map((attempt) => ctx.db.delete(attempt._id)),
+    ]);
     return { staffProfileId: staff._id, name: staff.name, role: staff.role };
   },
 });
@@ -219,28 +241,25 @@ export const replaceCredentialAsOwner = internalMutation({
       .unique();
     if (!existing) throw new Error('Staff access is unavailable.');
     const credentialVersion = existing.credentialVersion + 1;
+    const { sessions, attempts } = await credentialState(ctx, args.staffProfileId);
     await ctx.db.patch(existing._id, {
       pinSalt: args.pinSalt,
       pinHash: args.pinHash,
       credentialVersion,
       updatedAt: args.now,
     });
-    const sessions = await ctx.db
-      .query('staffSessions')
-      .withIndex('by_staff_profile', (index) =>
-        index.eq('staffProfileId', args.staffProfileId),
-      )
-      .take(101);
-    if (sessions.length > 100) throw new Error('Staff session limit exceeded.');
-    await Promise.all(sessions.map((session) => {
-      if (session.revokedAt) return undefined;
-      const keepCurrentOwner = actor.staffProfileId === String(args.staffProfileId)
-        && session.deviceId === args.deviceId
-        && session.tokenHash === args.currentTokenHash;
-      return keepCurrentOwner
-        ? ctx.db.patch(session._id, { credentialVersion })
-        : ctx.db.patch(session._id, { revokedAt: args.now });
-    }));
+    await Promise.all([
+      ...sessions.map((session) => {
+        if (session.revokedAt) return undefined;
+        const keepCurrentOwner = actor.staffProfileId === String(args.staffProfileId)
+          && session.deviceId === args.deviceId
+          && session.tokenHash === args.currentTokenHash;
+        return keepCurrentOwner
+          ? ctx.db.patch(session._id, { credentialVersion })
+          : ctx.db.patch(session._id, { revokedAt: args.now });
+      }),
+      ...attempts.map((attempt) => ctx.db.delete(attempt._id)),
+    ]);
     return {
       id: staff._id,
       name: staff.name,
@@ -285,12 +304,31 @@ export const createStaffWithCredential = internalMutation({
         )
         .unique();
       if (!identity) throw new Error('Staff provisioning retry found no credential.');
+      let identityRevision = identity.credentialVersion;
+      if (identity.pinSalt !== args.pinSalt || identity.pinHash !== args.pinHash) {
+        const { sessions, attempts } = await credentialState(ctx, previous._id);
+        identityRevision += 1;
+        await ctx.db.patch(identity._id, {
+          pinSalt: args.pinSalt,
+          pinHash: args.pinHash,
+          credentialVersion: identityRevision,
+          updatedAt: args.now,
+        });
+        await Promise.all([
+          ...sessions.map((session) =>
+            session.revokedAt
+              ? undefined
+              : ctx.db.patch(session._id, { revokedAt: args.now }),
+          ),
+          ...attempts.map((attempt) => ctx.db.delete(attempt._id)),
+        ]);
+      }
       return {
         id: previous._id,
         name: previous.name,
         role: previous.role,
         revision: previous.revision,
-        identityRevision: identity.credentialVersion,
+        identityRevision,
       };
     }
     const active = await ctx.db

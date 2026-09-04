@@ -147,15 +147,13 @@ These decisions are final for this batch and must not be reopened:
 
 ## State Pointer
 
-**Active card:** POLISH-01 production large-menu POS repair
+**Active card:** POLISH-01 profile creation and PIN-change reliability repair
 
-**Active status:** committed, pushed, redeployed, rebuilt, installed, and
-physically verified on SM-X115; owner visual acceptance remains
+**Active status:** implementation and safe checks pass; protected development
+cloud and two-profile physical acceptance remain gated
 
-**Last completed step:** verified stronger/non-overlapping category art and
-full product-grid scrolling at 1340 by 800 on the production-connected tablet
-
-**Repair commit:** `31e57f2e09d335bf06cd4096288590770455fe1c`
+**Last completed step:** built the complete 140-task Android beta after the
+shared profile/PIN reliability repair; no production identity was mutated
 
 **Current facts:**
 

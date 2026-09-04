@@ -158,7 +158,15 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
         unlockedSession = saved;
       };
       const networkAvailable = await readSecureSessionNetworkStatus();
-      const pendingSession = await loadStaffSession(staffProfileId);
+      let pendingSession: StaffSession | undefined;
+      try {
+        pendingSession = await loadStaffSession(staffProfileId);
+      } catch (storageError) {
+        if (!networkAvailable || staffProfileId.startsWith('staff:')) {
+          throw storageError;
+        }
+        await clearStaffSession(staffProfileId).catch(() => undefined);
+      }
       if (!networkAvailable || isPendingStaffSession(pendingSession)) {
         await unlockOffline();
       } else {

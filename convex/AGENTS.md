@@ -36,6 +36,9 @@ data, reporting summaries, and development seeding.
   Owner-authorized PIN changes likewise receive only a derived credential,
   revoke the target profile's other sessions, and preserve the current owner's
   authenticated tablet session when changing their own PIN.
+  Credential replacement clears the target's failed-attempt rows. If creation
+  is retried after the owner changed a still-pending PIN, the latest derived
+  credential replaces the first one before the new staff session is returned.
 - `lib/` holds only helpers genuinely shared by multiple domain operations.
 
 ## Local Contracts

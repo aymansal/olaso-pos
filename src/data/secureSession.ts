@@ -10,6 +10,10 @@ type SecureSessionPlugin = {
   get(options: { key: string }): Promise<{ value: string | null }>;
   set(options: { key: string; value: string }): Promise<void>;
   remove(options: { key: string }): Promise<void>;
+  replace(options: {
+    values: Record<string, string>;
+    removeKeys: string[];
+  }): Promise<void>;
   monotonicClock(): Promise<{ elapsedRealtime: number; bootCount: number }>;
   networkStatus(): Promise<NetworkStatus>;
   addListener(
@@ -69,6 +73,22 @@ export async function readSecureSessionNetworkStatus() {
     throw new Error('Protected network status is unavailable.');
   }
   return status.available;
+}
+
+export async function replaceSecureSessionValues(
+  values: Record<string, string>,
+  removeKeys: string[] = [],
+) {
+  for (const [key, value] of Object.entries(values)) {
+    assertKey(key);
+    if (value.length > 8192) throw new Error('Secure session value is too long.');
+  }
+  for (const key of removeKeys) assertKey(key);
+  if (Object.keys(values).length + removeKeys.length > 16) {
+    throw new Error('Secure session update is too large.');
+  }
+  if (!Capacitor.isNativePlatform()) throw unavailable();
+  await nativeSecureSession.replace({ values, removeKeys });
 }
 
 export async function watchSecureSessionNetworkStatus(

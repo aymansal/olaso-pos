@@ -1087,6 +1087,14 @@ staff PIN
   profile's local protected record, revokes the prior token for that
   staff/device pair, and removes already revoked rows through the bounded
   staff-profile session index.
+- **Credential replacement:** the protected Android copy of a profile's
+  session, PIN verifier, provisioning credential, and attempt state changes in
+  one encrypted SharedPreferences commit. A failed local commit cannot leave a
+  mixed old/new credential. Online sign-in may replace a corrupt provisioned
+  local copy, while an offline or still-local profile fails closed. Changing a
+  PIN clears that profile's online/offline failed attempts and revokes its
+  other sessions. A retry of a not-yet-acknowledged staff creation adopts the
+  latest protected PIN credential before returning the provisioned session.
 - **Revision propagation:** active profile discovery and operational sync carry
   each profile's credential version. A changed version clears only that
   profile's protected offline record. Every reconnect validates the active

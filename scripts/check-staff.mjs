@@ -66,6 +66,59 @@ try {
   assert.equal(JSON.stringify(safeProfile).includes(initialPin), false);
   assert.equal('pinHash' in safeProfile, false);
 
+  const retriedPin = initialPin === '111111' ? '222222' : '111111';
+  const retriedCredential = credential(retriedPin);
+  const changedRetry = await action(api.identity.createStaff, {
+    name: 'Offline staff check',
+    role: 'cashier',
+    ...retriedCredential,
+    clientMutationId: 'staff01-profile-create',
+  });
+  assert.equal(changedRetry.id, provisioned.id);
+  assert.equal(changedRetry.identityRevision, 2);
+  assert.deepEqual(await client.action(api.identity.signIn, {
+    staffProfileId: provisioned.id,
+    pin: initialPin,
+    deviceId: sessionArgs.deviceId,
+  }), { kind: 'invalid-pin' });
+  const retriedSession = await client.action(api.identity.signIn, {
+    staffProfileId: provisioned.id,
+    pin: retriedPin,
+    deviceId: sessionArgs.deviceId,
+  });
+  assert.equal(retriedSession.kind, 'authenticated');
+
+  const lockedDeviceId = 'staff-check-locked-device';
+  const wrongPin = retriedPin === '333333' ? '444444' : '333333';
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const failure = await client.action(api.identity.signIn, {
+      staffProfileId: provisioned.id,
+      pin: wrongPin,
+      deviceId: lockedDeviceId,
+    });
+    assert.equal(failure.kind, attempt === 4 ? 'locked' : 'invalid-pin');
+  }
+  const changedPin = retriedPin === '555555' ? '666666' : '555555';
+  const updated = await action(api.identity.updateStaffPin, {
+    staffProfileId: provisioned.id,
+    ...credential(changedPin),
+  });
+  assert.equal(updated.identityRevision, 3);
+  assert.equal((await client.action(api.identity.checkSession, {
+    token: retriedSession.token,
+    deviceId: sessionArgs.deviceId,
+  })).kind, 'invalid');
+  assert.deepEqual(await client.action(api.identity.signIn, {
+    staffProfileId: provisioned.id,
+    pin: retriedPin,
+    deviceId: sessionArgs.deviceId,
+  }), { kind: 'invalid-pin' });
+  assert.equal((await client.action(api.identity.signIn, {
+    staffProfileId: provisioned.id,
+    pin: changedPin,
+    deviceId: lockedDeviceId,
+  })).kind, 'authenticated');
+
   const created = await mutation(api.staff.save, {
     name: 'Cost check cashier',
     role: 'cashier',
