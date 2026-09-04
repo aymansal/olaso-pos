@@ -146,18 +146,26 @@ remaining goal and card sequence.
   fail closed, clears cloud/offline attempts and other sessions on PIN change,
   and makes creation retry adopt the latest protected credential. Add-staff and
   Change-PIN dialogs also block close/double-submit while saving. Production
-  profiles and PINs were not mutated. Focused identity/local staff/Settings/
-  Android checks, Convex codegen/typecheck, TypeScript, web build, and the full
+  identities and PIN values were not modified. Focused identity/local staff/
+  Settings/Android checks, Convex codegen/typecheck, TypeScript, web build, and the full
   140-task Android beta passed. The destructive development cloud regression
   stopped before reset because its required disposable owner PIN is absent and
   was not bypassed. The first Android build caught nullable native bundle input;
   that boundary was corrected and the complete rebuild passed. Normal Graphify
   refresh stopped without changing the graph because 144 non-code files require
   an unavailable semantic key; the supported code-only refresh passed at 3,087
-  nodes / 6,132 edges. Exact next action: review/commit/push, deploy the backend,
-  install over the production-connected tablet without
-  clearing data, verify Yassine still unlocks, and leave a two-profile create/
-  PIN-change/offline matrix for explicit safe test-profile authorization.
+  nodes / 6,132 edges. Committed and pushed the repair as
+  `3172e9b3f42a782794113e340e76aa1a0a0c974c` (`POLISH-01: harden staff
+  credential lifecycle`) on `origin/main`, then deployed the matching backend
+  to production `befitting-fox-181`. Installed version 1.1 over the connected
+  tablet with `adb install -r`, preserving production data. Physical 1340 by
+  800 evidence confirmed Yassine remained listed, the existing PIN unlocked
+  online, all four categories and 92 products remained, and the same saved
+  profile unlocked after a full app restart with Wi-Fi disabled. Wi-Fi was
+  restored and validated; focused logcat contained no fatal, secure-session,
+  database-lock, or Chromium crash error. Exact next action: run the complete
+  two-profile create/sync/restart/offline/PIN-change matrix only when a
+  disposable test profile and safe test credential are explicitly authorized.
 
 - First production setup and POS catalog follow-up (4 Sep 2026): deployed the
   current Convex schema/functions to production `befitting-fox-181`, created

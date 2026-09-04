@@ -149,14 +149,27 @@ These decisions are final for this batch and must not be reopened:
 
 **Active card:** POLISH-01 profile creation and PIN-change reliability repair
 
-**Active status:** implementation and safe checks pass; protected development
-cloud and two-profile physical acceptance remain gated
+**Active status:** implementation, deployment, existing-profile online/offline
+tablet proof, and safe checks pass; protected development cloud and complete
+two-profile PIN-change acceptance remain gated
 
-**Last completed step:** built the complete 140-task Android beta after the
-shared profile/PIN reliability repair; no production identity was mutated
+**Last completed step:** deployed and installed the profile/PIN repair without
+clearing tablet data, then proved the existing owner unlocks online and after
+an offline restart; no production identity or PIN value was modified
 
 **Current facts:**
 
+- Profile/PIN reliability repair `3172e9b3f42a782794113e340e76aa1a0a0c974c`
+  is on `origin/main` and its Convex functions are deployed to production
+  `befitting-fox-181`. The production-connected version 1.1 beta was installed
+  with `adb install -r`; existing data survived. On SM-X115 `R8YX91AKWXJ`,
+  Yassine remained listed and the existing PIN unlocked both online and after
+  a full app restart with Wi-Fi disabled. All four categories and 92 products
+  remained available offline. Wi-Fi was restored and validated; focused
+  logcat contained no fatal, secure-session, database-lock, or Chromium crash
+  error. No staff row or PIN value was created, changed, or deleted during
+  this acceptance. The full two-profile creation and PIN-replacement matrix
+  still requires an explicitly authorized disposable profile/test credential.
 - AUDIT-01 repair A: `convex/reports.ts` `getAllSummary` was replaced by
   `getAllSummaryPage` (one `.paginate(paginationOpts)` call) and
   `getAllSummaryStock` (bounded live-ingredient overlay). The Reports data
