@@ -285,7 +285,13 @@ const dailyReport = {
     { service: 'take-away', orderCount: 1 },
   ],
   cancellations: [{ receiptNumber: '000122', reason: 'Erreur caisse', actorName: 'Olaso Owner' }],
-  products: [{ name: 'Latte · Regular', quantity: 3, totalCentimes: 5400 }],
+  profilePerformance: [{
+    name: 'Samira',
+    orderCount: 2,
+    itemCount: 3,
+    netCentimes: 5400,
+    products: [{ name: 'Latte · Regular', quantity: 3, totalCentimes: 5400 }],
+  }],
   ingredientCostCentimes: 1800,
   grossProfitCentimes: 5700,
   compensationCentimes: 900,
@@ -303,6 +309,9 @@ assert.match(dailyText, /RAPPORT QUOTIDIEN DU PROPRIÉTAIRE/);
 assert.match(dailyText, /Carte \(1\)\s+40\.00 MAD/);
 assert.match(dailyText, /Espèces \(2\)\s+35\.00 MAD/);
 assert.match(dailyText, /À emporter\s+1/);
+assert.match(dailyText, /PERFORMANCE PAR PROFIL/);
+assert.match(dailyText, /Samira/);
+assert.match(dailyText, /TOTAL:/);
 assert.match(dailyText, /Résultat opérationnel\s+45\.00 MAD/);
 assert.doesNotMatch(dailyText, /Terminal|Comptoir/);
 assert(dailyText.split('\n').every((row) => row.length <= 48));

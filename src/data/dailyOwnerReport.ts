@@ -21,9 +21,10 @@ export async function loadDailySalesOverview(
   database: ReportDatabase,
   businessDate: string,
 ) {
-  const [sales, corrections] = await Promise.all([
+  const [sales, corrections, items] = await Promise.all([
     database.query(
-      `SELECT status, service_type, subtotal_centimes,
+      `SELECT local_sale_id, actor_profile_id, status, service_type, total_centimes,
+        receipt_snapshot_json, subtotal_centimes,
         cost_status, print_state FROM sales
        WHERE business_date = ? LIMIT 1001`,
       [businessDate],
@@ -36,12 +37,86 @@ export async function loadDailySalesOverview(
        ORDER BY correction.corrected_at LIMIT 101`,
       [businessDate],
     ),
+    database.query(
+      `SELECT item.local_sale_id, item.product_name_snapshot,
+        SUM(item.quantity) AS quantity, SUM(item.line_total_centimes) AS total_centimes
+       FROM sale_items item
+       JOIN sales sale ON sale.local_sale_id = item.local_sale_id
+       WHERE sale.business_date = ? AND sale.status = 'completed'
+       GROUP BY item.local_sale_id, item.product_name_snapshot
+       ORDER BY item.local_sale_id, item.product_name_snapshot
+       LIMIT 5001`,
+      [businessDate],
+    ),
   ]);
-  if ((sales.values?.length ?? 0) > 1_000 || (corrections.values?.length ?? 0) > 100) {
+  if (
+    (sales.values?.length ?? 0) > 1_000
+    || (corrections.values?.length ?? 0) > 100
+    || (items.values?.length ?? 0) > 5_000
+  ) {
     throw new Error('The saved daily report exceeds its supported limit.');
+  }
+  const productsBySale = new Map<string, Array<{ name: string; quantity: number; totalCentimes: number }>>();
+  for (const row of items.values ?? []) {
+    const saleId = String(row.local_sale_id);
+    const products = productsBySale.get(saleId) ?? [];
+    products.push({
+      name: String(row.product_name_snapshot),
+      quantity: Number(row.quantity),
+      totalCentimes: Number(row.total_centimes),
+    });
+    productsBySale.set(saleId, products);
+  }
+  const profiles = new Map<string, {
+    name?: string;
+    orderCount: number;
+    itemCount: number;
+    netCentimes: number;
+    products: Map<string, { name: string; quantity: number; totalCentimes: number }>;
+  }>();
+  for (const row of sales.values ?? []) {
+    if (row.status !== 'completed') continue;
+    const profileId = row.actor_profile_id ? String(row.actor_profile_id) : '';
+    let cashierName: string | undefined;
+    try {
+      const saved = JSON.parse(String(row.receipt_snapshot_json)) as { cashierName?: unknown };
+      cashierName = typeof saved.cashierName === 'string' && saved.cashierName.trim()
+        ? saved.cashierName.trim()
+        : undefined;
+    } catch {
+      cashierName = undefined;
+    }
+    const profile = profiles.get(profileId) ?? {
+      ...(profileId && cashierName ? { name: cashierName } : {}),
+      orderCount: 0,
+      itemCount: 0,
+      netCentimes: 0,
+      products: new Map(),
+    };
+    profile.orderCount += 1;
+    profile.netCentimes += Number(row.total_centimes);
+    for (const product of productsBySale.get(String(row.local_sale_id)) ?? []) {
+      const total = profile.products.get(product.name) ?? { ...product, quantity: 0, totalCentimes: 0 };
+      total.quantity += product.quantity;
+      total.totalCentimes += product.totalCentimes;
+      profile.itemCount += product.quantity;
+      profile.products.set(product.name, total);
+    }
+    profiles.set(profileId, profile);
   }
   return {
     salesRows: sales.values ?? [],
+    profileTotals: [...profiles.values()]
+      .map((profile) => ({
+        ...(profile.name ? { name: profile.name } : {}),
+        orderCount: profile.orderCount,
+        itemCount: profile.itemCount,
+        netCentimes: profile.netCentimes,
+        products: [...profile.products.values()].sort((left, right) =>
+          right.totalCentimes - left.totalCentimes || left.name.localeCompare(right.name),
+        ),
+      }))
+      .sort((left, right) => right.netCentimes - left.netCentimes || (left.name ?? '').localeCompare(right.name ?? '')),
     cancellations: (corrections.values ?? []).map((row) => ({
       receiptNumber: String(row.receipt_number),
       reason: String(row.reason),
@@ -101,11 +176,7 @@ export async function createDailyOwnerReport(
     })),
     serviceTotals: [...services].map(([service, orderCount]) => ({ service, orderCount })),
     cancellations: overview.cancellations,
-    products: report.current.productTotals.map((product) => ({
-      name: product.productName,
-      quantity: product.quantity,
-      totalCentimes: product.totalCentimes,
-    })),
+    profilePerformance: overview.profileTotals,
     ingredientCostCentimes,
     grossProfitCentimes,
     compensationCentimes,

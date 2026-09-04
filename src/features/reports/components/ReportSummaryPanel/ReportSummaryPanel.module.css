@@ -105,6 +105,71 @@
   background: var(--olaso-stock-strip);
 }
 
+.profilePerformance {
+  position: absolute;
+  top: 400px;
+  left: 22px;
+  width: 356px;
+  height: 148px;
+}
+
+.profilePerformance h3 {
+  height: 20px;
+  margin: 0;
+  color: var(--olaso-text-meta);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.profileList {
+  height: 128px;
+  overflow: auto;
+}
+
+.profileList article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  border-bottom: 1px solid var(--olaso-order-divider);
+}
+
+.profileList article > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profileList strong,
+.profileList b {
+  color: var(--olaso-text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.profileList strong {
+  overflow: hidden;
+  max-width: 220px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileList small,
+.profileList p {
+  margin: 0;
+  color: var(--olaso-copy);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.profileList p {
+  display: grid;
+  height: 128px;
+  place-items: center;
+}
+
 .result small {
   color: var(--olaso-copy);
   font-size: 12px;

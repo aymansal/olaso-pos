@@ -22,7 +22,7 @@ data, reporting summaries, and development seeding.
 - `dashboard.ts` owns the one-call saved-summary, current-warning, and
   recent-order snapshot.
 - `reports.ts` owns the one-call current/prior saved-summary range and bounded
-  product, category, payment, service, and exact-unit ingredient aggregates.
+  product, category, payment, service, profile-performance, and exact-unit ingredient aggregates.
 - `expenses.ts` owns retry-safe exact-date expense creation/correction;
   `staff.ts` owns owner-only bounded compensation reads, period creation, and
   forward-only stops.

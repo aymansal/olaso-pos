@@ -33,6 +33,13 @@ const makeDailyRow = (index) => ({
     paymentMethod: index % 2 ? 'Card' : 'Cash',
     totalCentimes: 1000 + index, orderCount: 1,
   }],
+  profileTotals: [{
+    staffProfileId: `staff-${index % 2}`,
+    profileName: index % 2 ? 'Samira' : 'Yassine',
+    orderCount: 1,
+    itemCount: 2,
+    netCentimes: 1000 + index,
+  }],
   ingredientTotals: [{
     ingredientId: `i${index % 3}`, ingredientName: `Ing ${index % 3}`,
     baseUnit: 'gram', quantity: 5,
@@ -64,6 +71,11 @@ const makeDailyRow = (index) => ({
   assert.equal(cloudAll.current.netCentimes, cloudDailyRows.reduce((sum, row) => sum + row.netCentimes, 0));
   assert.equal(cloudAll.current.orderCount, 130);
   assert.equal(cloudAll.current.itemCount, 260);
+  assert.equal(cloudAll.current.profileTotals.length, 2);
+  assert.deepEqual(
+    cloudAll.current.profileTotals.reduce((sum, profile) => sum + profile.netCentimes, 0),
+    cloudAll.current.netCentimes,
+  );
   assert.equal(cloudAll.current.ingredientTypeCount, 3);
   assert.equal(cloudAll.current.productTotals.length, 20);
   assert.equal(cloudAll.current.productTotals[0].quantity, 12);
@@ -235,6 +247,32 @@ assert.deepEqual(aggregate.paymentTotals, [{
   paymentMethod: 'Cash',
   totalCentimes: 1000,
   orderCount: 1,
+}]);
+assert.deepEqual(aggregate.profileTotals, [{
+  profileName: 'Unattributed',
+  orderCount: 1,
+  itemCount: 2,
+  netCentimes: 1000,
+}]);
+const attributed = aggregateOfflineSales([{
+  ...rows[0],
+  staffProfileId: 'staff-yassine',
+  profileName: 'Yassine',
+  receipt: {
+    ...rows[0].receipt,
+    cashierName: 'Yassine',
+    tenders: [
+      { paymentMethod: 'Cash', dueCentimes: 400, amountCentimes: 400, changeCentimes: 0 },
+      { paymentMethod: 'Card', dueCentimes: 600, amountCentimes: 600, changeCentimes: 0 },
+    ],
+  },
+}], new Map());
+assert.deepEqual(attributed.profileTotals, [{
+  staffProfileId: 'staff-yassine',
+  profileName: 'Yassine',
+  orderCount: 1,
+  itemCount: 2,
+  netCentimes: 1000,
 }]);
 const repeatedMixedTenders = aggregateOfflineSales([{
   ...rows[0],

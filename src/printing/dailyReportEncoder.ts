@@ -20,7 +20,13 @@ export type DailyOwnerReport = {
   paymentTotals: Array<{ label: string; totalCentimes: number; orderCount: number }>;
   serviceTotals: Array<{ service: 'dine-in' | 'take-away' | 'online'; orderCount: number }>;
   cancellations: Array<{ receiptNumber: string; reason: string; actorName: string }>;
-  products: Array<{ name: string; quantity: number; totalCentimes: number }>;
+  profilePerformance: Array<{
+    name?: string;
+    orderCount: number;
+    itemCount: number;
+    netCentimes: number;
+    products: Array<{ name: string; quantity: number; totalCentimes: number }>;
+  }>;
   ingredientCostCentimes: number;
   grossProfitCentimes: number;
   compensationCentimes: number;
@@ -74,14 +80,14 @@ function reportRows(report: DailyOwnerReport): PrinterRow[] {
     title: 'RAPPORT QUOTIDIEN DU PROPRIÉTAIRE', date: 'Date', printed: 'Imprimé', owner: 'Propriétaire',
     sales: 'VENTES', orders: 'Commandes', items: 'Articles', subtotal: 'Sous-total', offert: 'Offert', net: 'Ventes nettes', average: 'Panier moyen',
     payments: 'PAIEMENTS', cash: 'Espèces', card: 'Carte', services: 'SERVICE', dineIn: 'Sur place', takeAway: 'À emporter', online: 'En ligne',
-    cancellations: 'ANNULATIONS', none: 'Aucune', by: 'Par', products: 'PRODUITS',
+    cancellations: 'ANNULATIONS', none: 'Aucune', by: 'Par', profiles: 'PERFORMANCE PAR PROFIL', total: 'TOTAL', unattributed: 'Non attribué',
     profit: 'RÉSULTAT', ingredients: 'Coût ingrédients', gross: 'Marge brute', wages: 'Salaires', expenses: 'Autres dépenses', operating: 'Résultat opérationnel', incomplete: 'Coûts incomplets',
     controls: 'STOCK ET CONTRÔLES', stockValue: 'Valeur du stock', lowStock: 'Stock faible', unsynced: 'Non synchronisé', printFailures: 'Échecs impression', end: 'FIN DU RAPPORT',
   } : {
     title: 'OWNER DAILY REPORT', date: 'Date', printed: 'Printed', owner: 'Owner',
     sales: 'SALES', orders: 'Orders', items: 'Items', subtotal: 'Subtotal', offert: 'Offert', net: 'Net sales', average: 'Average order',
     payments: 'PAYMENTS', cash: 'Cash', card: 'Card', services: 'SERVICE', dineIn: 'Dine in', takeAway: 'Take away', online: 'Online',
-    cancellations: 'CANCELLATIONS', none: 'None', by: 'By', products: 'PRODUCTS',
+    cancellations: 'CANCELLATIONS', none: 'None', by: 'By', profiles: 'PROFILE PERFORMANCE', total: 'TOTAL', unattributed: 'Unattributed',
     profit: 'PROFIT', ingredients: 'Ingredient cost', gross: 'Gross profit', wages: 'Wages', expenses: 'Other expenses', operating: 'Operating profit', incomplete: 'Incomplete costs',
     controls: 'STOCK & CONTROLS', stockValue: 'Stock value', lowStock: 'Low stock', unsynced: 'Unsynced', printFailures: 'Print failures', end: 'END OF REPORT',
   };
@@ -108,11 +114,19 @@ function reportRows(report: DailyOwnerReport): PrinterRow[] {
       { text: `${item.receiptNumber} · ${item.reason}`, bold: true },
       { text: `${l.by}: ${item.actorName}` },
     ]) : [{ text: l.none }]),
-    ...section(l.products),
-    ...(report.products.length ? report.products.flatMap((product) => [
-      ...wrap(`${product.quantity} × ${product.name}`).map((text) => ({ text })),
-      ...pair('', money(product.totalCentimes)),
+    ...section(l.profiles),
+    ...(report.profilePerformance.length ? report.profilePerformance.flatMap((profile) => [
+      { text: profile.name ?? l.unattributed, bold: true },
+      ...pair(`${profile.orderCount} ${l.orders.toLowerCase()} · ${profile.itemCount} ${l.items.toLowerCase()}`, money(profile.netCentimes)),
+      ...profile.products.flatMap((product) => [
+        ...wrap(`  ${product.quantity} × ${product.name}`).map((text) => ({ text })),
+        ...pair('', money(product.totalCentimes)),
+      ]),
     ]) : [{ text: l.none }]),
+    ...pair(
+      `${l.total}: ${report.orderCount} ${l.orders.toLowerCase()} · ${report.itemCount} ${l.items.toLowerCase()}`,
+      money(report.netCentimes),
+    ),
     ...section(l.profit),
     ...pair(l.ingredients, money(report.ingredientCostCentimes)),
     ...pair(l.gross, money(report.grossProfitCentimes)),

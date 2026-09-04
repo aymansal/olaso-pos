@@ -301,6 +301,7 @@ export default defineSchema({
     localSaleId: v.string(),
     receiptNumber: v.string(),
     cashierName: v.optional(v.string()),
+    staffProfileId: v.optional(v.id('staffProfiles')),
     serviceMode,
     customerName: v.optional(v.string()),
     tableLabel: v.optional(v.string()),
@@ -529,6 +530,17 @@ export default defineSchema({
         totalCentimes: v.number(),
         orderCount: v.number(),
       }),
+    ),
+    profileTotals: v.optional(
+      v.array(
+        v.object({
+          staffProfileId: v.id('staffProfiles'),
+          profileName: v.string(),
+          orderCount: v.number(),
+          itemCount: v.number(),
+          netCentimes: v.number(),
+        }),
+      ),
     ),
     productTotals: v.array(
       v.object({

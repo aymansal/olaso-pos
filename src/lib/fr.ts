@@ -249,6 +249,7 @@ export const fr: Record<string, string> = {
   'No order selected': 'Aucune commande sélectionnée',
   'No prior period': 'Pas de période précédente',
   'No product sales.': 'Aucune vente produit.',
+  'No profile sales.': 'Aucune vente par profil.',
   'No products match these filters.': 'Aucun produit ne correspond.',
   'No products match this category and search.':
     'Aucun produit ne correspond à cette catégorie et cette recherche.',
@@ -341,6 +342,7 @@ export const fr: Record<string, string> = {
   'Products': 'Produits',
   'Products pagination': 'Pages des produits',
   'Profit': 'Bénéfice',
+  'Profile performance': 'Performance par profil',
   'Purchase could not be saved.': 'L’achat n’a pas pu être enregistré.',
   'Quantities stay as whole': 'Les quantités restent entières',
   'Quantity per package': 'Quantité par colis',
@@ -524,6 +526,7 @@ export const fr: Record<string, string> = {
     'Déverrouillage impossible. Vérifiez la connexion et réessayez.',
   'Unavailable': 'Indisponible',
   'Uncategorized': 'Sans catégorie',
+  'Unattributed': 'Non attribué',
   'UNIT GROUP': 'FAMILLE',
   'Units and share of sales': 'Unités et part des ventes',
   'UNITS SOLD': 'UNITÉS VENDUES',
@@ -603,6 +606,7 @@ export const fr: Record<string, string> = {
     'L’équipier n’a pas pu être supprimé.',
   'up to {max}': 'jusqu’à {max}',
   '{count} items': '{count} articles',
+  '{orders} orders · {items} items': '{orders} commandes · {items} articles',
   '{name} quantity: {quantity}': '{name} : {quantity}',
   'Offline · sales stay saved on this tablet.':
     'Hors ligne · les ventes restent enregistrées sur cette tablette.',

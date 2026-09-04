@@ -44,6 +44,7 @@ export function ReportSummaryPanel({
   const categories = current?.categoryTotals.slice(0, 4) ?? [];
   const products = current?.productTotals.slice(0, 6) ?? [];
   const ingredients = current?.ingredientTotals.slice(0, 10) ?? [];
+  const profiles = current?.profileTotals ?? [];
 
   if (tab === 'products') {
     return (
@@ -226,6 +227,25 @@ export function ReportSummaryPanel({
           </article>
         ))}
       </div>
+      <section className={`${styles.profilePerformance} ${styles.data}`} data-stale={stale} aria-labelledby="profile-performance-title">
+        <h3 id="profile-performance-title">{t('Profile performance')}</h3>
+        <div className={styles.profileList}>
+          {profiles.length === 0 ? (
+            <p>{t('No profile sales.')}</p>
+          ) : profiles.map((profile) => (
+            <article key={profile.staffProfileId ?? 'unattributed'}>
+              <span>
+                <strong>{profile.staffProfileId ? profile.profileName : t('Unattributed')}</strong>
+                <small>{t('{orders} orders · {items} items', {
+                  orders: profile.orderCount,
+                  items: profile.itemCount,
+                })}</small>
+              </span>
+              <b>{formatMoney(profile.netCentimes)}</b>
+            </article>
+          ))}
+        </div>
+      </section>
       <div className={`${styles.result} ${styles.data}`} data-stale={stale}>
         <small>{t(showCompensation ? 'Operating profit' : 'Gross profit')}</small>
         <strong className={

@@ -35,6 +35,7 @@ type SavedLine = {
 
 type SavedReceipt = {
   completedAt: number;
+  cashierName?: string;
   paymentMethod: string;
   tenders?: Array<{
     paymentMethod?: 'Cash' | 'Card';
@@ -54,7 +55,7 @@ function receipt(value: unknown): SavedReceipt {
 async function localSales(fromDate: string, toDate: string) {
   const database = await openLocalDatabase();
   const [result, savedCategories] = await Promise.all([database.query(
-    `SELECT local_sale_id, receipt_number, status, service_type,
+    `SELECT local_sale_id, actor_profile_id, receipt_number, status, service_type,
       total_centimes, business_date, receipt_snapshot_json, created_at,
       ingredient_cost_centimes
      FROM sales
@@ -85,6 +86,8 @@ async function localSales(fromDate: string, toDate: string) {
     const savedReceipt = receipt(row.receipt_snapshot_json);
     return {
     id: String(row.local_sale_id),
+    staffProfileId: row.actor_profile_id ? String(row.actor_profile_id) : undefined,
+    profileName: savedReceipt.cashierName?.trim() || undefined,
     receiptNumber: String(row.receipt_number),
     status: String(row.status) as 'completed' | 'cancelled' | 'refunded',
     serviceMode: row.service_type === 'dine-in'
@@ -159,6 +162,13 @@ export function aggregateOfflineSales(
     totalCentimes: number;
     orderCount: number;
   }>();
+  const profiles = new Map<string, {
+    staffProfileId?: string;
+    profileName: string;
+    orderCount: number;
+    itemCount: number;
+    netCentimes: number;
+  }>();
   let netCentimes = 0;
   let itemCount = 0;
   let ingredientCostCentimes = 0;
@@ -166,6 +176,18 @@ export function aggregateOfflineSales(
   for (const row of completed) {
     netCentimes += row.totalCentimes;
     ingredientCostCentimes += row.ingredientCostCentimes ?? 0;
+    const profileKey = row.staffProfileId ?? '';
+    const profile = profiles.get(profileKey) ?? {
+      ...(row.staffProfileId ? { staffProfileId: row.staffProfileId } : {}),
+      profileName: row.staffProfileId && row.profileName
+        ? row.profileName
+        : 'Unattributed',
+      orderCount: 0,
+      itemCount: 0,
+      netCentimes: 0,
+    };
+    profile.orderCount += 1;
+    profile.netCentimes += row.totalCentimes;
     const salePayments = new Map<string, number>();
     for (const tender of row.receipt.tenders?.length
       ? row.receipt.tenders
@@ -185,6 +207,7 @@ export function aggregateOfflineSales(
     }
     for (const line of row.receipt.lines) {
       itemCount += line.quantity;
+      profile.itemCount += line.quantity;
       const category = line.categoryIdSnapshot && line.categoryNameSnapshot
         ? { id: line.categoryIdSnapshot, name: line.categoryNameSnapshot }
         : categoryByProduct.get(line.productId);
@@ -213,12 +236,17 @@ export function aggregateOfflineSales(
         categories.set(category.id, total);
       }
     }
+    profiles.set(profileKey, profile);
   }
   const productList = [...products.values()];
   return {
     netCentimes,
     orderCount: completed.length,
     itemCount,
+    profileTotals: [...profiles.values()].sort(
+      (left, right) => right.netCentimes - left.netCentimes
+        || left.profileName.localeCompare(right.profileName),
+    ),
     ingredientCostCentimes,
     incompleteSaleCount: 0,
     ingredientUsageEventCount: 0,
@@ -397,6 +425,34 @@ export async function loadAllPaymentTotals(database: Database) {
   ).slice(0, 20);
 }
 
+async function loadAllProfileTotals(database: Database) {
+  const result = await database.query(
+    `SELECT sale.actor_profile_id AS staff_profile_id,
+      MAX(json_extract(sale.receipt_snapshot_json, '$.cashierName')) AS profile_name,
+      COUNT(*) AS order_count,
+      COALESCE(SUM(sale.total_centimes), 0) AS net_centimes,
+      COALESCE(SUM((SELECT SUM(item.quantity) FROM sale_items item
+        WHERE item.local_sale_id = sale.local_sale_id)), 0) AS item_count
+     FROM sales sale
+     WHERE sale.status = 'completed'
+     GROUP BY sale.actor_profile_id
+     ORDER BY net_centimes DESC, profile_name
+     LIMIT 1001`,
+  );
+  if ((result.values?.length ?? 0) > 1_000) {
+    throw new Error('Saved profile report exceeds its supported limit.');
+  }
+  return (result.values ?? []).map((row) => ({
+    ...(row.staff_profile_id ? { staffProfileId: String(row.staff_profile_id) } : {}),
+    profileName: row.staff_profile_id && row.profile_name
+      ? String(row.profile_name)
+      : 'Unattributed',
+    orderCount: Number(row.order_count),
+    itemCount: Number(row.item_count),
+    netCentimes: Number(row.net_centimes),
+  }));
+}
+
 async function loadOfflineAllReport() {
   const database = await openLocalDatabase();
   const today = localBusinessDate();
@@ -410,7 +466,7 @@ async function loadOfflineAllReport() {
      )`,
   );
   const fromDate = String(dates.values?.[0]?.earliest ?? today);
-  const [summary, productSummary, categories, payments, usage] = await Promise.all([
+  const [summary, productSummary, categories, payments, profiles, usage] = await Promise.all([
     database.query(
       `SELECT COALESCE(SUM(total_centimes), 0) AS net_centimes,
         COUNT(*) AS order_count,
@@ -428,6 +484,7 @@ async function loadOfflineAllReport() {
        ORDER BY total_centimes DESC, category_name LIMIT 20`,
     ),
     loadAllPaymentTotals(database),
+    loadAllProfileTotals(database),
     ingredientUsage(fromDate, today),
   ]);
   const row = summary.values?.[0] ?? {};
@@ -447,11 +504,12 @@ async function loadOfflineAllReport() {
         quantity: Number(item.quantity), totalCentimes: Number(item.total_centimes),
       })),
       paymentTotals: payments,
+      profileTotals: profiles,
       ingredientTotals: usage.ingredientTotals,
     },
     previous: { netCentimes: 0, orderCount: 0, itemCount: 0, ingredientCostCentimes: 0,
       incompleteSaleCount: 0, ingredientUsageEventCount: 0, ingredientTypeCount: 0,
-      productTotals: [], categoryTotals: [], paymentTotals: [], ingredientTotals: [] },
+      productTotals: [], categoryTotals: [], paymentTotals: [], profileTotals: [], ingredientTotals: [] },
     daily: [],
   };
 }

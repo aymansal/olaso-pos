@@ -153,14 +153,31 @@ These decisions are final for this batch and must not be reopened:
 tablet proof, and safe checks pass; protected development cloud and complete
 two-profile PIN-change acceptance remain gated
 
-**Last completed step:** repaired the production catalog's missing sellable
-sizes, installed the beta without clearing tablet data, and verified the
-tablet cache has 92 active products, 93 active sizes, and zero products without
-an active size; no sale, product, staff identity, or PIN value was created,
-changed, or deleted during device verification
+**Last completed step:** implemented and deployed owner-approved profile
+performance accounting for the Sales report and daily owner report; the
+matching production APK is packaged, but no tablet, sale, profile, or PIN was
+touched for this card
 
 **Current facts:**
 
+- Profile performance is sale-owned, never payment-owned: one completed sale
+  contributes once to its authenticated profile regardless of Cash/Card tender
+  splits. New cloud sales save the authenticated staff-profile ID and name in
+  the daily metric; cancellation reverses those exact profile totals. Existing
+  records without a saved profile ID remain an explicit `Unattributed` row.
+  The Sales profit card keeps Operating Profit fixed and gives profile rows an
+  internal scroll area. The daily owner report now groups each sold product
+  under its profile, then prints overall orders/items/net-sales totals. The
+  feature stays entirely inside the existing SQLite, Convex, and Capacitor data
+  boundary; official Android architecture guidance supports persistent
+  data-layer ownership rather than Activity state, and no native/plugin change
+  is needed. Development and production Convex functions are deployed; the
+  production Android bundle was built successfully. Focused offline, local,
+  printing, TypeScript, CSS-scope, and production packaging checks pass.
+  Protected cloud sales/reports checks stopped at the missing disposable owner
+  test PIN before any development seed/reset and were not bypassed. Exact next
+  action: commit and push this POLISH-01 adjustment, then owner installs the
+  packaged build and checks the Reports Sales card and a printed daily report.
 - Production client recovery: the earlier APK was connected to the development
   Convex deployment, whose old active catalog has 15 products; production has
   the real 92-product menu. This was why reconnect replaced the tablet menu
@@ -1925,3 +1942,26 @@ Do not claim physical acceptance. The owner performs it.
   screen. Exact next action: owner unlocks the app, then inspect all four
   category cards and add one imported product to the cart without placing a
   sale.
+
+### 2026-09-04 — POLISH-01 profile performance implementation
+
+- The owner approved a professional, non-competitive staff-sales report:
+  profile name, completed orders, sold units, and net sales, where a split
+  payment is still one sale. New sales save the server-authenticated staff ID
+  in the immutable cloud sale and per-day profile totals; cancellation removes
+  those same amounts. Existing daily records have no fabricated identity: the
+  report derives their remaining totals as `Unattributed`.
+- The Reports Sales profit card uses its existing gap above the fixed Operating
+  Profit strip for an internally scrolling compact list. The printed daily
+  owner report replaces its flat product block with profile headings, product
+  rows, and an overall total. English and French labels are both included.
+- Official Android and Capacitor research confirms this is data-layer work, so
+  no Kotlin, Android storage API, plugin, or dependency was added. Development
+  and production Convex deployments succeeded. Focused offline/local/printing,
+  TypeScript, CSS scope, build, and production Android packaging pass.
+  `check:sales` and `check:reports` stopped before seed/reset because the
+  deliberately absent disposable owner test PIN is required; it was not
+  requested or bypassed. Graphify code-only incremental refresh succeeded at
+  3,095 nodes / 6,142 edges / 194 communities after the normal mixed refresh
+  correctly stopped for the absent semantic-extraction key. The tablet was not
+  launched, installed, or operated for this card.

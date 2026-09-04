@@ -7,7 +7,7 @@ import {
   conflict,
   invalid,
 } from './lib/management';
-import { requireOperationalAccess } from './lib/operational';
+import { requireOperationalAccess, requireOperationalSession } from './lib/operational';
 import { sessionArgs } from './lib/session';
 import { consumeValuation } from '../src/lib/costs';
 import { resolveProductConfiguration } from '../src/lib/productConfiguration';
@@ -200,9 +200,9 @@ export const accept = mutation({
     lines: v.array(saleLine),
   },
   handler: async (ctx, args) => {
-    const actor = await requireOperationalAccess(ctx, args);
+    const actor = await requireOperationalSession(ctx, args);
     const cashierName = args.cashierName === undefined
-      ? actor
+      ? actor.name
       : cleanText(args.cashierName, 'Cashier name', 80);
     const deviceId = identifier(args.deviceId, 'Device ID');
     const localSaleId = identifier(args.localSaleId, 'Local sale ID');
@@ -667,6 +667,7 @@ export const accept = mutation({
       localSaleId,
       receiptNumber,
       cashierName,
+      staffProfileId: actor.staffProfileId as Id<'staffProfiles'>,
       serviceMode: args.serviceMode,
       subtotalCentimes,
       discountCentimes,
@@ -754,7 +755,7 @@ export const accept = mutation({
         valuationRevision,
         revision: ingredient.revision + 1,
         updatedAt: acknowledgedAt,
-        updatedBy: actor,
+        updatedBy: actor.name,
       });
       await ctx.db.insert('stockMovements', {
         ingredientId,
@@ -765,7 +766,7 @@ export const accept = mutation({
         relatedSaleId: saleId,
         reason: `Recipe deduction for ${receiptNumber}`,
         deviceId,
-        actorLabel: actor,
+        actorLabel: actor.name,
         businessDate: args.businessDate,
         createdAt: completedAt,
         clientMutationId: `${deviceId}:${localSaleId}:${ingredientId}`,
@@ -787,7 +788,7 @@ export const accept = mutation({
         await ctx.db.patch(recipe._id, {
           firstUsedAt: completedAt,
           updatedAt: acknowledgedAt,
-          updatedBy: actor,
+          updatedBy: actor.name,
         });
       }
     }
@@ -858,6 +859,26 @@ export const accept = mutation({
     const categoryTotals = metric
       ? metric.categoryTotals.map((row) => ({ ...row }))
       : [];
+    const profileTotals = metric?.profileTotals
+      ? metric.profileTotals.map((row) => ({ ...row }))
+      : [];
+    const profile = profileTotals.find(
+      (row) => row.staffProfileId === actor.staffProfileId,
+    );
+    const saleItemCount = preparedLines.reduce((sum, line) => sum + line.quantity, 0);
+    if (profile) {
+      profile.orderCount += 1;
+      profile.itemCount += saleItemCount;
+      profile.netCentimes += totalCentimes;
+    } else {
+      profileTotals.push({
+        staffProfileId: actor.staffProfileId as Id<'staffProfiles'>,
+        profileName: actor.name,
+        orderCount: 1,
+        itemCount: saleItemCount,
+        netCentimes: totalCentimes,
+      });
+    }
     const ingredientTotals = metric?.ingredientTotals
       ? metric.ingredientTotals.map((row) => ({ ...row }))
       : [];
@@ -926,6 +947,7 @@ export const accept = mutation({
       refundedCentimes: metric?.refundedCentimes ?? 0,
       totalsByPaymentMethod,
       totalsByServiceMode,
+      profileTotals,
       productTotals,
       categoryTotals,
       ingredientTotals,
@@ -1142,6 +1164,24 @@ export const cancel = mutation({
       if (!total) return conflict('Saved ingredient summary is incomplete.');
       total.quantity = subtractMetric(total.quantity, -movement.quantityDelta, 'ingredient quantity');
     }
+    const profileTotals = (metric.profileTotals ?? []).map((row) => ({ ...row }));
+    if (original.staffProfileId) {
+      const profile = profileTotals.find(
+        (row) => row.staffProfileId === original.staffProfileId,
+      );
+      if (!profile) return conflict('Saved profile summary is incomplete.');
+      profile.orderCount = subtractMetric(profile.orderCount, 1, 'profile order count');
+      profile.itemCount = subtractMetric(
+        profile.itemCount,
+        items.reduce((sum, item) => sum + item.quantity, 0),
+        'profile item count',
+      );
+      profile.netCentimes = subtractMetric(
+        profile.netCentimes,
+        original.totalCentimes,
+        'profile net sales',
+      );
+    }
     await ctx.db.patch(metric._id, {
       grossCentimes: subtractMetric(metric.grossCentimes, original.totalCentimes, 'gross total'),
       netCentimes: subtractMetric(metric.netCentimes, original.totalCentimes, 'net total'),
@@ -1151,6 +1191,7 @@ export const cancel = mutation({
       totalsByServiceMode: totalsByServiceMode.filter((row) => row.orderCount > 0),
       productTotals: productTotals.filter((row) => row.quantity > 0),
       categoryTotals: categoryTotals.filter((row) => row.quantity > 0),
+      profileTotals: profileTotals.filter((row) => row.orderCount > 0),
       ingredientTotals: ingredientTotals.filter((row) => row.quantity > 0),
       ingredientUsageEventCount: subtractMetric(metric.ingredientUsageEventCount ?? 0, movements.length, 'ingredient usage count'),
       ingredientCostCentimes: subtractMetric(metric.ingredientCostCentimes ?? 0, original.ingredientCostCentimes ?? 0, 'ingredient cost'),

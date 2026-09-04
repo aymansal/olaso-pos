@@ -173,6 +173,20 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Profile performance accounting (4 Sep 2026): owner approved a proper
+  staff-sales report, not a score. A completed sale counts once for its
+  authenticated profile regardless of Cash/Card tender splits; cancellations
+  reverse the same profile, and older records with no profile ID are explicitly
+  `Unattributed`. The Sales profit card now uses its reserved gap for an
+  internally scrolling profile list while Operating Profit remains fixed. The
+  printed owner daily report now groups product sales under each profile and
+  preserves an overall total. Development and production Convex functions are
+  deployed; focused offline/local/printing/TypeScript/CSS/build and production
+  package checks pass. Protected cloud sales/report checks stopped before their
+  seed/reset at the intentionally absent disposable test PIN. No tablet, sale,
+  profile, or PIN was touched. Exact next action: commit/push, then owner-led
+  install and visual/printed acceptance.
+
 - Owner-directed profile/PIN reliability audit (4 Sep 2026): traced creation,
   pending provisioning, online/offline unlock, retry, lockout, PIN replacement,
   protected storage, reconciliation, deletion, restart, and update survival.

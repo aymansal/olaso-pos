@@ -7,6 +7,13 @@ export async function requireOperationalAccess(
   ctx: Pick<QueryCtx, 'db'>,
   args: { sessionToken: string; deviceId: string },
 ) {
+  return (await requireOperationalSession(ctx, args)).name;
+}
+
+export async function requireOperationalSession(
+  ctx: Pick<QueryCtx, 'db'>,
+  args: { sessionToken: string; deviceId: string },
+) {
   const session = await requireStaffSession(ctx, args);
   if (!hasPermission(session.role, 'pos')) {
     throw new ConvexError({
@@ -14,5 +21,5 @@ export async function requireOperationalAccess(
       message: 'Your staff role cannot perform POS operations.',
     });
   }
-  return session.name;
+  return session;
 }

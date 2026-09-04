@@ -756,6 +756,18 @@ await client.action(api.identity.validateSession, {
     afterReport.current.itemCount,
     beforeReport.current.itemCount + 1,
   );
+  assert.deepEqual(
+    afterReport.current.profileTotals.reduce((total, profile) => ({
+      orderCount: total.orderCount + profile.orderCount,
+      itemCount: total.itemCount + profile.itemCount,
+      netCentimes: total.netCentimes + profile.netCentimes,
+    }), { orderCount: 0, itemCount: 0, netCentimes: 0 }),
+    {
+      orderCount: afterReport.current.orderCount,
+      itemCount: afterReport.current.itemCount,
+      netCentimes: afterReport.current.netCentimes,
+    },
+  );
   assert.equal(
     afterReport.current.ingredientUsageEventCount,
     beforeReport.current.ingredientUsageEventCount + 2,
@@ -876,6 +888,10 @@ await client.action(api.identity.validateSession, {
   assert.equal(restoredReport.current.netCentimes, beforeReport.current.netCentimes);
   assert.equal(restoredReport.current.orderCount, beforeReport.current.orderCount);
   assert.equal(restoredReport.current.itemCount, beforeReport.current.itemCount);
+  assert.deepEqual(
+    restoredReport.current.profileTotals,
+    beforeReport.current.profileTotals,
+  );
   assert.equal(restoredReport.current.ingredientUsageEventCount, beforeReport.current.ingredientUsageEventCount);
   const cancelledOrders = await client.query(api.sales.listOrders, { ...sessionArgs, limit: 20 });
   assert.equal(cancelledOrders.page.find((sale) => sale.localSaleId === cloudInput.localSaleId)?.status, 'cancelled');

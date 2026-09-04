@@ -61,6 +61,16 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
     string,
     { paymentMethod: string; totalCentimes: number; orderCount: number }
   >();
+  const profiles = new Map<
+    string,
+    {
+      staffProfileId?: string;
+      profileName: string;
+      orderCount: number;
+      itemCount: number;
+      netCentimes: number;
+    }
+  >();
   const ingredients = new Map<
     string,
     {
@@ -84,6 +94,21 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
     ingredientUsageEventCount += row.ingredientUsageEventCount ?? 0;
     ingredientCostCentimes += row.ingredientCostCentimes ?? 0;
     incompleteSaleCount += row.incompleteCostSaleCount ?? 0;
+
+    for (const profile of row.profileTotals ?? []) {
+      const key = String(profile.staffProfileId);
+      const total = profiles.get(key) ?? {
+        staffProfileId: key,
+        profileName: profile.profileName,
+        orderCount: 0,
+        itemCount: 0,
+        netCentimes: 0,
+      };
+      total.orderCount += profile.orderCount;
+      total.itemCount += profile.itemCount;
+      total.netCentimes += profile.netCentimes;
+      profiles.set(key, total);
+    }
 
     for (const product of row.productTotals) {
       const key = String(product.productId);
@@ -124,15 +149,42 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
       || right.quantity - left.quantity
       || left.productName.localeCompare(right.productName),
   );
+  const attributed = [...profiles.values()].reduce(
+    (total, profile) => ({
+      orderCount: total.orderCount + profile.orderCount,
+      itemCount: total.itemCount + profile.itemCount,
+      netCentimes: total.netCentimes + profile.netCentimes,
+    }),
+    { orderCount: 0, itemCount: 0, netCentimes: 0 },
+  );
+  const itemCount = allProductTotals.reduce(
+    (total, product) => total + product.quantity,
+    0,
+  );
+  if (
+    attributed.orderCount !== orderCount
+    || attributed.itemCount !== itemCount
+    || attributed.netCentimes !== netCentimes
+  ) {
+    profiles.set('', {
+      profileName: 'Unattributed',
+      orderCount: orderCount - attributed.orderCount,
+      itemCount: itemCount - attributed.itemCount,
+      netCentimes: netCentimes - attributed.netCentimes,
+    });
+  }
   return {
     netCentimes,
     orderCount,
     ingredientCostCentimes,
     incompleteSaleCount,
-    itemCount: allProductTotals.reduce(
-      (total, product) => total + product.quantity,
-      0,
-    ),
+    itemCount,
+    profileTotals: [...profiles.values()]
+      .filter((profile) => profile.orderCount > 0)
+      .sort((left, right) =>
+        right.netCentimes - left.netCentimes
+        || left.profileName.localeCompare(right.profileName),
+      ),
     ingredientTypeCount: ingredients.size,
     ingredientUsageEventCount,
     productTotals: allProductTotals.slice(0, MAX_DETAIL_ROWS),

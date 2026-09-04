@@ -26,7 +26,9 @@ performance, ingredient usage, and bounded period controls.
   peak photograph, round Y-axis numbers (integer ticks for units and usage),
   and a daily average divided by days elapsed this month; the period calendar filters the hero and
   right-card facts. The Sales profit card shows stock value, orders, and
-  average. Costs stay add-only on the left card and use the shared global report
+  average. The Sales profit card keeps its operating-profit result fixed and
+  uses the space above it for an internally scrolling profile-performance list:
+  profile name, orders, items, and net sales. Costs stay add-only on the left card and use the shared global report
   period rather than a second month picker. Monthly pay rows can be stopped.
   Deleting a staff profile ends open wage on the prior day and keeps already-
   recorded wage history.

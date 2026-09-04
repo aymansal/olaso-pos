@@ -20,7 +20,8 @@ tablet's local SQLite operational record.
   Dashboard is mounted, uses the current local business date on each visible
   load, and exposes explicit retry state.
 - `useReportsData.ts` makes one saved-summary range request only while Reports
-  is mounted or its period changes, and exposes explicit retry state.
+  is mounted or its period changes, including profile-owned orders, units, and
+  net sales, and exposes explicit retry state.
 - `useInventoryManagement.ts` and `useCostManagement.ts` render from SQLite,
   commit authorized writes locally first, and refresh after the shared worker.
   Stock used-today is today’s recipe deductions grouped by ingredient name and
@@ -113,8 +114,9 @@ tablet's local SQLite operational record.
   reads and cloud snapshot merging. `inventorySync.ts` and `costSync.ts` own
   their reconnect dispatch boundaries.
 - `dailyOwnerReport.ts` composes the owner-only current-day report from bounded
-  saved SQLite/report data and sends its deterministic bytes through the shared
-  printer transport.
+  saved SQLite/report data, grouping every completed order and product under its
+  saved profile (or `Unattributed` when no profile ID exists), and sends its
+  deterministic bytes through the shared printer transport.
 - `managementOperation.ts` owns the plain operation envelope, bounded payload
   and protected-field validation, actor/role permission validation, saved-row
   parsing, and safe operator-facing sync-failure classification.
