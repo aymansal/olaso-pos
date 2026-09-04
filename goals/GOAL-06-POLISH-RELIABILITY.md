@@ -161,6 +161,18 @@ changed, or deleted during device verification
 
 **Current facts:**
 
+- Production client recovery: the earlier APK was connected to the development
+  Convex deployment, whose old active catalog has 15 products; production has
+  the real 92-product menu. This was why reconnect replaced the tablet menu
+  and checkout rejected a product from the production catalog. `android:production`
+  now obtains the endpoint directly from the production deployment, verifies it
+  is embedded in the bundle, and only then packages the Android beta. The
+  wrong local database was copied to `tmp/` for recovery and cleared only after
+  its empty outbox was verified. On SM-X115, the production lock showed Yassine,
+  the authenticated refresh restored 4 categories, 92 products, and 93 sizes,
+  and Espresso entered then was removed from the cart without an order. The
+  development endpoint and its local Olaso Owner profile are no longer on the
+  tablet.
 - Catalog sale repair `c14b303` is on `origin/main`. Production had 92 active
   products but only V60's two size records, leaving 91 visible products with no
   active size; POS correctly refused those products because checkout requires a

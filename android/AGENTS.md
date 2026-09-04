@@ -87,6 +87,10 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   changes.
 - Run `npm run android:beta` for the checked development beta build. Its
   ignored output is `android/app/build/outputs/apk/debug/app-debug.apk`.
+- Run `npm run android:production` for a client-tablet build. It obtains the
+  production Convex URL directly from the production deployment, verifies that
+  URL is embedded in the web bundle, then packages the same debug APK for
+  physical QA. Never install `android:beta` as a production-client update.
 - The beta build runs app JVM unit tests before assembly, including exact socket
   bytes and closed-endpoint behavior for the native LAN writer.
 - Run `npm run android:release` only when upload-keystore env vars are set.

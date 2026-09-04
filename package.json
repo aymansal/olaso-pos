@@ -44,6 +44,7 @@
     "build": "npm run theme:build && npm run prepare:sqlite-web && tsc -b && vite build",
     "android:sync": "npm run build && cap sync android",
     "android:beta": "npm run check:android && npm run android:sync && node scripts/build-android-beta.mjs",
+    "android:production": "convex deploy --yes --cmd \"npm run check:android && npm run android:sync && node scripts/verify-production-bundle.mjs && node scripts/build-android-beta.mjs\" --cmd-url-env-var-name VITE_CONVEX_URL",
     "android:release": "npm run check:release && npm run check:android && npm run android:sync && node scripts/build-android-release.mjs",
     "release:publish": "node scripts/publish-release.mjs",
     "preview": "vite --host 0.0.0.0"

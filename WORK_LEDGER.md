@@ -67,6 +67,25 @@ remaining goal and card sequence.
   visual card and add-to-cart proof is pending owner unlock; no PIN, sale, or
   test product was used.
 
+### 2026-09-04 — POLISH-01 production client recovery
+
+- Root cause was not missing production data: production has 92 real-menu
+  products, while the installed tablet APK was bundled with the development
+  Convex endpoint, whose old catalog has 15 products. The normal authenticated
+  refresh correctly replaced the local cache with that wrong source, which also
+  made a retained production product invalid at checkout.
+- Added the explicit `android:production` command. It has Convex provide the
+  production URL during deployment, builds/syncs the Android web assets with
+  that URL, verifies the resulting bundle contains it, then packages the APK.
+  `android:beta` remains development-only and must never be installed as a
+  client update.
+- Before reset, verified the tablet outbox was empty and saved a recoverable
+  copy of its wrong local database under ignored `tmp/`. Installed the protected
+  production APK with `adb install -r`, then cleared only `com.olaso.pos` local
+  data. Production cloud data was not changed. Fresh launch showed Yassine;
+  authenticated refresh restored 4 categories, 92 products, and 93 active
+  sizes. Espresso added to the cart at 10 MAD and was removed without an order.
+
 ## Most Recently Completed Goal
 
 ### Goal 05 — Business Policy, Identity, and Permissions
