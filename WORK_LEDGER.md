@@ -134,6 +134,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Owner beverage technical sheet extracted (4 Sep 2026): the five category
+  tabs reconcile exactly to the combined `Toutes les boissons` tab: 181
+  populated, non-duplicate ingredient rows covering 50 products and 47 source
+  ingredient names. Added
+  `goals/OLASO-BEVERAGE-RECIPE-EXTRACTION.md` with every grouped recipe,
+  quantity, menu crosswalk, all 42 still-missing menu recipes, and the exact
+  names/units requiring owner confirmation. No workbook, application code,
+  live menu, stock, recipe, tablet, or cloud data was changed. The existing
+  owner-directed audit remains the exact next action.
+
 - RECEIPT-01 report cleanup (3 Sep 2026): owner asked to remove the daily
   report's Terminal text. The whole row is removed. Added exact report-total
   checks for Card + Cash + Cash and Cash + Card + Card: repeated tenders of the

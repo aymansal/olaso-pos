@@ -254,6 +254,12 @@ images lives in
 discussion and future configuration source, not authorization to import or
 change live menu data.
 
+The owner's incomplete beverage technical sheet is grouped into exact
+per-product recipes, ingredient names, quantity forms, menu coverage, and
+unresolved mappings in
+[Olaso Beverage Recipe Extraction](goals/OLASO-BEVERAGE-RECIPE-EXTRACTION.md).
+It is also a factual source, not authorization to change live data.
+
 ## First-production-release exit
 
 The project is finished only when every remaining card is done and pushed and
