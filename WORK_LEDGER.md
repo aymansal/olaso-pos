@@ -57,8 +57,21 @@ remaining goal and card sequence.
   Pistachio Kunefe + Magnum total57 verified and removed, empty cart restored.
   No sale placed. Local/cloud verification repeated 2026-09-05T16:32:54Z, zero
   pending operations; screenshot tmp/croissant-installed.png inspected.
-- Next: commit/push display fix with evidence; await owner visual review and
-  next page. Missing croissant/extra recipes remain explicitly pending owner data.
+- Complete-photo fix pushed as `00c4aed8270897aecc8eff714632f4d779e2de60`
+  on origin/main. Owner reviewed and requested larger photos for ALL products.
+- Current follow-up: enlarge only ProductCard photo box to146x100 at14,6;
+  retain contain, 174x162 card, text and add-button positions. Original image
+  files/compression/cloud data unchanged. Same native/CSS research applies.
+- Completed: check:pos and production build/Android checks/JVM tests/package
+  passed; installed via adb install -r. Physical all-four-category check covers
+  92 products: loaded images, contain, 146x100 photo box, unchanged174x162 card,
+  image bottom above text/add button, no overlap or console warnings/errors.
+  Client-rectangle assertions allow0.1px for WebView transition rounding.
+- Rechecked all nine croissant options/prices after install; screenshot
+  tmp/croissant-installed.png visibly confirms large full croissants and ice
+  creams. No image recompression or database changes for this size follow-up.
+- Next: commit/push enlarged image framing and record SHA; await owner review.
+  Recipes remain pending owner ingredient quantities.
 
 ### Current checkpoint — 2026-09-05 WebP photo refinement (POLISH-01)
 
