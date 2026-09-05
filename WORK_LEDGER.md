@@ -83,6 +83,8 @@ remaining goal and card sequence.
   optional extra 20 -> 40 -> 20 behavior unchanged; no test sale created.
   No runtime modules added/moved; existing Graphify query used for the shared
   compressor path. Next: owner visual acceptance, then next menu page.
+- Image-quality implementation and verification pushed to `origin/main` as
+  `b155032913cee6e3aa63d528666ed858bd1f1608`.
 
 - Owner correction (latest): rejected the broader popup restyling. Restore all
   original CSS from before `78e48f0`, changing only width from 560 to a
