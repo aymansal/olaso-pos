@@ -62,6 +62,8 @@ remaining goal and card sequence.
   original ~44px row, wrapped title, visible footer, no horizontal overflow or
   captured console errors. Screenshot `tmp/icecream-popup-original-320.png`.
   Select/unselect remains 20 -> 40 -> 20 MAD; no order or catalog writes.
+- Width-only correction committed and pushed:
+  `dbc476e3f0babc529e3910123597439e37b0f283` on `origin/main`.
 
 - **Latest verified state:** all 11 exact existing Soft Ice Cream products now
   have their compressed photos and optional Croissant +20 MAD in both tablet
