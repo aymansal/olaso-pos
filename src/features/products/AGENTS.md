@@ -48,7 +48,8 @@ recipe management with saved tablet presentation during an outage.
   compressed to a small JPEG on the tablet before SQLite or Convex. They
   survive lock and install-over; a cloud snapshot that omits a photo does not
   wipe the tablet copy. The Edit
-  Product artwork pill stays in place and opens the same photo picker.
+  Product artwork pill opens the same photo picker; its 58px holder is offset
+  4px upwards and contains the complete image in a 48px square without cropping.
   Edit Product has no PRODUCT DETAILS label; the Edit product title aligns
   with Active and Delete. The category menu is the same 40-pixel height as
   the price field.

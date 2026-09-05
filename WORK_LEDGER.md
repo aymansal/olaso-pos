@@ -7,6 +7,33 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Edit product identity (POLISH-01)
+
+- Owner limits work to edit-product photo fitting/vertical positioning, category
+  field matching price height, and short consistent generated product codes.
+- Graphify traced ProductEditorPanel and localCatalog/managementMutations.
+  Existing visible code is the immutable product key (used for creation/sync
+  uniqueness), so code policy must preserve identity and historical links.
+  Asked owner numbered P-0001 versus name-based LAT-001 format; awaiting reply.
+- Tablet before: image in58px button lays out87px tall and is clipped; category
+  trigger36px versus price40px because shared selector wins specificity.
+  Local editor CSS now explicitly contains48px image, moves holder up4px,
+  and gives its40px category rule sufficient specificity. No other UI changes.
+- Android research: https://developer.android.com/develop/ui/views/layout/webapps/webview
+  and https://capacitorjs.com/docs confirm this remains WebView CSS and the
+  existing local-first data boundary; no native plugin/Kotlin needed.
+- Visual fix verified and installed with adb install -r, no data reset. Build,
+  production endpoint verification, JVM checks and check:css-scope passed.
+  Initial packaging lacked JAVA_HOME; reran with existing bundled Java21/SDK.
+  Physical measured image48px inside58px holder, object-fit contain, holder
+ 4px higher; category and price both40px with identical top/bottom. Inspected
+  tmp/editor-current.png at1340x800, no console/logcat errors. No sales or
+  catalog mutations. Native launch lock settled before authorized PIN unlock.
+- Product-code generation is NOT changed yet. Existing keys are immutable
+  creation/sync identifiers, not merely decorative text. Await requested format
+  choice before assigning new persistent short codes to existing products.
+  Next: push visual fix, then resume code generation when owner selects format.
+
 ### Current checkpoint — 2026-09-05 Shared dropdown/text and ingredient English (POLISH-01)
 
 - Owner requests all live ingredient names in English, verify Oulmès source,
