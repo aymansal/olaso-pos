@@ -68,8 +68,9 @@ remaining goal and card sequence.
   pass. Existing build-tool warnings remain (jeep-sqlite crypto externalization,
   Gradle flatDir/SDK metadata); no new browser errors observed. No structural
   application files added/moved, so no graph regeneration needed.
-- Implementation and verification complete for this scoped follow-up; commit/
-  push evidence follows. Next owner review: compact popup and soft ice cream
+- Scoped follow-up complete: implementation and evidence committed as
+  `78e48f0adc9497b1711cc40454446115623aa474`, pushed to `origin/main`.
+  Next owner review: compact popup and soft ice cream
   images, then select the next menu page. Other Bakery & Desserts products
   intentionally still use their existing images/fallbacks.
 
