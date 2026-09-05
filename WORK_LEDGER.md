@@ -40,7 +40,8 @@ remaining goal and card sequence.
   preserved holders/layout. Source contact sheet covers all42 products.
   Final readback again matches cloud/tablet with zero queue and92 products.
   Total encoded bytes945868, largest data URL32767; original photos retained.
-  No structural code changes requiring graph rebuild. Ready to commit/push.
+  No structural code changes requiring graph rebuild. Implementation5122558
+  pushed to origin/main; installed and verified. Next: owner visual acceptance.
 
 ### Current checkpoint — 2026-09-05 Transparent detail photos (POLISH-01)
 
