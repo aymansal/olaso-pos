@@ -214,7 +214,7 @@ Sizes:
 
 Source notes: Homemade daily; Fresh locally sourced ingredients.
 
-### Applied 5 September 2026; recipe linking pending
+### Applied 5 September 2026; Standard recipes linked
 
 - Updated the existing nine products; IDs, category and base prices preserved.
   Renamed each existing Regular size to Standard (preserving its ID/key), kept
@@ -231,12 +231,16 @@ Source notes: Homemade daily; Fresh locally sourced ingredients.
   Product mappings: Strawberry Passion -> Strawberry Passion Lemonade;
   Coraçao -> Coaraçao; Friscito Lemonade -> Fresquito Lemonade;
   Mum's Lemonade -> Mum’s Lemonade. Iced Tea has no supplied recipe.
-- Do not activate recipes until owner confirms which size the workbook covers
-  and Plus quantities. Existing resolver falls back to base recipe quantities
-  when size overrides are absent; attaching the Standard recipe alone would
-  silently deduct Standard quantities for Plus. No scaling by price, duplicate
-  quantities, zero overrides, or invented recipes. All nine remain sellable
-  with no recipe deduction until the quantity decision is provided.
+- Owner follow-up confirmed workbook quantities are for Standard and explicitly
+  requested Plus without ingredients for now. Applied eight immutable recipes
+  with31base ingredients and62explicit size quantities: Standard matches Excel,
+  Plus is zero for every recipe ingredient so it cannot inherit Standard.
+  This is a temporary unconfigured Plus recipe, not a statement of zero real
+  cost. Do not infer complete Plus profitability from these absent deductions.
+  Iced Tea remains without a recipe in both sizes. No price-based scaling.
+- Exact tablet/cloud recipe verification2026-09-05T17:46:24Z: eight recipes,
+  31ingredients rows,62size quantities, Standard resolver exact and Plus empty,
+  no pending operations. Rechecked all18size/cart totals without placing a sale.
 - Physical tablet checked all18 Standard/Plus selections and cart totals,
   320px dialog without overflow, loaded whole photos, no console errors/warnings;
   temporary lines removed and empty cart restored, no sale placed. Exact cloud/

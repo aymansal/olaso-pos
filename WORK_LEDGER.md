@@ -9,6 +9,25 @@ remaining goal and card sequence.
 
 ### Current checkpoint — 2026-09-05 Lemonade menu (POLISH-01)
 
+- Owner follow-up confirmed Excel amounts for Standard; leave Plus without
+  ingredients temporarily. Approved explicit zero Plus quantity overrides
+  prevent resolver fallback to Standard; they represent no configured deduction,
+  not a claim that Plus has no real ingredient cost. Apply eight Standard
+  recipes through existing authenticated callback; Iced Tea remains unlinked.
+- Completed follow-up: eight new immutable recipes via authenticated local-first
+  onSaveRecipe,31source ingredient rows,62explicit size quantities (Standard
+  exact Excel; Plus zero). No app changes/build needed. Existing researched
+  native SQLite/reconnect boundary unchanged. Backup tmp/lemonade-before-recipes.json.
+- Exact tablet/cloud verification2026-09-05T17:46:24Z passed, and shared actual
+  resolver returns expected Standard amounts/price and empty Plus deductions
+  at +15MAD. Iced Tea unlinked. Evidence tmp/lemonade-recipe-verification.json.
+- Physical18cart/size checks passed again with recipes active: correct totals,
+  images loaded, no dialog overflow or console warnings/errors; cart emptied,
+  no sale placed. Plus costs/profitability remain provisional until its recipe
+  is supplied; zero deduction is an owner-approved temporary configuration.
+- Supersedes the pending recipe checkpoint below. Next: await owner next page;
+  later obtain Plus quantities, Iced Tea recipe and ingredient purchase costs.
+
 - Owner authorized existing nine Lemonades/Iced Tea, correct Standard/Plus
   sizes, photos and supplied recipes. Preserve IDs, no duplicate products.
 - Menu prices32/32/30/30/30/30/25/30/34 MAD; Plus adds15 MAD. Homemade
