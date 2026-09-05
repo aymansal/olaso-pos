@@ -7,6 +7,43 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Settings and auto-lock (POLISH-01)
+
+- Owner asks working selectable inactivity duration incl Never and redesign of
+  left Settings card only; Staff & access unchanged. Announced5/10/15/30min/Never.
+- Existing App hardcoded5min timeout; selected5min remains migration default.
+  Store terminal-wide auto_lock_minutes in existing device_settings;0=Never.
+  Older language-save callers omit the preference and must preserve it.
+- Existing native Android lifecycle/Capacitor boundary remains; research
+  https://developer.android.com/guide/components/activities/activity-lifecycle
+  and https://capacitorjs.com/docs/apis/app: timers may suspend in background.
+  Use a JS deadline checked on visibility/focus resume, not a native repeating
+  worker. Never disables inactivity only; manual/invalid-session/startup locks
+  and protected credentials remain unchanged. No new dependency.
+- Left card uses compact four-preference row, left-aligned printer label,
+  existing editable connection endpoint, compact sync facts and update block.
+  Removed only IPv4 explanation, not required printer configuration. Flow layout
+  supports long feedback/update content without overlap; unchanged card bounds.
+  UI/UX guidance used for hierarchy/touch alignment, existing brand retained.
+- Checks passed: check:settings (all durations, save/reload, Never preserved by
+  language-only writes, invalid values, corrupt empty value defaults5, timer
+  reset/resume/expiry/cleanup), check:local-staff, check:css-scope, TypeScript,
+  full android:production including JVM/build/endpoint checks. Installed with
+  adb install -r; no reset or data loss. Graphify refreshed3338nodes6445edges;
+  existing Gradle-parser warnings on3files, no application build failure.
+- Physical tablet: all5choices saved; Never remained unlocked beyond simulated
+ 31min and5min expiry locked on resume. Used controlled Date.now elapsed-time
+  injection restored immediately, not a claim of wall-clock5minute soak.
+  Never persisted across install-over/restart and normal PIN unlock; language
+  changes retained it. Final preference restored5min, application English.
+- EN/FR screens inspected at1340x800 (tmp/settings-en.png/settings-fr.png).
+  Card886x686 unchanged, all4controls48px and aligned, no normal scrollbar,
+  printer left aligned, feedback in flow. Caught selected-button specificity
+  issue, fixed and repeated physical visual check with regression assertion.
+  Staff & access source unchanged. No captured console/logcat errors/warnings.
+- Next: commit/push this Settings delivery; owner review. Earlier product-code
+  format question remains separate and pending, no product codes changed.
+
 ### Current checkpoint — 2026-09-05 Edit product identity (POLISH-01)
 
 - Owner limits work to edit-product photo fitting/vertical positioning, category

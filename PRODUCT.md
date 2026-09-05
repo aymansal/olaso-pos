@@ -218,7 +218,11 @@ profile. Owner, manager, and cashier each receive a private six-digit PIN; an
 owner can create that profile while offline and the person can sign in on this
 tablet immediately. A locked screen supports staff switching and appears after
 application/tablet restart.
-It auto-locks after an owner-configurable five-minute default and imposes a
+Its tablet-wide inactivity auto-lock offers 5 (default), 10, 15, or 30 minutes,
+or Never. Touch, typing and scrolling restart that interval; background time
+counts and the elapsed deadline is checked on return. Never disables only
+inactivity locking, not manual, startup or invalid-session locks. The preference
+survives restart and install-over updates. It imposes a
 five-minute lockout after five failed attempts. Registered staff continue to
 authenticate locally throughout an outage; a revocation reaches the tablet on
 its next successful synchronization.

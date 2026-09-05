@@ -1,4 +1,13 @@
 export const fr: Record<string, string> = {
+  'Auto-lock': 'Verrouillage auto',
+  '5 minutes': '5 minutes',
+  '10 minutes': '10 minutes',
+  '15 minutes': '15 minutes',
+  '30 minutes': '30 minutes',
+  'Never': 'Jamais',
+  'Auto-lock duration is invalid.': 'Le délai de verrouillage est invalide.',
+  'Preferences and terminal controls': 'Préférences et commandes du terminal',
+  'Printer address': 'Adresse de l’imprimante',
   '12 hour': '12 heures',
   '24 hour': '24 heures',
   'Add': 'Ajouter',

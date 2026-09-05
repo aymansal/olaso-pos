@@ -14,6 +14,7 @@ import {
 } from '../src/data/terminalSettings.ts';
 import { createPrinterTestBytes } from '../src/printing/printerDiagnostic.ts';
 import { describePrinterFailure } from '../src/printing/testPrinter.ts';
+import { startAutoLock } from '../src/lib/autoLock.ts';
 
 const database = new DatabaseSync(':memory:');
 for (const migration of localMigrations) {
@@ -56,6 +57,73 @@ const initial = await loadTerminalSettingsFromDatabase(
 assert.equal(initial.deviceId, 'device-settings-check');
 assert.equal(initial.terminalName, 'Olaso POS');
 assert.equal(initial.clockFormat, '24-hour');
+assert.equal(initial.autoLockMinutes, 5);
+for (const minutes of [0, 5, 10, 15, 30]) {
+  await saveTerminalPreferencesToDatabase(adapter, { ...initial, autoLockMinutes: minutes });
+  assert.equal((await loadTerminalSettingsFromDatabase(adapter)).autoLockMinutes, minutes);
+}
+await saveTerminalPreferencesToDatabase(adapter, { ...initial, autoLockMinutes: 0 });
+await saveTerminalPreferencesToDatabase(adapter, {
+  terminalName: initial.terminalName, clockFormat: '24-hour',
+  receiptLanguage: 'en', applicationLanguage: 'fr',
+});
+assert.equal((await loadTerminalSettingsFromDatabase(adapter)).autoLockMinutes, 0, 'Language changes preserve Never');
+await assert.rejects(saveTerminalPreferencesToDatabase(adapter, { ...initial, autoLockMinutes: 7 }), /Auto-lock/);
+await saveTerminalPreferencesToDatabase(adapter, initial);
+database.prepare("UPDATE device_settings SET value = '' WHERE key = 'auto_lock_minutes'").run();
+assert.equal((await loadTerminalSettingsFromDatabase(adapter)).autoLockMinutes, 5, 'Corrupt empty duration must not disable locking');
+await saveTerminalPreferencesToDatabase(adapter, initial);
+
+const realNow = Date.now;
+let elapsed = 0;
+Date.now = () => elapsed;
+try {
+  for (const minutes of [0, 5, 10, 15, 30]) {
+    let locks = 0;
+    let scheduled;
+    const host = new EventTarget();
+    host.setTimeout = (fn, delay) => { scheduled = { fn, delay }; return 1; };
+    host.clearTimeout = () => { scheduled = undefined; };
+    const page = new EventTarget();
+    page.visibilityState = 'visible';
+    page.hasFocus = () => true;
+    const stop = startAutoLock(minutes, () => locks++, host, page);
+    if (!minutes) {
+      elapsed += 60 * 60_000;
+      host.dispatchEvent(new Event('focus'));
+      assert.equal(scheduled, undefined);
+      assert.equal(locks, 0);
+    } else {
+      assert.equal(scheduled.delay, minutes * 60_000);
+      elapsed += 1000;
+      host.dispatchEvent(new Event('keydown'));
+      assert.equal(scheduled.delay, minutes * 60_000, 'Activity restarts full duration');
+      page.visibilityState = 'hidden';
+      elapsed += minutes * 60_000 + 1;
+      page.visibilityState = 'visible';
+      page.dispatchEvent(new Event('visibilitychange'));
+      assert.equal(locks, 1, 'Resume checks expired deadline');
+      host.dispatchEvent(new Event('pointerdown'));
+      assert.equal(locks, 1, 'Expired lock cannot be cancelled by a tap');
+    }
+    stop();
+    assert.equal(scheduled, undefined);
+  }
+  let callback;
+  let locks = 0;
+  const host = new EventTarget();
+  host.setTimeout = fn => { callback = fn; return 1; };
+  host.clearTimeout = () => {};
+  const page = new EventTarget();
+  page.visibilityState = 'visible'; page.hasFocus = () => true;
+  const cleanup = startAutoLock(5, () => locks++, host, page);
+  elapsed += 300_000;
+  callback();
+  assert.equal(locks, 1, 'Scheduled timeout locks without a resume event');
+  cleanup();
+  callback();
+  assert.equal(locks, 1, 'Disposed callbacks cannot lock a later session');
+} finally { Date.now = realNow; }
 assert.equal(initial.receiptLanguage, 'en');
 assert.equal(initial.applicationLanguage, 'en');
 assert.equal(initial.isLocked, false);
@@ -203,6 +271,9 @@ assert.doesNotMatch(printerPanel, /Restore saved logo/);
 assert.doesNotMatch(printerPanel, /Device ID/);
 assert.doesNotMatch(printerPanel, /Lock application/);
 assert.match(printerPanel, /Application/);
+assert.match(printerPanel, /autoLockMinutes/);
+const settingsCss = readFileSync('src/features/settings/components/SettingsContentPanel/SettingsContentPanel.module.css', 'utf8');
+assert.match(settingsCss, /\.choice > div:not\(\.autoLock\) > button\[aria-pressed='true'\]/);
 assert.match(printerPanel, /192\.168\.1\.100:9100/);
 
 database.close();

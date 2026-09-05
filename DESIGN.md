@@ -522,9 +522,14 @@ pass LAN connection, print, cut, recovery, and endurance testing.
   scrolls at 136px so they never cover Reprint or Cancel. Payment and
   actions stay at the bottom of the card for both completed and cancelled
   receipts.
-- The profile-owned Settings left card keeps language, clock, one printer
+- The Settings left card uses four aligned preference columns (application,
+  receipts, clock, auto-lock), followed by a left-aligned printer block, compact
+  sync facts and updates. Keep the existing card bounds and use normal vertical
+  flow with overflow only for additional feedback/update content, never overlap.
+  Controls are48px; no oversized separate sync tiles. It keeps one printer
   host:port field, Test printer, Sync, and Check for update. Staff & access is
-  the right card. There is no Settings lock control and no Restore saved logo
+  the right card. Auto-lock offers5/10/15/30minutes and Never; manual Lock remains
+  in the Header. There is no Restore saved logo
   action. Both keep 44-pixel targets and ask the operator to inspect paper
   rather than claiming it.
 - The owner-only Staff & access panel lists name, role, and quiet `Ready` or

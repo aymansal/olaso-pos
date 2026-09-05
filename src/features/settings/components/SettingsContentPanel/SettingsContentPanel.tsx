@@ -11,6 +11,7 @@ import {
   parsePrinterEndpoint,
 } from '../../../../data/terminalSettings';
 import { useLanguage, useT } from '../../../../lib/locale';
+import { MenuSelect } from '../../../../components/MenuSelect/MenuSelect';
 import styles from './SettingsContentPanel.module.css';
 
 function formatTimestamp(value: number | undefined, language: 'en' | 'fr') {
@@ -103,6 +104,7 @@ export function SettingsContentPanel({
   const [receiptLanguage, setReceiptLanguage] =
     useState<TerminalPreferences['receiptLanguage']>('en');
   const [printerEndpoint, setPrinterEndpoint] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!settings) return;
@@ -114,19 +116,24 @@ export function SettingsContentPanel({
   }, [settings]);
 
   async function savePreferences(
-    next: Partial<Pick<TerminalPreferences, 'clockFormat' | 'receiptLanguage'>>,
+    next: Partial<Pick<TerminalPreferences, 'clockFormat' | 'receiptLanguage' | 'autoLockMinutes'>>,
   ) {
-    if (!settings) return;
+    if (!settings || saving) return;
     const clock = next.clockFormat ?? clockFormat;
     const receipt = next.receiptLanguage ?? receiptLanguage;
-    setClockFormat(clock);
-    setReceiptLanguage(receipt);
-    await onSave({
+    setSaving(true);
+    try { await onSave({
       terminalName: settings.terminalName,
       clockFormat: clock,
       receiptLanguage: receipt,
       applicationLanguage: language,
+      autoLockMinutes: next.autoLockMinutes ?? settings.autoLockMinutes,
     });
+      setClockFormat(clock);
+      setReceiptLanguage(receipt);
+    } catch {
+      // Keep the last saved values; the data hook displays the save failure.
+    } finally { setSaving(false); }
   }
 
   async function testPrinter() {
@@ -148,7 +155,7 @@ export function SettingsContentPanel({
     <section className={styles.panel} aria-labelledby="settings-heading">
       <header className={styles.header}>
         <h1 id="settings-heading">{t('Settings')}</h1>
-        <small>{t('Language, printer, sync, and updates')}</small>
+        <small>{t('Preferences and terminal controls')}</small>
       </header>
 
       <div className={styles.choices}>
@@ -160,7 +167,7 @@ export function SettingsContentPanel({
                 className={language === value ? styles.selected : ''}
                 type="button"
                 aria-pressed={language === value}
-                disabled={isLoading}
+                disabled={isLoading || saving}
                 onClick={() => void onLanguageChange(value)}
                 key={`app-${value}`}
               >
@@ -177,7 +184,7 @@ export function SettingsContentPanel({
                 className={receiptLanguage === value ? styles.selected : ''}
                 type="button"
                 aria-pressed={receiptLanguage === value}
-                disabled={isLoading}
+                disabled={isLoading || saving}
                 onClick={() => void savePreferences({ receiptLanguage: value })}
                 key={`receipt-${value}`}
               >
@@ -194,7 +201,7 @@ export function SettingsContentPanel({
                 className={clockFormat === value ? styles.selected : ''}
                 type="button"
                 aria-pressed={clockFormat === value}
-                disabled={isLoading}
+                disabled={isLoading || saving}
                 onClick={() => void savePreferences({ clockFormat: value })}
                 key={value}
               >
@@ -203,15 +210,27 @@ export function SettingsContentPanel({
             ))}
           </div>
         </fieldset>
+        <fieldset className={styles.choice}>
+          <legend>{t('Auto-lock')}</legend>
+          <MenuSelect size="field" className={styles.autoLock} ariaLabel="Auto-lock"
+            value={String(settings?.autoLockMinutes ?? 5)} disabled={isLoading || saving || !settings}
+            onChange={(value) => void savePreferences({ autoLockMinutes: Number(value) as TerminalSettings['autoLockMinutes'] })}
+            options={[
+              { id: '5', label: '5 minutes' }, { id: '10', label: '10 minutes' },
+              { id: '15', label: '15 minutes' }, { id: '30', label: '30 minutes' },
+              { id: '0', label: 'Never' },
+            ]}
+          />
+        </fieldset>
       </div>
 
       <section className={styles.printer} aria-labelledby="printer-heading">
         <header>
           <h2 id="printer-heading">{t('Printer')}</h2>
-          <small>{t('IPv4 address and port')}</small>
         </header>
         <div className={styles.printerRow}>
           <input
+            aria-label={t('Printer address')}
             value={printerEndpoint}
             inputMode="decimal"
             autoComplete="off"

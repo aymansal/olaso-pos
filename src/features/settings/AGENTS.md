@@ -10,14 +10,19 @@ presentation.
 - Settings is opened from the shared profile control; it is not a seventh
   permanent navigation item.
 - The left card is one Settings page: application language, receipt language,
-  clock format, printer host:port, Test printer, Sync, and Check for update.
+  clock format, auto-lock duration, printer host:port, Test printer, Sync, and Check for update.
   Application language is the signed-in profile's preferred language (SQLite
   plus cloud). Changing it in Settings or the Header EN|FR control updates
   both. Receipt language is tablet-wide and owner-only; it is not a profile
   preference. The Lock screen keeps the last application language used on
   this tablet.
 - Staff & access is the right card. There are no Settings tabs and no Lock
-  application control; lock remains on the shared Header profile menu.
+  application action; manual lock remains on the shared Header profile menu.
+- Auto-lock is tablet-wide, saved immediately:5/10/15/30minutes or Never.
+  Failed saves keep the last saved selection. Preserve PIN/startup/manual locks.
+- Left-card sections use normal vertical flow; preference controls align at48px.
+  The printer heading is left-aligned; retain its endpoint field while omitting
+  the IPv4 explanation. Feedback/update actions must not overlap other sections.
 - Device ID and terminal name stay in local storage but are not shown.
 - Manual synchronization calls the data hook once per deliberate action and
   reports pending, success, offline, and error states. Online tablets also

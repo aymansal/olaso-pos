@@ -4,6 +4,7 @@ import { withLocalTransaction } from './localDatabase.ts';
 export type ClockFormat = '12-hour' | '24-hour';
 export type ReceiptLanguage = 'en' | 'fr';
 export type ApplicationLanguage = 'en' | 'fr';
+export type AutoLockMinutes = 0 | 5 | 10 | 15 | 30;
 
 export type TerminalSettings = {
   deviceId: string;
@@ -11,6 +12,7 @@ export type TerminalSettings = {
   clockFormat: ClockFormat;
   receiptLanguage: ReceiptLanguage;
   applicationLanguage: ApplicationLanguage;
+  autoLockMinutes: AutoLockMinutes;
   isLocked: boolean;
   pendingSyncCount: number;
   lastSyncAt?: number;
@@ -23,7 +25,7 @@ export type TerminalSettings = {
 export type TerminalPreferences = Pick<
   TerminalSettings,
   'terminalName' | 'clockFormat' | 'receiptLanguage' | 'applicationLanguage'
->;
+> & { autoLockMinutes?: AutoLockMinutes };
 
 export type PrinterPreferences = Pick<
   TerminalSettings,
@@ -136,12 +138,13 @@ export async function loadTerminalSettingsFromDatabase(
        'clock_format',
        'receipt_language',
        'application_language',
+       'auto_lock_minutes',
        'session_locked',
        'operational_cache_updated_at',
        'printer_host',
        'printer_port'
      )
-     LIMIT 9`,
+     LIMIT 10`,
   );
   const values = new Map(
     (settings.values ?? []).map((row) => [String(row.key), String(row.value)]),
@@ -151,6 +154,9 @@ export async function loadTerminalSettingsFromDatabase(
   const clockFormat = values.get('clock_format') ?? '24-hour';
   const receiptLanguage = values.get('receipt_language') ?? 'en';
   const applicationLanguage = values.get('application_language') ?? 'en';
+  const storedAutoLock = values.get('auto_lock_minutes') ?? '5';
+  const autoLockMinutes = (['0', '5', '10', '15', '30'].includes(storedAutoLock)
+    ? Number(storedAutoLock) : 5) as AutoLockMinutes;
   assertClockFormat(clockFormat);
   assertReceiptLanguage(receiptLanguage);
   assertApplicationLanguage(applicationLanguage);
@@ -161,6 +167,7 @@ export async function loadTerminalSettingsFromDatabase(
     ['clock_format', clockFormat],
     ['receipt_language', receiptLanguage],
     ['application_language', applicationLanguage],
+    ['auto_lock_minutes', String(autoLockMinutes)],
     ['session_locked', values.get('session_locked') ?? '0'],
   ]) {
     if (!values.has(key)) await upsertSetting(database, key, value, now);
@@ -192,6 +199,7 @@ export async function loadTerminalSettingsFromDatabase(
     clockFormat,
     receiptLanguage,
     applicationLanguage,
+    autoLockMinutes,
     isLocked: values.get('session_locked') === '1',
     pendingSyncCount: Number(pending.values?.[0]?.count ?? 0),
     printerHost: values.get('printer_host') ?? '',
@@ -223,9 +231,15 @@ export async function saveTerminalPreferencesToDatabase(
   assertClockFormat(input.clockFormat);
   assertReceiptLanguage(input.receiptLanguage);
   assertApplicationLanguage(input.applicationLanguage);
+  if (input.autoLockMinutes !== undefined && ![0, 5, 10, 15, 30].includes(input.autoLockMinutes)) {
+    throw new Error('Auto-lock duration is invalid.');
+  }
   await upsertSetting(database, 'terminal_name', terminalName, now);
   await upsertSetting(database, 'clock_format', input.clockFormat, now);
   await upsertSetting(database, 'receipt_language', input.receiptLanguage, now);
+  if (input.autoLockMinutes !== undefined) {
+    await upsertSetting(database, 'auto_lock_minutes', String(input.autoLockMinutes), now);
+  }
   await upsertSetting(
     database,
     'application_language',
@@ -237,6 +251,7 @@ export async function saveTerminalPreferencesToDatabase(
     clockFormat: input.clockFormat,
     receiptLanguage: input.receiptLanguage,
     applicationLanguage: input.applicationLanguage,
+    ...(input.autoLockMinutes !== undefined ? { autoLockMinutes: input.autoLockMinutes } : {}),
   };
 }
 
