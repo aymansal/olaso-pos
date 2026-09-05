@@ -279,6 +279,37 @@ Milk types:
 - Coconut
 - Almond
 
+### Applied 5 September 2026 — Frappé
+
+- Owner approved milk surcharges for this page: single required Milk group,
+  Whole default+0, Lactose Free+5MAD, Oat/Coconut/Almond each+10MAD. No separate
+  Vegetal Milk or Lactose-Free extra; substitution charged once. This supersedes
+  the earlier temporary free-milk assumption for frappés only.
+- Three optional extras: Ceremonial Matcha+15, Cold Foam+10, Protein+18MAD.
+  Configured combinable (0–3), none default; owner may still request max-one.
+  Their recipe quantities are unknown, so effects remain empty, not invented.
+- Existing10product IDs, menu prices and single Regular sizes preserved. No
+  Plus size printed on this menu, therefore none added. All10original photos
+  from output/frappe-transparent-images compressed with shared WebP path:
+  480px,217480binary bytes total, all <=32768dataURL characters.
+- Re-read actual Excel Frappé A1:D41: ten recipes/40rows. Linked the four fully
+  measured recipes: Lotus (rows10–12), Chocolate (17–20), Framboise (21–23),
+  Oreo (24–28),15ingredient rows total. Lait maps to approved Whole milk;
+  alternatives replace its130ml with130ml selected milk, never add both.
+- Added10missing ingredients, reused existing Lait de coco. Unknown costs,
+  no opening stock/purchase fabricated. Existing Soft Ice remains a separate
+  ingredient; alternative milk does not make the entire drink dairy-free.
+- Six recipes pending measurements: Caramel (caramel pump), Bueno/Pistachio
+  (hazelnut pump), Matcha (vanilla pump), Cerelac (scoop), Signature Coffee
+  (espresso shot and cinnamon). Do not substitute invented ml/g or silently
+  omit unknown rows. Those six currently have priced choices but no recipe
+  deductions. All three extra serving amounts also remain pending.
+- Verified exact local/cloud photos, prices,20sections,80values,4recipes,
+  16milk replacement effects;400resolver combinations correct,92totalproducts,
+  pending0 at2026-09-05T18:17:44Z. All10physical tablet dialogs checked with
+  five milk choices and combined extras/cart totals; no sale, empty cart restored.
+  Dialog320px wide, inside800px viewport, no overflow/console warning/error.
+
 ## 7. Coffee / V60 — 23 listings
 
 ### Hot coffee

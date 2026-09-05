@@ -7,6 +7,41 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Frappé menu (POLISH-01)
+
+- Owner approved one milk group: Whole default/free, Lactose Free+5MAD,
+  Oat/Coconut/Almond+10MAD each. Do not duplicate milk under Extras.
+  Other extras Ceremonial Matcha+15, Cold Foam+10, Protein+18. Asked whether
+  extras may combine and for missing recipe measurements; awaiting answers.
+- Ten existing products/prices/Regular sizes preserved. Preparing original
+  output/frappe-transparent-images with same approved compressor; no app/UI
+  changes required. Existing native SQLite/local-first callback boundary and
+  Android/Capacitor research from this card remain applicable.
+- Excel has10recipes/40rows; six need pump/scoop/shot measurements or cinnamon
+  amount. Four complete recipes: Lotus, Chocolate, Framboise, Oreo. No guessed
+  units or extra quantities. Next: photos, approved milk choices and safe exact
+  recipes; unknown extras/remaining recipe deductions must stay explicit.
+- Completed local-first data update:10photos480px/217480binary bytes;50milk
+  choices in10required single groups, Whole default;30extras in10optional
+  multiple groups0–3, none default. Milk not duplicated as extras. Combinable
+  extras used as announced default while optional owner answer is outstanding.
+- Linked four fully measured recipes (Lotus/Chocolate/Framboise/Oreo),15rows;
+ 16replace effects swap130ml Lait for130ml selected alternative. Created10
+ missing ingredients, reused existing coconut milk; costs unknown, no purchases
+ or opening stock. Six unmeasured recipes and all extra stock effects pending.
+- Data-only normal callbacks/outbox; no code/UI changes or APK build. Exact
+ tablet/cloud check2026-09-05T18:17:44Z:92products,20sections,80values,4recipes,
+ all images/prices/effects match,400configuration combinations resolve exact
+ prices and replacement deductions, pending0. tmp/frappe-verification.json.
+- Physical all10dialogs: Whole default, eachmilk correct, all3extras combine
+ at+43MAD, cart totals correct; removed temporary lines, no sale. No captured
+ console errors/warnings. Inspected tmp/frappe-installed.png and frappe-dialog.png.
+ Dialog320x544 fits800pxviewport with nooverflow; no layout change. Tablet
+ autolock during read-only cloud checks resolved through authorized normal PIN.
+- Next: await owner next menu/answers. Missing pump/scoop/shot equivalents,
+ Signature cinnamon and extra amounts must be supplied before remaining
+ recipe/extra deductions. Menu source MD records exact limits and mappings.
+
 ### Current checkpoint — 2026-09-05 Lemonade menu (POLISH-01)
 
 - Owner follow-up confirmed Excel amounts for Standard; leave Plus without
