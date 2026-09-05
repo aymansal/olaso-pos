@@ -36,8 +36,29 @@ remaining goal and card sequence.
   horizontal overflow. All nine photos loaded, no captured console warnings/
   errors, no sale placed. Screenshot tmp/croissant-installed.png. Owner visual
   acceptance of this page remains pending.
-- Next: commit/push this data-delivery journal and menu decision, record SHA,
-  then await owner review/next page.
+- Data-delivery journal/menu decision pushed as
+  `f4118faa426cafd1893943ede3d2a5d6097eed4f` on origin/main.
+- Visual closeout caught a display defect: ProductCard uses object-fit: cover
+  in a 72x92 portrait box, cropping wide croissant photos. OrderItemCard shares
+  the same problem. Pause closeout to change only cover -> contain in both;
+  preserve every image box/card/text/button coordinate. Small check:pos guard.
+- Native research before display fix: Android WebView guidance
+  https://developer.android.com/develop/ui/views/layout/webapps/webview and
+  Capacitor https://capacitorjs.com/docs retain rendering in WebView CSS; MDN
+  https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/object-fit
+  documents contain vs cover. No Kotlin/plugin needed. Frontend-design skill
+  used narrowly to preserve the approved geometry; no redesign.
+- Display-fix checks passed: check:pos, check:css-scope, production TypeScript/
+  web build, Android checks/JVM tests/package and deployment. Installed via
+  adb install -r. No structural code change; Graphify refresh not required.
+- Physical recheck after install: all nine images loaded with contain and
+  unchanged 72x92 boxes, all nine extras none/soft/magnum/none pass again.
+  Cart photograph contains the whole croissant in unchanged 60x76 box; temporary
+  Pistachio Kunefe + Magnum total57 verified and removed, empty cart restored.
+  No sale placed. Local/cloud verification repeated 2026-09-05T16:32:54Z, zero
+  pending operations; screenshot tmp/croissant-installed.png inspected.
+- Next: commit/push display fix with evidence; await owner visual review and
+  next page. Missing croissant/extra recipes remain explicitly pending owner data.
 
 ### Current checkpoint — 2026-09-05 WebP photo refinement (POLISH-01)
 

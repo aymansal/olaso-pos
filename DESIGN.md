@@ -321,6 +321,8 @@ Depth is quiet and structural. The application root is flat and full-bleed. Hier
 - Do not apply a radius, border, or shadow to the production application root.
 - Product cards, fields, category cards, and receipt content use borders without drop shadows.
 - Product photography keeps its natural shadow and transparent background.
+- POS product and cart photos fit completely within their existing image boxes
+  (`object-fit: contain`); wide food photos must not be cropped like portraits.
 - Do not add gradients, glass effects, glow, or black shadows.
 
 ## Shapes

@@ -174,6 +174,8 @@ assert.match(productCard, /<Plus /);
 assert.doesNotMatch(productCard, /styles\.hit/);
 assert.match(productCardCss, /text-overflow: ellipsis/);
 assert.match(productCardCss, /width: 100px/);
+assert.match(productCardCss, /object-fit: contain/);
+assert.match(readFileSync('src/features/pos/components/OrderItemCard/OrderItemCard.module.css', 'utf8'), /object-fit: contain/);
 
 let offered = addProduct([], 'latte', 'latte-reg');
 offered = incrementCartLine(offered, offered[0].id);

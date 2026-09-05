@@ -14,7 +14,7 @@
   width: 60px;
   height: 76px;
   border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .name,
