@@ -53,6 +53,8 @@ remaining goal and card sequence.
   quantities for eight products; verify immutable recipes/local/cloud and
   resolved stock amounts without placing a production sale. Iced Tea still
   needs its recipe. No app code or unrelated menu page changed.
+- Photo/size/ingredient delivery and pending-recipe record pushed as
+  `44c4cd8b68ba63f08e0e0cd45002457922f85cf3` on origin/main.
 
 ### Current checkpoint — 2026-09-05 Brioche menu (POLISH-01)
 
