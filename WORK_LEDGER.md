@@ -49,6 +49,20 @@ remaining goal and card sequence.
 
 ### 2026-09-05 — POLISH-01 Soft Ice Cream batch checkpoint
 
+- Owner correction (latest): rejected the broader popup restyling. Restore all
+  original CSS from before `78e48f0`, changing only width from 560 to a
+  viewport-bounded 320px. Keep the independent optional-deselection logic fix.
+  This supersedes the 420px/content-sized-row presentation below. CSS-only
+  WebView change; prior Android/Capacitor boundary research remains applicable,
+  original 44px targets retained per DESIGN.md. `git diff f4015cb` confirms the
+  stylesheet differs from the original by its width declaration only.
+- Width correction verified: production build/JVM checks, `check:css-scope`,
+  and `check:pos` pass. Installed with `adb install -r` Success and verified on
+  Galaxy Tab A9 at 1340x800: 320px dialog, original full-width ~270px option,
+  original ~44px row, wrapped title, visible footer, no horizontal overflow or
+  captured console errors. Screenshot `tmp/icecream-popup-original-320.png`.
+  Select/unselect remains 20 -> 40 -> 20 MAD; no order or catalog writes.
+
 - **Latest verified state:** all 11 exact existing Soft Ice Cream products now
   have their compressed photos and optional Croissant +20 MAD in both tablet
   SQLite and production `befitting-fox-181`. Exact image equality, prices,
