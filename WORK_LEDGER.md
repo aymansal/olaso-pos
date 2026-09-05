@@ -43,8 +43,9 @@ remaining goal and card sequence.
   no captured console errors/warnings. Screenshot: tmp/icecream-webp-installed.png.
 - Owner physically accepted: "they look crisp ... very, very good, I like them."
   No UI/layout changes or structural code changes (Graphify refresh not needed).
-- Next: commit/push this scoped POLISH-01 refinement and record its SHA; then
-  await the owner's next menu page/instruction.
+- Completed and pushed as `745ace62ca7038965ed2ec6c8c02314e9f12d3dc`
+  (`POLISH-01: improve product photos with high-quality WebP`) on `origin/main`.
+  Next: await the owner's next menu page/instruction.
 
 ### Goal 06 — Production Hardening, Release, and Acceptance
 
