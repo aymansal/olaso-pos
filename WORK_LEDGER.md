@@ -41,7 +41,8 @@ remaining goal and card sequence.
   printer left aligned, feedback in flow. Caught selected-button specificity
   issue, fixed and repeated physical visual check with regression assertion.
   Staff & access source unchanged. No captured console/logcat errors/warnings.
-- Next: commit/push this Settings delivery; owner review. Earlier product-code
+- Settings delivery pushed as `ce0e365` on `origin/main`; APK installed and
+  focused tablet checks passed. Next: owner review. Earlier product-code
   format question remains separate and pending, no product codes changed.
 
 ### Current checkpoint — 2026-09-05 Edit product identity (POLISH-01)
