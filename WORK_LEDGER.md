@@ -7,6 +7,53 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Lemonade menu (POLISH-01)
+
+- Owner authorized existing nine Lemonades/Iced Tea, correct Standard/Plus
+  sizes, photos and supplied recipes. Preserve IDs, no duplicate products.
+- Menu prices32/32/30/30/30/30/25/30/34 MAD; Plus adds15 MAD. Homemade
+  syrups are informational, not options. Existing nine Regular sizes and
+  prices match; no photos, recipes or ingredients; outbox empty. Read-only
+  backup tmp/lemonade-before.json; no production writes yet.
+- WhatsApp Excel Lemonades A1:D32 contains eight recipes/31 ingredient rows,
+  no Iced Tea recipe and no size-specific quantities. Asked owner whether
+  these are Standard amounts and what Plus quantities to use; never derive
+  recipe ratios from selling prices. Ingredient prices remain unknown.
+- Native research: https://developer.android.com/topic/architecture/data-layer/offline-first
+  and https://capacitorjs.com/docs support the existing local-first data layer
+  through native SQLite and authenticated reconnect. Data-only catalog work;
+  no new native code, app changes or APK rebuild needed.
+- Completed photos through shared compressor/authenticated onSave: all nine
+  480px,145442binary bytes, original transparent assets preserved. Saved Plus
+  before renaming/defaulting existing Regular to Standard, retaining its ID.
+  Exact Standard/Plus totals32/47,32/47,30/45,30/45,30/45,30/45,25/40,30/45,
+  34/49 MAD. No extras. Evidence tmp/lemonade-webp.json and sizes-applied.jsonl.
+- Created17 distinct source-named ingredients through authenticated Stock
+  callback/local-first outbox; empty inventory confirmed beforehand. Base units
+  gram/millilitre/piece (one Lipton sachet=one piece), zero opening quantity,
+  unknown cost, no purchase/stock quantities invented. Source Nestlé and Lait
+  concentré kept separate. tmp/lemonade-recipes.json records exact31source rows.
+- Production CLI empty-table output is blank with a diagnostic, not JSON [];
+  corrected temporary read-only preflight parser before any ingredient write.
+  Cloud costStatus omission maps to incomplete in convex/sync.ts; exact check
+  follows that existing contract rather than requiring a missing optional field.
+- Physical18size/cart checks passed, all images loaded480px with146x100 contain,
+  original320px dialog no horizontal overflow. No captured console warnings/
+  errors; temporary cart lines removed, empty cart restored, no sale placed.
+  Auto-lock interrupted the initial check before actions; reauthenticated and
+  reran successfully. Inspected tmp/lemonade-installed.png. No APK required.
+- Exact cloud/tablet verification2026-09-05T17:13:23Z:9products,18sizes,
+  17ingredients,92totalproducts, prices/images/unknown costs match, pending0.
+  Evidence tmp/lemonade-verification.json and lemonade-pos-verification.json.
+- NOT COMPLETE: recipe linking awaits owner size-quantity answer. Existing
+  resolver defaults missing size quantities to the base recipe, so saving only
+  Standard would incorrectly assume Plus has identical deductions. No recipes
+  activated. Exact next action: confirm workbook size and Plus amounts, then
+  use existing onSaveRecipe with fresh IDs/revisions and explicit per-size
+  quantities for eight products; verify immutable recipes/local/cloud and
+  resolved stock amounts without placing a production sale. Iced Tea still
+  needs its recipe. No app code or unrelated menu page changed.
+
 ### Current checkpoint — 2026-09-05 Brioche menu (POLISH-01)
 
 - Owner requested the three brioche products and recipes if provided in Excel.

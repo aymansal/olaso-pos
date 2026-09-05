@@ -214,6 +214,34 @@ Sizes:
 
 Source notes: Homemade daily; Fresh locally sourced ingredients.
 
+### Applied 5 September 2026; recipe linking pending
+
+- Updated the existing nine products; IDs, category and base prices preserved.
+  Renamed each existing Regular size to Standard (preserving its ID/key), kept
+  it default, and added one active Plus size at exactly +15 MAD. No syrup or
+  other extra choices added; homemade syrups are informational per owner.
+- Saved all nine source photos from output/lemonade-transparent-images with
+  the approved shared WebP compressor:480px maximum edge,145442 binary bytes
+  total, each data URL <=32768 characters. Originals and app layout unchanged.
+- Created the17 distinct ingredients from Excel Lemonades A2:D32, with the
+  original names and units. No purchases, opening stock or costs invented.
+  Nestlé remains distinct from Lait concentré; Thé Lipton uses piece, one piece
+  means one sachet. Missing cloud costStatus maps to incomplete as designed.
+- Eight recipes/31 rows are preserved in OLASO-BEVERAGE-RECIPE-EXTRACTION.md.
+  Product mappings: Strawberry Passion -> Strawberry Passion Lemonade;
+  Coraçao -> Coaraçao; Friscito Lemonade -> Fresquito Lemonade;
+  Mum's Lemonade -> Mum’s Lemonade. Iced Tea has no supplied recipe.
+- Do not activate recipes until owner confirms which size the workbook covers
+  and Plus quantities. Existing resolver falls back to base recipe quantities
+  when size overrides are absent; attaching the Standard recipe alone would
+  silently deduct Standard quantities for Plus. No scaling by price, duplicate
+  quantities, zero overrides, or invented recipes. All nine remain sellable
+  with no recipe deduction until the quantity decision is provided.
+- Physical tablet checked all18 Standard/Plus selections and cart totals,
+  320px dialog without overflow, loaded whole photos, no console errors/warnings;
+  temporary lines removed and empty cart restored, no sale placed. Exact cloud/
+  tablet data verified2026-09-05T17:13:23Z with92products and zero pending work.
+
 ## 6. Frappé — 10 listings
 
 | Product | Price |
