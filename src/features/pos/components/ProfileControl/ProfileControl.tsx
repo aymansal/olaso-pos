@@ -1,5 +1,5 @@
 import { User } from '@boxicons/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { StaffRole } from '../../../../data/permissions.ts';
 import type { AppLanguage } from '../../../../lib/locale';
 import { useT } from '../../../../lib/locale';
@@ -30,9 +30,19 @@ export function ProfileControl({
 }) {
   const t = useT();
   const root = useRef<HTMLDivElement>(null);
+  const menu = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
   const [error, setError] = useState('');
+
+  useLayoutEffect(() => {
+    if (!open || !root.current || !menu.current) return;
+    const box = root.current.getBoundingClientRect();
+    menu.current.style.top = `${box.bottom + 6}px`;
+    menu.current.style.right = `${Math.max(8, window.innerWidth - box.right)}px`;
+    menu.current.showPopover();
+    return () => { if (menu.current?.matches(':popover-open')) menu.current.hidePopover(); };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -82,7 +92,9 @@ export function ProfileControl({
         </span>
       </button>
       {open ? (
-        <div className={styles.menu} id="staff-profile-menu" role="menu">
+        <div ref={menu} popover="auto" onToggle={(event) => {
+          if (event.newState === 'closed') setOpen(false);
+        }} className={styles.menu} id="staff-profile-menu" role="menu">
           <div className={styles.language} role="group" aria-label={t('Application')}>
             {(['en', 'fr'] as const).map((value) => (
               <button

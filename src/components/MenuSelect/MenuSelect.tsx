@@ -32,6 +32,7 @@ export function MenuSelect({
   className?: string;
 }) {
   const root = useRef<HTMLDivElement>(null);
+  const menu = useRef<HTMLUListElement>(null);
   const listId = useId();
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
@@ -39,14 +40,21 @@ export function MenuSelect({
   const selected = options.find((option) => option.id === value);
 
   useLayoutEffect(() => {
-    if (!open || !root.current) return;
+    if (!open || !root.current || !menu.current) return;
     const box = root.current.getBoundingClientRect();
+    const below = window.innerHeight - box.bottom - 14;
+    const above = box.top - 14;
+    const maximum = size === 'lock' ? 240 : size === 'field' ? 220 : 200;
+    const upwards = below < maximum && above > below;
     setMenuStyle({
-      top: box.bottom + 6,
-      left: box.left,
-      width: box.width,
+      ...(upwards ? { bottom: window.innerHeight - box.top + 6 } : { top: box.bottom + 6 }),
+      left: Math.max(8, Math.min(box.left, window.innerWidth - box.width - 8)),
+      width: Math.min(box.width, window.innerWidth - 16),
+      maxHeight: Math.max(0, Math.min(maximum, upwards ? above : below)),
     });
-  }, [open]);
+    menu.current.showPopover();
+    return () => { if (menu.current?.matches(':popover-open')) menu.current.hidePopover(); };
+  }, [open, size]);
 
   useEffect(() => {
     if (!open) return;
@@ -56,7 +64,9 @@ export function MenuSelect({
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };
-    const closeOnScroll = () => setOpen(false);
+    const closeOnScroll = (event: Event) => {
+      if (!menu.current?.contains(event.target as Node)) setOpen(false);
+    };
     document.addEventListener('pointerdown', closeOutside);
     document.addEventListener('keydown', closeOnEscape);
     document.addEventListener('scroll', closeOnScroll, true);
@@ -96,7 +106,9 @@ export function MenuSelect({
         />
       </button>
       {open ? (
-        <ul className={styles.menu} id={listId} role="listbox" style={menuStyle}>
+        <ul ref={menu} popover="auto" onToggle={(event) => {
+          if (event.newState === 'closed') setOpen(false);
+        }} className={styles.menu} id={listId} role="listbox" style={menuStyle}>
           {options.map((option) => (
             <li key={option.id}>
               <button

@@ -595,6 +595,8 @@ Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-laye
 - Keep at least 8 pixels between independent touch targets.
 - Preserve visible keyboard focus with a 2-pixel Operational Green outline and sufficient offset.
 - Native buttons and inputs are preferred beneath Astryx styling. List menus use the shared in-app `MenuSelect` (Lock appearance). Dates use the shared period calendar.
+- `MenuSelect` and the staff menu use the WebView Popover top layer so sibling controls and panel clipping cannot cover them. Lists stay within the viewport, open above the trigger when necessary, and remain open during internal scrolling. Long option labels wrap with automatic row height. Preserve the existing trigger geometry and outside-tap/Escape dismissal.
+- Table text must retain room for letter descenders: clipped name/date cells use a 1.4 line height without increasing the approved table row geometry.
 - Form fields have persistent visible labels. Placeholders are examples, not labels.
 - Meaningful product images have useful alt text; decorative category artwork has empty alt text.
 - Status never relies on color alone. Pair danger and availability colors with text or an icon.

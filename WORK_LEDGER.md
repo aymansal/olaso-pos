@@ -7,6 +7,44 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Shared dropdown/text and ingredient English (POLISH-01)
+
+- Owner requests all live ingredient names in English, verify Oulmès source,
+  fix dropdown menus covered by adjacent controls and clipped table letters.
+- Source Oulmès is60ml in Coaraçao, Excel Lemonades row22. Keep brand identity.
+  Rename existing records, not IDs/recipes/history. No invented name merges.
+- Root cause: MenuSelect wrap z-index2 creates sibling stacking contexts;
+  descendant fixed z-index40 cannot escape. Stock/Product name line-height1
+  with overflow hidden clips descenders. Preserve row geometry.
+- Native research https://developer.mozilla.org/en-US/docs/Web/API/Popover_API,
+  https://developer.android.com/develop/ui/views/layout/webapps/webview and
+  https://capacitorjs.com/docs: use existing WebView native top-layer popovers,
+  no new Kotlin/plugin/package. Physical Chrome151 supports showPopover.
+- Shared MenuSelect and ProfileControl now use WebView top-layer popovers;
+  list placement stays within viewport, flips upwards near bottom, internal
+  scrolling stays open, outside/Escape dismissal retained. Long options wrap.
+  Stock/Product names, Orders dates/service and profile text retain descenders
+  with line-height1.4; fixed row/card geometry preserved. No new dependency.
+- Renamed21 of27 live ingredients through authenticated Stock callbacks and
+  normal local-first outbox. Exact tablet/cloud readback at18:33:14Z verified
+  all IDs, units, keys, stock and costs unchanged, pending0; recipe identities
+  preserved. tmp/english-verification.json; alias map in recipe extraction MD
+  prevents future imports from recreating French duplicates. Historical names
+  and Oulmès brand retained. Backup tmp/ingredients-before-english.json.
+- Checks passed: TypeScript, check:css-scope, check:pos and full
+  npm run android:production (production deployment/build/JVM checks).
+  Installed APK via adb install -r on SM-X115, no data reset. Normal PIN unlock.
+- Physical Choices Stock change/Ingredient/Replacement and Sizes Availability
+  menus hit-tested above adjacent controls, inside viewport; long list scrolling
+  and outside dismissal passed. Stock/Orders/Reports filters, Dashboard profile
+  and Settings menus passed after route transitions settled. No captured console
+  errors/warnings. Inspected tmp/menu-fixed.png and stock-english.png at1340x800;
+  Energy drink line box16.8px at12px font retains full descenders. Additional
+  Mango Lemonade Standard/Plus two-row availability overlap check passed.
+  No sales made,
+  no form changes saved. Docs record shared UI contract and English aliases.
+- Next: finish source closeout and push this POLISH-01 follow-up on main.
+
 ### Current checkpoint — 2026-09-05 Frappé menu (POLISH-01)
 
 - Owner approved one milk group: Whole default/free, Lactose Free+5MAD,

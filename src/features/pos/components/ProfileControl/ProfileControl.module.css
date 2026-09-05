@@ -46,7 +46,7 @@
   min-width: 0;
   flex-direction: column;
   gap: 2px;
-  line-height: 1;
+  line-height: 1.4;
 }
 
 .profileCopy strong,
@@ -66,16 +66,19 @@
 }
 
 .menu {
-  position: absolute;
-  top: 56px;
-  right: 0;
-  display: grid;
+  position: fixed;
+  inset: auto;
+  margin: 0;
   width: 190px;
   padding: 8px;
   border: 1px solid var(--olaso-panel-border);
   border-radius: 18px;
   background: var(--olaso-white);
   box-shadow: 0 10px 24px rgb(28 33 27 / 14%);
+}
+
+.menu:popover-open {
+  display: grid;
 }
 
 .language {

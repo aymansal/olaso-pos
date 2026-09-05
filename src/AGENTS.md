@@ -63,6 +63,8 @@ application, global tokens, and the feature screens under `features/`.
   navigation. The staff lock is the authentication boundary and application
   startup fails closed until a valid staff session is established.
 - Do not add a shared-state library while local React state is sufficient.
+- Shared list menus and the staff menu use native WebView popovers for top-layer
+  painting; do not regress to sibling z-index escalation or clipped in-panel lists.
 
 ## Work Guidance
 

@@ -221,7 +221,7 @@
 .price {
   color: var(--olaso-text);
   font-size: 12px;
-  line-height: 1;
+  line-height: 1.4;
   font-weight: 700;
 }
 

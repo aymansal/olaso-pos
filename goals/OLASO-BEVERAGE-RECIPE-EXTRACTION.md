@@ -13,6 +13,44 @@ similar ingredient names or invent conversions without owner confirmation.
 
 ## Source validation
 
+### Live English ingredient names — owner approved 5 September 2026
+
+The transcription below preserves the workbook's exact source wording. Live
+ingredient display names are English. Future imports must resolve these aliases
+to the existing ingredient IDs, never recreate French duplicates. The 21 renames
+preserved ingredient IDs, units, stock, valuation, recipe links and historical
+snapshots; all 27 live ingredients matched locally and in production after sync.
+
+| Source / former live name | Live English name |
+| --- | --- |
+| Mangue | Mango |
+| Jus d'orange Valencia | Valencia orange juice |
+| Lait de coco | Coconut milk |
+| Passion | Passion fruit |
+| Purée de fraise | Strawberry puree |
+| Sirop de citron | Lemon syrup |
+| Fraise | Strawberry |
+| Eau | Water |
+| Lait concentré | Condensed milk |
+| Sirop Coraçao | Curaçao syrup |
+| Thé Lipton | Lipton tea |
+| Sucre | Sugar |
+| Lait | Whole milk |
+| Soft Ice | Soft ice cream |
+| Crème Lotus | Lotus cream |
+| Sauce chocolat | Chocolate sauce |
+| Poudre chocolat | Chocolate powder |
+| Crème framboise | Raspberry cream |
+| Lait sans lactose | Lactose-free milk |
+| Lait d’avoine | Oat milk |
+| Lait d’amande | Almond milk |
+
+Unchanged English/brand names: Ice cubes, Nestlé, Sprite, Oulmès, Energy drink,
+Mini Oreo. **Oulmès is present in the workbook**, Lemonades row 22, Coaraçao,
+60 ml; preserve that brand identity rather than removing or merging it.
+
+### Workbook checks
+
 - The workbook contains five category tabs plus one combined tab named
   `Toutes les boissons`.
 - The five category tabs contain 181 ingredient rows in total and match the

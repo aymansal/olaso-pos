@@ -99,6 +99,7 @@
 }
 
 .service {
+  line-height: 1.4;
   overflow: hidden;
   color: var(--olaso-text-service);
   font-size: 11px;
@@ -112,7 +113,7 @@
   align-items: center;
   gap: 6px;
   white-space: nowrap;
-  line-height: 1;
+  line-height: 1.4;
 }
 
 .when strong,
@@ -120,7 +121,7 @@
   display: flex;
   align-items: center;
   margin: 0;
-  line-height: 1;
+  line-height: 1.4;
   font-size: 10px;
 }
 

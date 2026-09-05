@@ -316,3 +316,18 @@ assert.deepEqual(toggleChoice(optionalExtra, 'other', ['croissant']), ['other'])
 assert.deepEqual(toggleChoice({ ...optionalExtra, required: true, min: 1 }, 'croissant', ['croissant']), ['croissant']);
 assert.match(choiceDialog, /section\.max === 1 && \(section\.required \|\| section\.min > 0\)/);
 console.log('POS cart, money, and optional-extra selection checks passed.');
+
+// Shared lists must escape sibling/scroll stacking contexts and stay scrollable.
+const menuSelect = readFileSync('src/components/MenuSelect/MenuSelect.tsx', 'utf8');
+assert.match(menuSelect, /popover="auto"/);
+assert.match(menuSelect, /showPopover\(\)/);
+assert.match(menuSelect, /menu\.current\?\.contains\(event.target as Node\)/);
+assert.match(menuSelect, /upwards/);
+for (const [file, selector] of [
+  ['src/features/stock/components/StockTable/StockTable.module.css', '.ingredient strong'],
+  ['src/features/products/components/ProductList/ProductList.module.css', '.productCopy strong,'],
+]) {
+  const css = readFileSync(file, 'utf8');
+  const rule = css.slice(css.indexOf(selector));
+  assert.match(rule.slice(0, rule.indexOf('}') + 1), /line-height: 1\.4/);
+}
