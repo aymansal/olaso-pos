@@ -187,7 +187,10 @@ tablet's local SQLite operational record.
   swaps to the new totals when they arrive; a failed reload clears the stale
   snapshot to the error state. The selected range
   prefers this tablet’s saved receipts when they contain more completed sales
-  than the cloud snapshot, so unsynced today sales still appear. Used-ingredient
+  than the cloud snapshot, so unsynced today sales still appear. When local and
+  cloud sales totals match exactly, local immutable profile attribution replaces
+  only the cloud profile breakdown, preserving older profile-owned sales whose
+  cloud daily metrics predate staff IDs. Used-ingredient
   bars overlay this tablet’s on-hand stock by name and unit.
 - Online All reports collect cloud daily summaries through legal page-by-page
   pagination (`getAllSummaryPage`, one `.paginate()` per call, the data layer

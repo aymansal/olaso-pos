@@ -173,6 +173,16 @@ remaining goal and card sequence.
 
 ## Current Checkpoint
 
+- Profile-performance attribution repair (5 Sep 2026): the owner found that
+  pre-feature sales printed under their saved local profile but appeared as
+  `Unattributed` on the online Reports card. The cloud daily metric predates
+  profile IDs, while the matching local immutable sale retains the actor ID.
+  The report now keeps cloud aggregate finance data and uses the local profile
+  breakdown only when orders, units, and net sales agree exactly. The focused
+  offline regression, TypeScript, and production web build pass; no cloud data,
+  tablet, sale, profile, or PIN was touched. Exact next action: commit/push the
+  repair, then package/install only with owner approval.
+
 - Profile performance accounting (4 Sep 2026): owner approved a proper
   staff-sales report, not a score. A completed sale counts once for its
   authenticated profile regardless of Cash/Card tender splits; cancellations

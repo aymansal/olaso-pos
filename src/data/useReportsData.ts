@@ -12,6 +12,26 @@ import { useStaffSession } from './sessionContext';
 export type ReportsSnapshot =
   FunctionReturnType<typeof api.reports.getSummary>;
 
+function hasSameSales(local: ReportsSnapshot, cloud: ReportsSnapshot) {
+  return local.current.orderCount === cloud.current.orderCount
+    && local.current.itemCount === cloud.current.itemCount
+    && local.current.netCentimes === cloud.current.netCentimes;
+}
+
+function selectReportSnapshot(cloud: ReportsSnapshot, local?: ReportsSnapshot) {
+  if (!local || local.current.orderCount > cloud.current.orderCount) return local ?? cloud;
+  // Older cloud daily metrics predate profile IDs; the matching local receipts
+  // retain their immutable sale actor, so only that more detailed breakdown wins.
+  if (!hasSameSales(local, cloud)) return cloud;
+  return {
+    ...cloud,
+    current: {
+      ...cloud.current,
+      profileTotals: local.current.profileTotals,
+    },
+  };
+}
+
 export function useReportsData(fromDate: string, toDate: string) {
   const { available, foreground } = useConnectionStatus();
   const session = useStaffSession();
@@ -66,9 +86,7 @@ export function useReportsData(fromDate: string, toDate: string) {
           }),
         localRequest.catch(() => undefined),
       ]).then(([cloud, local]) => {
-        const snapshot = local && local.current.orderCount > cloud.current.orderCount
-          ? local
-          : cloud;
+        const snapshot = selectReportSnapshot(cloud, local);
         if (!local) return snapshot;
         const stockByName = new Map(
           local.current.ingredientTotals.map((item) => [

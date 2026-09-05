@@ -1969,3 +1969,25 @@ Do not claim physical acceptance. The owner performs it.
   launched, installed, or operated for this card.
 - Committed and pushed as `30e655728d3b85abd03393fa2477379ca1118ba9`
   (`POLISH-01: add profile sales reporting`) on `origin/main`.
+
+### 2026-09-05 — POLISH-01 profile-performance attribution repair
+
+- Owner found an accounting mismatch: two pre-feature orders printed under
+  Yassine from their saved tablet receipts, but the online Reports card showed
+  them as `Unattributed`. Root cause: equal cloud and tablet order counts chose
+  the cloud summary wholesale; its older daily metric has no profile ID even
+  though the matching local sale has its immutable actor ID.
+- `useReportsData` now retains the cloud report for its aggregate finance data
+  and swaps in the local profile breakdown only when orders, units, and net
+  sales match exactly. A mismatch still keeps the existing cloud selection;
+  this neither guesses an identity from a name nor changes any sale or cloud
+  record. The focused regression guard proves all three equality checks and
+  the local-profile replacement path.
+- Official Android data-layer and Capacitor guidance confirms this remains an
+  existing React/SQLite read-boundary repair, requiring no native change,
+  plugin, dependency, deployment, tablet action, or data migration. Passed
+  `npm run check:offline`, `npx tsc -b`, `npm run build`, and `git diff --check`.
+  Graphify code-only refresh passed at 3,097 nodes / 6,146 edges / 180
+  communities.
+- Exact next action: commit and push this repair, then package and install only
+  with owner approval.
