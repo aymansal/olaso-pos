@@ -183,7 +183,8 @@ remaining goal and card sequence.
   tablet, sale, profile, or PIN was touched. Committed and pushed as
   `ff2c5fa86fced248cd032c21630212c5e4b81aa8`
   (`POLISH-01: preserve historical profile attribution`) on `origin/main`.
-  Exact next action: package/install only with owner approval.
+  The production-connected APK is packaged and ready; exact next action:
+  install only with owner approval.
 
 - Profile performance accounting (4 Sep 2026): owner approved a proper
   staff-sales report, not a score. A completed sale counts once for its

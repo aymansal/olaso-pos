@@ -1996,6 +1996,7 @@ Do not claim physical acceptance. The owner performs it.
 
 - Committed and pushed as `ff2c5fa86fced248cd032c21630212c5e4b81aa8`
   (`POLISH-01: preserve historical profile attribution`) on `origin/main`.
-  Exact next action: package the production-connected APK, then install it only
-  with owner approval and have the owner verify the three Yassine orders on the
-  Sales card.
+  The production endpoint was verified in the synced bundle and Android
+  packaging produced `android/app/build/outputs/apk/debug/app-debug.apk` at
+  2026-09-05 14:21 local time. Exact next action: install it only with owner
+  approval and have the owner verify the three Yassine orders on the Sales card.
