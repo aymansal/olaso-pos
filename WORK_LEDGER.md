@@ -7,6 +7,28 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Brioche menu (POLISH-01)
+
+- Owner requested the three brioche products and recipes if provided in Excel.
+  Menu: Spicy Tuna34, Shrimps Parm Brioche49, Morning Version32 MAD; no extras.
+- Read-only supplied WhatsApp Excel recheck: no brioche/tuna/shrimps/morning
+  products among all workbook products. Menu descriptions list ingredients but
+  no quantities, so do not create invented recipes, stock amounts or prices.
+- Existing three exact product keys/prices matched; no photos saved. Backup
+  tmp/brioche-before.json. Prepared existing output/brioche-transparent-images
+  with the same approved shared compressor:384px, total65906 binary bytes,
+  <=32768 characters each. Originals untouched. Contact sheet inspected against
+  source menu. Shared native/WebView boundary unchanged; data-only, no APK build.
+- Completed photo-only save through authenticated existing callback/local-first
+  outbox. Exact production/tablet check at2026-09-05T16:58:00Z: three photos,
+  prices and active Regular sizes match, no extras/recipes invented,92 products
+  total, zero pending operations. Evidence tmp/brioche-verification.json.
+- Physical POS: all three whole photos load in approved146x100 contain boxes;
+  each adds directly at34/49/32 MAD, no options dialog. Removed each temporary
+  cart line, empty cart restored, no sale placed. No captured console errors/
+  warnings. Inspected tmp/brioche-installed.png; no clipping or overlap.
+- Next: commit/push this delivery record, then await owner review/next menu page.
+
 ### Current checkpoint — 2026-09-05 Croissant menu (POLISH-01)
 
 - Owner requested existing nine croissants, both menu extras, approved WebP

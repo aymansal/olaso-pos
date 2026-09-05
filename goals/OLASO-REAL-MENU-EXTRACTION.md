@@ -180,6 +180,12 @@ until the owner supplies them.
 The descriptions can inform later recipe discussions, but no recipe quantity
 is present in the image.
 
+Applied 5 September 2026: existing three products/prices/Regular sizes preserved,
+photos from `output/brioche-transparent-images` compressed with the approved
+shared WebP uploader and verified on tablet and production. No extras are shown
+on this page. The supplied drinks Excel contains no brioche recipes; retain the
+above ingredient descriptions as source notes, not invented stock recipes.
+
 ## 5. Lemonades / Iced Tea — 9 listings
 
 | Product | Source badge | Price |
