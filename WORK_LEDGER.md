@@ -27,7 +27,8 @@ remaining goal and card sequence.
   each adds directly at34/49/32 MAD, no options dialog. Removed each temporary
   cart line, empty cart restored, no sale placed. No captured console errors/
   warnings. Inspected tmp/brioche-installed.png; no clipping or overlap.
-- Next: commit/push this delivery record, then await owner review/next menu page.
+- Delivery record pushed as `27b4722b9a172e1a0f1672a043b7c42e5efa66dc`
+  on origin/main. Next: await owner review/next menu page.
 
 ### Current checkpoint — 2026-09-05 Croissant menu (POLISH-01)
 
