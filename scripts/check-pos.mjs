@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { stripTypeScriptTypes } from 'node:module';
 import {
   addProduct,
   chargedCentimes,
@@ -293,4 +294,21 @@ const paymentCss = readFileSync(
 assert.match(paymentCss, /\.sharePrice \{[\s\S]*right: 0/);
 assert.match(paymentCss, /width: 88px/);
 
-console.log('POS cart and money checks passed.');
+// Exercise the real dialog handler without mounting a browser or making a sale.
+const choiceDialog = readFileSync(
+  'src/features/pos/components/ModifierSelectionDialog/ModifierSelectionDialog.tsx', 'utf8',
+);
+const toggleSource = choiceDialog.slice(
+  choiceDialog.indexOf('  function toggle('), choiceDialog.indexOf('\n  return (\n    <OverlayPortal>'),
+);
+assert(toggleSource.includes('function toggle('));
+const toggleChoice = new Function('section', 'valueId', 'selected',
+  `const setSelected = (update) => { selected = update(selected); };
+    ${stripTypeScriptTypes(toggleSource)}\n toggle(section, valueId); return selected;`);
+const optionalExtra = { required: false, min: 0, max: 1, values: [{ id: 'croissant' }, { id: 'other' }] };
+assert.deepEqual(toggleChoice(optionalExtra, 'croissant', []), ['croissant']);
+assert.deepEqual(toggleChoice(optionalExtra, 'croissant', ['croissant']), []);
+assert.deepEqual(toggleChoice(optionalExtra, 'other', ['croissant']), ['other']);
+assert.deepEqual(toggleChoice({ ...optionalExtra, required: true, min: 1 }, 'croissant', ['croissant']), ['croissant']);
+assert.match(choiceDialog, /section\.max === 1 && \(section\.required \|\| section\.min > 0\)/);
+console.log('POS cart, money, and optional-extra selection checks passed.');

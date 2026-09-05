@@ -47,6 +47,94 @@ remaining goal and card sequence.
 | POLISH-01 / POLISH-02 — Final owner-led UI review and polish | in progress — PR-01 through PR-04, AUDIT-01, AUDIT-02, and RECEIPT-01 done on `origin/main`; AUDIT-03 remains deferred for the owner-directed bug audit |
 | HARD-08 — Final endurance and acceptance | pending |
 
+### 2026-09-05 — POLISH-01 Soft Ice Cream batch checkpoint
+
+- **Latest verified state:** all 11 exact existing Soft Ice Cream products now
+  have their compressed photos and optional Croissant +20 MAD in both tablet
+  SQLite and production `befitting-fox-181`. Exact image equality, prices,
+  one extra per product, default=false, min=0/max=1 verified after APK update
+  at 2026-09-05T15:16:30Z. Outbox empty; total catalog remains 92 products.
+  No recipes, ingredient prices, stock, sales, or other menu pages changed.
+- Popup fix built with `npm run android:production` (production endpoint
+  verified), JVM checks/build successful, and installed using `adb install -r`
+  with Success. Physical Galaxy Tab A9: 1340x800 screenshot
+  `tmp/icecream-popup-installed.png`; dialog width ~420px, Croissant row ~189px
+  wide/~48px tall, no horizontal overflow. Optional checkbox select/unselect
+  verifies 20 -> 40 -> 20 MAD, no sale created; attached CDP console warnings/
+  errors empty. POS category has 23 products, 11 loaded JPEG photos as intended.
+- Checks: `check:pos` (added real-handler optional toggle regression),
+  `check:css-scope`, `check:product-configuration`, production TypeScript/Vite
+  build, Android JVM/build, and post-install exact local/cloud data assertions
+  pass. Existing build-tool warnings remain (jeep-sqlite crypto externalization,
+  Gradle flatDir/SDK metadata); no new browser errors observed. No structural
+  application files added/moved, so no graph regeneration needed.
+- Implementation and verification complete for this scoped follow-up; commit/
+  push evidence follows. Next owner review: compact popup and soft ice cream
+  images, then select the next menu page. Other Bakery & Desserts products
+  intentionally still use their existing images/fallbacks.
+
+- Owner now authorizes agent unlock after automatic locking. Batch resumed:
+  all 11 local image/extra saves complete. Explicit existing sync runs are
+  draining the ordered dependency chain before final cloud verification.
+- Popup follow-up research: Android accessibility guidance recommends retaining
+  large touch targets (https://developer.android.com/guide/topics/ui/accessibility/views/apps-views);
+  Capacitor remains the existing WebView boundary (https://capacitorjs.com/docs).
+  This is React/CSS presentation and selection state only: no native plugin,
+  storage, lifecycle, or backend changes. Frontend design and React guidance
+  used to preserve existing tokens and event-owned state, with no new dependencies.
+- Narrow popup from fixed 560px to viewport-bounded 420px; content-sized option
+  pills, 48px minimum row height, wrapping names and non-wrapping prices. Also
+  correct optional max-one selection so it can be unticked; required choices
+  remain radio selections. Verification/install still pending.
+
+- Follow-up with owner-unlocked Products: prepared all 11 images using the
+  actual app compressor, preceded by a white background matching POS cards
+  because direct JPEG conversion makes these transparent PNGs black. Total
+  compressed JPEG bytes: 23011; largest data URL: 3095 characters. Contact-sheet
+  inspection caught reversed source filenames: `mango.png` is espresso brown,
+  `espresso.png` is mango yellow. Corrected the prepared pairing without changing
+  original files. Prepared inputs/backups: `tmp/icecream-prepared.json`.
+- Batch called existing authenticated editor save callbacks, no clicks and no
+  direct SQLite writes. Tablet locked again mid-batch. Read-only verification:
+  Vanille Madagascar / Yogurt, Dulce de Leche and Kunefe Pistachio have image
+  plus optional Croissant locally; Oreo Hazelnut has image only. Other seven
+  untouched. Cloud verified Vanille image and extra only at this checkpoint;
+  five operations remain safely pending, none failed. Do not claim full sync.
+- Resume script `tmp/icecream-apply.mjs` skips exact completed image/choice
+  saves and completes partial records under current revision guards. Next:
+  owner unlocks Products again; reinitialize editor access with preflight,
+  resume batch, then verify all 11 local/cloud records, option values, and
+  empty pending outbox. Compression does not need repeating.
+
+- Owner approved editing the 11 existing Soft Ice Cream products, preserving
+  their menu prices and the combined Vanille Madagascar / Yogurt listing,
+  adding optional Croissant +2000 centimes (not selected by default), and using
+  compressed existing images. No recipes are supplied for this page.
+- Owner explicitly requested a batch, not tablet clicks. No catalog data or
+  application source was changed in this checkpoint. Read-only production
+  inspection of `befitting-fox-181` confirms all 11 exact
+  `bakery-desserts-soft-ice-*` keys exist at the expected prices, revision 1,
+  with no saved imageJpeg. Do not match Espresso by name alone.
+- Existing save path is `useProductManagement` to `saveLocalProduct` /
+  `saveLocalChoiceSection`, then the ordinary management outbox. Preserve its
+  transaction, revision, permission, and synchronization checks; never write
+  SQLite directly or introduce a deployment authorization bypass.
+- Batch preflight found the tablet locked and document hidden; no authenticated
+  product-management save callbacks were mounted. A subsequent read-only
+  connection timed out. Do not unlock, wake, navigate, or rewrite the locked
+  local database behind the owner's no-click request.
+- Temporary diagnostic scripts: `tmp/icecream-batch.mjs` (preflight only) and
+  `tmp/icecream-compression-check.mjs` (compression preview only). Neither has
+  applied updates. The compression preview did not complete. Current compressor
+  uses max 96 pixels, JPEG qualities 0.62/0.45/0.32 and max 16384 characters.
+  Source pistachio image was visually inspected; check transparency/background
+  in an actual compressed preview before uploading any of the 11 images.
+- Next: owner opens/unlocks the existing Products screen and keeps it awake;
+  re-read current local targets/pending operations and production revisions,
+  finish image preview, then batch normal authenticated saves and verify each
+  local/cloud image and optional extra. No product recreation, no recipes,
+  no stock/cost invention, and no APK install needed for this data-only work.
+
 ### 2026-09-04 — POLISH-01 catalog sellability repair
 
 - Production review found 92 active products but just two active size records:

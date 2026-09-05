@@ -122,6 +122,9 @@ export function ModifierSelectionDialog({
   function toggle(section: PosChoiceSection, valueId: string) {
     const sectionValueIds = section.values.map((value) => value.id);
     setSelected((current) => {
+      if (current.includes(valueId) && !section.required && section.min === 0) {
+        return current.filter((id) => id !== valueId);
+      }
       if (section.max === 1) {
         return [
           ...current.filter((id) => !sectionValueIds.includes(id)),
@@ -207,7 +210,8 @@ export function ModifierSelectionDialog({
                     return (
                       <label key={value.id}>
                         <input
-                          type={section.max === 1 ? 'radio' : 'checkbox'}
+                          type={section.max === 1 && (section.required || section.min > 0)
+                            ? 'radio' : 'checkbox'}
                           name={`choice-${section.id}`}
                           checked={selected.includes(value.id)}
                           onChange={() => toggle(section, value.id)}

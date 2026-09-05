@@ -58,6 +58,9 @@ owns the shared Header and TopNavigation currently used across the application.
   explicit cashier choices; never silently select an option. A product with
   one size must not force a size selection. Cart identity includes the selected
   size once OPTIONS-03 activates product-owned checkout.
+- Customization uses a viewport-bounded 420-pixel dialog with content-sized
+  option rows. Optional max-one choices must be deselectable; required max-one
+  choices remain explicit radio selections.
 - Checkout clears the cart only after the local sale transaction commits. Place
   order is a slide-to-confirm on the existing primary pill; sliding to the end
   opens the payment overlay when there is something to collect, and a tap does
