@@ -161,6 +161,14 @@ Extras:
 - Soft Ice Cream: +20 MAD
 - Magnum: +25 MAD
 
+Owner confirmed 5 September 2026: optional single selection—Soft Ice Cream or
+Magnum, never both; neither selected by default. Applied to the existing nine
+croissants on the production tablet and cloud, preserving IDs and menu prices.
+Photos use `output/transparent-product-images` originals compressed through the
+same approved WebP uploader (384–480px for this set). The supplied drinks Excel
+contains no croissant recipes; ingredients and extra quantities remain unset
+until the owner supplies them.
+
 ## 4. Brioche — 3 listings
 
 | Product | Description shown in source | Price |

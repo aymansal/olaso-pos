@@ -7,6 +7,38 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Croissant menu (POLISH-01)
+
+- Owner requested existing nine croissants, both menu extras, approved WebP
+  compression, tablet/cloud persistence, and recipes only if supplied in Excel.
+- Read-only tablet inspection: nine existing exact croissant keys, all menu
+  prices correct (32/32/22/25/30/22/25/18/20 MAD in menu order), active Regular
+  sizes match, no saved photos. Backup: tmp/croissant-before.json. No writes yet.
+- Read the supplied WhatsApp OLASO_Fiche_Technique_Boissons.xlsx with bundled
+  openpyxl read-only: Ice Drinks, Hot Coffee, Frappé, Lemonades, Matcha, Toutes les
+  boissons; no croissant or Magnum recipe rows. Do not invent ingredient amounts.
+- Owner confirmed at most one extra, neither selected by default. Added one
+  optional single-choice Extras section to each existing croissant: Soft Ice
+  Cream +20 MAD, Magnum +25 MAD. No recipe/effect quantities fabricated.
+- Owner identified the transparent set. Initial raw previews misleadingly showed
+  hidden RGB background colours; alpha-composited contact sheets confirmed
+  output/transparent-product-images as the distinct menu-matching set. Visually
+  inspected all nine against the menu; no regeneration or original overwrite.
+- Reused the installed shared WebP compressor and authenticated local-first
+  callback/outbox for all nine photos. 384–480px, 206706 total binary bytes
+  (~202 KiB), each data URL <=32768 characters. No app code/layout/native changes
+  or rebuild; same previously researched and physically accepted WebView path.
+- Exact tablet/cloud check 2026-09-05T16:27:39Z: all nine photos, menu prices,
+  optional single selections and 18 extra values match; 92 products total,
+  zero pending operations. Evidence: tmp/croissant-verification.json.
+- Physical POS checked every croissant: none -> Soft Ice Cream -> Magnum ->
+  none; each price correct, never two selected, popup remains 320px without
+  horizontal overflow. All nine photos loaded, no captured console warnings/
+  errors, no sale placed. Screenshot tmp/croissant-installed.png. Owner visual
+  acceptance of this page remains pending.
+- Next: commit/push this data-delivery journal and menu decision, record SHA,
+  then await owner review/next page.
+
 ### Current checkpoint — 2026-09-05 WebP photo refinement (POLISH-01)
 
 - Owner approved WebP with less compression for the 11 ice-cream photos and
