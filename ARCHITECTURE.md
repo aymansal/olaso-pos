@@ -350,8 +350,7 @@ management record/effect.
   WebP data URL starting at a 480-pixel longest edge, without upscaling. The
   shared compressor tries quality 0.94/0.90, then smaller 384/320/256/192/128/96-pixel
   bounds only as needed to keep a 32,768-character limit. It
-  composites transparency on the existing white card background to avoid costly
-  alpha detail, and releases its decoded bitmap on every
+  preserves source transparency so photos fit any holder background, and releases its decoded bitmap on every
   outcome. This same path handles manual uploads and batch-prepared photos,
   stored in SQLite and
   synchronized as `products.imageJpeg` (historical field name, not a format

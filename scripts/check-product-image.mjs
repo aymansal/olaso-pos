@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import {build} from 'esbuild';
 import {compressProductImage,productImageJpeg,MAX_PRODUCT_IMAGE_CHARS} from '../src/lib/compressProductImage.ts';
-let closed=0,draws=[],attempts=[],fill='',failCanvas=false,encodedType='image/webp';
+let closed=0,draws=[],attempts=[],failCanvas=false,encodedType='image/webp';
 const bitmap={width:1600,height:800,close(){closed++}};
 globalThis.createImageBitmap=async()=>bitmap;
 let accept=(w,q)=>w===480&&q===0.94;
-globalThis.document={createElement(){const canvas={width:0,height:0,getContext(){return failCanvas?null:{set fillStyle(v){fill=v},fillRect(){assert.equal(fill,'#ffffff')},drawImage(){draws.push([canvas.width,canvas.height])}}},toDataURL(type,q){assert.equal(type,'image/webp');attempts.push([canvas.width,q]);return `data:${encodedType};base64,`+'A'.repeat(accept(canvas.width,q)?100:MAX_PRODUCT_IMAGE_CHARS)}};return canvas}};
+globalThis.document={createElement(){const canvas={width:0,height:0,getContext(){return failCanvas?null:{fillRect(){assert.fail('Source transparency must not be flattened')},drawImage(){draws.push([canvas.width,canvas.height])}}},toDataURL(type,q){assert.equal(type,'image/webp');attempts.push([canvas.width,q]);return `data:${encodedType};base64,`+'A'.repeat(accept(canvas.width,q)?100:MAX_PRODUCT_IMAGE_CHARS)}};return canvas}};
 await compressProductImage({type:'image/png'});assert.deepEqual(draws,[[480,240]]);assert.deepEqual(attempts,[[480,0.94]]);assert.equal(closed,1);
 draws=[];attempts=[];accept=(w,q)=>w===480&&q===0.90;
 await compressProductImage({type:'image/jpeg'});assert.deepEqual(attempts,[[480,0.94],[480,0.90]]);
@@ -33,4 +33,4 @@ for(const value of [undefined,'data:image/jpeg;base64,AAAA','data:image/webp;bas
 for(const value of ['data:image/png;base64,AAAA','data:image/webp;base64,'+'A'.repeat(MAX_PRODUCT_IMAGE_CHARS)]){
   assert.throws(()=>cleanProductImageJpeg(value));assert.throws(()=>productImageJpeg(value));
 }
-console.log('WebP quality, size cap, JPEG compatibility, white background, no upscale, encoder format, and cleanup checks passed.');
+console.log('WebP quality, size cap, JPEG compatibility, transparency preservation, no upscale, encoder format, and cleanup checks passed.');

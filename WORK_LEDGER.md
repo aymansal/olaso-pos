@@ -7,6 +7,47 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Transparent detail photos (POLISH-01)
+
+- Owner requests slightly larger transparent photos in Edit Product and Orders
+  detail only, retaining existing holders. Compressor currently flattens alpha
+  onto white; restore originals through normal local-first image saves.
+- Graphify queried before investigation. Existing WebView canvas WebP encoding
+  preserves alpha; no native plugin, storage schema, or dependency needed.
+  Research: MDN HTMLCanvasElement/toDataURL, Android WebView guidance, Capacitor
+  documentation. Keep existing quality0.94/0.90 and32768-character cap.
+- Target52px inside58px editor holder;34px inside40px order holder. Other
+  layout and historical sale facts unchanged. Next: prepare and verify original
+  transparent photos, apply with revision checks, build/install and inspect.
+- Implementation preserves canvas alpha (no white fill), with a regression
+  assertion against flattening. Existing originals for all 42 uploaded photos
+  re-encoded by that same compressor on the physical WebView, at 320–480px
+  longest edge as required by the unchanged 32,768-character cap. Every output
+  has transparent pixels; contact sheet visually inspected on a green surface.
+  Original/current photo equality and revision guards protected each normal
+  local-first image save; backups and apply journal: `tmp/transparent-webp*`.
+- `node scripts/check-product-image.mjs`, `npm run build`, and production Android
+  packaging/JVM checks passed. Installed with `adb install -r`, no data reset.
+  Physical Products photo is 52px with green holder, Orders photo 34px with
+  green holder; screenshots `tmp/transparent-products.png` and
+  `tmp/transparent-orders.png` show transparency, containment and unchanged
+  surrounding layout. No console warnings/errors in the inspected screens.
+- Official boundary references: https://developer.android.com/develop/ui/views/layout/webapps/webview,
+  https://capacitorjs.com/docs/core-apis/web and
+  https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL.
+  Compression stays in the existing WebView; persistence/outbox remain native
+  SQLite through the existing bridge. No structural graph changes.
+- Sync observation: sequential batch edits form dependent operations; normal
+  manual sync advances one ready image at a time. Repeating the existing
+  Settings sync action to drain this batch; no direct database writes or
+  changes to the sync worker. Next: verify all 42 cloud images, zero queue,
+  unchanged product fields, then commit/push this scoped polish.
+- Final verification: all 42 photos exactly match production Convex and the
+  tablet; 92 products retained, zero pending operations, names/keys/prices/
+  categories/status/order/recipe references unchanged. Encoded photos total
+  925,716 bytes; largest data URL 32,635 characters. `check:css-scope` passed.
+  Delivery verified and ready for owner visual acceptance; commit/push next.
+
 ### Current checkpoint — 2026-09-05 Settings and auto-lock (POLISH-01)
 
 - Owner asks working selectable inactivity duration incl Never and redesign of

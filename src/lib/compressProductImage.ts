@@ -25,9 +25,7 @@ export async function compressProductImage(file: File) {
       canvas.height = Math.max(1, Math.round(bitmap.height * scale));
       const context = canvas.getContext('2d');
       if (!context) throw new Error('Could not prepare the product photo.');
-      // Keep the white product-card background without storing costly alpha detail.
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, canvas.width, canvas.height);
+      // Resizing clears the canvas; preserve the source image's transparency.
       context.imageSmoothingEnabled = true;
       context.imageSmoothingQuality = 'high';
       context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);

@@ -45,11 +45,11 @@ recipe management with saved tablet presentation during an outage.
   saving creates its first active Regular size at that price automatically.
   Sizes keeps name, price, order, availability, default, and delete on one
   line with a shared header row. Photos are
-  compressed to a small JPEG on the tablet before SQLite or Convex. They
+  compressed to a small transparency-preserving WebP on the tablet before SQLite or Convex. They
   survive lock and install-over; a cloud snapshot that omits a photo does not
   wipe the tablet copy. The Edit
   Product artwork pill opens the same photo picker; its 58px holder is offset
-  4px upwards and contains the complete image in a 48px square without cropping.
+  4px upwards and contains the complete image in a 52px square without cropping.
   Edit Product has no PRODUCT DETAILS label; the Edit product title aligns
   with Active and Delete. The category menu is the same 40-pixel height as
   the price field.
