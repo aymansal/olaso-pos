@@ -70,7 +70,8 @@ remaining goal and card sequence.
 - Rechecked all nine croissant options/prices after install; screenshot
   tmp/croissant-installed.png visibly confirms large full croissants and ice
   creams. No image recompression or database changes for this size follow-up.
-- Next: commit/push enlarged image framing and record SHA; await owner review.
+- Enlarged image framing pushed as
+  `45102fffd1779b9befedaddc2a88192cbaf354fd` on origin/main. Await owner review.
   Recipes remain pending owner ingredient quantities.
 
 ### Current checkpoint — 2026-09-05 WebP photo refinement (POLISH-01)
