@@ -49,6 +49,41 @@ remaining goal and card sequence.
 
 ### 2026-09-05 — POLISH-01 Soft Ice Cream batch checkpoint
 
+- Image-quality follow-up verified: owner explicitly approved replacing blurred
+  photos from originals and using the same improved internal upload compressor.
+  Shared helper now tries 320px at JPEG 0.86/0.78, reducing dimensions only to
+  satisfy the unchanged 16384-character local/cloud limit. White alpha
+  compositing is now shared, high-quality downsampling, no upscaling, bitmap
+  cleanup in finally. No UI/layout or price/recipe/extra changes.
+- Native research before implementation: Android WebView guidance
+  https://developer.android.com/develop/ui/views/layout/webapps/webview and
+  https://capacitorjs.com/docs support keeping this existing canvas/image work
+  in the WebView; native file picker, SQLite, and network boundaries unchanged.
+  Ponytail: reuse the shared helper and native canvas; no packages or new native
+  layer.
+- All 11 originals retain a 320px longest edge at higher quality within the
+  existing cap; total binary JPEG bytes 121616 (~119 KiB), maximum data URL
+  15843 characters. Comparison `tmp/icecream-hq-comparison.jpg` visually checked,
+  including corrected Mango/Espresso file pairing. Regenerated using the exact
+  shared source helper, with no extra preprocessing implementation.
+- Photo-only batch saved via authenticated normal product callbacks, preserving
+  IDs, prices, sizes, extras, recipes and stock. Post-install exact local/cloud
+  assertion at 2026-09-05T15:42:15Z: 11 matching photos/extras, 92 total products,
+  empty outbox. Evidence `tmp/icecream-hq-verification.json`; guarded before/new
+  data in `tmp/icecream-hq.json` and save journal in `tmp/icecream-hq-applied.jsonl`.
+- `check:product-image` covers dimension/quality preference, bounded fallback,
+  no upscale, white alpha compositing, rejection and bitmap cleanup.
+  `check:local-catalog`, production TypeScript/Vite/JVM/build pass; installed
+  production APK with `adb install -r` Success. Physical upload-input change
+  test ran the installed app's actual compressor for two originals and matched
+  batch bytes exactly. Restored original draft photo; never pressed Save during
+  that test. No captured console errors/warnings.
+- Physical POS shows all 11 photos at natural longest-edge 320px; screenshot
+  `tmp/icecream-hq-installed.png` visually checked. Narrow 320px popup and
+  optional extra 20 -> 40 -> 20 behavior unchanged; no test sale created.
+  No runtime modules added/moved; existing Graphify query used for the shared
+  compressor path. Next: owner visual acceptance, then next menu page.
+
 - Owner correction (latest): rejected the broader popup restyling. Restore all
   original CSS from before `78e48f0`, changing only width from 560 to a
   viewport-bounded 320px. Keep the independent optional-deselection logic fix.

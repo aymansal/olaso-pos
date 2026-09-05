@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {compressProductImage,productImageJpeg,MAX_PRODUCT_IMAGE_CHARS} from '../src/lib/compressProductImage.ts';
+let closed=0,draws=[],attempts=[],fill='',failCanvas=false;
+const bitmap={width:1600,height:800,close(){closed++}};
+globalThis.createImageBitmap=async()=>bitmap;
+let accept=(w,q)=>w===320&&q===0.86;
+globalThis.document={createElement(){const canvas={width:0,height:0,getContext(){return failCanvas?null:{set fillStyle(v){fill=v},fillRect(){assert.equal(fill,'#ffffff')},drawImage(){draws.push([canvas.width,canvas.height])}}},toDataURL(type,q){attempts.push([canvas.width,q]);return 'data:image/jpeg;base64,'+'A'.repeat(accept(canvas.width,q)?100:MAX_PRODUCT_IMAGE_CHARS)}};return canvas}};
+await compressProductImage({type:'image/png'});assert.deepEqual(draws,[[320,160]]);assert.deepEqual(attempts,[[320,0.86]]);assert.equal(closed,1);
+draws=[];attempts=[];accept=w=>w===256;
+await compressProductImage({type:'image/jpeg'});assert.deepEqual(draws,[[320,160],[256,128]]);assert.equal(closed,2);
+bitmap.width=40;bitmap.height=20;draws=[];accept=()=>true;
+await compressProductImage({type:'image/png'});assert.deepEqual(draws,[[40,20]]);
+accept=()=>false;await assert.rejects(compressProductImage({type:'image/png'}),/still too large/);assert.equal(closed,4);
+failCanvas=true;await assert.rejects(compressProductImage({type:'image/png'}),/Could not prepare/);assert.equal(closed,5);
+await assert.rejects(compressProductImage({type:'text/plain'}),/JPEG or PNG/);
+assert.throws(()=>productImageJpeg('data:image/jpeg;base64,'+'A'.repeat(MAX_PRODUCT_IMAGE_CHARS)),/too large/);
+console.log('Product compression dimensions, quality, size cap, alpha background, no upscale, and cleanup checks passed.');

@@ -347,7 +347,12 @@ management record/effect.
   authoritative until their ordered cloud acknowledgement.
 - Curated category art and fallback product art are versioned APK assets.
   Owner-selected product photos are reduced before persistence to a bounded
-  96 by 96 JPEG data URL (at most 16,384 characters), stored in SQLite and
+  JPEG data URL starting at a 320-pixel longest edge, without upscaling. The
+  shared compressor tries quality 0.86/0.78, then smaller 256/192/128/96-pixel
+  bounds only as needed to keep the existing 16,384-character limit. It
+  composites transparency on white and releases its decoded bitmap on every
+  outcome. This same path handles manual uploads and batch-prepared photos,
+  stored in SQLite and
   synchronized as `products.imageJpeg`. A cloud snapshot that omits a photo
   cannot clear the tablet copy. Categories persist an artwork key and resolve
   an unknown/missing key to one neutral bundled fallback.

@@ -17,26 +17,28 @@ export async function compressProductImage(file: File) {
     throw new Error('Choose a JPEG or PNG photo.');
   }
   const bitmap = await createImageBitmap(file);
-  const limit = 96;
-  const scale = Math.min(limit / bitmap.width, limit / bitmap.height, 1);
   const canvas = document.createElement('canvas');
-  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-  const context = canvas.getContext('2d');
-  if (!context) {
-    bitmap.close();
-    throw new Error('Could not prepare the product photo.');
-  }
-  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
-  for (const quality of [0.62, 0.45, 0.32]) {
-    const dataUrl = canvas.toDataURL('image/jpeg', quality);
-    if (
-      dataUrl.startsWith(PRODUCT_IMAGE_PREFIX) &&
-      dataUrl.length <= MAX_PRODUCT_IMAGE_CHARS
-    ) {
-      return dataUrl;
+  try {
+    for (const limit of [320, 256, 192, 128, 96]) {
+      const scale = Math.min(limit / bitmap.width, limit / bitmap.height, 1);
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('Could not prepare the product photo.');
+      // JPEG has no alpha: match the white product cards rather than turn PNGs black.
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
+      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      for (const quality of [0.86, 0.78]) {
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        if (dataUrl.startsWith(PRODUCT_IMAGE_PREFIX)
+            && dataUrl.length <= MAX_PRODUCT_IMAGE_CHARS) return dataUrl;
+      }
     }
+    throw new Error('That photo is still too large after compressing.');
+  } finally {
+    bitmap.close();
   }
-  throw new Error('That photo is still too large after compressing.');
 }
