@@ -32,7 +32,8 @@ remaining goal and card sequence.
 - Product-code generation is NOT changed yet. Existing keys are immutable
   creation/sync identifiers, not merely decorative text. Await requested format
   choice before assigning new persistent short codes to existing products.
-  Next: push visual fix, then resume code generation when owner selects format.
+  Visual fix pushed as `ba15a97` on `origin/main`. Next: resume code generation
+  when owner selects format; this portion of the request remains pending.
 
 ### Current checkpoint — 2026-09-05 Shared dropdown/text and ingredient English (POLISH-01)
 
