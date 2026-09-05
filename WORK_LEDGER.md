@@ -43,7 +43,9 @@ remaining goal and card sequence.
   Mango Lemonade Standard/Plus two-row availability overlap check passed.
   No sales made,
   no form changes saved. Docs record shared UI contract and English aliases.
-- Next: finish source closeout and push this POLISH-01 follow-up on main.
+- Delivery committed and pushed as `abbcd53` on `origin/main`; production APK
+  already installed and physical checks passed. No structural graph refresh
+  required. Next: owner review; await the next approved menu/task.
 
 ### Current checkpoint — 2026-09-05 Frappé menu (POLISH-01)
 
