@@ -27,6 +27,8 @@ remaining goal and card sequence.
   is supplied; zero deduction is an owner-approved temporary configuration.
 - Supersedes the pending recipe checkpoint below. Next: await owner next page;
   later obtain Plus quantities, Iced Tea recipe and ingredient purchase costs.
+- Recipe delivery pushed as `de1a3f2dbe74352bbc20f93614bc9f2765bbe58f`
+  on origin/main; final catalog recheck2026-09-05T17:46:50Z also passed.
 
 - Owner authorized existing nine Lemonades/Iced Tea, correct Standard/Plus
   sizes, photos and supplied recipes. Preserve IDs, no duplicate products.
