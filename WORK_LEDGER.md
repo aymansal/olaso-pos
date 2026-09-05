@@ -46,7 +46,9 @@ remaining goal and card sequence.
   tablet; 92 products retained, zero pending operations, names/keys/prices/
   categories/status/order/recipe references unchanged. Encoded photos total
   925,716 bytes; largest data URL 32,635 characters. `check:css-scope` passed.
-  Delivery verified and ready for owner visual acceptance; commit/push next.
+  Delivery verified and ready for owner visual acceptance. Implementation
+  `c61fb76` pushed to `origin/main`; installed APK and production photos verified.
+  Next: owner reviews the two detail cards; no further layout changes authorized.
 
 ### Current checkpoint — 2026-09-05 Settings and auto-lock (POLISH-01)
 
