@@ -7,6 +7,41 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 Consistent product framing (POLISH-01)
+
+- Owner approved shared visible-subject framing, all existing originals, no
+  duplicated products or distorted shapes. Graphify/Ponytail used; smallest
+  change is in the existing compressor, not individual screen scaling rules.
+- Official Android WebView and Capacitor Web API guidance reviewed together
+  with MDN CanvasRenderingContext2D/getImageData. Pixel inspection stays in the
+  existing WebView; no native plugin, new dependency, or persistence change.
+  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
+- Bounded 1024px inspection finds alpha>8 subject bounds, ignores faint noise,
+  expands one inspection pixel for edge safety, crops from the full original,
+  centers on a square with 4% margins. Opaque photos retain their aspect/frame;
+  empty transparent images fail safely. Existing WebP quality/cap retained.
+- Focused regression checks pass for margins, crop coordinates, proportions,
+  no upscale, opaque fallback, empty image, cleanup and existing size limits.
+  Preparing `tmp/framed-webp.json` from all42 originals; compare before writes.
+- All42 normalized originals visually checked in `tmp/framed-preview.png`:
+  Strawberry Passion, Strawberry Lemonade and Iced Tea now have consistent
+  cup heights; soft ice creams/croissants/frappes retain distinct originals.
+  Applied via guarded existing local-first save/outbox. Production and tablet
+  readback match all42 images; zero pending work,92 unchanged product identities
+  and unchanged non-image fields. Next: install final build, manual uploader
+  parity and POS/detail visual verification, then commit/push.
+- Final production build/JVM checks passed and installed with `adb install -r`.
+  Installed normal file-input handler produced byte-identical batch output for
+  Vanille Madagascar/Yogurt and Frappe Cerelac; original editor draft restored,
+  Save not pressed during that check. No warnings/errors on inspected screens.
+- Physical1340x800 POS Cold Drinks screenshot `tmp/framed-pos.png` confirms
+  equal visible cup heights for lemonade row, including Strawberry Passion;
+  Products and Orders detail screenshots `tmp/transparent-framed-*.png` confirm
+  preserved holders/layout. Source contact sheet covers all42 products.
+  Final readback again matches cloud/tablet with zero queue and92 products.
+  Total encoded bytes945868, largest data URL32767; original photos retained.
+  No structural code changes requiring graph rebuild. Ready to commit/push.
+
 ### Current checkpoint — 2026-09-05 Transparent detail photos (POLISH-01)
 
 - Owner requests slightly larger transparent photos in Edit Product and Orders

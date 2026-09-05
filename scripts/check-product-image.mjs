@@ -5,7 +5,8 @@ let closed=0,draws=[],attempts=[],failCanvas=false,encodedType='image/webp';
 const bitmap={width:1600,height:800,close(){closed++}};
 globalThis.createImageBitmap=async()=>bitmap;
 let accept=(w,q)=>w===480&&q===0.94;
-globalThis.document={createElement(){const canvas={width:0,height:0,getContext(){return failCanvas?null:{fillRect(){assert.fail('Source transparency must not be flattened')},drawImage(){draws.push([canvas.width,canvas.height])}}},toDataURL(type,q){assert.equal(type,'image/webp');attempts.push([canvas.width,q]);return `data:${encodedType};base64,`+'A'.repeat(accept(canvas.width,q)?100:MAX_PRODUCT_IMAGE_CHARS)}};return canvas}};
+let pixelMode='opaque',cropDraw;
+globalThis.document={createElement(){const canvas={width:0,height:0,getContext(){return failCanvas?null:{fillRect(){assert.fail('Source transparency must not be flattened')},drawImage(...args){if(args.length===9){draws.push([canvas.width,canvas.height]);cropDraw=args.slice(1)}},getImageData(){const data=new Uint8ClampedArray(canvas.width*canvas.height*4);if(pixelMode==='opaque')data.fill(255);else if(pixelMode==='subject'){for(let y=100;y<300;y++)for(let x=150;x<250;x++)data[(y*canvas.width+x)*4+3]=255;data[3]=2;}return {data}}}},toDataURL(type,q){assert.equal(type,'image/webp');attempts.push([canvas.width,q]);return `data:${encodedType};base64,`+'A'.repeat(accept(canvas.width,q)?100:MAX_PRODUCT_IMAGE_CHARS)}};return canvas}};
 await compressProductImage({type:'image/png'});assert.deepEqual(draws,[[480,240]]);assert.deepEqual(attempts,[[480,0.94]]);assert.equal(closed,1);
 draws=[];attempts=[];accept=(w,q)=>w===480&&q===0.90;
 await compressProductImage({type:'image/jpeg'});assert.deepEqual(attempts,[[480,0.94],[480,0.90]]);
@@ -17,6 +18,14 @@ encodedType='image/png';await assert.rejects(compressProductImage({type:'image/p
 encodedType='image/webp';accept=()=>false;await assert.rejects(compressProductImage({type:'image/png'}),/still too large/);assert.equal(closed,6);
 failCanvas=true;await assert.rejects(compressProductImage({type:'image/png'}),/Could not prepare/);assert.equal(closed,7);
 await assert.rejects(compressProductImage({type:'text/plain'}),/JPEG or PNG/);
+failCanvas=false;accept=()=>true;bitmap.width=400;bitmap.height=400;pixelMode='subject';
+await compressProductImage({type:'image/png'});
+assert.deepEqual(cropDraw.slice(0,4),[149,99,102,202]);
+assert.equal(draws.at(-1)[0],draws.at(-1)[1],'Transparent subjects use square frames');
+assert(cropDraw[4]>0&&cropDraw[5]>0,'Leave a safety margin');
+assert.equal(cropDraw[6]/cropDraw[7],102/202,'Never stretch a product');
+assert(cropDraw[6]<=102&&cropDraw[7]<=202,'Do not upscale source pixels');
+pixelMode='empty';await assert.rejects(compressProductImage({type:'image/png'}),/no visible product/);
 for(const type of ['jpeg','webp']){
   const valid=`data:image/${type};base64,`+'A'.repeat(24000);
   assert.equal(productImageJpeg(valid),valid);

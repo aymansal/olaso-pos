@@ -115,6 +115,7 @@ export const fr: Record<string, string> = {
   'Correct': 'Corriger',
   'Correct expense': 'Corriger la dépense',
   'Could not use that photo.': 'Cette photo n’a pas pu être utilisée.',
+  'That photo has no visible product.': 'Cette photo ne contient aucun produit visible.',
   'Count, spoilage or breakage': 'Inventaire, casse ou perte',
   'Counted on hand': 'Quantité comptée',
   'Created': 'Créée',
