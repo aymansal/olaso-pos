@@ -180,8 +180,10 @@ remaining goal and card sequence.
   The report now keeps cloud aggregate finance data and uses the local profile
   breakdown only when orders, units, and net sales agree exactly. The focused
   offline regression, TypeScript, and production web build pass; no cloud data,
-  tablet, sale, profile, or PIN was touched. Exact next action: commit/push the
-  repair, then package/install only with owner approval.
+  tablet, sale, profile, or PIN was touched. Committed and pushed as
+  `ff2c5fa86fced248cd032c21630212c5e4b81aa8`
+  (`POLISH-01: preserve historical profile attribution`) on `origin/main`.
+  Exact next action: package/install only with owner approval.
 
 - Profile performance accounting (4 Sep 2026): owner approved a proper
   staff-sales report, not a score. A completed sale counts once for its
