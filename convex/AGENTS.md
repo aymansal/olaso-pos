@@ -58,8 +58,9 @@ data, reporting summaries, and development seeding.
   range, accept no more than 31 days, and cap each detail aggregate at 20.
   Used-ingredient on-hand is the live active stock for that name and unit.
 - Store money as integer centimes and stock in integer ingredient base units.
-- Product photos are optional compressed JPEG data URLs (`imageJpeg`), never
-  bundled-key replacements and never uncompressed camera files.
+- Product photos are optional compressed WebP or legacy JPEG data URLs, bounded
+  to 32,768 characters. Keep the historical `imageJpeg` field name; never store
+  uncompressed camera files or replace bundled keys.
 - Keep sales, corrections, stock movements, purchases, immutable recipes, and
   compensation append-only or historical. Live categories, products,
   ingredients, and owner-managed staff may be permanently deleted only after

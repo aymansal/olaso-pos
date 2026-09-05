@@ -61,8 +61,8 @@ export function cleanOptionalText(
 export function cleanProductImageJpeg(value: string | undefined) {
   if (!value) return undefined;
   if (
-    !value.startsWith('data:image/jpeg;base64,') ||
-    value.length > 16_384
+    (!value.startsWith('data:image/jpeg;base64,') && !value.startsWith('data:image/webp;base64,')) ||
+    value.length > 32_768
   ) {
     return fail(
       'INVALID_ARGUMENT',

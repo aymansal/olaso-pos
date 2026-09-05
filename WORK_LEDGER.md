@@ -7,6 +7,45 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-05 WebP photo refinement (POLISH-01)
+
+- Owner approved WebP with less compression for the 11 ice-cream photos and
+  the normal upload compressor. Preserve existing products, layout and extras.
+- Pre-implementation research: Android image-size guidance
+  https://developer.android.com/develop/ui/views/graphics/reduce-image-sizes
+  and WebP https://developers.google.com/speed/webp/docs/compression confirm
+  lossy WebP supports transparency and quality/size tradeoffs; compare originals,
+  not already compressed photos. Capacitor https://capacitorjs.com/docs keeps
+  the existing canvas work in the Android WebView. No native plugin change.
+- Use existing shared compressor (Ponytail), 480px maximum without upscaling,
+  quality 0.94/0.90, bounded smaller dimensions, 32768-character data URL ceiling.
+  Accept legacy JPEG in both validators and retain field names.
+- Original-source measurement found alpha detail forced some WebPs back to
+  320px under the proposed cap. Retain the existing white compositing (no visual
+  background change) instead: measured 384–480px at 0.94/0.90 below the cap.
+- Compressor/local-catalog checks passed. Legacy check:management stopped at its
+  missing test PIN gate before any reseed; do not supply it on the production
+  workspace. Added isolated checks of the actual bundled cloud validator instead,
+  with no database changes; these passed.
+- Completed: compressor/local-catalog/isolated actual cloud-validator checks;
+  production web build, Android checks/JVM tests/assembly and Convex deployment
+  to befitting-fox-181 passed. Installed with adb install -r (data preserved).
+- Rebuilt all 11 photos from originals with the shared compressor; 384–480px,
+  229492 total binary bytes (~224 KiB), largest data URL 31615 characters.
+  Original and JPEG backups remain in ignored tmp; no original asset overwritten.
+- Saved only photos via authenticated ProductEditor callback/local-first outbox;
+  synchronized through the existing worker. At 2026-09-05T16:18:26Z exact local/
+  cloud images and unchanged prices/extras verified for all 11, 92 total products,
+  zero pending operations. Evidence: tmp/icecream-webp-verification.json.
+- Physical installed manual file-input checks matched batch output exactly for
+  Vanille Madagascar / Yogurt and Espresso; restored draft, never saved a test
+  change or placed an order. POS displays all 11 WebPs at expected dimensions,
+  no captured console errors/warnings. Screenshot: tmp/icecream-webp-installed.png.
+- Owner physically accepted: "they look crisp ... very, very good, I like them."
+  No UI/layout changes or structural code changes (Graphify refresh not needed).
+- Next: commit/push this scoped POLISH-01 refinement and record its SHA; then
+  await the owner's next menu page/instruction.
+
 ### Goal 06 — Production Hardening, Release, and Acceptance
 
 **Status:** active
