@@ -40,7 +40,8 @@ remaining goal and card sequence.
  autolock during read-only cloud checks resolved through authorized normal PIN.
 - Next: await owner next menu/answers. Missing pump/scoop/shot equivalents,
  Signature cinnamon and extra amounts must be supplied before remaining
- recipe/extra deductions. Menu source MD records exact limits and mappings.
+  recipe/extra deductions. Menu source MD records exact limits and mappings.
+- Delivery pushed as `e961d60b35d4818a5608814d089278c6bb7cc9a8` on origin/main.
 
 ### Current checkpoint — 2026-09-05 Lemonade menu (POLISH-01)
 
