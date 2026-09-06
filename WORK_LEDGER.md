@@ -19,6 +19,7 @@ remaining goal and card sequence.
   rendering in existing WebView, no native plugin/security changes required.
 - Local build, immediate-lock checks and diff check passed. CSS-only; no
   structural graph refresh needed. Physical appearance/acceptance still pending.
+  Source e09c545 pushed to origin/main; card remains pending tablet verification.
   Next: when owner reconnects tablet, package with higher version/same key and
   inspect both fades. No new APK published or installed in this step.
 
