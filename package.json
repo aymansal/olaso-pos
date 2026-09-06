@@ -24,7 +24,7 @@
     "check:expenses": "node scripts/check-expenses.mjs",
     "check:monthly-costs": "node scripts/check-monthly-costs.mjs",
     "check:local": "node --disable-warning=ExperimentalWarning scripts/check-local-database.mjs && node --disable-warning=ExperimentalWarning scripts/check-operational-read.mjs",
-    "check:audit": "node --disable-warning=ExperimentalWarning scripts/check-audit-stock-staff.mjs && node --disable-warning=ExperimentalWarning scripts/check-report-audit.mjs && node --disable-warning=ExperimentalWarning scripts/check-sale-quote.mjs && node --disable-warning=ExperimentalWarning scripts/check-catalog-history.mjs && node scripts/check-immediate-lock.mjs",
+    "check:audit": "node --disable-warning=ExperimentalWarning scripts/check-audit-stock-staff.mjs && node --disable-warning=ExperimentalWarning scripts/check-report-audit.mjs && node --disable-warning=ExperimentalWarning scripts/check-sale-quote.mjs && node --disable-warning=ExperimentalWarning scripts/check-catalog-history.mjs && node scripts/check-immediate-lock.mjs && node --disable-warning=ExperimentalWarning scripts/check-lock-refresh.mjs",
     "check:product-configuration": "node --disable-warning=ExperimentalWarning scripts/check-product-configuration.mjs",
     "check:sales": "node --disable-warning=ExperimentalWarning scripts/check-sales.mjs",
     "check:orders": "node --disable-warning=ExperimentalWarning scripts/check-orders.mjs",

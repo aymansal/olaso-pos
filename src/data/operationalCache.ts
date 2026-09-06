@@ -260,9 +260,11 @@ export async function pruneStaleOperationalCatalog(
 
 export async function replaceOperationalCache(
   snapshot: OperationalCacheSnapshot,
+  requireCurrentContext: () => void = () => undefined,
 ) {
   assertBounded(snapshot);
   return withLocalTransaction(async (database) => {
+    requireCurrentContext();
     const pendingStaff = await database.query(
       `SELECT local_record_id FROM outbox
        WHERE operation_type = 'management.staff.create' LIMIT 101`,
@@ -356,6 +358,7 @@ export async function replaceOperationalCache(
     );
 
     for (const category of snapshot.categories) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO categories
           (id, key, name, artwork_key, sort_order, status, revision, updated_at)
@@ -382,6 +385,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const product of snapshot.products) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO products
           (id, category_id, name, receipt_name, price_centimes, status, key,
@@ -422,6 +426,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const group of snapshot.modifierGroups) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO modifier_groups
           (id, key, name, minimum_selections, maximum_selections, status,
@@ -451,6 +456,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const option of snapshot.modifierOptions) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO modifier_options
           (id, modifier_group_id, key, name, price_delta_centimes, status,
@@ -482,6 +488,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const link of snapshot.productModifierGroups) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_modifier_groups
           (product_id, modifier_group_id, sort_order)
@@ -491,6 +498,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const ingredient of snapshot.ingredients) {
+      requireCurrentContext();
       const cachedStock = Math.max(0, ingredient.currentStockQuantity);
       const localStockDelta = Math.min(0, ingredient.currentStockQuantity);
       await database.run(
@@ -530,6 +538,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const staff of snapshot.staffProfiles) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO staff_profiles
           (id, name, role, status, revision, updated_at, identity_revision, preferred_language)
@@ -555,6 +564,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const version of snapshot.recipeVersions) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO recipe_versions
           (id, product_id, product_name_snapshot, version, is_active, created_at)
@@ -580,6 +590,7 @@ export async function replaceOperationalCache(
       false,
     );
     for (const item of snapshot.recipeItems) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO recipe_items
           (recipe_version_id, ingredient_id, ingredient_name_snapshot,
@@ -596,6 +607,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const size of snapshot.productSizes) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_sizes
           (id, product_id, key, name, price_centimes, sort_order, is_default,
@@ -627,6 +639,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const row of snapshot.recipeSizeQuantities) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO recipe_size_quantities
           (recipe_version_id, ingredient_id, product_size_id, size_name_snapshot,
@@ -647,6 +660,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const section of snapshot.productChoiceSections) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_choice_sections
           (id, product_id, key, name, selection_mode, is_required,
@@ -683,6 +697,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const link of snapshot.productChoiceSectionSizes) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_choice_section_sizes (section_id, product_size_id)
          VALUES (?, ?)`,
@@ -691,6 +706,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const value of snapshot.productChoiceValues) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_choice_values
           (id, section_id, key, name, price_delta_centimes, is_default_selected,
@@ -722,6 +738,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const link of snapshot.productChoiceValueSizes) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_choice_value_sizes
           (value_id, product_size_id, available, price_delta_centimes)
@@ -736,6 +753,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const effect of snapshot.productChoiceValueEffects) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_choice_value_effects
           (id, value_id, effect_type, ingredient_id, replacement_ingredient_id,
@@ -761,6 +779,7 @@ export async function replaceOperationalCache(
       );
     }
     for (const link of snapshot.productChoiceValueEffectSizes) {
+      requireCurrentContext();
       await database.run(
         `INSERT INTO product_choice_value_effect_sizes
           (effect_id, product_size_id, quantity)
@@ -769,8 +788,10 @@ export async function replaceOperationalCache(
         false,
       );
     }
+    requireCurrentContext();
     await pruneStaleOperationalCatalog(database, snapshot.updatedAt);
     for (const pending of pendingStaff.values ?? []) {
+      requireCurrentContext();
       await database.run(
         `UPDATE staff_profiles SET status = 'active'
          WHERE id = ?`,
@@ -794,6 +815,7 @@ export async function replaceOperationalCache(
       [Date.now()],
       false,
     );
+    requireCurrentContext();
   });
 }
 

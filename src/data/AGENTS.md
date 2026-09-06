@@ -65,6 +65,10 @@ tablet's local SQLite operational record.
 - An intentionally cancelled refresh on lock/background/session change rejects
   as unavailable without persisting a false sync failure. Genuine storage or
   business failures still follow the normal error-recording path.
+- Read-only directory/menu downloads do not hold the credential queue. Recheck
+  current context inside that queue before applying results. Operational
+  replacement checks between rows and before commit; cancellation rolls back
+  the entire snapshot so PIN unlock does not wait for an obsolete menu refresh.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail,
  Dashboard/Reports fallback reads, and the POS quick-add ranking over the last
  seven business days; it never performs management writes. Stock used-today

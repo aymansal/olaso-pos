@@ -537,6 +537,7 @@ export function ReconnectProvider({
       }
 
       await cleanupAcknowledgedStaffProvisioning();
+      requireCurrentContext();
       const preferredLanguage = await loadStaffPreferredLanguage(
         session.staffProfileId,
       );
@@ -545,10 +546,12 @@ export function ReconnectProvider({
         deviceId: session.deviceId,
         language: preferredLanguage,
       });
+      requireCurrentContext();
+      const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
+        deviceId: session.deviceId,
+      });
       await withStaffCredentialLock(async () => {
-        const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
-          deviceId: session.deviceId,
-        });
+        requireCurrentContext();
         const activeProfiles = remoteProfiles.flatMap((profile) =>
           isStaffRole(profile.role)
             ? [{
@@ -576,19 +579,22 @@ export function ReconnectProvider({
         [...OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
           ...STAFF_MANAGEMENT_OPERATION_TYPES],
       )) {
+        requireCurrentContext();
+        // Do not hold the PIN credential queue during a menu download.
+        const cloud = await convex.query(api.sync.getOperationalSnapshot, {
+          sessionToken: session.token,
+          deviceId: session.deviceId,
+          requestId: crypto.randomUUID(),
+        });
         await withStaffCredentialLock(async () => {
-          const cloud = await convex.query(api.sync.getOperationalSnapshot, {
-            sessionToken: session.token,
-            deviceId: session.deviceId,
-            requestId: crypto.randomUUID(),
-          });
+          requireCurrentContext();
           await replaceOperationalCache({
             ...cloud,
             products: cloud.products.map((product) => ({
               ...product,
               status: product.status === 'active' ? 'active' : 'unavailable',
             })),
-          });
+          }, requireCurrentContext);
         });
         refreshed = true;
       }

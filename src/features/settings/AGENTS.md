@@ -37,6 +37,8 @@ presentation.
   configuration, unavailable, timeout, write, and unknown feedback.
 - A successful test means only that bytes were written; the operator must
   confirm paper separately.
+- Lock-screen entry uses a180ms opacity reveal, disabled for reduced motion.
+  Authenticated screens are already removed; animation never delays locking.
 - Unlock is the production staff-authentication boundary. Every owner, manager,
   and cashier uses a separate six-digit PIN; never add placeholder, shared, or
   default credentials. Staff choice on Lock uses the in-app list, not the

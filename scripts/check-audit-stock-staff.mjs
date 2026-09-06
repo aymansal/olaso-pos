@@ -165,8 +165,8 @@ const snapshotStaffSource = cacheSource.slice(
   cacheSource.indexOf('for (const staff of snapshot.staffProfiles)'),
   cacheSource.indexOf('for (const version of snapshot.recipeVersions)'),
 );
-await new Function('database', 'snapshot', `return (async () => { ${compile(snapshotStaffSource)} })();`)(
-  db, { staffProfiles: [targetProfile], updatedAt: Date.now() },
+await new Function('database', 'snapshot', 'requireCurrentContext', `return (async () => { ${compile(snapshotStaffSource)} })();`)(
+  db, { staffProfiles: [targetProfile], updatedAt: Date.now() }, () => {},
 );
 assert.equal(identityRevision(), 3);
 assert.deepEqual(await reconcile([ownerProfile], ownerProfile.id), [targetProfile.id], 'Missing staff must still invalidate protected access.');
@@ -204,21 +204,21 @@ assert.equal(savedSessionRevision, 2);
 assert.equal(unlocked, true);
 
 const reconnectSource = readFileSync('src/data/reconnectContext.tsx', 'utf8');
-const directoryStart = reconnectSource.indexOf('await withStaffCredentialLock(async () => {');
+const directoryStart = reconnectSource.indexOf('const remoteProfiles = await convex.query');
 const directoryBlock = reconnectSource.slice(directoryStart, reconnectSource.indexOf('\n\n      const settings', directoryStart));
 let releaseDirectory;
 const directoryGate = new Promise((resolve) => { releaseDirectory = resolve; });
 const directoryEvents = [];
-const directorySync = new Function('withStaffCredentialLock', 'convex', 'api', 'session', 'isStaffRole', 'reconcileAuthenticatedStaffProfiles', 'clearStaffSession',
+const directorySync = new Function('withStaffCredentialLock', 'convex', 'api', 'session', 'isStaffRole', 'reconcileAuthenticatedStaffProfiles', 'clearStaffSession', 'requireCurrentContext',
   `return (async () => { ${compile(directoryBlock)} })();`,
 )(withStaffCredentialLock, { query: async () => { directoryEvents.push('fetch'); await directoryGate; return [ownerProfile]; } },
   { identity: { listActiveProfiles: {} } }, { staffProfileId: ownerProfile.id }, () => true,
-  async () => [targetProfile.id], async () => { directoryEvents.push('clear'); });
+  async () => [targetProfile.id], async () => { directoryEvents.push('clear'); }, () => {});
 const queuedPin = withStaffCredentialLock(async () => { directoryEvents.push('new-pin'); });
 await new Promise((resolve) => setImmediate(resolve));
-assert.deepEqual(directoryEvents, ['fetch']);
+assert.deepEqual(directoryEvents, ['fetch', 'new-pin'], 'Read-only network work must not block PIN access.');
 releaseDirectory();
 await Promise.all([directorySync, queuedPin]);
-assert.deepEqual(directoryEvents, ['fetch', 'clear', 'new-pin']);
+assert.deepEqual(directoryEvents, ['fetch', 'new-pin', 'clear']);
 sql.close();
 console.log('AUD-02/03/06/10: isolated stock recovery, PIN promotion ordering, and sync feedback passed.');

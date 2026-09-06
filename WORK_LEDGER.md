@@ -7,6 +7,39 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 unlock delay and lock fade (POLISH-01)
+
+- Owner requests subtle lock transition and fixes for slow unlock. Physical
+  support10 tracing reproduced an operational snapshot still doing1105 native
+  run calls /11.5s cumulative after sign-in, holding the shared credential and
+  SQLite queues across Lock. PIN hashing itself measured152ms; no weakening.
+- Android responsiveness guidance and official Capacitor Android plugin guide
+  reviewed: retain native SQLite/secure storage; fix cancellation in data layer,
+  not a new native worker. Frontend design/React/Ponytail guidance used for a
+  CSS-only180ms opacity reveal with reduced-motion opt-out and no retained
+  authenticated screen. Existing layout/colors unchanged.
+- Move read-only refresh downloads outside credential queue; recheck context
+  inside queue. Check cancellation between snapshot rows and before commit so
+  existing transaction rollback preserves the complete previous catalog and
+  promptly releases access queues.
+- Exact physical busy-refresh cycle on support10: lock16ms, staff ready18,030ms,
+  PIN unlock678ms, total18,708ms and1553 SQL runs after Lock. Same cycle on
+  support11: lock18ms, staff ready391ms, PIN unlock697ms, total1088ms and7 runs
+  after Lock. Correct catalog counts18/19/19/23, no console/logcat errors.
+- CSS checked on tablet180ms at1340x800, no overflow; screenshot inspected,
+  unchanged geometry. Reduced-motion opt-out covered by regression assertion.
+- check:audit, check:reconnect, check:local-catalog, check:settings,
+  check:local-staff passed. Regression executes production snapshot writer and
+  transaction wrapper against isolated SQLite: cancelled before/between writes
+  rolls back, old catalog preserved, successful snapshot still commits.
+  Signed build/native tests and production bundle check passed. Graphify
+  refreshed3523nodes/6817edges (existing Gradle parser limitation).
+  Final NON-DEBUGGABLE1.4/code11 installed over existing app and launched.
+  Published v1.4 to PRIVATE aymansal/olaso-pos-releases, same durable key.
+  APK SHA256 b1152b41e8adf895eaef7944db546aba39e5b623f15791e621f0d6d2c2f1b91f.
+  Next: commit/push verified fix and record source SHA.
+  No test orders or database cleanup performed; PIN strength unchanged.
+
 ### Current checkpoint — 2026-09-06 immediate lock (POLISH-01)
 
 - Owner reports Lock / switch staff sits at Locking for a long time. Confirmed

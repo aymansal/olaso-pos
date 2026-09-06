@@ -5,6 +5,16 @@
   overflow: hidden;
   background: var(--olaso-white);
   grid-template-columns: 720px 620px;
+  animation: lockReveal 180ms ease-out;
+}
+
+@keyframes lockReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { animation: none; }
 }
 
 .brandSide {
