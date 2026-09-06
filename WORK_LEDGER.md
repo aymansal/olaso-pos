@@ -7,6 +7,19 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 Codes and Coffee (POLISH-01)
+
+- Owner requests short related codes for all existing/future products, then
+  Coffee page setup. Graphify queried and current local/cloud save paths read:
+  displayed code is the internal key; backend updates preserve that key.
+- Production read-only check confirms23 coffee products, all without photos or
+  recipes. Workbook extraction has5 measured hot recipes and10 iced recipes
+  with shot/pump conversion gaps.12 transparent coffee originals located.
+- Detailed source mapping and safeguards: `goals/OLASO-COFFEE-SETUP.md`.
+  Questions sent for code format and deferring unknown shot/pump deductions.
+  No code or production changes yet. Next: record owner answers, implement
+  durable short codes safely, then coffee configuration and normal sync/QA.
+
 ### Current checkpoint — 2026-09-05 Consistent product framing (POLISH-01)
 
 - Owner approved shared visible-subject framing, all existing originals, no
