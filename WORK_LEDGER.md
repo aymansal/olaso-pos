@@ -42,7 +42,8 @@ remaining goal and card sequence.
   tmp visually inspected. No new console/logcat messages; empty cart preserved.
 - Durable setup and remaining measurement gaps: goals/OLASO-MATCHA-SETUP.md.
   No source/theme/bundled asset change: build/APK/Graphify refresh not needed.
-  Next: commit/push this evidence, then owner acceptance; recipe gaps await owner.
+  Evidence committed e96d682 and pushed to origin/main.
+  Next: owner acceptance; recipe gaps await owner measurements and supplier prices.
 
 ### Current checkpoint — 2026-09-06 Settings timing and approved hot photos (POLISH-01)
 
