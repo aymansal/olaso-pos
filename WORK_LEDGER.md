@@ -22,6 +22,7 @@ remaining goal and card sequence.
   Evidence tmp/hot-cup-verification.json and hot-cup-webp.json; physical POS
   screenshots hot-cups.png/hot-v60.png show all six cleanly. No app source
   change/reinstall necessary; installed app receives content through normal sync.
+- Completion evidence committed8677848 and pushed to origin/main.
 - Next: owner visual acceptance or next menu page. Earlier pending image notes
   below are superseded by this completion checkpoint.
 
