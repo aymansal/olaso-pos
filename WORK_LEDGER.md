@@ -9,6 +9,11 @@ remaining goal and card sequence.
 
 ### Current checkpoint — 2026-09-06 update rehearsal and test-order cleanup
 
+- Release/check/docs completion committed as242a307 and pushed to origin/main
+  (private aymansal/olaso-pos). Final release artifact is the published1.2 APK.
+  Other staff must sign in online once after the one-time reinstall to rebuild
+  their device-protected offline access; cloud PIN records were preserved.
+
 - COMPLETED execution: signed1.2/code9 published, downloaded by tablet Settings
   Check for update, verified by existing hash/package/certificate guards, and
   installed through Android's Update confirmation. Play Protect showed an
