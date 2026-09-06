@@ -9,6 +9,22 @@ remaining goal and card sequence.
 
 ### Current checkpoint — 2026-09-06 Settings timing and approved hot photos (POLISH-01)
 
+- Hot photos complete: owner approved scripted checkerboard removal. Five exact
+  source cups preserved RGB-pixel-for-pixel with alpha-only cutouts, visually
+  checked on sage. Sources output/hot-coffee-approved-source-v1; transparent
+  PNGs and app-compressed WebP output/hot-coffee-transparent-v1.
+- Six existing Coffee products updated through normal onSave and sync, never
+  direct database writes: Espresso/Blend share espresso; Cappuccino, Flat White,
+  Nos Nos, V60. Scoped to Coffee so Espresso ice cream is unchanged. Prices,
+  keys, categories unchanged; no products created (87 total). WebP18,218–23,744
+  bytes; Espresso384px, other cups480px. App compressor unchanged.
+- Verified all six exact images match SQLite and production Convex, zero outbox.
+  Evidence tmp/hot-cup-verification.json and hot-cup-webp.json; physical POS
+  screenshots hot-cups.png/hot-v60.png show all six cleanly. No app source
+  change/reinstall necessary; installed app receives content through normal sync.
+- Next: owner visual acceptance or next menu page. Earlier pending image notes
+  below are superseded by this completion checkpoint.
+
 - Owner requests verified10-minute inactivity lock, no preference-save flashing,
   stable Header position with12-hour clock, and approved paper-cup image upload
   for six products (Espresso/Blend intentionally share one of five images).
