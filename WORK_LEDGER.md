@@ -9,6 +9,9 @@ remaining goal and card sequence.
 
 ### Current checkpoint — 2026-09-06 Codes and Coffee (POLISH-01)
 
+- Completion commits dfd113a (short codes) and906e269 (coffee evidence/size sync
+  parity) pushed to origin/main. Final APK installed and verified. Owner acceptance
+  and supplying missing source data are the remaining actions; no queued work.
 - Coffee complete within known source data:18 products cover23 listings after
   normal deletion of five unused iced duplicates (no local/cloud sale references).
   Total87 live products, unique short codes,12 photos,5 measured recipes,
