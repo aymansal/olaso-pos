@@ -473,6 +473,11 @@ given and change. This is not a 50/50 tender split
 without product assignment, and unpaid products do not remain in the cart as a
 later sale.
 
+Once payment opens, the whole order keeps the agreed product prices and choices,
+even if the menu changes before the last payer finishes. An in-process lock keeps
+recorded payments and the unpaid remainder; it must not charge a payer twice.
+This does not promise recovery after the application process is terminated.
+
 Every receipt shows the order total before a separate payment summary. A Card
 payment shows its exact amount. A Cash payment with change shows the cashier's
 calculation directly on its own lines: cash received as `+`, change given as

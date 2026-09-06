@@ -22,8 +22,12 @@ remaining goal and card sequence.
 - check:audit now includes local quote and real backend-handler synthetic tests;
   all pass, along with POS/printing/local/CSS and earlier scoped checks. No real
   financial/stock/PIN tests; protected seeded backend fixtures and paper are
-  unrun. Graphify refreshed3504nodes. Current commit/push pending below; no claim
+  unrun. Graphify refreshed3504nodes. Repair commit
+  c88d9e4a98a55acf28b216f98ea216a21c8efc15 pushed to origin/main; no claim
   that an audit guarantees zero undiscovered bugs or full client acceptance.
+- Exact next action: owner tests the installed app and printed receipts during
+  ordinary service; investigate specific feedback without another broad audit.
+  Unrelated untracked image/output/.commandcode folders preserved.
 
 - Owner authorizes all AUD-01–14 repairs plus INVEST-01 root-cause repair, then
   a fresh independent-agent audit. One repair batch under POLISH-01; do not
