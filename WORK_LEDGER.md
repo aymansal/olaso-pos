@@ -7,6 +7,33 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 full-app audit (POLISH-01)
+
+- Owner requested a cross-screen audit with parallel agents and explicitly
+  requested matching Add staff Role/Name heights. Audit source of truth:
+  goals/OLASO-FULL-APP-AUDIT-2026-09-06.md. Fourteen open findings, with source
+  traces separated from isolated reproductions; no claim of exhaustive safety.
+- Highest priorities: split progress lost on lock, pending-profile PIN race,
+  negative-stock recovery, monthly report sales ceiling, unavailable expenses
+  falsely shown as zero. No production financial/identity test writes or broad
+  fixes performed. Client readiness remains blocked by these findings.
+- UI-01 root cause confirmed: shared compact-menu selector outweighed form48px
+  rule. Changed only form-scoped specificity. Graphify queried; Ponytail and
+  frontend guidance used. Official Android accessibility/Capacitor docs support
+  existing CSS boundary, no native/plugin changes or structural graph refresh.
+- Settings/local-staff/CSS checks passed; production build, endpoint validation,
+  native JVM checks and install-over update passed. Physical Name/Role heights
+  before48/36, after48/48. Screenshot tmp/staff-height-audit.png visually checked
+  at1340x800: no clipping/overlap. Empty form closed, no staff submitted.
+- Agents additionally passed costs/offline/local-inventory-costs checks. These
+  existing checks miss the listed bugs; isolated reproductions establish several.
+- Products delay/false empty investigation remains open. Fresh visit showed79
+  products; initial zero/Espresso sampling was invalid (uncategorized0 and sorted
+  Ube page). Do not claim reproduction or fix. Next: capture precise visible
+  table state and read timing across startup/reconnect without clearing data.
+- Exact next action: present ranked audit, request owner direction for P1 repair
+  sequence. Only UI-01 is corrected; audit does not complete POLISH-01/client gate.
+
 ### Current checkpoint — 2026-09-06 adaptive split and approved footer (POLISH-01)
 
 - Owner approved footer option4: EN "A little pause. / A place to belong.";
