@@ -7,6 +7,24 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 update rehearsal and test-order cleanup
+
+- Owner requests quota-conscious in-app update rehearsal through the separate
+  releases repo, then deletion of all test orders locally and in production,
+  preserving business setup/catalog/ingredients/staff. Do not reset whole DB.
+- Read-only checks: releases repo aymansal/olaso-pos-releases is PRIVATE;
+  latest v1.1 manifest/versionCode8; tablet also8/1.1 but DEBUGGABLE testing APK.
+  APK certificate comparison confirms mismatch: testing236d2569... versus
+  published release9308041b.... Android cannot install that release over this
+  testing build. Existing update guards/check:release pass, but end-to-end
+  download/install is NOT tested yet. No repo visibility or order data changed.
+- Need owner authority for one-time debug-to-signed migration (uninstall clears
+  all app-private data, not just orders). Before migration preserve/verify cloud
+  business setup, settings, protected-access recovery and correct signing key;
+  never uninstall blindly. After migration rehearse genuine higher-version
+  update, restore releases repo PRIVATE, then execute scoped backed-up test-sale
+  cleanup including derived reports/stock effects and prevent outbox resurrection.
+
 ### Current checkpoint — 2026-09-06 customer footer spacing (POLISH-01)
 
 - Owner wants the saying vertically centered without increasing paper length,
