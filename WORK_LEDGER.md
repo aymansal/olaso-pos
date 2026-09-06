@@ -41,7 +41,8 @@ remaining goal and card sequence.
 - Final contrast correction explicitly inherits white for button total; final
   APK installed and checked: total/button both rgb(255,255,255), empty disabled
   state correct, authenticated POS79 products and no console/logcat errors.
-  Next: commit/push evidence; owner actual sale
+  Implementation committed15d7167 and pushed to origin/main.
+  Next: owner actual sale
   and paper acceptance, protected cloud sales integration check remain unrun.
 
 ### Current checkpoint — 2026-09-06 Matcha menu (POLISH-01)
