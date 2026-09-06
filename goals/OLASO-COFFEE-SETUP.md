@@ -48,6 +48,11 @@ Never invent hot versions for iced-only listings or change Mocha's printed price
 
 ## Configuration
 
+Update6 September: Milk sections removed from Espresso, Espresso Blend,
+Americano, Fredo Espresso and V60 after owner approval. Earlier optional-Milk
+notes below describe the superseded setup. See OLASO-MENU-RECIPE-AUDIT.md for
+the verified correction and full workbook recipe coverage.
+
 - Plus adds15 MAD to the selected preparation's Standard price. Preserve the
   earlier owner decision: Plus recipe quantities remain unconfigured, not an
   invented multiplier. Never silently use Standard quantities for Plus.

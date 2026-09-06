@@ -7,6 +7,24 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 menu correctness audit (POLISH-01)
+
+- Owner approved removal of Milk from five black coffees and requested complete
+  workbook ingredient verification. Used Graphify/Ponytail/Spreadsheets guidance.
+- Deleted only those five sections through normal local-first management action;
+  production/tablet readback confirms removal, unchanged product prices/images/
+  recipe IDs and zero outbox. No application code/APK/native boundary changed.
+- Reread original workbook50 recipes181 rows.31 configured preparations match
+  all106 ingredient rows exactly;19 recipes75 rows remain unconfigured due to
+  missing shot/pump/scoop measurements, cinnamon quantity or condensed-milk unit.
+  Current recipe IDs/items/size quantities match local/cloud. No recipes changed.
+- Physical dialog check inconclusive (assertion failed, cart changed during
+  inspection); stopped tablet interaction and preserved cart. No test sales.
+- Detailed coverage/remaining recipes: goals/OLASO-MENU-RECIPE-AUDIT.md.
+  Evidence tmp/menu-recipe-audit.json and recipe-source-comparison.json.
+- Next: owner visual review, obtain missing measurements; retain Plus gaps.
+  Commit/push pending below; no structural Graphify refresh/build necessary.
+
 ### Current checkpoint — 2026-09-06 POS customization and checkout (POLISH-01)
 
 - Owner approved independently stacked two-column option groups, compact simple
