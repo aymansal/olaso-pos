@@ -31,6 +31,8 @@ remaining goal and card sequence.
   tmp/payment-adaptive.png inspected. Evidence tmp/payment-adaptive-check.json.
   Printing/POS/CSS checks and production native build pass. No structural code
   changes requiring graph rebuild. Receipt paper/keyboard acceptance not claimed.
+- Completed source/install commit89fbd882ab142057053a7271d40a8c239bde7052
+  pushed to origin/main. Next: owner paper and popup acceptance.
 
 ### Current checkpoint — 2026-09-06 cash popup clipping (POLISH-01)
 
