@@ -220,8 +220,8 @@ function receiptRows(model: ReceiptModel): PrinterRow[] {
     { text: '-'.repeat(WIDTH) },
     ...payment,
     { text: '-'.repeat(WIDTH) },
-    { text: labels.thanks, align: 'center', bold: true, doubleWidth: true },
-    { text: model.receiptLanguage === 'fr' ? 'À bientôt' : 'See you soon', align: 'center' },
+    { text: model.receiptLanguage === 'fr' ? 'Une petite pause.' : 'A little pause.', align: 'center', bold: true },
+    { text: model.receiptLanguage === 'fr' ? 'Un endroit où se sentir chez soi.' : 'A place to belong.', align: 'center' },
   ];
 }
 

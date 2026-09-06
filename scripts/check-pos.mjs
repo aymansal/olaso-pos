@@ -236,6 +236,10 @@ assert.doesNotMatch(paymentDialog, /onClose=\{onCancel\}/);
 // Only the receipt rail chooses split mode; no redundant in-dialog toggle.
 assert.match(paymentDialog, /const split = canSplit && startSplit === true/);
 assert.doesNotMatch(paymentDialog, /toggleSplit|styles\.split|setSplitFade/);
+const adaptivePaymentCss = readFileSync('src/features/pos/components/PaymentDialog/PaymentDialog.module.css', 'utf8');
+assert.match(adaptivePaymentCss, /grid-template-rows: minmax\(0, 1fr\)/);
+assert.match(adaptivePaymentCss, /flex: 0 1 auto/);
+assert.match(adaptivePaymentCss, /max-height: 196px/);
 const posScreen = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
 assert.match(posScreen, /PaymentDialog/);
 assert.match(posScreen, /total === 0/);

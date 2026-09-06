@@ -304,3 +304,9 @@ The four supplied Tetouanpreneurs spotlight frames describe Olaso as warm, human
 ### Rule for future work
 
 Confirmed assets override provisional recommendations. When the owner supplies official brand files, update this document first; derive `DESIGN.md` from the revised source of truth.
+# Approved customer receipt footer — 6 September 2026
+
+English: "A little pause." / "A place to belong."
+French: "Une petite pause." / "Un endroit où se sentir chez soi."
+Use two centered normal-width lines, first bold. Select the saved receipt
+language; no extra thank-you line. Owner approved this community-oriented copy.

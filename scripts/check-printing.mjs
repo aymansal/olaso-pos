@@ -51,7 +51,7 @@ const model = createReceiptModel(snapshot, {
 });
 const text = renderReceiptText(model);
 const raw = encodeWd8260Receipt(model);
-const goldenSha256 = 'F84EAA57B4B930D76A3410B56FE6128A1B3D2DF3F33CC33078B2CFE8567B847A';
+const goldenSha256 = '118A81DEC055872BD7822E6D6FB5B4D10799B7FFA37FF5560B5A636B7DE0DC73';
 
 const outputIndex = process.argv.indexOf('--output');
 if (outputIndex >= 0) {
@@ -66,7 +66,15 @@ assert.equal((text.match(/\bMAD\b/g) || []).length, 1);
 assert.match(text, /ORDER 000123\s+21\/08\/2026 14:35/);
 assert.match(text, /Cashier: Alex\s+Dine in \/ Table T4/);
 assert.match(text, /Café crème double\s+2\s+36\.00/);
-assert.match(text, /THANK YOU\.\nSee you soon/);
+assert.match(text, /A little pause\.\nA place to belong\.\n$/);
+const frenchFooter = renderReceiptText(createReceiptModel({ ...snapshot, receiptLanguage: 'fr' }));
+assert.match(frenchFooter, /Une petite pause\.\nUn endroit où se sentir chez soi\.\n$/);
+for (const footer of [text, frenchFooter]) {
+  for (const row of footer.trimEnd().split('\n').slice(-2)) {
+    assert(row.length <= 48);
+    assert(!encodeCp858(row).includes(0x3f), 'Footer characters must encode without replacements');
+  }
+}
 assert.ok(text.indexOf('TOTAL') < text.indexOf('PAYMENT SUMMARY'));
 assert.match(text, /CASH/);
 assert.match(text, /Cash received\s+\+100\.00/);

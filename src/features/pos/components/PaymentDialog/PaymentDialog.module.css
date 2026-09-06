@@ -72,7 +72,7 @@
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
-  margin-top: 16px;
+  margin-top: 12px;
   overflow: hidden;
 }
 
@@ -93,9 +93,11 @@
 .shares {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: minmax(0, 1fr);
   gap: 20px;
   min-width: 0;
-  flex: 0 1 180px;
+  flex: 0 1 auto;
+  max-height: 196px;
   min-height: 0;
   margin-top: 8px;
   overflow: hidden;
@@ -109,6 +111,7 @@
 }
 
 .shareHead {
+  height: 18px;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -199,14 +202,14 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 6px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .methods {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
-  margin-top: 16px;
+  margin-top: 12px;
   padding: 4px;
   border-radius: 24px;
   background: var(--olaso-soft);
@@ -248,7 +251,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 12px;
+  margin-top: 8px;
   color: var(--olaso-text-meta);
   font-size: 8px;
   font-weight: 700;

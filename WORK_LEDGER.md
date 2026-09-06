@@ -7,6 +7,31 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 adaptive split and approved footer (POLISH-01)
+
+- Owner approved footer option4: EN "A little pause. / A place to belong.";
+  FR "Une petite pause. / Un endroit où se sentir chez soi." Two centered
+  normal-width lines, first bold; longest32 columns within48. CP858 accents
+  verified; removed old thank-you/see-you footer, no money/transport changes.
+- Split lists now intrinsic height with196px maximum (18px heading +2px gap
+  +four44px rows), rather than reserving180px for even one row. Keeps existing
+  independent scrolling and fixed cash controls,480px dialog/max640px.
+- Official Android accessibility and Capacitor keyboard docs rechecked before
+  change; same CSS/encoder-only decision, no native/plugin change. Printing,
+  POS and CSS checks pass; new EN/FR footer width/encoding checks included.
+  Expected byte hash updated for approved footer. Build/device QA underway.
+- Physical1–5 product-row checks exposed grid auto-track overflowing its cap;
+  constrained track to minmax(0,1fr), reran successfully. Tightened cash gaps16px
+  total so four complete rows fit under640px. Final production package underway.
+  No real sale/print; temporary draft cleared. Small CSS regression assertions
+  added. Paper footer acceptance remains owner-led.
+- Final production APK installed. Physical1/2/3/4/5-row checks pass in both
+  methods: Card heights336/380/424/468/468; Cash504/548/592/636/636.
+  Fifth row scrolls, all cash inputs visible, no console messages; final image
+  tmp/payment-adaptive.png inspected. Evidence tmp/payment-adaptive-check.json.
+  Printing/POS/CSS checks and production native build pass. No structural code
+  changes requiring graph rebuild. Receipt paper/keyboard acceptance not claimed.
+
 ### Current checkpoint — 2026-09-06 cash popup clipping (POLISH-01)
 
 - Owner requests cash input always visible despite long split lists, compact
