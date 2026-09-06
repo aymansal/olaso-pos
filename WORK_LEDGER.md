@@ -35,6 +35,8 @@ remaining goal and card sequence.
   disposable test restore PIN and remains unrun. Never used live PIN for it.
   Keyboard-open visual acceptance remains untested. Graphify refreshed.
 - Next: owner popup/keyboard acceptance and choice of bilingual footer wording.
+- Implemented/installed commit b6a0c786cd19a341677a789ce408ea4283d0d4cb pushed
+  to origin/main. Owner acceptance and protected cloud check remain separate.
 
 ### Current checkpoint — 2026-09-06 menu correctness audit (POLISH-01)
 
