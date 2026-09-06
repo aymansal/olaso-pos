@@ -23,7 +23,8 @@ remaining goal and card sequence.
 - Detailed coverage/remaining recipes: goals/OLASO-MENU-RECIPE-AUDIT.md.
   Evidence tmp/menu-recipe-audit.json and recipe-source-comparison.json.
 - Next: owner visual review, obtain missing measurements; retain Plus gaps.
-  Commit/push pending below; no structural Graphify refresh/build necessary.
+  Correction/audit committed fe575b23bb09e71895d562712e68896afd524c52 and pushed
+  to origin/main; no structural Graphify refresh/build necessary.
 
 ### Current checkpoint — 2026-09-06 POS customization and checkout (POLISH-01)
 
