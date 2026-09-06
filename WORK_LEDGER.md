@@ -37,7 +37,8 @@ remaining goal and card sequence.
   Final NON-DEBUGGABLE1.4/code11 installed over existing app and launched.
   Published v1.4 to PRIVATE aymansal/olaso-pos-releases, same durable key.
   APK SHA256 b1152b41e8adf895eaef7944db546aba39e5b623f15791e621f0d6d2c2f1b91f.
-  Next: commit/push verified fix and record source SHA.
+  Source794e2e8 committed and pushed to origin/main (aymansal/olaso-pos).
+  Complete; await owner feedback on the short fade and lock/unlock.
   No test orders or database cleanup performed; PIN strength unchanged.
 
 ### Current checkpoint — 2026-09-06 immediate lock (POLISH-01)
