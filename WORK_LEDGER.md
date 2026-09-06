@@ -7,6 +7,43 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 Matcha menu (POLISH-01)
+
+- Owner requests complete Matcha page using same approved Coffee/Frappé model.
+  Graphify/Ponytail/Spreadsheets used; workbook Matcha59 rows/17 recipes reread.
+- Planned19 retained products cover27 listings (eight hot/iced pairs),54 sizes,
+  Plus+20MAD. Milk Whole0/Lactose Free5/Oat,Coconut,Almond10; charged once.
+  Extras Ceremonial Matcha15/Cold Foam10, optional multiple, no default or
+  invented dosage. No syrup choices on this page. Preserve English ingredients.
+-14 fully measured Standard recipes: five hot and nine iced. Hot Spanish unit
+  conflict (30ml condensed milk vs gram stock), two protein scoop recipes,
+  all Hojicha/Ube and all Plus remain unconfigured. No invented costs/stock.
+- Backup tmp/matcha-before.json; exact sources tmp/matcha-recipes-source.json;
+  executable mapping tmp/matcha-plan.json. Add six missing measured ingredients,
+  preserving existing IDs. Configure retained rows, normalize19 existing photos,
+  sync, then retire unused duplicates only after local/cloud history checks.
+- This is catalog content through existing native SQLite/normal authenticated
+  sync, no application/native boundary change or new dependency. No APK needed.
+- Six missing ingredients created with zero opening stock/no invented costs.
+  All19 products configured,54 sizes,38 sections,14 measured Standard recipes.
+  Recipes/milk replacement use explicit per-size quantities including zero for
+  every unconfigured preparation. Configuration synchronized without rejection.
+- All19 existing transparent photos visually checked, normalized with the
+  unchanged app compressor, saved through normal product action. Sources remain
+  untouched; WebP output/matcha-app-webp-v1; tmp/matcha-webp.json backs up rows.
+- Complete operationally: eight unused iced duplicates removed only after both
+  local/cloud history checks returned no references; original backup retained.
+ 19 Matcha products /79 total; all photos and relevant configuration match cloud
+  and SQLite, zero outbox. tmp/matcha-verification.json proves1080 combinations
+  and exact ingredient quantities. No sales placed or stock purchases invented.
+- Physical Tab A9: all19 dialogs /54 size selections passed,320px bounded width,
+  correct totals with Oat+both extras; default Hot Standard/Whole and neither
+  extra checked separately. Screenshots matcha-top.png/matcha-options.png under
+  tmp visually inspected. No new console/logcat messages; empty cart preserved.
+- Durable setup and remaining measurement gaps: goals/OLASO-MATCHA-SETUP.md.
+  No source/theme/bundled asset change: build/APK/Graphify refresh not needed.
+  Next: commit/push this evidence, then owner acceptance; recipe gaps await owner.
+
 ### Current checkpoint — 2026-09-06 Settings timing and approved hot photos (POLISH-01)
 
 - Hot photos complete: owner approved scripted checkerboard removal. Five exact
