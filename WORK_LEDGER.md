@@ -33,6 +33,8 @@ remaining goal and card sequence.
   table state and read timing across startup/reconnect without clearing data.
 - Exact next action: present ranked audit, request owner direction for P1 repair
   sequence. Only UI-01 is corrected; audit does not complete POLISH-01/client gate.
+- Audit and installed UI correction committed as ea5e164 and pushed to
+  origin/main. Remaining AUD-01–14 and INVEST-01 stay open.
 
 ### Current checkpoint — 2026-09-06 adaptive split and approved footer (POLISH-01)
 
