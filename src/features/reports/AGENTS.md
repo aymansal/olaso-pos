@@ -51,6 +51,11 @@ performance, ingredient usage, and bounded period controls.
 - Stock-usage and product tabs must share the established report shell rather
   than duplicate it.
 - Keep ingredient base units separate; never invent a cross-unit stock total.
+- Show every used ingredient in the existing scrolling list, not a silently
+  truncated top-ten list. Missing ingredient costs remain explicitly incomplete.
+- Missing or failed operating-cost reads show Loading/Unavailable, never zero
+  wages or expenses and an apparently complete operating profit. Valid sales
+  and gross-profit figures may remain visible independently.
 - Offline Reports derive the selected one-to-31-day period from bounded saved
   tablet receipts and movements and never remain on a cloud loading state.
   Offert drinks still count as units sold; their product and category money is

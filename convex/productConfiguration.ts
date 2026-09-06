@@ -14,6 +14,7 @@ import {
   requireManagement,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
+import { retainProductCatalog } from './lib/catalogHistory';
 
 const productStatus = v.union(v.literal('active'), v.literal('unavailable'), v.literal('archived'));
 const choiceStatus = v.union(v.literal('active'), v.literal('archived'));
@@ -65,6 +66,7 @@ export const saveSize = mutation({
       if (duplicate) return conflict('A product size with this key already exists.');
     }
     const now = Date.now();
+    await retainProductCatalog(ctx, product._id);
     if (args.isDefault && args.status !== 'archived') {
       const sizes = await ctx.db.query('productSizes').withIndex('by_product', (q) => q.eq('productId', product._id)).take(9);
       for (const size of sizes) if (size._id !== existing?._id && size.isDefault && size.status !== 'archived') {
@@ -91,6 +93,7 @@ export const removeSize = mutation({
     if (!size) return { id: args.id, revision: args.expectedRevision + 1 };
     if (size.lastMutationId === clientMutationId) return { id: size._id, revision: size.revision };
     expectRevision(args.expectedRevision, size.revision);
+    await retainProductCatalog(ctx, size.productId);
     await ctx.db.patch(size._id, { status: 'archived', isDefault: false, revision: size.revision + 1,
       updatedAt: Date.now(), updatedBy, lastMutationId: clientMutationId });
     return { id: size._id, revision: size.revision + 1 };
@@ -140,6 +143,7 @@ export const saveSection = mutation({
     }
     const now = Date.now();
     let sectionId: Id<'productChoiceSections'>;
+    await retainProductCatalog(ctx, product._id);
     let revision: number;
     if (existing) {
       sectionId = existing._id; revision = existing.revision + 1;
@@ -191,6 +195,7 @@ export const removeSection = mutation({
     if (!section) return { id: args.id, revision: args.expectedRevision + 1 };
     if (section.lastMutationId === clientMutationId) return { id: section._id, revision: section.revision };
     expectRevision(args.expectedRevision, section.revision);
+    await retainProductCatalog(ctx, section.productId);
     await ctx.db.patch(section._id, { status: 'archived', revision: section.revision + 1,
       updatedAt: Date.now(), updatedBy, lastMutationId: clientMutationId });
     return { id: section._id, revision: section.revision + 1 };
@@ -209,6 +214,7 @@ export const copySections = mutation({
     if (args.sourceProductId === args.destinationProductId) return invalid('Choose a different product to copy choices.');
     await requireProduct(ctx, args.sourceProductId);
     await requireProduct(ctx, args.destinationProductId);
+    await retainProductCatalog(ctx, args.destinationProductId);
     const sources = await ctx.db.query('productChoiceSections')
       .withIndex('by_product', (q) => q.eq('productId', args.sourceProductId)).take(13);
     const sections = sources.filter((section) => section.status === 'active');

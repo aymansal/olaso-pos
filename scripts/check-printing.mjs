@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import {
   encodeCp858,
   encodeWd8260Receipt,
+  formatReceiptMoney,
   renderReceiptText,
 } from '../src/printing/receiptEncoder.ts';
 import { createReceiptModel } from '../src/printing/receiptModel.ts';
@@ -312,6 +313,15 @@ const dailyReport = {
   failedPrintCount: 0,
 };
 const dailyText = renderDailyOwnerReport(dailyReport);
+for (const [amount, expected] of [[-50, '-0.50'], [-1250, '-12.50'], [-1200, '-12.00'], [0, '0.00'], [1250, '12.50']]) {
+  assert.equal(formatReceiptMoney(amount), expected);
+}
+for (const language of ['fr', 'en']) {
+  const lossReport = renderDailyOwnerReport({ ...dailyReport, language, grossProfitCentimes: -50, operatingProfitCentimes: -1250 });
+  assert.match(lossReport, /-0\.50 MAD/);
+  assert.match(lossReport, /-12\.50 MAD/);
+  assert.doesNotMatch(lossReport, /-1\.-50|-13\.-50/);
+}
 const dailyBytes = encodeDailyOwnerReport(dailyReport);
 assert.match(dailyText, /RAPPORT QUOTIDIEN DU PROPRIÉTAIRE/);
 assert.match(dailyText, /Carte \(1\)\s+40\.00 MAD/);

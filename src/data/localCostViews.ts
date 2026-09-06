@@ -1,7 +1,8 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { daysInCalendarMonth, operatingCostsForRange } from '../lib/costs.ts';
 import type { StaffRole } from './permissions.ts';
-import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
+import { openLocalDatabase, serializeLocalTransaction, withLocalTransaction } from './localDatabase.ts';
+import { readLocalPages } from './readLocalPages.ts';
 import type {
   SavedCostManagement,
   SavedExpense,
@@ -52,7 +53,7 @@ export async function loadLocalCostManagementFromDatabase(
   role: StaffRole,
 ): Promise<SavedCostManagement> {
   const selectedMonth = month(targetMonth);
-  const expenseRows = await database.query(
+  const expenseRows = await readLocalPages(database,
     `SELECT e.* FROM operating_expenses e
      WHERE e.status = 'active' AND NOT EXISTS (
        SELECT 1 FROM local_cloud_mappings m
@@ -60,27 +61,18 @@ export async function loadLocalCostManagementFromDatabase(
        WHERE m.record_type = 'expense' AND m.local_record_id = e.id
          AND m.local_record_id <> m.cloud_record_id
      )
-     ORDER BY e.created_at DESC LIMIT 101`,
+     ORDER BY e.created_at DESC, e.id`,
   );
-  if ((expenseRows.values?.length ?? 0) > 100) {
-    throw new Error('Saved expenses exceed the local report limit.');
-  }
   const expenses = (expenseRows.values ?? []).map(expenseFromRow);
   const monthStart = `${selectedMonth}-01`;
   const monthEnd = `${selectedMonth}-${String(daysInCalendarMonth(selectedMonth)).padStart(2, '0')}`;
   const purchaseRows = await database.query(
-    `SELECT transaction_type, total_cost_centimes FROM inventory_purchases
-     WHERE business_date BETWEEN ? AND ? LIMIT 1001`,
+    `SELECT COALESCE(SUM(CASE WHEN transaction_type = 'reversal'
+       THEN -total_cost_centimes ELSE total_cost_centimes END), 0) AS cash
+     FROM inventory_purchases WHERE business_date BETWEEN ? AND ?`,
     [`${selectedMonth}-01`, `${selectedMonth}-31`],
   );
-  if ((purchaseRows.values?.length ?? 0) > 1_000) {
-    throw new Error('Saved purchases exceed the local report limit.');
-  }
-  const purchaseCashCentimes = (purchaseRows.values ?? []).reduce(
-    (sum, purchase) => sum + (purchase.transaction_type === 'reversal' ? -1 : 1)
-      * Number(purchase.total_cost_centimes),
-    0,
-  );
+  const purchaseCashCentimes = Number(purchaseRows.values?.[0]?.cash ?? 0);
   const inventoryRows = await database.query(
     `SELECT SUM(CASE WHEN inventory_value_centimes IS NULL THEN 0
       ELSE inventory_value_centimes + local_inventory_value_delta END) AS value
@@ -95,11 +87,11 @@ export async function loadLocalCostManagementFromDatabase(
       purchaseCashCentimes, inventoryValueCentimes, otherExpenseCentimes };
   }
   const [staffRows, periodRows, saleRows] = await Promise.all([
-    database.query(
+    readLocalPages(database,
       `SELECT id, name, role FROM staff_profiles
-       WHERE status = 'active' ORDER BY name LIMIT 101`,
+       WHERE status = 'active' ORDER BY name, id`,
     ),
-    database.query(
+    readLocalPages(database,
       `SELECT c.* FROM compensation_periods c
        WHERE NOT EXISTS (
          SELECT 1 FROM local_cloud_mappings m
@@ -108,20 +100,17 @@ export async function loadLocalCostManagementFromDatabase(
            AND m.local_record_id = c.id
            AND m.local_record_id <> m.cloud_record_id
        )
-       ORDER BY c.effective_start_month DESC LIMIT 101`,
+       ORDER BY c.effective_start_month DESC, c.id`,
     ),
     database.query(
-      `SELECT total_centimes, ingredient_cost_centimes, cost_status
+      `SELECT COALESCE(SUM(total_centimes), 0) AS revenue,
+         COALESCE(SUM(ingredient_cost_centimes), 0) AS cost,
+         COALESCE(SUM(CASE WHEN cost_status <> 'complete' THEN 1 ELSE 0 END), 0) AS incomplete
        FROM sales WHERE status = 'completed'
-         AND business_date BETWEEN ? AND ? LIMIT 1001`,
+         AND business_date BETWEEN ? AND ?`,
       [`${selectedMonth}-01`, `${selectedMonth}-31`],
     ),
   ]);
-  if ((staffRows.values?.length ?? 0) > 100
-      || (periodRows.values?.length ?? 0) > 100
-      || (saleRows.values?.length ?? 0) > 1_000) {
-    throw new Error('Saved profitability data exceeds the local report limit.');
-  }
   const staff = (staffRows.values ?? []).map((row) => ({
     id: String(row.id),
     name: String(row.name),
@@ -150,17 +139,9 @@ export async function loadLocalCostManagementFromDatabase(
     revision: Number(row.revision),
     createdAt: Number(row.created_at),
   }));
-  const revenueCentimes = (saleRows.values ?? []).reduce(
-    (sum, row) => sum + Number(row.total_centimes),
-    0,
-  );
-  const ingredientCostCentimes = (saleRows.values ?? []).reduce(
-    (sum, row) => sum + Number(row.ingredient_cost_centimes ?? 0),
-    0,
-  );
-  const incompleteSaleCount = (saleRows.values ?? []).filter(
-    (row) => row.cost_status !== 'complete',
-  ).length;
+  const revenueCentimes = Number(saleRows.values?.[0]?.revenue ?? 0);
+  const ingredientCostCentimes = Number(saleRows.values?.[0]?.cost ?? 0);
+  const incompleteSaleCount = Number(saleRows.values?.[0]?.incomplete ?? 0);
   const { otherExpenseCentimes, compensationCentimes } = operatingCostsForRange(
     expenses,
     compensation,
@@ -192,9 +173,9 @@ export async function loadLocalCostManagement(
   targetMonth: string,
   role: StaffRole,
 ) {
-  return loadLocalCostManagementFromDatabase(
+  return serializeLocalTransaction(async () => loadLocalCostManagementFromDatabase(
     await openLocalDatabase(), targetMonth, role,
-  );
+  ));
 }
 
 export async function pruneSavedExpensesFromDatabase(
@@ -202,7 +183,7 @@ export async function pruneSavedExpensesFromDatabase(
   incomingIds: string[],
 ) {
   const incoming = incomingIds.length
-    ? `id NOT IN (${incomingIds.map(() => '?').join(', ')})`
+    ? `id NOT IN (SELECT value FROM json_each(?))`
     : '1 = 1';
   await database.run(
     `DELETE FROM operating_expenses
@@ -220,7 +201,7 @@ export async function pruneSavedExpensesFromDatabase(
          JOIN outbox o ON o.operation_id = m.operation_id
          WHERE m.operation_type = 'management.expense.correct'
        )`,
-    incomingIds,
+    incomingIds.length ? [JSON.stringify(incomingIds)] : [],
     false,
   );
 }
@@ -230,7 +211,7 @@ export async function pruneSavedCompensationFromDatabase(
   incomingIds: string[],
 ) {
   const incoming = incomingIds.length
-    ? `id NOT IN (${incomingIds.map(() => '?').join(', ')})`
+    ? `id NOT IN (SELECT value FROM json_each(?))`
     : '1 = 1';
   await database.run(
     `DELETE FROM compensation_periods
@@ -243,7 +224,7 @@ export async function pruneSavedCompensationFromDatabase(
            'management.compensation.add', 'management.compensation.delete'
          )
        )`,
-    incomingIds,
+    incomingIds.length ? [JSON.stringify(incomingIds)] : [],
     false,
   );
 }
@@ -264,9 +245,11 @@ export function replaceSavedExpenses(
     correctionOfExpenseId?: string;
     revision: number;
   }>,
+  transact: Transaction = withLocalTransaction,
+  requireCurrentContext: () => void = () => undefined,
 ) {
-  if (rows.length > 100) throw new Error('Expense snapshot exceeds its limit.');
-  return withLocalTransaction(async (database) => {
+  return transact(async (database) => {
+    requireCurrentContext();
     const now = Date.now();
     const ordered = [...rows].sort(
       (left, right) => Number(Boolean(left.correctionOfExpenseId))
@@ -319,9 +302,10 @@ export function replaceSavedCompensation(
     revision: number;
   }>,
   transact: Transaction = withLocalTransaction,
+  requireCurrentContext: () => void = () => undefined,
 ) {
-  if (rows.length > 100) throw new Error('Compensation snapshot exceeds its limit.');
   return transact(async (database) => {
+    requireCurrentContext();
     const now = Date.now();
     const blocked = await database.query(
       `SELECT m.local_record_id FROM management_operations m

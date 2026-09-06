@@ -1,17 +1,16 @@
 import { X } from '@boxicons/react';
-import { useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import {
   changeCentimes,
   chargedCentimes,
+  canRecordPayment,
   moveCartUnit,
   parseDirhamsToCentimes,
-  payableCart,
   QUICK_TENDER_CENTIMES,
   type CartLine,
-  type PaymentMethod,
+  type PaymentDraft,
   type PaymentTender,
 } from '../../posSession';
 import styles from './PaymentDialog.module.css';
@@ -32,11 +31,10 @@ type PricedChoiceValue = {
 type PaymentDialogProps = {
   cart: CartLine[];
   labels: Record<string, PaymentLineCopy>;
-  paymentMethod: PaymentMethod;
+  draft: PaymentDraft;
+  onDraftChange: (update: (current: PaymentDraft) => PaymentDraft) => void;
   sizes: readonly PricedSize[];
   choiceValues: readonly PricedChoiceValue[];
-  canSplit: boolean;
-  startSplit?: boolean;
   processing: boolean;
   onCancel: () => void;
   onConfirm: (tenders: PaymentTender[]) => Promise<void>;
@@ -96,25 +94,16 @@ function ShareRows({
 export function PaymentDialog({
   cart,
   labels,
-  paymentMethod,
+  draft,
+  onDraftChange,
   sizes,
   choiceValues,
-  canSplit,
-  startSplit,
   processing,
   onCancel,
   onConfirm,
 }: PaymentDialogProps) {
   const t = useT();
-  const split = canSplit && startSplit === true;
-  const [remaining, setRemaining] = useState(() => payableCart(cart));
-  const [pick, setPick] = useState<CartLine[]>([]);
-  const [recorded, setRecorded] = useState<PaymentTender[]>([]);
-  const [activeMethod, setActiveMethod] = useState<PaymentMethod>(paymentMethod);
-  const [customText, setCustomText] = useState('');
-  const [tendered, setTendered] = useState<number | undefined>(
-    paymentMethod === 'Card' ? chargedCentimes(cart, sizes, choiceValues) : undefined,
-  );
+  const { split, remaining, pick, recorded, activeMethod, customText, tendered } = draft;
 
   const locked = recorded.length > 0;
   const cash = activeMethod === 'Cash';
@@ -122,18 +111,13 @@ export function PaymentDialog({
   const due = chargedCentimes(activeCart, sizes, choiceValues);
   const received = cash ? (tendered ?? (due === 0 ? 0 : undefined)) : due;
   const change = received === undefined ? undefined : changeCentimes(due, received);
-  const canPay = activeCart.length > 0 && change !== undefined;
+  const withinLimit = canRecordPayment(recorded.length, split && remaining.length > 0);
+  const canPay = activeCart.length > 0 && change !== undefined && withinLimit;
   const lastSplit = split && remaining.length === 0;
   const confirmLabel = !split || lastSplit ? 'Place order' : 'Take payment';
 
   function setAmount(centimes: number) {
-    setTendered(centimes);
-    setCustomText('');
-  }
-
-  function resetCashAmount() {
-    setTendered(undefined);
-    setCustomText('');
+    onDraftChange((current) => ({ ...current, tendered: centimes, customText: '' }));
   }
 
   async function takePayment() {
@@ -150,9 +134,9 @@ export function PaymentDialog({
       await onConfirm([...recorded, tender]);
       return;
     }
-    setRecorded((current) => [...current, tender]);
-    setPick([]);
-    resetCashAmount();
+    onDraftChange((current) => current.pick.length === 0 ? current : ({
+      ...current, recorded: [...current.recorded, tender], pick: [], tendered: undefined, customText: '',
+    }));
   }
 
   return (
@@ -206,9 +190,10 @@ export function PaymentDialog({
                     empty="Nothing left."
                     disabled={processing}
                     onPick={(lineId) => {
-                      const next = moveCartUnit(remaining, pick, lineId);
-                      setRemaining(next.from);
-                      setPick(next.to);
+                      onDraftChange((current) => {
+                        const next = moveCartUnit(current.remaining, current.pick, lineId);
+                        return { ...current, remaining: next.from, pick: next.to };
+                      });
                     }}
                   />
                 </div>
@@ -223,9 +208,10 @@ export function PaymentDialog({
                     empty="Select products."
                     disabled={processing}
                     onPick={(lineId) => {
-                      const next = moveCartUnit(pick, remaining, lineId);
-                      setPick(next.from);
-                      setRemaining(next.to);
+                      onDraftChange((current) => {
+                        const next = moveCartUnit(current.pick, current.remaining, lineId);
+                        return { ...current, pick: next.from, remaining: next.to };
+                      });
                     }}
                   />
                 </div>
@@ -240,8 +226,7 @@ export function PaymentDialog({
                     aria-pressed={activeMethod === method}
                     disabled={processing}
                     onClick={() => {
-                      setActiveMethod(method);
-                      resetCashAmount();
+                      onDraftChange((current) => ({ ...current, activeMethod: method, tendered: undefined, customText: '' }));
                     }}
                     key={method}
                   >
@@ -277,8 +262,7 @@ export function PaymentDialog({
                     placeholder={t('Amount given')}
                     onChange={(event) => {
                       const next = event.target.value;
-                      setCustomText(next);
-                      setTendered(parseDirhamsToCentimes(next));
+                      onDraftChange((current) => ({ ...current, customText: next, tendered: parseDirhamsToCentimes(next) }));
                     }}
                   />
                 </label>
@@ -307,6 +291,7 @@ export function PaymentDialog({
             </div>
           </dl> : null}
 
+          {!withinLimit ? <p className={styles.limitNotice} role="status">{t('Select all remaining products for the final payment.')}</p> : null}
           <footer>
             {locked || processing ? null : (
               <button type="button" className={styles.cancel} onClick={onCancel}>

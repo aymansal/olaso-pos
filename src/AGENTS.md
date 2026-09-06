@@ -19,6 +19,9 @@ application, global tokens, and the feature screens under `features/`.
   it preserves an unfinished cart across an in-process lock and never clears
   profile-scoped protected access. Lock/switch destroys every retained screen
   so the next staff member cannot inherit restricted management state.
+  The session includes open payment progress (selected/remaining quantities,
+  recorded tenders and cash input); never move collected payments back into
+  dialog-local state. Process-death recovery is not implied by this memory state.
 - `App.tsx` mounts the reconnect worker only inside an authenticated staff
   session, so locked connection changes never perform cloud work.
 - `data/` owns the application-level Convex provider, feature-facing data

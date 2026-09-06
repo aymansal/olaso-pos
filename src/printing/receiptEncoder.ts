@@ -35,7 +35,8 @@ export function encodeCp858(value: string) {
 }
 
 export function formatReceiptMoney(centimes: number) {
-  return `${Math.floor(centimes / 100)}.${String(centimes % 100).padStart(2, '0')}`;
+  const absolute = Math.abs(centimes);
+  return `${centimes < 0 ? '-' : ''}${Math.floor(absolute / 100)}.${String(absolute % 100).padStart(2, '0')}`;
 }
 
 function formatReceiptDate(timestamp: number) {

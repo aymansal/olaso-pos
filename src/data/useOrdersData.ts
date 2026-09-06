@@ -95,6 +95,7 @@ function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
       totalCentimes: snapshot.totalCentimes,
       taxPolicyLabel: snapshot.taxPolicyLabel,
       paymentMethod: snapshot.paymentMethod,
+      ...(snapshot.receiptLanguage ? { receiptLanguage: snapshot.receiptLanguage } : {}),
       ...(snapshot.tenders ? {
         tenders: snapshot.tenders.map((tender) => ({
           ...tender,

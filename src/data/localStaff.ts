@@ -63,7 +63,7 @@ export async function saveStaffIdentityRevision(
 ) {
   await withLocalTransaction(async (database) => {
     await database.run(
-      `UPDATE staff_profiles SET identity_revision = ?, updated_at = ?
+      `UPDATE staff_profiles SET identity_revision = MAX(identity_revision, ?), updated_at = ?
        WHERE id = ?`,
       [identityRevision, Date.now(), staffProfileId],
       false,

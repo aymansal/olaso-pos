@@ -34,6 +34,7 @@ export function ReportSummaryPanel({
     snapshot?.range.from ?? fromDate,
     snapshot?.range.to ?? toDate,
     showCompensation,
+    Boolean(costManagement.saved) && !costManagement.error && !costManagement.isLoading,
   );
   const difference = fromDate || toDate ? previous?.netCentimes
     ? ((current?.netCentimes ?? 0) - previous.netCentimes) / previous.netCentimes * 100
@@ -43,7 +44,10 @@ export function ReportSummaryPanel({
     : 0;
   const categories = current?.categoryTotals.slice(0, 4) ?? [];
   const products = current?.productTotals.slice(0, 6) ?? [];
-  const ingredients = current?.ingredientTotals.slice(0, 10) ?? [];
+  const ingredients = current?.ingredientTotals ?? [];
+  const costValue = (value: number) => profit.costsAvailable
+    ? formatMoney(value)
+    : t(costManagement.error ? 'Unavailable' : 'Loading…');
   const profiles = current?.profileTotals ?? [];
 
   if (tab === 'products') {
@@ -169,12 +173,12 @@ export function ReportSummaryPanel({
           {showCompensation ? (
             <article>
               <small>{t('Wages')}</small>
-              <strong>{formatMoney(profit.compensationCentimes)}</strong>
+              <strong>{costValue(profit.compensationCentimes)}</strong>
             </article>
           ) : null}
           <article>
             <small>{t('Other expenses')}</small>
-            <strong>{formatMoney(profit.otherExpenseCentimes)}</strong>
+            <strong>{costValue(profit.otherExpenseCentimes)}</strong>
           </article>
         </div>
       </aside>
@@ -206,7 +210,7 @@ export function ReportSummaryPanel({
       <div className={`${styles.facts} ${styles.data}`} data-stale={stale}>
         <article>
           <small>{t('Stock value')}</small>
-          <strong>{formatMoney(costManagement.saved?.inventoryValueCentimes ?? 0)}</strong>
+          <strong>{costValue(costManagement.saved?.inventoryValueCentimes ?? 0)}</strong>
         </article>
         <article>
           <small>{t('Orders')}</small>
@@ -222,7 +226,7 @@ export function ReportSummaryPanel({
           <article key={label}>
             <small>{t(label)}</small>
             <strong className={label === 'Gross profit' ? styles.emphasis : ''}>
-              {formatMoney(value)}
+              {label === 'Wages' || label === 'Expenses' ? costValue(value) : formatMoney(value)}
             </strong>
           </article>
         ))}
@@ -253,13 +257,11 @@ export function ReportSummaryPanel({
             ? styles.loss
             : ''
         }>
-          {formatMoney(
-            showCompensation
-              ? profit.operatingProfitCentimes
-              : profit.grossProfitCentimes,
-          )}
+          {showCompensation
+            ? costValue(profit.operatingProfitCentimes)
+            : formatMoney(profit.grossProfitCentimes)}
         </strong>
-        {showCompensation && !profit.complete ? (
+        {showCompensation && !profit.ingredientCostsComplete ? (
           <small>{t('Some sales are missing ingredient cost.')}</small>
         ) : null}
       </div>

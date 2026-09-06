@@ -1,5 +1,6 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import type { CartLine, PaymentTender } from '../features/pos/posSession';
+import { MAX_PAYMENT_TENDERS } from '../features/pos/posSession.ts';
 import {
   loadOperationalCache,
   type OperationalCacheSnapshot,
@@ -8,7 +9,9 @@ import {
   CONNECTION_SYNC_FAILURE,
   listPendingOutbox,
 } from './outbox.ts';
-import { latestPendingManagementOperationIdFromDatabase } from './localManagement.ts';
+import { latestPendingManagementOperationIdFromDatabase, resolveCloudRecordIdFromDatabase } from './localManagement.ts';
+import { captureCatalogQuote, remapCatalogQuote, type CatalogQuote } from '../lib/catalogQuote.ts';
+import { readLocalSaleQuote, releaseLocalSaleQuote } from './localSaleQuote.ts';
 import {
   managementIdentifier,
   OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
@@ -31,6 +34,7 @@ export type SavedReceipt = {
   lines: Array<{
     productId: string;
     productRevision: number;
+    catalogQuote?: CatalogQuote;
     recipeVersionId?: string;
     productName: string;
     receiptName: string;
@@ -90,6 +94,7 @@ export type SaleSyncPayload = {
   lines: Array<{
     productId: string;
     productRevision: number;
+    catalogQuote?: CatalogQuote;
     recipeVersionId?: string;
     quantity: number;
     sizeId?: string;
@@ -105,6 +110,7 @@ type SaleDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
 export type CompleteSaleInput = {
   cart: CartLine[];
+  quoteId?: string;
   cashierProfileId: string;
   cashierName: string;
   serviceType: Exclude<LocalServiceType, 'order-online'>;
@@ -128,7 +134,7 @@ export type SaleCancellationPayload = {
 const TAX_POLICY_LABEL = 'No tax';
 
 function validateTenders(tenders: PaymentTender[], saleTotalCentimes: number) {
-  if (tenders.length < 1 || tenders.length > 20) {
+  if (tenders.length < 1 || tenders.length > MAX_PAYMENT_TENDERS) {
     throw new Error('A sale can include 1 to 20 payments.');
   }
   let dueSum = 0;
@@ -533,11 +539,51 @@ export async function commitLocalSale(
     input.cashierProfileId,
     'Cashier profile ID',
   );
-  const menu = await loadOperationalCache(database as SQLiteDBConnection);
+  const currentMenu = await loadOperationalCache(database as SQLiteDBConnection);
+  let menu = currentMenu;
+  let cart = input.cart;
+  const stockRowIds = new Map<string, string>();
+  if (input.quoteId) {
+    const resolvedIds = new Map<string, Promise<string>>();
+    const resolve = (kind: string, id: string) => {
+      const key = `${kind}:${id}`;
+      let resolved = resolvedIds.get(key);
+      if (!resolved) {
+        resolved = resolveCloudRecordIdFromDatabase(database, kind, id);
+        resolvedIds.set(key, resolved);
+      }
+      return resolved;
+    };
+    menu = await remapCatalogQuote(readLocalSaleQuote(input.quoteId, input.cart), resolve);
+    // Catalog prices/recipes are quoted, but costs and stock are current at commit.
+    const currentIngredients = new Map<string, OperationalCacheSnapshot['ingredients'][number]>();
+    for (const item of currentMenu.ingredients) {
+      const cloudId = await resolve('ingredient', item.id);
+      // Acknowledgement can precede cache replacement: the stock row still has
+      // its local ID. Prefer a real cloud row if both copies are present.
+      if (!currentIngredients.has(cloudId) || item.id === cloudId) {
+        currentIngredients.set(cloudId, { ...item, id: cloudId });
+        stockRowIds.set(cloudId, item.id);
+      }
+    }
+    menu.ingredients = menu.ingredients.map((item) => currentIngredients.get(item.id) ?? {
+      ...item, currentStockQuantity: 0, inventoryValueCentimes: undefined,
+      costStatus: 'incomplete', valuationRevision: 0,
+    });
+    cart = await Promise.all(input.cart.map(async (line) => ({
+      ...line,
+      productId: await resolve('product', line.productId),
+      sizeId: await resolve('product-size', line.sizeId),
+      choiceValueIds: await Promise.all(line.choiceValueIds.map((id) => resolve('choice-value', id))),
+    })));
+  }
   const completedAt = input.completedAt ?? Date.now();
   const receiptNumber = await allocateReceiptNumber(database, completedAt);
-  const prepared = prepareSale(menu, { ...input, completedAt }, localSaleId, receiptNumber);
+  const prepared = prepareSale(menu, { ...input, cart, completedAt }, localSaleId, receiptNumber);
   const { receipt } = prepared;
+  if (input.quoteId) {
+    for (const line of receipt.lines) line.catalogQuote = captureCatalogQuote(menu, line.productId);
+  }
 
   await database.run(
     `INSERT INTO sales
@@ -601,13 +647,14 @@ export async function commitLocalSale(
     if (quantity === 0) continue;
     const ingredientCostCentimes = prepared.ingredientCosts.get(ingredientId);
     const ingredient = menu.ingredients.find((item) => item.id === ingredientId);
+    const stockRowId = stockRowIds.get(ingredientId) ?? ingredientId;
     await database.run(
       `UPDATE ingredients
        SET local_stock_delta = local_stock_delta - ?,
            local_inventory_value_delta = local_inventory_value_delta - COALESCE(?, 0),
            updated_at = ?
        WHERE id = ?`,
-      [quantity, ingredientCostCentimes ?? null, receipt.completedAt, ingredientId],
+      [quantity, ingredientCostCentimes ?? null, receipt.completedAt, stockRowId],
       false,
     );
     await database.run(
@@ -619,7 +666,7 @@ export async function commitLocalSale(
        VALUES (?, ?, ?, ?, ?, ?, 'sale', ?, ?, ?, ?, ?)`,
       [
         idFactory(),
-        ingredientId,
+        stockRowId,
         ingredient?.name ?? '',
         ingredient?.baseUnit ?? '',
         localSaleId,
@@ -654,8 +701,10 @@ export async function commitLocalSale(
   return { localSaleId, operationId, deviceId, receipt };
 }
 
-export function completeLocalSale(input: CompleteSaleInput) {
-  return withLocalTransaction((database) => commitLocalSale(database, input));
+export async function completeLocalSale(input: CompleteSaleInput) {
+  const result = await withLocalTransaction((database) => commitLocalSale(database, input));
+  if (input.quoteId) releaseLocalSaleQuote(input.quoteId);
+  return result;
 }
 
 export async function cancelLocalSale(
@@ -847,6 +896,7 @@ async function loadSaleSyncPayload(
     lines: receipt.lines.map((line) => ({
       productId: line.productId,
       productRevision: line.productRevision,
+      ...(line.catalogQuote ? { catalogQuote: line.catalogQuote } : {}),
       ...(line.recipeVersionId
         ? { recipeVersionId: line.recipeVersionId }
         : {}),

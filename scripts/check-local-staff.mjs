@@ -184,7 +184,7 @@ assert.ok(
   staffManagement.indexOf('await saveUpdatedStaffPin(')
     < staffManagement.indexOf('await saveStaffIdentityRevision('),
 );
-assert.match(staffManagement, /await clearStaffSession\(profile\.id\)/);
+assert.match(staffManagement, /await clearStaffSession\(current\.id\)/);
 assert.doesNotMatch(identitySession, /writeSecureSessionValue\(keys\.provisioning, pin\)/);
 assert.match(lock, /isPendingStaffSession/);
 assert.match(lock, /pendingLocal/);

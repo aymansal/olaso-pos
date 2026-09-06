@@ -1,4 +1,7 @@
 import { useAction, useConvex, useMutation } from 'convex/react';
+import { collectCloudPages } from './collectCloudPages';
+import { withStaffCredentialLock } from './staffCredentialQueue';
+import { catalogQuoteFingerprint, remapCatalogQuote } from '../lib/catalogQuote.ts';
 import {
   createContext,
   useCallback,
@@ -74,6 +77,7 @@ type ReconnectResult = {
   synced: number;
   failed: number;
   pending: number;
+  pendingChanges: boolean;
   refreshed: boolean;
 };
 
@@ -94,8 +98,13 @@ async function toConvexSaleArgs({
   return {
     ...input,
     cashierName: actorName,
-    lines: await Promise.all(input.lines.map(async ({ recipeVersionId, sizeId, choiceValueIds, ...line }) => ({
+    lines: await Promise.all(input.lines.map(async ({ recipeVersionId, sizeId, choiceValueIds, catalogQuote, ...line }) => ({
       ...line,
+      ...(catalogQuote ? {
+        catalogQuoteFingerprint: await catalogQuoteFingerprint(
+          await remapCatalogQuote(catalogQuote, resolveCloudRecordId),
+        ),
+      } : {}),
       productId: await resolveCloudRecordId('product', line.productId) as Id<'products'>,
       ...(recipeVersionId
         ? {
@@ -177,6 +186,13 @@ export function ReconnectProvider({
   const inFlight = useRef<Promise<ReconnectResult> | undefined>(undefined);
   const requestedMode = useRef<ReconnectMode | undefined>(undefined);
   const previousAvailable = useRef<boolean | undefined>(undefined);
+  const currentContext = useRef({ available, foreground, token: session.token });
+  currentContext.current = { available, foreground, token: session.token };
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
   const [isSyncing, setIsSyncing] = useState(false);
   const [revision, setRevision] = useState(0);
   const notifyLocalWrite = useCallback(() => {
@@ -193,6 +209,13 @@ export function ReconnectProvider({
       );
     }
 
+    const isCancelled = () => !mounted.current
+      || currentContext.current.available !== true
+      || !currentContext.current.foreground
+      || currentContext.current.token !== session.token;
+    const requireCurrentContext = () => {
+      if (isCancelled()) throw new Error(CONNECTION_SYNC_FAILURE);
+    };
     let synced = 0;
     let failed = 0;
     try {
@@ -522,28 +545,30 @@ export function ReconnectProvider({
         deviceId: session.deviceId,
         language: preferredLanguage,
       });
-      const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
-        deviceId: session.deviceId,
+      await withStaffCredentialLock(async () => {
+        const remoteProfiles = await convex.query(api.identity.listActiveProfiles, {
+          deviceId: session.deviceId,
+        });
+        const activeProfiles = remoteProfiles.flatMap((profile) =>
+          isStaffRole(profile.role)
+            ? [{
+                id: String(profile.id),
+                name: profile.name,
+                role: profile.role,
+                revision: Number(profile.revision),
+                identityRevision: Number(profile.identityRevision),
+                preferredLanguage: profile.preferredLanguage === 'fr' ? 'fr' as const : 'en' as const,
+              }]
+            : [],
+        );
+        const invalidatedProfileIds = await reconcileAuthenticatedStaffProfiles(
+          activeProfiles,
+          session.staffProfileId,
+        );
+        for (const profileId of invalidatedProfileIds) {
+          await clearStaffSession(profileId);
+        }
       });
-      const activeProfiles = remoteProfiles.flatMap((profile) =>
-        isStaffRole(profile.role)
-          ? [{
-              id: String(profile.id),
-              name: profile.name,
-              role: profile.role,
-              revision: Number(profile.revision),
-              identityRevision: Number(profile.identityRevision),
-              preferredLanguage: profile.preferredLanguage === 'fr' ? 'fr' as const : 'en' as const,
-            }]
-          : [],
-      );
-      const invalidatedProfileIds = await reconcileAuthenticatedStaffProfiles(
-        activeProfiles,
-        session.staffProfileId,
-      );
-      for (const profileId of invalidatedProfileIds) {
-        await clearStaffSession(profileId);
-      }
 
       const settings = await loadTerminalSettings();
       let refreshed = false;
@@ -551,50 +576,56 @@ export function ReconnectProvider({
         [...OPERATIONAL_MANAGEMENT_OPERATION_TYPES,
           ...STAFF_MANAGEMENT_OPERATION_TYPES],
       )) {
-        const cloud = await convex.query(api.sync.getOperationalSnapshot, {
-          sessionToken: session.token,
-          deviceId: session.deviceId,
-          requestId: crypto.randomUUID(),
-        });
-        await replaceOperationalCache({
-          ...cloud,
-          products: cloud.products.map((product) => ({
-            ...product,
-            status: product.status === 'active' ? 'active' : 'unavailable',
-          })),
+        await withStaffCredentialLock(async () => {
+          const cloud = await convex.query(api.sync.getOperationalSnapshot, {
+            sessionToken: session.token,
+            deviceId: session.deviceId,
+            requestId: crypto.randomUUID(),
+          });
+          await replaceOperationalCache({
+            ...cloud,
+            products: cloud.products.map((product) => ({
+              ...product,
+              status: product.status === 'active' ? 'active' : 'unavailable',
+            })),
+          });
         });
         refreshed = true;
       }
       if (hasPermission(session.role, 'expenses')) {
-        const expenses = await convex.query(api.expenses.list, {
+        const expenses = await collectCloudPages((paginationOpts) => convex.query(api.expenses.listPage, {
           ...sessionArgs,
-          limit: 100,
-        });
+          paginationOpts,
+        }), isCancelled);
+        requireCurrentContext();
         await replaceSavedExpenses(expenses.map((expense) => ({
           ...expense,
           id: String(expense.id),
           ...(expense.correctionOfExpenseId
             ? { correctionOfExpenseId: String(expense.correctionOfExpenseId) }
             : {}),
-        })));
+        })), undefined, requireCurrentContext);
       }
       if (hasPermission(session.role, 'compensation')) {
-        const compensation = await convex.query(
-          api.staff.listAllCompensation,
-          sessionArgs,
-        );
+        const compensation = await collectCloudPages((paginationOpts) => convex.query(
+          api.staff.listAllCompensationPage,
+          { ...sessionArgs, paginationOpts },
+        ), isCancelled);
+        requireCurrentContext();
         await replaceSavedCompensation(compensation.map((period) => ({
           ...period,
           id: String(period.id),
           staffProfileId: String(period.staffProfileId),
-        })));
+        })), undefined, requireCurrentContext);
       }
       setRevision((value) => value + 1);
-      await clearSyncError();
+      const pendingChanges = await hasPendingManagementOperations();
+      if (!failed && !pendingChanges && !settings.pendingSyncCount) await clearSyncError();
       return {
         synced,
         failed,
         pending: settings.pendingSyncCount,
+        pendingChanges,
         refreshed,
       };
     } catch (caught) {

@@ -8,6 +8,7 @@ export function buildPeriodProfit(
   fromDate: string,
   toDate: string,
   showCompensation: boolean,
+  costsAvailable = costs !== undefined,
 ) {
   const revenueCentimes = snapshot?.current.netCentimes ?? 0;
   const ingredientCostCentimes = snapshot?.current.ingredientCostCentimes ?? 0;
@@ -30,6 +31,8 @@ export function buildPeriodProfit(
     operatingProfitCentimes: grossProfitCentimes
       - allocated.compensationCentimes
       - allocated.otherExpenseCentimes,
-    complete: !incomplete,
+    complete: !incomplete && costsAvailable,
+    ingredientCostsComplete: !incomplete,
+    costsAvailable,
   };
 }

@@ -29,6 +29,7 @@ import type { Product } from './data/products';
 import { productImage } from '../../lib/productImage';
 import {
   addProduct,
+  createPaymentDraft,
   complimentaryCentimes,
   decrementCartLine,
   filterProducts,
@@ -167,16 +168,18 @@ export function PosScreen({
   const t = useT();
   const { available } = useConnectionStatus();
   const {
-    menu,
+    menu: liveMenu,
     quickAddProductIds,
     completeOrder,
     printFeedback,
-    isLoading,
+    createPaymentQuote,
+    releasePaymentQuote,
     error: dataWarning,
   } = usePosData();
+  const menu = session.payment?.quote?.menu ?? liveMenu;
+  const isLoading = !menu;
   const [configuringProductId, setConfiguringProductId] = useState<string>();
-  const [paying, setPaying] = useState(false);
-  const [payingSplit, setPayingSplit] = useState(false);
+  const paying = session.payment !== undefined;
   const checkoutInFlight = useRef(false);
   const [checkoutError, setCheckoutError] = useState('');
   const [visitedCategoryIds, setVisitedCategoryIds] = useState<string[]>(
@@ -185,7 +188,8 @@ export function PosScreen({
 
   function editSession(edit: (current: PosSession) => PosSession) {
     setCheckoutError('');
-    onSessionChange((current) => ({ ...edit(current), checkoutStatus: 'idle' }));
+    onSessionChange((current) => current.payment || current.checkoutStatus === 'processing'
+      ? current : { ...edit(current), checkoutStatus: 'idle' });
   }
 
   const categoryKeyById = useMemo(
@@ -297,7 +301,6 @@ export function PosScreen({
       onSessionChange((current) => ({
         ...current,
         selectedCategoryId: categories[0].id,
-        checkoutStatus: 'idle',
       }));
     }
   }, [categories, onSessionChange, session.selectedCategoryId]);
@@ -424,6 +427,26 @@ export function PosScreen({
     }));
   }
 
+  async function beginPayment(split: boolean) {
+    if (validation.kind !== 'valid' || checkoutInFlight.current || paying) return;
+    checkoutInFlight.current = true;
+    setCheckoutError('');
+    onSessionChange((current) => ({ ...current, checkoutStatus: 'processing' }));
+    try {
+      const quote = await createPaymentQuote(session.cart);
+      onSessionChange((current) => ({
+        ...current,
+        payment: createPaymentDraft(current.cart, current.paymentMethod, split, quote),
+        checkoutStatus: 'idle',
+      }));
+    } catch (caught) {
+      setCheckoutError(caught instanceof Error ? caught.message : 'The order could not be prepared.');
+      onSessionChange((current) => ({ ...current, checkoutStatus: 'idle' }));
+    } finally {
+      checkoutInFlight.current = false;
+    }
+  }
+
   async function placeOrder() {
     if (validation.kind !== 'valid') return;
     setCheckoutError('');
@@ -435,7 +458,7 @@ export function PosScreen({
       await confirmPayment();
       return;
     }
-    setPaying(true);
+    await beginPayment(false);
   }
 
   async function confirmPayment(tenders?: PaymentTender[]) {
@@ -455,13 +478,13 @@ export function PosScreen({
         serviceType: localServiceType(session.serviceMode),
         paymentMethod: session.paymentMethod,
         receiptLanguage,
+        ...(session.payment?.quote ? { quoteId: session.payment.quote.id } : {}),
         ...(savedTenders ? { tenders: savedTenders } : {}),
       });
-      setPaying(false);
-      setPayingSplit(false);
       onSessionChange((current) => ({
         ...current,
         cart: [],
+        payment: undefined,
         checkoutStatus: 'success',
       }));
     } catch (caught) {
@@ -560,9 +583,7 @@ export function PosScreen({
         canSplit={paidUnitCount(session.cart) > 1}
         onSplit={() => {
           if (validation.kind !== 'valid' || checkoutInFlight.current || paidUnitCount(session.cart) <= 1) return;
-          setCheckoutError('');
-          setPayingSplit(true);
-          setPaying(true);
+          void beginPayment(true);
         }}
       />
       {configuringProduct && configuringSizes.length > 0 ? (
@@ -585,7 +606,7 @@ export function PosScreen({
           }}
         />
       ) : null}
-      {paying ? (
+      {session.payment && menu && !isLoading ? (
         <PaymentDialog
           cart={session.cart}
           labels={Object.fromEntries(
@@ -600,15 +621,17 @@ export function PosScreen({
               },
             ]),
           )}
-          paymentMethod={session.paymentMethod}
+          draft={session.payment}
+          onDraftChange={(update) => onSessionChange((current) => current.payment
+            ? { ...current, payment: update(current.payment) } : current)}
           sizes={pricedSizes}
           choiceValues={pricedChoiceValues}
-          canSplit={paidUnitCount(session.cart) > 1}
-          startSplit={payingSplit}
           processing={session.checkoutStatus === 'processing'}
           onCancel={() => {
-            setPaying(false);
-            setPayingSplit(false);
+            if (session.payment?.recorded.length) return;
+            if (session.payment?.quote) releasePaymentQuote(session.payment.quote.id);
+            onSessionChange((current) => current.payment?.recorded.length
+              ? current : { ...current, payment: undefined });
           }}
           onConfirm={confirmPayment}
         />

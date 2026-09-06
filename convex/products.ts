@@ -1,4 +1,5 @@
 import { v } from 'convex/values';
+import { retainProductCatalog } from './lib/catalogHistory';
 import { mutation, query } from './_generated/server';
 import type { Id } from './_generated/dataModel';
 import type { MutationCtx } from './_generated/server';
@@ -104,6 +105,7 @@ export const save = mutation({
         return { id: product._id, revision: product.revision, created: false };
       }
       expectRevision(args.expectedRevision, product.revision);
+      await retainProductCatalog(ctx, product._id);
       if (product.status === 'archived') {
         return conflict('Restore this product before editing it.');
       }
@@ -175,6 +177,7 @@ export const remove = mutation({
     const product = await ctx.db.get(args.id);
     if (!product) return { id: args.id, deleted: true as const };
     expectRevision(args.expectedRevision, product.revision);
+    await retainProductCatalog(ctx, product._id);
     const recipes = await ctx.db.query('recipeVersions')
       .withIndex('by_product_version', (index) => index.eq('productId', product._id))
       .take(101);
@@ -213,6 +216,7 @@ export const setStatus = mutation({
       return { id: product._id, revision: product.revision };
     }
     expectRevision(args.expectedRevision, product.revision);
+    await retainProductCatalog(ctx, product._id);
     await ctx.db.patch(product._id, {
       status: args.status,
       revision: product.revision + 1,

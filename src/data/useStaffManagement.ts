@@ -19,6 +19,8 @@ import {
 } from './identitySession.ts';
 import { useReconnect } from './reconnectContext.tsx';
 import { useStaffSession } from './sessionContext.tsx';
+import { resolveCloudRecordId } from './localManagement.ts';
+import { withStaffCredentialLock } from './staffCredentialQueue.ts';
 
 export function useStaffManagement() {
   const session = useStaffSession();
@@ -92,32 +94,37 @@ export function useStaffManagement() {
     setMessage('');
     try {
       const credential = await createStaffPinCredential(validateStaffPin(input));
-      let identityRevision = profile.identityRevision;
-      if (!profile.pending) {
-        const updated = await updateStaffPin({
-          sessionToken: session.token,
-          deviceId: session.deviceId,
-          staffProfileId: profile.id as Id<'staffProfiles'>,
-          ...credential,
-        });
-        identityRevision = updated.identityRevision;
-      }
-      try {
-        await saveUpdatedStaffPin(
-          profile.id,
-          credential,
-          identityRevision,
-          profile.pending,
-        );
-        if (!profile.pending) {
-          await saveStaffIdentityRevision(profile.id, identityRevision);
+      await withStaffCredentialLock(async () => {
+        const currentId = await resolveCloudRecordId('staff-profile', profile.id);
+        const current = (await loadLocalStaffProfiles()).find((item) => item.id === currentId);
+        if (!current) throw new Error('Staff member changed. Refresh before changing the PIN.');
+        let identityRevision = current.identityRevision;
+        if (!current.pending) {
+          const updated = await updateStaffPin({
+            sessionToken: session.token,
+            deviceId: session.deviceId,
+            staffProfileId: current.id as Id<'staffProfiles'>,
+            ...credential,
+          });
+          identityRevision = updated.identityRevision;
         }
-      } catch (storageError) {
-        if (!profile.pending) {
-          await clearStaffSession(profile.id).catch(() => undefined);
+        try {
+          await saveUpdatedStaffPin(
+            current.id,
+            credential,
+            identityRevision,
+            current.pending,
+          );
+          if (!current.pending) {
+            await saveStaffIdentityRevision(current.id, identityRevision);
+          }
+        } catch (storageError) {
+          if (!current.pending) {
+            await clearStaffSession(current.id).catch(() => undefined);
+          }
+          throw storageError;
         }
-        throw storageError;
-      }
+      });
       await reload();
       setMessage('PIN changed.');
     } catch (caught) {

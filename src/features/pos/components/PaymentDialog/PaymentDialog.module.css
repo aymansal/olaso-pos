@@ -29,6 +29,13 @@
   display: flex;
 }
 
+.limitNotice {
+  flex-shrink: 0;
+  margin: 8px 0 0;
+  color: var(--olaso-text-meta);
+  font-size: 11px;
+}
+
 .dialog header,
 .dialog footer {
   flex-shrink: 0;

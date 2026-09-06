@@ -1,4 +1,5 @@
 import { v } from 'convex/values';
+import { paginationOptsValidator } from 'convex/server';
 import { mutation, query } from './_generated/server';
 import {
   boundedInteger,
@@ -252,6 +253,15 @@ export const listAllCompensation = query({
       ...(row.effectiveEndDate ? { effectiveEndDate: row.effectiveEndDate } : {}),
       revision: row.revision,
     }));
+  },
+});
+
+export const listAllCompensationPage = query({
+  args: { ...sessionArgs, paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    await requireOwner(ctx, args);
+    const page = await ctx.db.query('compensationPeriods').paginate(args.paginationOpts);
+    return { ...page, page: page.page.map((row) => ({ ...row, id: row._id })) };
   },
 });
 

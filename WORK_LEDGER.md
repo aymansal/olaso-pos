@@ -7,6 +7,68 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 audit repair authorized (POLISH-01)
+
+- FINAL: original AUD-01–14/INVEST-01 plus fresh AUD-15–19 repaired. Owner's
+  original-price decision implemented end-to-end with trusted catalog history.
+  Final review caught/fixed mapping-before-cache-replacement stock identity;
+  regression confirms actual stock80→40 and correct cost. No further audits
+  requested now: owner conserving remaining quota.
+- Final production build, native checks, endpoint verification and Convex deploy
+  passed; final APK installed over data. Cash/split quote dialogs open and unpaid
+  quote cancellation works. Real5-minute lock preserved first tender/remaining
+  item; original10-minute setting restored, synthetic cart cleared. Dashboard,
+  Orders, Stock, Products, Reports, Settings smoke pass; final console empty.
+- check:audit now includes local quote and real backend-handler synthetic tests;
+  all pass, along with POS/printing/local/CSS and earlier scoped checks. No real
+  financial/stock/PIN tests; protected seeded backend fixtures and paper are
+  unrun. Graphify refreshed3504nodes. Current commit/push pending below; no claim
+  that an audit guarantees zero undiscovered bugs or full client acceptance.
+
+- Owner authorizes all AUD-01–14 repairs plus INVEST-01 root-cause repair, then
+  a fresh independent-agent audit. One repair batch under POLISH-01; do not
+  declare completion from compilation alone or invent a Products reproduction.
+- Work split: reports agent04/05/07/08/09, identity-stock agent02/03/06/10,
+  receipt agent11/12/13; root01/14 and Products startup. Root integrates/checks,
+  packages/installs and owns shared ledger/commits. No production test mutations.
+- Root pre-change official Android saved-UI-state guidance and Capacitor docs:
+  https://developer.android.com/topic/libraries/architecture/saving-states
+  https://capacitorjs.com/docs . Keep payment draft with existing App-owned
+  session across authentication unmount, not native UI state or disabled lock.
+  In-process recovery is distinct from process-death persistence. Products reads
+  remain existing SQLite/React boundary; diagnose ordering before adding caches.
+- In progress: scoped implementation and isolated regression checks. Exact next:
+  integrate repairs, reproduce tablet-visible cases safely, then fresh reviewers.
+- Repair pass implemented AUD-01–14 + proven Products archive/read race. Existing
+  transaction queue now isolates menu reads from replacement. Added regression
+  command check:audit; safe POS/identity/stock/local/offline/printing checks pass.
+- Fresh agents found AUD-15 finance100history ceiling,17 stale-identity response,
+  18 pagedcost/readwrite race,19 backgroundfinancepagination; implemented and
+  isolated regressions pass. AUD-16 partial-payment/catalog-change pricing policy
+  owner approved keeping the original agreed prices for the entire split order.
+  Implementation must preserve trusted catalog facts through local completion
+  and cloud validation, while valuing stock at completion; a display-only price
+  freeze is not sufficient. Do not call the entire batch release-ready.
+- Physical isolated SQLite test passed negative-stock recovery,10→30 recount,
+  1,002 monthly sales,121 expenses, daily overview. Temporary separate audit DB
+  deleted/absence verified; production business records untouched. Evidence
+  tmp/native-audit-result.json. Initial harness syntax failed before execution.
+- Protected sales/orders local checks passed up to absent disposable PIN gate;
+  protected backend fixtures not run. Production package currently building;
+  next install-over + visible screen/split-lock QA, document policy blocker.
+- Install-over succeeded for the original repair build. First tablet smoke
+  revealed its backend deployment had not completed: production metadata lacked
+  finance page functions and pending-cancellation arguments. Corrected the
+  Convex-only import-extension typecheck failure and deployed successfully.
+  Reports now loads9 orders/387MAD, Costs/Stock usage render correctly; Products
+  shows Loading live menu then79 records, not a false empty-table sentence.
+- AUD-16 implementation underway with private local quote, fresh final stock
+  valuation, and server-owned pre-change catalog history. Local quote and POS
+  regressions pass. No live sale was saved for these checks. Temporary own
+  two-Espresso split draft has one10MAD card tender only in memory; waiting for
+  real5-minute inactivity lock. Restore original10-minute preference and clear
+  this synthetic draft before release; never complete it as a production sale.
+
 ### Current checkpoint — 2026-09-06 full-app audit (POLISH-01)
 
 - Owner requested a cross-screen audit with parallel agents and explicitly

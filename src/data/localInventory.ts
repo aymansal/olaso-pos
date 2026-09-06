@@ -5,7 +5,7 @@ import type {
   StockAdjustmentMode,
 } from '../features/stock/stockManagementTypes.ts';
 import {
-  allocateCentimes,
+  valueStockIncrease,
   consumeValuation,
   receiveValuation,
   type InventoryValuation,
@@ -78,7 +78,7 @@ async function ingredient(database: Database, ingredientId: string) {
 }
 
 function valuation(row: Record<string, unknown>): InventoryValuation {
-  const quantity = integer(Number(row.effective_quantity), 'Stock quantity');
+  const quantity = integer(Number(row.effective_quantity), 'Stock quantity', -MAX_QUANTITY);
   const value = row.effective_value === null || row.effective_value === undefined
     ? undefined
     : integer(Number(row.effective_value), 'Inventory value', 0, MAX_TIME);
@@ -161,7 +161,7 @@ async function receivePurchaseInDatabase(
   const totalCostCentimes = multiplied(packageCount, packagePriceCentimes, 'Total purchase cost');
   const receivedAt = integer(input.receivedAt ?? Date.now(), 'Received time', 0, MAX_TIME);
   const current = valuation(row);
-  integer(current.quantity + totalQuantity, 'Resulting stock quantity');
+  integer(current.quantity + totalQuantity, 'Resulting stock quantity', -MAX_QUANTITY);
   const next = receiveValuation(current, totalQuantity, totalCostCentimes);
   const valuationRevision = Number(row.valuation_revision) + 1;
   const revision = Number(row.revision) + 1;
@@ -586,7 +586,7 @@ export function recordLocalStockAdjustment(
     const current = valuation(row);
     const quantityDelta = mode === 'receive' ? quantity : quantity - current.quantity;
     if (quantityDelta === 0) throw new Error('The counted quantity already matches the current stock.');
-    const nextQuantity = integer(current.quantity + quantityDelta, 'Resulting stock quantity');
+    const nextQuantity = integer(current.quantity + quantityDelta, 'Resulting stock quantity', -MAX_QUANTITY);
     let next: InventoryValuation;
     let costDeltaCentimes: number | undefined;
     if (mode === 'receive') {
@@ -596,11 +596,7 @@ export function recordLocalStockAdjustment(
       next = consumed.next;
       if (consumed.cost.complete) costDeltaCentimes = -consumed.cost.costCentimes;
     } else if (current.complete && current.quantity > 0) {
-      const increaseCost = allocateCentimes(
-        current.inventoryValueCentimes!,
-        current.quantity,
-        quantityDelta,
-      );
+      const increaseCost = valueStockIncrease(current, quantityDelta);
       next = receiveValuation(current, quantityDelta, increaseCost);
       costDeltaCentimes = increaseCost;
     } else {

@@ -4,6 +4,8 @@ import { stripTypeScriptTypes } from 'node:module';
 import { balanceOptionGroups } from '../src/features/pos/balanceOptionGroups.ts';
 import {
   addProduct,
+  createPaymentDraft,
+  canRecordPayment,
   chargedCentimes,
   changeCentimes,
   complimentaryCentimes,
@@ -228,13 +230,13 @@ const paymentDialog = readFileSync(
   'utf8',
 );
 assert.match(paymentDialog, /QUICK_TENDER_CENTIMES/);
-assert.match(paymentDialog, /payableCart/);
-assert.match(paymentDialog, /canSplit/);
+assert.match(paymentDialog, /onDraftChange/);
+assert.match(paymentDialog, /canRecordPayment/);
 assert.match(paymentDialog, /Split/);
 assert.match(paymentDialog, /locked \|\| processing \? null/);
 assert.doesNotMatch(paymentDialog, /onClose=\{onCancel\}/);
 // Only the receipt rail chooses split mode; no redundant in-dialog toggle.
-assert.match(paymentDialog, /const split = canSplit && startSplit === true/);
+assert.match(paymentDialog, /const \{ split, remaining, pick, recorded/);
 assert.doesNotMatch(paymentDialog, /toggleSplit|styles\.split|setSplitFade/);
 const adaptivePaymentCss = readFileSync('src/features/pos/components/PaymentDialog/PaymentDialog.module.css', 'utf8');
 assert.match(adaptivePaymentCss, /grid-template-rows: minmax\(0, 1fr\)/);
@@ -243,7 +245,7 @@ assert.match(adaptivePaymentCss, /max-height: 196px/);
 const posScreen = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
 assert.match(posScreen, /PaymentDialog/);
 assert.match(posScreen, /total === 0/);
-assert.match(posScreen, /setPaying\(true\)/);
+assert.match(posScreen, /payment: createPaymentDraft/);
 assert.match(posScreen, /paidUnitCount/);
 assert.match(posScreen, /tenders/);
 assert.match(posScreen, /const savedTenders = tenders \?\? \(total > 0 \? \[\{/);
@@ -331,14 +333,37 @@ assert.doesNotMatch(posScreen, /SplitOrderQuestion|setSplitQuestion/);
 assert.match(posScreen, /checkoutInFlight.current = true/);
 assert.match(posScreen, /finally \{\s*checkoutInFlight.current = false/);
 const placeStart = posScreen.indexOf('  async function placeOrder()');
+const beginStart = posScreen.indexOf('  async function beginPayment(');
+const beginSource = posScreen.slice(beginStart, placeStart);
+let quoteRequests = 0, finishQuote;
+const quoteReady = new Promise(resolve => { finishQuote = resolve; });
+const beginHarness = new Function('createPaymentQuote', 'createPaymentDraft', `
+  const validation={kind:'valid'}, checkoutInFlight={current:false}, paying=false;
+  const session={cart:[],paymentMethod:'Cash'}, setCheckoutError=()=>{};
+  let state=session;
+  const onSessionChange=update=>{state=update(state)};
+  ${stripTypeScriptTypes(beginSource)}
+  return {beginPayment, state:()=>state};
+`)(async()=>{quoteRequests++;return quoteReady}, createPaymentDraft);
+const firstQuote = beginHarness.beginPayment(true);
+await beginHarness.beginPayment(true);
+assert.equal(quoteRequests, 1, 'Repeated clicks cannot replace a pending payment quote');
+assert.equal(beginHarness.state().payment, undefined, 'Payment cannot start before the trusted quote');
+const agreedQuote = {id:'agreed',menu:{products:[]}};
+finishQuote(agreedQuote);
+await firstQuote;
+assert.equal(beginHarness.state().payment.quote, agreedQuote);
+assert.equal(beginHarness.state().checkoutStatus, 'idle');
+assert.match(posScreen, /session\.payment\?\.quote\?\.menu \?\? liveMenu/);
+assert.match(posScreen, /quoteId: session\.payment\.quote\.id/);
 const placeSource = posScreen.slice(placeStart, posScreen.indexOf('  async function confirmPayment', placeStart));
 for (const [method,total,expected] of [['Card',5600,'save'],['Cash',5600,'amount'],['Cash',0,'save']]) {
   let route;
-  const run = new Function('session','total','confirmPayment','setPaying', `
+  const run = new Function('session','total','confirmPayment','beginPayment', `
     const validation={kind:'valid'}, setCheckoutError=()=>{};
     ${stripTypeScriptTypes(placeSource)}
     return placeOrder();`);
-  await run({paymentMethod:method},total,async()=>{route='save'},()=>{route='amount'});
+  await run({paymentMethod:method},total,async()=>{route='save'},async(split)=>{assert.equal(split,false);route='amount'});
   assert.equal(route,expected);
 }
 const confirmStart = posScreen.indexOf('  async function confirmPayment');
@@ -359,19 +384,35 @@ const takePaymentSource = paymentDialog.slice(paymentStart, paymentDialog.indexO
 for (const methods of [['Cash', 'Card'], ['Card', 'Cash'], ['Cash', 'Card', 'Card']]) {
   let recorded = [], confirmed;
   for (const [index, method] of methods.entries()) {
-    const run = new Function('activeMethod', 'recorded', 'lastSplit', 'onConfirm', 'setRecorded', `
+    const run = new Function('activeMethod', 'recorded', 'lastSplit', 'onConfirm', 'onDraftChange', `
       const canPay=true, due=1300, received=activeMethod==='Cash'?2000:1300,
         change=received-due, processing=false, split=true;
       const setPick=()=>{}, resetCashAmount=()=>{};
       ${stripTypeScriptTypes(takePaymentSource)}
       return takePayment();`);
     await run(method, recorded, index===methods.length-1,
-      async rows=>{confirmed=rows}, update=>{recorded=update(recorded)});
+      async rows=>{confirmed=rows}, update=>{recorded=update({recorded,pick:[{}]}).recorded});
   }
   assert.deepEqual(confirmed.map(row=>row.paymentMethod),methods);
   assert.equal(confirmed.reduce((sum,row)=>sum+row.dueCentimes,0),1300*methods.length);
   assert(confirmed.every(row=>row.changeCentimes===(row.paymentMethod==='Cash'?700:0)));
 }
+
+// App-owned progress survives replacement of the screen which renders it.
+const draftCart = addProduct(addProduct([], 'americano', 'americano-reg'), 'latte', 'latte-reg');
+const draft = createPaymentDraft(draftCart, 'Cash', true);
+const draftMoved = moveCartUnit(draft.remaining, draft.pick, draft.remaining[0].id);
+const appSession = { ...baseSession, cart: draftCart, payment: {
+  ...draft, remaining: draftMoved.from, pick: [], recorded: [{ paymentMethod:'Cash', dueCentimes:1300, amountCentimes:2000, changeCentimes:700 }],
+} };
+assert.equal(appSession.payment.remaining.length,1);
+assert.equal(appSession.payment.recorded[0].dueCentimes,1300);
+assert.match(posScreen, /session\.payment && menu && !isLoading/);
+assert.doesNotMatch(paymentDialog, /useState/);
+assert.equal(canRecordPayment(18,true),true);
+assert.equal(canRecordPayment(19,true),false);
+assert.equal(canRecordPayment(19,false),true);
+assert.equal(canRecordPayment(20,false),false);
 
 // Shared lists must escape sibling/scroll stacking contexts and stay scrollable.
 const menuSelect = readFileSync('src/components/MenuSelect/MenuSelect.tsx', 'utf8');

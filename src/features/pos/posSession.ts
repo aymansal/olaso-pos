@@ -1,4 +1,5 @@
 import type { CategoryId } from './data/categories';
+import type { LocalSaleQuote } from '../../data/localSaleQuote';
 
 export type ServiceMode = 'Dine In' | 'Take Away';
 export type PaymentMethod = 'Cash' | 'Card';
@@ -19,7 +20,30 @@ export type PosSession = {
   serviceMode: ServiceMode;
   paymentMethod: PaymentMethod;
   checkoutStatus: 'idle' | 'processing' | 'success';
+  payment?: PaymentDraft;
 };
+
+export const MAX_PAYMENT_TENDERS = 20;
+
+/** App-owned draft survives authentication unmounts, like the unfinished cart. */
+export type PaymentDraft = {
+  quote?: LocalSaleQuote;
+  split: boolean;
+  remaining: CartLine[];
+  pick: CartLine[];
+  recorded: PaymentTender[];
+  activeMethod: PaymentMethod;
+  customText: string;
+  tendered?: number;
+};
+
+export function createPaymentDraft(cart: CartLine[], method: PaymentMethod, split: boolean, quote?: LocalSaleQuote): PaymentDraft {
+  return { quote, split, remaining: payableCart(cart), pick: [], recorded: [], activeMethod: method, customText: '' };
+}
+
+export function canRecordPayment(recordedCount: number, hasRemaining: boolean) {
+  return recordedCount < MAX_PAYMENT_TENDERS - (hasRemaining ? 1 : 0);
+}
 
 type PricedSize = {
   id: string;

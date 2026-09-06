@@ -1,4 +1,5 @@
 import { v } from 'convex/values';
+import { retainCategoryCatalog } from './lib/catalogHistory';
 import { mutation, query } from './_generated/server';
 import {
   boundedInteger,
@@ -58,6 +59,7 @@ export const save = mutation({
         return { id: category._id, revision: category.revision, created: false };
       }
       expectRevision(args.expectedRevision, category.revision);
+      await retainCategoryCatalog(ctx, category._id);
       await ctx.db.patch(category._id, {
         name,
         artworkKey,
@@ -117,6 +119,7 @@ export const setArchived = mutation({
       return { id: category._id, revision: category.revision };
     }
     expectRevision(args.expectedRevision, category.revision);
+    await retainCategoryCatalog(ctx, category._id);
     await ctx.db.patch(category._id, {
       status: args.archived ? 'archived' : 'active',
       revision: category.revision + 1,
@@ -141,6 +144,7 @@ export const remove = mutation({
     const category = await ctx.db.get(args.id);
     if (!category) return { id: args.id, deleted: true as const };
     expectRevision(args.expectedRevision, category.revision);
+    await retainCategoryCatalog(ctx, category._id);
     const products = await ctx.db.query('products')
       .withIndex('by_category', (index) => index.eq('categoryId', category._id))
       .take(201);

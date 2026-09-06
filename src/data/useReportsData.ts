@@ -8,6 +8,7 @@ import { useConnectionStatus } from './connectionContext';
 import { loadOfflineReport } from './offlineViews';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
+import { pendingReportSaleIds } from './pendingReportCorrections';
 
 export type ReportsSnapshot =
   FunctionReturnType<typeof api.reports.getSummary>;
@@ -64,12 +65,13 @@ export function useReportsData(fromDate: string, toDate: string) {
     const localRequest = loadOfflineReport(fromDate, toDate) as unknown as Promise<ReportsSnapshot>;
     const request = available
       ? Promise.all([
-        allTime
+        pendingReportSaleIds().then((pendingCancelledSaleIds) => allTime
           ? collectCloudAllReportPages(
             (paginationOpts) => convex.query(api.reports.getAllSummaryPage, {
               sessionToken: session.token,
               deviceId: session.deviceId,
               paginationOpts,
+              pendingCancelledSaleIds,
             }),
             () => convex.query(api.reports.getAllSummaryStock, {
               sessionToken: session.token,
@@ -81,9 +83,10 @@ export function useReportsData(fromDate: string, toDate: string) {
           : convex.query(api.reports.getSummary, {
             fromDate,
             toDate,
+            pendingCancelledSaleIds,
             sessionToken: session.token,
             deviceId: session.deviceId,
-          }),
+          })),
         localRequest.catch(() => undefined),
       ]).then(([cloud, local]) => {
         const snapshot = selectReportSnapshot(cloud, local);
@@ -96,7 +99,10 @@ export function useReportsData(fromDate: string, toDate: string) {
         );
         return {
           ...snapshot,
-          ...(allTime ? { range: local.range } : {}),
+          ...(allTime ? { range: {
+            ...snapshot.range,
+            from: local.range.from < cloud.range.from ? local.range.from : cloud.range.from,
+          } } : {}),
           current: {
             ...snapshot.current,
             ingredientTotals: snapshot.current.ingredientTotals.map((item) => ({

@@ -1,7 +1,9 @@
 import { v } from 'convex/values';
+import { retainIngredientCatalog } from './lib/catalogHistory';
 import { mutation, query } from './_generated/server';
 import {
   allocateCentimes,
+  valueStockIncrease,
   consumeValuation,
   receiveValuation,
 } from '../src/lib/costs';
@@ -414,6 +416,7 @@ export const removeIngredient = mutation({
       return { id: args.id, deleted: true as const, repairs: restored.flat() };
     }
     expectRevision(args.expectedRevision, ingredient.revision);
+    await retainIngredientCatalog(ctx, ingredient._id);
     const [items, movements, purchases, products] = await Promise.all([
       ctx.db.query('recipeItems')
         .withIndex('by_ingredient_created_at', (index) =>
@@ -558,7 +561,7 @@ export const receivePurchase = mutation({
     const currentStockQuantity = boundedInteger(
       ingredient.currentStockQuantity + input.totalQuantity,
       'Resulting stock quantity',
-      0,
+      -MAX_PACKAGE_QUANTITY,
       MAX_PACKAGE_QUANTITY,
     );
     const valuation = receiveValuation(
@@ -851,7 +854,7 @@ export const recordAdjustment = mutation({
     const currentStockQuantity = boundedInteger(
       ingredient.currentStockQuantity + quantityDelta,
       'Resulting stock quantity',
-      0,
+      -100_000_000,
       100_000_000,
     );
     const currentValuation = valuationOf(ingredient);
@@ -864,11 +867,7 @@ export const recordAdjustment = mutation({
       valuation = consumed.next;
       if (consumed.cost.complete) costDeltaCentimes = -consumed.cost.costCentimes;
     } else if (currentValuation.complete && currentValuation.quantity > 0) {
-      const increaseCostCentimes = allocateCentimes(
-        currentValuation.inventoryValueCentimes!,
-        currentValuation.quantity,
-        quantityDelta,
-      );
+      const increaseCostCentimes = valueStockIncrease(currentValuation, quantityDelta);
       valuation = receiveValuation(
         currentValuation,
         quantityDelta,

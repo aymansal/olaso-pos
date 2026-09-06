@@ -1,4 +1,5 @@
 export const fr: Record<string, string> = {
+  'Select all remaining products for the final payment.': 'Sélectionnez tous les produits restants pour le dernier paiement.',
   'Auto-lock': 'Verrouillage auto',
   '5 minutes': '5 minutes',
   '10 minutes': '10 minutes',
@@ -574,6 +575,10 @@ export const fr: Record<string, string> = {
   'Compensation could not be saved.': 'La rémunération n’a pas pu être enregistrée.',
   'Category could not be deleted.': 'La catégorie n’a pas pu être supprimée.',
   'Ingredient could not be deleted.': 'L’ingrédient n’a pas pu être supprimé.',
+  'Some saved changes still need synchronization. Use Sync again.':
+    'Certaines modifications doivent encore être synchronisées. Relancez la synchronisation.',
+  'Staff member changed. Refresh before changing the PIN.':
+    'Le profil a changé. Actualisez avant de modifier le code PIN.',
   'Menu and synchronization state are up to date.':
     'Le menu et la synchronisation sont à jour.',
   'Synchronization failed. Try again.':

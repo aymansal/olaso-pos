@@ -5,6 +5,7 @@ import {
   requireManagement,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
+import { pendingReportCorrections } from './lib/pendingReportCorrections';
 
 const MAX_SUMMARY_DAYS = 12;
 const MAX_INGREDIENTS = 100;
@@ -19,11 +20,11 @@ function shiftBusinessDate(value: string, days: number) {
 }
 
 export const getSnapshot = query({
-  args: { ...sessionArgs, businessDate: v.string() },
+  args: { ...sessionArgs, businessDate: v.string(), pendingCancelledSaleIds: v.optional(v.array(v.string())) },
   handler: async (ctx, args) => {
     await requireManagement(ctx, args);
     const date = businessDate(args.businessDate);
-    const [summaries, ingredients, sales] = await Promise.all([
+    const [savedSummaries, ingredients, sales] = await Promise.all([
       ctx.db
         .query('dailyMetrics')
         .withIndex('by_business_date', (index) =>
@@ -47,6 +48,9 @@ export const getSnapshot = query({
       throw new Error('Dashboard ingredient result exceeded its bounded limit.');
     }
 
+    const { rows: summaries, cancelledIds } = await pendingReportCorrections(
+      ctx, savedSummaries, args.deviceId, args.pendingCancelledSaleIds,
+    );
     const byDate = new Map(
       summaries.map((summary) => [summary.businessDate, summary]),
     );
@@ -133,7 +137,7 @@ export const getSnapshot = query({
       recentOrders: sales.map((sale) => ({
         id: sale._id,
         receiptNumber: sale.receiptNumber,
-        status: sale.status,
+        status: cancelledIds.has(sale._id) ? 'cancelled' as const : sale.status,
         serviceMode: sale.serviceMode,
         customerName: sale.customerName,
         totalCentimes: sale.totalCentimes,

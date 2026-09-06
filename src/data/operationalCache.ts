@@ -1,5 +1,5 @@
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
-import { openLocalDatabase, withLocalTransaction } from './localDatabase.ts';
+import { openLocalDatabase, serializeLocalTransaction, withLocalTransaction } from './localDatabase.ts';
 import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 
 export type IngredientEffect = {
@@ -540,7 +540,7 @@ export async function replaceOperationalCache(
            status = 'active',
            revision = excluded.revision,
            updated_at = excluded.updated_at,
-           identity_revision = excluded.identity_revision,
+           identity_revision = MAX(staff_profiles.identity_revision, excluded.identity_revision),
            preferred_language = excluded.preferred_language`,
         [
           staff.id,
@@ -811,7 +811,7 @@ export async function saveAuthenticatedStaffProfile(profile: ActiveStaffProfile)
          status = 'active',
          revision = excluded.revision,
          updated_at = excluded.updated_at,
-         identity_revision = excluded.identity_revision,
+         identity_revision = MAX(staff_profiles.identity_revision, excluded.identity_revision),
          preferred_language = excluded.preferred_language`,
       [
         profile.id,
@@ -890,7 +890,7 @@ export async function reconcileAuthenticatedStaffProfiles(
       const current = activeById.get(String(row.id));
       return !pendingIds.has(String(row.id))
         && !retainedActorIds.has(String(row.id))
-        && (!current || current.identityRevision !== Number(row.identity_revision))
+        && (!current || current.identityRevision > Number(row.identity_revision))
         ? [String(row.id)]
         : [];
     });
@@ -906,7 +906,7 @@ export async function reconcileAuthenticatedStaffProfiles(
            status = 'active',
            revision = excluded.revision,
            updated_at = excluded.updated_at,
-           identity_revision = excluded.identity_revision,
+           identity_revision = MAX(staff_profiles.identity_revision, excluded.identity_revision),
            preferred_language = excluded.preferred_language`,
         [
           profile.id,
@@ -954,7 +954,12 @@ function parseIngredientEffects(value: unknown): IngredientEffect[] {
 export async function loadOperationalCache(
   connection?: SQLiteDBConnection,
 ): Promise<OperationalCacheSnapshot> {
-  const database = connection ?? await openLocalDatabase();
+  // Screen reads share the write queue so cache replacement cannot leak partial rows.
+  // Checkout already owns a transaction and passes its connection explicitly.
+  if (!connection) {
+    return serializeLocalTransaction(async () => loadOperationalCache(await openLocalDatabase()));
+  }
+  const database = connection;
   const [
     categories,
     products,

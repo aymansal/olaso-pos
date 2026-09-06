@@ -1,4 +1,5 @@
 import { v } from 'convex/values';
+import { cancelMetric, salePaymentTotals } from './lib/cancelMetric';
 import type { Doc, Id } from './_generated/dataModel';
 import { internalQuery, mutation, query } from './_generated/server';
 import {
@@ -11,6 +12,7 @@ import { requireOperationalAccess, requireOperationalSession } from './lib/opera
 import { sessionArgs } from './lib/session';
 import { consumeValuation } from '../src/lib/costs';
 import { resolveProductConfiguration } from '../src/lib/productConfiguration';
+import { resolveCatalogHistory, type CatalogHistoryRows } from './lib/catalogHistory';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -27,6 +29,7 @@ const receiptTender = v.object({
   changeCentimes: v.number(),
 });
 const saleLine = v.object({
+  catalogQuoteFingerprint: v.optional(v.string()),
   productId: v.id('products'),
   productRevision: v.number(),
   recipeVersionId: v.optional(v.id('recipeVersions')),
@@ -114,23 +117,6 @@ function readTenders(
   }));
 }
 
-function salePaymentTotals(
-  paymentMethodValue: 'Cash' | 'Card',
-  totalCentimes: number,
-  tenders?: Array<{
-    paymentMethod?: 'Cash' | 'Card';
-    dueCentimes: number;
-  }>,
-) {
-  const totals = new Map<string, number>();
-  for (const tender of tenders?.length
-    ? tenders
-    : [{ paymentMethod: paymentMethodValue, dueCentimes: totalCentimes }]) {
-    const method = tender.paymentMethod ?? paymentMethodValue;
-    totals.set(method, (totals.get(method) ?? 0) + tender.dueCentimes);
-  }
-  return totals;
-}
 
 function snapshotCost(
   status: 'complete' | 'incomplete',
@@ -253,6 +239,8 @@ export const accept = mutation({
     );
 
     const preparedLines: PreparedLine[] = [];
+    const catalogByFingerprint = new Map<string, CatalogHistoryRows>();
+    const quotedIngredients = new Map<Id<'ingredients'>, CatalogHistoryRows['ingredients'][number]>();
     for (const line of args.lines) {
       const quantity = boundedInteger(line.quantity, 'Quantity', 1, 100);
       const ingredientCostCentimes = snapshotCost(
@@ -260,7 +248,13 @@ export const accept = mutation({
         line.ingredientCostCentimes,
         'Sale line',
       );
-      const product = await ctx.db.get(line.productId);
+      const catalogKey = `${line.productId}:${line.catalogQuoteFingerprint ?? ''}`;
+      const catalog = line.catalogQuoteFingerprint
+        ? catalogByFingerprint.get(catalogKey)
+          ?? await resolveCatalogHistory(ctx, line.productId, line.catalogQuoteFingerprint) : undefined;
+      if (catalog) catalogByFingerprint.set(catalogKey, catalog);
+      for (const ingredient of catalog?.ingredients ?? []) quotedIngredients.set(ingredient._id, ingredient);
+      const product = catalog ? catalog.products[0] : await ctx.db.get(line.productId);
       if (!product || product.status !== 'active') {
         return conflict('A sale product is no longer available.');
       }
@@ -270,20 +264,20 @@ export const accept = mutation({
           'Product revision',
           1,
           Number.MAX_SAFE_INTEGER,
-        ) !== product.revision
+        ) !== product.revision && !catalog
       ) {
         return conflict(`${product.name} changed after it was added.`);
       }
       if (line.recipeVersionId !== product.currentRecipeVersionId) {
         return conflict(`${product.name} has a newer recipe.`);
       }
-      const category = product.categoryId
+      const category = catalog ? catalog.categories[0] : product.categoryId
         ? await ctx.db.get(product.categoryId)
         : null;
       if (product.categoryId && (!category || category.status !== 'active')) {
         return conflict(`${product.name}'s category is unavailable.`);
       }
-      const recipe = product.currentRecipeVersionId
+      const recipe = catalog ? catalog.recipeVersions[0] : product.currentRecipeVersionId
         ? await ctx.db.get(product.currentRecipeVersionId)
         : undefined;
       if (
@@ -296,7 +290,7 @@ export const accept = mutation({
       ) {
         return conflict(`${product.name}'s current recipe is unavailable.`);
       }
-      const recipeItems = recipe
+      const recipeItems = catalog ? catalog.recipeItems : recipe
         ? await ctx.db
             .query('recipeItems')
             .withIndex('by_recipe_version', (q) =>
@@ -327,7 +321,7 @@ export const accept = mutation({
         ) {
           return invalid(`Invalid choices for ${product.name}.`);
         }
-        const size = await ctx.db.get(sizeId);
+        const size = catalog ? catalog.productSizes.find((row) => row._id === sizeId) : await ctx.db.get(sizeId);
         if (
           !size
           || size.productId !== product._id
@@ -335,7 +329,9 @@ export const accept = mutation({
         ) {
           return conflict(`A selected size for ${product.name} is unavailable.`);
         }
-        const [sizes, sections, sizeQuantities] = await Promise.all([
+        const [sizes, sections, sizeQuantities] = catalog
+          ? [catalog.productSizes, catalog.productChoiceSections, catalog.recipeSizeQuantities]
+          : await Promise.all([
           ctx.db
             .query('productSizes')
             .withIndex('by_product', (q) => q.eq('productId', product._id))
@@ -353,7 +349,7 @@ export const accept = mutation({
                 .take(801)
             : Promise.resolve([]),
         ]);
-        const sectionSizeIds = (
+        const sectionSizeIds = catalog ? catalog.productChoiceSectionSizes : (
           await Promise.all(
             sections.map((section) =>
               ctx.db
@@ -363,7 +359,7 @@ export const accept = mutation({
             ),
           )
         ).flat();
-        const values = (
+        const values = catalog ? catalog.productChoiceValues : (
           await Promise.all(
             sections.map((section) =>
               ctx.db
@@ -373,7 +369,7 @@ export const accept = mutation({
             ),
           )
         ).flat();
-        const valueSizes = (
+        const valueSizes = catalog ? catalog.productChoiceValueSizes : (
           await Promise.all(
             values.map((value) =>
               ctx.db
@@ -383,7 +379,7 @@ export const accept = mutation({
             ),
           )
         ).flat();
-        const effects = (
+        const effects = catalog ? catalog.productChoiceValueEffects : (
           await Promise.all(
             values.map((value) =>
               ctx.db
@@ -393,7 +389,7 @@ export const accept = mutation({
             ),
           )
         ).flat();
-        const effectSizes = (
+        const effectSizes = catalog ? catalog.productChoiceValueEffectSizes : (
           await Promise.all(
             effects.map((effect) =>
               ctx.db
@@ -598,7 +594,13 @@ export const accept = mutation({
     const ingredientRecords = new Map<Id<'ingredients'>, Doc<'ingredients'>>();
     for (const ingredientId of saleIngredientUsage.keys()) {
       const ingredient = await ctx.db.get(ingredientId);
-      if (!ingredient || ingredient.status !== 'active') {
+      if (!ingredient && quotedIngredients.has(ingredientId)) {
+        if (preparedLines.some((line) => line.ingredientUsage.has(ingredientId) && line.costStatus !== 'incomplete')) {
+          return invalid('A deleted ingredient must have an unknown saved cost.');
+        }
+        continue;
+      }
+      if (!ingredient || (ingredient.status !== 'active' && !quotedIngredients.has(ingredientId))) {
         return conflict('A recipe ingredient is unavailable.');
       }
       ingredientRecords.set(ingredientId, ingredient);
@@ -730,7 +732,18 @@ export const accept = mutation({
     for (const [ingredientId, amount] of saleIngredientUsage) {
       if (amount === 0) continue;
       const ingredient = ingredientRecords.get(ingredientId);
-      if (!ingredient) return conflict('A recipe ingredient is missing.');
+      if (!ingredient) {
+        const historical = quotedIngredients.get(ingredientId);
+        if (!historical) return conflict('A recipe ingredient is missing.');
+        await ctx.db.insert('stockMovements', {
+          ingredientId, ingredientNameSnapshot: historical.name, ingredientBaseUnitSnapshot: historical.baseUnit,
+          quantityDelta: -amount, movementType: 'sale', relatedSaleId: saleId,
+          reason: `Recipe deduction for ${receiptNumber}`, deviceId, actorLabel: actor.name,
+          businessDate: args.businessDate, createdAt: completedAt,
+          clientMutationId: `${deviceId}:${localSaleId}:${ingredientId}`,
+        });
+        continue;
+      }
       const valuation = {
         quantity: ingredient.currentStockQuantity,
         ...(ingredient.inventoryValueCentimes === undefined
@@ -784,7 +797,7 @@ export const accept = mutation({
         line.recipe ? [[line.recipe._id, line.recipe] as const] : [],
       ),
     ).values()) {
-      if (!recipe.firstUsedAt) {
+      if (!recipe.firstUsedAt && await ctx.db.get(recipe._id)) {
         await ctx.db.patch(recipe._id, {
           firstUsedAt: completedAt,
           updatedAt: acknowledgedAt,
@@ -921,7 +934,7 @@ export const accept = mutation({
       metric?.ingredientUsageEventCount ?? 0;
     for (const [ingredientId, quantity] of saleIngredientUsage) {
       if (quantity === 0) continue;
-      const ingredient = ingredientRecords.get(ingredientId);
+      const ingredient = ingredientRecords.get(ingredientId) ?? quotedIngredients.get(ingredientId);
       if (!ingredient) return conflict('A recipe ingredient is missing.');
       const ingredientTotal = ingredientTotals.find(
         (row) => row.ingredientId === ingredientId,
@@ -978,12 +991,6 @@ export const accept = mutation({
   },
 });
 
-function subtractMetric(value: number, amount: number, label: string) {
-  if (!Number.isSafeInteger(value) || !Number.isSafeInteger(amount) || amount < 0 || value < amount) {
-    return conflict(`Saved ${label} cannot be reversed safely.`);
-  }
-  return value - amount;
-}
 
 export const cancel = mutation({
   args: {
@@ -1122,81 +1129,8 @@ export const cancel = mutation({
       });
     }
 
-    const totalsByPaymentMethod = metric.totalsByPaymentMethod.map((row) => ({ ...row }));
-    for (const [method, amount] of salePaymentTotals(
-      original.paymentMethod === 'Card' ? 'Card' : 'Cash',
-      original.totalCentimes,
-      original.receiptSnapshot.tenders,
-    )) {
-      const payment = totalsByPaymentMethod.find((row) => row.paymentMethod === method);
-      if (!payment) return conflict('Saved payment summary is incomplete.');
-      payment.totalCentimes = subtractMetric(payment.totalCentimes, amount, 'payment total');
-      payment.orderCount = subtractMetric(payment.orderCount, 1, 'payment count');
-    }
-    const totalsByServiceMode = metric.totalsByServiceMode.map((row) => ({ ...row }));
-    const service = totalsByServiceMode.find((row) => row.serviceMode === original.serviceMode);
-    if (!service) return conflict('Saved service summary is incomplete.');
-    service.totalCentimes = subtractMetric(service.totalCentimes, original.totalCentimes, 'service total');
-    service.orderCount = subtractMetric(service.orderCount, 1, 'service count');
-    const productTotals = metric.productTotals.map((row) => ({ ...row }));
-    const categoryTotals = metric.categoryTotals.map((row) => ({ ...row }));
-    for (const item of items) {
-      if (!item.productId) return conflict('Saved product history is incomplete.');
-      const product = productTotals.find((row) => row.productId === item.productId);
-      if (!product) return conflict('Saved product summary is incomplete.');
-      product.quantity = subtractMetric(product.quantity, item.quantity, 'product quantity');
-      product.totalCentimes = subtractMetric(product.totalCentimes, item.lineTotalCentimes, 'product total');
-      const categoryMatches = item.categoryId
-        ? categoryTotals.filter((row) => row.categoryId === item.categoryId)
-        : categoryTotals.filter((row) => row.categoryName === product.categoryName);
-      const category = categoryMatches.length === 1 ? categoryMatches[0] : undefined;
-      if (!category && (item.categoryId || product.categoryName)) {
-        return conflict('Saved category summary is incomplete.');
-      }
-      if (category) {
-        category.quantity = subtractMetric(category.quantity, item.quantity, 'category quantity');
-        category.totalCentimes = subtractMetric(category.totalCentimes, item.lineTotalCentimes, 'category total');
-      }
-    }
-    const ingredientTotals = (metric.ingredientTotals ?? []).map((row) => ({ ...row }));
-    for (const movement of movements) {
-      const total = ingredientTotals.find((row) => row.ingredientId === movement.ingredientId);
-      if (!total) return conflict('Saved ingredient summary is incomplete.');
-      total.quantity = subtractMetric(total.quantity, -movement.quantityDelta, 'ingredient quantity');
-    }
-    const profileTotals = (metric.profileTotals ?? []).map((row) => ({ ...row }));
-    if (original.staffProfileId) {
-      const profile = profileTotals.find(
-        (row) => row.staffProfileId === original.staffProfileId,
-      );
-      if (!profile) return conflict('Saved profile summary is incomplete.');
-      profile.orderCount = subtractMetric(profile.orderCount, 1, 'profile order count');
-      profile.itemCount = subtractMetric(
-        profile.itemCount,
-        items.reduce((sum, item) => sum + item.quantity, 0),
-        'profile item count',
-      );
-      profile.netCentimes = subtractMetric(
-        profile.netCentimes,
-        original.totalCentimes,
-        'profile net sales',
-      );
-    }
     await ctx.db.patch(metric._id, {
-      grossCentimes: subtractMetric(metric.grossCentimes, original.totalCentimes, 'gross total'),
-      netCentimes: subtractMetric(metric.netCentimes, original.totalCentimes, 'net total'),
-      orderCount: subtractMetric(metric.orderCount, 1, 'order count'),
-      cancelledCentimes: metric.cancelledCentimes + original.totalCentimes,
-      totalsByPaymentMethod: totalsByPaymentMethod.filter((row) => row.orderCount > 0),
-      totalsByServiceMode: totalsByServiceMode.filter((row) => row.orderCount > 0),
-      productTotals: productTotals.filter((row) => row.quantity > 0),
-      categoryTotals: categoryTotals.filter((row) => row.quantity > 0),
-      profileTotals: profileTotals.filter((row) => row.orderCount > 0),
-      ingredientTotals: ingredientTotals.filter((row) => row.quantity > 0),
-      ingredientUsageEventCount: subtractMetric(metric.ingredientUsageEventCount ?? 0, movements.length, 'ingredient usage count'),
-      ingredientCostCentimes: subtractMetric(metric.ingredientCostCentimes ?? 0, original.ingredientCostCentimes ?? 0, 'ingredient cost'),
-      completeCostSaleCount: subtractMetric(metric.completeCostSaleCount ?? 0, original.costStatus === 'complete' ? 1 : 0, 'complete-cost sale count'),
-      incompleteCostSaleCount: subtractMetric(metric.incompleteCostSaleCount ?? 0, original.costStatus === 'incomplete' ? 1 : 0, 'incomplete-cost sale count'),
+      ...cancelMetric(metric, original, items, movements),
       updatedAt: acknowledgedAt,
     });
     await ctx.db.patch(original._id, { status: 'cancelled' });

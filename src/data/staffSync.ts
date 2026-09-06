@@ -10,6 +10,7 @@ import { saveAuthenticatedStaffProfile } from './operationalCache.ts';
 import { withLocalTransaction } from './localDatabase.ts';
 import { syncPendingManagementOperations } from './catalogSync.ts';
 import { loadStaffPreferredLanguage } from './localStaff.ts';
+import { withStaffCredentialLock } from './staffCredentialQueue.ts';
 
 type Result = {
   recordType: string;
@@ -112,8 +113,8 @@ export async function dispatchStaffOperation(
 export function syncPendingStaffOperations(
   send: (operation: PendingLocalManagementOperation) => Promise<Result>,
 ) {
-  return syncPendingManagementOperations(
+  return withStaffCredentialLock(() => syncPendingManagementOperations(
     STAFF_MANAGEMENT_OPERATION_TYPES,
     send,
-  );
+  ));
 }

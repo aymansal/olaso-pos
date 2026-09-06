@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { stripTypeScriptTypes } from 'node:module';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 import { ConvexHttpClient } from 'convex/browser';
@@ -18,6 +19,7 @@ import {
 } from '../src/data/printState.ts';
 import { attemptSaleReceiptPrint } from '../src/data/receiptPrinting.ts';
 import { localMigrations } from '../src/data/schema.ts';
+import { createReceiptModel } from '../src/printing/receiptModel.ts';
 
 const database = new DatabaseSync(':memory:');
 database.exec('PRAGMA foreign_keys = ON');
@@ -101,6 +103,40 @@ assert.equal(firstPage.page[0].printState, 'pending');
 assert.equal(firstPage.page[0].printAttemptCount, 0);
 assert.equal(firstPage.isDone, false);
 assert(firstPage.continueCursor);
+
+// History must preserve saved language and signed option deltas without weakening totals.
+const historicalReceipt = JSON.parse(receipt('CHECK-002', secondAt, 'Butter Croissant'));
+const replaceSnapshot = database.prepare('UPDATE sales SET receipt_snapshot_json = ? WHERE local_sale_id = ?');
+for (const language of ['fr', 'en', undefined]) {
+  const saved = { ...historicalReceipt, receiptLanguage: language };
+  saved.lines[0].modifiers = [{ groupName: 'Choice', optionName: 'Adjustment', priceDeltaCentimes: -100 }];
+  replaceSnapshot.run(JSON.stringify(saved), 'sale-2');
+  const loaded = (await loadLocalOrderPage({ limit: 1 }, adapter)).page[0].receipt;
+  assert.equal(loaded.receiptLanguage, language);
+  assert.equal(createReceiptModel(loaded).receiptLanguage, language ?? 'en');
+  assert.equal(loaded.lines[0].modifiers[0].priceDeltaCentimes, -100);
+}
+for (const invalid of [
+  { ...historicalReceipt, totalCentimes: -1 },
+  { ...historicalReceipt, receiptLanguage: 'invalid' },
+]) {
+  replaceSnapshot.run(JSON.stringify(invalid), 'sale-2');
+  await assert.rejects(loadLocalOrderPage({ limit: 1 }, adapter), /saved receipt/);
+}
+replaceSnapshot.run(JSON.stringify(historicalReceipt), 'sale-2');
+const historyHookSource = readFileSync(new URL('../src/data/useOrdersData.ts', import.meta.url), 'utf8');
+const mapCloudOrder = new Function(`${stripTypeScriptTypes(historyHookSource.slice(
+  historyHookSource.indexOf('function cloudOrder('),
+  historyHookSource.indexOf('export function useOrdersData('),
+))}; return cloudOrder;`)();
+for (const language of ['fr', 'en', undefined]) {
+  const mapped = mapCloudOrder({
+    id: 'cloud-sale', deviceId: 'device', localSaleId: 'sale', businessDate: '2026-07-28', status: 'completed',
+    receiptSnapshot: { ...historicalReceipt, serviceMode: 'take-away', receiptLanguage: language },
+  });
+  assert.equal(createReceiptModel(mapped.receipt).receiptLanguage, language ?? 'en');
+}
+console.log('Historical receipt language and signed option regression checks passed.');
 
 const secondPage = await loadLocalOrderPage(
   { limit: 1, cursor: firstPage.continueCursor },

@@ -74,6 +74,14 @@ owns the shared Header and TopNavigation currently used across the application.
   those scroll areas. The overlay cannot close after the first recorded payer.
   Each split payer chooses Cash or Card; Card is exact and only Cash shows
   Given/Change. One sale records every tender on the ticket.
+  The App-owned session retains payment progress through an in-process lock.
+  Before opening payment, capture a trusted quote through the data hook. Keep
+  that quote's display menu in the App-owned draft, including original prices
+  and size/choice labels even when the live menu changes. Final completion sends
+  the quote ID, not UI prices. Release an unpaid abandoned quote or a successfully
+  committed one; failed completion must keep it for retry.
+  After19 tenders the final payment must include all remaining items; enforce
+  the20-tender ceiling before accepting another partial payment.
   A cashier may empty the current draft from the always-visible trash next to
   the Current order title; it stays gray while the cart is empty. The cart list
   itself stays blank until a product is added; each line uses the same compact

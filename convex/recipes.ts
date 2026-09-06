@@ -1,4 +1,5 @@
 import { v } from 'convex/values';
+import { retainProductCatalog } from './lib/catalogHistory';
 import { mutation, query } from './_generated/server';
 import type { Id } from './_generated/dataModel';
 import {
@@ -104,6 +105,7 @@ export const saveVersion = mutation({
     const product = await ctx.db.get(args.productId);
     if (!product) return notFound('Product');
     expectRevision(args.expectedProductRevision, product.revision);
+    await retainProductCatalog(ctx, product._id);
     if (product.status === 'archived') {
       return invalid('Restore this product before editing its recipe.');
     }

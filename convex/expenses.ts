@@ -1,4 +1,5 @@
 import { v } from 'convex/values';
+import { paginationOptsValidator } from 'convex/server';
 import { mutation, query } from './_generated/server';
 import {
   boundedInteger,
@@ -99,6 +100,17 @@ export const list = query({
         : {}),
       revision: row.revision,
     }));
+  },
+});
+
+export const listPage = query({
+  args: { ...sessionArgs, paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    await requirePermission(ctx, args, 'expenses');
+    const page = await ctx.db.query('operatingExpenses')
+      .withIndex('by_status_created_at', (index) => index.eq('status', 'active'))
+      .paginate(args.paginationOpts);
+    return { ...page, page: page.page.map((row) => ({ ...row, id: row._id })) };
   },
 });
 

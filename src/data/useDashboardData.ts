@@ -7,6 +7,7 @@ import { useConnectionStatus } from './connectionContext';
 import { loadOfflineDashboard } from './offlineViews';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
+import { pendingReportSaleIds } from './pendingReportCorrections';
 
 export type DashboardSnapshot =
   FunctionReturnType<typeof api.dashboard.getSnapshot>;
@@ -34,11 +35,12 @@ export function useDashboardData() {
     const localRequest = loadOfflineDashboard(businessDate) as Promise<DashboardSnapshot>;
     const request = available
       ? Promise.all([
-          convex.query(api.dashboard.getSnapshot, {
+          pendingReportSaleIds().then((pendingCancelledSaleIds) => convex.query(api.dashboard.getSnapshot, {
             businessDate,
+            pendingCancelledSaleIds,
             sessionToken: session.token,
             deviceId: session.deviceId,
-          }),
+          })),
           localRequest.catch(() => undefined),
         ]).then(([cloud, local]) => {
           const cloudToday = cloud.today?.orderCount ?? 0;

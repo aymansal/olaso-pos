@@ -13,6 +13,8 @@ import {
   type StaffSession,
 } from '../../data/identitySession';
 import { readSecureSessionNetworkStatus } from '../../data/secureSession';
+import { withStaffCredentialLock } from '../../data/staffCredentialQueue';
+import { loadLocalStaffProfiles } from '../../data/localStaff';
 import { useConnectionStatus } from '../../data/connectionContext';
 import {
   loadOperationalCache,
@@ -138,80 +140,87 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
     setUnlocking(true);
     setError('');
     try {
-      let unlockedSession: StaffSession | undefined;
-      const unlockOffline = async () => {
-        const saved = await loadStaffSession(staffProfileId);
-        const cached = staff.find((member) => member.id === staffProfileId);
-        if (!saved || !cached || saved.staffProfileId !== cached.id
-            || saved.name !== cached.name || saved.role !== cached.role
-            || saved.identityRevision !== cached.identityRevision) {
-          await clearStaffSession(staffProfileId);
-          throw new Error('This staff identity is unavailable offline. Connect and sync this terminal.');
-        }
-        const result = await verifyOfflinePin(staffProfileId, pin);
-        if (result.kind === 'locked') {
-          throw new Error('Too many failed PIN attempts. Try again later.');
-        }
-        if (result.kind === 'incorrect') {
-          throw new Error(`PIN is incorrect. ${result.attemptsRemaining} attempts remaining.`);
-        }
-        unlockedSession = saved;
-      };
-      const networkAvailable = await readSecureSessionNetworkStatus();
-      let pendingSession: StaffSession | undefined;
-      try {
-        pendingSession = await loadStaffSession(staffProfileId);
-      } catch (storageError) {
-        if (!networkAvailable || staffProfileId.startsWith('staff:')) {
-          throw storageError;
-        }
-        await clearStaffSession(staffProfileId).catch(() => undefined);
-      }
-      if (!networkAvailable || isPendingStaffSession(pendingSession)) {
-        await unlockOffline();
-      } else {
-        try {
-        const session = await signIn({ staffProfileId: staffProfileId as never, pin, deviceId: settings.deviceId });
-        if (session.kind !== 'authenticated') {
-          if (session.kind === 'locked') {
+      const authenticatedSession = await withStaffCredentialLock(async () => {
+        let unlockedSession: StaffSession | undefined;
+        const unlockOffline = async () => {
+          const saved = await loadStaffSession(staffProfileId);
+          const cached = staff.find((member) => member.id === staffProfileId);
+          if (!saved || !cached || saved.staffProfileId !== cached.id
+              || saved.name !== cached.name || saved.role !== cached.role
+              || saved.identityRevision !== cached.identityRevision) {
+            await clearStaffSession(staffProfileId);
+            throw new Error('This staff identity is unavailable offline. Connect and sync this terminal.');
+          }
+          const result = await verifyOfflinePin(staffProfileId, pin);
+          if (result.kind === 'locked') {
             throw new Error('Too many failed PIN attempts. Try again later.');
           }
-          throw new Error('Wrong PIN. Try again.');
-        }
-        const authenticatedProfile = staff.find((member) => member.id === session.staffProfileId);
-        if (!authenticatedProfile) throw new Error('Staff access is unavailable. Sign in again.');
-        const localProfile = {
-          ...authenticatedProfile,
-          name: session.name,
-          role: session.role,
-          identityRevision: session.identityRevision,
-        };
-        const archivedProfileIds = authoritativeStaff?.some(
-          (member) => member.id === session.staffProfileId,
-        )
-          ? await reconcileAuthenticatedStaffProfiles(
-            authoritativeStaff,
-            session.staffProfileId,
-          )
-          : [];
-        if (!authoritativeStaff?.some((member) => member.id === session.staffProfileId)) {
-          await saveAuthenticatedStaffProfile(localProfile);
-        }
-        for (const archivedProfileId of archivedProfileIds) {
-          await clearStaffSession(archivedProfileId);
-        }
-        await saveStaffSession(session, pin);
-        await clearLegacyStaffSession();
-        unlockedSession = session;
-        } catch (onlineError) {
-          if (!isServiceUnavailable(onlineError)) {
-            throw onlineError;
+          if (result.kind === 'incorrect') {
+            throw new Error(`PIN is incorrect. ${result.attemptsRemaining} attempts remaining.`);
           }
-          await unlockOffline();
+          unlockedSession = saved;
+        };
+        const networkAvailable = await readSecureSessionNetworkStatus();
+        let pendingSession: StaffSession | undefined;
+        try {
+          pendingSession = await loadStaffSession(staffProfileId);
+        } catch (storageError) {
+          if (!networkAvailable || staffProfileId.startsWith('staff:')) {
+            throw storageError;
+          }
+          await clearStaffSession(staffProfileId).catch(() => undefined);
         }
-      }
-      if (!unlockedSession) throw new Error('Staff session is unavailable. Sign in again.');
-      await onUnlock(unlockedSession);
+        if (!networkAvailable || isPendingStaffSession(pendingSession)) {
+          await unlockOffline();
+        } else {
+          try {
+          const session = await signIn({ staffProfileId: staffProfileId as never, pin, deviceId: settings.deviceId });
+          if (session.kind !== 'authenticated') {
+            if (session.kind === 'locked') {
+              throw new Error('Too many failed PIN attempts. Try again later.');
+            }
+            throw new Error('Wrong PIN. Try again.');
+          }
+          const authenticatedProfile = staff.find((member) => member.id === session.staffProfileId);
+          if (!authenticatedProfile) throw new Error('Staff access is unavailable. Sign in again.');
+          const localProfile = {
+            ...authenticatedProfile,
+            name: session.name,
+            role: session.role,
+            identityRevision: session.identityRevision,
+          };
+          const archivedProfileIds = authoritativeStaff?.some(
+            (member) => member.id === session.staffProfileId,
+          )
+            ? await reconcileAuthenticatedStaffProfiles(
+              authoritativeStaff,
+              session.staffProfileId,
+            )
+            : [];
+          for (const archivedProfileId of archivedProfileIds) {
+            await clearStaffSession(archivedProfileId);
+          }
+          const currentProfile = (await loadLocalStaffProfiles()).find(
+            (member) => member.id === session.staffProfileId,
+          );
+          if (currentProfile && currentProfile.identityRevision > session.identityRevision) {
+            throw new Error('Staff identity changed. Sign in again.');
+          }
+          await saveAuthenticatedStaffProfile(localProfile);
+          await saveStaffSession(session, pin);
+          await clearLegacyStaffSession();
+          unlockedSession = session;
+          } catch (onlineError) {
+            if (!isServiceUnavailable(onlineError)) {
+              throw onlineError;
+            }
+            await unlockOffline();
+          }
+        }
+        if (!unlockedSession) throw new Error('Staff session is unavailable. Sign in again.');
+        return unlockedSession;
+      });
+      await onUnlock(authenticatedSession);
     } catch (caught) {
       setError(unlockErrorMessage(caught));
       setUnlocking(false);

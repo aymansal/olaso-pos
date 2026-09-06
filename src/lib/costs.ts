@@ -50,11 +50,18 @@ export function receiveValuation(
   receivedQuantity: number,
   receivedCostCentimes: number,
 ): InventoryValuation {
-  integer(current.quantity, 'Current quantity');
+  integer(current.quantity, 'Current quantity', Number.MIN_SAFE_INTEGER);
   integer(receivedQuantity, 'Received quantity', 1);
   integer(receivedCostCentimes, 'Received cost');
   const quantity = current.quantity + receivedQuantity;
-  integer(quantity, 'Resulting quantity');
+  integer(quantity, 'Resulting quantity', Number.MIN_SAFE_INTEGER);
+  // A negative balance means unrecorded stock was consumed. Receiving repairs
+  // the count, but cannot establish the value of that missing historical stock.
+  if (current.quantity < 0) {
+    return quantity === 0
+      ? { quantity: 0, inventoryValueCentimes: 0, complete: true }
+      : { quantity, complete: false };
+  }
   if (current.quantity === 0) {
     return {
       quantity,
@@ -74,6 +81,19 @@ export function receiveValuation(
     ),
     complete: true,
   };
+}
+
+export function valueStockIncrease(current: InventoryValuation, quantity: number) {
+  integer(current.quantity, 'Current quantity', 1);
+  integer(quantity, 'Added quantity', 1);
+  if (!current.complete || current.inventoryValueCentimes === undefined) {
+    throw new Error('Stock value is unavailable.');
+  }
+  integer(current.inventoryValueCentimes, 'Current inventory value');
+  return numberFrom(roundedDivision(
+    BigInt(current.inventoryValueCentimes) * BigInt(quantity),
+    BigInt(current.quantity),
+  ), 'Added stock value');
 }
 
 export function consumeValuation(

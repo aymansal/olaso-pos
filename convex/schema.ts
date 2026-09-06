@@ -69,6 +69,9 @@ const receiptLine = v.object({
 });
 
 export default defineSchema({
+  productCatalogHistory: defineTable({
+    productId: v.id('products'), fingerprint: v.string(), snapshotJson: v.string(), retainedAt: v.number(),
+  }).index('by_product_fingerprint', ['productId', 'fingerprint']),
   categories: defineTable({
     key: v.string(),
     name: v.string(),

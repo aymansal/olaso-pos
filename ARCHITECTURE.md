@@ -1156,7 +1156,11 @@ staff PIN
   credentials. A deliberate switch asks for confirmation only when the
   App-owned POS cart has lines and preserves that cart in memory for the next
   verified staff member; cancelling changes neither identity nor cart. The
-  staff member who completes checkout becomes the immutable sale actor. Empty
+  same App-owned session retains open payment quantities, recorded tenders and
+  cash input through the in-process lock; collecting a split tender must never
+  live solely in an unmounted dialog. The20-tender limit is enforced before
+  a partial payment can leave an impossible final payment.
+  The staff member who completes checkout becomes the immutable sale actor. Empty
   carts, idle locks, invalid sessions, and restart lock immediately without a
   cart prompt. Restart begins locked and does not claim process-death cart
   persistence. The native monotonic clock, not editable wall time, measures the

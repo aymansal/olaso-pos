@@ -35,6 +35,7 @@ export type OrderReceipt = {
   totalCentimes: number;
   taxPolicyLabel: string;
   paymentMethod: string;
+  receiptLanguage?: 'en' | 'fr';
   tenders?: Array<{
     paymentMethod: 'Cash' | 'Card';
     dueCentimes: number;
@@ -130,9 +131,9 @@ function recordFromSaleRow(row: Record<string, unknown>): OrderHistoryRecord {
   };
 }
 
-function money(value: unknown, label: string) {
+function money(value: unknown, label: string, signed = false) {
   const amount = Number(value);
-  if (!Number.isSafeInteger(amount) || amount < 0) {
+  if (!Number.isSafeInteger(amount) || (!signed && amount < 0)) {
     throw new Error(`The saved receipt ${label} is invalid.`);
   }
   return amount;
@@ -167,6 +168,10 @@ function parseReceipt(raw: unknown): OrderReceipt {
   const completedAt = Number(value.completedAt);
   if (!Number.isSafeInteger(completedAt) || completedAt < 0) {
     throw new Error('The saved receipt completion time is invalid.');
+  }
+  if (value.receiptLanguage !== undefined
+      && value.receiptLanguage !== 'en' && value.receiptLanguage !== 'fr') {
+    throw new Error('The saved receipt language is invalid.');
   }
   return {
     receiptNumber: text(value.receiptNumber, 'number'),
@@ -209,6 +214,7 @@ function parseReceipt(raw: unknown): OrderReceipt {
             priceDeltaCentimes: money(
               modifier.priceDeltaCentimes,
               'modifier price',
+              true,
             ),
           };
         }),
@@ -221,6 +227,7 @@ function parseReceipt(raw: unknown): OrderReceipt {
     totalCentimes: money(value.totalCentimes, 'total'),
     taxPolicyLabel: text(value.taxPolicyLabel, 'tax policy'),
     paymentMethod: text(value.paymentMethod, 'payment method'),
+    ...(value.receiptLanguage ? { receiptLanguage: value.receiptLanguage } : {}),
     ...(Array.isArray(value.tenders) && value.tenders.length
       ? { tenders: parseTenders(value.tenders, value.paymentMethod) }
       : {}),

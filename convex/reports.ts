@@ -9,6 +9,7 @@ import {
   requireOwner,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
+import { pendingReportCorrections } from './lib/pendingReportCorrections';
 import { operatingCostsForRange } from '../src/lib/costs';
 
 const MAX_RANGE_DAYS = 31;
@@ -205,8 +206,7 @@ function aggregate(rows: Doc<'dailyMetrics'>[]) {
     ingredientTotals: [...ingredients.values()]
       .sort((left, right) =>
         left.ingredientName.localeCompare(right.ingredientName),
-      )
-      .slice(0, MAX_DETAIL_ROWS),
+      ),
   };
 }
 
@@ -215,13 +215,14 @@ export const getSummary = query({
     ...sessionArgs,
     fromDate: v.string(),
     toDate: v.string(),
+    pendingCancelledSaleIds: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
     await requireManagement(ctx, args);
     const range = checkedRange(args.fromDate, args.toDate);
     const previousTo = shiftBusinessDate(range.from, -1);
     const previousFrom = shiftBusinessDate(previousTo, 1 - range.days);
-    const [currentRows, previousRows] = await Promise.all([
+    const [savedCurrentRows, savedPreviousRows] = await Promise.all([
       ctx.db
         .query('dailyMetrics')
         .withIndex('by_business_date', (index) =>
@@ -239,6 +240,11 @@ export const getSummary = query({
         )
         .take(MAX_RANGE_DAYS + 1),
     ]);
+    const { rows: correctedRows } = await pendingReportCorrections(
+      ctx, [...savedCurrentRows, ...savedPreviousRows], args.deviceId, args.pendingCancelledSaleIds,
+    );
+    const currentRows = correctedRows.slice(0, savedCurrentRows.length);
+    const previousRows = correctedRows.slice(savedCurrentRows.length);
     if (
       currentRows.length > range.days
       || previousRows.length > range.days
@@ -297,14 +303,15 @@ export const getSummary = query({
 });
 
 export const getAllSummaryPage = query({
-  args: { ...sessionArgs, paginationOpts: paginationOptsValidator },
+  args: { ...sessionArgs, paginationOpts: paginationOptsValidator, pendingCancelledSaleIds: v.optional(v.array(v.string())) },
   handler: async (ctx, args) => {
     await requireManagement(ctx, args);
     const page = await ctx.db
       .query('dailyMetrics')
       .withIndex('by_business_date')
       .paginate(args.paginationOpts);
-    return page;
+    const corrected = await pendingReportCorrections(ctx, page.page, args.deviceId, args.pendingCancelledSaleIds);
+    return { ...page, page: corrected.rows };
   },
 });
 

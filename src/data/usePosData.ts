@@ -11,6 +11,7 @@ import {
 import { topSellingProductIds } from './offlineViews.ts';
 import { useReconnect } from './reconnectContext';
 import { useStaffSession } from './sessionContext';
+import { createLocalSaleQuote, releaseLocalSaleQuote } from './localSaleQuote.ts';
 
 export function usePosData() {
   const session = useStaffSession();
@@ -79,6 +80,8 @@ export function usePosData() {
     menu,
     quickAddProductIds,
     completeOrder,
+    createPaymentQuote: createLocalSaleQuote,
+    releasePaymentQuote: releaseLocalSaleQuote,
     printFeedback,
     isLoading: !menu,
     error: localError || undefined,

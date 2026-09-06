@@ -19,6 +19,10 @@ data, reporting summaries, and development seeding.
   client cache without changing the bounded read.
 - `sales.ts` owns the idempotent sale mutation and the bounded, cursor-paginated
   receipt-snapshot history query.
+- `lib/catalogHistory.ts` retains immutable product configurations before
+  authorized catalog changes. Quoted sale lines identify exact trusted live or
+  retained facts with the shared catalog fingerprint; clients never authorize
+  their own prices. Images and changing stock valuations are excluded.
 - `dashboard.ts` owns the one-call saved-summary, current-warning, and
   recent-order snapshot.
 - `reports.ts` owns the one-call current/prior saved-summary range and bounded
@@ -75,6 +79,15 @@ data, reporting summaries, and development seeding.
   while still deducting recipe stock; daily metrics use the charged total.
   Optional tenders on the receipt snapshot store Cash/Card method and due plus
   cash amount given/change; their dues must sum to the charged sale total.
+- A quoted split order instead resolves its agreed configuration from the exact
+  live fingerprint or server-retained configuration. Product/size/choice/category
+  deletion cannot erase that history. Inventory valuation remains current at
+  completion. A deleted ingredient may produce only a historical movement from
+  trusted retained metadata and incomplete cost; never recreate its live row.
+- Product, size, choice, recipe, category and ingredient-deletion mutations retain
+  affected active configurations before their first change. Keep this gate when
+  adding catalog mutation paths. History is indexed by product and fingerprint,
+  bounded per configuration, and is not an operational menu collection.
 - Seed/reset work is internal, development-only, deterministic, refuses to run
   without the disposable-deployment acknowledgement, and never replaces staff
   profile IDs that own credentials.

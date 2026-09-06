@@ -79,6 +79,10 @@ export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
     try {
       const result = await reconnect.run('manual');
       const afterSales = await refresh();
+      if (result.failed > 0 || result.pendingChanges || !result.refreshed) {
+        setError('Some saved changes still need synchronization. Use Sync again.');
+        return;
+      }
       if (afterSales.pendingSyncCount > 0) {
         setError(
           afterSales.lastSyncError
@@ -87,9 +91,7 @@ export function useSettingsData(options: { hasUnfinishedCart: boolean }) {
         return;
       }
       setMessage(
-        result.synced > 0
-          ? `${result.synced} saved order${result.synced === 1 ? '' : 's'} and the menu synchronized.`
-          : 'Menu and synchronization state are up to date.',
+        'Menu and synchronization state are up to date.',
       );
     } catch (caught) {
       setError(

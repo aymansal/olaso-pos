@@ -82,6 +82,9 @@ tablet's local SQLite operational record.
   All per-profile protected values are replaced in one native encrypted commit;
   after a cloud PIN acknowledgement, any local persistence failure clears that
   profile's protected copy rather than leaving the old PIN usable offline.
+  PIN changes, provisioning, sign-in, and authenticated directory cleanup share
+  one credential queue. Staff snapshots never lower a saved identity revision;
+  stale directory revisions cannot invalidate newer protected access.
 - Profile application language is saved locally first. Reconnect pushes that
   local value before pulling the cloud directory, and offline staff
   provisioning carries the same value through the local-ID/cloud-ID promotion.
@@ -97,6 +100,13 @@ tablet's local SQLite operational record.
   `sale_items`, and set `discountCentimes`. Optional tenders store each
   payment's method and due, plus amount given/change for cash; their dues must
   sum to the sale total.
+- `localSaleQuote.ts` captures the SQLite catalog when payment starts and keeps
+  one private quote across an in-process lock. UI receives a display copy and
+  opaque ID; completion validates the unchanged cart, maps promoted IDs, and
+  combines quoted prices/recipes with fresh ingredient valuations. Saved lines
+  carry catalog evidence for cloud fingerprint verification, never a UI price
+  override. Release the quote on unpaid dismissal or successful sale commit;
+  process-death draft recovery is not provided.
 - `localManagement.ts` owns the shared local-first management operation
   persistence: atomic outbox enqueue, optional parent dependency, cloud
   acknowledgement plus local/cloud record mappings, and safe retry/failure
@@ -108,10 +118,14 @@ tablet's local SQLite operational record.
   so a newly saved product is immediately sellable offline and after sync.
 - `localInventory.ts` owns ingredient, purchase, valuation, and stock-
   adjustment transactions. Opening quantity with a paid price is committed as
-  the first purchase in the same transaction. `localCosts.ts` owns
+  the first purchase in the same transaction.
 - `localCosts.ts` owns exact-date expense/compensation writes, including owner
   stop of an open monthly-pay period; `localCostViews.ts` owns bounded role-scoped
-  reads and cloud snapshot merging. `inventorySync.ts` and `costSync.ts` own
+  reads and cloud snapshot merging. Its public cost reader holds the shared
+  transaction queue across all pages and aggregates; direct database readers
+  stay usable inside an already-owned transaction. Finance page collection and
+  queued replacement entry recheck current foreground, connection, and session
+  so an interrupted fetch never replaces saved costs. `inventorySync.ts` and `costSync.ts` own
   their reconnect dispatch boundaries.
 - `dailyOwnerReport.ts` composes the owner-only current-day report from bounded
   saved SQLite/report data, grouping every completed order and product under its
@@ -128,6 +142,9 @@ tablet's local SQLite operational record.
   or stock creation logic.
 - `operationalCache.ts` owns the bounded cloud-to-local menu, category artwork
   key, recipe, product-owned size/choice, and stock snapshot.
+  Ordinary snapshot reads share the serialized transaction queue so readers
+  cannot observe replacement's temporary archived/absent rows. An explicitly
+  supplied transaction connection reads directly; never enqueue it again.
 - `src/lib/productConfiguration.ts` owns the pure size/choice/recipe resolver.
   Checkout and trusted cloud validation must call the same resolution; React
   components never compute stock or price from choices.
@@ -166,8 +183,16 @@ tablet's local SQLite operational record.
   Sale cashier names stay on the local receipt and are sent to Convex.
 - Serialize transactions on the shared SQLite connection; callers may start
   concurrently but `BEGIN`/`COMMIT` boundaries may not overlap.
+  PIN changes and staff provisioning/acknowledgement share a credential queue;
+  resolve fresh profile mappings inside it rather than trusting a dialog snapshot.
 - Re-read trusted product, recipe, choice, and ingredient data inside the
   local sale transaction; never persist UI-provided prices or deductions.
+  Payment quotes are captured from SQLite before taking payment and retained
+  privately across in-process locks. Their display copy is not trusted input.
+  Quoted sales retain original catalog facts, validate the exact original cart,
+  and use current ingredient valuations at completion. Cloud synchronization
+  identifies the authoritative live or archived configuration by fingerprint;
+  it never accepts a supplied price override.
 - Represent offline sale usage as a signed local stock delta over the cached
   cloud balance so low stock never blocks a valid sale.
 - Keep operational and outbox reads explicitly bounded.
@@ -200,6 +225,13 @@ tablet's local SQLite operational record.
   (never the top-20 product list), splits mixed-tender sales by their exact
   saved tenders, and keeps legacy single-method receipts on their top-level
   payment method.
+- Cloud-backed totals overlay this device's pending cancellations with the same
+  reversal calculation used at acknowledgement; an already cancelled cloud sale
+  is never subtracted twice. Other devices' valid sales remain included.
+- Costs aggregate monthly sales in SQL and page complete expense/compensation
+  histories. Hold the local transaction queue for the entire multi-page read.
+  Cloud finance replacement starts only after all pages succeed in the same
+  foreground authenticated context; never prune from a partial result.
 - Online Dashboard uses Convex saved summaries, with the saved-tablet
   snapshot shown temporarily while a newer local completed sale still waits
   for acknowledgement; totals are never mixed by addition; `offlineViews`
@@ -260,6 +292,7 @@ tablet's local SQLite operational record.
 ## Verification
 
 - Run `npm run check:local`, `npm run check:local-management`,
+  `npm run check:audit`,
   `npm run check:local-catalog`,
   `npm run check:local-inventory-costs`,
   `npm run check:local-staff`,

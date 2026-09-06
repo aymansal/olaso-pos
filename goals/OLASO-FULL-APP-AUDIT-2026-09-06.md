@@ -4,7 +4,10 @@
 
 Read root/applicable AGENTS.md, PLAN.md, WORK_LEDGER.md and this document before
 resuming. This is an audit, not authorization to implement all findings. The
-owner explicitly requested only the Add staff Role field height correction.
+owner initially requested only the Add staff Role field height correction.
+UPDATE: owner subsequently authorized fixing all findings and the Products
+investigation, followed by fresh independent audit agents. Repairs are underway;
+the original findings below remain the baseline until verified individually.
 Preserve production data and existing business decisions. Do not create real
 sales, change live PINs, reset databases, or alter stock to reproduce findings.
 Use isolated fixtures for accounting, authentication races, and payment cases.
@@ -23,7 +26,78 @@ reproduced on the live tablet.
 
 ## Priority board
 
-| ID | Priority | Finding | Status/evidence |
+Repair checkpoint (supersedes original Open labels below): AUD-01–14 and
+INVEST-01 have source repairs and focused regression checks. Integration/tablet
+acceptance and push are in progress. The original rows remain the audit baseline;
+do not interpret implementation as full client-release acceptance.
+
+Fresh-review additions:
+
+- AUD-15: finance synchronization's separate100-entry history ceiling. Repaired
+  with role-protected cloud pages and complete local replacement; interrupted
+  pagination never applies a partial snapshot.121 entries tested.
+- AUD-16: a menu price/size change after one split payer pays can make remaining
+  payments inconsistent with checkout, or a missing size can crash rendering.
+  REPAIRED — owner approved original agreed prices. Private SQLite-derived quote
+  survives lock, display receives a separate copy, final commit uses fresh stock
+  valuations. Cloud accepts an exact live or server-archived configuration, not
+  UI price overrides. Auth, bad totals and forged fingerprints still reject.
+  Tests include price edit, deleted size/product/ingredient, replaced choices,
+  retry idempotence and ID promotion before/after replacement. The final review
+  caught the mapping-before-replacement stock-row mismatch; deduction now targets
+  the actual local row (80→40 proven), not its not-yet-present cloud ID.
+- AUD-17: stale staff-directory response could roll back identity revision and
+  remove freshly updated offline access. Repaired with monotonic identity writes,
+  credential-queue coordination for sign-in/directory/snapshot cleanup, and
+  rejection of an older sign-in response before protected overwrite. Isolated
+  old/equal/new/missing-profile and queued-interleaving regressions pass.
+- AUD-18: paged local cost reads could interleave with writes, duplicating one
+  expense and omitting a newly inserted expense. Repaired by holding the existing
+  serialization queue over the whole snapshot. Actual101→102-row interleaving
+  regression now yields a coherent total rather than10200 instead of10100/11000.
+- AUD-19: long finance pagination could continue after background/offline/session
+  change. Repaired with current-context checks per page and before replacement,
+  including after waiting for its database transaction. No partial cache applied.
+
+Independent reviewers: fresh_sales_review, fresh_identity_review and
+fresh_reports_review. They did not author the first repair pass. The latter two
+then fixed their demonstrated additional findings. Nested pagination splitting
+was investigated but did not demonstrate an accounting failure; not counted.
+
+Physical isolated SQLite evidence: tmp/native-audit-result.json. Actual tablet
+database engine passed negative-stock receiving,10→30 recount with exact value,
+1,002 monthly sales,121 expenses and a single-day owner overview. Test database
+olaso_audit_20260906 was created separately and deleted with absence verified;
+no production business writes. The initial harness invocation had a JavaScript
+syntax-wrapper error before execution; corrected and rerun successfully.
+
+Checks now include check:audit (stock/staff + reports) and check:local includes
+the operational snapshot read/write regression. check:sales and check:orders
+local portions passed; protected backend fixtures remain blocked on an absent
+disposable restore PIN. Never substitute the live owner PIN. Current production
+build/install and screen verification remain to be recorded below.
+
+### Final repair verification
+
+AUD-01–19 and the proven INVEST-01 cache-read race are repaired. Final production
+build/native checks, endpoint validation and cloud deployment passed; APK installed
+over existing tablet data. No real sale, stock, PIN or wage test mutations.
+Original 5-minute inactivity lock restored the recorded10MAD card payment and
+one remaining10MAD item; screenshot tmp/olaso-split-restored.png. Restored10-minute
+preference. Synthetic draft cleared; production orders remain unchanged.
+Final APK cash quote opening/cancellation and split quote opening pass. Dashboard,
+Orders, Products, Stock, Reports and Settings load; final-session console empty.
+Reports layouts inspected at1340x800; original current-month graph policy intact.
+Graphify code graph refreshed (3504nodes), docs read separately. Focused
+check:audit/pos/printing/local/css and prior identity/settings/reconnect checks
+pass. Protected seeded-backend fixtures and physical paper acceptance are NOT
+claimed. The intermittent startup delay has no quantified performance guarantee;
+the proven intermediate-empty cache race has its own deterministic regression.
+No further audit expansion, per owner's remaining quota request. Commit/push
+evidence is recorded in WORK_LEDGER.md. The table below is the ORIGINAL baseline,
+not the current repair status.
+
+| ID | Priority | Finding | Original status/evidence |
 |---|---|---|---|
 | AUD-01 | P1 | Lock loses already collected split-payment progress | Open; source trace |
 | AUD-02 | P1 | PIN change can succeed against an obsolete pending profile | Open; source race trace |

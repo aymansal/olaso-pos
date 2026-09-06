@@ -2,6 +2,7 @@ import { localBusinessDate, shiftBusinessDate } from '../lib/date.ts';
 import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { openLocalDatabase } from './localDatabase.ts';
 import { loadOperationalCache } from './operationalCache.ts';
+import { readLocalPages } from './readLocalPages.ts';
 
 type Database = Pick<SQLiteDBConnection, 'query'>;
 
@@ -57,7 +58,7 @@ async function localSales(fromDate: string, toDate: string) {
   const [result, savedCategories] = await Promise.all([database.query(
     `SELECT local_sale_id, actor_profile_id, receipt_number, status, service_type,
       total_centimes, business_date, receipt_snapshot_json, created_at,
-      ingredient_cost_centimes
+      ingredient_cost_centimes, cost_status
      FROM sales
      WHERE business_date BETWEEN ? AND ?
      ORDER BY created_at DESC
@@ -97,6 +98,7 @@ async function localSales(fromDate: string, toDate: string) {
         : 'online' as const,
     totalCentimes: Number(row.total_centimes),
     ingredientCostCentimes: Number(row.ingredient_cost_centimes ?? 0),
+    costStatus: String(row.cost_status),
     businessDate: String(row.business_date),
     createdAt: Number(row.created_at),
     receipt: {
@@ -248,7 +250,7 @@ export function aggregateOfflineSales(
         || left.profileName.localeCompare(right.profileName),
     ),
     ingredientCostCentimes,
-    incompleteSaleCount: 0,
+    incompleteSaleCount: completed.filter((row) => row.costStatus !== 'complete').length,
     ingredientUsageEventCount: 0,
     productTotals: productList
       .slice()
@@ -269,10 +271,10 @@ export function aggregateOfflineSales(
   };
 }
 
-async function ingredientUsage(fromDate: string, toDate: string) {
-  const database = await openLocalDatabase();
+export async function ingredientUsage(fromDate: string, toDate: string, savedDatabase?: Database) {
+  const database = savedDatabase ?? await openLocalDatabase();
   const [result, countResult, stockResult] = await Promise.all([
-    database.query(
+    readLocalPages(database,
       `SELECT MIN(m.ingredient_id) AS ingredient_id,
         COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')) AS name,
         COALESCE(i.base_unit,
@@ -286,8 +288,7 @@ async function ingredientUsage(fromDate: string, toDate: string) {
          AND s.status = 'completed'
        GROUP BY COALESCE(i.name, NULLIF(m.ingredient_name_snapshot, '')),
          COALESCE(i.base_unit, NULLIF(m.ingredient_base_unit_snapshot, ''))
-       ORDER BY name
-        LIMIT 20`,
+       ORDER BY name, base_unit`,
        [fromDate, toDate],
      ),
     database.query(

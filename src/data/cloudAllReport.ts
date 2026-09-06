@@ -2,13 +2,13 @@ import type { FunctionReturnType } from 'convex/server';
 import type { PaginationOptions } from 'convex/server';
 import type { api } from '../../convex/_generated/api';
 import type { ReportsSnapshot } from './useReportsData';
+import { collectCloudPages } from './collectCloudPages.ts';
 
 type AllSummaryPage = FunctionReturnType<typeof api.reports.getAllSummaryPage>;
 type AllSummaryStock = FunctionReturnType<typeof api.reports.getAllSummaryStock>;
 type DailyRow = AllSummaryPage['page'][number];
 
 const MAX_DETAIL_ROWS = 20;
-const PAGE_NUM_ITEMS = 60;
 
 export type CloudAllReportPage = {
   page: DailyRow[];
@@ -24,65 +24,7 @@ export async function collectCloudAllReportPages(
   businessDate: string,
   isCancelled: () => boolean = () => false,
 ): Promise<ReportsSnapshot> {
-  const rows: DailyRow[] = [];
-  const continuationCursors = new Set<string>();
-  const splitCursors = new Set<string>();
-  let requests = 0;
-
-  const throwIfCancelled = () => {
-    if (isCancelled()) {
-      throw new Error('All-time report loading was cancelled.');
-    }
-  };
-
-  // Resolves one cursor interval, replacing incomplete SplitRequired pages
-  // with their two ordered halves so every row is aggregated exactly once.
-  // An interval is complete when the query reports isDone or its returned
-  // cursor reaches the interval's own endCursor.
-  async function collectInterval(paginationOpts: PaginationOptions): Promise<void> {
-    throwIfCancelled();
-    requests += 1;
-    const page = await queryPage(paginationOpts);
-    if (page.pageStatus === 'SplitRequired') {
-      if (!page.splitCursor || splitCursors.has(page.splitCursor)) {
-        throw new Error('All-time report page split did not return a usable split cursor.');
-      }
-      splitCursors.add(page.splitCursor);
-      await collectInterval({ ...paginationOpts, endCursor: page.splitCursor });
-      await collectInterval({
-        ...paginationOpts,
-        cursor: page.splitCursor,
-        endCursor: paginationOpts.endCursor ?? page.continueCursor,
-      });
-      if (page.isDone) return;
-      if (!page.continueCursor) {
-        throw new Error('All-time report pagination did not return a continuation cursor.');
-      }
-      if (continuationCursors.has(page.continueCursor)) {
-        throw new Error('All-time report pagination repeated a continuation cursor.');
-      }
-      continuationCursors.add(page.continueCursor);
-      await collectInterval({ ...paginationOpts, cursor: page.continueCursor });
-      return;
-    }
-    rows.push(...page.page);
-    if (page.isDone) return;
-    if (!page.continueCursor) {
-      throw new Error('All-time report pagination did not return a continuation cursor.');
-    }
-    if (paginationOpts.endCursor !== undefined
-      && page.continueCursor === paginationOpts.endCursor) {
-      return;
-    }
-    if (continuationCursors.has(page.continueCursor)) {
-      throw new Error('All-time report pagination repeated a continuation cursor.');
-    }
-    continuationCursors.add(page.continueCursor);
-    await collectInterval({ ...paginationOpts, cursor: page.continueCursor });
-  }
-
-  await collectInterval({ numItems: PAGE_NUM_ITEMS, cursor: null });
-  throwIfCancelled();
+  const rows = await collectCloudPages(queryPage, isCancelled);
   const stock = await queryStock();
   return buildAllReportSnapshot(rows, stock, businessDate);
 }
@@ -283,7 +225,6 @@ function buildAllReportSnapshot(
         .slice(0, MAX_DETAIL_ROWS),
       ingredientTotals: [...ingredients.values()]
         .sort((left, right) => left.ingredientName.localeCompare(right.ingredientName))
-        .slice(0, MAX_DETAIL_ROWS)
         .map((item) => ({
           ...item,
           currentStockQuantity: stockByName.get(
