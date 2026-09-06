@@ -7,6 +7,21 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 matching unlock fade (POLISH-01)
+
+- Owner requests matching unlock fade; tablet disconnected, explicitly defer
+  installation/device checks until owner reconnects it. Scope is visual only;
+  Convex quota findings remain unmodified and need separate authorization.
+- Graphify/Ponytail/frontend guidance: existing authenticated shell mounts only
+  after successful unlock. Add matching180ms opacity entry, reduced-motion off;
+  no timer, retained locked screen, layout changes or extra network work.
+  Previously reviewed Android responsiveness/Capacitor boundary applies: CSS
+  rendering in existing WebView, no native plugin/security changes required.
+- Local build, immediate-lock checks and diff check passed. CSS-only; no
+  structural graph refresh needed. Physical appearance/acceptance still pending.
+  Next: when owner reconnects tablet, package with higher version/same key and
+  inspect both fades. No new APK published or installed in this step.
+
 ### Current checkpoint — 2026-09-06 unlock delay and lock fade (POLISH-01)
 
 - Owner requests subtle lock transition and fixes for slow unlock. Physical
