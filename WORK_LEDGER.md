@@ -18,12 +18,26 @@ remaining goal and card sequence.
   published release9308041b.... Android cannot install that release over this
   testing build. Existing update guards/check:release pass, but end-to-end
   download/install is NOT tested yet. No repo visibility or order data changed.
-- Need owner authority for one-time debug-to-signed migration (uninstall clears
+- Owner approved one-time debug-to-signed migration (uninstall clears
   all app-private data, not just orders). Before migration preserve/verify cloud
   business setup, settings, protected-access recovery and correct signing key;
   never uninstall blindly. After migration rehearse genuine higher-version
   update, restore releases repo PRIVATE, then execute scoped backed-up test-sale
   cleanup including derived reports/stock effects and prevent outbox resurrection.
+- 2026-09-06 continuation: owner confirms Products now loads quickly; do not
+  spend quota investigating it further. Future client-demo order cleanup is
+  discussion only, not authorization to add a cleanup feature.
+- Signing gate blocked before destructive migration: saved rehearsal keystore
+  exists at tmp/olaso-upload-rehearsal.jks (2646 bytes, alias olaso), but no
+  OLASO_UPLOAD signing environment values are present, and gh secret list for
+  both source and releases repos returns no configured repository secrets.
+  Password-free listing does not verify keystore integrity or unlock its key.
+  Do not guess README placeholder passwords or replace the release identity.
+- Both GitHub repos remain PRIVATE; tablet is connected. No uninstall, data
+  deletion, release publication, or application source changes in this step.
+  Next: owner supplies signing credentials through protected local storage;
+  verify matching release certificate, make verified backups/recovery checks,
+  migrate and test real in-app update, then scoped test-order cleanup.
 
 ### Current checkpoint — 2026-09-06 customer footer spacing (POLISH-01)
 
