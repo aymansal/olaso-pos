@@ -13,6 +13,7 @@ import type { LocalManagementActor } from './managementOperation.ts';
 import { OPERATIONAL_MANAGEMENT_OPERATION_TYPES } from './managementOperation.ts';
 import { keyFromName } from './managementMutations.ts';
 import { productImageJpeg } from '../lib/compressProductImage.ts';
+import { nextProductCode } from '../lib/productCode.ts';
 
 type CatalogDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 type CatalogTransaction = <T>(operation: (database: CatalogDatabase) => Promise<T>) => Promise<T>;
@@ -214,6 +215,10 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
       : existing?.image_jpeg != null && String(existing.image_jpeg)
         ? String(existing.image_jpeg)
         : null;
+    const code = existing?.product_code ? String(existing.product_code)
+      : nextProductCode(name, ((await database.query(
+        'SELECT product_code FROM products WHERE product_code IS NOT NULL LIMIT 501',
+      )).values ?? []).map((row) => String(row.product_code)));
     await database.run(
       `INSERT INTO products
         (id, category_id, name, receipt_name, price_centimes, status,
@@ -233,6 +238,8 @@ export function saveLocalProduct(context: CatalogContext, input: ProductSaveInpu
       ],
       false,
     );
+    await database.run('UPDATE products SET product_code = ? WHERE id = ?',
+      [code, localId], false);
     const operation = await enqueueManagementOperation(database, {
       deviceId: context.deviceId,
       operationType: 'management.product.save',

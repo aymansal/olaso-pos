@@ -18,6 +18,7 @@ import {
 } from '../src/data/localProductConfiguration.ts';
 import { queueProductSizeSaves } from '../src/features/products/queueProductSizeSaves.ts';
 import { localMigrations } from '../src/data/schema.ts';
+import { nextProductCode } from '../src/lib/productCode.ts';
 import { pruneStaleOperationalCatalog } from '../src/data/operationalCache.ts';
 import {
   CATEGORY_ARTWORK_OPTIONS,
@@ -71,10 +72,15 @@ const category = await saveLocalCategory(context, {
   name: 'Offline category', artworkKey: 'cold-drinks', sortOrder: 90,
 }, transaction);
 const photo = 'data:image/webp;base64,' + 'A'.repeat(24000);
+assert.equal(nextProductCode('Latte', []), 'LAT-001');
+assert.equal(nextProductCode('Latté', ['LAT-001','LAT-002']), 'LAT-003');
+assert.equal(nextProductCode('V60', []), 'V60-001');
+assert.throws(() => nextProductCode('Latte', Array.from({length:999},(_,i)=>`LAT-${String(i+1).padStart(3,'0')}`)), /range is full/);
 const product = await saveLocalProduct(context, {
   name: 'Offline drink', categoryId: category.id, basePriceCentimes: 2200,
   status: 'active', sortOrder: 90, imageJpeg: photo,
 }, transaction);
+assert.equal(database.prepare('SELECT product_code FROM products WHERE id = ?').get(product.id).product_code,'OFF-001');
 assert.equal(
   database.prepare('SELECT image_jpeg FROM products WHERE id = ?').get(product.id).image_jpeg,
   photo,
@@ -254,6 +260,16 @@ assert.equal(database.prepare(
   'SELECT depends_on_operation_id FROM outbox WHERE operation_id = ?',
 ).get(removedProduct.operationId).depends_on_operation_id, uncategorized.operationId,
 'Later product deletion must wait for every earlier change descended from its pending sale.');
+const codeProduct = await saveLocalProduct(context, {
+  name: 'Latte', basePriceCentimes: 1800, status: 'active', sortOrder: 1,
+}, transaction);
+const identityBefore = database.prepare('SELECT key, product_code FROM products WHERE id = ?').get(codeProduct.id);
+await saveLocalProduct(context, {
+  id: codeProduct.id, name: 'Renamed coffee', basePriceCentimes: 1800,
+  status: 'active', sortOrder: 1, expectedRevision: 1,
+}, transaction);
+assert.deepEqual(database.prepare('SELECT key, product_code FROM products WHERE id = ?').get(codeProduct.id),
+  identityBefore, 'Rename preserves code and internal key');
 database.close();
 
 const pruneDatabase = new DatabaseSync(':memory:');

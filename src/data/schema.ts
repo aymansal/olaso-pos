@@ -921,6 +921,10 @@ export const localMigrations = [
              ELSE NULL END`,
     ],
   },
+  {
+    toVersion: 25,
+    statements: [`ALTER TABLE products ADD COLUMN product_code TEXT`],
+  },
 ] as const;
 
 export const LOCAL_SCHEMA_VERSION =

@@ -215,7 +215,7 @@ export function ProductEditorPanel({
           <span className={styles.identityCopy}>
             <strong>{name || t('New product')}</strong>
             <small>
-              {(product?.key ?? t('NEW')).toUpperCase()} ·{' '}
+              {product?.code ?? t('Generated on save')} ·{' '}
               {category?.name ?? t('Uncategorized')}
             </small>
           </span>
@@ -241,7 +241,7 @@ export function ProductEditorPanel({
       </label>
       <label className={`${styles.field} ${styles.codeField}`}>
         <span>{t('Product code')}</span>
-        <input value={(product?.key ?? t('Generated on save')).toUpperCase()} readOnly />
+        <input value={product?.code ?? t('Generated on save')} readOnly />
       </label>
       <label className={`${styles.field} ${styles.priceField}`}>
         <span>{t('Price')}</span>

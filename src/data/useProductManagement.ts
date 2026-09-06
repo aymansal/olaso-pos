@@ -39,7 +39,7 @@ export function useProductManagement(selectedProductId?: string) {
   }, [reconnect.revision, reload]);
   const context = { deviceId: session.deviceId, actor: { staffProfileId: session.staffProfileId, name: session.name, role: session.role } };
   const products: ManagedProduct[] = (cache?.products ?? []).map((product) => ({
-    id: product.id, key: product.key, categoryId: product.categoryId,
+    id: product.id, key: product.key, code: product.code, categoryId: product.categoryId,
     name: product.name, receiptName: product.receiptName, basePriceCentimes: product.priceCentimes,
     status: product.status, imageAssetKey: product.imageAssetKey, imageJpeg: product.imageJpeg, sortOrder: product.sortOrder,
     currentRecipeVersionId: product.currentRecipeVersionId, revision: product.revision, updatedAt: product.updatedAt,

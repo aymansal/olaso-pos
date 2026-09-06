@@ -12,6 +12,7 @@ export type ManagedCategory = {
 export type ManagedProduct = {
   id: string;
   key: string;
+  code?: string;
   categoryId: string;
   name: string;
   receiptName: string;

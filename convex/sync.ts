@@ -230,6 +230,7 @@ export const getOperationalSnapshot = query({
       products: products.map((product) => ({
         id: product._id,
         key: product.key,
+        ...(product.code ? { code: product.code } : {}),
         categoryId: product.categoryId ?? '',
         name: product.name,
         receiptName: product.receiptName,

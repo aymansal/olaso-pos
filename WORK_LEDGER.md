@@ -9,6 +9,30 @@ remaining goal and card sequence.
 
 ### Current checkpoint — 2026-09-06 Codes and Coffee (POLISH-01)
 
+- Short codes deployed to production and installed over existing tablet data.
+  All92 products saved through normal authenticated management; readback confirms
+  92 unique seven-character codes, exact cloud/tablet match, unchanged IDs, keys,
+  names, prices, photos and recipe links, zero outbox. Evidence in
+  tmp/product-codes-before.json, product-codes-applied.jsonl,
+  product-codes-verification.json and product-codes-installed.png. Physical1340x800
+  Products shows ICE-031 fully inside its field, no console warnings/errors.
+- Checks passed: local catalog (create/rename), migration25/restart, local
+  management/inventory/staff, product configuration, settings, reconnect, offline,
+  TypeScript and production Android build/JVM checks. Graphify refreshed to
+  3353nodes/6467edges; three Gradle parser warnings affect only that tooling graph.
+  Next: commit/push codes, then coffee sizes/options/known recipes/images.
+- Owner approved short related codes and instructed continuation. Implementing
+  separate saved code,3-character name prefix plus001–999, never changing IDs
+  or keys. SQLite schema25 adds product_code; cloud code assigned transactionally
+  from bounded live product set. Saved cloud codes survive rename. Offline code
+  is provisional until first cloud assignment (two offline tablets can pick the
+  same candidate); cloud allocation prevents duplicate final codes, snapshot
+  reconciles candidates without affecting product identity or pending sales.
+- Official Android SQLite upgrade guidance reviewed; existing Capacitor ordered
+  migrations used, additive only, no new native boundary. Attempted plugin GitHub
+  upgrade guide unavailable via browsing; installed plugin is existing boundary.
+  Pure allocator and local catalog regression checks added; production not yet
+  changed. Next: verification, deployment/install, normal-save92-code backfill.
 - Owner requests short related codes for all existing/future products, then
   Coffee page setup. Graphify queried and current local/cloud save paths read:
   displayed code is the internal key; backend updates preserve that key.

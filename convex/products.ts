@@ -16,6 +16,7 @@ import {
   requireManagement,
 } from './lib/management';
 import { sessionArgs } from './lib/session';
+import { nextProductCode } from '../src/lib/productCode';
 
 const MAX_PRODUCTS = 200;
 const productStatus = v.union(
@@ -90,6 +91,11 @@ export const save = mutation({
     const sortOrder = boundedInteger(args.sortOrder, 'Sort order', 0, 100_000);
     await validateRelations(ctx, args.categoryId);
     const updatedAt = Date.now();
+    const allocateCode = async () => {
+      const rows = await ctx.db.query('products').withIndex('by_updated_at').take(501);
+      if (rows.length > 500) return invalid('Product code allocation limit exceeded.');
+      return nextProductCode(name, rows.flatMap((row) => row.code ? [row.code] : []));
+    };
 
     if (args.id) {
       const product = await ctx.db.get(args.id);
@@ -102,6 +108,7 @@ export const save = mutation({
         return conflict('Restore this product before editing it.');
       }
       await ctx.db.patch(product._id, {
+        code: product.code ?? await allocateCode(),
         categoryId: args.categoryId,
         name,
         receiptName,
@@ -136,6 +143,7 @@ export const save = mutation({
     }
     const id = await ctx.db.insert('products', {
       key,
+      code: await allocateCode(),
       categoryId: args.categoryId,
       name,
       receiptName,

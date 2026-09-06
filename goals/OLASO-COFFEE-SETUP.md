@@ -6,8 +6,8 @@ Owner requested short codes for existing/future products, followed by Coffee
 menu setup. Read-only production check found23 Coffee products, no coffee photos
 or recipes linked. No production changes performed for this card yet.
 
-Two questions sent to owner: name-related LAT-001/ESP-001 versus plain P-0001;
-and whether to defer unknown shot/pump deductions. Await answers before applying.
+Owner approved short name-related codes such as LAT-001 and instructed continuation.
+Unknown shot/pump deductions remain unconfigured rather than guessed.
 
 ## Codes — implementation boundary
 
@@ -16,8 +16,10 @@ the name; backend updates deliberately do not change it. Do not simply truncate
 it or replace IDs. Preserve all sale/recipe/size/choice and synchronization links.
 Short codes must be durable, work offline and after install-over/new-device sync,
 stay stable on renames, and avoid duplicate allocation across offline devices.
-Choose the smallest correct persistence/allocation design after format decision;
-do not claim sequential device-local numbering is globally collision-safe.
+Separate optional cloud code / SQLite product_code (schema25), generated from
+three normalized name characters and001–999. Existing saved codes survive rename.
+Offline candidates are provisional until the cloud assigns the final unique code
+transactionally; normal snapshots reconcile without changing identity or sales.
 
 ## Coffee product identity mapping
 

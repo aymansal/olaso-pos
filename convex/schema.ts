@@ -86,6 +86,7 @@ export default defineSchema({
 
   products: defineTable({
     key: v.string(),
+    code: v.optional(v.string()),
     categoryId: v.optional(v.id('categories')),
     name: v.string(),
     receiptName: v.string(),

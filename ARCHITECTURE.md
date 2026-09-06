@@ -8,6 +8,15 @@ authority: Technical architecture, persistence, synchronization, performance, an
 
 # Olaso POS Architecture
 
+## Product display codes
+
+Product references use a saved three-character normalized name prefix and a
+three-digit suffix, such as LAT-001. They are separate from immutable IDs and
+synchronization keys. Renames preserve assigned codes. SQLite schema25 stores
+product_code; Convex products.code is assigned transactionally on the first save.
+Offline candidates are provisional until the first cloud allocation; snapshots
+reconcile the final code without changing product identity or historical orders.
+
 ## Purpose
 
 This document defines how Olaso POS is implemented. It exists to prevent slow
