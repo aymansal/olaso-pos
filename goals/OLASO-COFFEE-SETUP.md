@@ -2,9 +2,12 @@
 
 ## Status — 6 September 2026
 
-Owner requested short codes for existing/future products, followed by Coffee
-menu setup. Read-only production check found23 Coffee products, no coffee photos
-or recipes linked. No production changes performed for this card yet.
+Completed on production and installed tablet: short codes,18 Coffee products
+covering all23 menu listings, exact Standard/Plus prices, milk/syrup/extras,
+five measured hot recipes and12 normalized transparent WebP photos.
+Five redundant iced records removed through normal authorized deletion only
+after verifying no local/cloud sale-item references. Existing hot identities
+and historical sale snapshots retained. Catalog now87 products, zero outbox.
 
 Owner approved short name-related codes such as LAT-001 and instructed continuation.
 Unknown shot/pump deductions remain unconfigured rather than guessed.
@@ -52,6 +55,10 @@ Never invent hot versions for iced-only listings or change Mocha's printed price
   without conflicting temperature and milk replacement effects. A four-size
   Hot Standard/Hot Plus/Iced Standard/Iced Plus mapping is a possible existing
   capability, not a new UI requirement. Verify all combinations before imports.
+- Implemented four named sizes for the five pairs and V60, two for other drinks.
+  Milk uses remove Whole + add replacement with exact per-size quantities where
+  known, so unconfigured Plus/iced recipes cannot fail a replace-missing-base
+  validation or deduct an invented milk amount. Black coffee milk has no default.
 - Milk interpretation follows the settled Frappé model: Whole0, Lactose Free5,
   Oat/Coconut/Almond10 MAD. Do not double-charge milk as an extra too. Do not
   silently add milk to black coffee/V60 or invent milk quantities.
@@ -83,6 +90,17 @@ There are no hot or V60 photos in that set; do not generate or mislabel new phot
 
 ## Verification and recovery
 
+- Passed32512 combinations through the shared price/ingredient resolver and
+  cloud/tablet readback. Physical1340x800 checks cover18 products/48 sizes with
+  paid options,320px contained dialog, no console warnings/errors; no sale placed
+  and original empty cart retained. Evidence tmp/coffee-verification.json,
+  coffee-pos-verification.json, coffee-installed.png and coffee-dialog.png.
+- Fixed existing local default-size revision mismatch found on V60: only an
+  actual prior default changes revision, matching cloud behavior. Regression
+  and production Android build passed; final APK installed over existing data.
+- Still intentionally pending: unknown shot/pump conversions, all Plus recipe
+  quantities, missing recipes/costs and six missing hot/V60 original photos.
+  Do not infer those from generic internet recipes or invent images.
 - Read current AGENTS/PLAN/WORK_LEDGER before resuming. Graphify/Ponytail mandatory.
 - No direct SQLite/production SQL, seed, reset, or clean install. Use existing
   authenticated local-first actions and normal sync, with revision guards.

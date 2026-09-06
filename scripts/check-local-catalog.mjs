@@ -270,6 +270,18 @@ await saveLocalProduct(context, {
 }, transaction);
 assert.deepEqual(database.prepare('SELECT key, product_code FROM products WHERE id = ?').get(codeProduct.id),
   identityBefore, 'Rename preserves code and internal key');
+const coldSize = await saveLocalProductSize(context, {
+  productId: codeProduct.id, name: 'Cold', priceCentimes: 2200,
+  sortOrder: 20, isDefault: false, status: 'active',
+}, transaction);
+const defaultSize = database.prepare('SELECT * FROM product_sizes WHERE product_id = ? AND is_default = 1').get(codeProduct.id);
+await saveLocalProductSize(context, {
+  id: defaultSize.id, productId: codeProduct.id, key: defaultSize.key,
+  name: 'Hot Standard', priceCentimes: 1800, sortOrder: 10,
+  isDefault: true, status: 'active', revision: defaultSize.revision,
+}, transaction);
+assert.equal(database.prepare('SELECT revision FROM product_sizes WHERE id = ?').get(coldSize.id).revision,
+  coldSize.revision, 'Editing the default size must not increment an unchanged non-default size (cloud parity)');
 database.close();
 
 const pruneDatabase = new DatabaseSync(':memory:');

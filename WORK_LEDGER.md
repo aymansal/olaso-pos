@@ -9,6 +9,38 @@ remaining goal and card sequence.
 
 ### Current checkpoint — 2026-09-06 Codes and Coffee (POLISH-01)
 
+- Coffee complete within known source data:18 products cover23 listings after
+  normal deletion of five unused iced duplicates (no local/cloud sale references).
+  Total87 live products, unique short codes,12 photos,5 measured recipes,
+  54 choice sections and48 sizes. All32512 price/ingredient combinations pass;
+  cloud/tablet match with zero outbox after final install. Physical all18 products
+  /48 sizes with paid options checked,320px dialog contained,no console errors;
+  no sale/print created, empty cart untouched. Final source/build installed.
+  Evidence tmp/coffee-verification.json, coffee-pos-verification.json,
+  coffee-retired.jsonl, coffee-installed.png,coffee-dialog.png.
+  Pending owner data only: shot/pump conversions,Plus recipes,missing recipes,
+  ingredient costs and six missing hot/V60 photos. Next: commit/push evidence,
+  then owner acceptance or next menu page.
+- All18 retained coffee records configured through normal actions. V60 exposed
+  an existing parity bug: local default-size save incremented every other size,
+  cloud incremented only an actual prior default. Cold was cloud revision1 but
+  queued expected2. Fixed local UPDATE with is_default=1 and regression check.
+  Recovered by normal PIN-authenticated owner save of unchanged cloud Cold size
+  (same name/price/settings, revision1->2); no PIN reset or local/outbox rewrite.
+  Its queued Cold Standard edit then synchronized normally; zero outbox.
+  Evidence: tmp/coffee-size-recovery.json. Production APK rebuilding with fix;
+  exhaustive combination verification running before retiring five iced rows.
+- Short-code commit dfd113a pushed to origin/main. Coffee configuration underway:
+  twelve normalized transparent originals visually checked, applied through normal
+  save; Coffee ingredient (grams) added without cost/opening stock. Five measured
+  hot recipes only. Four size entries on hot/iced pairs preserve exact prices;
+  Plus and unknown iced recipe deductions remain zero/unconfigured as approved.
+  Milk remove+add effects use measured hot Standard amounts only, avoiding an
+  invalid replacement against an unconfigured Plus/iced recipe. Black coffee
+  milk is optional, no default. Normal UI actions only; no sales or printouts.
+  Recovery: tmp/coffee-local-before.json, coffee-webp.json, coffee-configured.jsonl.
+  First size attempt stopped on delayed React refresh; Espresso sizes were saved
+  safely, resumed by exact-match reuse with bounded refresh checks. No duplicate.
 - Short codes deployed to production and installed over existing tablet data.
   All92 products saved through normal authenticated management; readback confirms
   92 unique seven-character codes, exact cloud/tablet match, unchanged IDs, keys,

@@ -76,7 +76,7 @@ export function saveLocalProductSize(
     if (input.isDefault && input.status !== 'archived') {
       await database.run(
         `UPDATE product_sizes SET is_default = 0, revision = revision + 1, updated_at = ?
-         WHERE product_id = ? AND id <> ? AND status <> 'archived'`,
+         WHERE product_id = ? AND id <> ? AND is_default = 1 AND status <> 'archived'`,
         [now, input.productId, id], false,
       );
     }
