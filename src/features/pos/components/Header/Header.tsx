@@ -71,7 +71,10 @@ export function Header({
         <div className={styles.wordmark}>
           <img src={olasoLogo} alt="Olaso" width={96} height={26} />
         </div>
-        <time className={styles.date} dateTime={now.toISOString()}>{date} · {time}</time>
+        <time className={styles.date} dateTime={now.toISOString()}>
+          <span className={styles.calendarDate}>{date} ·</span>
+          <span className={styles.clock}>{time}</span>
+        </time>
       </div>
 
       <TopNavigation activePage={activePage} onNavigate={onNavigate} role={staff.role} />

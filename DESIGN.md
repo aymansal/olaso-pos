@@ -500,6 +500,11 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - The shared Header and Lock clock read tablet time locally, refresh immediately
   on foreground/resume, and then continue their normal interval without an
   internet dependency.
+- The Header reserves fixed brand, navigation, and action columns. Changing
+  language or 12/24-hour format never shifts navigation; keep the clock visible
+  and ellipsize only an exceptionally long date within its reserved space.
+- Saving a Settings preference disables repeated submissions without dimming
+  the entire preference group. Initial unavailable/loading controls may dim.
 - A deliberate staff switch with an unfinished order uses one concise native
   confirmation that says the order will remain. Cancel keeps the current staff
   and order; confirm locks and hands the order to the next verified staff

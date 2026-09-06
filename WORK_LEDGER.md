@@ -7,6 +7,45 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 Settings timing and approved hot photos (POLISH-01)
+
+- Owner requests verified10-minute inactivity lock, no preference-save flashing,
+  stable Header position with12-hour clock, and approved paper-cup image upload
+  for six products (Espresso/Blend intentionally share one of five images).
+- Graphify/Ponytail and React/design skills used. Physical61-frame baseline:
+  no Settings/Header remount,9 frames of all preference controls dimming while
+  saving,nav x371.63->383.12 on12-hour change. Keep disabled save protection,
+  aria-busy overrides temporary dimming; fixed Header grid keeps nav x370.
+- Android WebView timer suspension and Capacitor lifecycle guidance reviewed:
+  retain existing JS deadline with visibility/focus expiry checks; no new native
+  plugin. Need real10-minute idle device observation plus boundary tests.
+- Approved generated images are RGB with baked checkerboards, not actual alpha.
+  Asked owner permission to remove background with exact-cup-preserving script;
+  never upload checkers or redraw approved cups silently. Await that answer.
+- Exact approved sources copied unchanged to output/hot-coffee-approved-source-v1
+  (espresso shared with Espresso Blend, cappuccino, flat-white, nos-nos, v60).
+  These are source copies only, not transparent/compressed/uploaded assets.
+- Production APK built and installed over existing data. Settings/clock changes
+  across English/French: eight transitions, zero dimmed frames/remounts, nav x
+  369.9765 consistently. Evidence tmp/settings-after.json. Settings, CSS scope,
+  local-staff, navigation, and lock-switch checks pass. Real idle observation
+  completed: one physical touch restarted the deadline, as expected.
+- Real tablet timing: last touch1788699575672; locked DOM1788700175771,
+  elapsed600099ms (10 minutes +99ms), no intervening activity. Lock screen
+  confirmed and normal owner unlock succeeded. Evidence
+  tmp/settings-idle-evidence.json. Background expiry/Never/activity boundaries
+  verified in deterministic tests, not claimed as separate real-duration runs.
+- All six main screens visually inspected in English and French at1340x800,
+  same nav x369.9765, clock visible, no document overflow or console messages.
+  Evidence tmp/header-verification.json, tmp/header-fr-verification.json and
+  corresponding screenshots. Auto-lock15/Never/10 changes: zero dimmed frames,
+  saved selection correct (tmp/settings-duration-verification.json).
+- Left tablet on POS, English app/receipt,12-hour clock and10-minute auto-lock.
+  No sale/print made. Source fixes/checks ready for commit; photo upload remains
+  pending exact-cutout permission. No structural graph refresh needed.
+- Next: commit/push Settings fixes; after owner answers, remove checkerboards
+  preserving approved cups, use existing WebP compressor, upload six through
+  normal authenticated saves/sync, verify local/cloud parity and zero queue.
 ### Current checkpoint — 2026-09-06 Codes and Coffee (POLISH-01)
 
 - Completion commits dfd113a (short codes) and906e269 (coffee evidence/size sync

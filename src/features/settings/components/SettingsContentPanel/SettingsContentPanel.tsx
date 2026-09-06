@@ -158,7 +158,7 @@ export function SettingsContentPanel({
         <small>{t('Preferences and terminal controls')}</small>
       </header>
 
-      <div className={styles.choices}>
+      <div className={styles.choices} aria-busy={saving}>
         <fieldset className={styles.choice}>
           <legend>{t('Application')}</legend>
           <div>

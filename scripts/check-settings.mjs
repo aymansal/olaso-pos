@@ -98,6 +98,17 @@ try {
       elapsed += 1000;
       host.dispatchEvent(new Event('keydown'));
       assert.equal(scheduled.delay, minutes * 60_000, 'Activity restarts full duration');
+      for (const event of ['pointerdown', 'pointermove', 'wheel']) {
+        elapsed += 1000;
+        host.dispatchEvent(new Event(event));
+        assert.equal(scheduled.delay, minutes * 60_000, `${event} restarts full duration`);
+      }
+      page.visibilityState = 'hidden';
+      elapsed += 1000;
+      host.dispatchEvent(new Event('pointerdown'));
+      page.visibilityState = 'visible';
+      host.dispatchEvent(new Event('focus'));
+      assert.equal(scheduled.delay, minutes * 60_000 - 1000, 'Background activity and focus do not extend the deadline');
       page.visibilityState = 'hidden';
       elapsed += minutes * 60_000 + 1;
       page.visibilityState = 'visible';
@@ -116,8 +127,11 @@ try {
   host.clearTimeout = () => {};
   const page = new EventTarget();
   page.visibilityState = 'visible'; page.hasFocus = () => true;
-  const cleanup = startAutoLock(5, () => locks++, host, page);
-  elapsed += 300_000;
+  const cleanup = startAutoLock(10, () => locks++, host, page);
+  elapsed += 599_999;
+  callback();
+  assert.equal(locks, 0, 'Ten-minute lock must not fire early');
+  elapsed += 1;
   callback();
   assert.equal(locks, 1, 'Scheduled timeout locks without a resume event');
   cleanup();
@@ -274,6 +288,8 @@ assert.match(printerPanel, /Application/);
 assert.match(printerPanel, /autoLockMinutes/);
 const settingsCss = readFileSync('src/features/settings/components/SettingsContentPanel/SettingsContentPanel.module.css', 'utf8');
 assert.match(settingsCss, /\.choice > div:not\(\.autoLock\) > button\[aria-pressed='true'\]/);
+assert.match(printerPanel, /aria-busy=\{saving\}/);
+assert.match(settingsCss, /\.choices\[aria-busy='true'\] button:disabled \{ opacity: 1; \}/);
 assert.match(printerPanel, /192\.168\.1\.100:9100/);
 
 database.close();

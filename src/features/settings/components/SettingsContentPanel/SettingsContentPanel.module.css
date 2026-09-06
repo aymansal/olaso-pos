@@ -57,6 +57,7 @@
 .primary { border: 1px solid var(--olaso-green); color: var(--olaso-white); background: var(--olaso-green); }
 .secondary, .update header .primary { border: 1px solid var(--olaso-control-border); color: var(--olaso-green); background: var(--olaso-white); }
 .primary:disabled, .secondary:disabled, .choice button:disabled { opacity: 0.5; }
+.choices[aria-busy='true'] button:disabled { opacity: 1; }
 .syncFacts { display: grid; margin-top: 16px; grid-template-columns: 1fr 1fr 1.6fr; padding: 16px 0; border-radius: 18px; background: var(--olaso-table-head); }
 .syncFacts article { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 0 18px; }
 .syncFacts article + article { border-left: 1px solid var(--olaso-order-divider); }
