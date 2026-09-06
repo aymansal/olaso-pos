@@ -43,7 +43,9 @@ remaining goal and card sequence.
 - Left tablet on POS, English app/receipt,12-hour clock and10-minute auto-lock.
   No sale/print made. Source fixes/checks ready for commit; photo upload remains
   pending exact-cutout permission. No structural graph refresh needed.
-- Next: commit/push Settings fixes; after owner answers, remove checkerboards
+- Settings fixes committed as aff2c9a and pushed to origin/main; the matching
+  production APK is installed. Settings portion complete; image portion pending.
+- Next: after owner answers, remove checkerboards
   preserving approved cups, use existing WebP compressor, upload six through
   normal authenticated saves/sync, verify local/cloud parity and zero queue.
 ### Current checkpoint — 2026-09-06 Codes and Coffee (POLISH-01)
