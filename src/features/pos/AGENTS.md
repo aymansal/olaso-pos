@@ -69,8 +69,9 @@ owns the shared Header and TopNavigation currently used across the application.
   mixed-method overlay directly from either initial method. In-flight guards
   prevent repeated submissions. A fully Offert cart skips the overlay.
   Cash shows20 /50 /100 /200 DH plus custom given and change; Split is disabled unless two or more paid units
-  remain. Offert lines stay off the split lists. With two or more paid units it
-  fades in on that overlay and cannot close after the first recorded payer.
+  remain. Offert lines stay off the split lists. No in-dialog Split toggle.
+  Two bounded product lists scroll independently; cash controls stay outside
+  those scroll areas. The overlay cannot close after the first recorded payer.
   Each split payer chooses Cash or Card; Card is exact and only Cash shows
   Given/Change. One sale records every tender on the ticket.
   A cashier may empty the current draft from the always-visible trash next to

@@ -233,10 +233,9 @@ assert.match(paymentDialog, /canSplit/);
 assert.match(paymentDialog, /Split/);
 assert.match(paymentDialog, /locked \|\| processing \? null/);
 assert.doesNotMatch(paymentDialog, /onClose=\{onCancel\}/);
-// Card "Yes, split it" entry: the split lists must be visible immediately and
-// the in-dialog Split button must not render (the question already chose split).
-assert.match(paymentDialog, /startSplit === true \? 'run' : 'idle'/);
-assert.match(paymentDialog, /canSplit && startSplit !== true \? \(/);
+// Only the receipt rail chooses split mode; no redundant in-dialog toggle.
+assert.match(paymentDialog, /const split = canSplit && startSplit === true/);
+assert.doesNotMatch(paymentDialog, /toggleSplit|styles\.split|setSplitFade/);
 const posScreen = readFileSync('src/features/pos/PosScreen.tsx', 'utf8');
 assert.match(posScreen, /PaymentDialog/);
 assert.match(posScreen, /total === 0/);

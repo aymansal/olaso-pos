@@ -1,5 +1,5 @@
 import { X } from '@boxicons/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
@@ -106,10 +106,7 @@ export function PaymentDialog({
   onConfirm,
 }: PaymentDialogProps) {
   const t = useT();
-  const [split, setSplit] = useState(canSplit && startSplit === true);
-  const [splitFade, setSplitFade] = useState<'idle' | 'prepare' | 'run'>(
-    canSplit && startSplit === true ? 'run' : 'idle',
-  );
+  const split = canSplit && startSplit === true;
   const [remaining, setRemaining] = useState(() => payableCart(cart));
   const [pick, setPick] = useState<CartLine[]>([]);
   const [recorded, setRecorded] = useState<PaymentTender[]>([]);
@@ -129,12 +126,6 @@ export function PaymentDialog({
   const lastSplit = split && remaining.length === 0;
   const confirmLabel = !split || lastSplit ? 'Place order' : 'Take payment';
 
-  useEffect(() => {
-    if (splitFade !== 'prepare') return;
-    const frame = requestAnimationFrame(() => setSplitFade('run'));
-    return () => cancelAnimationFrame(frame);
-  }, [splitFade]);
-
   function setAmount(centimes: number) {
     setTendered(centimes);
     setCustomText('');
@@ -143,25 +134,6 @@ export function PaymentDialog({
   function resetCashAmount() {
     setTendered(undefined);
     setCustomText('');
-  }
-
-  function toggleSplit() {
-    if (locked || processing || !canSplit) return;
-    if (split) {
-      setSplit(false);
-      setSplitFade('idle');
-      setRemaining(payableCart(cart));
-      setPick([]);
-      setActiveMethod(paymentMethod);
-      setTendered(paymentMethod === 'Card' ? chargedCentimes(cart, sizes, choiceValues) : undefined);
-      return;
-    }
-    setSplit(true);
-    setRemaining(payableCart(cart));
-    setPick([]);
-    setActiveMethod(paymentMethod);
-    resetCashAmount();
-    setSplitFade('prepare');
   }
 
   async function takePayment() {
@@ -211,18 +183,6 @@ export function PaymentDialog({
           </header>
 
           <div className={styles.body}>
-            {canSplit && startSplit !== true ? (
-              <button
-                type="button"
-                className={styles.split}
-                aria-pressed={split}
-                disabled={locked || processing}
-                onClick={toggleSplit}
-              >
-                {t('Split')}
-              </button>
-            ) : null}
-
             {recorded.length > 0 ? (
               <p className={styles.paid}>
                 {recorded.map((tender, index) => (
@@ -234,7 +194,7 @@ export function PaymentDialog({
             ) : null}
 
             {split ? (
-              <div className={styles.shares} data-fade={splitFade}>
+              <div className={styles.shares}>
                 <div>
                   <p className={styles.shareHead}>
                     {t('Remaining')}

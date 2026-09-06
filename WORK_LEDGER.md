@@ -7,6 +7,35 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 cash popup clipping (POLISH-01)
+
+- Owner requests cash input always visible despite long split lists, compact
+  standard popup, removal of redundant internal Split; footer wording proposals.
+- Root cause: lists and cash controls shared one body scroll. Changed lists to
+  independent bounded scroll areas, nonshrinking controls,480px width/max640px
+  viewport-bounded height. Removed toggle and obsolete fade state/effect.
+- Graphify/Ponytail/frontend/React guidance used. Native research before change:
+  https://developer.android.com/guide/topics/ui/accessibility/apps and
+  https://capacitorjs.com/docs/apis/keyboard. Keep existing WebView/native input
+  behavior; CSS handles overflow, short keyboard viewport outer-scroll fallback;
+  no new plugin, persistence or money logic change.
+- check:pos and check:css-scope pass. Production build/install QA underway.
+  Owner explicitly confirmed tablet ready for install and brief verification.
+- Printed footer unchanged pending wording approval; suggested community copy
+  in English and French in conversation. No printer encoding changes.
+- Production build/native JVM checks passed; APK installed over existing data.
+  Owner-authorized tablet check with ten distinct draft lines: dialog480x636.4,
+  input fully visible (y511.5–561.5), independently scrolling product list,
+  regular cash popup has no Split, cash/card controls switch correctly.
+  Screenshot tmp/payment-cash-scroll.png visually inspected; evidence
+  tmp/payment-scroll-check.json. No console messages, no payment confirmed;
+  only the temporary test cart cleared. Earlier QA selector accidentally chose
+  underlying rail Card; scoped it to dialog and reran successfully.
+- check:sales local portion passed; protected cloud portion requires absent
+  disposable test restore PIN and remains unrun. Never used live PIN for it.
+  Keyboard-open visual acceptance remains untested. Graphify refreshed.
+- Next: owner popup/keyboard acceptance and choice of bilingual footer wording.
+
 ### Current checkpoint — 2026-09-06 menu correctness audit (POLISH-01)
 
 - Owner approved removal of Milk from five black coffees and requested complete
