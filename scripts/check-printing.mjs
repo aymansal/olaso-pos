@@ -52,7 +52,7 @@ const model = createReceiptModel(snapshot, {
 });
 const text = renderReceiptText(model);
 const raw = encodeWd8260Receipt(model);
-const goldenSha256 = '118A81DEC055872BD7822E6D6FB5B4D10799B7FFA37FF5560B5A636B7DE0DC73';
+const goldenSha256 = 'DAFD76DA145A768F2AAFE63C2D8427469BF0F726AC5FD9EBEA99614447C6D1C0';
 
 const outputIndex = process.argv.indexOf('--output');
 if (outputIndex >= 0) {
@@ -68,6 +68,8 @@ assert.match(text, /ORDER 000123\s+21\/08\/2026 14:35/);
 assert.match(text, /Cashier: Alex\s+Dine in \/ Table T4/);
 assert.match(text, /Café crème double\s+2\s+36\.00/);
 assert.match(text, /A little pause\.\nA place to belong\.\n$/);
+assert.match(text, /-{48}\n\nA little pause\./);
+assert.deepEqual([...raw.slice(-5)], [0x0a, 0x1d, 0x56, 0x42, 0x00]);
 const frenchFooter = renderReceiptText(createReceiptModel({ ...snapshot, receiptLanguage: 'fr' }));
 assert.match(frenchFooter, /Une petite pause\.\nUn endroit où se sentir chez soi\.\n$/);
 for (const footer of [text, frenchFooter]) {

@@ -221,6 +221,7 @@ function receiptRows(model: ReceiptModel): PrinterRow[] {
     { text: '-'.repeat(WIDTH) },
     ...payment,
     { text: '-'.repeat(WIDTH) },
+    { text: '' },
     { text: model.receiptLanguage === 'fr' ? 'Une petite pause.' : 'A little pause.', align: 'center', bold: true },
     { text: model.receiptLanguage === 'fr' ? 'Un endroit où se sentir chez soi.' : 'A place to belong.', align: 'center' },
   ];
@@ -231,10 +232,11 @@ export function renderReceiptText(model: ReceiptModel) {
 }
 
 export function encodeWd8260Receipt(model: ReceiptModel) {
-  return encodeWd8260Rows(receiptRows(model));
+  // Redistribute the existing two blank lines around the saying; no extra paper.
+  return encodeWd8260Rows(receiptRows(model), 1);
 }
 
-export function encodeWd8260Rows(rows: PrinterRow[]) {
+export function encodeWd8260Rows(rows: PrinterRow[], trailingBlankLines = 2) {
   const bytes: number[] = [
     ESC, 0x40,
     ESC, 0x74, 0x13,
@@ -255,7 +257,7 @@ export function encodeWd8260Rows(rows: PrinterRow[]) {
     ESC, 0x45, 0x00,
     GS, 0x21, 0x00,
     ESC, 0x61, 0x00,
-    0x0a, 0x0a,
+    ...Array.from({ length: trailingBlankLines }, () => 0x0a),
     GS, 0x56, 0x42, 0x00,
   );
   return Uint8Array.from(bytes);

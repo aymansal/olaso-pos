@@ -7,6 +7,20 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 customer footer spacing (POLISH-01)
+
+- Owner wants the saying vertically centered without increasing paper length,
+  and asks whether a heart emoji is possible. Moved one of the existing two
+  trailing blank lines above the saying. Customer receipt only; owner report's
+  default feed unchanged. CP858 cannot encode a normal heart emoji; graphical
+  heart discussed, not silently replaced by a question mark or added yet.
+- Graphify/Ponytail used. Existing Capacitor native printer boundary retained;
+  https://capacitorjs.com/docs/plugins reviewed, no native or transport change.
+  Encoder-only spacing, same total LF budget/cut command. Focused printing checks
+  updated and passing; production/native build and install-over succeeded.
+  Empty cart verified before installation; no receipt printed or sale created.
+  Actual paper centering remains owner acceptance. No structural graph change.
+
 ### Current checkpoint — 2026-09-06 audit repair authorized (POLISH-01)
 
 - FINAL: original AUD-01–14/INVEST-01 plus fresh AUD-15–19 repaired. Owner's
