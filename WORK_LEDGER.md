@@ -36,7 +36,8 @@ remaining goal and card sequence.
   UI confirms LockScreen. No uninstall, test sales, or data cleanup performed.
 - Published v1.3 to PRIVATE aymansal/olaso-pos-releases; kept valid v1.2.
   APK SHA256 8b7df6161864c6745c88c87e01e5b7058a17080d540bcd964bbeab9d204d2faf.
-  Next: commit/push this narrow POLISH-01 fix and record source SHA.
+  Source fix5ec88e5 committed and pushed to origin/main (aymansal/olaso-pos).
+  Complete; await owner feedback. No further audit or cleanup started.
 
 ### Current checkpoint — 2026-09-06 update rehearsal and test-order cleanup
 
