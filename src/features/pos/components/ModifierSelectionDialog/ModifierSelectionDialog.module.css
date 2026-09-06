@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   width: min(320px, calc(100vw - 36px));
-  max-height: 544px;
+  max-height: min(660px, calc(100dvh - 36px));
   padding: 24px;
   overflow: hidden;
   border: 1px solid var(--olaso-panel-border);
@@ -65,13 +65,24 @@
 }
 
 .groups {
+  display: flex;
+  gap: 24px;
   flex: 1 1 auto;
   min-height: 0;
   margin-top: 16px;
   overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.wide { width: min(620px, calc(100vw - 36px)); }
+.column { flex: 1; min-width: 0; }
+
+@media (max-width: 560px) {
+  .groups { display: block; }
 }
 
 .groups fieldset {
+  min-width: 0;
   margin: 0;
   padding: 14px 0;
   border: 0;
@@ -117,7 +128,12 @@
 
 .options label > span {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
+
+.options label > strong,
+.options input { flex-shrink: 0; }
 
 .options label > strong {
   color: var(--olaso-green);

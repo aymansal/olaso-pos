@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
+import { balanceOptionGroups } from '../../balanceOptionGroups';
 import styles from './ModifierSelectionDialog.module.css';
 
 export type PosProductSize = {
@@ -143,31 +144,9 @@ export function ModifierSelectionDialog({
     });
   }
 
-  return (
-    <OverlayPortal>
-    <div
-      className={styles.overlay}
-      role="presentation"
-      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
-    >
-      <section
-        className={styles.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modifier-selection-title"
-      >
-        <header>
-          <span>
-            <small>{t('CUSTOMIZE ORDER')}</small>
-            <h2 id="modifier-selection-title">{productName}</h2>
-          </span>
-          <button type="button" onClick={onClose} aria-label={t('Close selection')}>
-            <X width={18} height={18} aria-hidden="true" />
-          </button>
-        </header>
-        <div className={styles.groups}>
-          {sizes.length > 1 ? (
-            <fieldset>
+  const groups = [
+    sizes.length > 1 ? (
+            <fieldset key="size">
               <legend>
                 <strong>{t('Size')}</strong>
                 <span>{t('Required · pick one')}</span>
@@ -187,8 +166,9 @@ export function ModifierSelectionDialog({
                 ))}
               </div>
             </fieldset>
-          ) : null}
-          {applicableSections.map((section) => {
+          ) : null,
+    ...sections.map((section) => {
+            if (!sectionApplies(section, sizeId)) return null;
             const visibleValues = section.values.filter((value) =>
               valueAvailable(value, sizeId),
             );
@@ -228,7 +208,40 @@ export function ModifierSelectionDialog({
                 </div>
               </fieldset>
             );
-          })}
+          }),
+  ];
+  const counts = [sizes.length > 1 ? sizes.length : 0, ...sections.map(section => section.values.length)];
+  const visibleGroupIndexes = counts.map((_, index) => index).filter(index => index !== 0 || sizes.length > 1);
+  const columns = balanceOptionGroups(visibleGroupIndexes.map(index => counts[index]));
+
+  return (
+    <OverlayPortal>
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onPointerDown={(event) => closeOnBackdrop(event, onClose)}
+    >
+      <section
+        className={`${styles.dialog} ${columns.length > 1 ? styles.wide : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modifier-selection-title"
+      >
+        <header>
+          <span>
+            <small>{t('CUSTOMIZE ORDER')}</small>
+            <h2 id="modifier-selection-title">{productName}</h2>
+          </span>
+          <button type="button" onClick={onClose} aria-label={t('Close selection')}>
+            <X width={18} height={18} aria-hidden="true" />
+          </button>
+        </header>
+        <div className={styles.groups}>
+          {columns.map((column, index) => (
+            <div className={styles.column} key={index}>
+              {column.map(groupIndex => groups[visibleGroupIndexes[groupIndex]])}
+            </div>
+          ))}
         </div>
         <footer>
           <button type="button" className={styles.cancel} onClick={onClose}>

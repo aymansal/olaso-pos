@@ -2,6 +2,7 @@ import {
   Activity,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type Dispatch,
   type SetStateAction,
@@ -23,7 +24,6 @@ import {
   type PosProductSize,
 } from './components/ModifierSelectionDialog/ModifierSelectionDialog';
 import { PaymentDialog } from './components/PaymentDialog/PaymentDialog';
-import { SplitOrderQuestion } from './components/SplitOrderQuestion/SplitOrderQuestion';
 import type { Category } from './data/categories';
 import type { Product } from './data/products';
 import { productImage } from '../../lib/productImage';
@@ -177,7 +177,7 @@ export function PosScreen({
   const [configuringProductId, setConfiguringProductId] = useState<string>();
   const [paying, setPaying] = useState(false);
   const [payingSplit, setPayingSplit] = useState(false);
-  const [splitQuestion, setSplitQuestion] = useState(false);
+  const checkoutInFlight = useRef(false);
   const [checkoutError, setCheckoutError] = useState('');
   const [visitedCategoryIds, setVisitedCategoryIds] = useState<string[]>(
     () => [session.selectedCategoryId],
@@ -431,19 +431,16 @@ export function PosScreen({
       await confirmPayment();
       return;
     }
-    if (session.paymentMethod === 'Card' && paidUnitCount(session.cart) <= 1) {
-      await confirmPayment();
-      return;
-    }
     if (session.paymentMethod === 'Card') {
-      setSplitQuestion(true);
+      await confirmPayment();
       return;
     }
     setPaying(true);
   }
 
   async function confirmPayment(tenders?: PaymentTender[]) {
-    if (validation.kind !== 'valid') return;
+    if (validation.kind !== 'valid' || checkoutInFlight.current) return;
+    checkoutInFlight.current = true;
     setCheckoutError('');
     onSessionChange((current) => ({ ...current, checkoutStatus: 'processing' }));
     try {
@@ -475,6 +472,8 @@ export function PosScreen({
         ...current,
         checkoutStatus: 'idle',
       }));
+    } finally {
+      checkoutInFlight.current = false;
     }
   }
 
@@ -558,6 +557,13 @@ export function PosScreen({
         onPaymentMethodChange={(paymentMethod) =>
           editSession((current) => ({ ...current, paymentMethod }))}
         onPlaceOrder={placeOrder}
+        canSplit={paidUnitCount(session.cart) > 1}
+        onSplit={() => {
+          if (validation.kind !== 'valid' || checkoutInFlight.current || paidUnitCount(session.cart) <= 1) return;
+          setCheckoutError('');
+          setPayingSplit(true);
+          setPaying(true);
+        }}
       />
       {configuringProduct && configuringSizes.length > 0 ? (
         <ModifierSelectionDialog
@@ -576,21 +582,6 @@ export function PosScreen({
               ),
             }));
             setConfiguringProductId(undefined);
-          }}
-        />
-      ) : null}
-      {splitQuestion ? (
-        <SplitOrderQuestion
-          processing={session.checkoutStatus === 'processing'}
-          onCancel={() => setSplitQuestion(false)}
-          onSplit={() => {
-            setSplitQuestion(false);
-            setPayingSplit(true);
-            setPaying(true);
-          }}
-          onSingle={() => {
-            setSplitQuestion(false);
-            void confirmPayment();
           }}
         />
       ) : null}

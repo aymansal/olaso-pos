@@ -7,6 +7,43 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 POS customization and checkout (POLISH-01)
+
+- Owner approved independently stacked two-column option groups, compact simple
+  products, one scroll area/fixed footer; separate Split and Place order buttons.
+- Card Place order saves directly; Cash opens amount; Split directly opens the
+  existing mixed Cash/Card payer flow regardless of starting method. Preserve
+  offers, local commit, receipts, unpaid selection, and duplicate-submit guards.
+- Native research: Android accessibility recommends48dp targets
+  (https://developer.android.com/guide/topics/ui/accessibility/views/apps-views);
+  Capacitor uses standard web UI (https://capacitorjs.com/). This is React/CSS
+  interaction only, no new native boundary/plugin. Existing SQLite/printing stay.
+- Graphify/Ponytail/frontend-design/React guidance: reuse components, no package;
+  fixed group assignment from option counts, no selection-time movement.
+- Implemented620px independent columns from fixed option-count assignment;
+  single groups320px; fixed header/footer and shared scroll. Removed unused
+  SplitOrderQuestion component/styles (recoverable in Git). PrimaryAction now
+  two50px buttons, same296px footprint, synchronous in-flight guard in checkout.
+- check:pos passed: group packing, actual Card/Cash/Offert route handlers,
+  actual duplicate-submit handler, mixed/repeated payment handlers without sales.
+  check:css-scope passed. check:sales completed its local portion but stopped at
+  protected cloud test login: disposable OLASO_OWNER_PIN absent. Live owner's PIN
+  was not used for this restore/test workflow; no cloud test sales were created.
+- Production build, endpoint verification, Android checks/JVM tests passed.
+  Physical APK install-over succeeded.19 Matcha dialogs/54 sizes verified;
+  compact Nutella and large Coffee inspected in EN/FR; original English restored.
+  Cash amount popup and Split from both initial methods verified on tablet with
+  a temporary draft subsequently cleared, never confirmed/printed. Zero console
+  errors in these runs. Evidence tmp/wide-matcha-pos-verification.json,
+  checkout-buttons-check.json, wide-coffee-fr.png, compact-croissant.png.
+- Graphify incremental AST refresh3329 nodes completed (code-only; no unnecessary
+  semantic indexing of411 unrelated docs/images). Docs/contracts updated.
+- Final contrast correction explicitly inherits white for button total; final
+  APK installed and checked: total/button both rgb(255,255,255), empty disabled
+  state correct, authenticated POS79 products and no console/logcat errors.
+  Next: commit/push evidence; owner actual sale
+  and paper acceptance, protected cloud sales integration check remain unrun.
+
 ### Current checkpoint — 2026-09-06 Matcha menu (POLISH-01)
 
 - Owner requests complete Matcha page using same approved Coffee/Frappé model.

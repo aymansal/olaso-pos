@@ -50,6 +50,8 @@ type ReceiptRailProps = {
   onServiceModeChange: (serviceMode: ServiceMode) => void;
   onPaymentMethodChange: (paymentMethod: PaymentMethod) => void;
   onPlaceOrder: () => Promise<void>;
+  canSplit: boolean;
+  onSplit: () => void;
 };
 
 export function ReceiptRail({
@@ -70,6 +72,8 @@ export function ReceiptRail({
   onServiceModeChange,
   onPaymentMethodChange,
   onPlaceOrder,
+  canSplit,
+  onSplit,
 }: ReceiptRailProps) {
   const t = useT();
   return (
@@ -126,6 +130,8 @@ export function ReceiptRail({
         disabled={checkoutDisabled}
         processing={checkoutProcessing}
         onPlaceOrder={onPlaceOrder}
+        canSplit={canSplit}
+        onSplit={onSplit}
       />
     </Card>
   );

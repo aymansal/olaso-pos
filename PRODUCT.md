@@ -459,10 +459,12 @@ Each completed sale keeps a permanent snapshot of:
 
 The first production policy has no tax calculation anywhere in the application,
 and receipts show no tax line. Cash and card are the only payment methods.
-Place order opens a payment overlay unless the charged total is 0 DH (the
-whole cart is Offert): cash uses 20 / 50 / 100 / 200 DH quick amounts
+Place order and Split are separate buttons. Card Place order saves the whole
+sale directly; Cash Place order opens amounts unless the charged total is0DH
+(the whole cart is Offert). Cash uses20 /50 /100 /200 DH quick amounts
 plus a custom amount given, then shows change to return. Card takes the exact
-due. Split is hidden unless two or more paid units remain; Offert drinks stay
+due. Split opens the same mixed-method overlay from either Cash or Card and is
+disabled unless two or more paid units remain; Offert drinks stay
 off the split lists. With two or more paid units it assigns remaining products
 to the next payer in that same overlay;
 the overlay stays until every product is paid. Each payer chooses Cash or Card;

@@ -58,14 +58,17 @@ owns the shared Header and TopNavigation currently used across the application.
   explicit cashier choices; never silently select an option. A product with
   one size must not force a size selection. Cart identity includes the selected
   size once OPTIONS-03 activates product-owned checkout.
-- Customization uses a viewport-bounded 320-pixel dialog with the original
-  full-width option rows, typography, and spacing. Optional max-one choices must be deselectable; required max-one
+- Customization uses a viewport-bounded620px dialog for multiple groups, two
+  independently stacked columns assigned by full option counts; selection never
+  rebalances them. Single groups stay320px. One shared scroll region, fixed
+  header/footer, original option rows. Optional max-one choices must be deselectable; required max-one
   choices remain explicit radio selections.
 - Checkout clears the cart only after the local sale transaction commits. Place
-  order is a slide-to-confirm on the existing primary pill; sliding to the end
-  opens the payment overlay when there is something to collect, and a tap does
-  not. A fully Offert cart skips the overlay. Cash shows 20 / 50 / 100 / 200 DH
-  plus custom given and change; Split is hidden unless two or more paid units
+  order and Split are separate tap buttons in the existing296 by50 footprint.
+  Card Place order commits directly; Cash opens amounts. Split opens the same
+  mixed-method overlay directly from either initial method. In-flight guards
+  prevent repeated submissions. A fully Offert cart skips the overlay.
+  Cash shows20 /50 /100 /200 DH plus custom given and change; Split is disabled unless two or more paid units
   remain. Offert lines stay off the split lists. With two or more paid units it
   fades in on that overlay and cannot close after the first recorded payer.
   Each split payer chooses Cash or Card; Card is exact and only Cash shows

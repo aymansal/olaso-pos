@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
+import { balanceOptionGroups } from '../src/features/pos/balanceOptionGroups.ts';
 import {
   addProduct,
   chargedCentimes,
@@ -159,7 +160,10 @@ const action = readFileSync(
   'src/features/pos/components/PrimaryAction/PrimaryAction.tsx',
   'utf8',
 );
-assert.match(action, /Slide to place order/);
+assert.match(action, /onClick=\{\(\) => void commit\(\)\}/);
+assert.match(action, /committing.current = true/);
+assert.match(action, /disabled=\{locked \|\| !canSplit\}/);
+assert.doesNotMatch(action, /role="slider"/);
 assert.doesNotMatch(action, /clickAction/);
 
 const productCard = readFileSync(
@@ -246,7 +250,7 @@ assert.doesNotMatch(posScreen, /ReceiptPreviewDialog|setReceiptPreview/);
 // single-tender dialog again.
 assert.match(
   posScreen,
-  /onSingle=\{\(\) => \{\s*setSplitQuestion\(false\);\s*void confirmPayment\(\);/,
+  /session.paymentMethod === 'Card'\) \{\s*await confirmPayment\(\);/,
 );
 const categoryCardCss = readFileSync(
   'src/features/pos/components/CategoryCard/CategoryCard.module.css',
@@ -303,7 +307,7 @@ const choiceDialog = readFileSync(
   'src/features/pos/components/ModifierSelectionDialog/ModifierSelectionDialog.tsx', 'utf8',
 );
 const toggleSource = choiceDialog.slice(
-  choiceDialog.indexOf('  function toggle('), choiceDialog.indexOf('\n  return (\n    <OverlayPortal>'),
+  choiceDialog.indexOf('  function toggle('), choiceDialog.indexOf('\n  const groups ='),
 );
 assert(toggleSource.includes('function toggle('));
 const toggleChoice = new Function('section', 'valueId', 'selected',
@@ -316,6 +320,55 @@ assert.deepEqual(toggleChoice(optionalExtra, 'other', ['croissant']), ['other'])
 assert.deepEqual(toggleChoice({ ...optionalExtra, required: true, min: 1 }, 'croissant', ['croissant']), ['croissant']);
 assert.match(choiceDialog, /section\.max === 1 && \(section\.required \|\| section\.min > 0\)/);
 console.log('POS cart, money, and optional-extra selection checks passed.');
+assert.deepEqual(balanceOptionGroups([2]), [[0]]);
+assert.deepEqual(balanceOptionGroups([2, 5, 2]), [[0, 2], [1]]);
+assert.deepEqual(balanceOptionGroups([4, 5, 2]), [[0, 2], [1]]);
+assert.deepEqual(balanceOptionGroups([2, 5, 7, 4]), [[0, 2], [1, 3]]);
+assert.doesNotMatch(posScreen, /SplitOrderQuestion|setSplitQuestion/);
+assert.match(posScreen, /checkoutInFlight.current = true/);
+assert.match(posScreen, /finally \{\s*checkoutInFlight.current = false/);
+const placeStart = posScreen.indexOf('  async function placeOrder()');
+const placeSource = posScreen.slice(placeStart, posScreen.indexOf('  async function confirmPayment', placeStart));
+for (const [method,total,expected] of [['Card',5600,'save'],['Cash',5600,'amount'],['Cash',0,'save']]) {
+  let route;
+  const run = new Function('session','total','confirmPayment','setPaying', `
+    const validation={kind:'valid'}, setCheckoutError=()=>{};
+    ${stripTypeScriptTypes(placeSource)}
+    return placeOrder();`);
+  await run({paymentMethod:method},total,async()=>{route='save'},()=>{route='amount'});
+  assert.equal(route,expected);
+}
+const confirmStart = posScreen.indexOf('  async function confirmPayment');
+const confirmSource = posScreen.slice(confirmStart, posScreen.indexOf('\n  return (',confirmStart));
+let commits=0, releaseCommit;
+const confirm = new Function('completeOrder', `
+  const validation={kind:'valid'}, checkoutInFlight={current:false}, total=5600;
+  const session={cart:[],serviceMode:'Dine In',paymentMethod:'Card'}, receiptLanguage='en';
+  const setCheckoutError=()=>{}, onSessionChange=()=>{}, setPaying=()=>{}, setPayingSplit=()=>{};
+  const localServiceType=value=>value;
+  ${stripTypeScriptTypes(confirmSource)}
+  return confirmPayment;`)(()=>{commits++;return new Promise(resolve=>{releaseCommit=resolve})});
+const firstCommit=confirm();await confirm();assert.equal(commits,1);releaseCommit();await firstCommit;
+const retryCommit=confirm();assert.equal(commits,2);releaseCommit();await retryCommit;
+// Exercise payment recording with both starting methods without touching live sales.
+const paymentStart = paymentDialog.indexOf('  async function takePayment()');
+const takePaymentSource = paymentDialog.slice(paymentStart, paymentDialog.indexOf('\n  return (', paymentStart));
+for (const methods of [['Cash', 'Card'], ['Card', 'Cash'], ['Cash', 'Card', 'Card']]) {
+  let recorded = [], confirmed;
+  for (const [index, method] of methods.entries()) {
+    const run = new Function('activeMethod', 'recorded', 'lastSplit', 'onConfirm', 'setRecorded', `
+      const canPay=true, due=1300, received=activeMethod==='Cash'?2000:1300,
+        change=received-due, processing=false, split=true;
+      const setPick=()=>{}, resetCashAmount=()=>{};
+      ${stripTypeScriptTypes(takePaymentSource)}
+      return takePayment();`);
+    await run(method, recorded, index===methods.length-1,
+      async rows=>{confirmed=rows}, update=>{recorded=update(recorded)});
+  }
+  assert.deepEqual(confirmed.map(row=>row.paymentMethod),methods);
+  assert.equal(confirmed.reduce((sum,row)=>sum+row.dueCentimes,0),1300*methods.length);
+  assert(confirmed.every(row=>row.changeCentimes===(row.paymentMethod==='Cash'?700:0)));
+}
 
 // Shared lists must escape sibling/scroll stacking contexts and stay scrollable.
 const menuSelect = readFileSync('src/components/MenuSelect/MenuSelect.tsx', 'utf8');
