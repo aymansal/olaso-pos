@@ -5,6 +5,22 @@ imported by the React application or packaged in the APK.
 
 ## Client ship gate
 
+- Current client release baseline is **1.2 / versionCode 9**, using certificate
+  SHA-256 `3fb839ec453557831868bbbd9b24629365ee00a5309949aad0bdbfbafc4773d1`.
+  The older rehearsal signing identity was retired with owner approval on
+  2026-09-06. Never generate another key for ordinary updates.
+- Signing secrets are configured on the private source repository; protected
+  local custody is outside this repository. An independent owner-held offline
+  backup remains a handover requirement. Windows-encrypted local credentials
+  alone are not a portable disaster-recovery backup.
+- Never install an ordinary debug-key APK over the client release. For support,
+  use the same durable signing key and preserve data with install-over-upgrade.
+  Temporary debuggable support APKs must never enter the public release channel;
+  restore the non-debug release before finishing support.
+- Set and verify the intended production `VITE_CONVEX_URL` for the release
+  build; CI needs that deployment configuration too. A stored signing secret
+  does not establish a backend environment by itself.
+
 Before handing an APK to the café client:
 
 - Release build must have `debuggable false` (`check:release` asserts this).

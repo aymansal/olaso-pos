@@ -96,6 +96,11 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
 - Run `npm run android:release` only when upload-keystore env vars are set.
   Signed output is `android/app/build/outputs/apk/release/app-release.apk`.
   Custody and HTTPS update publishing live in `tools/release/README.md`.
+- The client tablet now uses the durable signed release (1.2/code9 baseline).
+  Do not replace it with `android:production`'s ordinary debug-key QA APK:
+  that certificate differs and cannot upgrade the client installation. Normal
+  client delivery uses the same durable key, a higher code, production endpoint
+  verification, and the non-debug release. Never uninstall for a routine update.
 - `AppUpdatePlugin` owns HTTPS APK download, SHA-256 verification, package /
   version / signing-certificate checks, and PackageInstaller user confirmation.
   Do not embed a GitHub credential in the APK.

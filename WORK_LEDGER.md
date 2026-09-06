@@ -9,6 +9,59 @@ remaining goal and card sequence.
 
 ### Current checkpoint — 2026-09-06 update rehearsal and test-order cleanup
 
+- COMPLETED execution: signed1.2/code9 published, downloaded by tablet Settings
+  Check for update, verified by existing hash/package/certificate guards, and
+  installed through Android's Update confirmation. Play Protect showed an
+  unknown-developer warning for the new identity; used its per-app Install
+  anyway confirmation without disabling global protection. Owner unlock and
+  all four category counts survived. Final installed package is non-debug9/1.2.
+- Owner-approved old binary releases/tags v1.1, v1.0, v0.1.0-rc.4 and
+  v0.1.0-rc.3 removed; only v1.2 remains. Source and binary repos both PRIVATE.
+  Published APK SHA256 ecaf823373faaac8ca09ae6b78aac3d8c36ab7142fa912c45f6d7bab11c4fac3.
+- After real update success, used local-only same-key maintenance9 to perform
+  approved scoped cleanup, then reinstalled exact non-debug release9 preserving
+  data. Removed12 sales,18 items,6 sale stock movements,3 cloud daily summaries,
+  and local receipt counter; there were no corrections or pending outbox rows.
+  Restored only test deductions (Whole milk540ml, Coffee33g) to opening0 stock;
+  did not invent ingredient prices. All purchases/expenses/payroll preserved.
+- Cloud before/after verification proves exact products/images/options/recipes,
+  category IDs, staff credentials and finance setup preserved. Only normal
+  owner-login profile updatedAt differs; no name/role/language/credential change.
+  Local full-table check preserved non-order tables; after reconnect verified
+  zero sales/items/movements/outbox/corrections,79 products,4 categories,
+  34 ingredients,2 profiles and original operator/printer preferences.
+  Orders says no matching orders; Reports says0 sales/orders and0 operating
+  profit, no profile sales. No console/logcat errors in those checks.
+- Temporary tightly gated internal cloud cleanup function was removed and the
+  removal deployed. No cleanup feature added to the app. Backup/validation
+  artifacts remain in protected ignored tmp/update-migration-20260906.
+  Signed build/native tests, production endpoint check, release/Android checks
+  passed. No final structural code changes; existing Graphify queried.
+- Remaining handover item: independent offline signing-key/password custody.
+  Next discussion only: how to handle future client demonstration orders.
+  Do not reopen Products startup (owner confirmed fast) or start a new audit.
+
+- Continuation: owner does not know old signing password and authorizes moving
+  forward without it. New durable key generated and verified (SHA256
+  3fb839ec453557831868bbbd9b24629365ee00a5309949aad0bdbfbafc4773d1).
+  Key/password kept outside repo, ACL-restricted local vault with Windows DPAPI
+  password, plus four encrypted signing secrets on PRIVATE source GitHub repo.
+  No secrets printed or committed. Independent offline owner backup still due.
+- Production export with file storage saved under ignored, ACL-restricted
+  tmp/update-migration-20260906; cold tablet DB + preferences archived there.
+  SQLite integrity OK, outbox0, products79/categories4/ingredients34/staff2,
+  sales12. Cloud export has matching core counts and both staff identities.
+- Android/Capacitor release research: Android app-signing documentation and
+  capacitorjs.com/docs/android/deploying-to-google-play confirm native signing
+  and PackageInstaller own update compatibility; no React migration code needed.
+  Plan: locally re-sign installed debug8 with new key for one-time DB recovery;
+  NEVER publish that debug migration artifact. Real in-app update targets
+  non-debug signed1.2/code9 with same new certificate. Preserve SQLite/settings;
+  do not restore old encrypted device credentials after uninstall.
+- Owner also authorizes removing all old APK releases in binary-only GitHub
+  repo. Do this after successful replacement publication/update verification,
+  not source history. Products startup accepted by owner; leave it alone.
+
 - Owner requests quota-conscious in-app update rehearsal through the separate
   releases repo, then deletion of all test orders locally and in production,
   preserving business setup/catalog/ingredients/staff. Do not reset whole DB.
