@@ -19,6 +19,10 @@ application, global tokens, and the feature screens under `features/`.
   it preserves an unfinished cart across an in-process lock and never clears
   profile-scoped protected access. Lock/switch destroys every retained screen
   so the next staff member cannot inherit restricted management state.
+  Lock immediately removes the in-memory authenticated session and renders the
+  lock screen before awaiting SQLite. Persist in the existing transaction queue;
+  a failed lock write stays fail-closed. Never reload settings from a delayed
+  lock completion over a newer authenticated session.
   The session includes open payment progress (selected/remaining quantities,
   recorded tenders and cash input); never move collected payments back into
   dialog-local state. Process-death recovery is not implied by this memory state.

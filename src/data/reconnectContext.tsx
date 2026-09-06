@@ -629,6 +629,12 @@ export function ReconnectProvider({
         refreshed,
       };
     } catch (caught) {
+      if (isCancelled() && caught instanceof Error
+        && (caught.message === 'Snapshot loading was cancelled.'
+          || caught.message === CONNECTION_SYNC_FAILURE)) {
+        // Lock/background cancellation is not a failed sale or sync record.
+        throw new Error(CONNECTION_SYNC_FAILURE);
+      }
       console.error('Reconnect synchronization failed', caught);
       const message = await recordSyncFailure(caught);
       setRevision((value) => value + 1);

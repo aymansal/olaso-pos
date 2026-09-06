@@ -7,6 +7,37 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-06 immediate lock (POLISH-01)
+
+- Owner reports Lock / switch staff sits at Locking for a long time. Confirmed
+  App.lock awaited setTerminalLocked's shared SQLite transaction before clearing
+  the authenticated session/rendering LockScreen. Removed that UI dependency:
+  state/session/screens lock immediately, then persist; failure enters existing
+  fail-closed recovery. Removed delayed settings reload that could overwrite a
+  newer session. Manual, automatic and session-invalid locks share this action.
+- Android responsiveness and Capacitor Bridge/plugin-thread guidance reviewed;
+  SQLite already uses native plugin thread/serialized transactions. The defect
+  is React sequencing, not a missing native worker. Graphify, Ponytail and
+  React deferred-await guidance used; no packages/native code added.
+- Added check-immediate-lock.mjs to check:audit: unresolved storage write still
+  clears access immediately, rejected write stays locked, late success cannot
+  overwrite a new session. Added expected lock/background cancellation checks:
+  do not persist/log a deliberate snapshot cancellation as a sync failure;
+  genuine failures still persist and reject. All audit/reconnect checks passed.
+- Physical baseline on local-only same-key support9: deliberately delayed one
+  SQLite bridge call3000ms; original lock took3074ms. No test sales created.
+  Fixed support10 measured8ms busy/7ms normal; final support10 including the
+  cancellation correction measured9ms busy, with no console/logcat errors.
+  One earlier unlock exceeded the helper10s timeout during queued work and
+  subsequently succeeded; this fix does not claim to change unlock latency.
+- Signed release build/native tests and production endpoint checks passed.
+  Graphify refreshed3509nodes/6800edges (known Gradle parser limitation).
+  Final NON-DEBUGGABLE1.3/code10 installed with install-r, launched and native
+  UI confirms LockScreen. No uninstall, test sales, or data cleanup performed.
+- Published v1.3 to PRIVATE aymansal/olaso-pos-releases; kept valid v1.2.
+  APK SHA256 8b7df6161864c6745c88c87e01e5b7058a17080d540bcd964bbeab9d204d2faf.
+  Next: commit/push this narrow POLISH-01 fix and record source SHA.
+
 ### Current checkpoint — 2026-09-06 update rehearsal and test-order cleanup
 
 - Release/check/docs completion committed as242a307 and pushed to origin/main

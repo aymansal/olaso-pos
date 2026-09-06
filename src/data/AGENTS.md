@@ -62,6 +62,9 @@ tablet's local SQLite operational record.
   access sentence when internet is not validated, the activity is not focused,
   or staff provisioning is still pending; it must not return a successful empty
   sync.
+- An intentionally cancelled refresh on lock/background/session change rejects
+  as unavailable without persisting a false sync failure. Genuine storage or
+  business failures still follow the normal error-recording path.
 - `offlineViews.ts` owns bounded tablet-only Products/Stock detail,
  Dashboard/Reports fallback reads, and the POS quick-add ranking over the last
  seven business days; it never performs management writes. Stock used-today

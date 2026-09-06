@@ -195,13 +195,21 @@ export function App() {
   }, [terminal?.isLocked, terminal?.autoLockMinutes]);
 
   async function lock() {
-    await setTerminalLocked(true);
+    // Hide authenticated screens before waiting for the shared SQLite queue.
+    // Startup always requires PIN authentication, even if this write fails.
     resetScreens();
     setTerminal((current) =>
       current ? { ...current, isLocked: true } : current,
     );
     setStaffSession(undefined);
-    loadTerminalSettings().then(setTerminal).catch(() => undefined);
+    try {
+      await setTerminalLocked(true);
+    } catch {
+      setStartupError(translate(
+        language,
+        'Terminal settings could not be verified. POS remains locked. Retry or restore this terminal before serving orders.',
+      ));
+    }
   }
 
   async function applyLanguage(next: AppLanguage) {
