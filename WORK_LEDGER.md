@@ -20,6 +20,8 @@ remaining goal and card sequence.
   updated and passing; production/native build and install-over succeeded.
   Empty cart verified before installation; no receipt printed or sale created.
   Actual paper centering remains owner acceptance. No structural graph change.
+- Installed spacing repair855216a pushed to origin/main. Next: owner paper check;
+  heart would require a small monochrome graphic, not a CP858 text emoji.
 
 ### Current checkpoint — 2026-09-06 audit repair authorized (POLISH-01)
 
