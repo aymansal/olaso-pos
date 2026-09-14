@@ -7,6 +7,13 @@ remaining goal and card sequence.
 
 ## Active Goal
 
+### Current checkpoint — 2026-09-14 complete POS category selection fill (POLISH-01)
+
+- Owner identified a visible white strip at the right of the selected Cold Drinks card in the production-era POS screenshot. The shared Astryx Card automatically uses scrolling for fixed heights; its scrollbar gutter stayed white over the selected green fill.
+- Kept this to the category-card surface only: force its existing clipped overflow to win over the shared scroll behavior. No menu, product, touch, data, Android, or cloud boundary changes. Local Coffee-selected screenshot and physical Galaxy Tab A9 check remain next.
+- `npm run build` passed. `npm run check:css-scope` is presently blocked by pre-existing `from`/`to` animation-selector findings in `src/App.module.css` and `src/features/settings/LockScreen.module.css`; this card added no such selector. Local preview reaches the real terminal lock screen, but no PIN was entered. The tablet is not connected.
+
+
 ### Current checkpoint — 2026-09-06 matching unlock fade (POLISH-01)
 
 - Owner requests matching unlock fade; tablet disconnected, explicitly defer

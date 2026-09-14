@@ -20,7 +20,7 @@
 
 .card {
   position: relative;
-  overflow: hidden;
+  overflow: hidden !important;
   border: 1px solid #ecefe7 !important;
   border-radius: 22px !important;
   background: var(--olaso-white) !important;
