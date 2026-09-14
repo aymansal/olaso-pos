@@ -7,13 +7,12 @@ remaining goal and card sequence.
 
 ## Active Goal
 
-### Current checkpoint — 2026-09-14 complete POS category selection fill (POLISH-01)
+### Current checkpoint — 2026-09-14 withdraw unverified category change (POLISH-01)
 
-- Owner identified a visible white strip at the right of the selected Cold Drinks card in the production-era POS screenshot. The shared Astryx Card automatically uses scrolling for fixed heights; its scrollbar gutter stayed white over the selected green fill.
-- Kept this to the category-card surface only: force its existing clipped overflow to win over the shared scroll behavior. No menu, product, touch, data, Android, or cloud boundary changes. Local Coffee-selected screenshot and physical Galaxy Tab A9 check remain next.
-- `npm run build` passed. `npm run check:css-scope` is presently blocked by pre-existing `from`/`to` animation-selector findings in `src/App.module.css` and `src/features/settings/LockScreen.module.css`; this card added no such selector. Local preview reaches the real terminal lock screen, but no PIN was entered. The tablet is not connected.
-- Source repair committed and pushed to `origin/main`: `f40c3c2e26d3441dbaac5ffb62d6f29a88766029`. The desktop preview's separate browser-local terminal has only a generic `Olaso Owner` record, not production Yassine; authorized `111111` verification correctly returned "Unable to unlock. Check the connection and try again." No data was changed. Next: reconnect the actual production tablet, then capture and inspect Coffee selected at 1340 × 800.
-
+- Owner clarified that the screenshot may have captured the existing 125 ms category highlight animation mid-transition. No persistent category defect was reproduced. The earlier assertion that a scrollbar gutter caused the strip was unsupported and is withdrawn.
+- Restored the exact original CategoryCard CSS, removing only the added `!important` from `overflow: hidden` introduced in `f40c3c2`. No tablet update was installed for that change. Existing animation and geometry are preserved.
+- Screenshot request remains pending; future captures must wait for the selection animation and product images to finish. Desktop preview showed only `Olaso Owner`, and an attempted sign-in failed. This does not establish the configured backend, an empty database, or any defect with production Yassine; those earlier conclusions were not verified.
+- Other working-tree changes in PeriodCalendar and reportProfit belong to the user and remain untouched. CategoryCard CSS has zero diff against `8900978`; `npm run build` and `git diff --check` passed. Corrective commit restores the original styling and withdraws the unsupported diagnosis; screenshot work remains pending.
 
 ### Current checkpoint — 2026-09-06 matching unlock fade (POLISH-01)
 
