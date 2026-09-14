@@ -12,6 +12,7 @@ remaining goal and card sequence.
 - Owner identified a visible white strip at the right of the selected Cold Drinks card in the production-era POS screenshot. The shared Astryx Card automatically uses scrolling for fixed heights; its scrollbar gutter stayed white over the selected green fill.
 - Kept this to the category-card surface only: force its existing clipped overflow to win over the shared scroll behavior. No menu, product, touch, data, Android, or cloud boundary changes. Local Coffee-selected screenshot and physical Galaxy Tab A9 check remain next.
 - `npm run build` passed. `npm run check:css-scope` is presently blocked by pre-existing `from`/`to` animation-selector findings in `src/App.module.css` and `src/features/settings/LockScreen.module.css`; this card added no such selector. Local preview reaches the real terminal lock screen, but no PIN was entered. The tablet is not connected.
+- Source repair committed and pushed to `origin/main`: `f40c3c2e26d3441dbaac5ffb62d6f29a88766029`. The desktop preview's separate browser-local terminal has only a generic `Olaso Owner` record, not production Yassine; authorized `111111` verification correctly returned "Unable to unlock. Check the connection and try again." No data was changed. Next: reconnect the actual production tablet, then capture and inspect Coffee selected at 1340 × 800.
 
 
 ### Current checkpoint — 2026-09-06 matching unlock fade (POLISH-01)
