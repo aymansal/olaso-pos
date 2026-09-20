@@ -701,3 +701,13 @@ Execution evidence:
   customization popup open with its default selections and the cart empty.
   Screen redesign, ingredient-system simplification and broad sync repairs
   remain separate owner-selected work; this card changes review data only.
+- Tablet tooling finding: the older Samsung helper's `wake()` sends
+  KEYCODE_MENU, which opens Android Recents on this Redmi. This interrupted
+  foreground-only work during inspection. Final checks used direct
+  `WebViewSession.connect()` after explicitly foregrounding MainActivity,
+  without that wake helper. Dashboard capture was retaken and visually verified
+  in the foreground; Latte was left open with `document.hasFocus() === true`.
+  Updating the general tablet helper remains a separate tooling follow-up.
+- Publication: `3617ddd000d1d6e261380614033068347dfe3561` pushed to
+  `origin/main` in `aymansal/olaso-pos`. Data preparation and its requested
+  tablet delivery are complete; full app/popup polish acceptance is not implied.
