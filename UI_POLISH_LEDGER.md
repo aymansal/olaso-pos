@@ -260,6 +260,8 @@ changes pushed and the owner must accept the screen before moving on.
 - Still not verified: real screen-reader speech, native nonempty-cart Cancel,
   printer output, Pencil reconciliation (connection unavailable). Owner review
   remains required; this checkpoint does not declare the whole screen complete.
+- Publication: `482c643` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`. Redmi returned to the live Dashboard.
 
 - Owner authorized starting Dashboard and confirmed the app is always light
   mode. The agent's dark-mode question was a misunderstanding; it does not
