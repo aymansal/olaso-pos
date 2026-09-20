@@ -503,4 +503,6 @@ Implementation and verification:
 - Pending: owner visual feedback, physical tablet verification, and Pencil
   master reconciliation once its desktop connection is available. SAAS-02 is
   a browser review candidate, not a completed tablet-accepted card.
-- Publication: pending commit/push of this focused source and documentation diff.
+- Publication: `08a7c683adddfad664f6815662fb217720486f5c` pushed to
+  `origin/main` in `aymansal/olaso-pos`. This follow-up records publication;
+  it does not mark tablet or design-master acceptance complete.
