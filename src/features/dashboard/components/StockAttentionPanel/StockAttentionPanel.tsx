@@ -44,13 +44,13 @@ export function StockAttentionPanel({
 }) {
   const t = useT();
   return (
-    <section className={styles.panel} aria-labelledby="stock-attention-title">
+    <section className={styles.panel} aria-labelledby="stock-attention-title" aria-busy={isLoading}>
       <header className={styles.header}>
         <span>
           <h2 id="stock-attention-title">{t('Needs attention')}</h2>
           <small>{t('Ingredients below their threshold')}</small>
         </span>
-        <button type="button" className={styles.viewAll} onClick={onViewAll}>
+        <button type="button" className={styles.viewAll} onClick={onViewAll} aria-label={`${t('View all')}: ${t('Stock')}`}>
           <span>{t('View all')}</span>
           <ArrowRight width={13} height={13} aria-hidden="true" />
         </button>

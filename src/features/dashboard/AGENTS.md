@@ -19,6 +19,10 @@ recent orders.
   Reports.
 - Preserve the approved dashboard frame in `untitled.pen` and the shared
   navigation geometry.
+- Missing, loading or failed snapshots never show zero or stale totals as current.
+  Zero is reserved for a successfully loaded empty result.
+- Chart details expose the full date and exact amount; axis abbreviations are
+  display-only. Escape and focus leaving the chart dismiss selection.
 - Child regions stay prop-driven and render loading, empty, error, and live
   states without importing Convex.
 - Offline Dashboard uses bounded saved tablet sales and stock warnings; it does
@@ -45,7 +49,9 @@ recent orders.
 
 - Run `npm run build`.
 - Run `npm run check:dashboard` after summary, warning, recent-order, or
-  Dashboard data-boundary changes.
+  Dashboard data-boundary changes, against a disposable development backend.
+  It reseeds that backend. For presentation-only changes, verify isolated real
+  components with sample props instead of resetting retained records.
 - Inspect Dashboard at 1340 × 800, including metric alignment, charts, stock
   rows, and recent orders.
 

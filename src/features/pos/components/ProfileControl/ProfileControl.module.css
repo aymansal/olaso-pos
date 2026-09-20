@@ -69,7 +69,7 @@
   position: fixed;
   inset: auto;
   margin: 0;
-  width: 190px;
+  width: 232px;
   padding: 8px;
   border: 1px solid var(--olaso-panel-border);
   border-radius: 18px;
@@ -84,7 +84,7 @@
 .language {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  height: 32px;
+  height: 54px;
   margin: 2px 4px 6px;
   padding: 2px;
   border: 1px solid var(--olaso-control-border);
@@ -93,13 +93,13 @@
 }
 
 .language button {
-  height: 28px;
+  height: 48px;
   padding: 0;
   border: 0;
   border-radius: 14px;
   color: var(--olaso-copy);
   background: transparent;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.6px;
   text-align: center;
@@ -111,13 +111,13 @@
 }
 
 .menu > button {
-  height: 44px;
+  height: 48px;
   padding: 0 12px;
   border: 0;
   border-radius: 12px;
   color: var(--olaso-text);
   background: transparent;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   text-align: left;
 }
@@ -129,6 +129,11 @@
 .menu p {
   margin: 6px 8px 2px;
   color: var(--olaso-danger-ink);
-  font-size: 8px;
-  line-height: 1.3;
+  font-size: 13px;
+  line-height: 1.5;
 }
+
+.language button { cursor: pointer; touch-action: manipulation; }
+.language button:active { background: var(--olaso-green-soft); }
+.menu > button { cursor: pointer; touch-action: manipulation; }
+.menu > button:disabled { cursor: wait; }

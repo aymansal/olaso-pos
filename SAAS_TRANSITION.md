@@ -506,3 +506,73 @@ Implementation and verification:
 - Publication: `08a7c683adddfad664f6815662fb217720486f5c` pushed to
   `origin/main` in `aymansal/olaso-pos`. This follow-up records publication;
   it does not mark tablet or design-master acceptance complete.
+
+### SAAS-03 — Dashboard and all of its interaction states
+
+Authorized 20 September 2026: polish Dashboard, including its popups and controls,
+using Apple Design; review at 1340 × 800 without the unavailable tablet.
+
+Pre-implementation research (20 September 2026):
+- [Apple typography](https://developer.apple.com/design/human-interface-guidelines/typography?changes=lat_2_6): use legible sizes, weight and spacing to establish hierarchy; preserve the Olaso face.
+- [Apple UI design guidance](https://developer.apple.com/design/tips/): clear contrast and consistent controls. The installed Apple Design skill informs immediate pressed feedback and restrained motion.
+- [Android accessibility](https://developer.android.com/guide/topics/ui/accessibility/views/apps-views): generous touch areas and distinct accessible descriptions. Browser CSS pixels do not establish native dp equivalence.
+- [Capacitor runtime](https://capacitorjs.com/docs): presentation stays in React/CSS inside the existing WebView; Android retains lifecycle, storage, security and printing. No new native plugin or animation dependency.
+
+Chosen approach: retain three-panel geometry and existing data boundary; improve
+readability, tap/focus states, chart selection and honest unavailable summaries.
+Review chart details, retry, both View all actions, shared staff popover, language,
+Settings exit, lock busy/error and the platform-owned staff confirmation/report
+alert. Keep native confirmation/alert behavior: these OS-owned prompts cannot be
+restyled with CSS and do not justify a new modal system. Shared popover styling
+also appears on other screens; it does not change their page design.
+
+Verification planned: an isolated sample-data fixture using real components,
+English/French, normal/empty/loading/error/long-content states, chart selection
+and dismissal, menu interactions and keyboard focus, production build and CSS
+scope scan. No live sale, seed/reset, printer call or auth bypass. The existing
+check:dashboard script reseeds the development database and is unsuitable for
+this UI-only pass. Pencil still cannot connect; physical device and design-master
+acceptance remain pending. Preserve existing PeriodCalendar/reportProfit edits.
+
+Implementation evidence (20 September 2026):
+- Updated the existing SalesPulse, StockAttentionPanel and RecentOrdersPanel
+  presentation and their CSS Modules, plus shared ProfileControl popup CSS.
+  DESIGN.md records the review candidate; Dashboard DOX records honest summary
+  states and safe presentation verification. No data, auth, sync, printer,
+  Header/TopNavigation behavior or native prompt code changed.
+- Clearer type, larger controls, focus/pressed feedback, three-line recent order
+  rows, wrapping/scrolling stock names, readable anchored chart details, compact
+  axis values and correctly aligned chart guides. Unknown or failed summaries
+  no longer resemble zero sales; chart interaction is absent until data exists.
+- Isolated preview: http://127.0.0.1:5173/tmp/dashboard-polish.html. Real leaf
+  components and shared Header receive sample props and an inert sample identity;
+  App and the Convex/data providers are absent. No credentials or protected
+  access are bypassed. Fixture files under tmp are excluded from production.
+- Browser: 1340 × 800; English/French normal, empty, loading, failure and long
+  values inspected. First/last chart labels stay bounded; long stock names wrap
+  with vertical scrolling and no horizontal overflow. Retry returns to sample
+  data; View all requests Orders and low-stock Stock respectively; Settings
+  closes the popup. Language selection and chart Escape dismissal verified.
+- Shared staff popup reviewed open in both languages. Report busy state disables
+  the action and its sample native alert was observed/dismissed. Testing the
+  sample native staff confirmation stalled browser input; its completion and
+  remaining lock busy/error interactions are unverified. No actual print or lock
+  was attempted. Native prompts retain their existing implementation.
+- Final production build passes; the existing jeep-sqlite crypto externalization
+  warning remains. Browser console inspection returned no errors or warnings.
+  CSS-scope check still reports only the four existing from/to keyframe findings
+  in untouched App/LockScreen modules; the whole-repository check does not pass.
+- Graphify code refresh completed: 2,841 nodes / 6,115 edges. Its existing Gradle
+  parsing limitations remain; semantic document extraction was not refreshed.
+  The tool backed up the prior curated graph. No new package or component added.
+- PeriodCalendar and reportProfit changes remain byte-for-byte unchanged.
+  git diff --check passes. Physical device, native-prompt acceptance and Pencil
+  master reconciliation remain pending; this is a browser review candidate.
+- Exact next action: review this Dashboard candidate with the owner, finish the
+  blocked staff-popup interaction checks, and validate on the tablet when it is
+  available. Other screen polishing still requires the owner's next selection.
+
+- Isolated server rendering checks pass for loading, missing/error snapshots,
+  a failed refresh with stale data, confirmed empty data and live exact totals.
+  This specifically verifies that unavailable summaries expose no invented
+  money or interactive chart points. No backend was contacted by these checks.

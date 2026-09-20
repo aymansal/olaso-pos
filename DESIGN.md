@@ -693,3 +693,27 @@ A screen is complete only when all of the following are true:
 - Do not use gradients, glass, glow, coffee-bean decoration, or generic cafe stock imagery.
 - Do not use brand playfulness during payment, refunds, or error recovery.
 - Do not lock production colors, fonts, languages, or hardware assumptions that are still marked provisional in `BRAND.md`.
+
+## Dashboard polish candidate — 20 September 2026
+
+Pending owner review, physical tablet acceptance and Pencil reconciliation:
+- Keep the existing full-bleed 1340 × 800 three-panel Dashboard composition.
+- Use clearer 11–17px supporting text, 22px metrics and a 44px net-sales total;
+  distinguish receipt number/amount, service/items and dated status on separate
+  lines so recent orders remain readable without collisions.
+- Dashboard View all/retry and shared staff-popup actions have 48px-high CSS
+  hit areas, visible focus and stable immediate pressed feedback. Do not infer
+  native dp equivalence until checked on the tablet. No bounce or travel effect.
+- Selecting a chart day shows its date and exact amount in an anchored label;
+  first/last labels stay within the chart. Escape or leaving the chart clears
+  selection. Axis labels abbreviate large values; details retain exact amounts.
+  Grid lines align with the proportional bar heights. Declines use the existing
+  warning colors plus explicit text and icon, never color alone.
+- Unknown/loading/failed summaries display dashes and a chart-state message;
+  a confirmed empty snapshot displays zero. Failures offer retry. Do not present
+  stale snapshot totals as current when refresh fails.
+- Long stock names wrap and the existing list scrolls vertically when needed.
+  The shared staff popover is 232px wide with 13px action/error copy and 48px
+  language/action controls. Its trigger and header geometry remain unchanged.
+- Staff-switch confirmation and report errors remain platform-owned prompts;
+  CSS cannot style their native surfaces. Their physical Android review is pending.

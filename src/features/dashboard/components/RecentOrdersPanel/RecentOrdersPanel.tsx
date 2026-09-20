@@ -3,7 +3,6 @@ import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { formatMoney } from '../../../../lib/money';
 import { useT } from '../../../../lib/locale';
 import { useLanguage } from '../../../../lib/locale';
-import { formatDate } from '../../../../lib/date';
 import styles from './RecentOrdersPanel.module.css';
 
 function serviceLabel(service: 'dine-in' | 'take-away' | 'online') {
@@ -26,13 +25,13 @@ export function RecentOrdersPanel({
   const t = useT();
   const language = useLanguage();
   return (
-    <section className={styles.panel} aria-labelledby="recent-orders-title">
+    <section className={styles.panel} aria-labelledby="recent-orders-title" aria-busy={isLoading}>
       <header className={styles.header}>
         <span>
           <h2 id="recent-orders-title">{t('Recent orders')}</h2>
           <small>{t('Latest activity from the counter')}</small>
         </span>
-        <button type="button" className={styles.viewAll} onClick={onViewAll}>
+        <button type="button" className={styles.viewAll} onClick={onViewAll} aria-label={`${t('View all')}: ${t('Orders')}`}>
           <span>{t('View all')}</span>
           <ArrowRight width={13} height={13} aria-hidden="true" />
         </button>

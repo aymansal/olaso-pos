@@ -4,7 +4,7 @@ import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { useT } from '../../../../lib/locale';
 import { formatDate } from '../../../../lib/date';
 import { useLanguage } from '../../../../lib/locale';
-import { formatCompactMoney, formatMoney } from '../../../../lib/money';
+import { formatMoney } from '../../../../lib/money';
 import styles from './SalesPulse.module.css';
 
 export function SalesPulse({
@@ -20,17 +20,21 @@ export function SalesPulse({
 }) {
   const t = useT();
   const language = useLanguage();
+  const axisFormat = new Intl.NumberFormat(language === 'fr' ? 'fr-MA' : 'en-MA', {
+    notation: 'compact', maximumFractionDigits: 1,
+  });
+  const unavailable = isLoading || Boolean(error) || !snapshot;
   const today = snapshot?.today;
   const yesterday = snapshot?.yesterday;
   const metrics = [
     {
       label: 'Orders',
-      value: isLoading ? '—' : String(today?.orderCount ?? 0),
+      value: unavailable ? '—' : String(today?.orderCount ?? 0),
       icon: Receipt,
     },
     {
       label: 'Average order',
-      value: isLoading
+      value: unavailable
         ? '—'
         : formatMoney(
             today?.orderCount
@@ -41,7 +45,7 @@ export function SalesPulse({
     },
     {
       label: 'Items sold',
-      value: isLoading ? '—' : String(today?.itemCount ?? 0),
+      value: unavailable ? '—' : String(today?.itemCount ?? 0),
       icon: Coffee,
     },
   ] as const;
@@ -58,14 +62,7 @@ export function SalesPulse({
         isPositive ? '{pct}% up vs yesterday' : '{pct}% down vs yesterday',
         { pct: Math.abs(comparison).toFixed(1) },
       );
-  const chart = snapshot?.dailySales ?? Array.from(
-    { length: 12 },
-    (_, index) => ({
-      businessDate: String(index + 1),
-      netCentimes: 0,
-      orderCount: 0,
-    }),
-  );
+  const chart = snapshot?.dailySales ?? [];
   const maximum = Math.max(...chart.map((day) => day.netCentimes), 0);
   const scaleMaximum = Math.max(maximum, 1);
   const peak = chart.reduce(
@@ -77,16 +74,16 @@ export function SalesPulse({
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   return (
-    <section className={styles.panel} aria-labelledby="sales-pulse-title">
+    <section className={styles.panel} aria-labelledby="sales-pulse-title" aria-busy={isLoading}>
       <header className={styles.panelHeader}>
         <div className={styles.title}>
           <Pulse width={18} height={18} aria-hidden="true" />
           <h1 id="sales-pulse-title">{t('Today’s pulse')}</h1>
         </div>
-        <div className={styles.live}>
+        <div className={`${styles.live} ${unavailable ? styles.unavailable : ''}`} role="status">
           <span />
           <strong>
-            {error
+            {error || (!isLoading && !snapshot)
               ? t('Unavailable')
               : isLoading
                 ? t('Loading')
@@ -104,7 +101,7 @@ export function SalesPulse({
       <p className={styles.netLabel}>{t('NET SALES')}</p>
       <div className={styles.netRow}>
         <p className={styles.netValue}>
-          {isLoading ? '—' : formatMoney(today?.netCentimes ?? 0)}
+          {unavailable ? '—' : formatMoney(today?.netCentimes ?? 0)}
         </p>
         {error ? (
           <button type="button" className={styles.change} onClick={onRetry}>
@@ -112,9 +109,9 @@ export function SalesPulse({
             <strong>{t('Retry summary')}</strong>
           </button>
         ) : (
-          <div className={styles.change}>
+          <div className={`${styles.change} ${!isPositive && !unavailable ? styles.decline : ''}`}>
             <ComparisonIcon width={14} height={14} aria-hidden="true" />
-            <strong>{isLoading ? t('Loading saved summary') : changeLabel}</strong>
+            <strong>{unavailable ? t(isLoading ? 'Loading saved summary' : 'Summary unavailable') : changeLabel}</strong>
           </div>
         )}
       </div>
@@ -146,7 +143,7 @@ export function SalesPulse({
         <span className={styles.peak}>
           <Bolt width={14} height={14} aria-hidden="true" />
           <strong>
-            {peak?.netCentimes
+            {unavailable ? '—' : peak?.netCentimes
               ? t('Peak {date}', {
                   date: formatDate(peak.businessDate, language, {
                     day: 'numeric',
@@ -158,18 +155,24 @@ export function SalesPulse({
         </span>
       </div>
 
-      <div className={styles.chart} aria-label={t('Daily net sales for the latest 12 days')}>
+      <div className={styles.chart} aria-label={t('Daily net sales for the latest 12 days')}
+        onKeyDown={(event) => { if (event.key === 'Escape') setSelectedDate(null); }}
+        onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelectedDate(null); }}>
+        {unavailable ? (
+          <p className={styles.chartState} role="status">
+            {t(isLoading ? 'Loading saved summary' : 'Summary unavailable')}
+          </p>
+        ) : (<>
         <div className={styles.guides} aria-hidden="true">
           {[1, 0.75, 0.5, 0.25].map((ratio) => (
             <span key={ratio}>
-              <small>{formatCompactMoney(maximum * ratio)}</small>
+              <small>{`${axisFormat.format(maximum * ratio / 100)} MAD`}</small>
               <i />
             </span>
           ))}
         </div>
         <div className={styles.bars}>
           {chart.map((day) => {
-            const isPeak = Boolean(peak?.netCentimes) && day === peak;
             const selected = selectedDate === day.businessDate;
             const amount = formatMoney(day.netCentimes);
             const intensity = day.netCentimes / scaleMaximum;
@@ -187,18 +190,19 @@ export function SalesPulse({
               aria-pressed={selected}
               aria-label={`${
                 day.businessDate.length === 10
-                  ? day.businessDate.slice(8)
+                  ? formatDate(day.businessDate, language, { day: 'numeric', month: 'long', year: 'numeric' })
                   : '—'
               }, ${amount}`}
               onClick={() => setSelectedDate(selected ? null : day.businessDate)}
             >
               <span
-                className={`${styles.bar} ${styles[`tone${tone}`]} ${
-                  isPeak ? styles.peakBar : ''
-                }`}
+                className={`${styles.bar} ${styles[`tone${tone}`]}`}
                 style={{ height }}
               >
-                {selected ? <span className={styles.tip}>{amount}</span> : null}
+                {selected ? <span className={styles.tip}>
+                  <span>{formatDate(day.businessDate, language, { day: 'numeric', month: 'short' })}</span>
+                  <strong>{amount}</strong>
+                </span> : null}
               </span>
             </button>
           )})}
@@ -217,6 +221,7 @@ export function SalesPulse({
             </span>
           ))}
         </div>
+        </>)}
       </div>
 
       <div className={styles.bestSellerDivider} />
@@ -230,15 +235,15 @@ export function SalesPulse({
             <strong>
               {isLoading
                 ? t('Loading sales…')
-                : error
+                : unavailable
                   ? t('Summary unavailable')
                   : bestSeller?.name ?? t('No sales yet')}
             </strong>
           </span>
         </div>
         <span className={styles.bestStats}>
-          <strong>{formatMoney(bestSeller?.totalCentimes ?? 0)}</strong>
-          <small>{t('{count} sold', { count: bestSeller?.quantity ?? 0 })}</small>
+          <strong>{unavailable ? '—' : formatMoney(bestSeller?.totalCentimes ?? 0)}</strong>
+          <small>{unavailable ? '—' : t('{count} sold', { count: bestSeller?.quantity ?? 0 })}</small>
         </span>
       </div>
     </section>

@@ -42,7 +42,7 @@
 
 .title h1 {
   color: var(--olaso-text);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -53,7 +53,7 @@
   border-radius: 14px;
   color: var(--olaso-green-ink);
   background: var(--olaso-green-soft);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .live span {
@@ -78,15 +78,16 @@
   top: 86px;
   left: 40px;
   color: var(--olaso-copy-green);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.4px;
 }
 
 .netRow {
   position: absolute;
-  top: 103px;
+  top: 108px;
   left: 40px;
+  right: 26px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -94,14 +95,17 @@
 
 .netValue {
   color: var(--olaso-text);
-  font-size: 48px;
+  font-size: 44px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -1.8px;
 }
 
 .change {
-  height: 28px;
+  min-height: 32px;
+  flex-shrink: 0;
   gap: 5px;
   padding: 0 10px;
   border-radius: 14px;
@@ -109,11 +113,13 @@
   background: var(--olaso-green-icon);
   border: 0;
   font-family: inherit;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .change:is(button) {
+  min-height: 48px;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .change:is(button):focus-visible {
@@ -182,13 +188,13 @@
 
 .metricCopy strong {
   color: var(--olaso-text);
-  font-size: 19px;
+  font-size: 22px;
   line-height: 1;
 }
 
 .metricCopy small {
   color: var(--olaso-copy);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -225,12 +231,12 @@
 
 .chartHeader strong {
   color: var(--olaso-text);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .chartHeader small {
   color: var(--olaso-copy);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -241,7 +247,7 @@
 
 .peak strong {
   color: var(--olaso-copy-green);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .chart {
@@ -254,7 +260,7 @@
 
 .guides {
   position: absolute;
-  top: 18px;
+  top: 50px;
   left: 0;
   width: 834px;
 }
@@ -262,24 +268,25 @@
 .guides > span {
   position: relative;
   display: block;
-  height: 50px;
+  height: 42px;
 }
 
 .guides small {
   position: absolute;
   top: -5px;
   left: 0;
-  width: 52px;
+  width: 84px;
   color: var(--olaso-axis);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .guides i {
   position: absolute;
-  top: 6px;
-  left: 56px;
-  width: 778px;
+  top: 0;
+  left: 88px;
+  width: 746px;
   height: 1px;
   background: var(--olaso-line-soft);
 }
@@ -287,10 +294,10 @@
 .bars,
 .axis {
   position: absolute;
-  left: 56px;
+  left: 88px;
   display: flex;
-  width: 778px;
-  gap: 10px;
+  width: 746px;
+  gap: 8px;
 }
 
 .bars {
@@ -300,6 +307,8 @@
 }
 
 .barColumn {
+  border-radius: 10px;
+  touch-action: manipulation;
   position: relative;
   display: flex;
   flex: 1;
@@ -323,11 +332,14 @@
   bottom: calc(100% + 4px);
   left: 50%;
   z-index: 1;
-  padding: 3px 7px;
+  display: grid;
+  gap: 2px;
+  padding: 7px 10px;
   border-radius: 10px;
+  box-shadow: 0 2px 8px rgb(28 33 27 / 10%);
   color: var(--olaso-green-ink);
   background: var(--olaso-green-soft);
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
   transform: translateX(-50%);
@@ -360,7 +372,7 @@
 .axis span {
   flex: 1;
   color: var(--olaso-axis);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   text-align: center;
 }
@@ -390,10 +402,12 @@
 
 .bestProduct {
   gap: 12px;
+  min-width: 0;
 }
 
 .bestIcon {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
   width: 42px;
   height: 42px;
@@ -404,32 +418,51 @@
 
 .bestCopy {
   gap: 3px;
+  min-width: 0;
 }
 
 .bestCopy small {
   color: var(--olaso-copy-green);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .bestCopy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--olaso-text);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .bestStats {
+  flex-shrink: 0;
+  margin-left: 16px;
+  font-variant-numeric: tabular-nums;
   align-items: flex-end;
   gap: 3px;
 }
 
 .bestStats strong {
   color: var(--olaso-text);
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .bestStats small {
   color: var(--olaso-copy);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
 }
+
+.unavailable { color: var(--olaso-copy); background: var(--olaso-soft); }
+.unavailable span { background: var(--olaso-muted); }
+.decline { color: var(--olaso-danger-ink); background: var(--olaso-danger-soft); }
+.change:is(button):active { background: var(--olaso-green-soft); }
+.barColumn:active { background: var(--olaso-green-soft); }
+.barColumn[aria-pressed="true"] { background: var(--olaso-green-row); }
+.barColumn:first-child .tip { left: -8px; transform: none; }
+.barColumn:last-child .tip { right: -8px; left: auto; transform: none; }
+.tip span { font-size: 11px; font-weight: 500; }
+
+.chartState { display: grid; place-items: center; height: 100%; color: var(--olaso-copy); font-size: 14px; }
