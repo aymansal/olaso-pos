@@ -37,10 +37,11 @@ Pencil frames still own their respective product and implementation contracts.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** continue the light-mode UI-01 review below,
-  including measured contrast, complete
-  shared-action/role coverage and Pencil reconciliation. Do not advance to POS
-  or treat the narrow chart/format corrections as whole-screen acceptance.
+- **Exact next action:** owner review of the unchanged-layout Dashboard;
+  finish native nonempty-cart cancellation and reconcile the Pencil reference
+  when available. Contrast and shared-menu checks are recorded below. Track
+  the Orders/Stock destination-data discrepancies without calling them fixed.
+  Do not advance to POS without Dashboard acceptance.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
   not block Dashboard. Do not infer an answer from silence.
@@ -170,6 +171,11 @@ changes pushed and the owner must accept the screen before moving on.
 - Owner confirmed Olaso is always light mode. There is no dark-mode Dashboard
   and no dark-mode work requested. The earlier clarification was an agent
   misunderstanding, now resolved; preserve the existing cream appearance.
+- Owner explicitly requires the Dashboard layout to remain unchanged. Use
+  realistic café names in previews (for example Iced Matcha Latte and Oat Milk).
+  The agent's exaggerated long-name fixture is not a real reported café problem
+  and does not authorize expanding rows or adding name-detail interactions.
+  Withdraw the best-seller wrapping/popover choice; keep the existing row.
 - Recent orders: line 1 = number + amount; line 2 = time + service type. No
   item count or routine Completed label; cancellation stays clearly marked.
 - Dashboard View all links are borderless. Previous corrections and selected
@@ -191,6 +197,69 @@ changes pushed and the owner must accept the screen before moving on.
 ## Checkpoint ledger
 
 ### UI-01 — Dashboard review — in progress, 20 September 2026
+
+#### Continued light-mode review
+
+- Re-read better-accessibility (including semantics-and-aria), better-colors
+  and Ponytail; retain the other skill readings recorded below.
+- Measured rendered live Dashboard text pairs: primary 18.34:1; metadata
+  5.14:1; chart labels 4.65:1; best-seller quantity 4.65:1; Low 4.51:1;
+  Critical 5.07:1; Cancelled 5.62:1. These meet 4.5:1. The active navigation
+  indicator is a sibling layer, so ancestor-only measurements are not valid
+  for its white text; check its actual green surface separately.
+- Reproduced medium accessibility finding in ProfileControl: Enter opens,
+  Tab reaches EN, ArrowDown does not move, although the popover claims menu
+  semantics. Escape from EN leaves focus on BODY. Apply better-accessibility
+  Native elements first / Full keyboard support: remove unsupported menu and
+  menuitem roles, preserve ordinary Tab/Enter/Space buttons, and return focus
+  to the opener on Escape. No visual redesign or new widget dependency.
+- Research before implementation, 20 September 2026:
+  [W3C disclosure navigation](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/)
+  distinguishes colloquial menus from ARIA menus and restores trigger focus
+  on Escape; [MDN Popover](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using)
+  documents native popover behavior. Prefer deleting unsupported semantics
+  over introducing custom arrow-key menu code for these four ordinary controls.
+  [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor](https://capacitorjs.com/docs) retain native rendering ownership;
+  this focus/semantics correction belongs to React/HTML, with no native change.
+- Planned checks: browser keyboard open/Tab/Enter/Space/Escape/outside close,
+  role/language/lock-error fixtures, build and Redmi shared Header on all six
+  routes. Continue Dashboard review without activating other screen redesigns.
+- Implemented `ProfileControl.tsx`: removed unsupported menu/menuitem roles,
+  added trigger ref and restored focus on Escape. Updated owning POS DOX and
+  DESIGN contract. No CSS, Dashboard layout or palette changes.
+- Verification passed: build and android:beta/JVM checks; browser Enter/Space
+  opening, Tab sequence, Settings action, Escape focus restoration; manager
+  and cashier fixture controls exclude Settings/Report, cashier navigation
+  exposes POS/Orders only; lock-failure fixture reports the error and permits
+  retry. Native browser confirmation fixture timed out at the dialog boundary;
+  do not claim its Cancel branch passed. No new captured console errors.
+- Confirmed active navigation white-on-green contrast 6.78:1 using the actual
+  sibling indicator, not the ancestor white background. No palette edits.
+- Installed beta over existing Redmi app, measured 1340 × 804. Native Escape
+  key returned focus to profile opener. Shared popover inspected on all six
+  routes after waiting for navigation fades to finish; captures
+  `tmp/ui01-{dashboard,pos,orders,products,stock,reports}-menu.png`.
+  Its bounds remain x1090/y77, width232, height175 within the viewport.
+- Real Dashboard paths: View all Stock opens Low stock and the expected single
+  low-stock row. View all Orders opens Orders. Settings opens correctly and
+  omits Settings from its own popover. Empty-cart Lock reaches the lock screen.
+  Report becomes disabled/Printing, then shows the native error “Printer
+  address must be a valid IPv4 address.” OK restores the Report action.
+  Printer delivery is not verified; no printer setup changed.
+- Discovered follow-ups: Orders shows zero for today despite Dashboard's 46;
+  Stock's retained selected detail can still show Brioche when Low stock lists
+  only Soft ice cream portions. Record these for UI-03/UI-05/data investigation;
+  route success is not proof of correct destination data. No data reset or fix
+  was attempted in this visual checkpoint.
+- Owner rejected the exaggerated long-name fixture as unrealistic and explicitly
+  required unchanged layout. Removed those fixture names, restored ordinary live
+  preview, withdrew proposed name wrapping/details; no production change made.
+- APK SHA-256: `86071baa8625abd0865dded1f2c50e503862989c200515f447c8e4c7b4cc4fb4`.
+  No structural graph change. Unrelated dirty files preserved.
+- Still not verified: real screen-reader speech, native nonempty-cart Cancel,
+  printer output, Pencil reconciliation (connection unavailable). Owner review
+  remains required; this checkpoint does not declare the whole screen complete.
 
 - Owner authorized starting Dashboard and confirmed the app is always light
   mode. The agent's dark-mode question was a misunderstanding; it does not

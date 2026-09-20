@@ -38,6 +38,9 @@ owns the shared Header and TopNavigation currently used across the application.
  opens the dialog.
 - The Header carries no notification control; do not reintroduce a decorative
  bell or a hardcoded badge count.
+- The staff popover uses ordinary native buttons, not ARIA menu/menuitem roles.
+  Tab moves between its controls; Escape closes it and returns focus to the
+  profile trigger. Preserve this shared behavior on every screen.
 - Product and category assets are content; do not recreate them with UI icons.
 - A long product name or price ellipsises before the plus; the plus stays
   visible. Only the plus adds to the order.

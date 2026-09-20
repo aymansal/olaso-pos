@@ -30,6 +30,7 @@ export function ProfileControl({
 }) {
   const t = useT();
   const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -50,7 +51,10 @@ export function ProfileControl({
       if (!root.current?.contains(event.target as Node)) setOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        setOpen(false);
+        trigger.current?.focus();
+      }
     };
     document.addEventListener('pointerdown', closeOutside);
     document.addEventListener('keydown', closeOnEscape);
@@ -75,6 +79,7 @@ export function ProfileControl({
   return (
     <div className={styles.wrap} ref={root}>
       <button
+        ref={trigger}
         className={styles.profile}
         type="button"
         aria-label={t('Open staff menu')}
@@ -94,7 +99,7 @@ export function ProfileControl({
       {open ? (
         <div ref={menu} popover="auto" onToggle={(event) => {
           if (event.newState === 'closed') setOpen(false);
-        }} className={styles.menu} id="staff-profile-menu" role="menu">
+        }} className={styles.menu} id="staff-profile-menu">
           <div className={styles.language} role="group" aria-label={t('Application')}>
             {(['en', 'fr'] as const).map((value) => (
               <button
@@ -109,7 +114,7 @@ export function ProfileControl({
             ))}
           </div>
           {canOpenSettings ? (
-            <button type="button" role="menuitem" onClick={() => {
+            <button type="button" onClick={() => {
               setOpen(false);
               onOpenSettings?.();
             }}>
@@ -118,7 +123,6 @@ export function ProfileControl({
           ) : null}
           <button
             type="button"
-            role="menuitem"
             disabled={switching}
             onClick={() => void switchStaff()}
           >

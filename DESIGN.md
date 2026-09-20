@@ -728,5 +728,7 @@ Pending owner review, physical tablet acceptance and Pencil reconciliation:
 - Long stock names wrap and the existing list scrolls vertically when needed.
   The shared staff popover is 232px wide with 13px action/error copy and 48px
   language/action controls. Its trigger and header geometry remain unchanged.
+  Staff popover actions retain native button semantics and Tab navigation;
+  Escape returns keyboard focus to the profile trigger.
 - Staff-switch confirmation and report errors remain platform-owned prompts;
   CSS cannot style their native surfaces. Their physical Android review is pending.
