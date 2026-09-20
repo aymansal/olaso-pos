@@ -579,3 +579,41 @@ Implementation evidence (20 September 2026):
 - Publication: implementation commit `afe6e147f31348bc5ab43722a9f1f3ca0036b691`
   pushed to `origin/main` in `aymansal/olaso-pos`. This publication does not mark
   the pending browser interactions, tablet or design-master acceptance complete.
+
+### Redmi Pad installation for manual review — 20 September 2026
+
+Owner requested installing the current POS/Dashboard polish on the newly
+connected Redmi Pad for their own manual testing. Windows and ADB identify
+Redmi Pad / 22081283G; physical panel is 1200 × 2000 (portrait reporting).
+The package was absent before installation. This replaces the Samsung as the
+connected review device; earlier Samsung evidence remains historical.
+
+Checked current [Android ADB installation guidance](https://developer.android.com/tools/adb)
+and [Capacitor build/sync workflow](https://capacitorjs.com/docs/basics/workflow).
+Use the existing checked android:beta workflow, then target this tablet
+explicitly with adb install -r. A development build is appropriate for this
+new manual-review tablet; no production backend deployment or release publishing
+is needed. Native Android continues to own install, orientation and viewport
+fitting; no rendering, authentication or business-logic change is needed.
+
+The build uses the current main working tree, including the owner's pre-existing
+PeriodCalendar/reportProfit edits, which remain unchanged and uncommitted by
+this task. Those changes are therefore included in this local test APK.
+Installation/launch evidence follows when the build completes; manual screen
+acceptance belongs to the owner and is not implied by successful installation.
+
+Installation evidence:
+- `npm run android:beta` passed Android checks, web build, Capacitor sync,
+  app JVM tests and debug APK assembly. Existing build warnings were unchanged.
+- First install was rejected by the tablet with INSTALL_FAILED_USER_RESTRICTED.
+  The owner enabled Install via USB; the retry returned Success.
+- Redmi package verification: com.olaso.pos, version 1.4, versionCode 11.
+  `am start -W` returned Status: ok. Screenshot inspection confirms the actual
+  online Olaso lock screen with Olaso Owner selected on the Redmi Pad.
+- APK: android/app/build/outputs/apk/debug/app-debug.apk, 26,523,246 bytes;
+  SHA-256 95930f280a7013b2aff60fa7299a8d47cfe9ee749f5b4f804a4364408def523d.
+- Local launch capture: tmp/redmi-install-review.png (2000 × 1200). No app
+  credentials were entered, sales placed or records reset by this installation.
+- Exact next action: owner signs in and manually reviews POS, Dashboard and
+  their popups on the Redmi; record their findings before further changes.
+  Installation/startup is verified, not full visual or workflow acceptance.
