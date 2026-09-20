@@ -88,7 +88,7 @@ unauthorized access while simplifying the app.
 
 | Stage | Scope | Status |
 | --- | --- | --- |
-| 0 | Replace old plans; capture requirements and initial research | Documentation prepared; publication recorded below |
+| 0 | Replace old plans; capture requirements and initial research | Complete; publication recorded below |
 | 1 | Owner-led interface polish and ingredient workflow simplification | Waiting for the owner's first instruction |
 | 2 | Security, database and sync investigation, then selected fixes | Not started |
 | 3 | Business/location separation and safe migration of the existing client | Not started |
@@ -252,7 +252,7 @@ discard inaccessible cached results. Show branch freshness and incomplete totals
 Decide business-day/time-zone rules and currency handling before combining figures.
 No browser access to tablet PIN secrets and no management features assumed.
 
-## Initial research checked on 20 September 2026
+### Stage 6: client readiness
 
 Before client rollout, stage 6 must demonstrate tenant/location isolation,
 correct totals under retry and offline recovery, realistic-volume performance,
@@ -260,6 +260,8 @@ backup restoration, and data-preserving upgrades. Define support ownership,
 incident handling, and monitoring without logging client secrets. Business
 onboarding, subscription/suspension policy, and retention/export rules need
 owner decisions; no billing system or enterprise certification is assumed.
+
+## Initial research checked on 20 September 2026
 
 These sources support options, not a completed audit or final architecture:
 
@@ -303,5 +305,7 @@ or exercising the unchanged application.
   references are removed from edited documents, and `git diff --check` passes.
   Hash checks confirm the three unrelated source files remain unchanged by
   this work. Graphify was queried; no structural app change requires a rebuild.
-- Publication: pending documentation closeout.
+- Publication: documentation commit `546ccf09c0079aa374d0782cd27557caa3a6bf02`
+  pushed to `origin/main` in `aymansal/olaso-pos`. This follow-up records that
+  publication and closes SAAS-00; it does not start implementation.
 - Next action: wait for the owner's chosen first UI step and additional skills.
