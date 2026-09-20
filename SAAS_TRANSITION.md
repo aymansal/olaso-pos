@@ -78,7 +78,8 @@ Implemented checkpoint (card remains open for the pending POS choice):
   This checkpoint is not a claim that every screen/popup has been polished.
 - Exact next action: apply the owner's pending POS option-row selection, then
   review the remaining POS popup states and reconcile the design master.
-  Publication evidence will be recorded after pushing this checkpoint.
+  Checkpoint `73fdcdb` was pushed to `origin/main`
+  (`https://github.com/aymansal/olaso-pos`); the card remains in progress.
 
 ## Current instruction and next action
 
