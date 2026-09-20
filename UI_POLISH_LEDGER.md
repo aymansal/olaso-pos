@@ -32,16 +32,16 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard.** Status: review in progress; previous
-  corrections exist but the complete screen is not accepted.
+- **Active screen: UI-01 — Dashboard.** Status: implementation and available
+  verification finished; ready for owner review, not yet owner-accepted.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** owner review of the unchanged-layout Dashboard;
-  finish native nonempty-cart cancellation and reconcile the Pencil reference
-  when available. Contrast and shared-menu checks are recorded below. Track
-  the Orders/Stock destination-data discrepancies without calling them fixed.
-  Do not advance to POS without Dashboard acceptance.
+- **Exact next action:** owner review of the installed unchanged-layout
+  Dashboard. Native nonempty-cart Cancel and low-stock selection now pass.
+  DESIGN records the owner's current-layout instruction over the older Pencil
+  geometry. Orders' cloud-only sample history remains a documented UI-03/data
+  limitation. Do not advance to POS without Dashboard acceptance.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
   not block Dashboard. Do not infer an answer from silence.
@@ -103,7 +103,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Active next; not accepted |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Ready for owner review; limitations below |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
@@ -196,9 +196,70 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Checkpoint ledger
 
-### UI-01 — Dashboard review — in progress, 20 September 2026
+### UI-01 — Dashboard — ready for owner review, 20 September 2026
+
+#### Final delivery record
+
+- Dashboard polish implementation finished with the current light-mode layout
+  preserved. This record supersedes the pending native Cancel, stock selection
+  and Pencil-geometry items in the earlier chronological checkpoints below.
+- Coverage completed across this pass: metrics and comparisons, proportional
+  chart bars and tap details, best seller, stock attention, approved two-line
+  recent orders, cancellation indication, both View all routes, EN/FR,
+  loading/empty/error/retry fixtures, profile menu roles and keyboard dismissal,
+  Settings, empty-cart lock, nonempty-cart Cancel and native report-error recovery.
+  Fixture evidence and real-device evidence remain distinguished below.
+- Final narrow fix: `src/features/stock/StockScreen.tsx` no longer retains an
+  ingredient excluded by the active filter. Updated its owning AGENTS contract.
+  Redmi check: unfiltered Brioche → Dashboard → Stock View all selects Soft ice
+  cream portions, with matching Low status and 10 pc quantity/threshold. A search
+  yielding no rows clears the detail; clearing search restores the visible item.
+- `DESIGN.md` records the owner's explicit unchanged-layout decision as the
+  Dashboard geometry authority for UI-01. The older Pencil frame differs; it
+  was not edited, and its geometry must not override that owner instruction.
+- Final `npm run android:beta` passed (web build, Android configuration,
+  Capacitor sync, JVM checks and APK assembly). Existing build warnings remain
+  as recorded below. No structural code change requiring a Graphify refresh.
+- First install attempt returned INSTALL_FAILED_USER_RESTRICTED. A subsequent
+  `adb install -r` succeeded. Final APK SHA-256:
+  `2ff56fd4f65180288013553eda836d515a5e5e7c9b6e8a741d40da14f981e5e5`.
+  Redmi 22081283G WebView measured 1340 × 804. Visually inspected final captures
+  `tmp/ui01-final-stock.png` and `tmp/ui01-final-dashboard.png`; no clipping or
+  horizontal overflow, no captured console errors/warnings. Retained 46 orders,
+  1,829 MAD and 87 items. No sale, payment, inventory write or reseeding performed.
+- Browser final check at 1340 × 800 covered live/loading/empty/error French
+  fixtures without console warnings/errors. Realistic café names retained.
+- Explicit limitations: Orders still excludes the cloud-only seeded receipts;
+  its local-history contract is a separate UI-03/data issue, not a corrected
+  Dashboard route. Printer output cannot be verified without a configured
+  printer; error recovery passed. Actual screen-reader speech was not tested.
+  These limitations are not owner-accepted or silently marked passed.
+- Owner review is next. UI-01 is not marked owner-accepted and no next screen
+  redesign is started. Publication evidence follows after the successful push.
 
 #### Continued light-mode review
+
+- Final closure work: native nonempty-cart Cancel verified on Redmi using one
+  unsaved Espresso. Cancel stayed on Dashboard, kept the staff session and
+  preserved the 10 MAD draft; removed only that temporary draft afterward.
+  Dashboard still showed 46 orders / 1,829 MAD. No sale or payment was placed.
+- Orders mismatch traced to the existing contract, not navigation: sample month
+  was created only in Convex by `scripts/seed-cafe-month.mjs`; useOrdersData
+  counts/pages SQLite and allows cloud enrichment only for already-local keys.
+  The current Orders implementation therefore excludes cloud-only seed receipts.
+  UI-03/data-history work must resolve that separately; no artificial local
+  receipt import or misleading counter change is part of Dashboard polish.
+- Dashboard → Low stock did expose a small selection bug: a previously chosen
+  healthy ingredient remained in the detail panel after filtering it out.
+  Pre-implementation research, 20 September 2026:
+  [Apple split views](https://developer.apple.com/design/human-interface-guidelines/split-views)
+  ties detail to visible selection; apple-design Familiarity/Grouping and the
+  existing Stock DOX require opening on the first visible ingredient. Update
+  the existing selection guard to retain a selection only while it matches the
+  filtered list. This is React view state under the already-reviewed Android
+  WebView/Capacitor boundary, not inventory or persistence logic. No layout,
+  colours, data or native changes. Verify by repeating the actual Dashboard path
+  after selecting Brioche in unfiltered Stock, then build/install the beta.
 
 - Re-read better-accessibility (including semantics-and-aria), better-colors
   and Ponytail; retain the other skill readings recorded below.

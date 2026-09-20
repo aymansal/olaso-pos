@@ -696,7 +696,14 @@ A screen is complete only when all of the following are true:
 
 ## Dashboard polish candidate — 20 September 2026
 
-Pending owner review, physical tablet acceptance and Pencil reconciliation:
+UI-01 preserves the current light-mode layout by explicit owner instruction.
+Its live geometry is the reference for this pass: sales x18/y92/886×686,
+stock x922/y92/400×334, recent orders x922/y444/400×334, inside 1340×800.
+The older Pencil Dashboard frame `wEoEi` has different panel dimensions and is
+historical for this pass; do not resize the application to match it. This
+supersedes that frame's Dashboard geometry only, not the POS frame `W26Y6`.
+Owner acceptance of the completed pass remains separate from implementation.
+
 - Keep the existing full-bleed 1340 × 800 three-panel Dashboard composition.
 - Use clearer 11–17px supporting text, 22px metrics and a 44px net-sales total.
   Owner-approved Recent orders rows have two lines: receipt number and amount,

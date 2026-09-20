@@ -60,7 +60,8 @@ export function StockScreen({
   }, [inventory.ingredients, levelFilter, search, unitGroup]);
 
   useEffect(() => {
-    if (inventory.isLoading || inventory.error || selectedIngredientId) return;
+    if (inventory.isLoading || inventory.error) return;
+    if (visibleIngredients.some((ingredient) => ingredient.id === selectedIngredientId)) return;
     setSelectedIngredientId(visibleIngredients[0]?.id);
   }, [
     inventory.error,

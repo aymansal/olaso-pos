@@ -42,6 +42,9 @@ history.
   delete, or stock-adjustment form.
 - All stock levels means all active ingredients. Ordinary lists exclude leftover
   archived rows; there is no ingredient archive action.
+- A filter that excludes the selected ingredient selects the first remaining
+  match, or clears selection when none remain. Dashboard's Low stock shortcut
+  must not retain a healthy ingredient in its detail panel.
 - The inventory table opens on the first visible ingredient. Pagination shows
   the same sliding three-page window as Orders, with a fixed page of seven
   equal-height rows that do not stretch. Unit-group and stock-level
