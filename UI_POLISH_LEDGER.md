@@ -322,6 +322,9 @@ Verification and delivery evidence:
   presentation changes. Orders cloud-only seed-history issue remains separate.
 - Next: owner visual review of this restart, then address Dashboard feedback and
   the explicit outstanding checks. Do not label the screen owner-accepted.
+- Publication: implementation `3b428ab` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`. This follow-up records the successful
+  publication; the installed APK contains the 150ms fade and Dashboard changes.
 
 ### UI-01 — previous Dashboard delivery (superseded by restart above), 20 September 2026
 
