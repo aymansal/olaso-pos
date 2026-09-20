@@ -39,3 +39,6 @@
 .place:disabled { opacity: .45; cursor: default; }
 .split:focus-visible,
 .place:focus-visible { outline: 2px solid var(--olaso-green); outline-offset: 2px; }
+
+.split:active:not(:disabled) { background: var(--olaso-green-soft); }
+.place:active:not(:disabled) { filter: brightness(0.88); }

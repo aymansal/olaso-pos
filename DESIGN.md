@@ -350,7 +350,7 @@ Shared components are contracts, not duplicated screen-specific markup. The Penc
 | `QuickAddRow` | best-seller chips | Up to three equal-width 50-pixel-tall chips carrying a product name only at 15px, filling the remaining width beside the search field. Chips come from saved tablet sales, never a fixed list, and the row renders nothing when there are none. An unusually long name may ellipsis. |
 | `CategoryCard` | name, item count, status, illustration | `active`, `default`, `warning`. Illustration stays clipped to the right half and feels embedded in the card. |
 | `ProductCard` | name, price, transparent product image, add action | 174 by 162. Image fits completely inside 146 by 100 at x 14, y 6. Add control is 44 by 44 at x 122, y 107. A long name or price ellipsises before that control. The price is 11px in a slightly softer ink than the name. Only the add control adds to the order. |
-| `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. A sliding Operational Green pill marks the selection; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. Products sidebar category names stay 12px, one line, and ellipsis; they never wrap or push the product count out of the row. Orders, Products, and Stock table row highlights use the same vertical slide and cream selected fill. Products and Stock keep the green mark; Orders does not. Column headers on those three tables are centered over their values. |
+| `SegmentedControl` | options, selected option | 296 by 50. Only one selected segment. An Operational Green pill marks the selection immediately in POS service and payment controls; selected labels are white and unselected labels use dark-soft at the same 11px/600 weight. Other existing selectors retain their motion. Cash/Card, top navigation, Orders status, and Reports tabs use the same green pill. Products category rows use it vertically. Products sidebar category names stay 12px, one line, and ellipsis; they never wrap or push the product count out of the row. Orders, Products, and Stock table row highlights use the same vertical slide and cream selected fill. Products and Stock keep the green mark; Orders does not. Column headers on those three tables are centered over their values. |
 | `LabeledField` | visible label, current value | Text and in-app `MenuSelect` list. Control is 129 by 48 on Lock; compact form lists are 36px tall. |
 | `MenuSelect` | options, current value | One in-app list from Lock. Lock size keeps the 54px identity control; ordinary lists use the compact size, while a form field may match its neighboring input height (the Staff role field is 48px). Do not use the Android native select. Dates use the shared period calendar attached to the field. Reports and Orders range pickers keep quick periods on the left and the month grid on the right; Costs uses the Reports global period instead of a second month picker. Orders opens on Today and offers Today, Yesterday, This week, Last week, This month, Last month, and All. Date-only fields (Add expense, Add monthly pay) omit the quick-period column and use a 248px month grid. The opener toggles: a second tap on the same button closes it. It opens below the button when there is room, otherwise above. Only the quick period the operator actually chose stays highlighted. A first tap selects a day; a second tap on another day selects the range and keeps the first day when the month changes. |
 | `OrderLine` | product, unit price, quantity, size, note, total, Offert | Keep the total right-aligned. Gift and trash keep 44-pixel hits with 36-pixel circles and 8-pixel gaps; green when Offert is active; charged total 0,00. A note is optional. |
@@ -588,6 +588,31 @@ pass LAN connection, print, cut, recovery, and endurance testing.
 - Loading, empty, unavailable, disabled, pressed, focused, success, and error states are required implementation states, not optional polish.
 
 Motion is restrained: 125 to 200 milliseconds for color, opacity, and state-layer transitions. Never animate flex or grid layout dimensions. POS category selection wipes green in from the left on the tapped card only, in 125ms; the previous card snaps off. It never travels the gap between cards. The product grid does not animate. Respect `prefers-reduced-motion`.
+
+### POS control polish — browser review candidate
+
+SAAS-02 applies Apple's response, clarity, and restraint principles to the
+existing POS. Physical tablet acceptance and Pencil master reconciliation are
+pending; see `SAAS_TRANSITION.md` for evidence. This is not an app-wide redesign.
+
+- Service and Cash/Card selections update the pill and text together instantly.
+  Press feedback uses a state layer; targets never shrink, bounce, or move.
+  Selected green controls retain a visible white inset keyboard-focus outline.
+- Place order, Split, popup actions, search clear, and quantity controls respond
+  on press with shading or color. Keep native click/release activation and all
+  disabled guards. Quantity/search hit areas remain circular during feedback.
+- Product-choice dialogs retain 320/620px widths, bounded scrolling, and fixed
+  header/footer regions. Use 22px headings, 13px option/group text, 11px supporting
+  text/prices, and 12px footer labels. Option rows are at least 48px with 8px gaps;
+  long names wrap. Selected rows use a green outline and soft green fill while
+  retaining the actual radio/checkbox mark.
+- Payment retains its 480px width and 640px height cap. Use a 26px amount,
+  11px eyebrow, 12px custom-field label, and 13px amount/method/footer controls.
+  Secondary split-payment details remain 10–12px. Payment method buttons have
+  44px height; list headings wrap instead of clipping. No changes to payment math,
+  selection requirements, close restrictions, or the native keyboard boundary.
+- The two POS dialogs appear directly, with no entrance motion or delayed input.
+  This remains appropriate with reduced motion enabled.
 
 ### Category artwork
 

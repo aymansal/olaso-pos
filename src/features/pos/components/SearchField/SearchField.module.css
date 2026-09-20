@@ -54,4 +54,8 @@
   border: 0;
   color: var(--olaso-muted);
   background: transparent;
+  border-radius: 50%;
 }
+
+.clear:active { background: var(--olaso-green-soft); }
+.clear:focus-visible { outline: 2px solid var(--olaso-green); outline-offset: -2px; }

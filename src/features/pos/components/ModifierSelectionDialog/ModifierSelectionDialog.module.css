@@ -39,17 +39,23 @@
   flex-direction: column;
 }
 
+.dialog header > span { min-width: 0; }
+
 .dialog header small {
   color: var(--olaso-copy);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
 }
 
 .dialog h2 {
-  margin: 3px 0 0;
+  margin: 4px 0 0;
   color: var(--olaso-text);
-  font-size: 18px;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
 .dialog header > button {
@@ -57,6 +63,7 @@
   place-items: center;
   width: 44px;
   height: 44px;
+  flex-shrink: 0;
   padding: 0;
   border: 1px solid var(--olaso-divider);
   border-radius: 50%;
@@ -94,30 +101,46 @@
   width: 100%;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 8px;
   color: var(--olaso-text);
-  font-size: 11px;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .groups legend span {
-  color: var(--olaso-text-meta);
-  font-size: 8px;
+  color: var(--olaso-muted);
+  font-size: 11px;
   font-weight: 500;
 }
 
 .options {
-  gap: 7px;
+  gap: 8px;
   margin-top: 9px;
 }
 
 .options label {
-  min-height: 44px;
+  min-height: 48px;
   align-items: center;
   gap: 10px;
-  padding: 0 14px;
+  padding: 10px 14px;
   border: 1px solid var(--olaso-control-border);
   border-radius: 22px;
   color: var(--olaso-text);
-  font-size: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.options label:has(input:checked) {
+  border-color: var(--olaso-green);
+  background: var(--olaso-green-soft);
+}
+
+.options label:active { background: var(--olaso-green-icon); }
+.options label:has(input:focus-visible) {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: -3px;
 }
 
 .options input {
@@ -137,11 +160,12 @@
 
 .options label > strong {
   color: var(--olaso-green);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .dialog footer {
   margin-top: 16px;
+  gap: 8px;
 }
 
 .cancel,
@@ -149,8 +173,8 @@
   height: 44px;
   padding: 0 18px;
   border-radius: 22px;
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .cancel {
@@ -171,3 +195,12 @@
 .add:disabled {
   opacity: 0.45;
 }
+
+.dialog button:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.dialog header > button:active,
+.cancel:active { background: var(--olaso-green-soft); }
+.add:active:not(:disabled) { filter: brightness(0.88); }

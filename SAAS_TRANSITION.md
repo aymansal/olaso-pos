@@ -9,13 +9,13 @@ plans and ledgers. Read it after the applicable `AGENTS.md` files when resuming
 work. `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, and `BRAND.md` still own
 durable product, engineering, design, and brand decisions.
 
-The owner has authorized documentation cleanup, research, this plan, and
-installation/review of the five supplied design skill collections.
-Do not run the app, test it, audit its code, fix bugs, change databases, install
-an APK, publish a release, or start implementing this plan now. The owner will
-choose the next step. The supplied skills are installed; no implementation
-step is active. Next action: discuss the owner's selected ingredient task or
-first specific UI change before choosing its implementation.
+The owner has authorized the first Apple Design polish pass and browser review
+at the Samsung tablet's 1340 × 800 reference size. SAAS-02 is ready for browser
+review: POS controls and choice/payment dialogs. Preserve business behavior.
+The tablet is unavailable; browser verification is authorized now, with physical
+acceptance pending. Apart from the separately authorized owner PIN reset below,
+do not change databases, install an APK, publish a release, or start ingredient
+redesign or security/data work. Next action: owner review of this first pass.
 
 Work one step at a time. Completing a step does not activate the next one.
 Record new concerns here as they arrive. Explain findings in plain English.
@@ -91,7 +91,7 @@ unauthorized access while simplifying the app.
 | Stage | Scope | Status |
 | --- | --- | --- |
 | 0 | Replace old plans; capture requirements and initial research | Complete; publication recorded below |
-| 1 | Owner-led interface polish and ingredient workflow simplification | Design skills installed and reviewed; waiting for the first selected app change |
+| 1 | Owner-led interface polish and ingredient workflow simplification | SAAS-02: first POS polish ready for browser review; tablet/design-master acceptance pending |
 | 2 | Security, database and sync investigation, then selected fixes | Not started |
 | 3 | Business/location separation and safe migration of the existing client | Not started |
 | 4 | Restricted APK distribution and update experience | Not started |
@@ -425,3 +425,82 @@ may need to change together; visual polish alone cannot resolve that problem.
 - Exact next action: the owner selects a concrete ingredient task or UI flow;
   discuss a simpler interaction, research its specific platform requirements,
   and proceed only within that selected scope.
+
+### SAAS-02 — first Apple Design POS polish
+
+Authorized on 20 September 2026: apply Apple Design guidance, with review in the
+Codex browser at 1340 × 800 because the owner's tablet is unavailable. Focus on
+POS control feedback and the product-choice/payment dialogs; preserve checkout,
+prices, selection rules, stored data, and the shared navigation/header.
+
+Research before implementation, checked 20 September 2026:
+
+- [Apple motion](https://developer.apple.com/design/human-interface-guidelines/motion?changes=l_9_3): frequent interactions should avoid unnecessary motion.
+- [Apple design principles](https://developer.apple.com/design/human-interface-guidelines/design-principles): clarity, consistency, and purposeful feedback inform this pass.
+- [Android animation overview](https://developer.android.com/develop/ui/views/animations/overview): subtle state feedback communicates what changed; physics is useful where actual motion calls for it.
+- [Android accessibility](https://developer.android.com/guide/topics/ui/accessibility/apps): preserve meaningful labels and adequate touch targets. CSS pixels in the fixed tablet viewport are not a claim of native dp equivalence.
+- [Capacitor web/native runtime](https://capacitorjs.com/docs): existing HTML/CSS renders within the native container. These presentation changes belong in component CSS. Android continues to own viewport fitting, lifecycle, storage, and hardware; no Kotlin or new animation package is needed.
+
+Smallest justified approach: retain existing components and geometry, improve
+popup typography/selection emphasis, add stable immediate pressed/focus states,
+and remove the traveling selection indicator animation from frequent service
+and payment choices. No spring library, glass redesign, or whole-app restyling.
+Use the installed Apple Design skill with the owner's no-bounce preference.
+
+Verification planned: production build, CSS scoping check, and browser review
+of affected controls and popup states at 1340 × 800, including long labels and
+French copy. Use isolated sample props if staff sign-in is unavailable; never
+bypass app authentication or perform live checkout to review styling.
+Physical tablet acceptance remains pending. Pencil is currently unavailable
+(desktop tool connection failed); any changed static component specification
+must be reconciled with its design master before full visual acceptance.
+
+Implementation and verification:
+
+- Seven existing POS CSS Modules changed: `ModifierSelectionDialog`,
+  `PaymentDialog`, `SegmentedControl`, `PaymentMethodControl`, `PrimaryAction`,
+  `QuantityStepper`, and `SearchField`. `DESIGN.md` records the candidate contract.
+  Production React behavior, business rules, shared header, and data code are unchanged.
+- Increased choice/payment popup type sizes; added selected-row emphasis,
+  stable press states and keyboard focus; removed service/payment pill travel.
+  No new dependencies, animation framework, app-wide skin, or geometry rewrite.
+- The normal browser app reaches Lock but cannot unlock because `secureSession.ts`
+  intentionally requires the native Android plugin, including its network check.
+  Authentication was not weakened. A temporary isolated fixture renders actual
+  POS components with sample props at
+  `http://127.0.0.1:5173/tmp/apple-polish.html`. It has no app data provider,
+  sign-in, database, printer, or sync; its header identifies sample data.
+  Fixture files are ignored under `tmp/apple-polish*`, not packaged or committed.
+  This is a focused component preview, not full app/end-to-end acceptance.
+- Owner separately requested resetting Olaso Owner's PIN. The existing protected
+  support reset was used on the preview's configured development deployment,
+  `colorful-newt-937`. The exact active owner profile was verified first; a normal
+  server sign-in then returned authenticated with the owner role. No production
+  deployment reset was performed. No PIN, recovery code, or session token is
+  retained in this document or committed. Other sessions are revoked by the
+  existing credential-replacement mechanism; disconnected tablet access was not tested.
+- `npm run build` passes. The installed SQLite web dependency emits a `crypto`
+  externalization warning; no dependency or runtime change was made for it.
+- `check:css-scope` still fails on four existing `from`/`to` keyframe findings in
+  untouched `App.module.css` and `LockScreen.module.css`. Comparing the same scan
+  against HEAD proves identical baseline findings and zero new findings in this
+  change. Do not report the full repository style check as passing.
+- Browser evidence: exact 1340 × 800 viewport and document dimensions; English
+  cash amount selection displays 50 received / 4 change for a 46 sample total;
+  French split selection displays 50 received / 26 change for a 24 sample part.
+  Wide product choices and narrow 320px choices were inspected. Narrow English
+  and French dialog checks found no overflowing buttons, labels, legends, or
+  headings; selection correctly enables Add. No real checkout was performed.
+  Service/payment indicators report zero transition duration; empty search,
+  clear-search, and disabled empty-cart actions were also checked. The final
+  clean reload has no browser console errors or warnings. A fixture-only hot
+  reload warning was resolved by reusing its preview root; production entry
+  code was unchanged.
+- Unrelated PeriodCalendar/reportProfit edits were preserved byte-for-byte.
+  `git diff --check` passes. Graphify was queried; production changes are CSS
+  only, with no structural code change requiring regeneration. No instruction
+  hierarchy or component ownership changed.
+- Pending: owner visual feedback, physical tablet verification, and Pencil
+  master reconciliation once its desktop connection is available. SAAS-02 is
+  a browser review candidate, not a completed tablet-accepted card.
+- Publication: pending commit/push of this focused source and documentation diff.
