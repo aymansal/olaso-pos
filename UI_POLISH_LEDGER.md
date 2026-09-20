@@ -34,8 +34,9 @@ Pencil frames still own their respective product and implementation contracts.
 
 - **Active screen: UI-01 — Dashboard.** Status: queued for a complete skills-led
   review; previous corrections exist but the complete screen is not accepted.
-- **Current task: UI-00 — create this ledger and wire recovery instructions.**
-  Documentation only. No new UI implementation or app testing in this task.
+- **UI-00 complete:** ledger and recovery instructions created and published.
+  Next work is UI-01 Dashboard. No new UI implementation or app testing was
+  performed during ledger creation.
 - **Exact next action:** read the required skills, then inventory the real
   Dashboard and every interaction it opens. Record evidence and the applicable
   skill rule for each proposed correction; bring unresolved visible/product
@@ -186,7 +187,7 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Checkpoint ledger
 
-### UI-00 — establish recovery and screen sequence — 20 September 2026
+### UI-00 — establish recovery and screen sequence — complete, 20 September 2026
 
 - Owner requested this file, mandatory rereading after compaction, actual skill
   reading, Dashboard-first/Lock-last coverage and no personal design choices.
@@ -196,5 +197,7 @@ changes pushed and the owner must accept the screen before moving on.
 - Verification: read back the full ledger; checked all eight screen cards,
   all 25 named skill files, recovery links in AGENTS/README/SaaS, the owner-choice
   and compaction rules, and `git diff --check`. Passed. No app build is needed
-  for documentation-only changes. Publication pending commit/push.
+  for documentation-only changes.
+- Publication: `389364f` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`. This follow-up records that evidence.
 - Next: UI-01 Dashboard, starting with the recovery protocol and full inventory.

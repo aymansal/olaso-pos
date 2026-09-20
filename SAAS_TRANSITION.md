@@ -94,14 +94,14 @@ directions after the applicable `AGENTS.md` instructions; the UI ledger must be
 reread in full after every compaction. Product, architecture, design and brand
 authorities retain ownership of their durable decisions.
 
-Current task: create and connect the documentation only. Next screen: Dashboard,
+The UI ledger and recovery links are created (`389364f`, `origin/main`). Next screen: Dashboard,
 with all of its interactions and states, then one screen at a time through Lock.
 Use the required skills and evidence, never personal aesthetic choices. Products
 and Stock include owner-led simplification of ingredient/recipe/choice/extra
 workflows. Earlier corrections are checkpoints, not complete screen acceptance.
 The Redmi tablet was available for the prior checkpoint; recheck it when needed.
 Future implementation follows the UI ledger, including existing authorizations,
-research and verification. No new app work is being performed in this doc task.
+research and verification. Ledger creation performed no new app work.
 
 Work one step at a time. Completing a step does not activate the next one.
 Record new concerns here as they arrive. Explain findings in plain English.
