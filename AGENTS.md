@@ -58,13 +58,19 @@ decision changes.
 
 ### SaaS transition and work record
 
-- `SAAS_TRANSITION.md` is the single active plan, concern register, and progress
-  record. Read it before starting/resuming work and after context compaction.
+- `UI_POLISH_LEDGER.md` owns the active screen-by-screen UI sequence and evidence.
+  Read it in full after every context compaction, when starting/resuming this
+  work, and before changing screens; read the actual skills it names before
+  acting. Dashboard is first and Lock is last. No personal design choices:
+  trace changes to applicable skill rules or owner decisions; unresolved choices
+  and skill conflicts go to the owner, not an invented preference.
+- `SAAS_TRANSITION.md` owns the wider SaaS plan, concerns and historical work.
+  Read its current direction alongside the UI ledger when resuming.
 - The owner chooses one step at a time. UI polish comes first, then security
   and database/sync work. Do not resume deleted goal plans or treat historical
   audits as authorization to execute their repair lists.
 - Record research, decisions, changed files, actual checks, limitations, commit
-  evidence, and the exact next action in that file after meaningful work.
+  evidence, and the exact next action in the owning ledger after meaningful work.
 - Product, architecture, design, and brand authorities still own their decisions.
   No implementation or app testing is authorized by the planning document alone.
 
@@ -95,7 +101,9 @@ decision changes.
 - Before every implementation step, research current official guidance and
   relevant professional practice for the exact problem; record sources, date,
   alternatives, the simplest justified choice, and intended verification in
-  `SAAS_TRANSITION.md`. This applies to UI, security, data, SaaS, and releases.
+  the owning ledger (`UI_POLISH_LEDGER.md` for screen work;
+  `SAAS_TRANSITION.md` for the wider transition). This applies to UI, security,
+  data, SaaS, and releases.
 - Before implementing every card, research the current official Android
   guidance and the official Capacitor/plugin guidance for any affected storage,
   lifecycle, background-work, networking, security, update, rendering, or

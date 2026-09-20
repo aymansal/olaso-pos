@@ -2,7 +2,12 @@
 
 Updated: 20 September 2026.
 
-### SAAS-05 — Dashboard and POS Apple-guidance correction — in progress
+Current UI work is governed by [UI_POLISH_LEDGER.md](UI_POLISH_LEDGER.md).
+Read it in full after every compaction and before resuming. Dashboard is the
+active next screen; Lock is last. This pointer supersedes earlier next-action
+notes below. This document retains wider SaaS concerns and historical evidence.
+
+### SAAS-05 — Dashboard and POS Apple-guidance correction — carried into UI ledger
 
 Owner rejected discretionary styling presented as Apple guidance and authorized
 redoing Dashboard and POS, including their popups. Do not introduce an invented
@@ -83,18 +88,20 @@ Implemented checkpoint (card remains open for the pending POS choice):
 
 ## Current instruction and next action
 
-This is the single active plan and progress record, replacing the old goal
-plans and ledgers. Read it after the applicable `AGENTS.md` files when resuming
-work. `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, and `BRAND.md` still own
-durable product, engineering, design, and brand decisions.
+This document owns the wider SaaS plan and concern register. The owner has now
+requested a separate active UI ledger: `UI_POLISH_LEDGER.md`. Read both current
+directions after the applicable `AGENTS.md` instructions; the UI ledger must be
+reread in full after every compaction. Product, architecture, design and brand
+authorities retain ownership of their durable decisions.
 
-The owner has authorized the first Apple Design polish pass and browser review
-at the Samsung tablet's 1340 × 800 reference size. SAAS-02 is ready for browser
-review: POS controls and choice/payment dialogs. Preserve business behavior.
-The tablet is unavailable; browser verification is authorized now, with physical
-acceptance pending. Apart from the separately authorized owner PIN reset below,
-do not change databases, install an APK, publish a release, or start ingredient
-redesign or security/data work. Next action: owner review of this first pass.
+Current task: create and connect the documentation only. Next screen: Dashboard,
+with all of its interactions and states, then one screen at a time through Lock.
+Use the required skills and evidence, never personal aesthetic choices. Products
+and Stock include owner-led simplification of ingredient/recipe/choice/extra
+workflows. Earlier corrections are checkpoints, not complete screen acceptance.
+The Redmi tablet was available for the prior checkpoint; recheck it when needed.
+Future implementation follows the UI ledger, including existing authorizations,
+research and verification. No new app work is being performed in this doc task.
 
 Work one step at a time. Completing a step does not activate the next one.
 Record new concerns here as they arrive. Explain findings in plain English.
@@ -146,7 +153,8 @@ practice for that exact problem. Start with current official documentation;
 use primary engineering sources for patterns the platform documents do not cover.
 Do not treat a video, generated answer, or an old plan as proof.
 
-For each step, record a short research note here containing:
+For each step, record a short research note in the owning ledger (screen work
+in `UI_POLISH_LEDGER.md`, wider transition work here) containing:
 
 1. The actual problem and the evidence available; distinguish reports from
    reproduced facts.
@@ -170,7 +178,7 @@ unauthorized access while simplifying the app.
 | Stage | Scope | Status |
 | --- | --- | --- |
 | 0 | Replace old plans; capture requirements and initial research | Complete; publication recorded below |
-| 1 | Owner-led interface polish and ingredient workflow simplification | SAAS-02: first POS polish ready for browser review; tablet/design-master acceptance pending |
+| 1 | Owner-led interface polish and ingredient workflow simplification | Active sequence in UI_POLISH_LEDGER.md; Dashboard next, Lock last; no complete screen accepted |
 | 2 | Security, database and sync investigation, then selected fixes | Not started |
 | 3 | Business/location separation and safe migration of the existing client | Not started |
 | 4 | Restricted APK distribution and update experience | Not started |
@@ -361,7 +369,9 @@ These sources support options, not a completed audit or final architecture:
 When resuming, read Current instruction and next action first. Do not reactivate
 deleted goal plans from Git history or follow stale graph references to them.
 Use Graphify for orientation and verify facts against current files. Research
-notes and completed-step evidence belong here; do not grow another set of plans.
+notes and completed-step evidence for the wider transition belong here. The
+owner-requested `UI_POLISH_LEDGER.md` owns screen-work evidence and recovery;
+do not duplicate its active cards here or create further competing plans.
 
 For each authorized step, record: scope, sources and decision, files changed,
 checks actually performed, remaining limitations, commit/push evidence, and the

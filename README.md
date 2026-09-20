@@ -78,7 +78,10 @@ untitled.pen        Pencil source design
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — how data, backend logic, offline work,
   printing, and releases are implemented.
 - [`SAAS_TRANSITION.md`](SAAS_TRANSITION.md) — the active SaaS transition plan,
-  owner-reported concerns, research requirements, and current next action.
+  owner-reported concerns, research requirements, and historical work.
+- [`UI_POLISH_LEDGER.md`](UI_POLISH_LEDGER.md) — the active screen-by-screen
+  ledger, required skills, owner decisions and exact next action. Read it in full
+  after every context compaction before resuming UI work.
 
 ## Current direction
 
@@ -86,7 +89,8 @@ The owner is moving Olaso toward multiple client businesses and locations,
 with a phone-first Next.js metrics dashboard and restricted APK updates.
 Interface polish comes first, followed by security and database improvements.
 `SAAS_TRANSITION.md` separates these requirements from unverified concerns.
-Implementation proceeds only through the next step chosen by the owner.
+`UI_POLISH_LEDGER.md` governs Dashboard-first, Lock-last screen work, including
+all popups and states. Implementation proceeds one owner-led step at a time.
 
 ## Target hardware
 
