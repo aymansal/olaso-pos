@@ -416,9 +416,12 @@ may need to change together; visual polish alone cannot resolve that problem.
 - Changed project file: this plan only. No app source, database, UI, release,
   or device changes. No build or app test is required for this documentation step.
 - Graphify was queried for project orientation; no structural app change
-  requires regenerating it. Document scope and whitespace checks precede commit.
-- Publication: pending documentation commit and push; installation itself is
-  machine-local and is recorded in the receipt above.
+  requires regenerating it. Document scope and `git diff --check` pass. Hash
+  checks confirm the three pre-existing source edits were preserved unchanged.
+- Publication: documentation commit `884039066cddc21ee1a8eb449b0dddcfbe072024`
+  pushed to `origin/main` in `aymansal/olaso-pos`. This follow-up records that
+  evidence and closes SAAS-01. Installation itself is machine-local and is
+  recorded in the receipt above.
 - Exact next action: the owner selects a concrete ingredient task or UI flow;
   discuss a simpler interaction, research its specific platform requirements,
   and proceed only within that selected scope.
