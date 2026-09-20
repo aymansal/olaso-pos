@@ -617,3 +617,5 @@ Installation evidence:
 - Exact next action: owner signs in and manually reviews POS, Dashboard and
   their popups on the Redmi; record their findings before further changes.
   Installation/startup is verified, not full visual or workflow acceptance.
+- Installation record published as `03b4ea805ad75bb0f376810374acb898e23c764f`
+  on `origin/main` in `aymansal/olaso-pos`; app source was unchanged this turn.
