@@ -49,14 +49,13 @@
   flex-shrink: 0;
   cursor: pointer;
   touch-action: manipulation;
-  gap: 6px;
-  padding: 0 11px;
-  border: 1px solid var(--olaso-divider);
-  border-radius: 15px;
-  color: var(--olaso-text);
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  color: var(--olaso-green);
   background: transparent;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .viewAll svg {
@@ -154,6 +153,6 @@
   background: var(--olaso-green-soft);
 }
 
-.viewAll:active { background: var(--olaso-soft); }
+.viewAll:active { opacity: 0.6; }
 .viewAll:focus-visible { outline: 2px solid var(--olaso-green); outline-offset: 2px; }
 .list { overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; }

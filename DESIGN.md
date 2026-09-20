@@ -698,9 +698,18 @@ A screen is complete only when all of the following are true:
 
 Pending owner review, physical tablet acceptance and Pencil reconciliation:
 - Keep the existing full-bleed 1340 × 800 three-panel Dashboard composition.
-- Use clearer 11–17px supporting text, 22px metrics and a 44px net-sales total;
-  distinguish receipt number/amount, service/items and dated status on separate
-  lines so recent orders remain readable without collisions.
+- Use clearer 11–17px supporting text, 22px metrics and a 44px net-sales total.
+  Owner-approved Recent orders rows have two lines: receipt number and amount,
+  then time and service mode. Omit item count and routine Completed labels;
+  keep Cancelled visible on the second line. The full timestamp remains on the
+  semantic time element. The latest-four data limit is unchanged.
+- Recent orders and Needs attention use borderless green View all navigation
+  actions with a chevron and their existing 48px hit height.
+- POS service/payment labels reuse the 13px control text size. Cash/Card has a
+  48px hit height. Choice/payment close controls have 48px hit areas; close and
+  Cancel are borderless secondary actions, with visible focus and press feedback.
+  Green confirmation remains primary. The option-row appearance awaits owner
+  selection; do not attribute that product choice to the Apple skill.
 - Dashboard View all/retry and shared staff-popup actions have 48px-high CSS
   hit areas, visible focus and stable immediate pressed feedback. Do not infer
   native dp equivalence until checked on the tablet. No bounce or travel effect.

@@ -68,10 +68,11 @@
 .dialog header > button {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
   padding: 0;
-  border: 1px solid var(--olaso-divider);
+  border: 0;
   border-radius: 50%;
   color: var(--olaso-muted);
   background: transparent;
@@ -320,7 +321,7 @@
 }
 
 .cancel {
-  border: 1px solid var(--olaso-control-border);
+  border: 0;
   color: var(--olaso-copy);
   background: transparent;
 }

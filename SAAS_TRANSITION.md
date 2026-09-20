@@ -2,6 +2,84 @@
 
 Updated: 20 September 2026.
 
+### SAAS-05 — Dashboard and POS Apple-guidance correction — in progress
+
+Owner rejected discretionary styling presented as Apple guidance and authorized
+redoing Dashboard and POS, including their popups. Do not introduce an invented
+visual direction. The installed apple-design skill is principles, not an Apple
+POS template; distinguish its explicit rules from product decisions. Owner chose
+two-line Recent orders: number/amount, then time/service. Remove item count and
+routine Completed status there; retain an explicit cancellation indication.
+POS plain rows versus outlined choices is pending the owner's answer.
+
+Pre-implementation research, 20 September 2026:
+- Installed apple-design sections 1, 4, 14–17: immediate feedback, no decorative
+  bounce, accessibility, coherent type hierarchy, simplicity and craft.
+- [Apple lists and tables](https://developer.apple.com/design/human-interface-guidelines/lists-and-tables)
+  ([official localized content](https://developer.apple.com/cn/design/human-interface-guidelines/lists-and-tables)):
+  concise row text, scannable content and selection feedback. Exact cafe fields
+  are the owner's decision above, not a rule attributed to Apple.
+- [Apple buttons](https://developer.apple.com/design/human-interface-guidelines/buttons)
+  and [borderless style](https://developer.apple.com/documentation/swiftui/borderlessbuttonstyle):
+  use action hierarchy. The owner rejected the permanent View all borders;
+  make these secondary navigation actions borderless, retaining focus/press
+  feedback and their existing generous hit areas. Avoid decorative button shells.
+- [Android accessible controls](https://developer.android.com/guide/topics/ui/accessibility/apps)
+  and [Capacitor Android](https://capacitorjs.com/docs/android): retain native
+  WebView rendering/viewport and keyboard ownership. CSS/React owns these visual
+  corrections; no Kotlin, database, sync, payment mathematics or new dependency.
+  Verify actual Redmi touch behavior, not a claim that CSS px equals native dp.
+
+Preserve approved Olaso assets, color tokens, DM Sans and screen geometry; use
+existing component patterns and measured fixes rather than choosing a new brand
+or layout. Review main screens, selection/payment/split popups, cart states and
+Dashboard chart details. Validate 1340 × 800 browser states, build and install
+the development APK over the current Redmi installation; preserve the cafe data.
+Do not run reseeding Dashboard/sales test scripts. Check presentation with real
+leaf components and use the physical tablet without the older helper's MENU key.
+
+Implemented checkpoint (card remains open for the pending POS choice):
+- RecentOrdersPanel now renders the approved two lines, without item count or
+  routine Completed, retaining Cancelled inline. StockAttentionPanel and
+  RecentOrdersPanel use borderless View all with chevrons and 48px hit height.
+- POS PaymentMethodControl grows from 42px to a 48px surface within the same
+  rail; service/payment labels reuse the existing 13px control size.
+  ModifierSelectionDialog and PaymentDialog give close/Cancel secondary
+  borderless treatment; choice footer and close hit areas are 48px. Option
+  pills, payment logic and the underlying data are unchanged.
+- Owning files: the four Dashboard component files, four POS CSS modules,
+  Dashboard AGENTS.md and DESIGN.md. Unrelated PeriodCalendar/reportProfit
+  working files retain their pre-work hashes and are excluded from this commit.
+- `npm run android:beta` passed: web TypeScript/build, Android configuration,
+  Capacitor sync, JVM checks and APK assembly. Existing crypto-externalization,
+  Gradle flatDir and SDK XML-version warnings remain. No new package/native code.
+- Browser 1340 x 800: English/French two-line orders, cancellation, loading,
+  empty/error states; choice required-selection disabled/enabled, populated
+  split payment, French cash popup and Cancel. No console warnings/errors.
+  Browser checks used inert real-component fixtures, not backend reseeding.
+- Redmi 22081283G: install-over succeeded; actual 1340 x 804 WebView verified
+  four two-line rows, both borderless View all controls, 13px POS labels and
+  bounded Latte popup with 48px close/Cancel/Add, zero clipped option labels.
+  No observed console warnings/errors. Left on Dashboard with the cart empty.
+  The retained day still shows 46 orders / 1,829 MAD / 87 items; no sales made.
+  Captures: `tmp/redmi-saas05-dashboard.png`, `tmp/redmi-saas05-choices.png`.
+- Installed APK SHA-256:
+  `06eb174c0d170d7b66cfd660bcf543b7a3635fed9e4950cca8ad559d78d92014`.
+- Graphify refreshed: 2,874 nodes / 6,160 edges. Existing three Gradle parsing
+  warnings remain. `git diff --check` passed.
+- `npm run check:css-scope` failed on existing `from`/`to` keyframe steps in
+  untouched App.module.css and LockScreen.module.css: the scanner treats those
+  animation steps as global element selectors. No changed CSS file was flagged;
+  the checker and unrelated animations were not altered in this UI checkpoint.
+- Limitations: the wider Dashboard/POS redo is not complete. POS option
+  appearance awaits the owner's answer; full popup-state acceptance follows
+  that decision. Pencil desktop transport was unavailable, so visual-master
+  reconciliation remains open rather than claiming an approved Pencil update.
+  This checkpoint is not a claim that every screen/popup has been polished.
+- Exact next action: apply the owner's pending POS option-row selection, then
+  review the remaining POS popup states and reconcile the design master.
+  Publication evidence will be recorded after pushing this checkpoint.
+
 ## Current instruction and next action
 
 This is the single active plan and progress record, replacing the old goal

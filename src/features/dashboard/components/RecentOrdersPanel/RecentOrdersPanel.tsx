@@ -1,4 +1,4 @@
-import { ArrowRight, Receipt } from '@boxicons/react';
+import { ChevronRight, Receipt } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { formatMoney } from '../../../../lib/money';
 import { useT } from '../../../../lib/locale';
@@ -33,7 +33,7 @@ export function RecentOrdersPanel({
         </span>
         <button type="button" className={styles.viewAll} onClick={onViewAll} aria-label={`${t('View all')}: ${t('Orders')}`}>
           <span>{t('View all')}</span>
-          <ArrowRight width={13} height={13} aria-hidden="true" />
+          <ChevronRight width={16} height={16} aria-hidden="true" />
         </button>
       </header>
 
@@ -55,28 +55,22 @@ export function RecentOrdersPanel({
               {order.receiptNumber.replace(/^[A-Z]+-/, '#')}
             </strong>
             <small className={styles.meta}>
-              {t(serviceLabel(order.serviceMode))} · {order.itemCount}{' '}
-              {t(order.itemCount === 1 ? 'item' : 'items')}
+              <time dateTime={new Date(order.completedAt).toISOString()}
+                title={new Intl.DateTimeFormat(language === 'fr' ? 'fr-FR' : 'en-GB', {
+                  dateStyle: 'medium', timeStyle: 'short',
+                }).format(new Date(order.completedAt))}>
+                {new Intl.DateTimeFormat(language === 'fr' ? 'fr-FR' : 'en-GB', {
+                  hour: '2-digit', minute: '2-digit',
+                }).format(new Date(order.completedAt))}
+              </time>
+              {' · '}{t(serviceLabel(order.serviceMode))}
             </small>
             <strong className={styles.amount}>
               {formatMoney(order.totalCentimes)}
             </strong>
-            <span
-              className={`${styles.status} ${
-                order.status === 'completed' ? '' : styles.statusAttention
-              }`}
-            >
-              <span />
-              <small>
-                {t(order.status === 'completed' ? 'Completed' : 'Cancelled')}{' '}
-                · {new Intl.DateTimeFormat(language === 'fr' ? 'fr-FR' : 'en-GB', {
-                  day: 'numeric',
-                  month: 'short',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                }).format(new Date(order.completedAt))}
-              </small>
-            </span>
+            {order.status !== 'completed' ? (
+              <small className={styles.statusAttention}>{t('Cancelled')}</small>
+            ) : null}
             {index < orders.length - 1 ? <span className={styles.divider} /> : null}
           </article>
         ))}

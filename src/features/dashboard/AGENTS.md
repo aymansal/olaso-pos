@@ -38,6 +38,9 @@ recent orders.
   leftmost day drops off and today stays on the right.
 - `View all` on recent orders opens Orders. `View all` on Needs attention
   opens Stock filtered to Low stock.
+- Recent orders use the owner's two-line hierarchy: number/amount, then
+  time/service. Omit item count and routine Completed; retain Cancelled.
+  Both View all actions are borderless navigation controls with 48px hit height.
 
 ## Work Guidance
 

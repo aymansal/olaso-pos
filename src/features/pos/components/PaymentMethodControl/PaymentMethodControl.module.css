@@ -1,11 +1,11 @@
 .control {
   position: absolute;
-  top: 126px;
+  top: 120px;
   left: 12px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 296px;
-  height: 42px;
+  height: 48px;
   overflow: hidden;
   border: 1px solid var(--olaso-border);
   border-radius: 21px;
@@ -34,7 +34,7 @@
   color: var(--olaso-text-dark-soft);
   background: transparent;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 

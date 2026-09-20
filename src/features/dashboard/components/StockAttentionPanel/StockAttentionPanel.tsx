@@ -1,4 +1,4 @@
-import { WaterDrop, Flask, Leaf, Package, ArrowRight } from '@boxicons/react';
+import { WaterDrop, Flask, Leaf, Package, ChevronRight } from '@boxicons/react';
 import type { DashboardSnapshot } from '../../../../data/useDashboardData';
 import { useT } from '../../../../lib/locale';
 import { formatStockQuantity } from '../../../../lib/stock';
@@ -52,7 +52,7 @@ export function StockAttentionPanel({
         </span>
         <button type="button" className={styles.viewAll} onClick={onViewAll} aria-label={`${t('View all')}: ${t('Stock')}`}>
           <span>{t('View all')}</span>
-          <ArrowRight width={13} height={13} aria-hidden="true" />
+          <ChevronRight width={16} height={16} aria-hidden="true" />
         </button>
       </header>
 
