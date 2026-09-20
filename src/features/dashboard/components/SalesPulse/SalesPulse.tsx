@@ -60,7 +60,9 @@ export function SalesPulse({
     ? t('No comparison yet')
     : t(
         isPositive ? '{pct}% up vs yesterday' : '{pct}% down vs yesterday',
-        { pct: Math.abs(comparison).toFixed(1) },
+        { pct: new Intl.NumberFormat(language === 'fr' ? 'fr-MA' : 'en-MA', {
+          minimumFractionDigits: 1, maximumFractionDigits: 1,
+        }).format(Math.abs(comparison)) },
       );
   const chart = snapshot?.dailySales ?? [];
   const maximum = Math.max(...chart.map((day) => day.netCentimes), 0);
@@ -158,9 +160,11 @@ export function SalesPulse({
       <div className={styles.chart} aria-label={t('Daily net sales for the latest 12 days')}
         onKeyDown={(event) => { if (event.key === 'Escape') setSelectedDate(null); }}
         onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelectedDate(null); }}>
-        {unavailable ? (
+        {unavailable || maximum === 0 ? (
           <p className={styles.chartState} role="status">
-            {t(isLoading ? 'Loading saved summary' : 'Summary unavailable')}
+            {t(unavailable
+              ? isLoading ? 'Loading saved summary' : 'Summary unavailable'
+              : 'No sales in period')}
           </p>
         ) : (<>
         <div className={styles.guides} aria-hidden="true">
@@ -176,9 +180,7 @@ export function SalesPulse({
             const selected = selectedDate === day.businessDate;
             const amount = formatMoney(day.netCentimes);
             const intensity = day.netCentimes / scaleMaximum;
-            const height = day.netCentimes
-              ? Math.max(8, Math.round(intensity * 168))
-              : 4;
+            const height = intensity * 168;
             const tone = day.netCentimes
               ? Math.max(1, Math.ceil(intensity * 10))
               : 1;

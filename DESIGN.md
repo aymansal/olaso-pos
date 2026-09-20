@@ -718,6 +718,10 @@ Pending owner review, physical tablet acceptance and Pencil reconciliation:
   selection. Axis labels abbreviate large values; details retain exact amounts.
   Grid lines align with the proportional bar heights. Declines use the existing
   warning colors plus explicit text and icon, never color alone.
+  Bar heights remain proportional down to zero; do not add a decorative
+  minimum height. An all-zero period uses the existing chart-state message
+  instead of repeated zero ticks. Comparison percentages follow the selected
+  language's decimal convention and retain one decimal place.
 - Unknown/loading/failed summaries display dashes and a chart-state message;
   a confirmed empty snapshot displays zero. Failures offer retry. Do not present
   stale snapshot totals as current when refresh fails.

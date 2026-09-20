@@ -32,15 +32,15 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard.** Status: queued for a complete skills-led
-  review; previous corrections exist but the complete screen is not accepted.
+- **Active screen: UI-01 — Dashboard.** Status: review in progress; previous
+  corrections exist but the complete screen is not accepted.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** read the required skills, then inventory the real
-  Dashboard and every interaction it opens. Record evidence and the applicable
-  skill rule for each proposed correction; bring unresolved visible/product
-  choices to the owner before implementing those choices.
+- **Exact next action:** resolve the pending dark-versus-cream clarification,
+  then continue the UI-01 review below, including measured contrast, complete
+  shared-action/role coverage and Pencil reconciliation. Do not advance to POS
+  or treat the narrow chart/format corrections as whole-screen acceptance.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
   not block Dashboard. Do not infer an answer from silence.
@@ -186,6 +186,75 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — Dashboard review — in progress, 20 September 2026
+
+- Owner authorized starting Dashboard. Clarification pending: “dark dashboard”
+  could mean dark mode or the existing Dashboard. Do not change the palette
+  until answered. Independent correctness review can proceed.
+- Read Apple design (including sections 15–17), the six better-interface
+  domains and review format, anti-slop skills and relevant ARTICLE sections,
+  Emil interaction guidance, review-animations, QA/error guidance,
+  data-visualization and localization-design. Graphify queried Dashboard and
+  its three regions before code inspection; Ponytail full applies.
+- Scope: sales summary and comparison, 12-day chart/tap details, best seller,
+  stock warnings, four recent orders, both View all actions, Header report
+  feedback and staff menu (languages, Settings, lock/switch). Inventory includes
+  loading, unavailable/error/retry, empty, long content, cancellation, decline,
+  keyboard focus/dismissal, roles and EN/FR. Inventory is not a passed check.
+- Reproduced with isolated real components: French comparison reads `32.1`
+  or `50.0` while currency uses commas; an empty chart repeats four `0 MAD`
+  ticks and paints 4px bars for zero. Long-data fixture confirms the 8px floor
+  exaggerates approximately 1,000 MAD beside approximately 1,234,568 MAD.
+- Narrow corrections justified by localization-design Date, Time, and Number
+  Formats and data-visualization accurate encoding: locale-format the existing
+  one-decimal comparison; remove the minimum decorative bar height. Reuse the
+  existing chart-state message for an all-zero period instead of a false scale.
+  Preserve each day’s existing full-height tap target when the period has sales.
+- Research before implementation, checked 20 September 2026:
+  [Apple charts](https://developer.apple.com/design/human-interface-guidelines/charts)
+  explains relative bar heights and a zero lower bound;
+  [MDN Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat)
+  provides native locale formatting. Alternatives rejected: decorative minimum
+  bars distort ratios; a new chart/formatting library adds no needed capability.
+  [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor runtime](https://capacitorjs.com/docs) keep this display-only
+  correction in React/standard web rendering. Native viewport/lifecycle and
+  saved summaries remain unchanged; no new Kotlin/plugin/database work.
+- Planned verification: build; real component empty/live/decline/loading/error,
+  tiny/zero values and tap details; EN/FR; 1340 × 800 browser; actual Redmi.
+  Device rechecked: Redmi 22081283G connected. No retained café records reset.
+- Implemented only `SalesPulse.tsx`: localized comparison, accurate fractional
+  bar heights and the existing all-zero chart message. Updated `DESIGN.md`.
+  No palette, geometry, order fields, data, native code or shared controls changed.
+- Verification: `npm run build`, `npm run android:beta` (including JVM tests)
+  and the existing isolated `tmp/check-dashboard-presentation.mjs` passed.
+  Known build warnings: SQLite crypto externalization, Gradle flatDir and SDK
+  XML tooling mismatch; no new build errors. No reseeding checks run.
+- Browser at verified 1340 × 800: empty, loading, error/retry, live and long
+  content; French `32,1`/`50,0` and English `50.0`; tiny bar measured 0.142884px
+  for 1,050 MAD versus 1,234,567.89 MAD; exact amount remains available by tap.
+  Chart Escape, language menu and both View all callbacks checked. No captured
+  browser warnings/errors. Callback fixtures do not prove full route flows.
+- Installed with `adb install -r` successfully, preserving data. Redmi 22081283G
+  measured 1340 × 804; live Dashboard retained 46 orders / 1,829 MAD / 87 items.
+  French comparison `6,6` and English `6.6` verified through staff language menu;
+  restored English. Chart-day selection shows exact 1,829 MAD. Captured and
+  visually inspected `tmp/ui01-dashboard.png`; no clipping in this live state.
+  Focused device session captured no console errors. Native empty/error states
+  and printer output were not exercised; those states were browser fixtures.
+  APK SHA-256: `e81e62353ecf296d5f18d49040ab937c32af90087cf5297d755827935a95c64d`.
+- Domain coverage: layout/type reviewed in existing + long-content fixtures;
+  writing/localization corrected; chart encoding corrected; accessibility and
+  motion partially reviewed (selection, Escape, unchanged immediate feedback).
+  Color contrast measurement, full keyboard/role coverage, extreme truncation
+  recovery, native report/lock dialogs and actual destination routes remain.
+  Verdict: **partial checkpoint, not whole-screen approval**.
+- Pencil connection retried and unavailable (desktop transport not connected);
+  no master updated. No graph structure changed; no graph refresh needed.
+  Unrelated PeriodCalendar/reportProfit work preserved.
+- Whole-screen acceptance and palette clarification remain pending. Publication
+  evidence will be recorded after the checkpoint commit is pushed.
 
 ### UI-00 — establish recovery and screen sequence — complete, 20 September 2026
 
