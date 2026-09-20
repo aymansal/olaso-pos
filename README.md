@@ -9,8 +9,9 @@ Tablet-first point-of-sale interface for Olaso Coffee, designed for the Samsung 
 The repository contains a functional development beta: live catalog and stock
 management, local-first checkout and receipt previews, synchronized orders,
 dashboard and reports, terminal settings, and the approved tablet interface.
-Production authentication, signed distribution, and receipt-printer transport
-remain later work.
+The documents also describe staff identity, signed APK updates, and LAN
+printing. Those existing capabilities are not a SaaS security or release
+acceptance claim; current verification belongs to the owner-selected step.
 
 ## Stack
 
@@ -76,20 +77,16 @@ untitled.pen        Pencil source design
 - [`PRODUCT.md`](PRODUCT.md) — what the application does and what is in scope.
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — how data, backend logic, offline work,
   printing, and releases are implemented.
-- [`WORK_LEDGER.md`](WORK_LEDGER.md) — active goal, task board, checkpoint, and
-  implementation journal.
-- [`PLAN.md`](PLAN.md) — canonical remaining goals, card order, dependencies,
-  and per-card automated/browser/Android/physical-device completion gates.
+- [`SAAS_TRANSITION.md`](SAAS_TRANSITION.md) — the active SaaS transition plan,
+  owner-reported concerns, research requirements, and current next action.
 
-## Production follow-ups
+## Current direction
 
-- Integrate the accepted ESC/POS receipt over Ethernet/LAN from the physical
-  Galaxy Tab A9 to the WDLink WD8260
-- Add the approved purchased-stock cost and profitability model
-- Confirm roles, PIN/login, tax, and receipt policy with the owner
-- Measure and harden APK startup on the near-final physical-tablet build
-- Add protected production signing and release handling
-- Run recovery, endurance, upgrade, and owner acceptance on the target hardware
+The owner is moving Olaso toward multiple client businesses and locations,
+with a phone-first Next.js metrics dashboard and restricted APK updates.
+Interface polish comes first, followed by security and database improvements.
+`SAAS_TRANSITION.md` separates these requirements from unverified concerns.
+Implementation proceeds only through the next step chosen by the owner.
 
 ## Target hardware
 

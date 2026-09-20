@@ -34,7 +34,7 @@ Owns the Capacitor-generated Android application shell for `com.olaso.pos`.
   expose protected values. Signed release builds keep `debuggable false`.
   Physical WebView CDP QA uses the debug beta APK, not the distributed
   release. Focused QA also uses filtered Android runtime checks. Before any
-  café-client handoff, HARD-08 / `PLAN.md` client ship gate must reconfirm
+  café-client handoff, the release gate in `tools/release/README.md` must reconfirm
   `debuggable false` plus update-channel versionCode/signing readiness.
 - First in-app update on a tablet needs Android **Install unknown apps** allowed
   for Olaso POS; afterward Settings → About → Update uses PackageInstaller.

@@ -42,7 +42,7 @@ the system.
 | Hosting | No Vercel dependency in the production APK runtime |
 | Printing | Local Capacitor-to-Kotlin raw TCP/LAN bridge using WD8260 ESC/POS |
 | Costing | Perpetual weighted-average ingredient valuation with immutable sale cost snapshots |
-| Initial topology | One cafe and one POS tablet |
+| Current topology | One cafe and one POS tablet; SaaS businesses/locations are requested but not implemented |
 | Updates | Signed, versioned APK releases with a guided remote tablet update path |
 
 The repository includes the Convex development backend, Capacitor Android
@@ -420,10 +420,14 @@ permanently active CSS-hidden page is introduced.
 
 ### Current scaling limit
 
-This synchronization model is optimized for one active POS tablet.
-Multi-device conflict resolution is added only when a second POS device is
-approved. Cloud idempotency and transactional mutations are retained because
-they are required even for one device.
+The documented baseline is optimized for one active POS tablet. The owner has
+requested multiple businesses and locations; see `SAAS_TRANSITION.md` for the
+research and migration scope. Business/location isolation and conflict policy
+must be established before claiming SaaS readiness. Multiple tills in one
+location remain a separate decision. Preserve retry safety and transactions.
+Existing descriptions are design/history records, not a fresh performance or
+security audit. Conflicting snapshot/incremental descriptions require later
+verification against behavior, not an assumed whole-database upload diagnosis.
 
 ### Android-native implementation decision
 
@@ -1286,6 +1290,12 @@ Rules:
   a reprintable failed state.
 
 ## APK release and update
+
+The following records the existing mechanism. On 20 September 2026 the owner
+requested restricted distribution that does not depend on making GitHub public,
+plus infrequent update discovery and a quiet notice. `SAAS_TRANSITION.md` owns
+that pending research; no new provider, polling interval, or app change has
+been implemented. Old public-window instructions do not authorize a release.
 
 The reproducible development beta is built with `npm run android:beta` using
 Java 21 and Android SDK 36. It compiles with API 36 but targets API 35 so the

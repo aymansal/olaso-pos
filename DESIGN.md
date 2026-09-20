@@ -201,17 +201,18 @@ Principles, in priority order:
 4. **Quietly playful.** One expressive visual moment is enough. Operational controls stay calm.
 5. **Reusable by construction.** A component is coded once, receives content through props, and owns its own styles.
 
-### Deferred owner-led simplification
+### Owner-led simplification
 
-- Do not redesign or “clean up” the working application piecemeal while
-  functional or technical cards are still moving. Only after HARD-07 is
-  complete does the owner review every screen and state on the real tablet and
-  record the final keep/remove/shorten/hide choices.
-- Treat redundant icons, corporate-sounding guidance, duplicate status, and
-  permanently visible support detail as review candidates, not automatic bugs.
-- Implement only the approved list. Preserve essential validation, destructive
-  warnings, error recovery, and accessibility, using progressive disclosure to
-  keep technical details out of the everyday operator path.
+- The owner now places interface polish first, ahead of the security and data
+  work. Follow the selected screen/flow in `SAAS_TRANSITION.md`; do not start
+  an autonomous audit or redesign adjacent screens.
+- Review popups and editing, validation, saving, error, empty, scrolling, and
+  keyboard states as part of that flow when authorized.
+- Simplify redundant copy, icons, groupings, and visible support detail through
+  the owner's feedback. Keep validation, destructive warnings, recovery,
+  accessibility, and accurate stock/cost behavior intact.
+- Additional owner-supplied design skills must be read before the work that
+  uses them. No design implementation is authorized by this planning update.
 
 ## Authority and Change Rules
 

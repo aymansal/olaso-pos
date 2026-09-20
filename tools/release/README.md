@@ -3,6 +3,15 @@
 Development-only custody and release notes for HARD-06. Nothing here is
 imported by the React application or packaged in the APK.
 
+## Transition status
+
+The owner requested restricted distribution on 20 September 2026. These notes
+preserve the existing release procedure and signing safeguards; the old
+public/private repository window is not the SaaS target and is not authorized
+by this document. Read `SAAS_TRANSITION.md` at the repository root for the
+pending replacement. No release or visibility change is part of that planning
+work. Verify installed versions before using the historical baseline below.
+
 ## Client ship gate
 
 - Current client release baseline is **1.2 / versionCode 9**, using certificate

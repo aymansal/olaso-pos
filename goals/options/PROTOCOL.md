@@ -1,14 +1,18 @@
 # OPTIONS working protocol
 
-Every OPTIONS card uses this protocol verbatim. An agent that skips a step has
-not finished the card.
+Retained instruction reference. Its OPTIONS card sequence is retired. The root
+`AGENTS.md` and `SAAS_TRANSITION.md` govern current scope and next steps; this
+protocol does not authorize testing, implementation, or the next card.
+
+The following preserves the former OPTIONS workflow as a reference. Current
+owner instructions and the active transition plan take precedence.
 
 ## 1. Before writing any code
 
 - Read the full instruction chain: `AGENTS.md`, every nested `AGENTS.md` between
-  the repository root and the files you will change, `PLAN.md`,
-  `WORK_LEDGER.md`, `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, this protocol,
-  and this card's spec.
+  the repository root and the files you will change, `SAAS_TRANSITION.md`,
+  `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, this protocol, and the selected
+  step's current scope.
 - Run `graphify query` before any Read, Grep, or Glob exploration.
 - Research the current official Android and Capacitor guidance for this specific
   card, the way a senior Android developer would, and record in the ledger:
@@ -64,9 +68,8 @@ Follow [TABLET-TESTING.md](TABLET-TESTING.md).
 
 ## 5. Closing the card
 
-- Update `WORK_LEDGER.md` with the research decision, verified facts, files
-  changed, checks run, device evidence, and the exact next action. Update
-  `PLAN.md` if the next action changed.
+- Update `SAAS_TRANSITION.md` with the research decision, verified facts, files
+  changed, checks run, device evidence, and the exact next action.
 - Commit with the card ID as prefix, for example
   `OPTIONS-01: add product-owned size and choice storage`. Push directly to
   `origin/main` and record the full SHA in the ledger.

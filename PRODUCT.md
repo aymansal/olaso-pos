@@ -52,9 +52,10 @@ These rules are ordered by importance:
    as incomplete rather than silently treated as zero.
 6. **Keep the interface faithful to Olaso.** `BRAND.md` and `DESIGN.md` remain
    the visual authorities.
-7. **Build only for current needs.** The first production version supports one
-   cafe and one POS tablet. Multi-branch and multi-POS behavior are added only
-   when requested.
+7. **Build only for confirmed needs.** The current baseline serves one cafe.
+   The owner has now requested multiple client businesses and locations plus
+   a phone-first Next.js metrics dashboard. `SAAS_TRANSITION.md` records that
+   transition; multiple tills per location remain a separate decision.
 
 ## Users
 
@@ -201,17 +202,14 @@ member and order; the staff member who completes checkout is saved as cashier.
 Costs and profitability belong inside the Reports workspace rather than adding
 a seventh permanent navigation destination.
 
-### Deferred owner-led simplification
+### Owner-led simplification
 
-- After every functional, offline, performance, recovery, and readiness card
-  through HARD-07 is complete, the owner reviews the whole application on the
-  physical tablet and supplies the final screen-by-screen list of disliked,
-  verbose, redundant, or “AI-ish” interface elements.
-- No speculative cleanup happens before that review. The final pass removes or
-  shortens only owner-approved copy, icons, groupings, and visible information.
-- Installation, validation, failure recovery, and destructive actions remain
-  available, but technical explanation may move behind progressive disclosure
-  instead of occupying the normal coffee-shop operator flow.
+The owner now prioritizes whole-app interface polish before security and data
+improvements. Work on the screen and flow the owner selects, including popups
+and less visible states. Simplify the ingredient workflow through discussion
+of real café tasks; do not silently change stock, costing, or history rules.
+Keep essential validation, recovery, and accessibility. Follow
+`SAAS_TRANSITION.md`; no testing or implementation starts from this document.
 
 The application exposes confirmed device and synchronization settings from that
 profile. Owner, manager, and cashier each receive a private six-digit PIN; an
@@ -664,8 +662,10 @@ rules.
   Android version number.
 - Application data must survive an update.
 
-Google Play is not part of the distribution plan. Android will require manual
-confirmation for each APK update.
+This describes the existing distribution baseline, not the new SaaS target.
+Restricted downloads and managed Google Play are options to research under
+`SAAS_TRANSITION.md`. The current mechanism remains unchanged in this
+planning-only step; Android installation requirements depend on the chosen route.
 
 ## Initial menu snapshot
 
@@ -847,89 +847,24 @@ Croissant extras shown in the menu: soft ice cream 20 and Magnum 25.
 - Coconut.
 - Almond.
 
-## Delivery phases
+## SaaS direction and delivery order
 
-Development proceeds through risk-ordered vertical slices. Each slice carries
-one business or operational capability through pure rules, persistence,
-synchronization, UI, recovery, and target-device verification. The project does
-not build every page first or build a speculative complete backend before real
-workflow feedback.
+As of 20 September 2026, the owner requests multiple independent client
+businesses, each with one or more separately managed locations. Authorized
+owners need location-specific and combined metrics through a phone-first
+Next.js website. Account and location boundaries must be enforced on the
+server, including all reporting and file access.
 
-### Phase 1 — approved shell
-
-- Match approved Pencil screen.
-- Keep components and CSS separated.
-- Establish the brand, design, product, and architecture documents.
-
-### Phase 2 — working POS
-
-- Real local cart and totals.
-- Editable initial menu.
-- Local order persistence.
-- Order history and receipt preview.
-- Mock printing.
-
-### Phase 3 — cloud and stock
-
-- Convex schema and authenticated functions.
-- Background synchronization.
-- Ingredients, recipe versions, and exact stock movements.
-- Owner product and stock management.
-- Reports backed by saved summaries.
-
-### Phase 4 — costs and profitability
-
-- Purchased-stock costs and weighted-average inventory valuation.
-- Recipe, product, and historical sale cost snapshots.
-- Staff compensation and one-time or recurring operating expenses.
-- Monthly cost, gross-profit, and operating-profit reports.
-
-### Phase 5 — Android and hardware
-
-- Capacitor Android packaging.
-- Signed APK release workflow.
-- Native Ethernet/LAN ESC/POS bridge.
-- Real tablet and printer testing.
-
-### Phase 6 — production hardening
-
-- Complete local-first management for menu, stock, costs, staff, and protected
-  initial PIN setup, followed by restart/reconnect/exact-once verification.
-- Retained visited-screen state, saved-content-first rendering, right-sized
-  images, and measured smooth navigation on the physical tablet.
-- Curated category artwork selection plus a neutral custom-category fallback.
-- Final app icon and measured optional branded startup motion.
-- Recovery and backup checks.
-- Permission review.
-- Performance and quota review.
-- Final owner-led full-application critique and approved operator-UI
-  simplification after functional/technical completion.
-- Endurance test during realistic service volume.
-- Owner acceptance.
-
-### Current execution order
-
-Goal 01 delivered the functional POS, Goal 02 delivered the offline-capable
-full-application beta, Goal 03 delivered Android LAN receipt printing plus
-safe saved-sale reprinting, Goal 04 delivered purchased-stock costing and
-monthly profitability, and Goal 05 delivered confirmed business policy,
-production identity, and permissions. The remaining work is:
-
-1. Complete offline management; retained, smooth screen navigation; category,
-   staff, and lock workflows; measured startup/launch continuity; signing;
-   backup/recovery; and security/readiness work.
-2. Perform the owner's final manual screen-by-screen critique and prompted UI
-   polish only after that functional and technical work is complete.
-3. Run endurance testing and final owner acceptance against the polished APK.
-
-Detailed goal status and activation order live in `WORK_LEDGER.md` and the
-canonical `PLAN.md`.
+Polish the current app first, then improve security and database/synchronization
+behavior. Replace public/private APK repository switching with a dependable
+restricted update channel. These are requirements, not implemented features.
+`SAAS_TRANSITION.md` is the single work sequence and progress record; the owner
+chooses each next step. Existing offline behavior stays in place while its
+future scope is researched. No database replacement is selected.
 
 ## Explicit non-goals for the first release
 
-- Google Play distribution.
-- Multiple branches.
-- Multiple simultaneous POS tablets.
+- Multiple simultaneous POS tablets per location, until separately requested.
 - Delivery-platform integrations.
 - Online customer ordering.
 - Accounting-system integration.
@@ -950,7 +885,8 @@ canonical `PLAN.md`.
 - Future discount policy, and whether the Offert line control stays after café
   trial.
 - Final fiche technique and measurement units.
-- Whether the owner needs a remote web dashboard.
+- Dashboard metrics, desktop scope, and whether catalogs are shared or independent
+  across locations. The phone-first remote metrics dashboard is now requested.
 
 ## Product definition of done
 

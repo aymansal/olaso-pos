@@ -2,11 +2,13 @@
 
 ## Recovery and scope
 
-Read root/applicable AGENTS.md, PLAN.md, WORK_LEDGER.md and this document before
-resuming. This is an audit, not authorization to implement all findings. The
-owner initially requested only the Add staff Role field height correction.
-UPDATE: owner subsequently authorized fixing all findings and the Products
-investigation, followed by fresh independent audit agents. Repairs are underway;
+Historical audit only. Its repair authorization and sequence are retired;
+findings have not been reverified by the documentation reset. Read root/applicable
+AGENTS.md and SAAS_TRANSITION.md before any owner-selected investigation.
+Historical context from 6 September: the owner initially requested only the
+Add staff Role field height correction, then authorized fixing all findings
+and the Products investigation, followed by fresh independent audit agents.
+Repairs were underway at the time;
 the original findings below remain the baseline until verified individually.
 Preserve production data and existing business decisions. Do not create real
 sales, change live PINs, reset databases, or alter stock to reproduce findings.
@@ -94,7 +96,7 @@ pass. Protected seeded-backend fixtures and physical paper acceptance are NOT
 claimed. The intermittent startup delay has no quantified performance guarantee;
 the proven intermediate-empty cache race has its own deterministic regression.
 No further audit expansion, per owner's remaining quota request. Commit/push
-evidence is recorded in WORK_LEDGER.md. The table below is the ORIGINAL baseline,
+evidence remains in the retired ledger in Git history. The table below is the ORIGINAL baseline,
 not the current repair status.
 
 | ID | Priority | Finding | Original status/evidence |

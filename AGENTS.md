@@ -56,20 +56,17 @@ decision changes.
   without a proven need.
 - Off only if the owner explicitly says so (`stop ponytail` / `normal mode`).
 
-### Work ledger
+### SaaS transition and work record
 
-- `PLAN.md` is the canonical remaining goal/card order and completion gate. Read
-  it with the ledger before activating or resuming a goal; it does not override
-  the project authorities.
-- When `WORK_LEDGER.md` has an active goal, read it after the applicable
-  `AGENTS.md` chain and before changing code.
-- Re-read it after context compaction, task handoff, or resuming paused work.
-- Update its task board, current checkpoint, and journal after every meaningful
-  completed step and before pausing or finishing a turn with work in progress.
-- Record verified facts, decisions, files changed, checks run, blockers, and the
-  exact next action. Do not copy full specifications into the ledger.
-- `WORK_LEDGER.md` tracks progress; it does not override `PRODUCT.md`,
-  `ARCHITECTURE.md`, `DESIGN.md`, `BRAND.md`, or the applicable DOX chain.
+- `SAAS_TRANSITION.md` is the single active plan, concern register, and progress
+  record. Read it before starting/resuming work and after context compaction.
+- The owner chooses one step at a time. UI polish comes first, then security
+  and database/sync work. Do not resume deleted goal plans or treat historical
+  audits as authorization to execute their repair lists.
+- Record research, decisions, changed files, actual checks, limitations, commit
+  evidence, and the exact next action in that file after meaningful work.
+- Product, architecture, design, and brand authorities still own their decisions.
+  No implementation or app testing is authorized by the planning document alone.
 
 ### Main-only commits and pushes
 
@@ -95,6 +92,10 @@ decision changes.
 
 - Use the smallest correct change and existing dependencies before adding code,
   abstractions, or packages.
+- Before every implementation step, research current official guidance and
+  relevant professional practice for the exact problem; record sources, date,
+  alternatives, the simplest justified choice, and intended verification in
+  `SAAS_TRANSITION.md`. This applies to UI, security, data, SaaS, and releases.
 - Before implementing every card, research the current official Android
   guidance and the official Capacitor/plugin guidance for any affected storage,
   lifecycle, background-work, networking, security, update, rendering, or
