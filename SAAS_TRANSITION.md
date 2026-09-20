@@ -9,11 +9,13 @@ plans and ledgers. Read it after the applicable `AGENTS.md` files when resuming
 work. `PRODUCT.md`, `ARCHITECTURE.md`, `DESIGN.md`, and `BRAND.md` still own
 durable product, engineering, design, and brand decisions.
 
-The owner has authorized documentation cleanup, research, and this plan only.
+The owner has authorized documentation cleanup, research, this plan, and
+installation/review of the five supplied design skill collections.
 Do not run the app, test it, audit its code, fix bugs, change databases, install
 an APK, publish a release, or start implementing this plan now. The owner will
-choose the next step and supply additional design skills. No implementation
-step is active. Next action: receive the owner's first specific UI instruction.
+choose the next step. The supplied skills are installed; no implementation
+step is active. Next action: discuss the owner's selected ingredient task or
+first specific UI change before choosing its implementation.
 
 Work one step at a time. Completing a step does not activate the next one.
 Record new concerns here as they arrive. Explain findings in plain English.
@@ -89,7 +91,7 @@ unauthorized access while simplifying the app.
 | Stage | Scope | Status |
 | --- | --- | --- |
 | 0 | Replace old plans; capture requirements and initial research | Complete; publication recorded below |
-| 1 | Owner-led interface polish and ingredient workflow simplification | Waiting for the owner's first instruction |
+| 1 | Owner-led interface polish and ingredient workflow simplification | Design skills installed and reviewed; waiting for the first selected app change |
 | 2 | Security, database and sync investigation, then selected fixes | Not started |
 | 3 | Business/location separation and safe migration of the existing client | Not started |
 | 4 | Restricted APK distribution and update experience | Not started |
@@ -309,3 +311,114 @@ or exercising the unchanged application.
   pushed to `origin/main` in `aymansal/olaso-pos`. This follow-up records that
   publication and closes SAAS-00; it does not start implementation.
 - Next action: wait for the owner's chosen first UI step and additional skills.
+
+### SAAS-01 — design skill installation and review
+
+Scope: read the five owner-supplied repositories, install their portable Codex
+skills, research distracting/generic UI patterns, and explain their fit for
+Olaso. No app implementation, code audit, app test, or device action authorized.
+
+Installation completed on 20 September 2026 into
+`C:\Users\Ayman\.codex\skills`, using the official Skill Installer's download,
+validation, and copy helpers against these pinned revisions:
+
+| Collection | Installed skills | Source commit |
+| --- | --- | --- |
+| [Emil Kowalski](https://github.com/emilkowalski/skills) | 13 | `85e8e2363b713506e1d5b6e07a0eb2da66be1bc3` |
+| [ConardLi](https://github.com/ConardLi/garden-skills) | 5 | `aaf9a82f5efd73e87cc0998edc398e75bfc35901` |
+| [MengTo](https://github.com/MengTo/Skills) | 141 | `5f47e389dac337a1bca5cddf376419248b3010f6` |
+| [Jakub Krehel](https://github.com/jakubkrehel/skills) | 11 | `267330e1adfc66a718fb65fa6918c1f06d0a689e` |
+| [Owl Listener](https://github.com/Owl-Listener/designer-skills) | 111 | `9a6930cf84a822eb458624bd11c61aac5bbdf224` |
+
+All 281 skill folders and their bundled files are installed. Owl's wider
+catalog advertises other repositories; only skills in the supplied repository
+were installed. Claude/Gemini plugin commands were not converted into Codex
+commands. No third-party installation scripts ran, no application dependencies
+were added, and no external service credentials were configured. Existing skills
+were preserved. Newly installed skills become available in a subsequent turn;
+their runtime behavior has not been exercised in Olaso.
+
+The machine-local receipt contains per-skill paths, revisions, file counts,
+and verification evidence:
+`C:\Users\Ayman\.codex\skill-install-records\2026-09-20-design-skills.json`.
+Do not copy this entire skill library into the application repository.
+
+#### Recommended use and limits
+
+- Emil: `emil-design-eng`, `apple-design`, and `review-animations` for clear
+  interaction states and restrained motion. `apple-design` is Emil's adaptation
+  of Apple talks, not an official Apple-authored skill. Apply useful principles
+  while retaining Olaso's Android platform, approved layout, and visual identity.
+- Jakub: `better-interface`, `better-ui`, `better-typography`, and
+  `better-accessibility` for consistent dialogs, controls, spacing, legibility,
+  and feedback. Its stress-testing tools remain unused until testing is authorized.
+- Owl: `jobs-to-be-done`, `teslers-law`, `form-design`,
+  `information-architecture`, and `user-flow-diagram` for simplifying ingredient
+  tasks before drawing screens. Use a focused conversation, not a large design
+  workshop or extra documentation process.
+- MengTo: `no-ai-design-slop` and `audit-ai-design-slop` are useful now: challenge
+  unnecessary containers, repetitive labels, weak emphasis, and effects without
+  a purpose. Most cinematic, 3D, and website theme skills are for future projects.
+- ConardLi: `web-design-engineer` can help with intentional layouts and complete
+  interaction states; its website/prototype tools and other media skills are
+  mostly for future work. Do not bring prototype-only controls, CDN scripts, or
+  a new styling system into the POS.
+
+Skills provide guidance, not permission to change the app. Choose the few that
+fit the selected problem. Repository instructions and owner decisions govern
+conflicts; installed skills do not justify framework swaps, new dependencies,
+new design authorities, or overriding accessibility and data correctness.
+
+#### Research and proposed motion direction
+
+Checked on 20 September 2026:
+
+- [Apple motion guidance](https://developer.apple.com/design/human-interface-guidelines/motion): keep feedback brief and purposeful, and avoid unnecessary motion in frequent interactions.
+- [Apple: Designing Fluid Interfaces](https://developer.apple.com/videos/play/wwdc2018/803/): responsiveness and interruptible interaction inform the principles; this does not prescribe copying iOS surfaces into Android.
+- [Emil: 7 Practical Animation Tips](https://emilkowal.ski/ui/7-practical-animation-tips): repeated daily actions often benefit from reducing or removing motion.
+- [Emil: Agents with Taste](https://emilkowal.ski/ui/agents-with-taste): explicit design judgment matters when using agents; isolated recipes still need context.
+- [MengTo: No AI Design Slop](https://github.com/MengTo/Skills/blob/main/agent-skills/ui/no-ai-design-slop/SKILL.md): preserve a justified visual identity; remove reflexive decoration and unnecessary UI complexity.
+- [Jakub: Better UI](https://github.com/jakubkrehel/skills/blob/main/skills/better-ui/SKILL.md): useful component consistency guidance, with defaults that need adapting for frequent POS use.
+- [Owl: Tesler's Law](https://github.com/Owl-Listener/designer-skills/blob/main/interaction-design/skills/teslers-law/SKILL.md): distinguish necessary business complexity from work the software can absorb.
+- [OpenAI skill documentation](https://learn.chatgpt.com/docs/build-skills): portable skill folders contain instructions and optional supporting resources.
+
+Here, "AI slop" means unconsidered design defaults: repeated decoration,
+unnecessary motion, weak prioritization, wordy labels, and incomplete states.
+It is not a claim that a particular font, rounded corner, shadow, or gradient is
+inherently bad, or proof of who authored an interface. Olaso has not been
+visually audited in this step.
+
+The owner rejects decorative bouncing buttons. Proposed POS baseline: stable
+tap targets with immediate color/shading feedback, no input delay, and restrained
+transitions only where they clarify a state change. Respect reduced motion.
+Both Emil and Jakub include button-shrink recipes; do not apply them globally.
+Apple-inspired clarity does not require glass surfaces, spring effects, or an
+iPhone appearance. Confirm and implement the selected controls in a later step.
+
+#### Ingredients: simplify the task before the screen
+
+First discuss one real example with the owner: adding an ingredient, recording
+a delivery, or specifying an amount used in a recipe. Identify what the operator
+actually knows and what the app should calculate. For example, entering twelve
+one-litre bottles with a total purchase price could let the app derive total
+volume and unit cost, while a recipe uses millilitres. This is an illustration,
+not an approved replacement model or a claim about current behavior.
+
+Avoid moving the same complexity into extra dialogs. Preserve accurate units,
+stock, cost calculations, and historical records. Workflow and underlying logic
+may need to change together; visual polish alone cannot resolve that problem.
+
+#### Evidence and next action
+
+- Installation verification: 281 destinations, required skill headers present,
+  and 1,392 copied files verified byte-for-byte against pinned source folders.
+  External services and optional skill tools were not configured or invoked.
+- Changed project file: this plan only. No app source, database, UI, release,
+  or device changes. No build or app test is required for this documentation step.
+- Graphify was queried for project orientation; no structural app change
+  requires regenerating it. Document scope and whitespace checks precede commit.
+- Publication: pending documentation commit and push; installation itself is
+  machine-local and is recorded in the receipt above.
+- Exact next action: the owner selects a concrete ingredient task or UI flow;
+  discuss a simpler interaction, research its specific platform requirements,
+  and proceed only within that selected scope.
