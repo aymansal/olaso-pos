@@ -37,8 +37,8 @@ Pencil frames still own their respective product and implementation contracts.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** resolve the pending dark-versus-cream clarification,
-  then continue the UI-01 review below, including measured contrast, complete
+- **Exact next action:** continue the light-mode UI-01 review below,
+  including measured contrast, complete
   shared-action/role coverage and Pencil reconciliation. Do not advance to POS
   or treat the narrow chart/format corrections as whole-screen acceptance.
 - POS option-row choice remains unanswered: plain rows with dividers and
@@ -167,6 +167,9 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Captured decisions and honest starting point
 
+- Owner confirmed Olaso is always light mode. There is no dark-mode Dashboard
+  and no dark-mode work requested. The earlier clarification was an agent
+  misunderstanding, now resolved; preserve the existing cream appearance.
 - Recent orders: line 1 = number + amount; line 2 = time + service type. No
   item count or routine Completed label; cancellation stays clearly marked.
 - Dashboard View all links are borderless. Previous corrections and selected
@@ -189,9 +192,9 @@ changes pushed and the owner must accept the screen before moving on.
 
 ### UI-01 — Dashboard review — in progress, 20 September 2026
 
-- Owner authorized starting Dashboard. Clarification pending: “dark dashboard”
-  could mean dark mode or the existing Dashboard. Do not change the palette
-  until answered. Independent correctness review can proceed.
+- Owner authorized starting Dashboard and confirmed the app is always light
+  mode. The agent's dark-mode question was a misunderstanding; it does not
+  block Dashboard work. Preserve the approved cream appearance.
 - Read Apple design (including sections 15–17), the six better-interface
   domains and review format, anti-slop skills and relevant ARTICLE sections,
   Emil interaction guidance, review-animations, QA/error guidance,
@@ -253,7 +256,7 @@ changes pushed and the owner must accept the screen before moving on.
 - Pencil connection retried and unavailable (desktop transport not connected);
   no master updated. No graph structure changed; no graph refresh needed.
   Unrelated PeriodCalendar/reportProfit work preserved.
-- Whole-screen acceptance and palette clarification remain pending.
+- Whole-screen acceptance remains pending. Light-mode direction is confirmed.
 - Publication: checkpoint `a97ee93` pushed to `origin/main` at
   `https://github.com/aymansal/olaso-pos`; this follow-up records the evidence.
 
