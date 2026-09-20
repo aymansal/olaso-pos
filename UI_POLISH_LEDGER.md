@@ -253,8 +253,9 @@ changes pushed and the owner must accept the screen before moving on.
 - Pencil connection retried and unavailable (desktop transport not connected);
   no master updated. No graph structure changed; no graph refresh needed.
   Unrelated PeriodCalendar/reportProfit work preserved.
-- Whole-screen acceptance and palette clarification remain pending. Publication
-  evidence will be recorded after the checkpoint commit is pushed.
+- Whole-screen acceptance and palette clarification remain pending.
+- Publication: checkpoint `a97ee93` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; this follow-up records the evidence.
 
 ### UI-00 — establish recovery and screen sequence — complete, 20 September 2026
 
