@@ -234,8 +234,11 @@ changes pushed and the owner must accept the screen before moving on.
   Dashboard route. Printer output cannot be verified without a configured
   printer; error recovery passed. Actual screen-reader speech was not tested.
   These limitations are not owner-accepted or silently marked passed.
+- Publication: implementation `2d4fdb7` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`. `git diff --check` passed; unrelated
+  PeriodCalendar/reportProfit files and untracked assets remained untouched.
 - Owner review is next. UI-01 is not marked owner-accepted and no next screen
-  redesign is started. Publication evidence follows after the successful push.
+  redesign is started.
 
 #### Continued light-mode review
 
