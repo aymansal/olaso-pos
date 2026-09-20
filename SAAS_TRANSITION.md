@@ -619,3 +619,85 @@ Installation evidence:
   Installation/startup is verified, not full visual or workflow acceptance.
 - Installation record published as `03b4ea805ad75bb0f376810374acb898e23c764f`
   on `origin/main` in `aymansal/olaso-pos`; app source was unchanged this turn.
+
+### SAAS-04 — Realistic cafe review data — 20 September 2026
+
+Owner explicitly authorized filling the disposable development database with
+normally named products/choices and a month of cafe orders. Current live catalog
+has 15 products, 15 sizes and zero choice sections. Preserve existing product and
+staff IDs, credentials and tablet access. Do not run the destructive legacy seed.
+
+Pre-implementation research: [Convex writes](https://docs.convex.dev/database/writing-data)
+and [internal functions](https://docs.convex.dev/functions/internal-functions)
+(20 September 2026). Reuse authenticated configuration, recipe, stock and sale
+mutations from a guarded local development script, including normal pricing,
+immutable receipts, stock valuation and daily metrics. Prefer this to duplicating
+accounting inside the legacy seed or deploying a new public seed endpoint.
+Require the exact known development deployment/URL, explicit acknowledgement
+and an owner PIN supplied transiently. Stable operation IDs permit resumption.
+Visible data uses ordinary cafe names. Add required milk choices and optional
+extras, with size-specific recipe quantities; create 30 days of varied sales.
+
+Android boundary: [Android offline-first guidance](https://developer.android.com/topic/architecture/data-layer/offline-first)
+and [Capacitor network guidance](https://capacitorjs.com/docs/apis/network) reviewed.
+This is cloud development data preparation only. Existing native lifecycle,
+network and SQLite boundaries continue to own tablet refresh/cache behavior;
+no APK, Kotlin, dependency or sync architecture change is justified.
+
+Verification planned: guarded refusal without acknowledgement; resolve actual
+choices through the shared resolver; check every inserted receipt and 30-day
+report totals, stock deductions/valuation, and repeat-run duplicate prevention.
+Confirm tablet delivery separately; server verification is not device acceptance.
+
+Tablet delivery prerequisite discovered: the connected Redmi's WebView reports
+`Could not find public function for expenses:listPage` during reconnect sync.
+The function exists in the committed backend, but the development deployment
+is stale. [Convex CLI guidance](https://docs.convex.dev/cli/overview) reviewed
+20 September: publish the existing backend with `convex dev --once` to the
+verified development target after seeding; no production deployment or new
+function implementation. Then verify normal tablet synchronization and a real
+product-choice popup. This deployment is necessary for the requested review data
+to reach the installed app reliably.
+
+Execution evidence:
+- Added `scripts/seed-cafe-month.mjs`, guarded to dev:colorful-newt-937 and its
+  exact URL, with explicit acknowledgement and transient owner authentication.
+  Existing products/staff IDs and credential revisions are preserved. No app
+  source, dependency, production data or APK changed.
+- 1,000 completed orders, 22 August–20 September 2026, 41,329 MAD revenue.
+  Varied daily traffic, busier weekends, quantities, drink/pastry combinations,
+  dine-in/take-away, Cash/Card and split tenders. Eight drinks gain Large sizes,
+  milk substitutions and extras; black coffees gain extra shots; pastries gain
+  serving choices. Final catalog: 15 products, 23 sizes, 21 sections, 47 values.
+- Normal stock receipts supply sales. Brioche's previously unvalued opening
+  balance is counted out and replaced through a priced purchase; new orders
+  have known ingredient costs. Existing unknown historical costs are not invented.
+- Script syntax and shared product-configuration/cost-range checks pass.
+  Missing acknowledgement refuses before authentication/writes. Full execution
+  verifies 30 populated days, revenue/cost summary deltas, nonnegative stock and
+  exact stock values, unchanged staff credentials and duplicate-sale rejection.
+  Full second run inserts zero orders; it verifies all 1,000 receipt products,
+  quantities, sizes, choices and totals. No mock/test/demo product labels.
+- Published the already-committed backend to the development target with
+  `npx convex dev --once`; typecheck/schema deployment passed, including the
+  missing expense pagination function and catalog-history index. Production
+  was not targeted. No backend source changes were needed.
+- Physical Redmi, actual app viewport 1340 × 804: Latte popup shows sizes/milk/
+  extras. Large + oat milk + vanilla changes the price to 32 MAD. Cancel leaves
+  the cart empty. Dashboard shows 46 orders, 1,829 MAD and populated daily chart
+  and recent receipts. Captures: `tmp/redmi-cafe-choices.png` and
+  `tmp/redmi-cafe-dashboard.png`. Both backend data and tablet delivery verified.
+- Manual Sync initially remained busy after the stale-backend repair. During
+  restart/sign-in the tablet moved to Android Recents and a request stalled;
+  a fresh foreground restart/sign-in completed successfully. Settings then
+  showed Sync now, Online, zero waiting sales and last successful sync 18:35
+  on 20 September. Fresh WebView console and focused logcat were empty.
+  This verifies recovery and current synchronization, not every lifecycle edge.
+- Graphify code refresh: 2,873 nodes / 6,159 edges; existing Gradle extraction
+  warnings remain. No new instruction hierarchy or application boundary.
+  Owner's PeriodCalendar/reportProfit file hashes remain unchanged.
+- Exact next action: owner manually reviews products, choices, Dashboard,
+  Orders and Reports with this month of development data. Leave Latte's
+  customization popup open with its default selections and the cart empty.
+  Screen redesign, ingredient-system simplification and broad sync repairs
+  remain separate owner-selected work; this card changes review data only.
