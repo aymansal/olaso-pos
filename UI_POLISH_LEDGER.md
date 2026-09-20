@@ -32,16 +32,15 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard.** Status: implementation and available
-  verification finished; ready for owner review, not yet owner-accepted.
+- **Active screen: UI-01 — Dashboard.** Restarted visual review delivered for
+  owner review, with explicit verification limits below. Not owner-accepted.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** owner review of the installed unchanged-layout
-  Dashboard. Native nonempty-cart Cancel and low-stock selection now pass.
-  DESIGN records the owner's current-layout instruction over the older Pencil
-  geometry. Orders' cloud-only sample history remains a documented UI-03/data
-  limitation. Do not advance to POS without Dashboard acceptance.
+- **Exact next action:** owner reviews the restarted Dashboard changes and
+  150ms screen fade. Address Dashboard feedback here; carry the unverified
+  accessibility/device checks below forward. Keep data-history work separate
+  and do not advance to POS without Dashboard acceptance.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
   not block Dashboard. Do not infer an answer from silence.
@@ -73,6 +72,14 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## Required skills and how they work together
 
+Owner clarification, 20 September: apply the agreed skills in successive passes
+to every screen, not one blended bug audit. Order: Apple Design; Better Interface
+(accessibility, layout, writing, typography, colors, UI); both anti-slop skills;
+Emil Design Engineering and Review Animations; Design QA and Error Handling UX.
+For each pass record actual visual findings, source, changes or justified no-change,
+and evidence. A skill need not force a change. Bug checks alone do not complete
+visual polish. A restart resets review status, not approved layout or café data.
+
 Installed skill root: `C:/Users/Ayman/.codex/skills/`. Each name below resolves
 to `<root>/<name>/SKILL.md`. Read the named files, not just their descriptions.
 If a required file is missing, report the gap; do not invent its instructions.
@@ -103,7 +110,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Ready for owner review; limitations below |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Restarted review delivered; limitations recorded; owner acceptance pending |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
@@ -196,7 +203,127 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Checkpoint ledger
 
-### UI-01 — Dashboard — ready for owner review, 20 September 2026
+### UI-01 — restarted visual skill sequence, 20 September 2026
+
+The owner explicitly rejected treating the prior functional checks as finished
+visual polish. Keep the approved light layout, two-line orders and borderless
+View all. Apply every agreed skill successively; do not invent a fresh theme.
+
+Pre-implementation research and scope:
+- Read Apple Design, Better Interface and its six domain skills, their review
+  format, grouping-and-alignment, both anti-slop skills, Emil Design Engineering,
+  Review Animations, Design QA and Error Handling UX. Graphify queried the
+  Dashboard regions and shared profile control; Ponytail full remains active.
+- [Apple principles](https://developer.apple.com/videos/play/wwdc2026/250/)
+  supports clear, consistent visual meaning and purposeful hierarchy.
+  [Apple typography](https://developer.apple.com/videos/play/wwdc2020/10175/)
+  supports a coherent type hierarchy, not an exact mandated café layout.
+  Checked 20 September 2026. Apple HIG JavaScript-only pages were not treated
+  as readable evidence; the official video transcripts are the usable sources.
+- [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor](https://capacitorjs.com/docs) retain native rendering ownership.
+  These corrections belong in existing React markup/CSS; no native plugin,
+  persistence, totals, stock calculations or navigation changes are needed.
+- Simplest choices: reuse the existing neutral status treatment and 12px
+  supporting-text size; align the existing divider to its row text. No new
+  tokens, fonts, containers, animation or dependencies.
+
+| Pass / source | Before | Intended correction | Why |
+| --- | --- | --- | --- |
+| 1. Apple §16 Familiarity / Craft | Loading and no-comparison messages carry a green upward trend icon | Existing neutral status colors; omit the unsupported trend icon | The appearance must not imply an increase when no comparison exists |
+| 2. Better Layout — Align to shared edges | Recent-order divider begins 6px after the receipt text | Align both at the existing 44px row inset | Remove accidental edge inconsistency without moving rows |
+| 2. Better Typography — Size floors / consistent scale | Stock/cancellation labels and chart-detail date use 11px; nearby metadata uses 12px | Reuse 12px for these and the best-seller caption | Improve small supporting-text readability within unchanged geometry |
+
+Verify the visible before/after in English/French, chart details and profile
+popover, live/loading/empty/error states; confirm unchanged panel bounds and
+no clipping. Then build and verify the actual Redmi if connected. Record later
+passes and limitations separately rather than mark all skills passed by reading.
+
+Motion pre-implementation decision, 20 September:
+- Review Animations standards 2/4 and Better UI Frequent interactions flag the
+  shared 420ms screen crossfade. DESIGN already specifies 125–150ms and the
+  source DOX requires retaining the crossfade. Reduce both opacity transitions
+  and their cleanup timer to 150ms; retain the existing easing, immediate live
+  pointer access and reduced-motion bypass. This reconciles existing authorities
+  rather than inventing a new transition. No scale, bounce or blur is added.
+- [Android animation overview](https://developer.android.com/develop/ui/views/animations/overview)
+  supports subtle visibility cues; [MDN transition-duration](https://developer.mozilla.org/en-US/docs/Web/CSS/transition-duration)
+  defines the existing CSS boundary. Capacitor retains WebView rendering: no
+  native animation layer is needed for React screen slots. Checked today.
+- Verify the rebuilt shared switch on all authorized routes on Redmi, rapid
+  navigation, return to Dashboard, and reduced-motion CSS. Preserve retained
+  screen state. Do not activate another screen's redesign card.
+
+Owner steering during the motion pass: “if the skill says 420 leave it then.”
+Clarified that 420ms comes from existing code, not the skills (under 300ms) or
+DESIGN (125–150ms). Restored the existing 420ms fade for now; no shared motion
+change was delivered at that point. The owner then explicitly instructed:
+“make it under 300ms.” Apply 150ms, matching the existing DESIGN range; this
+supersedes the temporary restoration and resolves the duration decision.
+
+#### Restarted pass results
+
+| Pass | Visible result / evidence | Status and boundary |
+| --- | --- | --- |
+| Apple Design | Loading/no-comparison no longer look like positive sales growth. Existing dominant sales total, smaller metrics and separate operational lists retained. | Correction verified in real-component loading/empty fixtures; actual comparison stays colored. |
+| Better Interface and six domains | Supporting labels/date 11→12px; order separators now align with receipt text (both x988 in browser). EN/FR fit unchanged panels. Profile popover and chart details inspected; existing Escape focus return retained. | Layout/type corrected; existing vocabulary and brand colors retained. Prior measured contrasts are historical evidence, not rerun measurements. No new palette. |
+| No AI Design Slop + Audit AI Design Slop | Removed the unsupported trend icon from unavailable/no-comparison states. Three panels still separate sales, stock and receipts; existing chart tones encode values. No extra shells, cards, motion or text were added. | No additional decorative removal justified by inspected live/popover/state views. Existing two-line rows and borderless links satisfy the owner's earlier removal requests. |
+| Emil Design Engineering + Review Animations | Shared crossfade 420→150ms, owner-approved. Native rendered duration is 0.15s; reduced-motion emulation gives 0s. Chart taps and profile disclosure remain immediate. | Duration finding resolved. Preserve the existing crossfade contract rather than adopting a new effect; no bounce/scale/blur. This is not a blanket approval of every animation elsewhere in the app. |
+| Design QA + Error Handling UX | Live/loading/empty/error/retry, chart detail and profile menu inspected in the browser; live Dashboard and shared navigation checked on Redmi. Empty is distinct from unavailable. | Scoped verification below passed. Screen-reader speech, large OS text and printer output remain unverified; no full accessibility or whole-app certification. |
+
+Motion review:
+
+| Before | After | Why |
+| --- | --- | --- |
+| Shared page fades and cleanup last 420ms | Both fades and cleanup last 150ms | Owner requested under 300ms; existing DESIGN permits 125–150ms. |
+
+Verdict: approve this duration correction within the existing page-switch
+contract. The untouched 220ms shared navigation indicator and keyboard-initiated
+page fade remain outside a claim of universal compliance with every Emil rule;
+the existing source DOX explicitly retains animated navigation/crossfades.
+
+Verification and delivery evidence:
+- Browser 1340 × 800: panel bounds unchanged at (18,92,886,686),
+  (922,92,400,334), (922,444,400,334). EN/FR live, loading, empty and error
+  checked; Retry summary returns live. Chart first-day popup exposes 820 MAD,
+  stays within the panel, uses a 12px date and dismisses with Escape.
+  Profile popup inspected in French; English switch and Escape focus return
+  checked earlier in this restarted pass. Final browser console: no warnings/errors.
+- Loading/no-comparison fixture: neutral surface and zero trend SVGs; stock and
+  cancellation labels and best-seller caption measured 12px. No horizontal
+  overflow or clipped ordinary café content in these checked views.
+- Final `npm run android:beta` passed: web build, Android configuration,
+  Capacitor sync, JVM checks and APK assembly. Initial build needed the local
+  JDK/SDK environment restored; final build ran with it. Existing SQLite crypto,
+  Gradle flatDir and SDK XML warnings remain. No business logic tests added.
+- `adb install -r` succeeded, preserving café records. Final APK SHA-256:
+  `b27e1c8256c4bba307177352a03e73d3246b6492dfea3381ce231a0af4205b83`.
+  Redmi 22081283G measured 1340 × 804. Final live capture visually inspected:
+  `tmp/ui01-restart-final.png`. Retained 46 orders, 1,829 MAD, 87 items.
+- Native shared switch checked through POS, Orders, Products, Stock, Reports,
+  Settings and back to Dashboard: rendered fade 0.15s, outgoing slot clears,
+  no horizontal overflow on measured routes. Rapid navigation ends on Dashboard.
+  Reduced-motion emulation reports 0s, then was cleared. Final focused foreground
+  navigation captured no new errors/warnings. Earlier OS-lock/background attempts
+  captured a Convex WebSocket/back-forward-cache disconnect; do not describe
+  the entire device session as error-free or treat this UI pass as a sync repair.
+- Device initially asleep/OS-locked; unlocked the noncredential OS screen and
+  dismissed the USB-mode dialog without changing its selected mode. An initial
+  helper wait wrongly expected a literal `data-fade=idle`; corrected inspection
+  waits for no outgoing slot and no running animations. Those failed attempts
+  were not accepted as verification. Final foreground screenshot is the evidence.
+- No database reset, sale, payment or inventory mutation. Unrelated
+  PeriodCalendar/reportProfit edits and untracked assets preserved. No graph
+  structure changed, so no Graphify regeneration required. `git diff --check`
+  passed. CSS scope scanner was not rerun; its known older limitation remains.
+- Limits: not tested with screen-reader speech, enlarged OS font/200% zoom,
+  320px reflow, slow-motion frame analysis or a working printer. Prior native
+  report-error and cart-lock checks remain historical; not repeated for these
+  presentation changes. Orders cloud-only seed-history issue remains separate.
+- Next: owner visual review of this restart, then address Dashboard feedback and
+  the explicit outstanding checks. Do not label the screen owner-accepted.
+
+### UI-01 — previous Dashboard delivery (superseded by restart above), 20 September 2026
 
 #### Final delivery record
 

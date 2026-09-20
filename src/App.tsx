@@ -74,7 +74,7 @@ const screenLoaders: Record<Exclude<AppScreen, 'POS'>, () => Promise<unknown>> =
   Settings: loadSettings,
 };
 
-const SCREEN_FADE_MS = 420;
+const SCREEN_FADE_MS = 150;
 
 type StockLevelFilter = 'all' | 'low' | 'healthy';
 

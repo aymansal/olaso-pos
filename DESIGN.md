@@ -705,7 +705,10 @@ supersedes that frame's Dashboard geometry only, not the POS frame `W26Y6`.
 Owner acceptance of the completed pass remains separate from implementation.
 
 - Keep the existing full-bleed 1340 × 800 three-panel Dashboard composition.
-- Use clearer 11–17px supporting text, 22px metrics and a 44px net-sales total.
+- Use 12–17px Dashboard supporting text, 22px metrics and a 44px net-sales total.
+  Stock/cancellation labels, chart-detail dates and the best-seller caption
+  reuse the 12px supporting-text size. Recent-order separators begin at the
+  receipt text's existing 44px row inset.
   Owner-approved Recent orders rows have two lines: receipt number and amount,
   then time and service mode. Omit item count and routine Completed labels;
   keep Cancelled visible on the second line. The full timestamp remains on the
@@ -729,6 +732,9 @@ Owner acceptance of the completed pass remains separate from implementation.
   minimum height. An all-zero period uses the existing chart-state message
   instead of repeated zero ticks. Comparison percentages follow the selected
   language's decimal convention and retain one decimal place.
+  Loading, unavailable and no-comparison messages use the existing neutral
+  status treatment without a trend arrow; green/red arrows describe an actual
+  available comparison only.
 - Unknown/loading/failed summaries display dashes and a chart-state message;
   a confirmed empty snapshot displays zero. Failures offer retry. Do not present
   stale snapshot totals as current when refresh fails.

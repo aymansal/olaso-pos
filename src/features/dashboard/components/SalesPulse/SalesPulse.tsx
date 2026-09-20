@@ -111,8 +111,8 @@ export function SalesPulse({
             <strong>{t('Retry summary')}</strong>
           </button>
         ) : (
-          <div className={`${styles.change} ${!isPositive && !unavailable ? styles.decline : ''}`}>
-            <ComparisonIcon width={14} height={14} aria-hidden="true" />
+          <div className={`${styles.change} ${unavailable || comparison === undefined ? styles.unavailable : !isPositive ? styles.decline : ''}`}>
+            {!unavailable && comparison !== undefined ? <ComparisonIcon width={14} height={14} aria-hidden="true" /> : null}
             <strong>{unavailable ? t(isLoading ? 'Loading saved summary' : 'Summary unavailable') : changeLabel}</strong>
           </div>
         )}
