@@ -576,3 +576,6 @@ Implementation evidence (20 September 2026):
   a failed refresh with stale data, confirmed empty data and live exact totals.
   This specifically verifies that unavailable summaries expose no invented
   money or interactive chart points. No backend was contacted by these checks.
+- Publication: implementation commit `afe6e147f31348bc5ab43722a9f1f3ca0036b691`
+  pushed to `origin/main` in `aymansal/olaso-pos`. This publication does not mark
+  the pending browser interactions, tablet or design-master acceptance complete.
