@@ -32,24 +32,18 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-03 — Orders / Sales sequential skill polish.**
-  The owner explicitly advanced the sequence from POS to Orders on 21
-  September 2026. The cloud-order data correction is complete and published;
-  this card retains earlier valid fixes and evidence, but prior grouped reviews
-  do not count as completion of the required individual skill passes.
-  Dashboard's recorded out-of-scope checks remain
-  historical limitations; advancing does not turn them into technical passes.
-  The latest owner clarification requires the numbered skills to be completed
-  sequentially. Overlap prevents duplicate fixes; it does not merge or skip
-  skill passes.
+- **Active screen: UI-02 — POS targeted corrections after Orders completion.**
+  The owner has finished the requested Orders work and retained the existing
+  palette, then returned to POS for two concrete popup fixes. The earlier UI-03
+  sequential skill evidence remains valid; this continuation does not reopen
+  the Orders visual review or change its colors.
 - **UI-00 complete:** ledger and recovery instructions created and published.
-  Dashboard was the first screen card; the current work is UI-03 Orders. No new
+  Dashboard was the first screen card; the current work is UI-02 POS targeted
+  corrections. No new
   UI implementation or app testing was performed during ledger creation.
-- **Exact next action:** resolve the retained UI-03 color-contrast finding in
-  step 07, then perform the final owner review at the required tablet viewport.
-  The remaining numbered passes were inspected below without silently changing
-  the approved layout or palette. Do not advance to Products until all Orders
-  passes are complete and the owner accepts UI-03.
+- **Exact next action:** owner reviews the POS customization popup at the
+  tablet viewport and confirms the existing option-row appearance. Do not
+  advance to Products until UI-02 is accepted.
 - Do not automatically jump to Products, ingredients, security or sync work.
 
 ## Owner rules — no personal design choices
@@ -754,6 +748,51 @@ changes pushed and the owner must accept the screen before moving on.
 - **Exact next action:** the owner reviews the combined Orders evidence and
   explicitly accepts UI-03 or requests one more scoped correction. Only after
   that acceptance may the sequence move to Products.
+
+### UI-03 / UI-02 — owner corrections, 21 September 2026
+
+- **Owner decision:** the two faint shared text colors remain unchanged. The
+  earlier contrast finding is retained for the later palette pass and is not a
+  blocker for this targeted layout work.
+- **Orders correction:** the date control now keeps its calendar and chevron at
+  their normal size, gives the label one line, and uses a compact locale-aware
+  range label so the year stays visible. The control uses the existing right
+  edge of the fixed tablet toolbar; the surrounding screen geometry is not
+  rearranged. Clearing search/status/date filters now returns to the product's
+  owner-selected default, **This week**, rather than **All dates**. The initial
+  Orders range also opens on This week so reset and startup agree.
+- **POS correction:** the small customization dialog footer now keeps Cancel,
+  Add to order, and the amount on one non-wrapping row. The wide dialog keeps
+  the same footer behavior. No option rows, colors, product data or popup
+  height rules changed.
+- **Research checked before implementation:** [MDN `white-space`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/white-space)
+  and [MDN `flex-shrink`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex-shrink)
+  were checked on 21 September 2026. The fixes use the existing CSS flex layout;
+  no library or runtime measurement was added. The unchanged Android boundary
+  remains the existing [WebView presentation](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  used by the app.
+- **Files changed:**
+  `src/features/pos/components/ModifierSelectionDialog/ModifierSelectionDialog.module.css`,
+  `src/features/orders/components/OrdersListPanel/OrdersListPanel.module.css`,
+  `src/features/orders/components/OrdersListPanel/OrdersListPanel.tsx`,
+  `src/features/orders/OrdersScreen.tsx`, `src/lib/date.ts`, and this ledger.
+- **Verification:** `npm run build`, `npm run check:pos`, `git diff --check`,
+  and `graphify . --update --code-only` passed. The focused date formatter
+  check produced `1–21 Sept 2026`, `31 Aug–6 Sept 2026`, and
+  `31 août–6 sept. 2026` without a line break. `npm run check:orders` passed
+  its historical receipt assertions but stopped at the protected
+  `OLASO_OWNER_PIN` restore gate; no reset or reseed was attempted.
+  `npm run check:css-scope` still reports only the four pre-existing keyframe
+  selectors in untouched App/Lock CSS. The source app preview stayed on its
+  startup screen and the Redmi remained on the protected lock screen, so a
+  fresh physical popup tap check is still unverified.
+- **Status:** the owner-requested Orders behavior and the two POS layout bugs
+  are corrected in source. UI-03's palette exception remains recorded rather
+  than changed. UI-02 remains open for the owner's manual popup review and the
+  existing POS option-row decision.
+- **Exact next action:** open the POS customization popup with a small product
+  and a large product at the fixed tablet viewport, then continue the UI-02
+  review only after the owner accepts this correction.
 
 ### UI-03 — sequential pass 01, Apple Design, 21 September 2026
 

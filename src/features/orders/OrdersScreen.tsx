@@ -4,7 +4,7 @@ import {
   type OrderStatusFilter,
 } from '../../data/orderHistory';
 import { useOrdersData } from '../../data/useOrdersData';
-import { localBusinessDate } from '../../lib/date';
+import { localBusinessDate, startOfIsoWeek } from '../../lib/date';
 import { useT } from '../../lib/locale';
 import type { PeriodPreset } from '../../components/PeriodCalendar/PeriodCalendar';
 import { OrderDetailPanel } from './components/OrderDetailPanel/OrderDetailPanel';
@@ -21,7 +21,7 @@ export function OrdersScreen() {
     fromDate: string;
     toDate: string;
     preset?: PeriodPreset;
-  }>({ fromDate: today, toDate: today, preset: 'today' });
+  }>({ fromDate: startOfIsoWeek(today), toDate: today, preset: 'thisWeek' });
   const data = useOrdersData({
     page,
     status,
@@ -78,7 +78,7 @@ export function OrdersScreen() {
         onClearFilters={() => {
           setQuery('');
           setStatus('All');
-          setRange({ fromDate: '', toDate: '', preset: 'all' });
+          setRange({ fromDate: startOfIsoWeek(today), toDate: today, preset: 'thisWeek' });
           setPage(0);
         }}
         onRetry={() => void data.refresh()}

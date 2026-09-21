@@ -8,7 +8,7 @@ import {
   ORDER_PAGE_SIZE,
   type OrderHistoryRecord,
 } from '../../../../data/orderHistory';
-import { formatPeriodLabel, formatTime } from '../../../../lib/date';
+import { formatCompactPeriodLabel, formatTime } from '../../../../lib/date';
 import { useLanguage, useT } from '../../../../lib/locale';
 import { OrdersTable } from '../OrdersTable/OrdersTable';
 import { visiblePageIndexes } from '../../../../lib/pagination';
@@ -146,7 +146,7 @@ export function OrdersListPanel({
             }}
           >
             <Calendar width={15} height={15} aria-hidden="true" />
-            <span>{formatPeriodLabel(fromDate, toDate, language)}</span>
+            <span>{formatCompactPeriodLabel(fromDate, toDate, language)}</span>
             <ChevronDown width={13} height={13} aria-hidden="true" />
           </button>
           {dateAnchor ? (

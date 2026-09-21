@@ -66,6 +66,7 @@ export function formatPeriodLabel(
   fromDate: string,
   toDate: string,
   language: DateLanguage = 'en',
+  compact = false,
 ) {
   if (!fromDate) return 'All dates';
   if (!toDate || fromDate === toDate) {
@@ -75,6 +76,18 @@ export function formatPeriodLabel(
       year: 'numeric',
     });
   }
+  if (compact) {
+    const sameMonth = calendarMonthOf(fromDate) === calendarMonthOf(toDate);
+    const start = formatDate(fromDate, language, {
+      day: 'numeric',
+      ...(sameMonth ? {} : { month: 'short' }),
+    });
+    return `${start}–${formatDate(toDate, language, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })}`;
+  }
   return `${formatDate(fromDate, language, {
     day: '2-digit',
     month: 'short',
@@ -83,6 +96,14 @@ export function formatPeriodLabel(
     month: 'short',
     year: 'numeric',
   })}`;
+}
+
+export function formatCompactPeriodLabel(
+  fromDate: string,
+  toDate: string,
+  language: DateLanguage = 'en',
+) {
+  return formatPeriodLabel(fromDate, toDate, language, true);
 }
 
 export function reportChartMonth(fromDate: string, toDate: string, today = localBusinessDate()) {

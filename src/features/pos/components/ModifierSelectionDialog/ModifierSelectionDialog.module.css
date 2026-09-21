@@ -185,6 +185,7 @@
 .dialog footer {
   margin-top: 16px;
   gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .cancel,
@@ -194,6 +195,8 @@
   border-radius: 22px;
   font-size: 13px;
   font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .cancel {
