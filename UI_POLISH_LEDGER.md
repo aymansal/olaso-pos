@@ -413,6 +413,8 @@ Results and handoff:
   Better Interface yet. Resolve the accessibility direction, finish the listed
   Apple checks and report again. `git diff --check` passed; no structural change
   requires Graphify regeneration and no DOX ownership contract changed.
+- Publication: implementation `f3247d5` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`. This follow-up records publication.
 
 ### UI-01 — one-skill-at-a-time protocol, 21 September 2026
 
