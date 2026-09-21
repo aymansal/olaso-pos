@@ -334,6 +334,8 @@ changes pushed and the owner must accept the screen before moving on.
 - This requested selection correction is verified; it does not mark the whole
   Apple pass complete. Next: owner review; retain the existing Apple-pass
   pending items, then continue only the owner-authorized screen/skill.
+- Publication: `2e00daa` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; this follow-up records delivery.
 
 ### UI-01 — individual Apple Design pass, 21 September 2026
 
