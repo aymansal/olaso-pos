@@ -537,6 +537,10 @@ changes pushed and the owner must accept the screen before moving on.
   `https://github.com/aymansal/olaso-pos`. Final staged diff check passed;
   only the nine files listed above were included. This follow-up records
   publication; unrelated changes and untracked assets remain preserved.
+- Chart correction publication: `e8e4d56` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; only the Dashboard chart contract,
+  ledger, and edge-tooltip CSS were included. Unrelated dirty files and
+  untracked assets remain preserved.
 
 ### UI-01 — combined screen-review protocol, 21 September 2026
 
