@@ -32,19 +32,20 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard. Active skill: 01 — `apple-design`.**
-  First separate pass started; navigation corrections delivered, full pass incomplete.
-  Earlier grouped reviews are evidence, not completion of the new skill steps.
+- **Active screen: UI-01 — Dashboard. Active skill: 02 — `better-interface`.**
+  Scope/routing completed; awaiting owner continuation to step 03.
+  Owner closed the Apple pass and explicitly requested the next skill on
+  21 September. This accepts advancing the sequence; it does not turn earlier
+  unverified checks into passes or claim 100% technical compliance.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** resolve the Apple-pass accessibility direction with
-  the owner: whether Olaso should follow tablet text-size/contrast preferences
-  while retaining the normal appearance. The owner reports these settings do
-  not currently affect the app; this is not approval to redesign or an accepted
-  exception. Finish outstanding Apple checks before its handoff; wait for the
-  owner before starting skill 02. Keep the approved layout,
-  light mode, two-line orders, borderless View all and 150ms screen fade.
+- **Exact next action:** after the owner says continue, read and apply only
+  step 03 `better-accessibility` to Dashboard and its complete interaction
+  surfaces below. Carry the prior text-size/contrast and unverified checks into
+  their owning reviews; do not silently implement a different layout. Keep
+  light mode, approved geometry, two-line orders, borderless View all, 150ms
+  screen fade and the verified text-selection rule.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
   not block Dashboard. Do not infer an answer from silence.
@@ -122,8 +123,8 @@ before final recovery/QA. Each row gets its own report and owner handoff.
 
 | Step | Skill | Dashboard status |
 | --- | --- | --- |
-| 01 | `apple-design` | Incomplete — navigation feedback corrected; accessibility direction unresolved |
-| 02 | `better-interface` | Queued — scope/routing only |
+| 01 | `apple-design` | Closed by owner; recorded verification gaps carried forward |
+| 02 | `better-interface` | Scope/routing complete; domain verdict waits for steps 03–08 |
 | 03 | `better-accessibility` | Queued |
 | 04 | `better-layout` | Queued |
 | 05 | `better-writing` | Queued |
@@ -194,7 +195,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Individual skill 01 — Apple Design in progress; no new step marked complete |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Apple closed by owner; Better Interface routing complete; Accessibility next |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
@@ -286,6 +287,57 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — Better Interface scope and routing, 21 September 2026
+
+- Owner explicitly closed the Apple pass and requested the next skill. Retain
+  its corrections, solid-surface exception and honest evidence limitations.
+  Earlier instructions to block advancement on Apple verification are superseded
+  by this owner handoff, not erased from the historical record.
+- Read `better-interface/SKILL.md` and `review-format.md` in full. The skill
+  owns orchestration, not a new visual style. Its default combined six-domain
+  review is split into the already approved individual steps 03–08. Do not
+  batch them or present this preparation as a full interface approval.
+- Recon: Graphify queried Dashboard/Header/ProfileControl. Confirmed React 19,
+  TypeScript, Vite, CSS Modules, Astryx, Boxicons, Olaso tokens and Capacitor
+  Android. Applicable documents are root/source/features/Dashboard/POS AGENTS,
+  DESIGN, BRAND, PRODUCT and ARCHITECTURE. No CONTRIBUTING, CODING_STANDARDS,
+  CLAUDE or Storybook files found in the focused file inventory. Reuse current
+  components and tokens; no framework, font or dependency replacement.
+- Scope: all three Dashboard regions (sales summary/chart details/best seller,
+  stock attention, recent orders); shared date/time, navigation, Report and
+  profile trigger; expanded EN/FR/Settings/Lock menu, lock error and native
+  report/unfinished-cart dialogs. Include both View all paths and return paths.
+  Destination screen redesigns and printer delivery remain outside Dashboard.
+- State coverage queued for each applicable owner: EN/FR, permitted roles,
+  live/saved/offline, loading, empty, error/retry, pressed, selected, focus,
+  disabled/busy, cancellation, dismissal and retained draft. Reference viewport
+  1340 × 800; recheck current Redmi dimensions. Zoom/narrow-width checks must
+  record actual outcomes against the fixed-tablet contract; do not turn an
+  unsupported viewport into an approved layout rewrite or a silent pass.
+
+| Domain / next step | Assigned coverage and carried work | Current review result |
+| --- | --- | --- |
+| Accessibility — 03 | Names, keyboard/touch access, focus/dismissal, status announcements, text-size/contrast preferences and editable-field selection exception | Not reviewed in this step; six-domain batching prohibited |
+| Layout — 04 | Existing panel geometry, alignment, clipping, scrolling, popup bounds and zoom/reflow consequences | Not reviewed; preserve owner geometry |
+| Writing — 05 | Labels, date/status language, empty/error/recovery messages, Report and lock-confirmation wording in EN/FR | Not reviewed |
+| Typography — 06 | Size/weight/leading/tracking, numbers, truncation, realistic café content and enlarged text | Not reviewed |
+| Colors — 07 | Actual rendered contrast pairs, selected/focus/disabled states, chart/status meaning and higher-contrast preferences | Not reviewed |
+| UI polish — 08 | State consistency, press feedback, interrupted transitions, reduced motion, popup behavior and frame review | Not reviewed |
+
+- All six owning SKILL.md files exist. Reading/routing from the umbrella does
+  not mark any of their reviews complete. Assign each eventual finding once
+  to its underlying rule owner, with source line and rendered evidence where
+  relevant. Use the skill's severity ladder, consolidate repeated causes and
+  cap the later combined report at 15 findings without hiding blockers.
+- Verification today: read current Dashboard composition and shared menu;
+  checked installed owners, project stack and worktree. No new ranked findings
+  issued, no domain marked Clear, and no Approve/Block interface verdict yet:
+  that requires completed domain evidence. Consolidate after 03–08 without
+  rerunning them as another batch. No source/native/device changes or new app
+  tests; no build required for this documentation-only step.
+- Outcome: step 02's owner-approved **scope/routing task is complete**.
+  Next skill is **03 — Better Accessibility**, awaiting owner continuation.
 
 ### UI-01 — nonselectable interface text, 21 September 2026
 
