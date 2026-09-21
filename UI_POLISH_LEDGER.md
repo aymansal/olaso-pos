@@ -327,6 +327,8 @@ changes pushed and the owner must accept the screen before moving on.
   structural graph refresh is needed for this documentation-only change.
 - Exact next action: on the owner's Dashboard start, prepare the deduplicated
   checklist, reuse valid evidence and finish distinct outstanding UI work.
+- Publication: `3bcdf9c` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; this follow-up records publication.
 
 ### UI-01 — Better Accessibility, 21 September 2026
 
