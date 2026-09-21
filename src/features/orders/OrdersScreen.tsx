@@ -81,6 +81,7 @@ export function OrdersScreen() {
           setRange({ fromDate: '', toDate: '', preset: 'all' });
           setPage(0);
         }}
+        onRetry={() => void data.refresh()}
         onPageChange={setPage}
       />
       <OrderDetailPanel

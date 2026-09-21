@@ -250,10 +250,37 @@
 }
 
 .footer > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   max-width: 360px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.retry {
+  flex-shrink: 0;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--olaso-green);
+  border-radius: 17px;
+  color: var(--olaso-green-ink);
+  background: var(--olaso-green-soft);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.retry:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.retry:active {
+  background: var(--olaso-green-icon);
 }
 
 .pagination {

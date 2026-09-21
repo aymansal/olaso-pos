@@ -683,6 +683,73 @@ changes pushed and the owner must accept the screen before moving on.
   and the live tablet, then we close the remaining state-evidence gaps or record
   the owner's explicit acceptance/limitation. Do not advance to Products.
 
+### UI-03 — close remaining state evidence and cloud-history retry, 21 September 2026
+
+- **Honest continuation status:** the earlier UI-03 entries did not claim that
+  every applicable requirement was passed. This continuation closed the
+  implementation gap in the unavailable-history state and rechecked the
+  remaining safe browser states. It did not invent a new layout or wait for
+  owner acceptance before doing independent work.
+- **Research before implementation:** the existing [W3C alert pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alert/)
+  was checked for announcing the cloud-history problem while keeping the
+  saved rows available. Android [WebView guidance](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and Capacitor's [Web API boundary](https://capacitorjs.com/docs/core-apis/web)
+  confirmed that retry presentation and refresh wiring belong in the existing
+  React/WebView layer; no native Android code, plugin, dependency or database
+  change was justified.
+- **Applicable skill record:** all applicable UI-03 skills named by the ledger
+  were read before this screen review and remain covered by the combined table
+  above. This continuation specifically applied `error-handling-ux`,
+  `loading-states`, `better-writing`, `better-accessibility`,
+  `design-qa-checklist`, `better-layout`, `localization-design`, and
+  `mobile-native` to the new recovery control and state evidence.
+  `data-visualization` remains not applicable because Orders has no chart
+  surface. The review does not claim that every installed design skill applies
+  to an Android POS screen.
+- **Smallest change:** the existing Orders data hook now exposes its existing
+  refresh function; `OrdersScreen` passes it to `OrdersListPanel`; and the
+  unavailable-history message now shows a small existing-style `Retry` button.
+  The ignored browser fixture was updated only to satisfy the new prop. Saved
+  rows remain visible while cloud history is unavailable. No data, layout,
+  wording outside the recovery action, dependency or database behavior changed.
+- **Browser evidence at the required 1340 × 800:** a fresh fixture tab showed
+  the saved `0926-0001` row and `Retry` together with the unavailable-history
+  message; `innerWidth`/`innerHeight` were `1340 × 800`, document size matched,
+  and the fresh tab reported no console warnings or errors. Loading showed
+  `Loading order history…` with the empty detail panel; empty showed
+  `No matching orders.` plus `Clear filters`; French showed the translated
+  Orders labels and saved row. None overflowed the viewport.
+- **Redmi evidence:** screenshot-first capture
+  `tmp/ui03-remaining-review-first.png` was black, confirming Android display
+  sleep. The tablet was woken directly without Recent Apps, the normal Olaso
+  owner unlock was completed privately, and the live Orders page was opened.
+  The retained `0926-0001` order remained selected, completed, synced and
+  unchanged at the Redmi WebView's approximately `1340 × 804` viewport.
+  Captures include `tmp/ui03-remaining-review-orders-page.png` and
+  `tmp/ui03-remaining-review-orders-live.png`.
+- **Checks:** `npm run build` passed. The current debug APK was installed with
+  `adb install -r`; local APK SHA-256 is
+  `AA0138D6C0B64B482B5E866BC0479BB7EE668BCA0F9D91C47E576AFF2E8B8153`.
+  `git diff --check` passed. `npm run check:orders` passed historical receipt
+  assertions and stopped at its protected `OLASO_OWNER_PIN` restore gate; no
+  reset or reseed was attempted. `npm run check:css-scope` still reports only
+  the four existing `from`/`to` keyframe selectors in untouched App/Lock CSS.
+  Full `graphify . --update` still requires an unavailable LLM key; the
+  permitted `graphify . --update --code-only` refresh passed with 2,920 nodes,
+  6,221 edges and 186 communities. `caveman status` passed.
+- **Remaining limitations:** TalkBack speech, enlarged OS text, RTL/large
+  localization expansion, and a real cloud-outage transition on the tablet
+  remain unverified. The real reprint action was not triggered because the
+  tablet has no printer and the owner-review sale must remain unchanged. These
+  are recorded limitations, not silently marked as passed.
+- **Status:** the Orders implementation and safe state evidence are complete
+  for this continuation, but UI-03 is not owner-accepted. No Products work is
+  authorized. Publication of this ledger entry and the retry change is pending
+  the current `UI-03` commit.
+- **Exact next action:** the owner reviews the combined Orders evidence and
+  explicitly accepts UI-03 or requests one more scoped correction. Only after
+  that acceptance may the sequence move to Products.
+
 ### UI-02 — combined POS review, 21 September 2026
 
 - **Scope inventory:** the live Redmi POS was checked at its WebView viewport of

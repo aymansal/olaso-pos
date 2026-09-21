@@ -35,6 +35,7 @@ export function OrdersListPanel({
   onStatusChange,
   onRangeChange,
   onClearFilters,
+  onRetry,
   onPageChange,
 }: {
   orders: OrderHistoryRecord[];
@@ -59,6 +60,7 @@ export function OrdersListPanel({
     preset?: PeriodPreset;
   }) => void;
   onClearFilters: () => void;
+  onRetry: () => void;
   onPageChange: (page: number) => void;
 }) {
   const t = useT();
@@ -67,6 +69,7 @@ export function OrdersListPanel({
   const start = orders.length === 0 ? 0 : page * ORDER_PAGE_SIZE + 1;
   const end = page * ORDER_PAGE_SIZE + orders.length;
   const hasFilters = query !== '' || status !== 'All' || fromDate !== '' || toDate !== '';
+  const canRetry = message.includes('unavailable');
 
   return (
     <section className={styles.panel} aria-labelledby="orders-title">
@@ -185,13 +188,20 @@ export function OrdersListPanel({
 
       <footer className={styles.footer}>
         <span role={message ? 'alert' : undefined}>
-          {message
-            ? t(message)
-            : t('Showing {from} to {to} of {total} orders', {
-                from: start,
-                to: end,
-                total: totalCount,
-              })}
+          {message ? (
+            <>
+              <span>{t(message)}</span>
+              {canRetry ? (
+                <button type="button" className={styles.retry} onClick={onRetry}>
+                  {t('Retry')}
+                </button>
+              ) : null}
+            </>
+          ) : t('Showing {from} to {to} of {total} orders', {
+            from: start,
+            to: end,
+            total: totalCount,
+          })}
         </span>
         <nav className={styles.pagination} aria-label={t('Orders pagination')}>
           <button

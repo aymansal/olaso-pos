@@ -318,6 +318,7 @@ export function useOrdersData(list: OrdersListQuery) {
     message,
     lastSuccessAt,
     productImages,
+    refresh,
     reprintReceipt,
     cancelOrder,
   };
