@@ -33,9 +33,10 @@ Pencil frames still own their respective product and implementation contracts.
 ## State pointer
 
 - **Active screen: UI-01 — Dashboard. Combined review checkpoint delivered;
-  chart appearance decision and recorded verification gaps remain open.**
-  Owner closed step 03 with the fixed-layout exception; actual speech/dialog
-  and other recorded verification gaps remain unverified, not accepted passes.
+  chart appearance decision remains open.**
+  Owner closed step 03 with the fixed-layout exception. The owner has now
+  explicitly excluded the remaining device-only checks from this screen's
+  acceptance; they are out of scope, not claimed as tested passes.
   The latest owner instruction replaces individual skill handoffs with one
   combined review per screen, after consolidating overlapping requirements.
   Owner closed the Apple pass and explicitly requested the next skill on
@@ -48,8 +49,9 @@ Pencil frames still own their respective product and implementation contracts.
   with a contrasting edge, or use the existing dark green for all bars), then
   apply and verify that correction. Owner authorized Dashboard and explicitly
   asked to skip reviews already performed. Do not repeat the completed checks.
-  Reuse earlier evidence only where still valid; retain the text-size/contrast
-  and other unverified checks. Do not silently implement a different layout. Keep
+  The owner has excluded the remaining device-only checks from this screen;
+  keep them recorded as out of scope rather than converting them into passes.
+  Do not silently implement a different layout. Keep
   light mode, approved geometry, two-line orders, borderless View all, 150ms
   screen fade and the verified text-selection rule.
 - POS option-row choice remains unanswered: plain rows with dividers and
@@ -290,6 +292,11 @@ changes pushed and the owner must accept the screen before moving on.
   The agent's exaggerated long-name fixture is not a real reported café problem
   and does not authorize expanding rows or adding name-detail interactions.
   Withdraw the best-seller wrapping/popover choice; keep the existing row.
+- Owner scope decision, 21 September: TalkBack speech, enlarged OS text/200%
+  zoom, increased-contrast settings, native report/lock dialog focus details,
+  slow-motion frame analysis and the full offline/role device matrix are not
+  required for Dashboard UI polish. They remain historical limitations labelled
+  **out of scope for this screen**, not claimed test passes.
 - Recent orders: line 1 = number + amount; line 2 = time + service type. No
   item count or routine Completed label; cancellation stays clearly marked.
 - Dashboard View all links are borderless. Previous corrections and selected
@@ -453,14 +460,14 @@ changes pushed and the owner must accept the screen before moving on.
 | --- | --- | --- |
 | 04, 13, 14 — grouping, alignment, hierarchy and density | Three operational regions retain their bounds; dominant 44px total, smaller metrics and list headings remain distinct. Two-line recent orders and aligned separators reused. No additional containers or layout change justified. | Owner fixed-layout exception remains; not responsive/reflow compliance. |
 | 05, 19, 20 — clear wording, consistent meaning and recovery | Stock/orders failure messages now point to the existing Retry summary button in EN/FR. French chart subtitle now means sales per day across the period. | Native report/lock popup evidence gaps below are not closed by these text checks. |
-| 06 — size floors, established scale and number detail | Profile role 10px → existing 12px size; name/role fit the same 178×50 trigger in EN/FR. Existing DM Sans, metric hierarchy, tabular/locale formatting and 12px Dashboard metadata retained. | Approved compact header navigation remains 11px; enlarged OS text remains unverified. No new font or scale invented. |
+| 06 — size floors, established scale and number detail | Profile role 10px → existing 12px size; name/role fit the same 178×50 trigger in EN/FR. Existing DM Sans, metric hierarchy, tabular/locale formatting and 12px Dashboard metadata retained. | Approved compact header navigation remains 11px. Enlarged OS text is out of scope for this screen by owner decision. No new font or scale invented. |
 | 07, 16 — actual contrast and semantic project colors | Profile icon and Report text use existing primary-text token. Scoped six-module color audit: 115/119 color-bearing declarations use tokens (96.6%). Four remaining literals are component-specific shadows/avatar surface and the explicitly approved pressed layer. | This percentage is not whole-app token coverage. Chart contrast below target remains open; no speculative token system migration. |
 | 08, 15 — controls, state consistency and visible recovery | Existing native buttons, selected/pressed/focus treatments, anchored popover, concentric language selector and borderless View all retained. Language-save rejection now has a translated message in the existing error area; retry clears it. | No extra outline, scale, blur or duplicate recovery button. Native dialog focus trapping not newly verified. |
 | 09, 10 — remove redundant decoration, preserve useful content | Existing two-line orders, meaningful sales/stock/history separation and best-seller highlight retained. No additional shell, card, badge, decorative animation or invented claim added. | Existing owner-approved layout is the constraint; these reviews do not authorize a new visual style. |
-| 11, 12 — frequent interaction, interruption and motion | Reuse unchanged 150ms fade, immediate menu/chart actions, press feedback, interruption and reduced-motion evidence. No motion source changed. | Existing 220ms indicator/keyboard fade and nonselectable UI are recorded owner/project exceptions; full slow-motion frame study remains unverified. |
+| 11, 12 — frequent interaction, interruption and motion | Reuse unchanged 150ms fade, immediate menu/chart actions, press feedback, interruption and reduced-motion evidence. No motion source changed. | Existing 220ms indicator/keyboard fade and nonselectable UI are recorded owner/project exceptions; full slow-motion frame study is out of scope for this screen by owner decision. |
 | 17 — honest chart encoding and accessible detail | Reuse proportional height, zero-value, 12-day ordering, units, exact tap value and keyboard evidence. French subtitle corrected. | Pale rendered bar measured 2.21:1. Owner choice pending; if retaining shades, also resolve the existing tone5/tone6 darkness reversal without implying a correct sequential ramp. |
-| 18 — tablet behavior and platform conventions | Existing native popover, ordinary touch controls, fixed native viewport and scoped selection behavior retained; current Redmi header/menu fit checked. | Android product: no iOS/PWA install features apply. Actual speech, enlarged text and native prompt gaps remain, not N/A. |
-| 21 — complete-flow evidence | Changed wording and failed-language/retry flow checked once in EN/FR real-component browser fixture; shared header checked across six actual Redmi routes. Reused prior unchanged loading/empty/chart/route/selection evidence. | Overall Dashboard remains incomplete until chart choice and recorded gaps/owner acceptance are resolved. |
+| 18 — tablet behavior and platform conventions | Existing native popover, ordinary touch controls, fixed native viewport and scoped selection behavior retained; current Redmi header/menu fit checked. | Android product: no iOS/PWA install features apply. Actual speech, enlarged text and native prompt checks are out of scope for this screen by owner decision. |
+| 21 — complete-flow evidence | Changed wording and failed-language/retry flow checked once in EN/FR real-component browser fixture; shared header checked across six actual Redmi routes. Reused prior unchanged loading/empty/chart/route/selection evidence. | Overall Dashboard remains incomplete only until chart choice and owner acceptance are resolved; device-only checks are owner-scoped out of this card. |
 
 - Actual changed files: Dashboard StockAttentionPanel and RecentOrdersPanel
   TSX; shared Header CSS; ProfileControl TSX/CSS; `src/lib/fr.ts`; owning POS
@@ -499,14 +506,16 @@ changes pushed and the owner must accept the screen before moving on.
   No structural module/component changes requiring graph regeneration. Known
   CSS-scope scanner limitation remains; no new animation/global selector was
   added. Earlier Apple/accessibility checks were not restarted.
-- **Open:** chart appearance choice; actual TalkBack speech/repeated notices;
-  current native report/cart dialog visual and keyboard-focus checks; actual
-  enlarged OS text/200% zoom and usable increased contrast; full motion frame
-  study and native offline/role matrix. Fixed geometry and solid surfaces remain
-  owner exceptions. Printer output and seeded Orders history are separate
-  hardware/data issues, not corrected UI claims. No 100% or screen acceptance.
+- **Open:** chart appearance choice. The owner explicitly moved TalkBack speech,
+  native report/cart dialog focus details, enlarged OS text/200% zoom, usable
+  increased contrast, full motion frame study and the native offline/role matrix
+  out of this screen's scope. They remain recorded as out-of-scope limitations,
+  not as tested passes. Fixed geometry and solid surfaces remain owner
+  exceptions. Printer output and seeded Orders history are separate
+  hardware/data issues. No 100% claim until the chart choice is applied and the
+  owner accepts the screen.
 - Exact next action: owner's pending chart choice, focused correction/check,
-  then report remaining limitations and obtain screen acceptance before UI-02.
+  then obtain screen acceptance before UI-02.
 - Publication: `64ef223` pushed to `origin/main` at
   `https://github.com/aymansal/olaso-pos`. Final staged diff check passed;
   only the nine files listed above were included. This follow-up records
