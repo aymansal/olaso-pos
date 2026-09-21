@@ -109,6 +109,7 @@ export function OrdersListPanel({
         <div
           className={styles.filters}
           style={{ '--count': filters.length, '--index': filters.indexOf(status) } as CSSProperties}
+          role="group"
           aria-label={t('Order status')}
         >
           <span className={styles.indicator} aria-hidden="true" />

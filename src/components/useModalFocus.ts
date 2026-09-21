@@ -9,6 +9,16 @@ const focusableSelector = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
+function canRestore(element: HTMLElement | null): element is HTMLElement {
+  return Boolean(
+    element
+      && element.isConnected
+      && element !== document.body
+      && element !== document.documentElement
+      && !element.matches(':disabled,[aria-hidden="true"]'),
+  );
+}
+
 export function useModalFocus<T extends HTMLElement>(
   open: boolean,
   onClose: () => void,
@@ -25,12 +35,12 @@ export function useModalFocus<T extends HTMLElement>(
       : null;
     const dialog = dialogRef.current;
     if (!dialog) return undefined;
-    const modal = dialog;
+    const dialogElement = dialog;
 
     const focusable = () =>
       [...dialog.querySelectorAll<HTMLElement>(focusableSelector)]
         .filter((element) => element.getClientRects().length);
-    const first = focusable()[0] ?? modal;
+    const first = focusable()[0] ?? dialog;
     first.focus();
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -43,7 +53,7 @@ export function useModalFocus<T extends HTMLElement>(
       const items = focusable();
       if (items.length === 0) {
         event.preventDefault();
-        modal.focus();
+        dialogElement.focus();
         return;
       }
       const currentIndex = items.indexOf(document.activeElement as HTMLElement);
@@ -56,13 +66,14 @@ export function useModalFocus<T extends HTMLElement>(
       }
     }
 
-    modal.addEventListener('keydown', handleKeyDown);
+    dialogElement.addEventListener('keydown', handleKeyDown);
     return () => {
-      modal.removeEventListener('keydown', handleKeyDown);
-      if (previous?.isConnected && previous !== document.body && previous !== document.documentElement) {
+      dialogElement.removeEventListener('keydown', handleKeyDown);
+      if (canRestore(previous)) {
         previous.focus();
       } else if (restoreSelector) {
-        document.querySelector<HTMLElement>(restoreSelector)?.focus();
+        const fallback = document.querySelector<HTMLElement>(restoreSelector);
+        if (canRestore(fallback)) fallback.focus();
       }
     };
   }, [open, restoreSelector]);

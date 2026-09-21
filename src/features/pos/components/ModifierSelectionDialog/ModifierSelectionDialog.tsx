@@ -4,7 +4,7 @@ import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPo
 import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import { balanceOptionGroups } from '../../balanceOptionGroups';
-import { useModalFocus } from '../../useModalFocus';
+import { useModalFocus } from '../../../../components/useModalFocus';
 import styles from './ModifierSelectionDialog.module.css';
 
 export type PosProductSize = {

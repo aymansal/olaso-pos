@@ -234,6 +234,7 @@ export function OrderDetailPanel({
       {cancellationOpen ? (
         <CancellationDialog
           receiptNumber={order.receipt.receiptNumber}
+          restoreSelector={'[data-orders-selected-row="true"]'}
           onClose={() => setCancellationOpen(false)}
           onConfirm={(reason) => onCancel(order, reason)}
         />

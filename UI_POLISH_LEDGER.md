@@ -32,21 +32,20 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-03 — Orders / Sales data correction before polish.**
+- **Active screen: UI-03 — Orders / Sales combined polish review.**
   The owner explicitly advanced the sequence from POS to Orders on 21
-  September 2026 and reported that seeded development orders were missing
-  from every Orders period. Dashboard's recorded out-of-scope checks remain
+  September 2026. The cloud-order data correction is complete and published;
+  this card now records the combined skill review and its first justified
+  interaction fixes. Dashboard's recorded out-of-scope checks remain
   historical limitations; advancing does not turn them into technical passes.
   The latest owner instruction replaces individual skill handoffs with one
   combined review per screen, after consolidating overlapping requirements.
-  Owner closed the Apple pass and explicitly requested the next skill on
-  21 September. This accepts advancing the sequence; it does not turn earlier
-  unverified checks into passes or claim 100% technical compliance.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Dashboard was the first screen card; the current work is UI-02 POS. No new
   UI implementation or app testing was performed during ledger creation.
-- **Exact next action:** owner confirms the restored Orders periods, then begin
-  the combined UI-03 polish review. The previous POS option-row question stays
+- **Exact next action:** owner reviews the Orders screen and its popup states on
+  the browser/tablet, then the remaining UI-03 states are verified before this
+  screen is marked complete. The previous POS option-row question stays
   recorded in the UI-02 checkpoint; no new visual choice was invented here.
 - Do not automatically jump to Products, ingredients, security or sync work.
 
@@ -369,6 +368,63 @@ changes pushed and the owner must accept the screen before moving on.
   [`origin/main`](https://github.com/aymansal/olaso-pos). The installed beta
   APK SHA-256 is
   `41e01a67da0d6e1afbfe8a0ce8d17b6fdae9eec961ab5f1fa5bd9c8f47c169d9`.
+
+### UI-03 — combined Orders polish checkpoint, 21 September 2026
+
+- **Scope reviewed:** the 1340 × 804 Orders screen, search field, status
+  filters, date calendar portal, paginated table rows, empty/loading message,
+  selected-order detail panel, reprint/cancel actions, and cancellation dialog.
+  Data visualization was not applicable because Orders has no chart surface.
+  The approved two-panel geometry, 42px toolbar controls, and existing table
+  density were kept unchanged.
+- **Research before implementation:** the [W3C modal dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
+  was checked for focus entry, Tab containment, Escape close, and focus return;
+  [MDN `:focus-visible`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:focus-visible),
+  [MDN `touch-action`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action),
+  and [MDN `user-select`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/user-select)
+  were checked for keyboard indication, tablet taps, and the owner’s
+  screen-by-screen selection rule. Android [WebView guidance](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and the Capacitor [Web API boundary](https://capacitorjs.com/docs/core-apis/web)
+  confirmed that this interaction work belongs in the existing React/WebView
+  layer; no native plugin change was justified. Checked 21 September 2026.
+- **Skill findings merged once:** Apple/Emil restraint and immediate feedback;
+  Better Accessibility focus visibility, 44px dialog actions, Escape/focus
+  return and error announcement; Better UI active feedback and reduced-motion
+  compatibility; Better Writing recovery wording; Mobile Native touch
+  handling; Error Handling UX validation and preserved input; Localization and
+  token reviews found no new wording or token requirement. No layout,
+  palette, animation, decoration, or data-model choice was invented.
+- **Changes made:** added a shared `src/components/useModalFocus.ts` and used
+  it for the Orders calendar and cancellation popup plus the existing POS
+  payment/modifier dialogs. Popups now focus their first control, keep Tab
+  inside, close with Escape, and restore the invoking control or selected row.
+  Orders buttons now expose visible green/white focus rings, immediate press
+  feedback, and tablet `touch-action`; interface labels and values are
+  unselectable while search and reason text remain selectable. Cancellation
+  now reports the required 3–240 character reason inline, links the error to
+  the textarea, and keeps the submit action available until the request starts.
+- **Verification:** `npm run build`, `npm run check:pos`, Graphify code-only
+  refresh, `npm run android:beta`, and Redmi install with `adb install -r`
+  passed. Redmi showed the restored 1,028-order first page at 1340 × 804 in
+  `tmp/ui03-orders-polished.png`; the existing rows, selected detail, payment
+  totals and cloud-only action note remained visible. WebView checks confirmed
+  the calendar receives focus, Shift+Tab wraps to its last control, Escape
+  closes it, and focus returns to the page. `check:orders` and
+  `check:reports` reached their existing protected destructive-reset gate;
+  no reset was attempted. The CSS scope scanner still reports its existing
+  unrelated `from`/`to` animation selectors.
+- **Limitations:** the browser preview remained locked during this checkpoint;
+  the Redmi is the authoritative visual evidence. The selected seeded rows
+  are cloud-only, so cancellation popup submit/recovery and local reprint
+  cannot be exercised on this tablet row. Cloud text search remains the
+  bounded-data follow-up recorded above. Screen-reader speech, 200% text,
+  RTL, and every French Orders state remain unverified.
+- **Status:** combined review is in progress; this checkpoint is not a claim
+  that UI-03 is complete. Exact next action is owner review of the Orders
+  screen and popup states, then finish the remaining UI-03 loading/empty/error,
+  French and cancellation evidence before advancing to Products.
+- **Publication:** implementation and ledger publication commit SHAs will be
+  recorded here after the focused change is pushed to `origin/main`.
 
 ### UI-02 — combined POS review, 21 September 2026
 

@@ -92,6 +92,7 @@ export function OrdersTable({
           className={styles.row}
           role="row"
           aria-selected={order.key === selectedKey}
+          data-orders-selected-row={order.key === selectedKey ? 'true' : undefined}
           onClick={() => onSelect(order.key)}
           key={order.key}
         >

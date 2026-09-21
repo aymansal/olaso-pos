@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from '@boxicons/react';
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useLayoutEffect, useState, type CSSProperties } from 'react';
 import { OverlayPortal } from '../OverlayPortal';
+import { useModalFocus } from '../useModalFocus';
 import {
   calendarMonthEnd,
   calendarMonthOf,
@@ -112,7 +113,7 @@ export function PeriodCalendar({
   const language = useLanguage();
   const today = localBusinessDate();
   const compact = presets.length === 0;
-  const dialog = useRef<HTMLElement>(null);
+  const dialogRef = useModalFocus(true, onClose);
   const [style, setStyle] = useState<CSSProperties>(() =>
     place(anchor, compact ? 248 : 400, 248),
   );
@@ -130,8 +131,8 @@ export function PeriodCalendar({
   );
 
   useLayoutEffect(() => {
-    if (!dialog.current) return;
-    setStyle(place(anchor, dialog.current.offsetWidth, dialog.current.offsetHeight));
+    if (!dialogRef.current) return;
+    setStyle(place(anchor, dialogRef.current.offsetWidth, dialogRef.current.offsetHeight));
   }, [anchor, visibleMonth, draft, pick]);
 
   function apply(range: PeriodRange, preset?: PeriodPreset) {
@@ -167,11 +168,12 @@ export function PeriodCalendar({
         }}
       >
         <section
-          ref={dialog}
+          ref={dialogRef}
           className={compact ? `${styles.dialog} ${styles.compact}` : styles.dialog}
           role="dialog"
           aria-modal="true"
           aria-label={t('Calendar')}
+          tabIndex={-1}
           style={style}
         >
           {presets.length ? (

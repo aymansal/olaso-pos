@@ -8,6 +8,8 @@
   border: 1px solid var(--olaso-panel-border);
   border-radius: 28px;
   background: var(--olaso-white);
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .header {
@@ -369,6 +371,19 @@
 
 .actions button span {
   min-width: 0;
+}
+
+.actions button:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.reprint:active:not(:disabled) {
+  filter: brightness(0.88);
+}
+
+.cancelOrder:active:not(:disabled) {
+  background: var(--olaso-danger-soft);
 }
 
 .reprint,

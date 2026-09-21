@@ -115,6 +115,8 @@ export const fr: Record<string, string> = {
   'Copy failed.': 'La copie a échoué.',
   'Copy from product': 'Copier depuis un produit',
   'Correct': 'Corriger',
+  'Correction reason must contain 3 to 240 characters.':
+    'Le motif doit contenir entre 3 et 240 caractères.',
   'Correct expense': 'Corriger la dépense',
   'Could not use that photo.': 'Cette photo n’a pas pu être utilisée.',
   'That photo has no visible product.': 'Cette photo ne contient aucun produit visible.',

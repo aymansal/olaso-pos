@@ -13,7 +13,7 @@ import {
   type PaymentDraft,
   type PaymentTender,
 } from '../../posSession';
-import { useModalFocus } from '../../useModalFocus';
+import { useModalFocus } from '../../../../components/useModalFocus';
 import styles from './PaymentDialog.module.css';
 
 export type PaymentLineCopy = {
