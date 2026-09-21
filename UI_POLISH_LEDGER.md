@@ -485,6 +485,8 @@ changes pushed and the owner must accept the screen before moving on.
 - **Exact next action:** owner manually reviews this focused correction and the
   now-accessible cancellation popup; then verify the remaining UI-03 empty,
   loading, error, French and reprint states before marking Orders complete.
+- **Publication:** implementation `137b430` is pushed to
+  [`origin/main`](https://github.com/aymansal/olaso-pos/commit/137b430).
 
 ### UI-02 — combined POS review, 21 September 2026
 
