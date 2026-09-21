@@ -41,12 +41,11 @@ Pencil frames still own their respective product and implementation contracts.
   The latest owner instruction replaces individual skill handoffs with one
   combined review per screen, after consolidating overlapping requirements.
 - **UI-00 complete:** ledger and recovery instructions created and published.
-  Dashboard was the first screen card; the current work is UI-02 POS. No new
+  Dashboard was the first screen card; the current work is UI-03 Orders. No new
   UI implementation or app testing was performed during ledger creation.
-- **Exact next action:** owner reviews the Orders screen and its popup states on
-  the browser/tablet, then the remaining UI-03 states are verified before this
-  screen is marked complete. The previous POS option-row question stays
-  recorded in the UI-02 checkpoint; no new visual choice was invented here.
+- **Exact next action:** owner reviews the complete Orders evidence on the
+  browser/tablet and accepts or rejects UI-03. Do not advance to Products until
+  the owner accepts Orders; no new visual choice is pending from this step.
 - Do not automatically jump to Products, ingredients, security or sync work.
 
 ## Owner rules — no personal design choices
@@ -536,6 +535,70 @@ changes pushed and the owner must accept the screen before moving on.
   loading, error, French and reprint states before marking Orders complete.
 - **Publication:** implementation `137b430` is pushed to
   [`origin/main`](https://github.com/aymansal/olaso-pos/commit/137b430).
+
+### UI-03 — empty-state recovery action and physical verification, 21 September 2026
+
+- **Finding and decision:** the empty Orders result previously said only
+  `No matching orders.`. The current `better-writing` rule says filtered empty
+  states should offer a clear exit, and `error-handling-ux` requires a specific
+  recovery action. The smallest approved change reuses the existing controls:
+  `Clear filters` clears search, status, and date, then selects the existing
+  `All` range. The action is hidden while loading and when there is nothing to
+  clear. No order, database record, layout, or new dependency was added.
+- **Research before implementation (21 September 2026):** the installed
+  `better-writing`, `error-handling-ux`, `loading-states`,
+  `design-qa-checklist`, and prior combined UI-03 skills were reread. Android's
+  [WebView guidance](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and Capacitor's [Web API boundary](https://capacitorjs.com/docs/core-apis/web)
+  confirm this is React/WebView state and does not require Kotlin or a native
+  plugin. Alternatives were a new empty-state component, a new filter system,
+  or native code; all were unnecessary.
+- **Files changed:** `src/features/orders/OrdersScreen.tsx`,
+  `src/features/orders/components/OrdersListPanel/OrdersListPanel.tsx`,
+  `src/features/orders/components/OrdersTable/OrdersTable.tsx`,
+  `src/features/orders/components/OrdersTable/OrdersTable.module.css`,
+  `src/lib/fr.ts`, and this ledger. The temporary ignored browser fixture was
+  updated only so it could render the new required prop.
+- **Browser evidence:** the clean Orders fixture rendered at exactly `1340 ×
+  800`; `No matching orders.` and `Clear filters` were visible together, the
+  table had no overflow, and the clean tab reported no console errors or
+  warnings. A fresh French fixture at the same size showed `Aucune commande
+  correspondante.` and `Effacer les filtres`, with no overflow or console
+  errors/warnings. Existing live, loading, and cloud-error fixtures remained
+  available from the same UI-03 review set.
+- **Physical evidence:** device is Redmi Pad `22081283G`, WebView `1340 ×
+  804`. Screenshot-first capture `tmp/ui03-empty-first.png` showed the Olaso
+  lock screen, not a black sleeping display. After the APK update, the install
+  briefly left Android Recent Apps visible; no Recent Apps/menu key was sent,
+  and `am start com.olaso.pos/.MainActivity` returned to Olaso. The owner
+  unlock used the existing in-app button menu with the PIN kept out of files and
+  output. Search for a harmless non-order string produced the empty state and
+  `Clear filters`; pressing it restored `0926-0001`, switched the date control
+  to `All dates`, and showed the saved first page (`1,029` orders). Captures:
+  `tmp/ui03-empty-orders-before-search.png`,
+  `tmp/ui03-empty-search-focused.png`, `tmp/ui03-empty-orders-result.png`,
+  and `tmp/ui03-empty-orders-restored-full.png`. No console or focused logcat
+  errors appeared; the development sale and database were unchanged.
+- **Checks:** `npm run build` passed. `npm run android:beta` passed with the
+  existing JDK 21 toolchain after the shell-only missing-`JAVA_HOME` retry;
+  `adb install -r` passed and preserved the café data. APK SHA-256 is
+  `A23F5A7129BA909BA9799DA793F900B0A3E62641CA8B15910670E5426E5DA3EF`.
+  `npm run check:orders` passed its static receipt assertions, then stopped at
+  its protected owner-PIN restore gate; no reset or reseed was attempted.
+  The focused empty-state source guard passed. `npm run check:css-scope` still
+  reports only the four existing `from`/`to` keyframe selectors in untouched
+  App/Lock CSS. `git diff --check` passed.
+  `graphify update .` passed with `2,919` nodes, `6,220` edges, and `197`
+  communities; it reported the existing three Gradle syntax warnings and the
+  existing need for LLM community relabeling.
+- **Status and limitation:** the empty-state recovery gap is closed and this
+  step did not change the approved layout or sliding-selection rule. Loading,
+  cloud-error, French, reprint, cancellation, and recovery evidence remains
+  part of the open owner review; this does not mark UI-03 accepted and does not
+  authorize Products.
+- **Exact next action:** owner reviews the combined UI-03 browser/tablet
+  evidence and explicitly accepts or requests another scoped correction. Keep
+  the screen on Orders until that acceptance.
 
 ### UI-03 — owner sliding-state review and combined skill checklist, 21 September 2026
 

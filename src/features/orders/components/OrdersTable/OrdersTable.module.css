@@ -176,11 +176,37 @@
 
 .empty {
   display: grid;
-  place-items: center;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
   height: 440px;
   margin: 0;
   color: var(--olaso-text-meta);
   font-size: 10px;
+}
+
+.emptyAction {
+  min-width: 132px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 24px;
+  color: var(--olaso-white);
+  background: var(--olaso-green);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.emptyAction:focus-visible {
+  outline: 2px solid var(--olaso-green);
+  outline-offset: 2px;
+}
+
+.emptyAction:active {
+  background: var(--olaso-green-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {

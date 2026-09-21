@@ -88,6 +88,7 @@ export const fr: Record<string, string> = {
     'Choisissez un équipier et saisissez un code à six chiffres.',
   'Choose product': 'Choisir un produit',
   'Clear cart': 'Vider',
+  'Clear filters': 'Effacer les filtres',
   'Clear search': 'Effacer la recherche',
   'Clock': 'Horloge',
   'Close cancellation': 'Fermer l’annulation',

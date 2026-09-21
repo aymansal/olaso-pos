@@ -34,6 +34,7 @@ export function OrdersListPanel({
   onQueryChange,
   onStatusChange,
   onRangeChange,
+  onClearFilters,
   onPageChange,
 }: {
   orders: OrderHistoryRecord[];
@@ -57,6 +58,7 @@ export function OrdersListPanel({
     toDate: string;
     preset?: PeriodPreset;
   }) => void;
+  onClearFilters: () => void;
   onPageChange: (page: number) => void;
 }) {
   const t = useT();
@@ -64,6 +66,7 @@ export function OrdersListPanel({
   const [dateAnchor, setDateAnchor] = useState<DOMRect>();
   const start = orders.length === 0 ? 0 : page * ORDER_PAGE_SIZE + 1;
   const end = page * ORDER_PAGE_SIZE + orders.length;
+  const hasFilters = query !== '' || status !== 'All' || fromDate !== '' || toDate !== '';
 
   return (
     <section className={styles.panel} aria-labelledby="orders-title">
@@ -174,6 +177,10 @@ export function OrdersListPanel({
         selectedKey={selectedKey}
         onSelect={onSelect}
         emptyMessage={isLoading ? t('Loading order history…') : t('No matching orders.')}
+        emptyAction={isLoading || !hasFilters ? undefined : {
+          label: t('Clear filters'),
+          onClick: onClearFilters,
+        }}
       />
 
       <footer className={styles.footer}>

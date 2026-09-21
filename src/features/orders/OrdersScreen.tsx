@@ -75,6 +75,12 @@ export function OrdersScreen() {
           setRange(next);
           setPage(0);
         }}
+        onClearFilters={() => {
+          setQuery('');
+          setStatus('All');
+          setRange({ fromDate: '', toDate: '', preset: 'all' });
+          setPage(0);
+        }}
         onPageChange={setPage}
       />
       <OrderDetailPanel

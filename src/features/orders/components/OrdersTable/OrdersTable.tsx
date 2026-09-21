@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { OrderHistoryRecord } from '../../../../data/orderHistory';
 import { useLanguage, useT } from '../../../../lib/locale';
 import { formatDate, formatTime } from '../../../../lib/date';
@@ -51,11 +51,13 @@ export function OrdersTable({
   selectedKey,
   onSelect,
   emptyMessage,
+  emptyAction,
 }: {
   orders: OrderHistoryRecord[];
   selectedKey?: string;
   onSelect: (key: string) => void;
-  emptyMessage: string;
+  emptyMessage: ReactNode;
+  emptyAction?: { label: string; onClick: () => void };
 }) {
   const t = useT();
   const language = useLanguage();
@@ -70,7 +72,14 @@ export function OrdersTable({
       </div>
 
       {orders.length === 0 ? (
-        <p className={styles.empty} role="status">{emptyMessage}</p>
+        <div className={styles.empty} role="status">
+          <span>{emptyMessage}</span>
+          {emptyAction ? (
+            <button type="button" className={styles.emptyAction} onClick={emptyAction.onClick}>
+              {emptyAction.label}
+            </button>
+          ) : null}
+        </div>
       ) : (
       <div
         className={styles.body}
