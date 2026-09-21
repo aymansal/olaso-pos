@@ -365,8 +365,10 @@ changes pushed and the owner must accept the screen before moving on.
   Cloud text search remains the explicit follow-up above. Owner review of the
   restored periods is required before the combined UI-03 polish pass begins.
 - **Publication:** implementation commit will be recorded after this change is
-  pushed; the follow-up ledger publication will record its SHA and
-  `origin/main`.
+  pushed; implementation `66af2fb` is now pushed to
+  [`origin/main`](https://github.com/aymansal/olaso-pos). The installed beta
+  APK SHA-256 is
+  `41e01a67da0d6e1afbfe8a0ce8d17b6fdae9eec961ab5f1fa5bd9c8f47c169d9`.
 
 ### UI-02 — combined POS review, 21 September 2026
 
