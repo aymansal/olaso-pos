@@ -106,7 +106,12 @@ export function ProfileControl({
                 type="button"
                 className={language === value ? styles.languageOn : ''}
                 aria-pressed={language === value}
-                onClick={() => void onLanguageChange(value)}
+                onClick={() => {
+                  setError('');
+                  void onLanguageChange(value).catch(() => {
+                    setError(t('Language could not be changed. Select EN or FR to try again.'));
+                  });
+                }}
                 key={value}
               >
                 {value === 'en' ? 'EN' : 'FR'}

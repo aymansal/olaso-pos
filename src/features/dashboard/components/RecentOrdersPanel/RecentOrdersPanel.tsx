@@ -42,7 +42,7 @@ export function RecentOrdersPanel({
         {error || isLoading || orders.length === 0 ? (
           <p className={styles.state}>
             {error
-              ? t('Recent orders are unavailable.')
+              ? t('Recent orders are unavailable. Select Retry summary.')
               : isLoading
                 ? t('Loading recent orders…')
                 : t('No saved orders yet.')}

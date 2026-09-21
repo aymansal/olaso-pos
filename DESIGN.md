@@ -752,6 +752,12 @@ Owner acceptance of the completed pass remains separate from implementation.
 - Long stock names wrap and the existing list scrolls vertically when needed.
   The shared staff popover is 232px wide with 13px action/error copy and 48px
   language/action controls. Its trigger and header geometry remain unchanged.
+  Staff-role supporting text uses the existing 12px scale within that trigger.
+  Dashboard list failures name the existing Retry summary action; do not add
+  duplicate recovery buttons for the same snapshot. The French chart subtitle
+  describes daily sales across the period, not just today's sales.
+  A failed language change uses the existing staff-menu error region and names
+  EN/FR as the retry controls; the selected language changes only after saving.
   Staff popover actions retain native button semantics and Tab navigation;
   Escape returns keyboard focus to the profile trigger.
 - Staff-switch confirmation and report errors remain platform-owned prompts;

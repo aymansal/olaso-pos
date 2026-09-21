@@ -32,7 +32,8 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard. Combined skill review is next.**
+- **Active screen: UI-01 — Dashboard. Combined review checkpoint delivered;
+  chart appearance decision and recorded verification gaps remain open.**
   Owner closed step 03 with the fixed-layout exception; actual speech/dialog
   and other recorded verification gaps remain unverified, not accepted passes.
   The latest owner instruction replaces individual skill handoffs with one
@@ -43,9 +44,10 @@ Pencil frames still own their respective product and implementation contracts.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** when the owner starts Dashboard, read all listed
-  applicable skills/references, map overlapping requirements to shared checks,
-  and complete the remaining distinct work across its full interaction scope.
+- **Exact next action:** obtain the pending chart correction choice (keep shades
+  with a contrasting edge, or use the existing dark green for all bars), then
+  apply and verify that correction. Owner authorized Dashboard and explicitly
+  asked to skip reviews already performed. Do not repeat the completed checks.
   Reuse earlier evidence only where still valid; retain the text-size/contrast
   and other unverified checks. Do not silently implement a different layout. Keep
   light mode, approved geometry, two-line orders, borderless View all, 150ms
@@ -138,24 +140,24 @@ rework. Existing results below are retained evidence, not automatic fresh passes
 | 01 | `apple-design` | Closed by owner; recorded verification gaps carried forward |
 | 02 | `better-interface` | Scope/routing complete; domain verdict waits for steps 03–08 |
 | 03 | `better-accessibility` | Closed by owner with fixed-layout exception; speech/dialog and other recorded checks remain unverified |
-| 04 | `better-layout` | Queued |
-| 05 | `better-writing` | Queued |
-| 06 | `better-typography` | Queued |
-| 07 | `better-colors` | Queued |
-| 08 | `better-ui` | Queued |
-| 09 | `no-ai-design-slop` | Queued |
-| 10 | `audit-ai-design-slop` | Queued |
-| 11 | `emil-design-eng` | Queued |
-| 12 | `review-animations` | Queued |
-| 13 | `critique-visual-hierarchy` | Queued |
-| 14 | `critique-information-density` | Queued |
-| 15 | `critique-affordance` | Queued |
-| 16 | `design-token-audit` | Queued |
-| 17 | `data-visualization` | Queued |
-| 18 | `mobile-native` | Queued |
-| 19 | `localization-design` | Queued |
-| 20 | `error-handling-ux` | Queued |
-| 21 | `design-qa-checklist` | Queued |
+| 04 | `better-layout` | Reviewed; unchanged geometry verified; fixed-layout exception retained |
+| 05 | `better-writing` | Recovery instructions corrected and checked in EN/FR |
+| 06 | `better-typography` | Role text corrected to 12px; enlarged-text gap retained |
+| 07 | `better-colors` | Chart contrast finding awaits owner appearance choice |
+| 08 | `better-ui` | Reviewed; approved controls retained; frame/dialog gaps carried |
+| 09 | `no-ai-design-slop` | Reviewed; no further decoration removal justified |
+| 10 | `audit-ai-design-slop` | Reviewed with row 09; no duplicate redesign |
+| 11 | `emil-design-eng` | Reviewed; existing owner motion/selection exceptions retained |
+| 12 | `review-animations` | Existing verified duration/interruption reused; full frame study unverified |
+| 13 | `critique-visual-hierarchy` | Reviewed; existing summary-first hierarchy retained |
+| 14 | `critique-information-density` | Reviewed; approved two-line rows and three regions retained |
+| 15 | `critique-affordance` | Reviewed; shared recovery finding corrected; chart contrast still open |
+| 16 | `design-token-audit` | Scoped audit complete; two existing primary-text token mappings corrected |
+| 17 | `data-visualization` | Accurate geometry/details evidence reused; chart color finding open |
+| 18 | `mobile-native` | Reviewed on Redmi; fixed viewport/selection exceptions and speech gap retained |
+| 19 | `localization-design` | French daily-period wording corrected; EN/FR fit verified |
+| 20 | `error-handling-ux` | List and language recovery corrected; native dialog gaps retained |
+| 21 | `design-qa-checklist` | Combined evidence recorded; not full-screen approval |
 
 Better Interface is an umbrella skill: row 02 routes findings to rows 03–08;
 its orchestration is not another full inspection of the same requirements.
@@ -215,7 +217,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Apple closed by owner; Better Interface routed; Accessibility corrections and remaining limits below |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Combined review checkpoint delivered; chart choice and recorded gaps remain open |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
@@ -307,6 +309,135 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — remaining skills combined, 21 September 2026
+
+- Owner authorized starting Dashboard and skipping completed reviews. Do not
+  restart Apple, Better Interface routing or Better Accessibility. `git diff
+  8d041a0 --` for Dashboard, Header, ProfileControl, TopNavigation, App, global
+  CSS and translations was empty before this pass; reuse their prior evidence
+  for unchanged behavior. Earlier unverified items stay unverified.
+- Read remaining rows 04–21 actual SKILL.md files. Relevant references read:
+  Better Layout grouping/alignment and spacing/adaptivity; Typography spacing,
+  wrapping/punctuation, variable-font basics, details/accessibility; Colors
+  contrast, token naming and palette structure; UI surfaces/icons/performance;
+  anti-slop ARTICLE sections 1–10; animation STANDARDS. Graphify queried;
+  Ponytail full; applicable root/source/features/Dashboard/POS/Android DOX read.
+- Scope: existing three panels, shared header/profile actions, chart detail,
+  EN/FR, ordinary cafe names, live/loading/empty/error/retry and selection.
+  No new layout, theme, workflow or database work. Unrelated files preserved.
+
+| Distinct check group | Skill coverage | Evidence reuse / remaining work |
+| --- | --- | --- |
+| Layout and hierarchy | 04, 09, 10, 13, 14, 21 | Reuse fixed bounds/two-line rows; inspect existing grouping, density and remaining states once |
+| Wording and language | 05, 06, 19, 20, 21 | Check labels against actions and date/amount meaning; EN/FR fit once |
+| Type and tokens | 06, 07, 08, 16, 21 | Inspect actual text sizes/weights and token literals; reuse existing font and numeric system |
+| Contrast and chart meaning | 07, 15, 17, 21 | Measure rendered text/graphics once; reuse proportional-height/zero-value and chart keyboard evidence |
+| Interaction and motion | 08–12, 15, 18, 21 | Reuse press, Escape, focus, 150ms fade and reduced-motion evidence; inspect remaining motion requirements once |
+| Recovery and complete flow | 05, 15, 19–21 | Reuse verified routes/retry/data-preservation; retain unverified native prompt/speech limitations |
+
+- Confirmed conflicts resolved by existing owner decisions: fixed viewport/no
+  reflow; nonselectable UI; no scale/blur/glass/stagger; solid light surfaces;
+  existing navigation indicator/crossfade. EN/FR only: RTL/new-language support
+  is outside the current product. These are scoped exceptions, not literal
+  compliance with every rule. No repeat approval request for accepted choices.
+- Before-edit findings: shared profile role is 10px versus the established
+  12px supporting size; French `Daily net sales` says `Ventes nettes du jour`
+  although the chart spans 12 days; list failure text offers no recovery hint
+  even though Retry summary refreshes the same snapshot. Chart shade 6 measures
+  2.21:1 against its rendered white background, below the 3:1 graphical target;
+  asked owner to choose an existing-green edge or uniform existing-green bars.
+- Research, checked 21 September: [W3C graphical contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html)
+  and [contrasting boundaries](https://www.w3.org/WAI/WCAG21/Techniques/general/G209),
+  [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview),
+  [Capacitor web layer](https://capacitorjs.com/docs/core-apis/web).
+  Better Typography size floors and existing Dashboard 12px copy justify the
+  role-size reuse. Better Writing errors/consistent meaning, localization date
+  semantics and Error Handling UX recovery justify the three copy corrections.
+  Keep the existing recovery button; do not add duplicate actions or new UI.
+- Intended implementation: CSS role 10→12px within the same 178×50 trigger;
+  reuse the existing primary-text token for its identical hard-coded value;
+  correct French chart subtitle and EN/FR list recovery instructions. Chart
+  appearance waits for the owner's answer. React/CSS/translation changes only;
+  native WebView/Capacitor continue rendering. No Kotlin/plugin/dependency.
+- Intended checks: rendered EN/FR and error/retry states, unchanged geometry,
+  measured contrast, existing shared-header six routes after role-size change;
+  build/install over current Redmi preserving data. No reseeding tests.
+- Final recovery inspection found the language buttons discard a rejected save
+  promise, so failure gives no visible feedback. Error Handling UX communication
+  and recovery require a message beside the action. Before implementing, read
+  the App callback: it updates displayed language after persistence succeeds.
+  [MDN Promise.catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch)
+  checked today confirms the existing callback's rejection can be handled locally.
+  Reuse the staff menu's existing error region, clear it on retry and name EN/FR
+  in the recovery instruction. Do not change persistence or add a new popup.
+  Verify a rejected callback followed by success in the isolated real-component
+  fixture, in both languages. This is app presentation under the same native
+  boundary; the final package must include this additional correction.
+- Token audit also maps Header's near-identical raw primary text color to the
+  existing `--olaso-text` role (Better Colors: use project tokens). Profile's
+  exact same-value replacement and Header reuse do not introduce a palette.
+
+#### Combined findings and coverage result
+
+| Skills / rule | Result and evidence | Remaining boundary |
+| --- | --- | --- |
+| 04, 13, 14 — grouping, alignment, hierarchy and density | Three operational regions retain their bounds; dominant 44px total, smaller metrics and list headings remain distinct. Two-line recent orders and aligned separators reused. No additional containers or layout change justified. | Owner fixed-layout exception remains; not responsive/reflow compliance. |
+| 05, 19, 20 — clear wording, consistent meaning and recovery | Stock/orders failure messages now point to the existing Retry summary button in EN/FR. French chart subtitle now means sales per day across the period. | Native report/lock popup evidence gaps below are not closed by these text checks. |
+| 06 — size floors, established scale and number detail | Profile role 10px → existing 12px size; name/role fit the same 178×50 trigger in EN/FR. Existing DM Sans, metric hierarchy, tabular/locale formatting and 12px Dashboard metadata retained. | Approved compact header navigation remains 11px; enlarged OS text remains unverified. No new font or scale invented. |
+| 07, 16 — actual contrast and semantic project colors | Profile icon and Report text use existing primary-text token. Scoped six-module color audit: 115/119 color-bearing declarations use tokens (96.6%). Four remaining literals are component-specific shadows/avatar surface and the explicitly approved pressed layer. | This percentage is not whole-app token coverage. Chart contrast below target remains open; no speculative token system migration. |
+| 08, 15 — controls, state consistency and visible recovery | Existing native buttons, selected/pressed/focus treatments, anchored popover, concentric language selector and borderless View all retained. Language-save rejection now has a translated message in the existing error area; retry clears it. | No extra outline, scale, blur or duplicate recovery button. Native dialog focus trapping not newly verified. |
+| 09, 10 — remove redundant decoration, preserve useful content | Existing two-line orders, meaningful sales/stock/history separation and best-seller highlight retained. No additional shell, card, badge, decorative animation or invented claim added. | Existing owner-approved layout is the constraint; these reviews do not authorize a new visual style. |
+| 11, 12 — frequent interaction, interruption and motion | Reuse unchanged 150ms fade, immediate menu/chart actions, press feedback, interruption and reduced-motion evidence. No motion source changed. | Existing 220ms indicator/keyboard fade and nonselectable UI are recorded owner/project exceptions; full slow-motion frame study remains unverified. |
+| 17 — honest chart encoding and accessible detail | Reuse proportional height, zero-value, 12-day ordering, units, exact tap value and keyboard evidence. French subtitle corrected. | Pale rendered bar measured 2.21:1. Owner choice pending; if retaining shades, also resolve the existing tone5/tone6 darkness reversal without implying a correct sequential ramp. |
+| 18 — tablet behavior and platform conventions | Existing native popover, ordinary touch controls, fixed native viewport and scoped selection behavior retained; current Redmi header/menu fit checked. | Android product: no iOS/PWA install features apply. Actual speech, enlarged text and native prompt gaps remain, not N/A. |
+| 21 — complete-flow evidence | Changed wording and failed-language/retry flow checked once in EN/FR real-component browser fixture; shared header checked across six actual Redmi routes. Reused prior unchanged loading/empty/chart/route/selection evidence. | Overall Dashboard remains incomplete until chart choice and recorded gaps/owner acceptance are resolved. |
+
+- Actual changed files: Dashboard StockAttentionPanel and RecentOrdersPanel
+  TSX; shared Header CSS; ProfileControl TSX/CSS; `src/lib/fr.ts`; owning POS
+  DOX, DESIGN and this ledger. No persistence/native/source ownership changes.
+- Browser 1340×800: corrected list errors fit and Retry summary restores live;
+  profile role fits; French chart subtitle displays correctly. Added an ignored
+  `?language-error` fixture that rejects the first language callback and allows
+  retry. Both EN and FR failures show the translated message, preserve the
+  previous selected language, and then clear the message on successful retry.
+  English and French error-menu screenshots visually inspected; no browser
+  warnings/errors captured. Restored ordinary French preview for the owner.
+- `npm run android:beta` passed after the final language change, including web
+  build, Capacitor sync, native JVM checks and APK assembly. Existing build
+  warnings remain. Final log: `tmp/ui01-combined-final-build.log`.
+- Installed final beta with `adb install --no-streaming -r` successfully on
+  Redmi 22081283G, preserving records. APK SHA-256:
+  `61d7389b58f862083cacdc9413a5317fb5119bda5d1a9351ced1f872aa9a77af`.
+  Current workspace's pre-existing PeriodCalendar/reportProfit changes are in
+  the built APK; they remain unrelated and excluded from this card's commit.
+- Native 1340×804: all six header routes fit without horizontal overflow;
+  French Propriétaire is 12px and fits the unchanged trigger. French menu fits,
+  language switching succeeds, Escape closes it, and English was restored.
+  Panel bounds remain (18,92,886,686), (922,92,400,334), (922,444,400,334),
+  within native rounding. Visually inspected `tmp/ui01-combined-{dashboard,
+  pos,orders,products,stock,reports,french-profile,final}.png`.
+  Measurements: `tmp/ui01-combined-native.json`; token audit:
+  `tmp/ui01-combined-token-audit.json`.
+- Early helper waits failed while the device was asleep (WebView hidden,
+  animations paused); waking it restored normal checks. A subsequent helper
+  assertion targeted a span instead of the actual subtitle small element;
+  corrected the inspection selector, not app code. The final run passed its
+  layout/language assertions. It captured one existing Convex WebSocket
+  back-forward-cache disconnect; do not claim an error-free native session or
+  expand this polish work into a synchronization repair.
+- No sale, reseed, stock write, printer configuration or security setting change.
+  No structural module/component changes requiring graph regeneration. Known
+  CSS-scope scanner limitation remains; no new animation/global selector was
+  added. Earlier Apple/accessibility checks were not restarted.
+- **Open:** chart appearance choice; actual TalkBack speech/repeated notices;
+  current native report/cart dialog visual and keyboard-focus checks; actual
+  enlarged OS text/200% zoom and usable increased contrast; full motion frame
+  study and native offline/role matrix. Fixed geometry and solid surfaces remain
+  owner exceptions. Printer output and seeded Orders history are separate
+  hardware/data issues, not corrected UI claims. No 100% or screen acceptance.
+- Exact next action: owner's pending chart choice, focused correction/check,
+  then report remaining limitations and obtain screen acceptance before UI-02.
 
 ### UI-01 — combined screen-review protocol, 21 September 2026
 

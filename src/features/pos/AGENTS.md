@@ -47,6 +47,9 @@ owns the shared Header and TopNavigation currently used across the application.
 - Profile's accessible name includes its visible staff name and role. Header's
   first keyboard stop skips to the active content via App; it is hidden until
   focused and does not change the normal touch layout.
+- A failed staff-menu language save shows a translated recovery message in
+  the existing error region. Keep language controls available for retry and
+  clear the prior error when retrying; never discard a rejected save silently.
 - Product and category assets are content; do not recreate them with UI icons.
 - A long product name or price ellipsises before the plus; the plus stays
   visible. Only the plus adds to the order.

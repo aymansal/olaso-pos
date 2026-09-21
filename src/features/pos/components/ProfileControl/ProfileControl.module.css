@@ -37,7 +37,7 @@
   height: 36px;
   border: 2px solid var(--olaso-green);
   border-radius: 50%;
-  color: #101611;
+  color: var(--olaso-text);
   background: #efe4d6;
 }
 
@@ -62,7 +62,7 @@
 }
 
 .profileCopy small {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .menu {

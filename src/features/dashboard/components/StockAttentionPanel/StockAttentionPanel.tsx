@@ -61,7 +61,7 @@ export function StockAttentionPanel({
         {error || isLoading || warnings.length === 0 ? (
           <p className={styles.state}>
             {error
-              ? t('Stock warnings are unavailable.')
+              ? t('Stock warnings are unavailable. Select Retry summary.')
               : isLoading
                 ? t('Loading current stock…')
                 : t('All active ingredients are above their thresholds.')}
