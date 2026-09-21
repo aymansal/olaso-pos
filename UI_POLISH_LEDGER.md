@@ -537,6 +537,85 @@ changes pushed and the owner must accept the screen before moving on.
 - **Publication:** implementation `137b430` is pushed to
   [`origin/main`](https://github.com/aymansal/olaso-pos/commit/137b430).
 
+### UI-03 — owner sliding-state review and combined skill checklist, 21 September 2026
+
+- **Owner rule reconfirmed:** when a control has a sliding selected pill or
+  indicator, that indicator is both selection and immediate touch feedback.
+  The same control must not add a gray pressed background. This applies to
+  primary navigation, Orders filters, Orders rows, POS service/payment,
+  profile language, and future controls using this pattern.
+- **Source decision:** the existing CSS already implements this rule. The
+  navigation, Orders filters, Orders rows, POS service/payment controls and
+  language buttons use transparent button surfaces plus one indicator layer;
+  their only active animation is the existing indicator transition. No source
+  file, dependency, data, or APK was changed in this continuation.
+- **Research reused before this review:** [Apple buttons](https://developer.apple.com/design/human-interface-guidelines/buttons),
+  [MDN `:active`](https://developer.mozilla.org/en-US/docs/Web/CSS/:active),
+  [MDN reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion),
+  [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview),
+  and [Capacitor Web APIs](https://capacitorjs.com/docs/core-apis/web), checked
+  21 September 2026. CSS/React remains the correct boundary; adding a second
+  pressed layer, JavaScript press state, native Android code, or a new package
+  would add no needed behavior.
+
+| Skill | UI-03 result | Evidence or remaining boundary |
+| --- | --- | --- |
+| `apple-design` | Verified for this correction | Green sliding indicator is the single selected/immediate state; no decorative press layer. Redmi capture `tmp/ui03-nav-products-pressed.png`. |
+| `better-interface` | Routed and verified | Shared control consistency checked against the six domain rows below; no duplicate finding. |
+| `better-accessibility` | Partial | Cancellation focus, Escape/recovery, visible focus treatment and editable-text selection were previously verified. TalkBack speech and enlarged OS text remain unverified. |
+| `better-layout` | Verified on device | Orders, popup, French labels and navigation fit at Redmi WebView `1340 × 804`; browser `1340 × 800` was not available in the in-app browser panel during this continuation. |
+| `better-writing` | Verified for checked states | English and French navigation, filters, status, cancellation validation and recovery text were readable and action-specific. |
+| `better-typography` | Partial | English/French type fit the fixed device layout; enlarged OS text and full browser viewport review remain unverified. |
+| `better-colors` | Partial | Green indicator, white selected text and transparent inactive controls were confirmed by computed styles; no new contrast measurement was made in this continuation. |
+| `better-ui` | Verified for affected controls | Only the sliding indicator changes on selection; ordinary settings/lock actions retain ordinary press feedback. |
+| `no-ai-design-slop` | Verified | No new decoration, container, effect, animation or redundant label was added. |
+| `audit-ai-design-slop` | No new finding | The removed duplicate gray layer was the concrete competing-state defect; the existing visual language was preserved. |
+| `emil-design-eng` | Verified for affected motion | Indicator motion is spatially meaningful, interruptible CSS `transform`, `220ms`, and has reduced-motion handling. |
+| `review-animations` | Verified for affected motion | No keyframes, layout animation, `transition: all`, or motion-only feedback; affected motion remains under 300ms. |
+| `design-qa-checklist` | Partial | Normal, selected, French, popup, validation, reprint-available and cancellation-recovery evidence exists. Live loading, empty and cloud-error states still need final owner/state evidence. |
+| `error-handling-ux` | Verified for checked flow | Empty cancellation reason showed the 3–240 character error, preserved the order, and Keep order closed the popup without changing data. |
+| `critique-visual-hierarchy` | Verified | The green indicator and selected row remain the only selection emphasis; no gray competing state appears. |
+| `critique-information-density` | Verified | Approved two-panel geometry and table density stayed unchanged; no extra status layer was added. |
+| `critique-affordance` | Verified for checked controls | Navigation, filters, selected row, language, reprint and cancel actions remain visibly actionable. |
+| `design-token-audit` | Verified for this change | Affected surfaces use existing Olaso tokens; no new color, radius or motion token was introduced. |
+| `data-visualization` | Not applicable | Orders has no chart or other data-visualization surface. |
+| `mobile-native` | Verified on Redmi | Touch navigation and popup behavior were checked on the physical Android tablet at `1340 × 804`; the safe wake path did not open Recent Apps. |
+| `localization-design` | Partial | English and French Orders states fit and remain readable; RTL and broader expansion testing remain unverified. |
+| `loading-states` | Partial | Loading/empty copy remains present in the existing Orders table path, but live loading and cloud-error transitions were not reproduced on the tablet. |
+
+- **Fresh Redmi evidence:** screenshot-first check found the app lock screen,
+  not a black asleep display; the app was unlocked without Recent Apps. The
+  live Orders page showed `0926-0001`, All and Completed filters, selected row,
+  reprint-available state, cancellation popup, empty-reason validation and
+  unchanged order recovery. Navigation from Orders to Products showed only the
+  Products pill, with no gray pressed layer. French Orders and the green FR
+  language pill fit at `1340 × 804`. Captures: `tmp/ui03-orders-owner-review.png`,
+  `tmp/ui03-orders-completed.png`, `tmp/ui03-nav-products-pressed.png`,
+  `tmp/ui03-profile-language-owner-review.png`,
+  `tmp/ui03-cancellation-owner-review.png`,
+  `tmp/ui03-orders-french-owner-review.png`.
+- **Device/runtime result:** no console messages, focused logcat errors,
+  clipping or overflow were observed. The retained development order remains
+  completed and unchanged. The installed APK remains SHA-256
+  `42CD87259EF626977933CE44620B000BDDFF78B900B3D55E86ACFA21866E8C57`.
+- **Checks:** `npm run build`, `npm run check:pos`, the focused sliding-state
+  source guard, and `git diff --check` passed. `npm run check:orders` passed
+  its historical receipt assertions, then stopped at its protected owner-PIN
+  restore gate; no reset or reseed was attempted. `npm run check:css-scope`
+  still reports only the existing `from`/`to` keyframe selectors in untouched
+  `src/App.module.css` and `src/features/settings/LockScreen.module.css`.
+- **Publication:** this ledger checkpoint is the only working-tree change for
+  this continuation. It must be committed with a `UI-03` message and pushed
+  to `origin/main`; unrelated `src/features/reports/reportProfit.ts` and the
+  preserved untracked directories remain outside the card.
+- **Status:** UI-03 remains open. Technical review confirms the sliding-state
+  correction; owner acceptance and final loading, empty and cloud-error
+  evidence are still required before Products. No browser `1340 × 800` visual
+  claim is made from the smaller in-app browser panel.
+- **Exact next action:** owner reviews the fresh English/French Orders captures
+  and the live tablet, then we close the remaining state-evidence gaps or record
+  the owner's explicit acceptance/limitation. Do not advance to Products.
+
 ### UI-02 — combined POS review, 21 September 2026
 
 - **Scope inventory:** the live Redmi POS was checked at its WebView viewport of
