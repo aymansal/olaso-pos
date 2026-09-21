@@ -596,6 +596,8 @@ changes pushed and the owner must accept the screen before moving on.
   cloud-error, French, reprint, cancellation, and recovery evidence remains
   part of the open owner review; this does not mark UI-03 accepted and does not
   authorize Products.
+- **Publication:** implementation commit `f4e5731` is pushed to
+  [`origin/main`](https://github.com/aymansal/olaso-pos/commit/f4e5731).
 - **Exact next action:** owner reviews the combined UI-03 browser/tablet
   evidence and explicitly accepts or requests another scoped correction. Keep
   the screen on Orders until that acceptance.
