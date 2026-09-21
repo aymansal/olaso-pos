@@ -1056,6 +1056,13 @@ changes pushed and the owner must accept the screen before moving on.
   change; fresh browser accessibility evidence was collected for the corrected
   semantics. Redmi installation, TalkBack speech, enlarged OS text, RTL and
   exact rendered contrast after a palette decision remain open.
+- **Android beta evidence:** `npm run android:beta` passed after setting the
+  repository JDK 21 path; the debug APK was installed with `adb install -r` on
+  the connected Redmi without clearing data. APK SHA-256 is
+  `7A37721C9E9CA8CE2240E42E5D9423F349ED0FA47A82145B309D414540E17A5E` and the
+  WebView reported `1340 × 804`. The protected owner unlock did not reach the
+  Orders screen in this run, so a fresh physical Orders interaction check was
+  not claimed; no PIN was reset or guessed.
 - **Status:** all numbered Orders passes have been inspected, but UI-03 is not
   owner-accepted because the color finding and physical-device checks remain
   open. Do not advance to Products.
