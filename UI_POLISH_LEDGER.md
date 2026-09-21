@@ -293,6 +293,8 @@ changes pushed and the owner must accept the screen before moving on.
   working-tree edits preserved. No build needed for documentation-only work.
 - Next: Dashboard, step 01 Apple Design only. Existing changes remain in place;
   no skill is marked 100% complete by this documentation update.
+- Publication: `2445947` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; this follow-up records publication.
 
 ### UI-01 — restarted visual skill sequence, 20 September 2026
 
