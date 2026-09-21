@@ -1,6 +1,6 @@
 # Olaso screen-by-screen polish ledger
 
-Updated: 20 September 2026.
+Updated: 21 September 2026.
 
 ## Read this after every context compaction
 
@@ -20,7 +20,7 @@ Pencil frames still own their respective product and implementation contracts.
    `SAAS_TRANSITION.md`. Read the deeper instructions for the active screen.
 2. Read the State pointer, captured owner decisions and latest checkpoint below.
    An old screenshot, installed APK or earlier polish pass is not acceptance.
-3. Open and read the actual required `SKILL.md` files below and their relevant
+3. Open and read the active skill's actual `SKILL.md` and its required
    referenced guidance. Reading this table or remembering a skill is not enough.
    Record which skills/sections were read for the current step.
 4. Query Graphify before inspecting/changing code. Check the working tree and
@@ -32,15 +32,17 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard.** Restarted visual review delivered for
-  owner review, with explicit verification limits below. Not owner-accepted.
+- **Active screen: UI-01 — Dashboard. Active skill: 01 — `apple-design`.**
+  First separate pass pending under the owner's 21 September protocol.
+  Earlier grouped reviews are evidence, not completion of the new skill steps.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** owner reviews the restarted Dashboard changes and
-  150ms screen fade. Address Dashboard feedback here; carry the unverified
-  accessibility/device checks below forward. Keep data-history work separate
-  and do not advance to POS without Dashboard acceptance.
+- **Exact next action:** perform only the Dashboard Apple Design pass: read
+  the skill, enumerate its applicable rules and surfaces, research, make only
+  justified corrections, verify and report its result. Stop at that skill's
+  handoff; wait for the owner before starting skill 02. Keep the approved layout,
+  light mode, two-line orders, borderless View all and 150ms screen fade.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
   not block Dashboard. Do not infer an answer from silence.
@@ -57,7 +59,7 @@ Pencil frames still own their respective product and implementation contracts.
 - Where guidance is broad, use an already approved Olaso pattern if it resolves
   the question. Otherwise show the owner concrete alternatives and wait for the
   decision before changing that part. Do not reopen decisions already recorded.
-- Read all relevant skills, but do not apply all 281 installed skills to every
+- Read the relevant skills, but do not apply the entire installed collection to every
   screen. Select by the actual task. Website themes, cinematic effects and 3D
   skills are not instructions to decorate this operational app.
 - Explicit owner decisions, security, data correctness and accessibility take
@@ -72,13 +74,12 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## Required skills and how they work together
 
-Owner clarification, 20 September: apply the agreed skills in successive passes
-to every screen, not one blended bug audit. Order: Apple Design; Better Interface
-(accessibility, layout, writing, typography, colors, UI); both anti-slop skills;
-Emil Design Engineering and Review Animations; Design QA and Error Handling UX.
-For each pass record actual visual findings, source, changes or justified no-change,
-and evidence. A skill need not force a change. Bug checks alone do not complete
-visual polish. A restart resets review status, not approved layout or café data.
+Owner instruction, 21 September, supersedes the earlier five grouped passes:
+**one screen, one individual skill, one report, then an owner handoff.**
+Never run several skills as one polishing batch or advance automatically.
+The original 14 skills plus seven agreed specialists form the 21 steps below.
+A skill need not force a change. A restart resets review status, not approved
+layout, working corrections or café data.
 
 Installed skill root: `C:/Users/Ayman/.codex/skills/`. Each name below resolves
 to `<root>/<name>/SKILL.md`. Read the named files, not just their descriptions.
@@ -92,7 +93,8 @@ If a required file is missing, report the gap; do not invent its instructions.
 | Every screen | `emil-design-eng`; `review-animations` for affected motion | Decide whether motion is useful for the frequency of the action. Review transitions and feedback without assuming every control needs animation. |
 | Every screen | `design-qa-checklist`, `error-handling-ux` | Verify the complete flow and recovery states, not just the opening screenshot. |
 | Products and Stock, before proposing a simpler model | `jobs-to-be-done`, `information-architecture`, `teslers-law`, `form-design`, `user-flow-diagram` | Understand real café tasks, remove unnecessary decisions and explain relationships before designing forms or changing data. |
-| When a specific issue calls for it | `design-token-audit`, `loading-states`, `data-visualization`, `localization-design`, `usability-test-plan` | Use the relevant specialist for evidenced inconsistency, state, chart, language or usability issues. |
+| Separate specialist steps on each screen | `critique-visual-hierarchy`, `critique-information-density`, `critique-affordance`, `design-token-audit`, `data-visualization`, `mobile-native`, `localization-design` | Review attention, clutter, visible interactivity, consistency, charts, tablet behavior and languages individually. Explain when a skill has no applicable surface. |
+| When a specific issue calls for it | `loading-states`, `usability-test-plan` | Additional focused work only when needed; record it separately, never silently expand the active pass. |
 | Future owner website, or an explicitly chosen prototype | `web-design-engineer` | Read when that task starts. Do not import a new website styling system into the Android POS. |
 
 Keep Graphify and Ponytail at full intensity as required by `AGENTS.md`.
@@ -102,6 +104,77 @@ boundaries. Record links, date checked, alternatives, applicable skill sections,
 the justified change, its owner decision where needed, and intended checks.
 Skills do not replace research or actual device verification.
 
+### Individual skill sequence and Dashboard progress
+
+This order preserves the existing sequence and places the added specialists
+before final recovery/QA. Each row gets its own report and owner handoff.
+
+| Step | Skill | Dashboard status |
+| --- | --- | --- |
+| 01 | `apple-design` | Next; separate pass pending |
+| 02 | `better-interface` | Queued — scope/routing only |
+| 03 | `better-accessibility` | Queued |
+| 04 | `better-layout` | Queued |
+| 05 | `better-writing` | Queued |
+| 06 | `better-typography` | Queued |
+| 07 | `better-colors` | Queued |
+| 08 | `better-ui` | Queued |
+| 09 | `no-ai-design-slop` | Queued |
+| 10 | `audit-ai-design-slop` | Queued |
+| 11 | `emil-design-eng` | Queued |
+| 12 | `review-animations` | Queued |
+| 13 | `critique-visual-hierarchy` | Queued |
+| 14 | `critique-information-density` | Queued |
+| 15 | `critique-affordance` | Queued |
+| 16 | `design-token-audit` | Queued |
+| 17 | `data-visualization` | Queued |
+| 18 | `mobile-native` | Queued |
+| 19 | `localization-design` | Queued |
+| 20 | `error-handling-ux` | Queued |
+| 21 | `design-qa-checklist` | Queued |
+
+Better Interface is an umbrella skill: step 02 identifies domain scope and
+routes findings to steps 03–08; it must not run those six passes in one batch.
+Reading a required reference does not authorize starting another skill's work.
+Review-only skills keep their review-only boundary: report findings and resolve
+their implementation handoff before advancing; do not claim a review fixed them.
+Information Architecture and Form Design remain required for Products/Stock
+alongside their other workflow skills above; they are not Dashboard steps.
+
+### Per-skill completion and handoff
+
+1. Read the active skill and required references. Make a checklist of its
+   applicable rules for the screen, including its popups, menus and UI states.
+   State scope before edits; do not shrink it afterward to claim completion.
+2. Record each finding against an exact skill section and observed evidence.
+   Each correction must also fit an existing owner decision or approved Olaso
+   pattern. If the skill leaves a design choice unresolved, ask the owner;
+   never invent a preference or attribute a personal choice to the skill.
+3. Research before implementation, make the justified changes, and verify
+   the applicable checklist. Record changed files, actual evidence and checks.
+   Earlier evidence can be reused only after confirming it still applies.
+4. Record each item as verified, failed, unverified, not applicable with a
+   reason, or an explicit owner exception. An exception is not compliance.
+   Reading a skill, compiling, or viewing one screenshot does not prove a pass.
+5. Say “Dashboard — Apple Design polishing: 100% complete for the applicable
+   checklist” only when every applicable item is verified, with no unresolved
+   findings, unverified items or exceptions. This is a scoped completion claim,
+   not Apple certification or a claim that all Dashboard skills are complete.
+   Otherwise say “incomplete” or “complete with owner-approved exceptions” and
+   name exactly what remains. Never rename an untested requirement as N/A.
+6. Keep visual polish, accessibility, app behavior and physical hardware results
+   separate. Printer output is not a visual-polish failure; a popup's appearance
+   and recovery are still UI scope. Accessibility requirements actually named
+   by the active skill remain in that skill's checklist.
+7. Update this ledger and publish changes under the repository rules. Report
+   the skill name, changes (or justified no-change), verification and outcome
+   in plain English. Finish with the next skill's name and **stop**. Start it
+   only after the owner says to continue. Owner screen acceptance stays separate.
+
+Later skills must preserve earlier verified results. If a later change affects
+one, reopen only the affected earlier checks and record that regression work;
+do not silently undo an approved decision or rerun all skills together.
+
 ## Screen queue
 
 Dashboard first and Lock last are explicit owner requirements. The middle rows
@@ -110,7 +183,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Restarted review delivered; limitations recorded; owner acceptance pending |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Individual skill 01 — Apple Design next; no new step marked complete |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
@@ -202,6 +275,24 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — one-skill-at-a-time protocol, 21 September 2026
+
+- Owner added the seven specialist skills discussed in this conversation and
+  required an individual completion report before proceeding to the next skill.
+  The 21-step queue above supersedes all grouped-pass completion claims below.
+- Retained the no-personal-design-choice rule and strengthened source tracing,
+  checklist evidence, honest 100% reporting and the owner handoff after each step.
+- Documentation only: updated this ledger and its root AGENTS workflow pointer.
+  No app edits, visual checks, device actions or installations in this checkpoint.
+- Sources: the owner's current instruction and the actual installed specialist
+  skill files inspected in the preceding discussion. No new app/native boundary
+  is introduced; implementation research remains required when step 01 starts.
+- Verification: all 21 queued skill files exist; sequence has no duplicate names;
+  Products/Stock workflow skills retained. Documentation diff checked; unrelated
+  working-tree edits preserved. No build needed for documentation-only work.
+- Next: Dashboard, step 01 Apple Design only. Existing changes remain in place;
+  no skill is marked 100% complete by this documentation update.
 
 ### UI-01 — restarted visual skill sequence, 20 September 2026
 

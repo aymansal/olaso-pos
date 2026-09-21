@@ -64,6 +64,9 @@ decision changes.
   acting. Dashboard is first and Lock is last. No personal design choices:
   trace changes to applicable skill rules or owner decisions; unresolved choices
   and skill conflicts go to the owner, not an invented preference.
+  Work on one individual skill at a time using the ledger's sequence. Report
+  that skill's verified result and stop for the owner's continuation before
+  starting the next; do not batch skills or claim 100% with unresolved checks.
 - `SAAS_TRANSITION.md` owns the wider SaaS plan, concerns and historical work.
   Read its current direction alongside the UI ledger when resuming.
 - The owner chooses one step at a time. UI polish comes first, then security
