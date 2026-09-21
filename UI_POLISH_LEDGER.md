@@ -744,8 +744,8 @@ changes pushed and the owner must accept the screen before moving on.
   are recorded limitations, not silently marked as passed.
 - **Status:** the Orders implementation and safe state evidence are complete
   for this continuation, but UI-03 is not owner-accepted. No Products work is
-  authorized. Publication of this ledger entry and the retry change is pending
-  the current `UI-03` commit.
+  authorized. This continuation was committed as `60d78b7` and pushed to
+  [`origin/main`](https://github.com/aymansal/olaso-pos/commit/60d78b7).
 - **Exact next action:** the owner reviews the combined Orders evidence and
   explicitly accepts UI-03 or requests one more scoped correction. Only after
   that acceptance may the sequence move to Products.
