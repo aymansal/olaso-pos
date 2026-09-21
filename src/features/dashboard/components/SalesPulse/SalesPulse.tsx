@@ -119,7 +119,7 @@ export function SalesPulse({
       </div>
 
       <div className={styles.summaryDividerTop} />
-      <div className={styles.summary} aria-label={t('Today’s sales summary')}>
+      <div className={styles.summary} role="group" aria-label={t('Today’s sales summary')}>
         {metrics.map(({ label, value, icon: Icon }, index) => (
           <div className={styles.metricSlot} key={label}>
             <div className={styles.metric}>
@@ -157,11 +157,11 @@ export function SalesPulse({
         </span>
       </div>
 
-      <div className={styles.chart} aria-label={t('Daily net sales for the latest 12 days')}
+      <div className={styles.chart} role="group" aria-label={t('Daily net sales for the latest 12 days')}
         onKeyDown={(event) => { if (event.key === 'Escape') setSelectedDate(null); }}
         onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelectedDate(null); }}>
         {unavailable || maximum === 0 ? (
-          <p className={styles.chartState} role="status">
+          <p className={styles.chartState}>
             {t(unavailable
               ? isLoading ? 'Loading saved summary' : 'Summary unavailable'
               : 'No sales in period')}

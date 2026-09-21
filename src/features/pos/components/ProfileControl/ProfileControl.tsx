@@ -82,15 +82,15 @@ export function ProfileControl({
         ref={trigger}
         className={styles.profile}
         type="button"
-        aria-label={t('Open staff menu')}
+        aria-label={`${name}, ${t(ROLE_LABEL[role])}: ${t('Open staff menu')}`}
         aria-expanded={open}
-        aria-controls="staff-profile-menu"
+        aria-controls={open ? 'staff-profile-menu' : undefined}
         onClick={() => {
           setError('');
           setOpen((current) => !current);
         }}
       >
-        <span className={styles.avatar}><User width={22} height={22} /></span>
+        <span className={styles.avatar}><User width={22} height={22} aria-hidden="true" /></span>
         <span className={styles.profileCopy}>
           <strong>{name}</strong>
           <small>{t(ROLE_LABEL[role])}</small>

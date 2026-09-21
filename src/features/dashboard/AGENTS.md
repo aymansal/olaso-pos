@@ -25,6 +25,9 @@ recent orders.
   Zero is reserved for a successfully loaded empty result.
 - Chart details expose the full date and exact amount; axis abbreviations are
   display-only. Escape and focus leaving the chart dismiss selection.
+- Chart and summary are named groups. Keep the stock/order status containers
+  mounted before their messages change; routine loading/unavailable updates
+  announce politely rather than interrupting speech in several panels at once.
 - Child regions stay prop-driven and render loading, empty, error, and live
   states without importing Convex.
 - Offline Dashboard uses bounded saved tablet sales and stock warnings; it does

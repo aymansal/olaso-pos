@@ -23,6 +23,7 @@ interface HeaderProps {
   language: AppLanguage;
   onLanguageChange: (language: AppLanguage) => Promise<void>;
   onPrintDailyReport?: () => Promise<void>;
+  onSkipToContent?: () => void;
 }
 
 export function Header({
@@ -34,6 +35,7 @@ export function Header({
   language,
   onLanguageChange,
   onPrintDailyReport,
+  onSkipToContent,
 }: HeaderProps) {
   const t = useT();
   const [now, setNow] = useState(new Date());
@@ -67,6 +69,10 @@ export function Header({
   }).format(now);
   return (
     <header className={styles.header}>
+      {onSkipToContent ? <a className={styles.skipLink} href="#olaso-content" onClick={(event) => {
+        event.preventDefault();
+        onSkipToContent();
+      }}>{t('Skip to content')}</a> : null}
       <div className={styles.brandSide}>
         <div className={styles.wordmark}>
           <img src={olasoLogo} alt="Olaso" width={96} height={26} />
@@ -82,7 +88,7 @@ export function Header({
       <div className={styles.actions}>
         {canPrintDailyReport ? <button className={styles.report} type="button" onClick={() => void printReport()} disabled={printingReport}>
           <span>{t(printingReport ? 'Printing…' : 'Report')}</span>
-          <File width={18} height={18} />
+          <File width={18} height={18} aria-hidden="true" />
         </button> : null}
         <ProfileControl
           name={staff.name}

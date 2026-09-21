@@ -38,15 +38,18 @@ export function RecentOrdersPanel({
       </header>
 
       <div className={styles.list}>
+        <div role="status">
         {error || isLoading || orders.length === 0 ? (
-          <p className={styles.state} role={error ? 'alert' : 'status'}>
+          <p className={styles.state}>
             {error
               ? t('Recent orders are unavailable.')
               : isLoading
                 ? t('Loading recent orders…')
                 : t('No saved orders yet.')}
           </p>
-        ) : orders.map((order, index) => (
+        ) : null}
+        </div>
+        {!error && !isLoading && orders.map((order, index) => (
           <article className={styles.row} key={order.id}>
             <span className={`${styles.icon} ${index === 0 ? styles.iconActive : ''}`}>
               <Receipt width={17} height={17} aria-hidden="true" />

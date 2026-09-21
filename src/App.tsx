@@ -92,6 +92,29 @@ export function App() {
   const [stockLevelFilter, setStockLevelFilter] = useState<StockLevelFilter>('all');
   const [language, setLanguage] = useState<AppLanguage>('en');
   const contentScreenRef = useRef<AppScreen>('POS');
+  const shell = useRef<HTMLDivElement>(null);
+
+  function focusContent() {
+    const main = shell.current?.querySelector<HTMLElement>('[data-live] main');
+    if (!main) return;
+    main.tabIndex = -1;
+    main.focus({ preventScroll: true });
+  }
+
+  useEffect(() => {
+    if (!staffSession || terminal?.isLocked || fade !== 'idle') return;
+    const main = shell.current?.querySelector('[data-live] main');
+    if (main?.contains(document.activeElement)
+      || [...document.querySelectorAll(':popover-open, dialog[open], [aria-modal="true"]')]
+        .some((overlay) => overlay.checkVisibility())) return;
+    focusContent();
+  }, [contentScreen, terminal?.isLocked, fade]);
+
+  useEffect(() => {
+    document.title = staffSession && !terminal?.isLocked
+      ? `${translate(language, contentScreen)} · Olaso POS`
+      : 'Olaso POS';
+  }, [contentScreen, language, staffSession, terminal?.isLocked]);
 
   function resetScreens() {
     setVisitedScreens(['POS']);
@@ -350,7 +373,7 @@ export function App() {
     <LocaleProvider language={language}>
     <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
       <ReconnectProvider onSessionUnavailable={lock}>
-        <div className={appStyles.shell}>
+        <div className={appStyles.shell} ref={shell}>
           <Header
             activePage={activeScreen === 'Settings' ? undefined : activeScreen}
             clockFormat={terminal.clockFormat}
@@ -360,6 +383,7 @@ export function App() {
             language={language}
             onLanguageChange={applyLanguage}
             onPrintDailyReport={staffSession.role === 'owner' ? printDailyReport : undefined}
+            onSkipToContent={focusContent}
           />
           {visitedScreens.map((visited) => {
             if (!hasPermission(staffSession.role, screenPermission[visited])) return null;
@@ -368,6 +392,8 @@ export function App() {
             return (
               <div
                 className={appStyles.slot}
+                id={live ? 'olaso-content' : undefined}
+                inert={!live}
                 data-live={live ? 'true' : undefined}
                 data-leave={leaving ? 'true' : undefined}
                 data-fade={fade !== 'idle' && (live || leaving) ? fade : undefined}

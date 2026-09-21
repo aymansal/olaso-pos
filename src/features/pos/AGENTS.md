@@ -44,6 +44,9 @@ owns the shared Header and TopNavigation currently used across the application.
 - The staff popover uses ordinary native buttons, not ARIA menu/menuitem roles.
   Tab moves between its controls; Escape closes it and returns focus to the
   profile trigger. Preserve this shared behavior on every screen.
+- Profile's accessible name includes its visible staff name and role. Header's
+  first keyboard stop skips to the active content via App; it is hidden until
+  focused and does not change the normal touch layout.
 - Product and category assets are content; do not recreate them with UI icons.
 - A long product name or price ellipsises before the plus; the plus stays
   visible. Only the plus adds to the order.

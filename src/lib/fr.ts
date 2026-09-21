@@ -1,4 +1,5 @@
 export const fr: Record<string, string> = {
+  'Skip to content': 'Aller au contenu',
   'Select all remaining products for the final payment.': 'Sélectionnez tous les produits restants pour le dernier paiement.',
   'Auto-lock': 'Verrouillage auto',
   '5 minutes': '5 minutes',

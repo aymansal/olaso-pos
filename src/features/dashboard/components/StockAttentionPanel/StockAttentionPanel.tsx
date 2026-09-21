@@ -57,15 +57,18 @@ export function StockAttentionPanel({
       </header>
 
       <div className={styles.list}>
+        <div role="status">
         {error || isLoading || warnings.length === 0 ? (
-          <p className={styles.state} role={error ? 'alert' : 'status'}>
+          <p className={styles.state}>
             {error
               ? t('Stock warnings are unavailable.')
               : isLoading
                 ? t('Loading current stock…')
                 : t('All active ingredients are above their thresholds.')}
           </p>
-        ) : warnings.map((warning, index) => {
+        ) : null}
+        </div>
+        {!error && !isLoading && warnings.map((warning, index) => {
           const presentation = warningPresentation(warning);
           const Icon = icons[presentation.icon];
 

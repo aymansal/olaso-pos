@@ -72,6 +72,10 @@ application, global tokens, and the feature screens under `features/`.
 - Do not add a shared-state library while local React state is sufficient.
 - Shared list menus and the staff menu use native WebView popovers for top-layer
   painting; do not regress to sibling z-index escalation or clipped in-panel lists.
+- App makes outgoing/hidden screen slots inert, updates the view title and
+  focuses the current main region after a screen switch. Header's keyboard
+  skip link uses the same focus path. Preserve retained scroll/form state and
+  never focus a hidden screen or a background screen behind a dialog.
 - App owns one configurable inactivity timer through lib/autoLock. Never disables
   this timer only; expiry checks on resume preserve elapsed background time.
 

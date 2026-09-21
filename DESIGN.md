@@ -633,6 +633,12 @@ pending; see `SAAS_TRANSITION.md` for evidence. This is not an app-wide redesign
 
 ## Accessibility and Operational Safety
 
+- The shared Header offers a keyboard-only skip link before navigation, using
+  the existing white/green focus treatment and a 44px target. It is offscreen
+  until focused. Screen changes focus the active main after it becomes visible,
+  without stealing focus from its controls or open overlays; they update
+  the document title and keep outgoing retained content inert; preserve scroll
+  and unfinished input. Profile's spoken name includes its visible name/role.
 - Owner-approved text selection: interface labels and displayed values are
   unselectable, including menus, popovers and dialogs. Editable text fields
   retain normal selection and copy/cut/paste with platform password safeguards.

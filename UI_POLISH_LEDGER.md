@@ -32,16 +32,18 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard. Active skill: 02 — `better-interface`.**
-  Scope/routing completed; awaiting owner continuation to step 03.
+- **Active screen: UI-01 — Dashboard. Active skill: 03 — `better-accessibility`.**
+  Corrections installed and verified within the scope recorded below. Zoom and
+  actual assistive-technology coverage remain open: **incomplete / Block**, not
+  a 100% pass. Await owner review before advancing to step 04.
   Owner closed the Apple pass and explicitly requested the next skill on
   21 September. This accepts advancing the sequence; it does not turn earlier
   unverified checks into passes or claim 100% technical compliance.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** after the owner says continue, read and apply only
-  step 03 `better-accessibility` to Dashboard and its complete interaction
+- **Exact next action:** finish and report only
+  step 03 `better-accessibility` on Dashboard and its complete interaction
   surfaces below. Carry the prior text-size/contrast and unverified checks into
   their owning reviews; do not silently implement a different layout. Keep
   light mode, approved geometry, two-line orders, borderless View all, 150ms
@@ -83,6 +85,10 @@ Pencil frames still own their respective product and implementation contracts.
   an example. Preserve the approved brand until the owner approves a change.
 - Use plain English with the owner. No new dependency, framework, speculative
   abstraction or broad rewrite just to follow an example in a skill.
+- Every skill report must explain in plain English what the skill asked for,
+  what was found, exactly what changed (or why nothing needed changing), what
+  was actually verified, and what remains. Preparation is not a completed
+  review; no-change alone is not evidence of compliance.
 
 ## Required skills and how they work together
 
@@ -125,7 +131,7 @@ before final recovery/QA. Each row gets its own report and owner handoff.
 | --- | --- | --- |
 | 01 | `apple-design` | Closed by owner; recorded verification gaps carried forward |
 | 02 | `better-interface` | Scope/routing complete; domain verdict waits for steps 03–08 |
-| 03 | `better-accessibility` | Queued |
+| 03 | `better-accessibility` | Corrections delivered; Block remains for zoom/reflow; speech/dialog checks incomplete |
 | 04 | `better-layout` | Queued |
 | 05 | `better-writing` | Queued |
 | 06 | `better-typography` | Queued |
@@ -195,7 +201,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Apple closed by owner; Better Interface routing complete; Accessibility next |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Apple closed by owner; Better Interface routed; Accessibility corrections and remaining limits below |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
@@ -287,6 +293,123 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — Better Accessibility, 21 September 2026
+
+- Read the actual skill plus semantics-and-aria, focus-and-keyboard,
+  hit-areas, forms, screen-readers and motion-and-zoom. Graphify queried;
+  Ponytail full. Scope remains the complete Dashboard/header/menu/chart,
+  loading/empty/error/retry, EN/FR, allowed roles and native dialogs.
+- Checklist: native semantics/names/state, keyboard paths/focus/dismissal,
+  hit targets, dynamic announcements, headings/landmarks/bypass, reduced
+  motion/forced colors, zoom/reflow. Forms/media/custom composite widgets
+  do not exist in Dashboard; profile uses ordinary disclosure buttons.
+- Before-edit evidence: actual Redmi axe-core 4.13.0 scan reports blocked
+  viewport zoom; two generic labeled containers require manual review.
+  Profile's accessible name omits visible name/role. App has no skip link,
+  document title change or focus handoff when switching views. Conditional
+  chart/list status regions are recreated, risking missed repeated updates.
+- Research checked today: [W3C Label in Name](https://www.w3.org/WAI/WCAG22/Understanding/label-in-name.html),
+  [status messages](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html),
+  [bypass blocks](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html),
+  [landmarks](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/),
+  [disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/),
+  [Android testing](https://developer.android.com/guide/topics/ui/accessibility/testing),
+  [WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor web layer](https://capacitorjs.com/docs/core-apis/web).
+- Smallest justified corrections: preserve visible profile text in its name;
+  make chart/summary real named groups; retain empty status containers before
+  updates; keyboard-only skip link using existing colors/44px target and the
+  skill's offscreen-until-focused pattern. App focuses the new visible main
+  and updates its title; outgoing retained content becomes inert during fade.
+  Retain screen scrolling/state, native controls, existing geometry and motion.
+  HTML/CSS/focus belongs in React/WebView; no native/plugin/data change.
+- Zoom/reflow conflicts with explicit fixed-layout/disabled-scaling contracts;
+  record the failure, do not rewrite layout or treat it as compliant. Actual
+  TalkBack speech is not yet verified; device reports no enabled accessibility
+  service. Do not silently enable a device setting to claim a speech test.
+- Intended checks: browser EN/FR/state keyboard walk and popup recovery,
+  actual Redmi before/after axe + focus/targets, all shared-header routes,
+  reduced-motion/forced-colors, build/install preserving data. No reseed.
+  Audit library downloaded into ignored tmp only, not an app dependency.
+
+#### Findings and implemented corrections
+
+| Severity / principle | Location | Before | After / status | Why |
+| --- | --- | --- | --- | --- |
+| HIGH — zoom/reflow | `index.html:7`, `src/globals.css:114` | Zoom disabled; fixed 1340px layout with hidden overflow | Unchanged pending owner direction; **Block** for full accessibility approval | At a measured 320px browser width, content remains 1340px and the right panels are outside the viewport. Existing fixed-layout/scaling contracts prohibit silently changing this. |
+| MEDIUM — accessible names | `src/features/pos/components/ProfileControl/ProfileControl.tsx:85` | Spoken label omitted visible staff name/role | Name/role precede existing menu-action wording; decorative icon hidden; closed popover no longer references absent target | Aligns voice activation and spoken identity with visible text, EN/FR |
+| MEDIUM — structure and keyboard navigation | `src/App.tsx:97`, `src/features/pos/components/Header/Header.tsx` | No skip path, view focus or contextual title; outgoing fade still accessible | Keyboard-only skip link; focus active main once visible; translated title; outgoing/hidden slots inert | Avoid repeated top-bar traversal and interaction with an outgoing view. Preserve focus already inside the new main or an open overlay. |
+| MEDIUM — named groups | `src/features/dashboard/components/SalesPulse/SalesPulse.tsx:122`, `:160` | Generic containers carried potentially ignored names | Summary and chart expose group semantics | Gives the chart controls and summary meaningful context |
+| MEDIUM — dynamic content | `src/features/dashboard/components/StockAttentionPanel/StockAttentionPanel.tsx:60`, `src/features/dashboard/components/RecentOrdersPanel/RecentOrdersPanel.tsx:41`, `SalesPulse.tsx` | Loading/empty regions remounted; duplicated chart status and simultaneous panel alerts | Persistent polite list status containers; existing summary status remains; duplicate chart live region removed | Reduces interruptions and follows the skill's stable-region guidance; real speech still requires TalkBack verification |
+
+- Kept normal colors, typography, all three panel bounds, order hierarchy,
+  borderless View all, 150ms fade, role permissions and text-selection rules.
+  Shared changes are accessibility behavior, not a redesign of other screens.
+  Native buttons remain for internal screen actions: this app has no URL routes
+  to supply real navigation links; adding a router is outside this pass.
+- Browser 1340 x 800: EN/FR labels, profile Enter/Tab/Space/Escape and trigger
+  focus return, chart Space selection/exact value/Escape, error Enter retry,
+  loading/empty/live messages, manager lock-error and cashier restricted menu
+  checked. Axes/buttons have names and state; low/critical/out/cancelled use
+  text, not color alone. No browser warnings/errors. Scoped axe component
+  scan returned no violations/manual-review items; it is not whole-app proof.
+- Redmi 22081283G, 1340 x 804: keyboard skip activates the Dashboard main;
+  all 12 chart days then both View all controls follow the tab order; visible
+  focus outlines; EN/FR/Settings/Lock menu tabs and Escape restore trigger.
+  Targets measured chart ~54.8 x 200, View all ~67.6 x 48, languages ~100.9 x 48,
+  skip ~135.5 x 44; no overlap introduced. Existing nav/Report/profile fit.
+- Actual installed-app axe scans: Dashboard EN 35 rules passed, expanded EN/FR
+  menus 36 passed, no incomplete items, sole violation `meta-viewport` in each.
+  Source profile-name failure also corrected; an automated pass alone would
+  not have caught every issue. Evidence `tmp/ui01-a11y-before.json` and
+  `tmp/ui01-a11y-native.json` with readable control results.
+- Six shared routes visually inspected in `tmp/ui01-a11y-{dashboard,pos,orders,
+  products,stock,reports}.png`; no new clipping/overflow. Each exposes one active
+  main; changed routes focus main and update title. Same-page Dashboard action
+  deliberately keeps current focus. French profile captured separately; English
+  restored. Dashboard bounds remain (18,92,886,686), (922,92,400,334),
+  (922,444,400,334), within native pixel-rounding tolerance.
+- Reduced-motion emulation yields 0s transitions and was cleared. Forced-colors
+  emulation produces system-colored focus but Android renders unreadable text
+  backplates in the capture: **not verified as usable**, not a contrast pass or
+  an excuse to add a dark mode. Full perimeter contrast remains for Better Colors.
+- Actual Report alert appeared in Android UI dump with the invalid printer
+  address and OK button. Screenshot again did not retain that popup; current
+  visual/focus-trap evidence remains incomplete. Printer output not tested.
+- Open verification: actual TalkBack spoken walk and repeated announcements,
+  native report/unfinished-cart confirmation keyboard trapping/focus restoration,
+  actual enlarged OS text/200% zoom (browser zoom shortcut did not change the
+  measured viewport), usable forced colors, full offline/role native matrix.
+  The fixture tests do not stand in for those device checks. No sale/reseed,
+  inventory write, printer setting or security preference was changed.
+- `npm run android:beta` and `npm run check:navigation` passed. Existing build
+  warnings remain. Graphify code update produced 2900 nodes/6187 edges; existing
+  Gradle parsing warnings recorded. Unrelated PeriodCalendar/reportProfit edits
+  and assets preserved/excluded; APK includes the current workspace's pre-existing
+  edits. Two streamed installs were rejected, then normal file-transfer install
+  succeeded after owner reconnected the tablet, without changing security settings.
+- Final route verification caught focus attempted before newly shown React
+  Activity content was ready. Final code focuses after the existing fade, with
+  guards for controls already focused in the incoming main and visible overlays.
+  Rebuilt and installed final APK successfully using `adb install --no-streaming -r`.
+  Final SHA-256 `08d172aa4da96fe16c366e22ee0185c69cf22826246d6fd4f5516e16f7e5d7e6`.
+  Repeated native route/audit checks now pass for that APK; all changed routes
+  focus MAIN. Latest `tmp/ui01-a11y-native.json` supersedes intermediate runs.
+  A failed early login helper was replaced with normal input insertion; no PIN
+  or credential is stored in evidence. Installed app returned to Dashboard EN.
+- `tmp/ui01-a11y-retention.json`: POS search survives Dashboard round trip;
+  temporary Espresso query restored to its original value. Opening/focusing EN
+  in the profile popup while changing screens keeps focus in the popup after
+  the fade. No payment, sale or saved product change. Final screen visually
+  inspected in `tmp/ui01-a11y-final.png`; final diff check passes.
+- **Verdict: Block for full accessibility approval.** Scoped corrections are
+  delivered, but zoom/reflow and the explicitly listed unverified checks remain.
+  Do not call this skill 100% or silently advance. Exact next action: explain
+  these results to the owner, resolve the fixed-layout accessibility exception
+  or authorize a separate zoom/text adaptation, and arrange the remaining
+  TalkBack/native-dialog checks. Next queued skill is 04 Better Layout only
+  after an explicit owner handoff. Publication recorded after push below.
 
 ### UI-01 — Better Interface scope and routing, 21 September 2026
 
