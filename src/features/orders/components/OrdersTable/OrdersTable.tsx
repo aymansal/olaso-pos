@@ -64,10 +64,10 @@ export function OrdersTable({
   const selectedIndex = orders.findIndex((order) => order.key === selectedKey);
 
   return (
-    <div className={styles.table} role="table" aria-label={t('Orders')}>
-      <div className={styles.head} role="row">
+    <div className={styles.table} aria-label={t('Orders')}>
+      <div className={styles.head}>
         {columns.map((column) => (
-          <span role="columnheader" key={column}>{t(column)}</span>
+          <span key={column}>{t(column)}</span>
         ))}
       </div>
 
@@ -99,25 +99,24 @@ export function OrdersTable({
         <button
           type="button"
           className={styles.row}
-          role="row"
-          aria-selected={order.key === selectedKey}
+          aria-current={order.key === selectedKey ? 'true' : undefined}
           data-orders-selected-row={order.key === selectedKey ? 'true' : undefined}
           onClick={() => onSelect(order.key)}
           key={order.key}
         >
-          <strong className={styles.order} role="cell" title={order.receipt.receiptNumber}>
+          <strong className={styles.order} title={order.receipt.receiptNumber}>
             {compactReceiptNumber(order.receipt.receiptNumber)}
           </strong>
-          <span className={styles.service} role="cell">{t(serviceLabel(order))}</span>
-          <strong className={styles.num} role="cell">{itemCount}</strong>
-          <strong className={styles.total} role="cell">
+          <span className={styles.service}>{t(serviceLabel(order))}</span>
+          <strong className={styles.num}>{itemCount}</strong>
+          <strong className={styles.total}>
             {formatMoney(order.receipt.totalCentimes)}
           </strong>
-          <span className={styles.when} role="cell">
+          <span className={styles.when}>
             <strong>{when.date}</strong>
             <span>{when.time}</span>
           </span>
-          <span className={styles.statusCol} role="cell">
+          <span className={styles.statusCol}>
             <span className={`${styles.status} ${styles[status.tone]}`}>
               <span />
               <strong>{t(status.label)}</strong>

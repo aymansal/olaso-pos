@@ -32,20 +32,24 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-03 — Orders / Sales combined polish review.**
+- **Active screen: UI-03 — Orders / Sales sequential skill polish.**
   The owner explicitly advanced the sequence from POS to Orders on 21
   September 2026. The cloud-order data correction is complete and published;
-  this card now records the combined skill review and its first justified
-  interaction fixes. Dashboard's recorded out-of-scope checks remain
+  this card retains earlier valid fixes and evidence, but prior grouped reviews
+  do not count as completion of the required individual skill passes.
+  Dashboard's recorded out-of-scope checks remain
   historical limitations; advancing does not turn them into technical passes.
-  The latest owner instruction replaces individual skill handoffs with one
-  combined review per screen, after consolidating overlapping requirements.
+  The latest owner clarification requires the numbered skills to be completed
+  sequentially. Overlap prevents duplicate fixes; it does not merge or skip
+  skill passes.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Dashboard was the first screen card; the current work is UI-03 Orders. No new
   UI implementation or app testing was performed during ledger creation.
-- **Exact next action:** owner reviews the complete Orders evidence on the
-  browser/tablet and accepts or rejects UI-03. Do not advance to Products until
-  the owner accepts Orders; no new visual choice is pending from this step.
+- **Exact next action:** resolve the retained UI-03 color-contrast finding in
+  step 07, then perform the final owner review at the required tablet viewport.
+  The remaining numbered passes were inspected below without silently changing
+  the approved layout or palette. Do not advance to Products until all Orders
+  passes are complete and the owner accepts UI-03.
 - Do not automatically jump to Products, ingredients, security or sync work.
 
 ## Owner rules — no personal design choices
@@ -93,12 +97,15 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## Required skills and how they work together
 
-Latest owner instruction, 21 September, supersedes the one-skill-at-a-time rule:
-**one screen, all applicable listed skills, overlapping checks performed once,
-one combined report, then owner acceptance before the next screen.**
-When the owner says to start a screen, proceed through the combined review and
-justified fixes without waiting for permission between skills. Unresolved design
-choices still go to the owner; continue independent work while awaiting answers.
+Latest owner clarification, 21 September, confirms the one-skill-at-a-time rule:
+**one screen, each applicable listed skill completed sequentially in numbered
+order, then one combined report and owner acceptance before the next screen.**
+Each skill gets its own checklist, screen review, justified corrections,
+verification and ledger status. When a later skill repeats a requirement already
+fixed by an earlier skill, verify that fix against the later skill and reuse its
+evidence; do not make the same change twice. Overlap deduplicates implementation,
+not skill passes. Continue to the next skill without waiting for permission unless
+an unresolved owner choice blocks that skill; continue independent work meanwhile.
 The original 14 skills plus seven agreed specialists form the 21 coverage rows below.
 A skill need not force a change. A restart resets review status, not approved
 layout, working corrections or café data.
@@ -126,11 +133,11 @@ boundaries. Record links, date checked, alternatives, applicable skill sections,
 the justified change, its owner decision where needed, and intended checks.
 Skills do not replace research or actual device verification.
 
-### Skill coverage and Dashboard progress
+### Skill sequence and Dashboard progress
 
-Numbers identify coverage, not separate work sessions or owner handoffs.
-Read all applicable guidance before editing so later skills do not cause avoidable
-rework. Existing results below are retained evidence, not automatic fresh passes.
+Numbers define required pass order, not separate owner handoffs. Read each skill
+and its required references before that skill's pass. Existing results below are
+retained evidence, not automatic fresh passes.
 
 | Step | Skill | Dashboard status |
 | --- | --- | --- |
@@ -164,43 +171,41 @@ review evidence distinct from evidence that a correction actually works.
 Information Architecture and Form Design remain required for Products/Stock
 alongside their other workflow skills above; they are not Dashboard steps.
 
-### Combined review, deduplication and screen handoff
+### Sequential review, overlap deduplication and screen handoff
 
-1. Read all applicable listed skills and required references before edits.
-   Inventory the screen, popups, menus and UI states. Create one checklist of
-   distinct requirements, mapping each to every skill/section it satisfies.
-   Consolidate only genuinely equivalent requirements: touch access, keyboard
-   access and spoken output, for example, are different checks. Do not drop a
-   unique requirement just because its skill overlaps elsewhere.
-2. Record each finding against an exact skill section and observed evidence.
+1. Start with the first applicable numbered skill. Read its actual `SKILL.md`
+   and required references completely. Inventory the screen, popups, menus and
+   states that skill covers. Create that skill's checklist before editing.
+2. Record each finding against the active skill's exact section and observed evidence.
    Each correction must also fit an existing owner decision or approved Olaso
    pattern. If the skill leaves a design choice unresolved, ask the owner;
    never invent a preference or attribute a personal choice to the skill.
-3. Research each distinct problem before implementation; fix each root cause
-   once. Reuse the result across every mapped skill. Earlier evidence can be
-   reused after confirming relevant code, state and environment still apply;
-   record that confirmation and the evidence reference. Recheck only what later
-   changes affect, plus required shared-control regressions. Group compatible
-   fixes before building/installing; no rebuild or reinstall solely to move
-   between skills. Complete repository-required checks for actual app changes.
-4. Record each item as verified, failed, unverified, not applicable with a
+3. Research each distinct problem before implementation; fix its root cause
+   once. Complete the active skill's review, corrections and verification, then
+   record its status before moving to the next numbered skill.
+4. A later skill must still receive a complete pass. When it repeats a requirement,
+   confirm the earlier correction and evidence still apply, then reference them
+   instead of editing or testing the same cause twice. Touch access, keyboard
+   access and spoken output, for example, are different checks and cannot be
+   collapsed merely because they all concern accessibility.
+5. Record each item as verified, failed, unverified, not applicable with a
    reason, or an explicit owner exception. An exception is not compliance.
    Reading a skill, compiling, or viewing one screenshot does not prove a pass.
-5. Say “Dashboard — Apple Design polishing: 100% complete for the applicable
+6. Say “Dashboard — Apple Design polishing: 100% complete for the applicable
    checklist” only when every applicable item is verified, with no unresolved
    findings, unverified items or exceptions. This is a scoped completion claim,
    not Apple certification or a claim that all Dashboard skills are complete.
    Otherwise say “incomplete” or “complete with owner-approved exceptions” and
    name exactly what remains. Never rename an untested requirement as N/A.
-6. Keep visual polish, accessibility, app behavior and physical hardware results
+7. Keep visual polish, accessibility, app behavior and physical hardware results
    separate. Printer output is not a visual-polish failure; a popup's appearance
    and recovery are still UI scope. Accessibility requirements actually named
    by the active skill remain in that skill's checklist.
-7. Update this ledger and publish changes under repository rules. Give one
-   plain-English screen report: what the skills asked for, findings, changes
-   (or justified no-change), checks/reused evidence and outstanding limitations.
-   Include a compact skill-coverage record so combined work hides no omissions.
-   Stop for owner screen acceptance before starting the next screen.
+8. After every numbered skill pass is recorded, give one plain-English screen
+   report: what each skill asked for, findings, changes or justified no-change,
+   checks, reused evidence and limitations. The final report combines results;
+   it does not replace the individual passes. Update and publish the ledger under
+   repository rules, then stop for owner acceptance before the next screen.
 
 Later changes must preserve earlier verified results. Reopen affected checks
 and record that regression work; do not silently undo an approved decision or
@@ -216,7 +221,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 | --- | --- | --- | --- |
 | UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Combined review checkpoint delivered; chart choice and recorded gaps remain open |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Combined review delivered; owner acceptance pending; option appearance unresolved |
-| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Combined review in progress; owner review pending |
+| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Sequential review active; step 01 Apple Design complete with owner exceptions; step 02 next |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
 | UI-05 | Stock | Ingredients, units, purchasing, stock corrections, low-stock states and the Product-to-Stock relationship | Queued; workflow simplification required |
 | UI-06 | Reports | Every existing report tab, periods/calendars, charts/tables, details and supported actions | Queued |
@@ -750,6 +755,311 @@ changes pushed and the owner must accept the screen before moving on.
   explicitly accepts UI-03 or requests one more scoped correction. Only after
   that acceptance may the sequence move to Products.
 
+### UI-03 — sequential pass 01, Apple Design, 21 September 2026
+
+- **Active skill and scope:** `apple-design/SKILL.md` was reread completely for
+  this individual pass. The review covered the Orders location and status
+  indicators, search/status/date controls, selected row, order details, calendar,
+  cancellation dialog, loading/empty/error/French fixtures and reprint/recovery
+  presentation. Gesture physics, momentum, rubber-banding, audio, haptics and
+  translucent materials are not used by this fixed POS screen and were recorded
+  as not applicable, not added as decoration.
+- **Checklist — response and wayfinding: verified.** Navigation, status filters
+  and rows use one green sliding indicator as both selection and immediate
+  feedback, with no second gray pressed layer. Ordinary buttons retain their
+  existing pressed feedback. Orders remains visibly selected, the selected row
+  stays tied to the detail panel, and completed/sync/print status remains visible.
+- **Checklist — spatial consistency and agency: verified.** The date calendar is
+  anchored below its trigger and remains inside the `1340 × 804` WebView. The
+  destructive whole-sale correction uses a centered modal and full-viewport
+  dimming scrim; Keep order, Escape and the close control all preserve the sale.
+  The empty-reason validation keeps the dialog open and leaves order `0926-0001`
+  completed and unchanged.
+- **Checklist — focus and recovery: verified.** Fresh live checks confirmed that
+  the calendar and cancellation dialog place initial focus inside, wrap both Tab
+  directions, close with Escape and return focus to their triggering control.
+  The cancellation error is exposed as an alert and marks the reason field
+  invalid. No cancellation or reprint was submitted.
+- **Checklist — motion and restraint: verified.** Selection motion is a
+  compositor-friendly `transform` transition at `220ms`, with no bounce,
+  keyframed decoration or input lock. Emulated `prefers-reduced-motion: reduce`
+  removes the shared navigation transition; the Orders indicator CSS uses the
+  same explicit no-transition rule. The approved light layout, geometry and
+  information hierarchy were preserved.
+- **Owner exceptions, not compliance:** Apple guidance recommends dark-mode
+  adaptation and user-scaled Dynamic Type/reflow. Olaso is permanently light
+  mode and the owner has approved a fixed tablet layout, so this pass does not
+  claim those two items as Apple compliance. They do not authorize a redesign
+  or block the next skill.
+- **Evidence:** `tmp/ui03-step01-resume-first.png` shows the live anchored
+  calendar at `1340 × 804`. `tmp/ui03-apple-live-check.mjs` rechecked calendar
+  and cancellation focus containment/restoration, centered geometry, full
+  scrim dimensions, empty validation, preserved order state and reduced-motion
+  behavior. Existing unchanged browser fixtures at `1340 × 800` cover normal,
+  loading, empty, unavailable-history/Retry and French presentation. The earlier
+  selected-state correction and fixture evidence were reused only after the
+  affected source and current live state were reconfirmed.
+- **Android/Capacitor boundary:** this pass found no native lifecycle, storage,
+  networking, security or hardware change. Existing Android WebView/Capacitor
+  research remains applicable: these CSS/React interaction states belong in the
+  WebView layer. No Kotlin, plugin, package, database or application source
+  change was justified.
+- **Status:** Apple Design pass complete with the two permanent owner-approved
+  exceptions above; no unresolved Apple finding requires implementation.
+- **Exact next action:** complete UI-03 step 02, `better-interface`, as its own
+  checklist and pass. Do not use the Apple result to skip that review and do not
+  advance to Products.
+
+### UI-03 — sequential pass 02, Better Interface, 21 September 2026
+
+- **Active skill and scope:** `better-interface/SKILL.md` and its required
+  `review-format.md` were read for this individual orchestration pass. The
+  boundary is the complete Orders flow at the fixed tablet surface: search,
+  status filters, date picker, paginated history, selected row, receipt detail,
+  reprint/cancel actions, cancellation dialog, loading, empty, unavailable,
+  French and keyboard states. React/Vite, CSS Modules, Astryx Olaso tokens,
+  Boxicons and the 1340 × 800 Android WebView contract were confirmed in the
+  project instructions and Orders DOX.
+- **Routing result:** this skill owns review scope and evidence consolidation;
+  it does not replace the six domain skills. Accessibility, layout, writing,
+  typography, colors and UI were kept as separate numbered passes. The source
+  inspection exposed two accessibility findings and routed them to step 03:
+  order rows were being exposed as table rows rather than native buttons, and
+  calendar days were announced as bare numbers without a full date or selection
+  state. No independent Better Interface styling change was justified.
+- **Evidence:** the fresh Orders fixture was opened and inspected through its
+  accessibility tree in normal, empty, loading, unavailable-history and French
+  states. Existing 1340 × 800 layout evidence was reused only because these
+  changes do not alter geometry. The live fixture showed the approved single
+  sliding selection treatment and no second gray selected layer.
+- **Research and boundary:** the [WAI-ARIA button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/)
+  and [accessible-name guidance](https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/)
+  were checked on 21 September 2026. Android [WebView guidance](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor Web API guidance](https://capacitorjs.com/docs/core-apis/web)
+  confirm that these semantics remain in the existing React/WebView layer; no
+  native Android or plugin change was needed.
+- **Status:** orchestration pass complete. Domain findings were not counted as
+  completed domain passes; step 03 records their accessibility corrections.
+- **Exact next action:** complete the standalone step 04 `better-layout` pass
+  after the step 03 correction below.
+
+### UI-03 — sequential pass 03, Better Accessibility, 21 September 2026
+
+- **Checklist and findings:** a keyboard/accessibility-tree walk found that the
+  visual order rows used `<button role="row">`, which hid the native button
+  action in the accessibility tree, and that calendar days were exposed only as
+  repeated numbers such as “1” and “2”. Cancellation validation also left focus
+  on “Cancel order” instead of moving to the invalid reason field. These are
+  direct violations of the skill's native-controls, accessible-name/state and
+  invalid-field focus rules.
+- **Smallest corrections:** `OrdersTable.tsx` now keeps each row as a native
+  button, removes the conflicting table/row/cell role overrides, and exposes
+  the selected row with `aria-current` while preserving the exact grid and
+  sliding cream indicator. `PeriodCalendar.tsx` now gives every day a
+  locale-aware full-date label, exposes the range state with `aria-pressed`,
+  and exposes today with `aria-current="date"`. `CancellationDialog.tsx` now
+  focuses the reason textarea when the submitted reason is invalid. No visible
+  geometry, colors, wording, selection animation or data behavior changed.
+- **Verification:** `npm run build` passed. The fresh fixture's accessibility
+  tree now reports the order as a button with its complete row content; calendar
+  days are full dates with their selected state; and invalid cancellation moves
+  focus to the reason field while keeping the dialog open. Normal, empty,
+  loading, unavailable-history and French states were inspected. `git diff
+  --check` passed. `npm run check:orders` reached the historical assertions and
+  stopped at the protected `OLASO_OWNER_PIN` restore gate; no PIN, reset or
+  reseed was attempted. `npm run check:css-scope` still reports only the four
+  pre-existing keyframe selectors in untouched App/Lock CSS.
+- **Android/Capacitor boundary:** this is React/WebView semantics only. No
+  Kotlin, plugin, storage, network, printer or database code changed. Physical
+  tablet confirmation of TalkBack speech remains unverified.
+- **Status:** Better Accessibility implementation pass complete for the
+  inspected Orders flow. Enlarged system text, RTL and TalkBack speech remain
+  explicit verification limits, not silent passes.
+- **Exact next action:** complete UI-03 step 04, `better-layout`, as a separate
+  pass; do not merge it into this accessibility result.
+
+### UI-03 — sequential pass 04, Better Layout, 21 September 2026
+
+- The fixed 1340 × 800 geometry, two-panel grouping, aligned table columns,
+  anchored calendar and pinned detail actions were checked against `better-layout`,
+  the Orders DOX and `DESIGN.md`. The empty, loading, unavailable and French
+  states retained their grouping without clipping in the existing tablet
+  evidence. No geometry or layout change was justified. The owner's fixed-layout
+  decision remains an explicit exception to responsive reflow guidance.
+- **Status:** pass complete; no source change.
+
+### UI-03 — sequential pass 05, Better Writing, 21 September 2026
+
+- English and French labels, recovery copy, cancellation warning, validation
+  message, disabled reprint note and empty-state instructions were inspected.
+  They use direct café-operational wording and provide a recovery action where
+  one exists. No copy change was justified.
+- **Status:** pass complete; no source change.
+
+### UI-03 — sequential pass 06, Better Typography, 21 September 2026
+
+- The screen uses the existing DM Sans roles, tabular money/date figures,
+  one-line date/time grouping and the approved compact tablet label sizes. The
+  search and reason fields remain readable and selectable. No type scale or
+  layout change was justified; the fixed tablet layout and owner-scaled text
+  exception remain recorded.
+- **Status:** pass complete with the fixed-layout exception; no source change.
+
+### UI-03 — sequential pass 07, Better Colors, 21 September 2026
+
+- Existing light-mode tokens were checked against their rendered light surfaces
+  using the WCAG contrast calculation. The strong text pairs pass, but
+  `--olaso-text-meta` on white is about 4.04:1 and
+  `--olaso-text-placeholder` on white is about 3.89:1, below the 4.5:1 normal
+  text target. These tokens affect the Orders detail metadata and search
+  placeholder. The [WCAG 2.2 contrast requirement](https://www.w3.org/TR/wcag/)
+  was checked on 21 September 2026.
+- Per `better-colors`, the palette was not changed without an owner-approved
+  color decision. This is a retained finding, not a pass claim. No layout,
+  copy, data or interaction behavior changed.
+- **Status:** pass inspected but blocked on the owner's palette decision. The
+  exact next action is to approve a token correction or explicitly retain these
+  colors as an exception, then remeasure the rendered pairs.
+
+### UI-03 — sequential pass 08, Better UI, 21 September 2026
+
+- The skill's high-frequency motion rule was applied without changing the
+  sliding interaction itself. Orders filter and table indicators now use a
+  150ms transform; filter-label color also uses 150ms. The shared top-navigation
+  indicator and label use the same 150ms values. All transitions name the exact
+  properties, keep the existing easing, and still turn off under reduced motion.
+- **Before / after:**
+
+  | Before | After | Why |
+  | --- | --- | --- |
+  | `transform 220ms`, `color 180ms`, and shared nav `opacity 180ms` | `transform 150ms`, `color 150ms`, and nav `opacity 150ms` | Frequent cashier selections acknowledge immediately while preserving the owner's sliding indicator. |
+
+- Research checked [MDN transition performance guidance](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/CSS_JavaScript_animation_performance)
+  on 21 September 2026; transform/opacity remain the existing compositor-friendly
+  properties. No bounce, scale, blur, keyframe decoration or new dependency was
+  added.
+- **Status:** pass complete. The shared navigation change is intentional and
+  will be reverified when those later screens receive their own passes.
+
+### UI-03 — sequential pass 09, No AI Design Slop, 21 September 2026
+
+- The rendered Orders states and source were checked for repeated decorative
+  containers, redundant labels, fake metrics, purposeless animation and generic
+  generated copy. The cream two-panel structure, status indicators, receipt
+  detail and single sliding selection all communicate real order state or task
+  hierarchy. No removal or replacement was justified.
+- **Status:** pass complete; no source change.
+
+### UI-03 — sequential pass 10, Audit AI Design Slop, 21 September 2026
+
+- The same evidence was audited diagnostically rather than redesigned. No
+  concrete slop pattern or established UI defect remained after the recorded
+  Orders corrections. No numeric slop score or speculative redesign was made.
+- **Status:** pass complete; no source change.
+
+### UI-03 — sequential pass 11, Emil Design Engineering, 21 September 2026
+
+- The pass used the required Before/After review format. The existing selection
+  movement had a valid spatial purpose and now uses 150ms for repeated cashier
+  actions; the existing custom easing stays intact. The cancellation and date
+  dialogs remain static and focus-led rather than theatrical. No other motion or
+  visual change was justified.
+- **Status:** pass complete; source change is the step 08 duration correction.
+
+### UI-03 — sequential pass 12, Review Animations, 21 September 2026
+
+- Filter, table and top-navigation selection transitions animate only `transform`
+  or `color`/`opacity`, can be interrupted by a new selection, and are removed
+  for reduced motion. Loading, empty, error and dialog states do not depend on
+  animation to communicate meaning. The existing fixed layout crossfade remains
+  outside the Orders-owned components and was not changed.
+- **Status:** pass complete for the inspected Orders flow; no additional source
+  change.
+
+### UI-03 — sequential pass 13, Critique Visual Hierarchy, 21 September 2026
+
+- The Orders title and filters lead the list, the selected row ties directly to
+  the receipt detail, and Reprint/Cancel remain the only detail actions. Status,
+  sync and printer notes are secondary. No hierarchy correction was justified.
+- **Status:** pass complete; no source change.
+
+### UI-03 — sequential pass 14, Critique Information Density, 21 September 2026
+
+- The table keeps one compact row per order, the detail card groups receipt
+  items and payment, and scroll is limited to long item/payment content above
+  pinned actions. Empty, loading and error states remove unavailable content
+  instead of filling the screen with placeholders. No density change was
+  justified.
+- **Status:** pass complete; no source change.
+
+### UI-03 — sequential pass 15, Critique Affordance, 21 September 2026
+
+- Native buttons, the search field, status filters, date opener, pagination,
+  retry, Reprint, Cancel and dialog controls have visible labels or accessible
+  names, focus states and clear disabled behavior. The selection indicator is
+  now backed by `aria-current` instead of conflicting table roles. No additional
+  affordance change was justified.
+- **Status:** pass complete; no source change beyond the accessibility pass.
+
+### UI-03 — sequential pass 16, Design Token Audit, 21 September 2026
+
+- Orders continues to use the existing Olaso color, radius, spacing, typography,
+  focus and motion values. The 150ms correction reused the existing curve; no
+  new token or duplicate component style was introduced.
+- **Status:** pass complete; no source change beyond the recorded duration
+  correction.
+
+### UI-03 — sequential pass 17, Data Visualization, 21 September 2026
+
+- Orders has no chart, graph or quantitative visualization surface. Money,
+  counts and dates are ordinary receipt/table values and remain governed by the
+  existing locale and receipt contracts.
+- **Status:** not applicable with evidence; no source change.
+
+### UI-03 — sequential pass 18, Mobile Native, 21 September 2026
+
+- The Orders work remains inside the existing React/WebView boundary. Native
+  buttons retain `touch-action: manipulation`, the fixed Android viewport and
+  scroll containment remain unchanged, and no device sniffing or zoom lock was
+  added. The current semantic changes still need a fresh installed-APK/TalkBack
+  check on the connected Redmi; browser evidence is not a substitute for that.
+- **Status:** source pass complete; physical-device verification remains open.
+
+### UI-03 — sequential pass 19, Localization Design, 21 September 2026
+
+- English and French fixture states were inspected. Dates, money, service,
+  payment, status, pagination and recovery labels use the existing locale layer;
+  calendar accessibility names are now locale-aware full dates. RTL and a long
+  expansion locale were not claimed because the product currently ships EN/FR.
+- **Status:** pass complete for shipped locales; RTL/expansion remain explicit
+  limits.
+
+### UI-03 — sequential pass 20, Error Handling UX, 21 September 2026
+
+- Loading shows a loading message, empty results offer Clear filters when useful,
+  cloud history keeps saved rows visible with Retry, and cancellation validation
+  states the exact reason requirement while keeping the dialog open. The
+  invalid field now receives focus. No further recovery change was justified.
+- **Status:** pass complete for the inspected states.
+
+### UI-03 — sequential pass 21, Design QA Checklist, 21 September 2026
+
+- Completed the Orders state inventory in the fresh fixture: normal, selected,
+  loading, empty, unavailable-history/Retry, cancellation validation, French,
+  calendar open/closed and keyboard focus. `npm run build` and `git diff --check`
+  passed. `npm run check:orders` stopped at its protected six-digit
+  `OLASO_OWNER_PIN` restore gate after historical assertions; no reset or reseed
+  was attempted. `npm run check:css-scope` still reports only the four existing
+  `from`/`to` keyframe selectors in untouched App/Lock CSS. Graphify was
+  refreshed with `graphify . --update --code-only` after the JSX changes.
+- The required 1340 × 800 layout evidence remains valid because geometry did not
+  change; fresh browser accessibility evidence was collected for the corrected
+  semantics. Redmi installation, TalkBack speech, enlarged OS text, RTL and
+  exact rendered contrast after a palette decision remain open.
+- **Status:** all numbered Orders passes have been inspected, but UI-03 is not
+  owner-accepted because the color finding and physical-device checks remain
+  open. Do not advance to Products.
+
 ### UI-02 — combined POS review, 21 September 2026
 
 - **Scope inventory:** the live Redmi POS was checked at its WebView viewport of
@@ -1079,9 +1389,11 @@ changes pushed and the owner must accept the screen before moving on.
 
 ### UI-01 — combined screen-review protocol, 21 September 2026
 
-- Latest owner instruction replaces the individual skill/handoff process with
-  all applicable listed skills per screen, after identifying overlaps. Historical
-  no-batching/next-skill instructions below are superseded, not current commands.
+- **Superseded workflow record:** this checkpoint incorrectly interpreted
+  overlap deduplication as replacing individual skill passes. The current
+  “Required skills” and “Sequential review” instructions above control: complete
+  every numbered skill pass in order, reuse duplicate fixes, and combine only
+  the final report. Do not use this historical checkpoint as an instruction.
 - Owner also closed Better Accessibility with the fixed-layout exception.
   This allows continuing; it does not turn zoom/reflow into compliance or the
   recorded speech, dialog, contrast and other verification gaps into passes.

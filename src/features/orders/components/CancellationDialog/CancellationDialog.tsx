@@ -1,5 +1,5 @@
 import { X } from '@boxicons/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPortal';
 import { useModalFocus } from '../../../../components/useModalFocus';
 import { useT } from '../../../../lib/locale';
@@ -20,11 +20,13 @@ export function CancellationDialog({
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const reasonRef = useRef<HTMLTextAreaElement>(null);
   const dialogRef = useModalFocus(true, onClose, restoreSelector);
 
   async function submit() {
     if (reason.trim().length < 3) {
       setError('Correction reason must contain 3 to 240 characters.');
+      reasonRef.current?.focus();
       return;
     }
     setSaving(true);
@@ -67,6 +69,7 @@ export function CancellationDialog({
         <label>
           <span>{t('Required reason')}</span>
           <textarea
+            ref={reasonRef}
             value={reason}
             maxLength={240}
             aria-invalid={Boolean(error)}

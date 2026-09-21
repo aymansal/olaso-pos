@@ -227,6 +227,10 @@ export function PeriodCalendar({
                 const end = draft.toDate;
                 const inRange = start && end && day >= start && day <= end;
                 const selected = day === start || day === end || day === pick;
+                const dayLabel = new Date(`${day}T12:00:00`).toLocaleDateString(
+                  language === 'fr' ? 'fr-FR' : 'en-GB',
+                  { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' },
+                );
                 return (
                   <button
                     type="button"
@@ -238,6 +242,9 @@ export function PeriodCalendar({
                       selected ? styles.selected : '',
                       day === today ? styles.today : '',
                     ].filter(Boolean).join(' ')}
+                    aria-label={dayLabel}
+                    aria-pressed={Boolean(inRange)}
+                    aria-current={day === today ? 'date' : undefined}
                     onClick={() => pickDay(day)}
                   >
                     {Number(day.slice(8))}
