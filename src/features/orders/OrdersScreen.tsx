@@ -32,7 +32,9 @@ export function OrdersScreen() {
   const [selectedKey, setSelectedKey] = useState<string>();
   const selectedOrder = data.orders.find((order) => order.key === selectedKey);
   const pageCount = Math.max(1, Math.ceil(data.totalCount / ORDER_PAGE_SIZE));
-  const safePage = Math.min(page, pageCount - 1);
+  const safePage = data.totalCount === 0 && page > 0
+    ? page
+    : Math.min(page, pageCount - 1);
 
   useEffect(() => {
     if (page !== safePage) setPage(safePage);

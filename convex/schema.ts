@@ -346,6 +346,8 @@ export default defineSchema({
     }),
   })
     .index('by_device_local_sale', ['deviceId', 'localSaleId'])
+    .index('by_business_date_completed_at', ['businessDate', 'completedAt'])
+    .index('by_status_business_date_completed_at', ['status', 'businessDate', 'completedAt'])
     .index('by_completed_at', ['completedAt']),
 
   saleCorrections: defineTable({

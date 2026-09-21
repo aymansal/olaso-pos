@@ -32,11 +32,11 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-02 — POS. Combined review implementation delivered;
-  owner acceptance is pending.**
-  The owner explicitly advanced the sequence from Dashboard to POS on 21
-  September 2026. Dashboard's recorded out-of-scope checks remain historical
-  limitations; advancing does not turn them into technical passes.
+- **Active screen: UI-03 — Orders / Sales data correction before polish.**
+  The owner explicitly advanced the sequence from POS to Orders on 21
+  September 2026 and reported that seeded development orders were missing
+  from every Orders period. Dashboard's recorded out-of-scope checks remain
+  historical limitations; advancing does not turn them into technical passes.
   The latest owner instruction replaces individual skill handoffs with one
   combined review per screen, after consolidating overlapping requirements.
   Owner closed the Apple pass and explicitly requested the next skill on
@@ -45,13 +45,10 @@ Pencil frames still own their respective product and implementation contracts.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Dashboard was the first screen card; the current work is UI-02 POS. No new
   UI implementation or app testing was performed during ledger creation.
-- **Exact next action:** owner manual acceptance of the POS flow, including the
-  option-row appearance decision. Do not start UI-03 until POS is accepted.
-- POS option-row choice remains unanswered: plain rows with dividers and
-  selection marks, or retained outlined options. Carry it into UI-02; it does
-  not block the technical fixes recorded below, but it blocks POS acceptance.
-  Do not infer an answer from silence.
-- Do not automatically jump to UI-03, ingredients, security or sync work.
+- **Exact next action:** owner confirms the restored Orders periods, then begin
+  the combined UI-03 polish review. The previous POS option-row question stays
+  recorded in the UI-02 checkpoint; no new visual choice was invented here.
+- Do not automatically jump to Products, ingredients, security or sync work.
 
 ## Owner rules — no personal design choices
 
@@ -314,6 +311,62 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-03 — restore development cloud order history before polish, 21 September 2026
+
+- **Owner request and scope:** before changing the Orders appearance, restore
+  the existing development mock orders so All dates, This month, Last month,
+  This week, paging and order details can be checked against real data. This
+  is a data-path correction only; no Orders layout or wording was redesigned.
+- **Root cause:** the development seed creates sales in Convex, while the
+  previous `useOrdersData` path treated SQLite keys as an allow-list and
+  discarded every cloud row that had no matching local row. Dashboard and
+  Reports used cloud summaries, so they still showed numbers while Orders was
+  empty. This was the existing local-history merge contract, not missing seed
+  records.
+- **Research before implementation (21 September 2026):** [Convex paginated
+  queries](https://docs.convex.dev/database/pagination) support cursor-based
+  pages; [Convex indexes](https://docs.convex.dev/database/reading-data/indexes/)
+  require the date/status access paths used here; [Convex filtering](https://docs.convex.dev/database/reading-data/filters)
+  documents bounded server-side filters. [Capacitor](https://capacitorjs.com/docs)
+  keeps this existing React/data change in the WebView boundary; no native
+  Android or plugin change was needed. Alternatives were an unbounded client
+  download or a destructive reseed; both were rejected for performance and
+  data-safety reasons.
+- **Changes:** `convex/schema.ts` adds business-date and status/date indexes;
+  `convex/sales.ts` accepts bounded date/status filters, returns cursor pages,
+  and derives an All/date total from bounded `dailyMetrics` summaries;
+  `src/data/useOrdersData.ts` replays cursors for requested pages, merges cloud
+  rows with matching local print state, and keeps unsynced local rows visible;
+  `src/features/orders/OrdersScreen.tsx` avoids resetting a requested page
+  while the remote total is loading. The search box continues to use the
+  existing local search path until a proper Convex search index is designed;
+  entering text therefore does not fetch cloud-only rows.
+- **Observed development data:** the deployed development query returned 1,028
+  All-date orders, 685 for 01–21 September 2026, and 332 for 01–31 August
+  2026. The current week (14–21 September) has no 21 September sale in the
+  seed, so its empty result is expected. The next page showed orders 9–16 and
+  the first page showed 1–8 of 1,028 on the Redmi.
+- **Cloud-only behavior:** a cloud row can be opened, but Reprint and Cancel
+  remain unavailable when the tablet has no local receipt/print state. This
+  preserves the existing Orders contract and does not pretend the cloud row is
+  locally printable.
+- **Verification:** `npm run check:convex`, `npx convex dev --once`,
+  `npm run build`, and `npm run android:beta` passed. The APK was installed
+  over the connected Redmi with `adb install -r`, preserving its data; the
+  Orders viewport measured 1340 × 804. `npm run check:orders` passed its local
+  receipt/option assertions, then stopped at the protected `seed:verify`
+  destructive-reset gate because this deployment is not marked disposable; no
+  reset was attempted. Browser visual polish and the full Orders skill review
+  are still pending.
+- **Limitations and next step:** exact totals are currently available for All
+  and date-range queries from saved daily summaries; status-filtered totals use
+  the bounded observed-page fallback until a server-side status rollup exists.
+  Cloud text search remains the explicit follow-up above. Owner review of the
+  restored periods is required before the combined UI-03 polish pass begins.
+- **Publication:** implementation commit will be recorded after this change is
+  pushed; the follow-up ledger publication will record its SHA and
+  `origin/main`.
 
 ### UI-02 — combined POS review, 21 September 2026
 

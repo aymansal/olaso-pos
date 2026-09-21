@@ -62,6 +62,7 @@ function mergeOrders(
 
 type CloudOrder =
   FunctionReturnType<typeof api.sales.listOrders>['page'][number];
+type CloudOrderPage = FunctionReturnType<typeof api.sales.listOrders>;
 
 function cloudOrder(sale: CloudOrder): OrderHistoryRecord {
   const snapshot = sale.receiptSnapshot;
@@ -123,6 +124,7 @@ export function useOrdersData(list: OrdersListQuery) {
   const mounted = useRef(true);
   const fetchGeneration = useRef(0);
   const hasOrdersSnapshot = useRef(false);
+  const cloudCursors = useRef(new Map<string, Array<string | undefined>>());
 
   const refresh = useCallback(async () => {
     const initial = !hasOrdersSnapshot.current;
@@ -132,12 +134,39 @@ export function useOrdersData(list: OrdersListQuery) {
     const offset = list.page * ORDER_PAGE_SIZE;
     const generation = fetchGeneration.current + 1;
     fetchGeneration.current = generation;
-    const cloudHistory = list.page === 0 && available && foreground
-      ? convex.query(api.sales.listOrders, {
-          sessionToken: session.token,
-          deviceId: session.deviceId,
-          limit: ORDER_PAGE_SIZE,
-        })
+    const cloudFilterKey = [
+      session.deviceId,
+      reconnect.revision,
+      list.status,
+      list.fromDate,
+      list.toDate,
+    ].join(':');
+    const cloudHistory = available && foreground && !list.query.trim()
+      ? (async (): Promise<CloudOrderPage> => {
+          const cursors = cloudCursors.current.get(cloudFilterKey) ?? [undefined];
+          let result: CloudOrderPage | undefined;
+          for (let page = 0; page <= list.page; page += 1) {
+            const cursor = cursors[page];
+            result = await convex.query(api.sales.listOrders, {
+              sessionToken: session.token,
+              deviceId: session.deviceId,
+              limit: ORDER_PAGE_SIZE,
+              ...(cursor ? { cursor } : {}),
+              ...(list.fromDate ? { fromDate: list.fromDate } : {}),
+              ...(list.toDate ? { toDate: list.toDate } : {}),
+              ...(list.status === 'All'
+                ? {}
+                : { status: list.status.toLocaleLowerCase() as OrderStatus }),
+            });
+            if (result.continueCursor) cursors[page + 1] = result.continueCursor;
+            else cursors.length = page + 1;
+            if (page < list.page && result.isDone) {
+              return { ...result, page: [] };
+            }
+          }
+          cloudCursors.current.set(cloudFilterKey, cursors);
+          return result!;
+        })()
       : undefined;
     const [localResult, countResult, summaryResult, imageResult] = await Promise.allSettled([
       loadLocalOrderPage({
@@ -152,12 +181,17 @@ export function useOrdersData(list: OrdersListQuery) {
     if (!mounted.current || generation !== fetchGeneration.current) return;
     const pageOrders =
       localResult.status === 'fulfilled' ? localResult.value.page : [];
+    const localCount = countResult.status === 'fulfilled'
+      ? countResult.value
+      : undefined;
     const errors: string[] = [];
     if (localResult.status === 'rejected') {
       errors.push('Local order history is unavailable.');
     }
     if (countResult.status === 'fulfilled') {
-      setTotalCount(countResult.value);
+      if ((localCount ?? 0) > 0 || !hasOrdersSnapshot.current) {
+        setTotalCount(localCount!);
+      }
     } else if (!hasOrdersSnapshot.current) {
       setTotalCount(pageOrders.length);
       errors.push('The order count is unavailable.');
@@ -183,15 +217,21 @@ export function useOrdersData(list: OrdersListQuery) {
     if (!mounted.current || generation !== fetchGeneration.current) return;
     const backgroundErrors: string[] = [];
     if (cloudResult.status === 'fulfilled') {
-      const allowed = new Set(pageOrders.map((order) => order.key));
-      setOrders(
-        mergeOrders(
-          pageOrders,
-          cloudResult.value.page.map(cloudOrder).filter((order) =>
-            allowed.has(order.key)
-          ),
-        ),
+      const localByKey = new Map(pageOrders.map((order) => [order.key, order]));
+      const cloudOrders = cloudResult.value.page.map((order) => {
+        const remote = cloudOrder(order);
+        const local = localByKey.get(remote.key);
+        return local ? mergeOrders([local], [remote])[0] : remote;
+      });
+      const cloudKeys = new Set(cloudOrders.map((order) => order.key));
+      const localOnly = pageOrders.filter((order) =>
+        !cloudKeys.has(order.key) && order.syncState !== 'synced',
       );
+      setOrders([...localOnly, ...cloudOrders].slice(0, ORDER_PAGE_SIZE));
+      const observedCount = list.page * ORDER_PAGE_SIZE + cloudOrders.length;
+      const cloudCount = cloudResult.value.totalCount
+        ?? (cloudResult.value.isDone ? observedCount : observedCount + ORDER_PAGE_SIZE);
+      setTotalCount(Math.max(localCount ?? 0, cloudCount));
     } else {
       backgroundErrors.push(
         'Cloud history is unavailable; saved local orders remain visible.',
@@ -209,6 +249,7 @@ export function useOrdersData(list: OrdersListQuery) {
     list.page,
     list.query,
     list.status,
+    reconnect.revision,
     session.deviceId,
     session.token,
   ]);

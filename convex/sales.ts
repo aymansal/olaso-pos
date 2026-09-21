@@ -4,6 +4,7 @@ import type { Doc, Id } from './_generated/dataModel';
 import { internalQuery, mutation, query } from './_generated/server';
 import {
   boundedInteger,
+  businessDate,
   cleanText,
   conflict,
   invalid,
@@ -22,6 +23,11 @@ const serviceMode = v.union(
 );
 const paymentMethod = v.union(v.literal('Cash'), v.literal('Card'));
 const receiptLanguage = v.union(v.literal('en'), v.literal('fr'));
+const saleStatus = v.union(
+  v.literal('completed'),
+  v.literal('cancelled'),
+  v.literal('refunded'),
+);
 const receiptTender = v.object({
   paymentMethod: v.optional(paymentMethod),
   dueCentimes: v.number(),
@@ -135,6 +141,9 @@ export const listOrders = query({
     ...sessionArgs,
     cursor: v.optional(v.string()),
     limit: v.number(),
+    fromDate: v.optional(v.string()),
+    toDate: v.optional(v.string()),
+    status: v.optional(saleStatus),
   },
   handler: async (ctx, args) => {
     await requireOperationalAccess(ctx, args);
@@ -142,16 +151,60 @@ export const listOrders = query({
     if (args.cursor && args.cursor.length > 2_048) {
       return invalid('The order cursor is invalid.');
     }
-    const result = await ctx.db
-      .query('sales')
-      .withIndex('by_completed_at')
-      .order('desc')
-      .paginate({
+    const fromDate = args.fromDate === undefined
+      ? undefined
+      : businessDate(args.fromDate);
+    const toDate = args.toDate === undefined
+      ? undefined
+      : businessDate(args.toDate);
+    if (fromDate && toDate && fromDate > toDate) {
+      return invalid('The order date range is invalid.');
+    }
+    const source = args.status
+      ? ctx.db.query('sales').withIndex('by_status_business_date_completed_at', (index) => {
+          const statusRange = index.eq('status', args.status!);
+          if (fromDate && toDate) {
+            return statusRange.gte('businessDate', fromDate).lte('businessDate', toDate);
+          }
+          if (fromDate) return statusRange.gte('businessDate', fromDate);
+          if (toDate) return statusRange.lte('businessDate', toDate);
+          return statusRange;
+        })
+      : fromDate || toDate
+        ? ctx.db.query('sales').withIndex('by_business_date_completed_at', (index) => {
+            if (fromDate && toDate) {
+              return index.gte('businessDate', fromDate).lte('businessDate', toDate);
+            }
+            if (fromDate) return index.gte('businessDate', fromDate);
+            return index.lte('businessDate', toDate!);
+          })
+        : ctx.db.query('sales').withIndex('by_completed_at');
+    const metricSource = fromDate || toDate
+      ? ctx.db.query('dailyMetrics').withIndex('by_business_date', (index) => {
+          if (fromDate && toDate) {
+            return index.gte('businessDate', fromDate).lte('businessDate', toDate);
+          }
+          if (fromDate) return index.gte('businessDate', fromDate);
+          return index.lte('businessDate', toDate!);
+        })
+      : ctx.db.query('dailyMetrics').withIndex('by_business_date');
+    const [result, metricRows] = await Promise.all([
+      source.order('desc').paginate({
         cursor: args.cursor ?? null,
         numItems: limit,
-      });
+      }),
+      args.status ? Promise.resolve(undefined) : metricSource.take(5_001),
+    ]);
+    if (metricRows && metricRows.length > 5_000) {
+      return invalid('Saved order summaries exceed the supported history limit.');
+    }
+    const totalCount = metricRows?.reduce(
+      (count, row) => count + row.orderCount,
+      0,
+    );
     return {
       ...result,
+      ...(totalCount === undefined ? {} : { totalCount }),
       page: result.page.map((sale) => ({
         id: sale._id,
         deviceId: sale.deviceId,
