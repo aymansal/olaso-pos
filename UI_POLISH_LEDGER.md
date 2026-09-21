@@ -440,7 +440,9 @@ changes pushed and the owner must accept the screen before moving on.
   screen-reader speech, enlarged OS text and printer output were not claimed.
   The POS option-row appearance remains an owner choice: plain rows with
   dividers and selection marks, or the current outlined rows. No choice was
-  invented. **Owner acceptance is required before UI-03.**
+  invented. The owner subsequently advanced the work to Orders for this data
+  correction; that advance does not infer a new option-row design or claim
+  those untested POS states.
 - **Publication:** implementation commit `37b1c32` was pushed to
   [`origin/main`](https://github.com/aymansal/olaso-pos). This follow-up ledger
   record is the publication evidence for UI-02; the owner review remains open.
