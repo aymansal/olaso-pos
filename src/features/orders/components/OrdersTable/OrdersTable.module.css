@@ -78,10 +78,6 @@
   outline-offset: -2px;
 }
 
-.row:active {
-  background: var(--olaso-soft);
-}
-
 .row > strong {
   color: var(--olaso-text-dark-soft);
   font-size: 12px;

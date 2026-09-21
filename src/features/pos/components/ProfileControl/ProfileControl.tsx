@@ -1,5 +1,5 @@
 import { User } from '@boxicons/react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { StaffRole } from '../../../../data/permissions.ts';
 import type { AppLanguage } from '../../../../lib/locale';
 import { useT } from '../../../../lib/locale';
@@ -100,7 +100,13 @@ export function ProfileControl({
         <div ref={menu} popover="auto" onToggle={(event) => {
           if (event.newState === 'closed') setOpen(false);
         }} className={styles.menu} id="staff-profile-menu">
-          <div className={styles.language} role="group" aria-label={t('Application')}>
+          <div
+            className={styles.language}
+            role="group"
+            aria-label={t('Application')}
+            style={{ '--index': language === 'fr' ? 1 : 0 } as CSSProperties}
+          >
+            <span className={styles.languageIndicator} aria-hidden="true" />
             {(['en', 'fr'] as const).map((value) => (
               <button
                 type="button"

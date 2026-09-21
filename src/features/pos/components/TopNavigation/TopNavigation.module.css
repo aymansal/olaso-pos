@@ -55,10 +55,6 @@
   outline-offset: -3px;
 }
 
-.item:active {
-  background: rgb(0 0 0 / 8%);
-}
-
 .active {
   color: var(--olaso-white);
 }

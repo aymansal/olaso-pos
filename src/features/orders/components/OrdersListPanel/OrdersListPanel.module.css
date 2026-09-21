@@ -141,8 +141,6 @@
 }
 
 .clear:active,
-.filter:active,
-.filterActive:active,
 .date:active,
 .pagination button:active:not(:disabled) {
   background: rgb(0 0 0 / 8%);

@@ -64,6 +64,12 @@ Pencil frames still own their respective product and implementation contracts.
   animation or product behavior because the agent thinks it looks better.
   Every visible change needs a specific applicable skill rule or an explicit
   owner-approved decision, with its source recorded here.
+- **Sliding-selection rule, owner decision 21 September:** when a control has a
+  sliding selected pill or sliding indicator, do not add a second gray pressed
+  highlight to the same control. The sliding indicator is the selected and
+  immediate-feedback state. Apply this to navigation tabs, segmented filters,
+  table selection indicators, service/payment controls, language controls and
+  any later control using the same pattern.
 - Skills are guidance, not an exact finished POS design. Never label an
   interpretation or preference as “Apple requires this” or “the skill says so.”
 - Where guidance is broad, use an already approved Olaso pattern if it resolves
@@ -211,7 +217,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 | --- | --- | --- | --- |
 | UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Combined review checkpoint delivered; chart choice and recorded gaps remain open |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Combined review delivered; owner acceptance pending; option appearance unresolved |
-| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
+| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Combined review in progress; owner review pending |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
 | UI-05 | Stock | Ingredients, units, purchasing, stock corrections, low-stock states and the Product-to-Stock relationship | Queued; workflow simplification required |
 | UI-06 | Reports | Every existing report tab, periods/calendars, charts/tables, details and supported actions | Queued |
@@ -403,6 +409,11 @@ changes pushed and the owner must accept the screen before moving on.
   unselectable while search and reason text remain selectable. Cancellation
   now reports the required 3–240 character reason inline, links the error to
   the textarea, and keeps the submit action available until the request starts.
+- **Owner follow-up:** the owner rejected the gray pressed overlay when a
+  sliding selected indicator already exists. The Orders table row, Orders
+  status filters, and primary navigation must keep only their indicator. The
+  POS service/payment controls and profile language control should use the same
+  sliding indicator behavior; the language indicator uses the green pill.
 - **Verification:** `npm run build`, `npm run check:pos`, Graphify code-only
   refresh, `npm run android:beta`, and Redmi install with `adb install -r`
   passed. Redmi showed the restored 1,028-order first page at 1340 × 804 in
@@ -428,6 +439,52 @@ changes pushed and the owner must accept the screen before moving on.
   The rebuilt APK SHA-256 is
   `740F6E46CA48E15CB9B7CD70C1CF3B15991179298327F0329E24139A193B4884`.
   This ledger publication is the follow-up commit for the same UI-03 card.
+
+### UI-03 — remove duplicate sliding-selection feedback and open cancellation review, 21 September 2026
+
+- **Owner correction:** a selected sliding pill already communicates both the
+  selected item and the immediate touch result. A second gray pressed layer made
+  the top navigation, Orders filters, and Orders rows look like two controls were
+  selected at once. This owner rule is now part of the permanent ledger and
+  applies to every later sliding control.
+- **Research before implementation:** the installed Apple Design, Emil Design
+  Engineering, Better UI, and Review Animations skills were reread for restraint,
+  immediate feedback and motion interruption. The official [MDN `:active` guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/:active)
+  and [MDN `prefers-reduced-motion`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion)
+  were checked on 21 September 2026. The existing 220ms Olaso indicator timing
+  was reused; no new animation library or native Android change was needed.
+- **Changes:** removed only the duplicate gray `:active` background from primary
+  navigation, Orders status filters and selected table rows. Added the same
+  restrained sliding indicator transition to the POS service and payment controls.
+  The profile language control now uses a green sliding pill; its selected label
+  stays white on that pill and has no second gray active state. Settings and Lock
+  actions keep their ordinary press feedback because they do not have a sliding
+  selection indicator. All changed controls keep the reduced-motion override.
+- **Same-day cancellation evidence:** created the normal development sale
+  `0926-0001` through the Redmi POS on 21 September 2026 at 16:02, then opened
+  Orders and its `WHOLE-SALE CORRECTION` popup. Submitting an empty reason showed
+  the inline 3–240 character validation and marked the textarea invalid. No
+  cancellation was submitted; the order remains available for the owner's manual
+  review. Capture: `tmp/ui03-cancellation-polished.png`.
+- **Device visual evidence:** the Redmi WebView measured 1340 × 804. The profile
+  menu capture `tmp/ui03-profile-language.png` shows the green EN pill; computed
+  styles reported the green indicator (`rgb(0, 106, 43)`), white selected label,
+  transparent inactive label, and a 0.22s indicator transition. POS service and
+  payment indicators reported the same 0.22s transition. The tablet helper's
+  wake action briefly opened Android Recents; the app was returned to the
+  foreground with the normal `am start` activity command before the accepted
+  screenshot was taken.
+- **Verification:** `npm run build`, `npm run check:pos`, `npm run android:beta`,
+  `git diff --check`, Graphify code-only refresh, and `adb install -r` passed.
+  The build and install preserved the development data. The installed APK
+  SHA-256 is `42CD87259EF626977933CE44620B000BDDFF78B900B3D55E86ACFA21866E8C57`.
+  The full Orders visual
+  review remains incomplete until the owner reviews the top navigation, filters,
+  selected row, POS service/payment controls, profile menu, and cancellation
+  popup on the live tablet.
+- **Exact next action:** owner manually reviews this focused correction and the
+  now-accessible cancellation popup; then verify the remaining UI-03 empty,
+  loading, error, French and reprint states before marking Orders complete.
 
 ### UI-02 — combined POS review, 21 September 2026
 
