@@ -438,6 +438,10 @@ changes pushed and the owner must accept the screen before moving on.
   hardware/data issues, not corrected UI claims. No 100% or screen acceptance.
 - Exact next action: owner's pending chart choice, focused correction/check,
   then report remaining limitations and obtain screen acceptance before UI-02.
+- Publication: `64ef223` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`. Final staged diff check passed;
+  only the nine files listed above were included. This follow-up records
+  publication; unrelated changes and untracked assets remain preserved.
 
 ### UI-01 — combined screen-review protocol, 21 September 2026
 
