@@ -386,6 +386,9 @@ changes pushed and the owner must accept the screen before moving on.
   The POS option-row appearance remains an owner choice: plain rows with
   dividers and selection marks, or the current outlined rows. No choice was
   invented. **Owner acceptance is required before UI-03.**
+- **Publication:** implementation commit `37b1c32` was pushed to
+  [`origin/main`](https://github.com/aymansal/olaso-pos). This follow-up ledger
+  record is the publication evidence for UI-02; the owner review remains open.
 
 ### UI-01 — align chart tap details with Reports, 21 September 2026
 
