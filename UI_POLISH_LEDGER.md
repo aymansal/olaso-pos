@@ -390,6 +390,33 @@ changes pushed and the owner must accept the screen before moving on.
   [`origin/main`](https://github.com/aymansal/olaso-pos). This follow-up ledger
   record is the publication evidence for UI-02; the owner review remains open.
 
+#### UI-02 follow-up — custom payment amount focus ring, 21 September 2026
+
+- Owner reported that the green focus ring around the editable Amount given
+  field was clipped on the left, right and bottom in both Payment and Split
+  payment dialogs. The popup layout and field size remain unchanged.
+- Research checked the current [MDN outline-offset guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/outline-offset)
+  and [MDN overflow guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow):
+  the dialog body intentionally hides overflow, while the previous positive
+  outline offset drew the ring outside the input box. The smallest justified
+  fix is the existing green outline with `outline-offset: -2px`, drawing it
+  inside the input bounds. No new component, shadow, animation or layout rule
+  was added.
+- Changed only `src/features/pos/components/PaymentDialog/PaymentDialog.module.css`.
+  This shared dialog style covers normal payment and split payment.
+- Verification passed: `npm run build`, `npm run check:pos`,
+  `npm run android:beta`, and `git diff --check`. On the Redmi at 1340 × 804,
+  both dialogs focused the editable field with computed `outline-offset:
+  -1.71429px`; the full green ring was visible on all four sides in
+  `tmp/ui02-payment-custom-focus-no-keyboard.png` and
+  `tmp/ui02-split-custom-focus.png`. The split check used two Latte items and
+  confirmed the split payment field, then cleared the temporary cart without
+  placing a sale. The updated APK was installed with the authorized package
+  installer after the normal ADB install prompt was rejected; app data was
+  preserved. APK SHA-256: `8c2bddd6a30158bd47e47d8b31607de6aaa18adc556fe41c3fbba56784b294cb`.
+- This is a targeted focus-ring fix. Owner review of the full POS screen and
+  its remaining option-row appearance is still required before UI-03.
+
 ### UI-01 — align chart tap details with Reports, 21 September 2026
 
 - Owner explicitly requested Reports' compact value-only tap label on Dashboard,
