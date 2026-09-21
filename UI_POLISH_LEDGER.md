@@ -20,7 +20,7 @@ Pencil frames still own their respective product and implementation contracts.
    `SAAS_TRANSITION.md`. Read the deeper instructions for the active screen.
 2. Read the State pointer, captured owner decisions and latest checkpoint below.
    An old screenshot, installed APK or earlier polish pass is not acceptance.
-3. Open and read the active skill's actual `SKILL.md` and its required
+3. Open and read every applicable listed skill's actual `SKILL.md` and required
    referenced guidance. Reading this table or remembering a skill is not enough.
    Record which skills/sections were read for the current step.
 4. Query Graphify before inspecting/changing code. Check the working tree and
@@ -32,20 +32,22 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard. Active skill: 03 — `better-accessibility`.**
-  Corrections installed and verified within the scope recorded below. Zoom and
-  actual assistive-technology coverage remain open: **incomplete / Block**, not
-  a 100% pass. Await owner review before advancing to step 04.
+- **Active screen: UI-01 — Dashboard. Combined skill review is next.**
+  Owner closed step 03 with the fixed-layout exception; actual speech/dialog
+  and other recorded verification gaps remain unverified, not accepted passes.
+  The latest owner instruction replaces individual skill handoffs with one
+  combined review per screen, after consolidating overlapping requirements.
   Owner closed the Apple pass and explicitly requested the next skill on
   21 September. This accepts advancing the sequence; it does not turn earlier
   unverified checks into passes or claim 100% technical compliance.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** finish and report only
-  step 03 `better-accessibility` on Dashboard and its complete interaction
-  surfaces below. Carry the prior text-size/contrast and unverified checks into
-  their owning reviews; do not silently implement a different layout. Keep
+- **Exact next action:** when the owner starts Dashboard, read all listed
+  applicable skills/references, map overlapping requirements to shared checks,
+  and complete the remaining distinct work across its full interaction scope.
+  Reuse earlier evidence only where still valid; retain the text-size/contrast
+  and other unverified checks. Do not silently implement a different layout. Keep
   light mode, approved geometry, two-line orders, borderless View all, 150ms
   screen fade and the verified text-selection rule.
 - POS option-row choice remains unanswered: plain rows with dividers and
@@ -85,17 +87,20 @@ Pencil frames still own their respective product and implementation contracts.
   an example. Preserve the approved brand until the owner approves a change.
 - Use plain English with the owner. No new dependency, framework, speculative
   abstraction or broad rewrite just to follow an example in a skill.
-- Every skill report must explain in plain English what the skill asked for,
+- The combined screen report must explain in plain English what the skills asked for,
   what was found, exactly what changed (or why nothing needed changing), what
   was actually verified, and what remains. Preparation is not a completed
   review; no-change alone is not evidence of compliance.
 
 ## Required skills and how they work together
 
-Owner instruction, 21 September, supersedes the earlier five grouped passes:
-**one screen, one individual skill, one report, then an owner handoff.**
-Never run several skills as one polishing batch or advance automatically.
-The original 14 skills plus seven agreed specialists form the 21 steps below.
+Latest owner instruction, 21 September, supersedes the one-skill-at-a-time rule:
+**one screen, all applicable listed skills, overlapping checks performed once,
+one combined report, then owner acceptance before the next screen.**
+When the owner says to start a screen, proceed through the combined review and
+justified fixes without waiting for permission between skills. Unresolved design
+choices still go to the owner; continue independent work while awaiting answers.
+The original 14 skills plus seven agreed specialists form the 21 coverage rows below.
 A skill need not force a change. A restart resets review status, not approved
 layout, working corrections or café data.
 
@@ -111,7 +116,7 @@ If a required file is missing, report the gap; do not invent its instructions.
 | Every screen | `emil-design-eng`; `review-animations` for affected motion | Decide whether motion is useful for the frequency of the action. Review transitions and feedback without assuming every control needs animation. |
 | Every screen | `design-qa-checklist`, `error-handling-ux` | Verify the complete flow and recovery states, not just the opening screenshot. |
 | Products and Stock, before proposing a simpler model | `jobs-to-be-done`, `information-architecture`, `teslers-law`, `form-design`, `user-flow-diagram` | Understand real café tasks, remove unnecessary decisions and explain relationships before designing forms or changing data. |
-| Separate specialist steps on each screen | `critique-visual-hierarchy`, `critique-information-density`, `critique-affordance`, `design-token-audit`, `data-visualization`, `mobile-native`, `localization-design` | Review attention, clutter, visible interactivity, consistency, charts, tablet behavior and languages individually. Explain when a skill has no applicable surface. |
+| Specialists within each screen review | `critique-visual-hierarchy`, `critique-information-density`, `critique-affordance`, `design-token-audit`, `data-visualization`, `mobile-native`, `localization-design` | Review attention, clutter, visible interactivity, consistency, charts, tablet behavior and languages; merge overlaps with domain checks. Explain when a skill has no applicable surface. |
 | When a specific issue calls for it | `loading-states`, `usability-test-plan` | Additional focused work only when needed; record it separately, never silently expand the active pass. |
 | Future owner website, or an explicitly chosen prototype | `web-design-engineer` | Read when that task starts. Do not import a new website styling system into the Android POS. |
 
@@ -122,16 +127,17 @@ boundaries. Record links, date checked, alternatives, applicable skill sections,
 the justified change, its owner decision where needed, and intended checks.
 Skills do not replace research or actual device verification.
 
-### Individual skill sequence and Dashboard progress
+### Skill coverage and Dashboard progress
 
-This order preserves the existing sequence and places the added specialists
-before final recovery/QA. Each row gets its own report and owner handoff.
+Numbers identify coverage, not separate work sessions or owner handoffs.
+Read all applicable guidance before editing so later skills do not cause avoidable
+rework. Existing results below are retained evidence, not automatic fresh passes.
 
 | Step | Skill | Dashboard status |
 | --- | --- | --- |
 | 01 | `apple-design` | Closed by owner; recorded verification gaps carried forward |
 | 02 | `better-interface` | Scope/routing complete; domain verdict waits for steps 03–08 |
-| 03 | `better-accessibility` | Corrections delivered; Block remains for zoom/reflow; speech/dialog checks incomplete |
+| 03 | `better-accessibility` | Closed by owner with fixed-layout exception; speech/dialog and other recorded checks remain unverified |
 | 04 | `better-layout` | Queued |
 | 05 | `better-writing` | Queued |
 | 06 | `better-typography` | Queued |
@@ -151,26 +157,33 @@ before final recovery/QA. Each row gets its own report and owner handoff.
 | 20 | `error-handling-ux` | Queued |
 | 21 | `design-qa-checklist` | Queued |
 
-Better Interface is an umbrella skill: step 02 identifies domain scope and
-routes findings to steps 03–08; it must not run those six passes in one batch.
-Reading a required reference does not authorize starting another skill's work.
-Review-only skills keep their review-only boundary: report findings and resolve
-their implementation handoff before advancing; do not claim a review fixed them.
+Better Interface is an umbrella skill: row 02 routes findings to rows 03–08;
+its orchestration is not another full inspection of the same requirements.
+Review-only skills supply findings. Implement justified fixes under this owner's
+screen-polish authorization and the relevant implementation guidance; keep
+review evidence distinct from evidence that a correction actually works.
 Information Architecture and Form Design remain required for Products/Stock
 alongside their other workflow skills above; they are not Dashboard steps.
 
-### Per-skill completion and handoff
+### Combined review, deduplication and screen handoff
 
-1. Read the active skill and required references. Make a checklist of its
-   applicable rules for the screen, including its popups, menus and UI states.
-   State scope before edits; do not shrink it afterward to claim completion.
+1. Read all applicable listed skills and required references before edits.
+   Inventory the screen, popups, menus and UI states. Create one checklist of
+   distinct requirements, mapping each to every skill/section it satisfies.
+   Consolidate only genuinely equivalent requirements: touch access, keyboard
+   access and spoken output, for example, are different checks. Do not drop a
+   unique requirement just because its skill overlaps elsewhere.
 2. Record each finding against an exact skill section and observed evidence.
    Each correction must also fit an existing owner decision or approved Olaso
    pattern. If the skill leaves a design choice unresolved, ask the owner;
    never invent a preference or attribute a personal choice to the skill.
-3. Research before implementation, make the justified changes, and verify
-   the applicable checklist. Record changed files, actual evidence and checks.
-   Earlier evidence can be reused only after confirming it still applies.
+3. Research each distinct problem before implementation; fix each root cause
+   once. Reuse the result across every mapped skill. Earlier evidence can be
+   reused after confirming relevant code, state and environment still apply;
+   record that confirmation and the evidence reference. Recheck only what later
+   changes affect, plus required shared-control regressions. Group compatible
+   fixes before building/installing; no rebuild or reinstall solely to move
+   between skills. Complete repository-required checks for actual app changes.
 4. Record each item as verified, failed, unverified, not applicable with a
    reason, or an explicit owner exception. An exception is not compliance.
    Reading a skill, compiling, or viewing one screenshot does not prove a pass.
@@ -184,14 +197,15 @@ alongside their other workflow skills above; they are not Dashboard steps.
    separate. Printer output is not a visual-polish failure; a popup's appearance
    and recovery are still UI scope. Accessibility requirements actually named
    by the active skill remain in that skill's checklist.
-7. Update this ledger and publish changes under the repository rules. Report
-   the skill name, changes (or justified no-change), verification and outcome
-   in plain English. Finish with the next skill's name and **stop**. Start it
-   only after the owner says to continue. Owner screen acceptance stays separate.
+7. Update this ledger and publish changes under repository rules. Give one
+   plain-English screen report: what the skills asked for, findings, changes
+   (or justified no-change), checks/reused evidence and outstanding limitations.
+   Include a compact skill-coverage record so combined work hides no omissions.
+   Stop for owner screen acceptance before starting the next screen.
 
-Later skills must preserve earlier verified results. If a later change affects
-one, reopen only the affected earlier checks and record that regression work;
-do not silently undo an approved decision or rerun all skills together.
+Later changes must preserve earlier verified results. Reopen affected checks
+and record that regression work; do not silently undo an approved decision or
+restart the entire checklist merely because another skill covers the same topic.
 
 ## Screen queue
 
@@ -293,6 +307,26 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — combined screen-review protocol, 21 September 2026
+
+- Latest owner instruction replaces the individual skill/handoff process with
+  all applicable listed skills per screen, after identifying overlaps. Historical
+  no-batching/next-skill instructions below are superseded, not current commands.
+- Owner also closed Better Accessibility with the fixed-layout exception.
+  This allows continuing; it does not turn zoom/reflow into compliance or the
+  recorded speech, dialog, contrast and other verification gaps into passes.
+- Updated this ledger and root AGENTS workflow only. No app edits, skill
+  reviews, device actions, builds or installations in this checkpoint.
+- Source is the owner's explicit workflow decision; no app/native boundary is
+  affected. The actual overlap map must be built from skill files when the
+  screen review starts; this documentation change does not claim it is done.
+- Verification: read the ledger in full and current root instructions; checked
+  recovery, coverage, handoff and status pointers for consistency. Unrelated
+  working-tree changes preserved. `git diff --check` passed; no app build or
+  structural graph refresh is needed for this documentation-only change.
+- Exact next action: on the owner's Dashboard start, prepare the deduplicated
+  checklist, reuse valid evidence and finish distinct outstanding UI work.
 
 ### UI-01 — Better Accessibility, 21 September 2026
 
