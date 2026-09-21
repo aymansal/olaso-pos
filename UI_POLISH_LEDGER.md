@@ -421,9 +421,8 @@ changes pushed and the owner must accept the screen before moving on.
   Exact next action is for the owner to review the Orders screen, filters,
   selected row, calendar, popup, reprint state and recovery states; do not
   advance to Products.
-- **Publication:** the helper and this checkpoint are ready for the current
-  UI-03 commit; the final commit SHA and `origin/main` location will be added
-  immediately after the commit is created.
+- **Publication:** commit `d9970d6a995fc686bd746de0085a43cdbfe3855f` is pushed
+  to [`origin/main`](https://github.com/aymansal/olaso-pos/commit/d9970d6a995fc686bd746de0085a43cdbfe3855f).
 
 ### UI-03 — combined Orders polish checkpoint, 21 September 2026
 
