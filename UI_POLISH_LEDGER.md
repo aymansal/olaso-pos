@@ -338,6 +338,8 @@ changes pushed and the owner must accept the screen before moving on.
   tests; no build required for this documentation-only step.
 - Outcome: step 02's owner-approved **scope/routing task is complete**.
   Next skill is **03 — Better Accessibility**, awaiting owner continuation.
+- Publication: `702c600` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; this follow-up records publication.
 
 ### UI-01 — nonselectable interface text, 21 September 2026
 
