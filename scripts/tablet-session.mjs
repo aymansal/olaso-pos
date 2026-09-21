@@ -238,7 +238,6 @@ class WebViewSession {
 
 async function wake() {
   await adb('shell', 'input', 'keyevent', 'KEYCODE_WAKEUP');
-  await adb('shell', 'input', 'keyevent', 'KEYCODE_MENU');
 }
 
 async function launchApp({ clearTask = false } = {}) {

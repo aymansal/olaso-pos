@@ -375,6 +375,56 @@ changes pushed and the owner must accept the screen before moving on.
   APK SHA-256 is
   `41e01a67da0d6e1afbfe8a0ce8d17b6fdae9eec961ab5f1fa5bd9c8f47c169d9`.
 
+### UI-03 — physical Orders review and safe tablet wake correction, 21 September 2026
+
+- **Owner workflow correction:** the Redmi has two separate states: a black
+  screenshot means Android's display is asleep, while the visible Olaso unlock
+  screen is the app's five-minute terminal lock. The physical review must take
+  a screenshot first, wake only the Android display when needed, and use the
+  normal owner unlock for the Olaso screen. The tablet must never be sent the
+  Android menu key because Redmi opens Recents for that key.
+- **Research before the tooling correction:** Android's [ADB guidance](https://developer.android.com/tools/adb)
+  and [`KeyEvent.KEYCODE_WAKEUP` reference](https://developer.android.com/reference/android/view/KeyEvent#KEYCODE_WAKEUP)
+  were checked on 21 September 2026. The smallest safe choice is to keep the
+  existing wake key and delete the incompatible `KEYCODE_MENU` command from
+  the development-only helper. Alternatives such as coordinate tapping or
+  sending more navigation keys were rejected because they are device-specific
+  and can open system UI. This is an Android test-tool change only; React,
+  Capacitor, the WebView boundary, storage, sync and café data were untouched.
+- **Tooling change:** `scripts/tablet-session.mjs` now wakes the display without
+  opening Recents. The direct WebView unlock path was used for this review, and
+  the owner PIN was kept out of files, logs and the ledger.
+- **Fresh Redmi evidence:** after taking a screenshot first, the app was
+  unlocked directly and reviewed at `1340 × 804`. The live Orders screen showed
+  the unchanged `0926-0001` sale. All and Completed kept the row and selected
+  detail. The open date calendar showed Today, Yesterday, week/month ranges and
+  All. Search for the order number narrowed the table correctly and was then
+  cleared. The cancellation popup opened, empty submission showed
+  `Correction reason must contain 3 to 240 characters.`, and Keep order closed
+  it without changing the sale. Captures: `tmp/ui03-orders-before-actions.png`,
+  `tmp/ui03-date-picker.png`, `tmp/ui03-search-result.png`,
+  `tmp/ui03-cancel-dialog-live.png`, and `tmp/ui03-cancel-empty-live.png`.
+- **Physical limitations:** selecting Cancelled once coincided with the
+  expected five-minute terminal lock before the result could be inspected.
+  The current tablet date view contains the one same-day owner-review sale;
+  no sale was created, cancelled, deleted or reseeded. Reprint was inspected
+  as the visible `Printer unavailable · reprint available` state but was not
+  triggered, so no printer side effect was introduced. French, loading, empty,
+  error and cancellation-recovery states still need the browser/fixture or
+  owner review evidence recorded below.
+- **Verification:** the tablet showed no console or focused logcat errors in
+  the fresh dumps. `npm run build`, `git diff --check`, and Graphify code-only
+  refresh passed. `npm run check:orders` passed its static regression checks
+  but stopped at the existing protected `seed:verify` destructive-reset gate;
+  no reset was attempted. The helper correction did not require a new APK.
+- **Status:** UI-03 remains incomplete and owner review is still required.
+  Exact next action is for the owner to review the Orders screen, filters,
+  selected row, calendar, popup, reprint state and recovery states; do not
+  advance to Products.
+- **Publication:** the helper and this checkpoint are ready for the current
+  UI-03 commit; the final commit SHA and `origin/main` location will be added
+  immediately after the commit is created.
+
 ### UI-03 — combined Orders polish checkpoint, 21 September 2026
 
 - **Scope reviewed:** the 1340 × 804 Orders screen, search field, status
