@@ -409,7 +409,9 @@ changes pushed and the owner must accept the screen before moving on.
   these results to the owner, resolve the fixed-layout accessibility exception
   or authorize a separate zoom/text adaptation, and arrange the remaining
   TalkBack/native-dialog checks. Next queued skill is 04 Better Layout only
-  after an explicit owner handoff. Publication recorded after push below.
+  after an explicit owner handoff.
+- Publication: `8d041a0` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; this follow-up records publication.
 
 ### UI-01 — Better Interface scope and routing, 21 September 2026
 
