@@ -633,6 +633,11 @@ pending; see `SAAS_TRANSITION.md` for evidence. This is not an app-wide redesign
 
 ## Accessibility and Operational Safety
 
+- Owner-approved text selection: interface labels and displayed values are
+  unselectable, including menus, popovers and dialogs. Editable text fields
+  retain normal selection and copy/cut/paste with platform password safeguards.
+  Roll out per screen through `UI_POLISH_LEDGER.md`; cover portalled overlays
+  explicitly. Do not cancel input, focus, scrolling or clipboard events.
 - Maintain a minimum 44 by 44 CSS-pixel interactive target; prefer 48 by 48 for Android controls where the approved layout permits it.
 - Keep at least 8 pixels between independent touch targets.
 - Preserve visible keyboard focus with a 2-pixel Operational Green outline and sufficient offset.

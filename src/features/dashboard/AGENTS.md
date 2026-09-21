@@ -15,6 +15,8 @@ recent orders.
 
 ## Local Contracts
 
+- Dashboard display text is unselectable, including chart details and all
+  states. Preserve normal selection/copy/paste for editable text fields.
 - Keep the dashboard summary-first; detailed work belongs in Orders, Stock, or
   Reports.
 - Preserve the approved dashboard frame in `untitled.pen` and the shared

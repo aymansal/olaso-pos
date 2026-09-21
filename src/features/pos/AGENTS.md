@@ -37,7 +37,10 @@ owns the shared Header and TopNavigation currently used across the application.
  path as a product card, so a product needing a size or a required choice still
  opens the dialog.
 - The Header carries no notification control; do not reintroduce a decorative
- bell or a hardcoded badge count.
+  bell or a hardcoded badge count.
+- Shared Header display text is unselectable, including date/time, navigation,
+  Report, profile name/role and the expanded staff menu. Editable fields retain
+  native selection/copy/paste; cover overlays separately if moved into a portal.
 - The staff popover uses ordinary native buttons, not ARIA menu/menuitem roles.
   Tab moves between its controls; Escape closes it and returns focus to the
   profile trigger. Preserve this shared behavior on every screen.

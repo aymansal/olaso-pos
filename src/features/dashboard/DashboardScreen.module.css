@@ -1,4 +1,6 @@
 .screen {
+  -webkit-user-select: none;
+  user-select: none;
   position: relative;
   width: 1340px;
   height: 800px;

@@ -52,6 +52,15 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## Owner rules — no personal design choices
 
+- **Text selection, owner decision 21 September:** interface text is not
+  selectable. Apply this screen by screen, covering the full screen, buttons,
+  dates/times, menus, popovers, dialogs, chart details and all UI states.
+  Editable input/textarea/contenteditable text must retain normal selection,
+  copy, cut and paste; preserve platform password protections. Do not block
+  pointer events, keyboard focus, scrolling, accessibility or clipboard events.
+  Check overlays separately, including portals outside the screen container.
+  Dashboard and the shared Header/profile menu are the first implementation;
+  other screen bodies follow when their polish card starts.
 - **0% personal aesthetic choices.** Do not invent styling, layouts, wording,
   animation or product behavior because the agent thinks it looks better.
   Every visible change needs a specific applicable skill rule or an explicit
@@ -277,6 +286,54 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — nonselectable interface text, 21 September 2026
+
+- Owner explicitly requested this correction for all Dashboard text, the shared
+  navigation, Report, profile name/role, date/time, and the entire profile menu.
+  This owner-directed step does not advance the Apple skill queue or resolve
+  its outstanding accessibility decision.
+- Research before implementation, checked today:
+  [MDN user-select](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/user-select)
+  documents `none` for interface text and `text` for editable content.
+  [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor](https://capacitorjs.com/docs/core-apis/web) keep selection in
+  the existing web-rendering layer. Use scoped CSS on Dashboard and Header;
+  the native profile popover is still a DOM descendant of Header. Explicitly
+  retain text selection on editable fields through the existing global input
+  defaults. No native changes or JavaScript event cancellation is needed.
+- Prefer two existing container rules over per-label handlers or a whole-app
+  selection ban. Future portalled overlays need their own scoped rule.
+- Verify actual long-press/drag on Dashboard, header and expanded menu, chart
+  interaction, all six shared-header routes, and selection/copy/paste in an
+  existing text field. Build, install without clearing data, inspect browser
+  and Redmi; record results below.
+- Implemented scoped `user-select: none` in Dashboard and Header CSS; editable
+  input/textarea/contenteditable exceptions in `globals.css`. Updated DESIGN
+  and both owning DOX contracts. No layout, data, event handlers or native code
+  changed. Other screen bodies remain for their own polish cards.
+- Verification passed: browser 1340 × 800 double-click selects nothing; expanded
+  menu labels resolve to `none`; chart tap/Escape still works and panel bounds
+  are unchanged. No browser warnings/errors. Redmi 22081283G, 1340 × 804:
+  700ms native holds on 12 targets (heading, total, stock name, receipt number,
+  date/time, navigation, Report, profile name, EN, FR, Settings, Lock/switch)
+  all leave selection empty. Shared header rule checked across all six routes,
+  with no horizontal overflow. Evidence: `tmp/ui01-selection-checks.json`;
+  visually inspected `tmp/ui01-selection-profile.png` and
+  `tmp/ui01-selection-final.png`.
+- Existing POS search field retains `user-select: text`: entered Espresso,
+  selected all 8 characters, copied, cut, pasted successfully, restored its
+  original empty value and returned to Dashboard. Native clipboard check in
+  `tmp/ui01-selection-input.json`; no captured warnings/errors. No café data
+  was changed. The temporary clipboard contains only the sample search word.
+- `npm run android:beta` passed (including web build and JVM checks), followed
+  by successful `adb install -r`. Existing build warnings unchanged. APK SHA-256
+  `1ddc7374c306511caf388dce73f14a24486bf7a82c893302697adc020e54de62`.
+  `git diff --check` passed. No structural change requiring graph regeneration.
+  Pre-existing unrelated edits preserved and excluded from this commit.
+- This requested selection correction is verified; it does not mark the whole
+  Apple pass complete. Next: owner review; retain the existing Apple-pass
+  pending items, then continue only the owner-authorized screen/skill.
 
 ### UI-01 — individual Apple Design pass, 21 September 2026
 
