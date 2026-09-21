@@ -1059,6 +1059,8 @@ changes pushed and the owner must accept the screen before moving on.
 - **Status:** all numbered Orders passes have been inspected, but UI-03 is not
   owner-accepted because the color finding and physical-device checks remain
   open. Do not advance to Products.
+- **Publication:** implementation and this ledger record are committed as
+  `fa986ee` and pushed to [`origin/main`](https://github.com/aymansal/olaso-pos/commit/fa986ee).
 
 ### UI-02 — combined POS review, 21 September 2026
 
