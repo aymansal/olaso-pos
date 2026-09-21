@@ -201,10 +201,7 @@ export function SalesPulse({
                 className={`${styles.bar} ${styles[`tone${tone}`]}`}
                 style={{ height }}
               >
-                {selected ? <span className={styles.tip}>
-                  <span>{formatDate(day.businessDate, language, { day: 'numeric', month: 'short' })}</span>
-                  <strong>{amount}</strong>
-                </span> : null}
+                {selected ? <span className={styles.tip}>{amount}</span> : null}
               </span>
             </button>
           )})}

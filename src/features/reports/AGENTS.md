@@ -35,6 +35,9 @@ performance, ingredient usage, and bounded period controls.
 
 ## Local Contracts
 
+- Chart tap labels keep their compact value-only appearance. Match Dashboard's
+  dismissal: Escape or focus leaving the chart closes the selected value;
+  another bar changes it and tapping the selected bar toggles it closed.
 - Report metrics and charts read bounded summaries; they must not trigger
   unbounded historical scans.
 - Reports opens on This week (Monday through today). One application data hook

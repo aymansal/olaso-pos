@@ -717,7 +717,7 @@ Owner acceptance of the completed pass remains separate from implementation.
 
 - Keep the existing full-bleed 1340 × 800 three-panel Dashboard composition.
 - Use 12–17px Dashboard supporting text, 22px metrics and a 44px net-sales total.
-  Stock/cancellation labels, chart-detail dates and the best-seller caption
+  Stock/cancellation labels, chart values and the best-seller caption
   reuse the 12px supporting-text size. Recent-order separators begin at the
   receipt text's existing 44px row inset.
   Owner-approved Recent orders rows have two lines: receipt number and amount,
@@ -734,9 +734,14 @@ Owner acceptance of the completed pass remains separate from implementation.
 - Dashboard View all/retry and shared staff-popup actions have 48px-high CSS
   hit areas, visible focus and stable immediate pressed feedback. Do not infer
   native dp equivalence until checked on the tablet. No bounce or travel effect.
-- Selecting a chart day shows its date and exact amount in an anchored label;
-  first/last labels stay within the chart. Escape or leaving the chart clears
-  selection. Axis labels abbreviate large values; details retain exact amounts.
+- Selecting a Dashboard chart day uses Reports' compact value-only anchored
+  label (3px 7px padding, existing green-soft surface/green-ink 12px bold text,
+  10px radius, no shadow). No repeated visible date or selected/pressed-column
+  fill; retain the full date and amount in the accessible button name and the
+  keyboard focus outline. First/last labels stay within the chart. Both charts
+  dismiss on Escape or focus leaving the chart; tapping another bar changes the
+  value, and tapping the selected bar closes it. Axis labels abbreviate large
+  values; details retain exact amounts. Both layouts remain unchanged.
   Grid lines align with the proportional bar heights. Declines use the existing
   warning colors plus explicit text and icon, never color alone.
   Bar heights remain proportional down to zero; do not add a decorative

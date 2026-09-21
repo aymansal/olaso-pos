@@ -332,11 +332,8 @@
   bottom: calc(100% + 4px);
   left: 50%;
   z-index: 1;
-  display: grid;
-  gap: 2px;
-  padding: 7px 10px;
+  padding: 3px 7px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgb(28 33 27 / 10%);
   color: var(--olaso-green-ink);
   background: var(--olaso-green-soft);
   font-size: 12px;
@@ -459,10 +456,7 @@
 .unavailable span { background: var(--olaso-muted); }
 .decline { color: var(--olaso-danger-ink); background: var(--olaso-danger-soft); }
 .change:is(button):active { background: var(--olaso-green-soft); }
-.barColumn:active { background: var(--olaso-green-soft); }
-.barColumn[aria-pressed="true"] { background: var(--olaso-green-row); }
 .barColumn:first-child .tip { left: -8px; transform: none; }
 .barColumn:last-child .tip { right: -8px; left: auto; transform: none; }
-.tip span { font-size: 12px; font-weight: 500; }
 
 .chartState { display: grid; place-items: center; height: 100%; color: var(--olaso-copy); font-size: 14px; }

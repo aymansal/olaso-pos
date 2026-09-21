@@ -310,6 +310,73 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Checkpoint ledger
 
+### UI-01 — align chart tap details with Reports, 21 September 2026
+
+- Owner explicitly requested Reports' compact value-only tap label on Dashboard,
+  without the selected-column highlight or repeated visible date. Reports must
+  inherit Dashboard's outside-tap dismissal. Both layouts remain unchanged.
+  This is a narrow owner-authorized Reports correction, not the UI-06 review.
+  It does not answer the earlier pale-bar contrast appearance question.
+- Graphify queried SalesPulse/SalesTrendChart; read Reports DOX and actual chart
+  implementations alongside the current Dashboard/source instruction chain.
+  Ponytail full, Better UI project consistency/motion restraint and Data
+  Visualization details-on-demand/keyboard access apply. Owner chooses the
+  exact appearance by naming the existing Reports treatment.
+- Before implementation, checked official [React focus events](https://react.dev/reference/react-dom/components/common#onblur),
+  [MDN pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerdown_event),
+  [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor web layer](https://capacitorjs.com/docs/core-apis/web), today.
+  Reuse Dashboard's existing bubbling blur/relatedTarget and Escape dismissal
+  on Reports before introducing document listeners. Verify actual outside taps,
+  including non-focusable blank space; add a pointer listener only if required.
+  All changes are React/CSS presentation; no native/plugin/data changes.
+- Planned correction: Dashboard tip uses Reports' 3px/7px padding and existing
+  colors/type, one amount, no shadow or selected/pressed column fill. Keep its
+  full-date accessible button name, keyboard focus outline and accurate heights.
+  Reports gets the same dismissal handlers, preserving selected-bar toggle and
+  switching to another bar. Check Sales/Products/Stock report chart variants,
+  first/last/zero bars, EN/FR, outside tap, Escape and keyboard focus; build and
+  install on Redmi without clearing data. Record results below.
+- Implemented only the two chart components and Dashboard tip CSS. Removed
+  the repeated visible date, grid/gap, shadow and persistent/pressed column fill;
+  copied the existing Reports value label padding. Reports now uses Dashboard's
+  two existing Escape/blur handlers. No new hook, listener, package or chart
+  abstraction was necessary. Updated DESIGN and both feature DOX contracts.
+- Browser: actual Dashboard component at 1340×800 shows a single amount, 3px
+  7px padding, no shadow and transparent selected-column background. French
+  first-day value visually inspected; outside heading click dismisses it.
+  Keyboard Space/Escape retained. Isolated Reports component checked in Sales,
+  Products and Stock variants: outside text and chart-heading clicks dismiss;
+  switching bars replaces the value; tapping the same bar closes; Space opens,
+  Escape closes, Tab out closes. French last-day value visually inspected.
+  No captured browser console warnings/errors. Temporary Reports preview closed;
+  ordinary Dashboard preview kept for the owner.
+- Final `npm run android:beta` passed (web build, Capacitor sync, JVM tests,
+  assembly), log `tmp/ui01-chart-details-build.log`. Existing warnings unchanged.
+  `adb install --no-streaming -r` succeeded, preserving cafe data. Final APK SHA-256
+  `d8bc9d5331312ec3983b4a7fedc70fe1711066040c2b43fe45fd4f7208fdcc58`.
+- Redmi 22081283G: actual ADB taps verify both charts show value-only labels
+  and dismiss outside. First/last (including zero), same-bar toggle, another-bar
+  selection and Escape passed. Sales/Products/Stock report variants all dismiss.
+  Captures `tmp/ui01-chart-{dashboard,reports,report-products,report-stock}.png`
+  visually inspected; Dashboard shows no touch-selection fill. Keyboard focus
+  outline remains intentionally available (visible in the Products capture after
+  the preceding keyboard check). Data/axis/bar geometry unchanged. Both tooltip
+  styles measure 3px 7px padding/no shadow; chart boxes retain 834×244 and
+  838×434. Focused native run captured no warnings/errors.
+  Runnable focused check/results: `tmp/ui01-chart-details-native.mjs` and `.json`.
+- The first device helper read the outgoing view before the route switched;
+  fixed its wait to require the destination chart, then all assertions passed.
+  A shell-quoted restoration command failed; a file-based helper restored Reports
+  to Sales and left the app on Dashboard. No app workaround or data change.
+- `git diff --check` passed. No structural component/module change; graph refresh
+  not required. Unrelated PeriodCalendar/reportProfit edits and assets preserved
+  and excluded from the commit (as before, the local APK includes existing edits).
+- **Requested interaction correction verified.** This is not a whole Reports
+  review or a resolution of chart fill contrast. Earlier accessibility gaps and
+  the pending pale-bar appearance decision remain recorded; next is owner review
+  of these exact tap behaviors. Do not restart completed Dashboard reviews.
+
 ### UI-01 — remaining skills combined, 21 September 2026
 
 - Owner authorized starting Dashboard and skipping completed reviews. Do not

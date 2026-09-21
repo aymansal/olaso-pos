@@ -144,6 +144,8 @@ export function SalesTrendChart({
     <section
       className={styles.chart}
       aria-labelledby="report-trend-title"
+      onKeyDown={(event) => { if (event.key === 'Escape') setSelectedKey(null); }}
+      onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSelectedKey(null); }}
     >
       <header className={styles.header}>
         <span className={styles.heading}>
