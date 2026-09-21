@@ -456,7 +456,5 @@
 .unavailable span { background: var(--olaso-muted); }
 .decline { color: var(--olaso-danger-ink); background: var(--olaso-danger-soft); }
 .change:is(button):active { background: var(--olaso-green-soft); }
-.barColumn:first-child .tip { left: -8px; transform: none; }
-.barColumn:last-child .tip { right: -8px; left: auto; transform: none; }
 
 .chartState { display: grid; place-items: center; height: 100%; color: var(--olaso-copy); font-size: 14px; }

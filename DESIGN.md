@@ -738,7 +738,9 @@ Owner acceptance of the completed pass remains separate from implementation.
   label (3px 7px padding, existing green-soft surface/green-ink 12px bold text,
   10px radius, no shadow). No repeated visible date or selected/pressed-column
   fill; retain the full date and amount in the accessible button name and the
-  keyboard focus outline. First/last labels stay within the chart. Both charts
+  keyboard focus outline. Every Dashboard label stays centered over its bar,
+  including the first and last; edge labels may overlap the chart axis as they
+  do in Reports. Both charts
   dismiss on Escape or focus leaving the chart; tapping another bar changes the
   value, and tapping the selected bar closes it. Axis labels abbreviate large
   values; details retain exact amounts. Both layouts remain unchanged.

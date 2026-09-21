@@ -25,7 +25,9 @@ recent orders.
   Zero is reserved for a successfully loaded empty result.
 - Chart tap labels match Reports: compact exact amount only, no repeated visible
   date or selected-column fill. Retain full date/amount in the button's accessible
-  name and keyboard focus outline. Axis abbreviations are display-only.
+  name and keyboard focus outline. Keep the value centered over every bar,
+  including the first and last; do not push edge labels inward. Axis
+  abbreviations are display-only.
   Escape and focus leaving the chart dismiss selection.
 - Chart and summary are named groups. Keep the stock/order status containers
   mounted before their messages change; routine loading/unavailable updates

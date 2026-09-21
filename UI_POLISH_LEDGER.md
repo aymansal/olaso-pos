@@ -33,7 +33,8 @@ Pencil frames still own their respective product and implementation contracts.
 ## State pointer
 
 - **Active screen: UI-01 — Dashboard. Combined review checkpoint delivered;
-  chart appearance decision remains open.**
+  chart colors are owner-approved as-is; edge-tooltip positioning correction is
+  verified.**
   Owner closed step 03 with the fixed-layout exception. The owner has now
   explicitly excluded the remaining device-only checks from this screen's
   acceptance; they are out of scope, not claimed as tested passes.
@@ -45,10 +46,10 @@ Pencil frames still own their respective product and implementation contracts.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** obtain the pending chart correction choice (keep shades
-  with a contrasting edge, or use the existing dark green for all bars), then
-  apply and verify that correction. Owner authorized Dashboard and explicitly
-  asked to skip reviews already performed. Do not repeat the completed checks.
+- **Exact next action:** verify the owner-requested centered first/last tooltip
+  correction, then obtain screen acceptance. Owner authorized Dashboard and
+  explicitly asked to skip reviews already performed. Do not repeat the completed
+  checks.
   The owner has excluded the remaining device-only checks from this screen;
   keep them recorded as out of scope rather than converting them into passes.
   Do not silently implement a different layout. Keep
@@ -297,6 +298,10 @@ changes pushed and the owner must accept the screen before moving on.
   slow-motion frame analysis and the full offline/role device matrix are not
   required for Dashboard UI polish. They remain historical limitations labelled
   **out of scope for this screen**, not claimed test passes.
+- Owner chart-color decision, 21 September: the existing green shade ramp is
+  visibly clear against the white chart surface. Do not add a dark outline or
+  replace the existing shades with one uniform color. The measured contrast
+  finding is an owner-approved exception for this Dashboard polish scope.
 - Recent orders: line 1 = number + amount; line 2 = time + service type. No
   item count or routine Completed label; cancellation stays clearly marked.
 - Dashboard View all links are borderless. Previous corrections and selected
@@ -323,7 +328,8 @@ changes pushed and the owner must accept the screen before moving on.
   without the selected-column highlight or repeated visible date. Reports must
   inherit Dashboard's outside-tap dismissal. Both layouts remain unchanged.
   This is a narrow owner-authorized Reports correction, not the UI-06 review.
-  It does not answer the earlier pale-bar contrast appearance question.
+  The owner has since confirmed the existing bar shades are visibly clear and
+  rejected both a dark outline and a uniform-color replacement.
 - Graphify queried SalesPulse/SalesTrendChart; read Reports DOX and actual chart
   implementations alongside the current Dashboard/source instruction chain.
   Ponytail full, Better UI project consistency/motion restraint and Data
@@ -461,11 +467,11 @@ changes pushed and the owner must accept the screen before moving on.
 | 04, 13, 14 — grouping, alignment, hierarchy and density | Three operational regions retain their bounds; dominant 44px total, smaller metrics and list headings remain distinct. Two-line recent orders and aligned separators reused. No additional containers or layout change justified. | Owner fixed-layout exception remains; not responsive/reflow compliance. |
 | 05, 19, 20 — clear wording, consistent meaning and recovery | Stock/orders failure messages now point to the existing Retry summary button in EN/FR. French chart subtitle now means sales per day across the period. | Native report/lock popup evidence gaps below are not closed by these text checks. |
 | 06 — size floors, established scale and number detail | Profile role 10px → existing 12px size; name/role fit the same 178×50 trigger in EN/FR. Existing DM Sans, metric hierarchy, tabular/locale formatting and 12px Dashboard metadata retained. | Approved compact header navigation remains 11px. Enlarged OS text is out of scope for this screen by owner decision. No new font or scale invented. |
-| 07, 16 — actual contrast and semantic project colors | Profile icon and Report text use existing primary-text token. Scoped six-module color audit: 115/119 color-bearing declarations use tokens (96.6%). Four remaining literals are component-specific shadows/avatar surface and the explicitly approved pressed layer. | This percentage is not whole-app token coverage. Chart contrast below target remains open; no speculative token system migration. |
+| 07, 16 — actual contrast and semantic project colors | Profile icon and Report text use existing primary-text token. Scoped six-module color audit: 115/119 color-bearing declarations use tokens (96.6%). Four remaining literals are component-specific shadows/avatar surface and the explicitly approved pressed layer. | This percentage is not whole-app token coverage. The owner accepts the existing chart shades without an outline for this screen; no speculative token system migration. |
 | 08, 15 — controls, state consistency and visible recovery | Existing native buttons, selected/pressed/focus treatments, anchored popover, concentric language selector and borderless View all retained. Language-save rejection now has a translated message in the existing error area; retry clears it. | No extra outline, scale, blur or duplicate recovery button. Native dialog focus trapping not newly verified. |
 | 09, 10 — remove redundant decoration, preserve useful content | Existing two-line orders, meaningful sales/stock/history separation and best-seller highlight retained. No additional shell, card, badge, decorative animation or invented claim added. | Existing owner-approved layout is the constraint; these reviews do not authorize a new visual style. |
 | 11, 12 — frequent interaction, interruption and motion | Reuse unchanged 150ms fade, immediate menu/chart actions, press feedback, interruption and reduced-motion evidence. No motion source changed. | Existing 220ms indicator/keyboard fade and nonselectable UI are recorded owner/project exceptions; full slow-motion frame study is out of scope for this screen by owner decision. |
-| 17 — honest chart encoding and accessible detail | Reuse proportional height, zero-value, 12-day ordering, units, exact tap value and keyboard evidence. French subtitle corrected. | Pale rendered bar measured 2.21:1. Owner choice pending; if retaining shades, also resolve the existing tone5/tone6 darkness reversal without implying a correct sequential ramp. |
+| 17 — honest chart encoding and accessible detail | Reuse proportional height, zero-value, 12-day ordering, units, exact tap value and keyboard evidence. French subtitle corrected. | Pale rendered bar measured 2.21:1; owner confirms it is visibly clear and accepts the current shades without an outline. |
 | 18 — tablet behavior and platform conventions | Existing native popover, ordinary touch controls, fixed native viewport and scoped selection behavior retained; current Redmi header/menu fit checked. | Android product: no iOS/PWA install features apply. Actual speech, enlarged text and native prompt checks are out of scope for this screen by owner decision. |
 | 21 — complete-flow evidence | Changed wording and failed-language/retry flow checked once in EN/FR real-component browser fixture; shared header checked across six actual Redmi routes. Reused prior unchanged loading/empty/chart/route/selection evidence. | Overall Dashboard remains incomplete only until chart choice and owner acceptance are resolved; device-only checks are owner-scoped out of this card. |
 
@@ -506,16 +512,27 @@ changes pushed and the owner must accept the screen before moving on.
   No structural module/component changes requiring graph regeneration. Known
   CSS-scope scanner limitation remains; no new animation/global selector was
   added. Earlier Apple/accessibility checks were not restarted.
-- **Open:** chart appearance choice. The owner explicitly moved TalkBack speech,
+- **Resolved:** the Dashboard first and last bar values now use the same centered
+  tooltip rule as Reports. The owner resolved chart appearance by keeping the
+  current shades without an outline; no outline or palette replacement was added.
+  The owner explicitly moved TalkBack speech,
   native report/cart dialog focus details, enlarged OS text/200% zoom, usable
   increased contrast, full motion frame study and the native offline/role matrix
   out of this screen's scope. They remain recorded as out-of-scope limitations,
   not as tested passes. Fixed geometry and solid surfaces remain owner
   exceptions. Printer output and seeded Orders history are separate
-  hardware/data issues. No 100% claim until the chart choice is applied and the
-  owner accepts the screen.
-- Exact next action: owner's pending chart choice, focused correction/check,
-  then obtain screen acceptance before UI-02.
+  hardware/data issues. No 100% claim until the owner accepts the screen.
+- Exact next action: obtain the owner's Dashboard screen acceptance before UI-02.
+- Tooltip verification passed after the CSS correction: the 1340 × 800 browser
+  preview measured first-bar and last-bar tooltip centers within 0.001 px of
+  their bar centers. The labels may cross the chart edge, matching Reports.
+  The Redmi 22081283G native 1340 × 804 check measured the first and last
+  centers within 0.001 px, with no captured console messages; the focused
+  capture is `tmp/ui01-edge-tooltip-native.png` and measurements are in
+  `tmp/ui01-edge-tooltip-native.json`. `npm run build` and
+  `npm run android:beta` passed, and the beta installed with `adb install -r`
+  while preserving the existing data. APK SHA-256:
+  `1A2088181F5B372282C95991DD55A11FACD504D06F913179DEF1C55D6AB6E4EB`.
 - Publication: `64ef223` pushed to `origin/main` at
   `https://github.com/aymansal/olaso-pos`. Final staged diff check passed;
   only the nine files listed above were included. This follow-up records
