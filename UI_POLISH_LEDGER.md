@@ -423,8 +423,11 @@ changes pushed and the owner must accept the screen before moving on.
   that UI-03 is complete. Exact next action is owner review of the Orders
   screen and popup states, then finish the remaining UI-03 loading/empty/error,
   French and cancellation evidence before advancing to Products.
-- **Publication:** implementation and ledger publication commit SHAs will be
-  recorded here after the focused change is pushed to `origin/main`.
+- **Publication:** implementation commit `4255f53` is pushed to
+  [`origin/main`](https://github.com/aymansal/olaso-pos/commit/4255f5344d6daaf6e87fa1b2db037ce1c46a56b0).
+  The rebuilt APK SHA-256 is
+  `740F6E46CA48E15CB9B7CD70C1CF3B15991179298327F0329E24139A193B4884`.
+  This ledger publication is the follow-up commit for the same UI-03 card.
 
 ### UI-02 — combined POS review, 21 September 2026
 
