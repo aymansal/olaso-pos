@@ -606,8 +606,10 @@ changes pushed and the owner must accept the screen before moving on.
   `src/App.module.css` and `src/features/settings/LockScreen.module.css`.
 - **Publication:** this ledger checkpoint is the only working-tree change for
   this continuation. It must be committed with a `UI-03` message and pushed
-  to `origin/main`; unrelated `src/features/reports/reportProfit.ts` and the
-  preserved untracked directories remain outside the card.
+  to `origin/main`; commit `6cfc1ef97cdd4b5a744b6997ff5813404d4a6bcf`
+  is published at `origin/main`. Unrelated
+  `src/features/reports/reportProfit.ts` and the preserved untracked
+  directories remain outside the card.
 - **Status:** UI-03 remains open. Technical review confirms the sliding-state
   correction; owner acceptance and final loading, empty and cloud-error
   evidence are still required before Products. No browser `1340 × 800` visual
