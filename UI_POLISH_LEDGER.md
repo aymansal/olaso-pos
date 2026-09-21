@@ -416,6 +416,9 @@ changes pushed and the owner must accept the screen before moving on.
   preserved. APK SHA-256: `8c2bddd6a30158bd47e47d8b31607de6aaa18adc556fe41c3fbba56784b294cb`.
 - This is a targeted focus-ring fix. Owner review of the full POS screen and
   its remaining option-row appearance is still required before UI-03.
+- Publication: implementation `ac25581` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`. This follow-up publication commit
+  records the remote implementation evidence; owner acceptance remains open.
 
 ### UI-01 — align chart tap details with Reports, 21 September 2026
 
