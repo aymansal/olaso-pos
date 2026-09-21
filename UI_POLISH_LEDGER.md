@@ -794,6 +794,21 @@ changes pushed and the owner must accept the screen before moving on.
   and a large product at the fixed tablet viewport, then continue the UI-02
   review only after the owner accepts this correction.
 
+### UI-02 — latest beta installed on Redmi, 21 September 2026
+
+- Built the current `main` checkout at commit `0a57d45` with the repository
+  JDK 21. The Android beta build passed and produced
+  `android/app/build/outputs/apk/debug/app-debug.apk`.
+- Installed with `adb install -r` on Redmi device `XOPFAQGYNNGYVGPR`
+  (`22081283G`), preserving existing app data. Android reported `Success`.
+  Installed package version is `1.4` / version code `11`; `MainActivity` was
+  brought to the foreground after installation.
+- APK SHA-256:
+  `40A867C5111CBFC0C3A5D54214FF76976E148045FC193CBAE4A7BEBDA6F69BF0`.
+- This confirms delivery and launch only. It does not claim that the protected
+  lock screen was passed or that the POS popup was manually exercised on this
+  install.
+
 ### UI-03 — sequential pass 01, Apple Design, 21 September 2026
 
 - **Active skill and scope:** `apple-design/SKILL.md` was reread completely for
