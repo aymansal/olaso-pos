@@ -5,6 +5,25 @@
   display: grid;
   place-items: center;
   background: rgb(28 33 27 / 38%);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.overlay * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.overlay input,
+.overlay textarea,
+.overlay [contenteditable='true'],
+.overlay [contenteditable='plaintext-only'] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.overlay button {
+  touch-action: manipulation;
 }
 
 .dialog {

@@ -13,6 +13,7 @@ import {
   type PaymentDraft,
   type PaymentTender,
 } from '../../posSession';
+import { useModalFocus } from '../../useModalFocus';
 import styles from './PaymentDialog.module.css';
 
 export type PaymentLineCopy = {
@@ -103,6 +104,7 @@ export function PaymentDialog({
   onConfirm,
 }: PaymentDialogProps) {
   const t = useT();
+  const dialogRef = useModalFocus(true, onCancel, '[data-focus-restore="payment-dialog"]');
   const { split, remaining, pick, recorded, activeMethod, customText, tendered } = draft;
 
   const locked = recorded.length > 0;
@@ -150,6 +152,8 @@ export function PaymentDialog({
       >
         <section
           className={styles.dialog}
+          ref={dialogRef}
+          tabIndex={-1}
           role="dialog"
           aria-modal="true"
           aria-labelledby="payment-dialog-title"

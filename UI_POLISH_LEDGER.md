@@ -32,33 +32,26 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-01 — Dashboard. Combined review checkpoint delivered;
-  chart colors are owner-approved as-is; edge-tooltip positioning correction is
-  verified.**
-  Owner closed step 03 with the fixed-layout exception. The owner has now
-  explicitly excluded the remaining device-only checks from this screen's
-  acceptance; they are out of scope, not claimed as tested passes.
+- **Active screen: UI-02 — POS. Combined review implementation delivered;
+  owner acceptance is pending.**
+  The owner explicitly advanced the sequence from Dashboard to POS on 21
+  September 2026. Dashboard's recorded out-of-scope checks remain historical
+  limitations; advancing does not turn them into technical passes.
   The latest owner instruction replaces individual skill handoffs with one
   combined review per screen, after consolidating overlapping requirements.
   Owner closed the Apple pass and explicitly requested the next skill on
   21 September. This accepts advancing the sequence; it does not turn earlier
   unverified checks into passes or claim 100% technical compliance.
 - **UI-00 complete:** ledger and recovery instructions created and published.
-  Next work is UI-01 Dashboard. No new UI implementation or app testing was
-  performed during ledger creation.
-- **Exact next action:** verify the owner-requested centered first/last tooltip
-  correction, then obtain screen acceptance. Owner authorized Dashboard and
-  explicitly asked to skip reviews already performed. Do not repeat the completed
-  checks.
-  The owner has excluded the remaining device-only checks from this screen;
-  keep them recorded as out of scope rather than converting them into passes.
-  Do not silently implement a different layout. Keep
-  light mode, approved geometry, two-line orders, borderless View all, 150ms
-  screen fade and the verified text-selection rule.
+  Dashboard was the first screen card; the current work is UI-02 POS. No new
+  UI implementation or app testing was performed during ledger creation.
+- **Exact next action:** owner manual acceptance of the POS flow, including the
+  option-row appearance decision. Do not start UI-03 until POS is accepted.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
-  not block Dashboard. Do not infer an answer from silence.
-- Do not automatically jump to POS, ingredients, security or sync work.
+  not block the technical fixes recorded below, but it blocks POS acceptance.
+  Do not infer an answer from silence.
+- Do not automatically jump to UI-03, ingredients, security or sync work.
 
 ## Owner rules — no personal design choices
 
@@ -69,8 +62,8 @@ Pencil frames still own their respective product and implementation contracts.
   copy, cut and paste; preserve platform password protections. Do not block
   pointer events, keyboard focus, scrolling, accessibility or clipboard events.
   Check overlays separately, including portals outside the screen container.
-  Dashboard and the shared Header/profile menu are the first implementation;
-  other screen bodies follow when their polish card starts.
+  Dashboard and the shared Header/profile menu were the first implementation;
+  POS now applies the same rule to its body and portal dialogs.
 - **0% personal aesthetic choices.** Do not invent styling, layouts, wording,
   animation or product behavior because the agent thinks it looks better.
   Every visible change needs a specific applicable skill rule or an explicit
@@ -221,7 +214,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
 | UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Combined review checkpoint delivered; chart choice and recorded gaps remain open |
-| UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
+| UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Combined review delivered; owner acceptance pending; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
 | UI-05 | Stock | Ingredients, units, purchasing, stock corrections, low-stock states and the Product-to-Stock relationship | Queued; workflow simplification required |
@@ -321,6 +314,78 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-02 — combined POS review, 21 September 2026
+
+- **Scope inventory:** the live Redmi POS was checked at its WebView viewport of
+  1340 × 804: shared Header/navigation, search, four category cards, the five-
+  column product grid, empty cart, cart line with quantity controls and Offert /
+  remove actions, customization dialog, cash payment dialog, cancel/close,
+  and the empty, selected, disabled and recovery states exposed by those
+  controls. English live content was used; the existing EN/FR labels and
+  locale-formatted amounts remain in the source. Browser live unlock was not
+  available in this pass, so the native Redmi evidence is the authoritative
+  interaction check.
+- **Skills read and merged:** Apple clarity/hierarchy/feedback/restraint;
+  Better Interface's accessibility, layout, writing, typography, colors and
+  UI owners; anti-AI-slop and audit; Emil interaction guidance; animation
+  review; design QA and error recovery; visual hierarchy, information density,
+  affordance, token audit, data visualization, mobile-native and localization.
+  The skills supported preserving the approved POS composition, removing no
+  useful café information, avoiding decorative motion, and making repeated
+  cashier actions immediate. The owner rule for unselectable interface text
+  overrides the general text-selection default; editable fields still select
+  normally. No skill justified changing the green outlines, product grid,
+  receipt rail, or option-row appearance.
+- **Research before implementation (21 September 2026):** [W3C modal dialog
+  guidance](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) requires
+  focus to enter a modal, remain inside while tabbing, close with Escape when
+  allowed, and return to the invoking action; [MDN touch-action
+  guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action)
+  documents `manipulation` for removing tap delay without disabling scrolling;
+  [Android WebView guidance](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor's web-layer guidance](https://capacitorjs.com/docs/core-apis/web)
+  keep this presentation and focus behavior in the existing React/WebView
+  boundary. The alternatives were adding a widget library or changing the
+  native shell; neither was needed.
+- **Findings and changes:** both custom dialogs previously left focus on the
+  page, did not trap Tab, and did not consistently close with Escape. The
+  shared `useModalFocus` hook now moves focus into each dialog, traps Tab,
+  closes through the existing cancel path, and restores the opener or its
+  current equivalent when a checkout render replaces the original button.
+  POS content and both dialog portals now make interface labels unselectable;
+  search and other editable fields retain normal copy/paste selection. POS
+  buttons use the native tap behavior with no new animation. Layout, palette,
+  option rows, product names and checkout rules were otherwise left unchanged.
+- **Files changed:**
+  `src/features/pos/useModalFocus.ts`,
+  `src/features/pos/PosScreen.module.css`,
+  `src/features/pos/components/ModifierSelectionDialog/ModifierSelectionDialog.tsx`,
+  `src/features/pos/components/ModifierSelectionDialog/ModifierSelectionDialog.module.css`,
+  `src/features/pos/components/PaymentDialog/PaymentDialog.tsx`,
+  `src/features/pos/components/PaymentDialog/PaymentDialog.module.css`,
+  `src/features/pos/components/PrimaryAction/PrimaryAction.tsx`, and this
+  screen contract in `src/features/pos/AGENTS.md`. Unrelated dirty files were
+  preserved.
+- **Verification:** `npm run build` passed; `npm run check:pos` passed; the
+  existing `npm run check:sales` reached its owner restore step but was blocked
+  by the protected Convex deployment because it is not marked disposable. No
+  destructive reset was attempted. `npm run android:beta` passed and the APK
+  installed with `adb install -r`, preserving café data. On the Redmi, the
+  modifier dialog focused its Close control, kept Tab inside, closed with
+  Escape and returned to Add Latte. The payment dialog did the same and
+  returned to the current Place order action. Computed selection was `none`
+  for the POS/product and dialog surfaces, `text` for search and the payment
+  amount field; viewport and document size were both 1340 × 804 with no
+  overflow. Final captures:
+  `tmp/ui02-pos-final.png`, `tmp/ui02-modifier-final.png`, and
+  `tmp/ui02-payment-final.png`. APK SHA-256:
+  `9ba513f2869727f8084ec83b62d908e04753a8db530a6cd2ef01706607e75591`.
+- **Limitations and owner decision:** the browser live unlock was unavailable;
+  screen-reader speech, enlarged OS text and printer output were not claimed.
+  The POS option-row appearance remains an owner choice: plain rows with
+  dividers and selection marks, or the current outlined rows. No choice was
+  invented. **Owner acceptance is required before UI-03.**
 
 ### UI-01 — align chart tap details with Reports, 21 September 2026
 

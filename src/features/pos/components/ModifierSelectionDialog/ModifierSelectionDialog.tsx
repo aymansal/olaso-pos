@@ -4,6 +4,7 @@ import { OverlayPortal, closeOnBackdrop } from '../../../../components/OverlayPo
 import { useT } from '../../../../lib/locale';
 import { formatMoney } from '../../../../lib/money';
 import { balanceOptionGroups } from '../../balanceOptionGroups';
+import { useModalFocus } from '../../useModalFocus';
 import styles from './ModifierSelectionDialog.module.css';
 
 export type PosProductSize = {
@@ -91,6 +92,7 @@ export function ModifierSelectionDialog({
   onAdd,
 }: ModifierSelectionDialogProps) {
   const t = useT();
+  const dialogRef = useModalFocus(true, onClose);
   const [sizeId, setSizeId] = useState(() => defaultSizeId(sizes));
   const [selected, setSelected] = useState(() =>
     defaultChoiceIds(defaultSizeId(sizes), sections),
@@ -223,6 +225,8 @@ export function ModifierSelectionDialog({
     >
       <section
         className={`${styles.dialog} ${columns.length > 1 ? styles.wide : ''}`}
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modifier-selection-title"

@@ -103,6 +103,10 @@ owns the shared Header and TopNavigation currently used across the application.
 - Checkout prints the saved ticket. POS does not open an on-screen receipt
   preview. Do not expose printer settings, permissions, bytes, or transport
   from this feature.
+- Customization and payment dialogs move keyboard focus inside when opened,
+  keep Tab navigation within the dialog, close on Escape when the checkout
+  state permits it, and return focus to the invoking action or its current
+  equivalent after closing. Keep `aria-modal` only with this modal behavior.
 - The Header Report action appears only for an owner and delegates one
   current-day print request to App; Header owns only its busy presentation.
 - The printed ticket joins product and size as one heading and renders actual

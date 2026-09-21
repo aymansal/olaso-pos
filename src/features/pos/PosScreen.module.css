@@ -4,6 +4,25 @@
   height: 800px;
   overflow: hidden;
   background: var(--olaso-canvas);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.screen * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.screen input,
+.screen textarea,
+.screen [contenteditable='true'],
+.screen [contenteditable='plaintext-only'] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.screen button {
+  touch-action: manipulation;
 }
 
 .menu {

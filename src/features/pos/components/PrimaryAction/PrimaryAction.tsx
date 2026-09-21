@@ -35,7 +35,13 @@ export function PrimaryAction({ totalCentimes, disabled, processing, canSplit, o
       <button type="button" className={styles.split} disabled={locked || !canSplit} onClick={onSplit}>
         {t('Split')}
       </button>
-      <button type="button" className={styles.place} disabled={locked} onClick={() => void commit()}>
+      <button
+        type="button"
+        className={styles.place}
+        data-focus-restore="payment-dialog"
+        disabled={locked}
+        onClick={() => void commit()}
+      >
         <span>{processing || busy ? t('Saving…') : t('Place order')}</span>
         <small>{formatMoney(totalCentimes)}</small>
       </button>
