@@ -1231,6 +1231,30 @@ changes pushed and the owner must accept the screen before moving on.
   `https://github.com/aymansal/olaso-pos`. This follow-up publication commit
   records the remote implementation evidence; owner acceptance remains open.
 
+#### UI-02 follow-up — small customization action width, 21 September 2026
+
+- Owner reported that the Add to order action in the compact customization
+  popups was oversized and clipped beyond the dialog edge, while the larger
+  popup remained acceptable. A Redmi screenshot and UI inspection measured the
+  compact dialog at about 320 CSS px wide, with the action extending beyond its
+  right edge.
+- Research used the current [MDN flex guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex),
+  [MDN overflow guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow),
+  and [MDN text-overflow guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-overflow)
+  (21 September 2026). The smallest correction is to reduce horizontal action
+  padding and the icon gap only for compact dialogs; the wide dialog keeps its
+  existing sizing and the full action label remains visible.
+- Changed only `src/features/pos/components/ModifierSelectionDialog/ModifierSelectionDialog.module.css`.
+  The selectors are scoped to `.dialog:not(.wide)`, so the larger Latte-style
+  customization popup is unchanged.
+- Verification passed: `npm run android:beta`, `npm run check:pos`, and
+  `git diff --check`. The rebuilt APK installed with `adb install -r` and
+  preserved café data. On the Redmi at 1340 × 804, the compact Butter
+  Croissant customization popup now keeps the Add to order button fully inside
+  the dialog with visible side margins (`tmp/ui02-after-enter.png`). APK
+  SHA-256: `9a426e8b2c7f1bd5087daafc4a7a771e190976e1cc0ee8a5cc09182d95351cc4`.
+- This targeted correction does not close the broader UI-02 owner review.
+
 ### UI-01 — align chart tap details with Reports, 21 September 2026
 
 - Owner explicitly requested Reports' compact value-only tap label on Dashboard,

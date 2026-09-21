@@ -214,6 +214,15 @@
   background: var(--olaso-green);
 }
 
+.dialog:not(.wide) .cancel {
+  padding-inline: 8px;
+}
+
+.dialog:not(.wide) .add {
+  gap: 6px;
+  padding-inline: 8px;
+}
+
 .add:disabled {
   opacity: 0.45;
 }
