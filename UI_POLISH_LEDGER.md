@@ -376,6 +376,8 @@ changes pushed and the owner must accept the screen before moving on.
   review or a resolution of chart fill contrast. Earlier accessibility gaps and
   the pending pale-bar appearance decision remain recorded; next is owner review
   of these exact tap behaviors. Do not restart completed Dashboard reviews.
+- Publication: `149800f` pushed to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; this follow-up records delivery.
 
 ### UI-01 — remaining skills combined, 21 September 2026
 
