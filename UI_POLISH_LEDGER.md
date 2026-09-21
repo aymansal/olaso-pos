@@ -33,15 +33,17 @@ Pencil frames still own their respective product and implementation contracts.
 ## State pointer
 
 - **Active screen: UI-01 — Dashboard. Active skill: 01 — `apple-design`.**
-  First separate pass pending under the owner's 21 September protocol.
+  First separate pass started; navigation corrections delivered, full pass incomplete.
   Earlier grouped reviews are evidence, not completion of the new skill steps.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Next work is UI-01 Dashboard. No new UI implementation or app testing was
   performed during ledger creation.
-- **Exact next action:** perform only the Dashboard Apple Design pass: read
-  the skill, enumerate its applicable rules and surfaces, research, make only
-  justified corrections, verify and report its result. Stop at that skill's
-  handoff; wait for the owner before starting skill 02. Keep the approved layout,
+- **Exact next action:** resolve the Apple-pass accessibility direction with
+  the owner: whether Olaso should follow tablet text-size/contrast preferences
+  while retaining the normal appearance. The owner reports these settings do
+  not currently affect the app; this is not approval to redesign or an accepted
+  exception. Finish outstanding Apple checks before its handoff; wait for the
+  owner before starting skill 02. Keep the approved layout,
   light mode, two-line orders, borderless View all and 150ms screen fade.
 - POS option-row choice remains unanswered: plain rows with dividers and
   selection marks, or retained outlined options. Carry it into UI-02; it does
@@ -111,7 +113,7 @@ before final recovery/QA. Each row gets its own report and owner handoff.
 
 | Step | Skill | Dashboard status |
 | --- | --- | --- |
-| 01 | `apple-design` | Next; separate pass pending |
+| 01 | `apple-design` | Incomplete — navigation feedback corrected; accessibility direction unresolved |
 | 02 | `better-interface` | Queued — scope/routing only |
 | 03 | `better-accessibility` | Queued |
 | 04 | `better-layout` | Queued |
@@ -183,7 +185,7 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Individual skill 01 — Apple Design next; no new step marked complete |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Individual skill 01 — Apple Design in progress; no new step marked complete |
 | UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Queued; option appearance unresolved |
 | UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Queued |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
@@ -275,6 +277,142 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-01 — individual Apple Design pass, 21 September 2026
+
+Active skill: `apple-design/SKILL.md`, read in full. Graphify queried Dashboard
+and shared controls; Ponytail full applies. This is step 01 only.
+
+Checklist established before implementation:
+
+| Skill sections | Applicable Dashboard coverage | Initial status |
+| --- | --- | --- |
+| 1, 10 — immediate response | Navigation, profile/language/Settings/lock, Report, View all, Retry, chart; down feedback, release commit, drag-away cancellation | Navigation has no pressed style; other controls need live verification |
+| 3, 7, 11 — continuity and spatial consistency | Interrupt/reverse navigation; anchored profile and chart details; compositor motion/frame review | Pending current-device verification |
+| 14 — preferences | Reduced motion, reduced transparency, increased contrast | Motion exists; surfaces already solid; increased-contrast styling absent |
+| 15 — typography | Existing size/weight/leading hierarchy, EN/FR, user text size | Default hierarchy inspected; enlarged text not verified |
+| 16 — foundations | Summary hierarchy, specific labels, loading/empty/error/status, recovery and exit paths, role-safe actions | Pending current interaction review; approved layout retained |
+| 17 — process | Interactive real-component preview and current Redmi, frame inspection and owner contextual use | Agent checks pending; owner contextual acceptance remains separate |
+
+Sections 2, 4–6, 8–9 apply to custom dragged/physics-driven objects: Dashboard
+has none; native list scrolling remains native. No new gesture or spring library.
+Section 10's extra hit padding cannot overlap neighboring nav/bar targets;
+verify existing native button cancellation rather than invent a gesture system.
+Section 12's translucent-chrome recommendation is an **owner exception**:
+approved solid surfaces and unchanged layout take precedence; do not call this
+literal full-skill compliance. Section 13 adds sound/haptics only for utility;
+no new sound/haptic interaction is justified by these read-only Dashboard taps.
+Section 15 permits a reasoned custom font: retain approved Olaso DM Sans.
+
+Pre-implementation research, checked 21 September 2026:
+- [Apple fluid interfaces](https://developer.apple.com/videos/play/wwdc2018/803/)
+  supports touch-down feedback and interruptibility. The installed skill's
+  sections 1/10 explicitly require press feedback; they do not require scaling.
+- [MDN :active](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:active)
+  provides native press-state styling. Reuse the exact `rgb(0 0 0 / 8%)` state
+  layer from Olaso's existing SegmentedControl for TopNavigation. Unlike a new
+  light fill, it preserves white labels over the selected green indicator.
+  No added timer, pointer handler, transform, dependency or layout change.
+- [Android WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  and [Capacitor web runtime](https://capacitorjs.com/docs/core-apis/web)
+  retain HTML/CSS rendering and native touch dispatch. This correction belongs
+  in the existing CSS Module; no Kotlin/plugin, data or lifecycle changes.
+- Intended verification: held press before release, drag-away cancellation,
+  selected/unselected buttons, all six shared routes, unchanged Dashboard panel
+  bounds, EN/FR and state fixtures, build and actual Redmi. Increased contrast
+  and text size remain checklist items; do not silently count them as passed.
+- Also reuse SegmentedControl's existing white focus ring on the selected
+  green navigation button; its previous green ring disappeared into the green
+  indicator. Apple 16 Flexibility/Craft supports perceptible interaction state;
+  the exact white-ring treatment is already an Olaso pattern.
+- Asked the owner whether accessibility-only layout/border adjustments are
+  allowed for sections 14–15, preserving the normal appearance. Await answer;
+  the unchanged-layout and borderless rules are not silently overridden.
+
+Results and handoff:
+- Continued independent touch checks before handoff: selected navigation,
+  Report, profile, both View all buttons and a chart bar all show their existing
+  pressed treatment with native Android touch; evidence
+  `tmp/ui01-apple-controls.json`. Menu review exposed one additional section 1
+  conflict: selected EN/FR uses `background: ... !important`, preventing the
+  existing language-button pressed color. Simplest correction is to replace
+  that override with the existing language-container selector specificity;
+  retain every color and the same selected/unselected normal appearance.
+  This uses the same researched native :active/WebView boundary above.
+  Verify selected/unselected language press, restoration and language switching;
+  rebuild/install before publication.
+- Changed `TopNavigation.module.css`: native pressed state reuses the
+  existing 8% dark layer; selected keyboard focus reuses the white inset ring.
+  `ProfileControl.module.css` removes the selected-language override that
+  blocked its existing pressed color. No other app source changed.
+  No geometry, font, menu, animation-duration, data or native-source changes.
+  Existing DESIGN pressed/focus contracts already cover both; no new design rule.
+- Browser measured 1340 × 800; panels remain (18,92,886,686),
+  (922,92,400,334), (922,444,400,334). Inspected English/French live views,
+  profile popup and chart's first-day anchored detail. Escape returns profile
+  focus. Loading/empty/error messages distinguish unavailable from zero;
+  Retry returns live. French lock-failure fixture wraps inside the menu and
+  retains recovery controls. Report fixture showed disabled Printing then
+  restored Report; its alert was not exposed by the browser dialog API, so
+  that popup itself is not counted as newly verified. No preview console warnings/errors.
+- `npm run android:beta` passed, including web build, Capacitor sync and JVM
+  checks. Existing SQLite crypto externalization, Gradle flatDir and SDK XML
+  warnings remain. No non-trivial logic introduced; no extra unit tests.
+  `adb install -r` succeeded on Redmi 22081283G, preserving records.
+  Final rebuild after the language correction passed and installed successfully.
+  Final APK SHA-256: `627dd9da1eca8d5963c60e5083c165ba2f3a990edc694b7fd2816f0ee101ff20`.
+- Native viewport 1340 × 804. Visually inspected all six shared-header routes:
+  `tmp/ui01-apple-{dashboard,pos,orders,products,stock,reports}.png`.
+  No horizontal overflow. Actual held Android press visibly shades POS while
+  Dashboard stays selected (`tmp/ui01-apple-real-press.png`); moving away and
+  releasing leaves Dashboard. Release activation reaches POS. Initial CDP
+  immediate samples preceded the active paint and were false; do not use them
+  as latency proof. A later frame sample showed the 8% fill; no absolute
+  touch-to-photon latency claim. Keyboard focus verified white on selected green.
+- Navigation reversal accepted Dashboard before the Reports movement ended;
+  sampled positions returned to Dashboard without reaching the old destination.
+  Reduced-motion emulation gives 0s navigation transition, then was cleared.
+  This verifies interruption/reduced motion, not a complete slow-motion video
+  assessment. Profile popup remains opaque, anchored at x1090/y77, width232;
+  Escape closes it and restores trigger focus. Focused foreground checks
+  captured no console warnings/errors. Touch probing briefly selected text;
+  cleared that inspection state before handoff.
+- Today's live total is zero on 21 September; earlier receipts/chart history
+  remain visible. No reseed, sale, stock adjustment, credential change or
+  printer configuration change. Existing unrelated PeriodCalendar/reportProfit
+  working edits are preserved and are not part of this commit; the APK was
+  built from the current workspace, including those pre-existing edits.
+- Sections 1/10 navigation correction, 3 interruption, 7 anchored popups,
+  14 reduced motion/solid surfaces and 16 inspected recovery states have scoped
+  evidence above. Sections 14 increased contrast and 15 text-size adaptation
+  remain unresolved. Owner said tablet settings do not affect Olaso; this is
+  owner-reported behavior, not permission to mark support unnecessary. Existing
+  fixed-pixel geometry and absent increased-contrast rules corroborate a gap,
+  but enlarged OS-font behavior was not experimentally measured in this pass.
+- Additional final evidence: selected and unselected EN/FR both shade green
+  while held; selected EN restores white on release. FR/EN switching works.
+  Native shared menu bounds/content checked across all six routes; final
+  EN/FR captures `tmp/ui01-apple-french-profile.png`,
+  `tmp/ui01-apple-language-press.png`, `tmp/ui01-apple-final.png` inspected.
+  `tmp/ui01-apple-menu-final.json` records measured results. Lock button press
+  shades correctly; Settings touch sample did not capture an active state,
+  so that isolated sample remains inconclusive, not a pass.
+- Actual native Report produced the expected invalid-printer-address alert in
+  the Android UI dump, with an enabled OK control; Report was enabled afterward.
+  The attempted screenshot did not retain the alert, so its current visual
+  appearance is not verified by that capture. No printer output claim.
+  Both actual Dashboard View all actions reached their destinations; Stock
+  exposes Low stock. This does not repair the historical Orders seed issue.
+- Other open verification: Settings press and Retry held state,
+  native report popup appearance/lock confirmation recheck, full motion frame review and
+  owner use in context. Earlier successful native report/cart-cancel records
+  remain historical, not silently relabeled current. Printer output and actual
+  screen-reader speech are not claimed.
+- Verdict: **Apple Design pass incomplete**, not 100%. Solid chrome remains
+  an owner exception to the skill's translucent-chrome default. Do not start
+  Better Interface yet. Resolve the accessibility direction, finish the listed
+  Apple checks and report again. `git diff --check` passed; no structural change
+  requires Graphify regeneration and no DOX ownership contract changed.
 
 ### UI-01 — one-skill-at-a-time protocol, 21 September 2026
 

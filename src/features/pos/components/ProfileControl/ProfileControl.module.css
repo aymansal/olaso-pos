@@ -105,9 +105,9 @@
   text-align: center;
 }
 
-.languageOn {
-  color: var(--olaso-text) !important;
-  background: var(--olaso-white) !important;
+.language .languageOn {
+  color: var(--olaso-text);
+  background: var(--olaso-white);
 }
 
 .menu > button {
