@@ -519,7 +519,7 @@ export const fr: Record<string, string> = {
     'La date de correction ne peut pas être antérieure à la date de début de la dépense initiale.',
   'The order could not be saved.': 'La commande n’a pas pu être enregistrée.',
   'The original order stays in history and the saved stock is restored. Olaso does not refund or reverse card payments.':
-    'La commande d’origine reste dans l’historique et le stock est rétabli. Olaso ne rembourse pas les paiements par carte et n’effectue aucune contrepassation bancaire.',
+    'La commande d’origine reste dans l’historique et le stock est rétabli. Olaso ne rembourse pas et n’annule pas les paiements par carte.',
   'The terminal could not be locked.': 'Le terminal n’a pas pu être verrouillé.',
   'Language could not be changed. Select EN or FR to try again.': 'La langue n’a pas pu être modifiée. Sélectionnez EN ou FR pour réessayer.',
   'This month': 'Ce mois',

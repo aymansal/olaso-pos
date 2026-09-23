@@ -323,6 +323,66 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Checkpoint ledger
 
+### UI-03 — owner correction: plain French cancellation copy, 23 September 2026
+
+- **Source and date:** root review of the published cancellation correction on
+  23 September 2026 flagged the French body phrase `contrepassation bancaire`
+  as accounting jargon that a non-developer owner cannot read. This is a narrow
+  copy-only follow-up to `UI-03 — owner copy correction: drop the redundant
+  cancellation eyebrow and state no card refund` above; it supersedes that
+  entry's quoted French body wording, which is left as the historical record.
+- **Research before implementation, 23 September 2026:** the European Commission
+  Directorate-General for Translation's [How to write
+  clearly](https://op.europa.eu/en/publication-detail/-/publication/725b7eb0-d92e-11e5-8fea-01aa75ed71a1/language-en)
+  and its [plain-language
+  guidance](https://translation.ec.europa.eu/languages-and-translation-european-commission/plain-language-making-european-commission-texts-clear_en)
+  advise replacing specialist terms with wording the reader already
+  understands, which agrees with the already-read `better-writing` (pass 05)
+  and `localization-design` (pass 19) skills. The alternatives were a
+  parenthetical gloss of `contrepassation bancaire` or keeping the term; plain
+  wording was chosen because the sentence only needs to say that Olaso does not
+  refund and does not cancel card payments.
+- **Changes:** `src/lib/fr.ts` changes the value of the existing key
+  `The original order stays in history and the saved stock is restored. Olaso does not refund or reverse card payments.`
+  from `La commande d’origine reste dans l’historique et le stock est rétabli. Olaso ne rembourse pas les paiements par carte et n’effectue aucune contrepassation bancaire.`
+  to `La commande d’origine reste dans l’historique et le stock est rétabli. Olaso ne rembourse pas et n’annule pas les paiements par carte.`
+  The English source string, the `CancellationDialog` component, the first
+  sentence about history and restored stock, the `Motif obligatoire` label,
+  the validation message, `Conserver` and `Annuler la commande`, and every
+  other screen are unchanged. The separate `Reversal` -> `Contrepassation`
+  label used by the Reports `CostsPanel` is a different screen and is
+  intentionally untouched.
+- **Verification:** `npm run build` passed (the known `jeep-sqlite` `crypto`
+  externalization warning is unchanged) and `git diff --check` passed. The
+  debug APK already rebuilt from this exact edit earlier on 23 September 2026
+  was running on the connected Redmi `22081283G` (adb serial
+  `XOPFAQGYNNGYVGPR`; package `com.olaso.pos` `lastUpdateTime`
+  2026-09-23 11:54:50). With French selected and sale `0926-0002` open on the
+  Commandes screen, opening the cancellation dialog and reading it through the
+  WebView bridge returned the new sentence exactly:
+  `La commande d’origine reste dans l’historique et le stock est rétabli. Olaso ne rembourse pas et n’annule pas les paiements par carte.`
+  The tablet screenshot `tmp/ui03-cancel-dialog-fr-plain.png` shows the title
+  `Annuler 0926-0002`, no eyebrow, the new sentence on two unclipped lines,
+  `Motif obligatoire`, `Conserver` and `Annuler la commande`. The dialog was
+  closed with `Conserver`; sale `0926-0002` stayed completed and synced; no
+  cancellation was submitted; focused logcat showed only the known chromium
+  `Seed missing signature` line.
+- **Limitations:** the connected test device is the Redmi `22081283G`, not the
+  Samsung Galaxy Tab A9 the root `AGENTS.md` names as the production baseline;
+  the 1340 × 800 browser view of this dialog was not captured; TalkBack speech,
+  enlarged OS text and RTL remain unverified. The French edit was left
+  uncommitted in the working tree by the interrupted previous worker and is
+  completed by this entry. Unrelated working-tree changes (`AGENTS.md`,
+  `SAAS_TRANSITION.md`, `src/features/reports/reportProfit.ts`) were preserved
+  and not staged.
+- **Status:** UI-03 owner acceptance is still pending; this is a copy
+  correction, not an acceptance, and it does not reopen any recorded Orders
+  pass.
+- **Exact next action:** the owner reviews the corrected French cancellation
+  dialog and accepts UI-03 or names one scoped correction. Do not advance to
+  Products.
+- **Publication:** commit recorded in the follow-up ledger commit below.
+
 ### UI-03 — owner copy correction: drop the redundant cancellation eyebrow and state no card refund, 23 September 2026
 
 - **Owner request and scope:** a narrow UI-03 Orders cancellation copy
