@@ -382,7 +382,10 @@ changes pushed and the owner must accept the screen before moving on.
 - **Exact next action:** the owner decides whether to run the remaining UI-02
   coverage and passes. Do not advance to Products or any other screen without
   that decision.
-- **Publication:** commit recorded in the follow-up ledger commit.
+- **Publication:** owner-acceptance commit
+  [`48cb887`](https://github.com/aymansal/olaso-pos/commit/48cb887cc8b5aa8ff372f88bcbaebc4285558626)
+  is pushed to `origin/main`; this follow-up ledger commit records that
+  publication.
 
 ### UI-02 — owner correction: stronger POS product-card outline, 23 September 2026
 
