@@ -411,7 +411,10 @@ changes pushed and the owner must accept the screen before moving on.
 - **Exact next action:** the owner reviews the stronger product-card outline on
   the tablet and either accepts it or names one different value or scope. Do not
   widen it to other controls or screens without that decision.
-- **Publication:** commit recorded in the follow-up ledger commit.
+- **Publication:** UI-02 outline commit
+  [`1db4f38`](https://github.com/aymansal/olaso-pos/commit/1db4f38ea80a447dbcebea4a154969b77d7109ef)
+  is pushed to `origin/main`; this follow-up ledger commit records that
+  publication.
 
 ### UI-03 — owner acceptance, 23 September 2026
 
