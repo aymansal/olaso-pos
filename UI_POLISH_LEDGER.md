@@ -381,7 +381,10 @@ changes pushed and the owner must accept the screen before moving on.
 - **Exact next action:** the owner reviews the corrected French cancellation
   dialog and accepts UI-03 or names one scoped correction. Do not advance to
   Products.
-- **Publication:** commit recorded in the follow-up ledger commit below.
+- **Publication:** implementation commit
+  [`477d432`](https://github.com/aymansal/olaso-pos/commit/477d43225f4abde6064581989cdd758f5656cc37)
+  is pushed to `origin/main`; this follow-up ledger commit records that
+  publication.
 
 ### UI-03 — owner copy correction: drop the redundant cancellation eyebrow and state no card refund, 23 September 2026
 
