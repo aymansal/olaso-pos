@@ -32,17 +32,23 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-03 — Orders / Sales.** Owner correction, 23 September
-  2026: Orders / Sales is the active UI-polish card, not POS. All 21 numbered
-  individual skill passes for Orders are recorded in the checkpoint ledger
-  below (`UI-03 — sequential pass 01` through `pass 21`). Owner acceptance is
-  still pending: UI-03 is not accepted and must not be reported as complete.
+- **UI-03 accepted; active card: UI-02 — POS owner-requested scoped correction.**
+  The owner accepted UI-03 Orders / Sales on 23 September 2026, after the plain
+  French cancellation-copy correction (`477d432`, recorded by `1a49f2a`). All
+  21 numbered individual skill passes for Orders are recorded below (`UI-03 —
+  sequential pass 01` through `pass 21`), and the acceptance entry records the
+  accepted scope and every retained limitation. Acceptance is not 100%: no
+  limitation below became a pass. The owner then named one scoped UI-02 POS
+  correction — the product-card outline feels too thin and faint and needs
+  stronger definition.
 - **UI-00 complete:** ledger and recovery instructions created and published.
   Dashboard was the first screen card; the current work is UI-03 Orders / Sales.
   No new UI implementation or app testing was performed during ledger creation.
-- **Exact next action:** the owner reviews the recorded Orders evidence and
-  either accepts UI-03 or names one scoped correction. Do not advance to
-  Products until that acceptance is recorded.
+- **Exact next action:** read-only discovery of the owner-requested UI-02 POS
+  product-card outline correction (compare the current border width and contrast
+  against the approved reference and all card states). No POS code or styling
+  change is authorized until the owner approves one specific change from that
+  packet. Do not advance to Products until that UI-02 decision is recorded.
 - **Carried forward unchanged:** the owner retained the two faint shared text
   colours (`--olaso-text-meta`, `--olaso-text-placeholder`) and deferred their
   contrast finding to a later palette pass. TalkBack speech, enlarged OS text,
@@ -222,8 +228,8 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
 | UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Combined review checkpoint delivered; the owner retained the existing chart shades without an outline; recorded gaps remain |
-| UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Combined review delivered; owner acceptance pending; the 23 September popup screenshot exercise was an erroneous detour, not acceptance evidence |
-| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Active card; all 21 numbered individual skill passes recorded; owner acceptance pending; not accepted |
+| UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Combined review delivered; owner acceptance pending; the 23 September popup screenshot exercise was an erroneous detour, not acceptance evidence. Owner requested one scoped correction on 23 September 2026: stronger product-card outline definition (border feels too thin/faint). Read-only discovery only; no code change authorized |
+| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Owner-accepted 23 September 2026; all 21 numbered individual skill passes recorded and all known limitations retained; closed and published to `origin/main` |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
 | UI-05 | Stock | Ingredients, units, purchasing, stock corrections, low-stock states and the Product-to-Stock relationship | Queued; workflow simplification required |
 | UI-06 | Reports | Every existing report tab, periods/calendars, charts/tables, details and supported actions | Queued |
@@ -322,6 +328,32 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-03 — owner acceptance, 23 September 2026
+
+- **Source and date:** explicit owner approval on 23 September 2026 that UI-03
+  Orders / Sales is accepted. It follows the plain French cancellation-copy
+  correction and its publication (`477d432`, recorded by `1a49f2a`).
+- **Scope accepted:** the Orders / Sales coverage and evidence published up to
+  `1a49f2a` — the 21 numbered individual skill passes and the two
+  owner-requested copy corrections — is accepted. No further Orders work is
+  queued.
+- **Retained limitations, not passes:** the acceptance closes no recorded
+  boundary. Still unverified or outstanding: a 1340 × 800 browser capture of the
+  cancellation dialog; TalkBack speech; enlarged OS text; RTL and
+  long-expansion; a real cloud-outage transition; and live reprint. The owner's
+  retained faint shared text colours (`--olaso-text-meta`,
+  `--olaso-text-placeholder`) stay deferred to a later palette pass. This
+  accepts the deliberate design; it is not a claim of 100%.
+- **Changes:** documentation only. No app, UI, data, device or APK change.
+- **Verification:** `git diff --check` reviewed; only this ledger changed, so no
+  build or device run was required for a documentation-only acceptance.
+  Unrelated working-tree changes were preserved.
+- **Status:** UI-03 accepted and closed. UI-02 POS remains not accepted.
+- **Exact next action:** read-only discovery of the owner-requested UI-02 POS
+  product-card outline correction; no POS code or styling change until the owner
+  approves one specific change from that packet.
+- **Publication:** commit recorded in the follow-up ledger commit.
 
 ### UI-03 — owner correction: plain French cancellation copy, 23 September 2026
 
