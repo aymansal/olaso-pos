@@ -518,13 +518,13 @@ export const fr: Record<string, string> = {
   'The correction date cannot be before the original expense start date.':
     'La date de correction ne peut pas être antérieure à la date de début de la dépense initiale.',
   'The order could not be saved.': 'La commande n’a pas pu être enregistrée.',
+  'The original order stays in history and the saved stock is restored. Olaso does not refund or reverse card payments.':
+    'La commande d’origine reste dans l’historique et le stock est rétabli. Olaso ne rembourse pas les paiements par carte et n’effectue aucune contrepassation bancaire.',
   'The terminal could not be locked.': 'Le terminal n’a pas pu être verrouillé.',
   'Language could not be changed. Select EN or FR to try again.': 'La langue n’a pas pu être modifiée. Sélectionnez EN ou FR pour réessayer.',
   'This month': 'Ce mois',
   'This payment': 'Ce règlement',
   'This period': 'Cette période',
-  'This records the cancellation and restores the saved stock. Card payment reversals must be handled outside Olaso.':
-    'L’annulation est enregistrée et le stock est rétabli. Les remboursements carte se font hors d’Olaso.',
   'This staff identity is unavailable offline. Connect and sync this terminal.':
     'Cette identité n’est pas disponible hors ligne. Connectez et synchronisez ce terminal.',
   'This week': 'Cette sem.',
@@ -565,7 +565,6 @@ export const fr: Record<string, string> = {
   'Waiting sales': 'Ventes en attente',
   'Waiting to sync': 'En attente de synchro',
   'Weighed': 'Pesés',
-  'WHOLE-SALE CORRECTION': 'ANNULATION DE COMMANDE',
   'Wrong PIN. Try again.': 'Code incorrect. Réessayez.',
   'Yesterday': 'Hier',
   'Yes, split it': 'Oui, la séparer',

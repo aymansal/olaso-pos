@@ -1,6 +1,6 @@
 # Olaso screen-by-screen polish ledger
 
-Updated: 21 September 2026.
+Updated: 23 September 2026.
 
 ## Read this after every context compaction
 
@@ -32,18 +32,26 @@ Pencil frames still own their respective product and implementation contracts.
 
 ## State pointer
 
-- **Active screen: UI-02 — POS targeted corrections after Orders completion.**
-  The owner has finished the requested Orders work and retained the existing
-  palette, then returned to POS for two concrete popup fixes. The earlier UI-03
-  sequential skill evidence remains valid; this continuation does not reopen
-  the Orders visual review or change its colors.
+- **Active screen: UI-03 — Orders / Sales.** Owner correction, 23 September
+  2026: Orders / Sales is the active UI-polish card, not POS. All 21 numbered
+  individual skill passes for Orders are recorded in the checkpoint ledger
+  below (`UI-03 — sequential pass 01` through `pass 21`). Owner acceptance is
+  still pending: UI-03 is not accepted and must not be reported as complete.
 - **UI-00 complete:** ledger and recovery instructions created and published.
-  Dashboard was the first screen card; the current work is UI-02 POS targeted
-  corrections. No new
-  UI implementation or app testing was performed during ledger creation.
-- **Exact next action:** owner reviews the POS customization popup at the
-  tablet viewport and confirms the existing option-row appearance. Do not
-  advance to Products until UI-02 is accepted.
+  Dashboard was the first screen card; the current work is UI-03 Orders / Sales.
+  No new UI implementation or app testing was performed during ledger creation.
+- **Exact next action:** the owner reviews the recorded Orders evidence and
+  either accepts UI-03 or names one scoped correction. Do not advance to
+  Products until that acceptance is recorded.
+- **Carried forward unchanged:** the owner retained the two faint shared text
+  colours (`--olaso-text-meta`, `--olaso-text-placeholder`) and deferred their
+  contrast finding to a later palette pass. TalkBack speech, enlarged OS text,
+  RTL and long-expansion, a real cloud-outage transition and live reprint stay
+  recorded verification limitations, not passes.
+- **Erroneous detour, 23 September 2026:** the POS customization-popup
+  screenshot exercise was not authorized Orders work. Those captures are not
+  acceptance evidence for UI-02 or any screen, no POS file changed, and the
+  UI-02 option-row appearance remains as documented in `DESIGN.md`.
 - Do not automatically jump to Products, ingredients, security or sync work.
 
 ## Owner rules — no personal design choices
@@ -213,9 +221,9 @@ at a time; finish its complete flow and obtain owner acceptance before advancing
 
 | Card | Screen | Required coverage | Status |
 | --- | --- | --- | --- |
-| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Combined review checkpoint delivered; chart choice and recorded gaps remain open |
-| UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Combined review delivered; owner acceptance pending; option appearance unresolved |
-| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Sequential review active; step 01 Apple Design complete with owner exceptions; step 02 next |
+| UI-01 | Dashboard | Metrics, chart details, recent orders, stock attention, View all paths, shared menus/actions reachable here and all relevant states | Combined review checkpoint delivered; the owner retained the existing chart shades without an outline; recorded gaps remain |
+| UI-02 | POS | Search/categories, products, cart, choices/extras, quantities, Offert, clear/remove, cash/card/split payments, validation and recovery | Combined review delivered; owner acceptance pending; the 23 September popup screenshot exercise was an erroneous detour, not acceptance evidence |
+| UI-03 | Orders / Sales | Search/filters, lists, details, cancellation and reprint flows, confirmations and feedback | Active card; all 21 numbered individual skill passes recorded; owner acceptance pending; not accepted |
 | UI-04 | Products | Categories, product forms, sizes, choices/extras, ingredient/recipe links, create/edit/delete and validation | Queued; workflow simplification required |
 | UI-05 | Stock | Ingredients, units, purchasing, stock corrections, low-stock states and the Product-to-Stock relationship | Queued; workflow simplification required |
 | UI-06 | Reports | Every existing report tab, periods/calendars, charts/tables, details and supported actions | Queued |
@@ -314,6 +322,100 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-03 — owner copy correction: drop the redundant cancellation eyebrow and state no card refund, 23 September 2026
+
+- **Owner request and scope:** a narrow UI-03 Orders cancellation copy
+  correction. Remove the redundant `WHOLE-SALE CORRECTION` eyebrow from the
+  cancellation dialog, and make the English and French body copy plainly state
+  that the original order remains in history and that Olaso does not refund or
+  reverse card payments. The internal correction model, data, sync names and
+  flows are unchanged, and no other screen, error message or translation area
+  is included.
+- **Research before implementation, 23 September 2026:** the [W3C WAI-ARIA APG
+  modal dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
+  makes `aria-labelledby` or `aria-label` the dialog's accessible name and
+  treats `aria-describedby` as optional, so removing a decorative label cannot
+  change the dialog's name or description.
+  [Android WebView guidance](https://developer.android.com/develop/ui/views/layout/webapps/webview)
+  keeps accessibility labels in the web content and advises against redundant
+  labels, which supports deleting a label that repeats the title.
+  [Capacitor's workflow](https://capacitorjs.com/docs/basics/workflow) confirms
+  HTML/CSS changes are web-layer work that needs no native change. The
+  alternatives were replacing the eyebrow with `ORDER CANCELLATION` or leaving
+  it in place; the owner chose removal because the existing title already names
+  the action.
+- **Changes:** `src/features/orders/components/CancellationDialog/CancellationDialog.tsx`
+  removes the header `<small>` eyebrow and replaces the body sentence with
+  `The original order stays in history and the saved stock is restored. Olaso does not refund or reverse card payments.`
+  The `aria-labelledby` title, the `aria-describedby` body, the close control,
+  the reason label, the validation message and both footer actions are
+  unchanged. `src/lib/fr.ts` moves the body entry to its alphabetical position
+  as
+  `La commande d'origine reste dans l'historique et le stock est rétabli. Olaso ne rembourse pas les paiements par carte et n'effectue aucune contrepassation bancaire.`
+  and deletes the now-unused `WHOLE-SALE CORRECTION` key. No data, model, sync,
+  document or other screen changed.
+- **Verification:** `npm run build` passed and the known `crypto` externalization
+  warning from `jeep-sqlite` is unchanged. `npm run check:orders` passed its
+  historical receipt and signed-option assertions, then stopped at the protected
+  `OLASO_OWNER_PIN` restore gate; no reset or reseed was attempted.
+  `git diff --check` passed and the focused diff contains only the dialog and
+  `fr.ts`. `npm run android:beta` passed with the repository JDK 21 and the debug
+  APK installed with `adb install -r`, preserving café data (APK SHA-256
+  `97D7340600A47DA77D9AC897D37F7BFAF60F7C800D1F8AC8DAEBC6AD1BC6C9FC`). On the
+  Redmi `22081283G` at the 1340 × 804 WebView the dialog opened on the completed
+  sale `0926-0002` with no eyebrow, the title `Cancel 0926-0002` and the new body
+  sentence; closing used `Keep order` and the order stayed `Completed · Synced`.
+  With French selected, the same dialog showed the title `Annuler 0926-0002`, the
+  new French sentence on two unclipped lines, `Motif obligatoire`, `Conserver`
+  and `Annuler la commande`. Captures: `tmp/ui03-cancel-dialog-en.png` and
+  `tmp/ui03-cancel-dialog-fr.png`. English was restored; no cancellation was
+  submitted and no print, stock or sale state changed.
+- **Limitations:** the 1340 × 800 browser view of this dialog was not captured
+  because no live browser preview of the real Orders flow is available here and
+  the earlier temporary fixtures were not the real component flow, so the
+  physical tablet is the authoritative visual evidence. TalkBack speech, enlarged
+  OS text and RTL remain unverified. A completed same-day sale `0926-0002`
+  already existed on the tablet during this review; this work created no sale and
+  changed no order.
+- **Status:** UI-03 owner acceptance is still pending; this correction is not an
+  acceptance and does not reopen the recorded Orders passes. The internal
+  append-only correction vocabulary in the data, sync and doctrine documents is
+  intentionally retained.
+- **Exact next action:** the owner reviews the corrected cancellation dialog in
+  English and French and accepts UI-03 or names one scoped correction. Do not
+  advance to Products.
+
+### UI-03 — owner correction: Orders / Sales is the active screen, 23 September 2026
+
+- **Source and date:** explicit owner correction on 23 September 2026 that the
+  active UI-polish screen is UI-03 Orders / Sales rather than POS. This agrees
+  with `SAAS_TRANSITION.md` (its opening pointer and its current-instruction
+  section both name Orders / Sales as the active screen) and with this ledger's
+  own Screen queue and its 21 recorded Orders passes.
+- **Stale text corrected:** the State pointer previously claimed the owner had
+  finished the Orders work and that UI-02 POS was the active screen, and the
+  queue row still read `step 01 Apple Design complete with owner exceptions;
+  step 02 next` although passes 01–21 are recorded. Documentation only: no
+  code, UI, design, device or data change.
+- **Erroneous detour recorded:** the 23 September POS customization-popup
+  screenshot exercise is recorded as an unauthorized detour. It is not
+  acceptance evidence for UI-02 or any screen, it changed no POS file, and the
+  UI-02 option-row appearance stays as written in `DESIGN.md`.
+- **Carried forward unchanged:** the owner's retained palette decision for the
+  two faint shared text colours, and the recorded limitations (TalkBack speech,
+  enlarged OS text, RTL and long-expansion, a real cloud-outage transition, and
+  live reprint). None of these becomes a pass.
+- **Verification:** `git diff --check` and the targeted `git diff` were reviewed;
+  only this ledger changed, so no app build was run. Unrelated working-tree
+  changes were preserved.
+- **Status:** UI-03 is the active card and is NOT owner-accepted. All 21
+  individual passes are recorded; owner acceptance is pending.
+- **Publication:** not committed and not pushed, per the owner's instruction for
+  this docs-only correction.
+- **Exact next action:** the owner reviews the recorded Orders evidence and
+  accepts UI-03 or names one scoped correction. No further Orders work and no
+  Products work until that decision is recorded.
 
 ### UI-03 — restore development cloud order history before polish, 21 September 2026
 
