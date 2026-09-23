@@ -3,7 +3,7 @@
   width: 174px !important;
   height: 162px !important;
   overflow: hidden;
-  border: 1.2px solid var(--olaso-border) !important;
+  border: 2px solid var(--olaso-border) !important;
   border-radius: 20px !important;
   background: var(--olaso-white) !important;
 }

@@ -329,6 +329,90 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Checkpoint ledger
 
+### UI-02 — owner correction: stronger POS product-card outline, 23 September 2026
+
+- **Source and date:** explicit owner instruction on 23 September 2026 after
+  reviewing `tmp/ui02-pos-current.png`: the POS product cards' green outlines
+  read too thin. Contract given: strengthen only each POS product card's outer
+  outline, from 1.2px to a conservative 1.5px, and calibrate to 2px at most if
+  the physical screen shows 1.5px is imperceptible. The add-control circles,
+  category cards, cart panel, cart row borders, colours, geometry, shadows and
+  behaviour stay untouched.
+- **Instruction chain read:** root `AGENTS.md`, `src/AGENTS.md`,
+  `src/features/pos/AGENTS.md`, this whole ledger, the current direction in
+  `SAAS_TRANSITION.md`, and the applicable listed skills `better-ui`,
+  `better-colors`, `design-token-audit`, `no-ai-design-slop`,
+  `critique-affordance` and `mobile-native`. Graphify was queried before code
+  inspection (`graphify query "POS product card border outline CSS"`, then
+  `"ProductCard border width var(--olaso-border)"`).
+- **Research before implementation, 23 September 2026:** MDN documents that
+  `border-width` accepts any non-negative length, fractional CSS pixels
+  included. WebSearch on 23 September 2026 confirmed the rendering consequence:
+  a fractional border whose CSS width times the effective scale is not a whole
+  number is antialiased across device pixels, so the painted line reads lighter
+  than its declared colour. Alternative considered: keep 1.2px and replace the
+  border with a layered inset `box-shadow`; rejected because `better-ui` says
+  borders own structure while shadows own depth, and because the owner asked for
+  a stronger outline, not simulated depth.
+- **Android/Capacitor boundary:** a pure web-layer CSS change. Capacitor's
+  workflow documentation confirms HTML/CSS edits need no native or plugin
+  change. No Kotlin, plugin, dependency or native configuration was added.
+- **Change applied:** `src/features/pos/components/ProductCard/ProductCard.module.css`
+  line 6, the `.card` rule, `border: 1.2px solid var(--olaso-border) !important`
+  becomes `border: 2px solid var(--olaso-border) !important`. The colour token,
+  20px radius, 174 × 162 geometry, `overflow: hidden`, photo, name, price and the
+  add control are unchanged; the add control keeps its own 1.2px circle outline.
+  `DESIGN.md` records the outline in the `product-card` token block
+  (`border: "2px solid {colors.action-border}"`) and in the `ProductCard`
+  contract row. `untitled.pen` updates the 13 authority nodes only — the 12
+  product cards in the production POS frame `W26Y6` and the reusable
+  `Component / Product Card` (`e0wXTE`) — by changing `strokeWidth` 1.2 to 2.
+  Other artboards are not the authority and were left as they were.
+- **Device evidence that 1.5px is imperceptible:** with the rebuilt beta
+  installed and the CSS confirmed live through the WebView bridge (the
+  `._card_*` rule reads back as `border: 1.5px solid var(--olaso-border) !important`),
+  the rendered outline was pixel-identical to the 1.2px capture. Scanning the
+  card's left edge in `tmp/ui02-pos-current.png` and in the 1.5px capture both
+  showed one full-intensity device pixel (`11,107,54`) plus one partial pixel.
+  The page renders 1340 CSS px into a 2000-device-pixel framebuffer (effective
+  scale ≈ 1.4925 device px per CSS px) while `window.devicePixelRatio` reports
+  1.75, so Chromium snapped both 1.2px and 1.5px to two device pixels. That met
+  the owner's stated calibration condition, so the value moved to 2px.
+- **Verified device result at 2px:** the same left-edge scan now shows two
+  full-intensity device pixels (`11,107,54`) plus one light pixel — the solid
+  core doubled. `getComputedStyle` reports `borderTopWidth` `1.71429px`
+  (3 device px at the reported ratio), colour `rgb(11, 107, 54)`, radius
+  `20px`. The viewport stayed `1340 × 804` and every card rect stayed
+  `174 × 162`, so no geometry moved. Captures:
+  `tmp/ui02-pos-after-2px.png` (accepted value), `tmp/ui02-pos-after-15px.png`
+  (1.5px intermediate) and `tmp/ui02-pos-current.png` (owner's reference).
+- **Checks:** `npm run build` passed, `npm run check:pos` passed (cart, money
+  and optional-extra assertions), `npm run android:beta` built in 24s and
+  `adb install -r` preserved café data. Focused logcat showed no Capacitor or
+  WebView console errors and only the known chromium feature warnings. The cart
+  stayed empty (`0,00 MAD`), so no sale was created. Graphify was not
+  refreshed: a CSS value change adds no file, symbol or edge.
+- **Device:** the connected device is the Redmi `22081283G` (adb serial
+  `XOPFAQGYNNGYVGPR`), not the Samsung Galaxy Tab A9 the root `AGENTS.md`
+  names as the reference device; the viewport is `1340 × 804`.
+- **Limitations:** the owner has not accepted this correction; no UI-02 skill
+  pass was re-run, so UI-02 stays not accepted and this is not 100%. The 1.5px
+  step was rejected on device evidence, not by the owner, who may still prefer it
+  if the design tool renders it differently. The reference capture is the Redmi
+  at 1340 × 804, not the Galaxy Tab A9 at 1340 × 800. `untitled.pen` was edited
+  as text, so the design master must still be opened in its design tool to
+  confirm. `scripts/tablet-session.mjs unlock` fails on this build because it
+  requires a native `<select>` staff picker that the Lock screen no longer
+  renders (`hasSelect: false`); the owner PIN was supplied only through
+  `OLASO_OWNER_PIN` for the current terminal and appears in no file, ledger or
+  commit. TalkBack, enlarged OS text, RTL and long-expansion remain unverified.
+- **Status:** scoped UI-02 correction implemented and device-verified; UI-02
+  owner acceptance still pending.
+- **Exact next action:** the owner reviews the stronger product-card outline on
+  the tablet and either accepts it or names one different value or scope. Do not
+  widen it to other controls or screens without that decision.
+- **Publication:** commit recorded in the follow-up ledger commit.
+
 ### UI-03 — owner acceptance, 23 September 2026
 
 - **Source and date:** explicit owner approval on 23 September 2026 that UI-03
