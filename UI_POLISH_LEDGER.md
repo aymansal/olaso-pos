@@ -353,7 +353,10 @@ changes pushed and the owner must accept the screen before moving on.
 - **Exact next action:** read-only discovery of the owner-requested UI-02 POS
   product-card outline correction; no POS code or styling change until the owner
   approves one specific change from that packet.
-- **Publication:** commit recorded in the follow-up ledger commit.
+- **Publication:** owner-acceptance commit
+  [`a437366`](https://github.com/aymansal/olaso-pos/commit/a437366fee3d2cd5e95ad6f47c06d388bc2884b7)
+  is pushed to `origin/main`; this follow-up ledger commit records that
+  publication.
 
 ### UI-03 — owner correction: plain French cancellation copy, 23 September 2026
 
