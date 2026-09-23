@@ -385,6 +385,10 @@ changes pushed and the owner must accept the screen before moving on.
 - **Exact next action:** the owner reviews the corrected cancellation dialog in
   English and French and accepts UI-03 or names one scoped correction. Do not
   advance to Products.
+- **Publication:** implementation commit
+  [`8ac87a2`](https://github.com/aymansal/olaso-pos/commit/8ac87a2d13cdc67e3bb2433282fca937044eb178)
+  is pushed to `origin/main`; this follow-up ledger commit records that
+  publication. The protected destructive checks were not run.
 
 ### UI-03 — owner correction: Orders / Sales is the active screen, 23 September 2026
 
