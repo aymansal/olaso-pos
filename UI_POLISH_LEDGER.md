@@ -329,6 +329,61 @@ changes pushed and the owner must accept the screen before moving on.
 
 ## Checkpoint ledger
 
+### UI-02 — owner accepts the 2px product-card outline, 23 September 2026
+
+- **Source and date:** explicit owner decision on 23 September 2026 after
+  comparing live previews on the physical tablet. The owner accepts the
+  committed **2px** POS product-card outer outline (commit `1db4f38`, published
+  by `fe50b5a`) and **rejects** both the 3px and the 2.5px previews.
+- **Scope accepted:** only the outer outline of each POS product card, at 2px
+  Operational Green with no shadow. The add-control circles keep their own 1.2px
+  outline; category cards, cart panel, cart rows, radius, colour, size and
+  behaviour are unchanged. This supersedes the pending-acceptance status of
+  `UI-02 - owner correction: stronger POS product-card outline` above.
+- **Preview method, not persisted:** the 3px and 2.5px candidates were tried as
+  a live DOM override (`<style id="olaso-preview-border">`) injected through
+  the WebView bridge on the already-unlocked tablet. Nothing was written to a
+  tracked file and no preview was committed. After the decision the override was
+  removed, so the device again renders the shipped 2px.
+- **Comparison evidence:** every preview was captured in the same French POS
+  session. On the card's left edge in the 2000 x 1200 device framebuffer the
+  full-intensity core measured 2 device pixels at 2px, 3 at 2.5px and 4 at 3px,
+  which is why the owner could compare them directly. Every candidate kept all
+  9 card rects at `174 x 162` with zero content overflow.
+- **Restoration verified:** with the override removed, `getComputedStyle`
+  reports `borderTopWidth 1.71429px`, radius `20px` and colour
+  `rgb(11, 107, 54)`, and the cart is empty (`0,00 MAD`). The restored capture
+  `tmp/ui02-pos-restored-2px.png` differs from the same-session 2px baseline
+  `tmp/ui02-pos-baseline-2px-samesession.png` in only 1,634 of 2,400,000 pixels,
+  all inside the header band (32, 54) to (460, 83), which is the date and clock
+  text (15:28 to 15:37). Every menu, card and rail pixel outside that band is
+  identical, so no unrelated UI changed.
+- **Checks:** no tracked file was created, edited or deleted by this work; no
+  CSS, `DESIGN.md` or `untitled.pen` change. `git diff --check` was reviewed and
+  `git status` still lists only the pre-existing unrelated changes (`AGENTS.md`,
+  `SAAS_TRANSITION.md`, `src/features/reports/reportProfit.ts`). The preview
+  helpers under `tmp/` are ignored development tooling and were left in place.
+- **Device:** the connected device is the Redmi `22081283G` (adb serial
+  `XOPFAQGYNNGYVGPR`), WebView `1340 x 804`, `devicePixelRatio` 1.75, French UI,
+  POS screen, empty cart. The Samsung Galaxy Tab A9 at 1340 x 800 remains the
+  named reference device and was not available, so the reference-device caveat
+  stands.
+- **Limitations retained:** this accepts one scoped correction, not the whole
+  UI-02 screen. UI-02 is still **not** done and is not 100%: its remaining
+  coverage and every earlier recorded boundary stay open. `untitled.pen` was
+  edited as text, so it still needs to be opened in its design tool to confirm.
+  TalkBack, enlarged OS text, RTL and long-expansion remain unverified.
+  `scripts/tablet-session.mjs unlock` still fails on this build because it
+  requires a native `<select>` staff picker the Lock screen no longer renders;
+  unlocking used the owner PIN through `OLASO_OWNER_PIN` for the current
+  terminal only, and it appears in no file, ledger or commit.
+- **Status:** the scoped 2px product-card outline correction is owner-accepted
+  and closed. UI-02 as a screen remains not accepted and not complete.
+- **Exact next action:** the owner decides whether to run the remaining UI-02
+  coverage and passes. Do not advance to Products or any other screen without
+  that decision.
+- **Publication:** commit recorded in the follow-up ledger commit.
+
 ### UI-02 — owner correction: stronger POS product-card outline, 23 September 2026
 
 - **Source and date:** explicit owner instruction on 23 September 2026 after
