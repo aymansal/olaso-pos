@@ -522,6 +522,18 @@ changes pushed and the owner must accept the screen before moving on.
 - Exact next action: resume the one-card-at-a-time sequence at the owner's next named card; the
   queued Products orange CTA trial stays provisional and unaccepted until the owner judges it.
 
+#### Publication
+
+- One consolidated commit `a3bc76f` (`UI-PUBLISH-01: publish all pending Olaso project work as
+  one owner-authorized snapshot`) was pushed non-force to `origin/main` at
+  `https://github.com/aymansal/olaso-pos`; the remote moved from `eb54a21` to `a3bc76f` with no
+  divergence and no force push.
+- Contents: 357 files changed, 5,542 insertions and 309 deletions, including the untracked art
+  working directories the owner asked to include. Left untracked: `.codex/`, `.commandcode/`,
+  `.freebuff/` and every ignored build/cache path.
+- This follow-up commit records the SHA, as the ledger's main-only rule requires. Provisional and
+  trial status is unchanged by the publish, and no card was marked done.
+
 ### PRODUCTS-ORANGE-02 — Products Add product CTA orange trial (owner-requested, reversible), 25 September 2026
 
 #### Owner override and constraints
