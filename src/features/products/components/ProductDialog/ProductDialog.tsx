@@ -60,6 +60,7 @@ export function ProductDialog({
     <OverlayPortal>
     <div
       className={styles.overlay}
+      data-products-palette
       role="presentation"
       onPointerDown={(event) => closeOnBackdrop(event, onClose)}
     >

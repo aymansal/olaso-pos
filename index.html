@@ -11,6 +11,7 @@
     <style>
       html, body, #root { min-height: 100%; margin: 0; background: #F8F7EA; }
       .olaso-startup {
+        --olaso-comet-size: 24px;
         display: grid;
         min-height: 100vh;
         place-content: center;
@@ -20,31 +21,60 @@
         text-align: center;
         background: #F8F7EA;
       }
-      .olaso-startup-logo { display: block; width: 320px; height: auto; }
+      .olaso-startup::before { content: ''; width: var(--olaso-comet-size); height: var(--olaso-comet-size); }
+      .olaso-startup-logo { display: block; width: 225px; height: auto; }
+      .olaso-comet {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--olaso-comet-size);
+        height: var(--olaso-comet-size);
+        --olaso-comet-head: calc(var(--olaso-comet-size) * 0.2);
+        --olaso-comet-radius: calc(var(--olaso-comet-size) * 0.83);
+      }
+      .olaso-comet-body {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        /* Fixed comet trail; only the rotation animates, so the sweep is
+           steady and never retracts back to its starting point. */
+        box-shadow:
+          0 calc(var(--olaso-comet-radius) * -1) 0 calc(var(--olaso-comet-head) * -2),
+          calc(var(--olaso-comet-radius) * -0.454) calc(var(--olaso-comet-radius) * -0.892) 0 calc(var(--olaso-comet-head) * -2.1),
+          calc(var(--olaso-comet-radius) * -0.777) calc(var(--olaso-comet-radius) * -0.629) 0 calc(var(--olaso-comet-head) * -2.2),
+          calc(var(--olaso-comet-radius) * -0.934) calc(var(--olaso-comet-radius) * -0.358) 0 calc(var(--olaso-comet-head) * -2.3),
+          calc(var(--olaso-comet-radius) * -0.988) calc(var(--olaso-comet-radius) * -0.108) 0 calc(var(--olaso-comet-head) * -2.385);
+        animation: olaso-comet-rotation 3.4s linear infinite;
+        transform: translateZ(0);
+      }
+      @keyframes olaso-comet-rotation {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @media (prefers-reduced-motion: reduce) { .olaso-comet-body { animation: none; } }
     </style>
-    <title>Olaso POS</title>
+    <title>Atelika POS</title>
   </head>
   <body>
     <div id="root">
       <main
         class="olaso-startup"
         data-olaso-startup="document"
-        aria-label="Loading Olaso"
+        aria-label="Loading Atelika"
         aria-busy="true"
         role="status"
       >
         <img
           class="olaso-startup-logo"
-          src="/assets/brand/olaso-wordmark-operational-green-transparent.png"
-          alt="OLASO"
-          width="320"
-          height="87"
+          src="/assets/brand/atelika-wordmark-transparent.png"
+          alt="Atelika"
+          width="225"
+          height="71"
         />
-        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="4" cy="12" r="2" fill="currentColor"><animate id="olaso_startup_first" begin="0;olaso_startup_last.end+0.25s" attributeName="cy" calcMode="spline" dur="0.6s" values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33" /></circle>
-          <circle cx="12" cy="12" r="2" fill="currentColor"><animate begin="olaso_startup_first.begin+0.1s" attributeName="cy" calcMode="spline" dur="0.6s" values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33" /></circle>
-          <circle cx="20" cy="12" r="2" fill="currentColor"><animate id="olaso_startup_last" begin="olaso_startup_first.begin+0.2s" attributeName="cy" calcMode="spline" dur="0.6s" values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33" /></circle>
-        </svg>
+        <span class="olaso-comet" aria-hidden="true">
+          <span class="olaso-comet-body"></span>
+        </span>
       </main>
     </div>
     <script type="module" src="/src/main.tsx"></script>

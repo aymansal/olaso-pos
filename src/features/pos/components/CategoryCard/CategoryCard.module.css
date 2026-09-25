@@ -10,7 +10,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--olaso-green);
+  outline: 2px solid var(--olaso-trial-on-canvas, var(--olaso-green));
   outline-offset: 2px;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .active {
-  border-color: var(--olaso-green) !important;
+  border-color: var(--olaso-trial-cat-ink, var(--olaso-green)) !important;
   color: white;
 }
 
@@ -36,7 +36,7 @@
   inset: 0;
   z-index: 0;
   border-radius: 22px;
-  background: var(--olaso-green);
+  background: var(--olaso-trial-cat-ink, var(--olaso-green));
   transform: scaleX(0);
   transform-origin: left center;
   pointer-events: none;
@@ -71,9 +71,9 @@
 }
 
 .active .status {
-  border-color: white;
-  color: white;
-  background: var(--olaso-green);
+  border-color: var(--olaso-trial-cat-ink-selected, white);
+  color: var(--olaso-trial-cat-ink-selected, white);
+  background: transparent;
 }
 
 .warning .status {
@@ -86,7 +86,7 @@
   top: auto;
   bottom: 25px;
   max-width: 105px;
-  color: var(--olaso-text);
+  color: var(--olaso-trial-cat-ink, var(--olaso-text));
   font-size: 18px;
   font-weight: 700;
   line-height: 18px;
@@ -95,14 +95,14 @@
 .count {
   top: auto;
   bottom: 7px;
-  color: var(--olaso-text);
+  color: var(--olaso-trial-cat-ink, var(--olaso-text));
   font-size: 10px;
   line-height: 12px;
 }
 
 .active .name,
 .active .count {
-  color: white;
+  color: var(--olaso-trial-cat-ink-selected, white);
 }
 
 .illustration {
@@ -113,14 +113,23 @@
   width: 132px;
   height: 112px;
   object-fit: contain;
-  opacity: 0.46;
+  /* POS-only teal strokes on the light card; every other screen keeps the
+     original green artwork. The selected card below overrides this. */
+  filter: var(--olaso-trial-cat-art, none);
 }
 
 .active .illustration {
   right: 0;
   width: 138px;
   opacity: 1;
-  filter: brightness(0) invert(1);
+  /* Mint strokes; the teal surface shows through the transparent spaces. */
+  filter: var(--olaso-trial-cat-art-selected, none);
+  /* Owner-rejected 25 September 2026: a trial shrank this artwork to about 96px
+     to buy dark-teal breathing room; the owner rejected the shrink, so the full
+     size is restored. The mint artwork still covers much of the card, so the
+     selected card's mean stays above the exact #01363e fill and reads greener
+     than the nav / Dine In / Cash fills. That perception is left open for the
+     owner rather than resolved here. */
 }
 
 @media (prefers-reduced-motion: reduce) {

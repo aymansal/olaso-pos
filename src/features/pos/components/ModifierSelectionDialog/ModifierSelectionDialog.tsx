@@ -220,6 +220,7 @@ export function ModifierSelectionDialog({
     <OverlayPortal>
     <div
       className={styles.overlay}
+      data-pos-palette
       role="presentation"
       onPointerDown={(event) => closeOnBackdrop(event, onClose)}
     >

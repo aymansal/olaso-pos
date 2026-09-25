@@ -262,7 +262,11 @@ const categoryCardCss = readFileSync(
   'utf8',
 );
 assert.match(categoryCardCss, /\.name \{[\s\S]*max-width: 105px/);
-assert.match(categoryCardCss, /\.illustration \{[\s\S]*opacity: 0\.46/);
+// Owner-approved 24 September category mapping: teal artwork/text on the light
+// card, mint artwork/text on the solid teal card.
+assert.match(categoryCardCss, /\.illustration \{[\s\S]*?filter: var\(--olaso-trial-cat-art, none\)/);
+assert.match(categoryCardCss, /\.active \.illustration \{[\s\S]*?filter: var\(--olaso-trial-cat-art-selected, none\)/);
+assert.match(categoryCardCss, /\.fill \{[\s\S]*?background: var\(--olaso-trial-cat-ink,/);
 const productGridCss = readFileSync(
   'src/features/pos/components/ProductGrid/ProductGrid.module.css',
   'utf8',

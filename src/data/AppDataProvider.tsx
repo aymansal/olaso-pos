@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { openLocalDatabase } from './localDatabase';
 import { useConnectionStatus } from './connectionContext.tsx';
-import olasoLogo from '../../assets/brand/olaso-wordmark-operational-green-transparent.png';
-import { StartupDots } from '../components/StartupDots/StartupDots';
+import atelikaLogo from '../../assets/brand/atelika-wordmark-transparent.png';
+import { CometSpinner } from '../components/CometSpinner/CometSpinner';
 import styles from './AppDataProvider.module.css';
 
 function createConvexClient() {
@@ -57,8 +57,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         aria-live="polite"
         role={localState === 'error' ? 'alert' : 'status'}
       >
-        <img className={styles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
-        {localState === 'error' ? <strong>Local data unavailable</strong> : <StartupDots />}
+        <img className={styles.logo} src={atelikaLogo} alt="Atelika" width={225} height={71} />
+        {localState === 'error' ? <strong>Local data unavailable</strong> : <CometSpinner />}
         {localState === 'error' && (
           <>
             <span>Checkout stays locked until local data opens again.</span>

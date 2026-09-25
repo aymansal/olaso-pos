@@ -1,6 +1,6 @@
 # Olaso screen-by-screen polish ledger
 
-Updated: 23 September 2026.
+Updated: 24 September 2026.
 
 ## Read this after every context compaction
 
@@ -58,6 +58,124 @@ Pencil frames still own their respective product and implementation contracts.
   screenshot exercise was not authorized Orders work. Those captures are not
   acceptance evidence for UI-02 or any screen, no POS file changed, and the
   UI-02 option-row appearance remains as documented in `DESIGN.md`.
+- **Owner-directed side task, 23 September 2026:** the owner separately
+  authorized a branded Android first frame plus a comet startup loader
+  (`LAUNCH-01` below). It changes no POS screen and does not alter the UI-02
+  next action, the screen queue, or UI-02's read-only status.
+- **Owner-directed side task, 24 September 2026:** the owner supplied an
+  accepted Atelika wordmark crop and asked for an asset-only replacement of the
+  live logo (`LAUNCH-04` below). It changes no screen layout and does not alter
+  the UI-02 next action or the screen queue.
+- **Owner-directed screen trial, 24 September 2026:** the owner approved one
+  POS-only background preview (`POS-BG-01` below): a full-width dark teal header
+  behind the existing cropped Atelika logo, plus a soft light non-white POS body
+  that keeps the white product/cart cards distinct. Trial-only, not propagated
+  to other screens, no palette rule declared. It awaits owner visual acceptance
+  and does not alter the UI-02 next action or the screen queue.
+- **Owner-directed screen trial, 24 September 2026 (POS-BG-02):** the owner then
+  asked to see the whole POS screen background in the same dark teal as the top
+  bar, POS screen only ('POS-BG-02' below). Provisional, reversible and
+  POS-scoped; it preserves the cropped logo pixels, the white cards/receipt, the
+  layout and every other screen, and only corrects the on-canvas text/control
+  contrast the dark field requires. It awaits owner visual acceptance and does not
+  alter the UI-02 next action or the screen queue.
+- **Owner-confirmed correction, 24 September 2026 (POS-BG-02):** on the Redmi's
+  1340 x 804 viewport the fixed 800 px POS shell left a six-physical-pixel cream
+  strip at the bottom; the page-surface token now follows the POS trial in
+  `src/globals.css`. See 'POS-BG-02 — correction' below. Still provisional and
+  awaiting owner acceptance; does not alter the UI-02 next action.
+- **Owner-directed screen trial, 24 September 2026 (BRAND-COLOR-01):** the
+  owner then asked for one POS-only brand-action colour trial that replaces
+  operational green where it meant selection or action with a brand mapping
+  (dark teal selection, mint selected category, one orange Place order). See
+  'BRAND-COLOR-01' below. Provisional, reversible and POS-scoped; it awaits
+  owner visual acceptance and does not alter the UI-02 next action or the
+  screen queue.
+- **Owner-directed screen trial, 24 September 2026 (BRAND-COLOR-01 follow-up):**
+  the owner then asked for three scoped changes to that same POS trial: a less
+  rounded POS navigation pill, the selected category on the trial's action
+  orange with dark text and the white knockout artwork instead of mint, and the
+  brand teal tint on the unselected category artwork. See 'BRAND-COLOR-01
+  follow-up' below. The owner rejected this follow-up on visual review; its
+  three CSS changes were reverted to the earlier BRAND-COLOR-01 trial. That
+  earlier trial is still provisional, not accepted. See the rollback entry.
+- **Owner-approved screen trial, 24 September 2026 (BRAND-COLOR-01 follow-up 2):**
+  the broad orange preview was installed, then rejected by the owner. The
+  assistant had incorrectly broadened the brief to the top nav, Current order
+  selectors, profile ring and language selector. Follow-up 3 below narrows the
+  POS trial to the category, product-card/plus accents and Place order; all
+  other interactive controls stay teal. No palette is accepted yet.
+- **Owner-directed screen trial, 24 September 2026 (POS-BG-03):** the owner asked
+  for one bounded POS-only trial: white top navigation/header background like the
+  supplied Atelika tablet reference, keeping a visible narrow pale-teal workspace
+  strip between the header's bottom edge and the Search products field. See
+  'POS-BG-03' below. Provisional, reversible, POS-scoped; it awaits owner visual
+ acceptance and does not alter the UI-02 next action or the screen queue.
+- **Owner-directed correction, 25 September 2026 (POS-BG-03 capsules):** the owner
+  asked for the `Report` button and the whole profile control to become 46px white
+  rounded secondary capsules with a thin teal outline and dark-teal ink, and for
+  the selected category fill to stay the exact `#01363E` shared by the top nav,
+  Dine In and Cash. See the 25 September entry under 'POS-BG-03'. Provisional,
+  POS-scoped; it survived an interrupted worker and awaits owner visual acceptance.
+  The owner then rejected the trial's selected-category artwork shrink, which is
+  reverted, so the selected card's greener reading than the nav/Dine In/Cash fills
+  stays open. No 3D or shadow change is made while that is discussed.
+- **Owner-approved change, 25 September 2026 (TOPBAR-01):** the owner approved
+  making the current POS top bar the single persistent top bar on every screen
+  that shows it — Dashboard, POS, Orders, Products, Stock, Reports — by reusing
+  the one shared `Header` already mounted in `App.tsx`. Settings is explicitly
+  excluded and keeps its previous bar; Lock and the startup states never mount
+  it. See 'TOPBAR-01' below. Provisional and reversible; it awaits owner visual
+  acceptance and does not alter the screen queue.
+
+- **Owner-directed palette trial, 25 September 2026 (DASH-PALETTE-01):** Dashboard
+  is the current active trial — the canvas moves to the POS pale mint-grey, the
+  nonsemantic green becomes the accepted dark teal through role-scoped aliases, and
+  the chart ramp becomes a teal ladder anchored by `#01363e`, while semantic
+  success/amber/danger and every other screen body are preserved. See
+  'DASH-PALETTE-01' below. After owner visual acceptance the Dashboard sequential
+  21 skill passes restart in the ledger's numbered order, one screen at a time, with
+  Settings last. The earlier POS findings remain open and provisional; this does not
+  supersede them.
+- **Root-cause fix, 25 September 2026 (NAV-PALETTE-01):** the owner reported that
+  leaving POS for Dashboard made the outgoing POS revert to legacy green/cream
+  during the transition. PROVEN CAUSE: the POS palette hung off the shell and was
+  gated on `activeScreen`, which `openScreen` sets urgently outside
+  `startTransition`, while the outgoing screen stayed painted through the 150 ms
+  fade. Each screen now owns its palette for its whole visible lifetime (POS via
+  `[data-pos-palette]` on its screen root and the two portalled POS dialogs;
+  Dashboard already did this), and the 4 px strip follows the visible frame. See
+  'NAV-PALETTE-01' below. The 150 ms transition is unchanged; the Dashboard 21-skill
+  sequential rerun stays paused until the owner accepts this fix.
+- **Owner-approved screen trial, 24 September 2026 (POS-CAT-01):** the owner
+  approved one POS-only two-state category mapping: unselected cards keep the
+  light surface with teal (#01363e) artwork and text, selected cards are solid
+  #01363e with the same artwork and text in mint (#b5efd3). Orange leaves category
+  styling only. See 'POS-CAT-01' below. Provisional and POS-scoped; it awaits
+ owner visual acceptance and does not alter the UI-02 next action or the queue.
+- **Owner-approved screen trial, 24 September 2026 (POS-CARD-01):** the owner
+  then approved product-card outlines moving from orange to the POS teal
+  (#01363e) with every plus button staying orange, and the workspace canvas
+ lightening from #e6f9f3 to the more neutral #f0f7f3. See 'POS-CARD-01' below.
+ Provisional and POS-scoped; it awaits owner visual acceptance and does not
+ alter the UI-02 next action or the queue.
+- **Owner-approved screen trial, 24 September 2026 (POS-NAV-01):** the owner
+  approved unifying the active top-navigation pill with the deep teal already used
+  by the selected Dine In and Cash segments. Inspection showed those segments
+  paint with `var(--olaso-green)` and the pill used a separate `#0e5360`; the pill
+  now reads the same declaration and the extra token is gone. See 'POS-NAV-01'
+  below. Provisional and POS-scoped; it awaits owner visual acceptance.
+- **Owner-directed Orders palette pass, 25 September 2026 (ORDERS-PALETTE-01):** the owner
+  asked to move to Orders now for a bounded palette step, not the 21-skill Orders sequence.
+  Orders now owns a screen-scoped palette (`[data-orders-palette]`) that takes the accepted
+  canvas `#f0f7f3` and the accepted dark teal `#01363e` for nonsemantic green controls, copy,
+  focus rings, pager, filter, date control and icon accents, keeps the real Completed /
+  Synced / Last sync chips green, keeps amber and danger, keeps the existing table-head,
+  metadata and selected-row fills, and adds no tint or orange. Reprint is teal. The two
+  Orders-opened portalled surfaces (PeriodCalendar and CancellationDialog) inherit the same
+  scoped palette; every other PeriodCalendar caller is unchanged. Provisional, awaiting owner
+  visual acceptance; the Dashboard 21 skill passes are still pending. See ORDERS-PALETTE-01
+  below.
 - Do not automatically jump to Products, ingredients, security or sync work.
 
 ## Owner rules — no personal design choices
@@ -328,6 +446,4212 @@ changes pushed and the owner must accept the screen before moving on.
   do not silently start the later architecture programme.
 
 ## Checkpoint ledger
+
+### UI-PUBLISH-01 — owner-authorized consolidated publish of all pending project work, 25 September 2026
+
+#### Why this is one commit instead of one card per commit
+
+- The owner explicitly instructed a single consolidated publish of every pending project change,
+  including provisional and not-yet-accepted work, and to stop asking about accepted versus
+  provisional. The pending changes are already intertwined inside shared files (`src/globals.css`,
+  `src/App.tsx`, `src/lib/fr.ts` and this ledger each carry hunks from several cards), so a strict
+  one-card-per-commit split is not possible without hunk-level staging that would risk splitting a
+  single card's own hunks. The owner authorized this consolidation; the one-card-per-commit and
+  one-card-per-push rule resumes with the next card.
+- No card below becomes `done` through this publish, and no 21-skill UI pass is started or
+  completed for any screen. Orders / Sales (UI-03) and POS UI-02 remain the only owner-accepted
+  cards; every other card is committed as provisional or as an explicitly rejected trial.
+
+#### Included cards and their honest status
+
+| Card | Publish content | Status |
+| --- | --- | --- |
+| LAUNCH-01 | branded first frame and comet loader (`index.html`, `CometSpinner`, `StartupDots` removed, Android first-frame assets) | provisional; recorded limitations stand |
+| LAUNCH-02 | visible logo artwork swap | provisional |
+| LAUNCH-03 | visible Olaso to Atelika rebrand in copy, aria labels and receipt fixtures | provisional |
+| LAUNCH-04 | accepted Atelika wordmark re-derivation (brand assets plus Android `drawable-nodpi`) | owner-accepted, asset-only |
+| NAV-PALETTE-01 | each screen owns its palette for its whole visible lifetime, plus the frame strip token | implemented and device-verified; still awaits owner acceptance |
+| TOPBAR-01 | the shared top bar on every screen that shows it | provisional |
+| POS-BG-01/02/03 | POS dark-teal header, soft body, white top bar and capsule corrections | provisional; several owner corrections folded in |
+| BRAND-COLOR-01 and follow-ups | POS brand-action colour trials | provisional; follow-up 1 and the broad orange preview were owner-rejected and reverted |
+| POS-NAV-01 | active nav pill unified with the selected segment teal | owner-approved |
+| POS-CARD-01 | 2px product-card outline and neutral workspace canvas | owner-approved |
+| POS-CAT-01 | POS two-state category mapping | owner-approved |
+| UI-01 | Dashboard chart comparison and locale corrections | partial checkpoint, not whole-screen approval |
+| UI-02 | 2px product-card outline | owner-accepted |
+| UI-03 | Orders / Sales sequential 21-skill passes | owner-accepted, with retained limitations |
+| DASH-PALETTE-01 | Dashboard palette trial | provisional |
+| DASH-ORANGE-01 | Dashboard orange Net Sales value | provisional trial |
+| ORDERS-PALETTE-01 | Orders palette first pass and its two corrections | provisional |
+| ORDERS-ORANGE-01 | full orange enabled Reprint action | provisional trial |
+| PRODUCTS-PALETTE-01 | Products palette trial | provisional |
+| PRODUCTS-SELECT-01 | list/editor selection synchronization, the category-change first-row rule and the editor-seeding correction | provisional; no colour change |
+| PRODUCTS-ORANGE-01 | orange selected category | OWNER-REJECTED and reverted; only the approved orange token pair remains, for the CTA |
+| PRODUCTS-ORANGE-02 | orange Add product CTA with dark action ink | provisional trial |
+
+#### Publish hygiene
+
+- The malformed three blocks this worker accidentally wrote into this ledger (139 lines carrying a
+  stray leading `+`) were repaired by stripping only that accidental character; every other line,
+  heading and table is unchanged and the file length is identical.
+- `SAAS_TRANSITION.md` had disappeared from the working tree during the audit. It was confirmed
+  absent, confirmed present in `HEAD`, and restored from `HEAD` with `git restore --source=HEAD`.
+  The working tree file is content-identical to `HEAD` (an earlier uncommitted edit of about
+  114 added and 6 removed lines had already been destroyed by that deletion before this worker
+  saw the file, and is not recoverable from git because it was never staged).
+- Excluded from the publish and left untracked: machine-local agent state `.codex/`,
+  `.commandcode/` and `.freebuff/`, plus the ignored build and cache directories (`dist/`,
+  `node_modules/`, `tmp/`, `graphify-out/`, `android/**/build/`, generated theme files). No
+  secrets, credentials, `.env` files, signing keys or local database files exist in the staged
+  set; a name scan found none anywhere in the tree.
+- Included per the owner's instruction even though no source references them: the untracked art
+  and output working directories `output/` (239 files, about 435 MB including five `.zip`
+  archives), `product-images/` (11), `croissant-images/` (9) and `croissant-crops/` (9). The
+  largest single file is `output/matcha-transparent-images.zip` at about 41 MB, under GitHub's
+  100 MB per-file limit.
+- Verification recorded with this publish: `npm run build` passed on the published source, and the
+  navigation, Products selection, local catalog and product configuration checks passed. No data
+  was written, and no sale, print, cancellation or reseed was performed.
+- Tablet evidence is unchanged from each card's own entry; this publish makes no new device
+  claim and does not restate provisional work as verified.
+
+#### Status and exact next action
+
+- Consolidated publish authorized by the owner. Commit and push `origin/main` are recorded in the
+  follow-up entry below, which carries the commit SHA required by the ledger rule.
+- Exact next action: resume the one-card-at-a-time sequence at the owner's next named card; the
+  queued Products orange CTA trial stays provisional and unaccepted until the owner judges it.
+
+### PRODUCTS-ORANGE-02 — Products Add product CTA orange trial (owner-requested, reversible), 25 September 2026
+
+#### Owner override and constraints
+
+- After seeing the orange selected category, the owner rejected it and replaced the request with
+  the opposite placement: the selected category returns to dark teal exactly, and the full
+  `Add product` call to action becomes the approved action orange `#e06a00` with the dark action
+  ink `#1c211b` on both its label and its plus glyph. Not icon-only, no other orange, no shared
+  component change.
+- Reversible and Products-only. Every other screen, the shared Header, the semantic success,
+  amber and danger colours, the selected product row, geometry, artwork and data are untouched.
+- Provisional: a visual TRIAL, not accepted, and still not the numbered UI-04 21-skill pass.
+
+#### Research gate, 25 September 2026
+
+- Same boundary and the same recorded research as the rejected category trial: W3C/WAI
+  *Understanding SC 1.4.3 Contrast (Minimum)* for the 4.5:1 small-text rule and *Understanding
+  SC 1.4.11 Non-text Contrast* for the plus glyph, plus the Android Material 3 brand-accent
+  versus status-role point. The CTA label is 9px / 700, so it is normal text and needs 4.5:1: the
+  dark-ink pair measures 4.86:1 while white on the same orange would be 3.37:1 and fail. No new
+  source, no new colour and no new token; the pair is the existing `--olaso-trial-action` and
+  `--olaso-trial-action-ink` already declared in the Products palette block.
+- Boundary: web-layer only - two declarations inside one existing rule. No Kotlin, plugin,
+  package, data or lifecycle change.
+
+##### Change (1 file for this trial, no new file)
+
+- `src/features/products/components/ProductCatalogPanel/ProductCatalogPanel.module.css:43-46` -
+  `.addProduct` now reads `color: var(--olaso-trial-action-ink, var(--olaso-white))` and
+  `background: var(--olaso-trial-action, var(--olaso-green))`. The fallbacks keep the previous
+  teal/white, and the label and the plus glyph share the same ink.
+- `scripts/check-navigation.mjs` - the rejected category assertions are replaced with the reverted
+  pill and ink plus the new `.addProduct` pair assertion, with a `doesNotMatch` guard that the
+  category sidebar no longer mentions the trial token.
+
+#### Measured pairs (computed from the declared values)
+
+| Surface | Fill | Ink | Ratio | Threshold |
+| --- | --- | --- | --- | --- |
+| Add product CTA (label and plus glyph) | `#e06a00` | `#1c211b` | 4.86:1 | 4.5:1 text, 3:1 glyph - pass |
+| selected category pill (reverted) | `#01363e` | `#ffffff` | 13.14:1 | unchanged |
+| Save changes (unchanged) | `#01363e` | `#ffffff` | 13.14:1 | unchanged |
+
+#### Browser evidence at exactly 1340 x 800 (real components)
+
+- `All`, `Coffee` and `Uncategorized`: the CTA renders background `rgb(224,106,0)` with label and
+  plus glyph `rgb(28,33,27)` (**4.86:1** each); the selected category pill renders `rgb(1,54,62)`
+  with white ink; Save changes stays `rgb(1,54,62)`; canvas `rgb(240,247,243)`; 1340 x 800 with
+  no overflow; the CTA is never disabled on this screen.
+- Hover, pressed and focus were forced through the devtools protocol: hover and `:active` keep the
+  same `rgb(224,106,0)` / `rgb(28,33,27)` pair with no `filter` applied, and `:focus-visible` adds
+  the browser default `1px auto rgb(16,16,16)` ring, well above 3:1 on the orange.
+
+#### Device evidence (installed build, 1340 x 804, Redmi 22081283G)
+
+- The CTA renders background `rgb(224,106,0)` with label and plus glyph `rgb(28,33,27)`; the
+  selected category pill renders `rgb(1,54,62)` with ink `rgb(255,255,255)`; Save changes stays
+  `rgb(1,54,62)`; canvas `rgb(240,247,243)`; 1340 x 804 with nothing clipped; console empty.
+
+#### Captures
+
+- Device: `tmp/products-orange/fix2-all-to-coffee.png`, `fix2-all-to-matcha.png`,
+  `fix2-all-to-cold.png`, `fix2-all-to-uncategorized.png`, `fix2-coffee-to-all.png`,
+  `fix2-matcha-to-all.png`, `fix2-cold-to-all.png`, `fix2-uncategorized-to-all.png`,
+  `fix2-all-page2.png`, `fix2-final-all-page1.png`.
+- Browser: `tmp/products-orange/browser-1340x800-cta-{All,Coffee,Uncategorized}.png`.
+
+#### Limitations (not acceptance)
+
+- Trial only; the orange CTA is not accepted and the 21-skill pass has not started.
+- The `Add product` control is never disabled, so a disabled state cannot be measured for it;
+  every other Products control's disabled appearance is unchanged.
+- FR and owner-versus-manager roles were not exercised. The crossfade edge was not re-measured
+  because this trial adds no canvas or frame token.
+
+#### Status and exact next action
+
+- Reversible, owner-requested ORANGE TRIAL on the Add product CTA only. Not accepted, screen not
+  done, no commit or push.
+- Exact next action: the owner reviews the CTA captures and either accepts the orange CTA or asks
+  to revert it - reverting is the one `.addProduct` pair plus the token pair in the Products
+  palette block.
+
+### PRODUCTS-ORANGE-01 — reversible Products-only orange selected-category trial (owner-requested), 25 September 2026
+
+#### Owner authorization and constraints
+
+- Queued by the owner after the PRODUCTS-SELECT-01 editor-sync correction, which finished first.
+  A Products-only orange visual TRIAL: the SELECTED category pill/background turns orange;
+  `Add product` (and `Add category`) stay dark teal; unselected categories, the selected product
+  row, every semantic status, other screens, layout/geometry and artwork are untouched.
+  Reversible, with no new dependency, abstraction or colour.
+- The owner explicitly chose which side carries the orange: the highlighted category, not
+  `Add product`. The selected category name, count and icon take the existing dark action ink
+  `#1c211b` because white on the orange measures 3.37:1 and fails the 4.5:1 small-text rule; the
+  dark pair measures 4.86:1.
+- Provisional: this is not the numbered UI-04 21-skill pass; Products is not marked done or
+  accepted, and the Dashboard 21-skill passes remain pending.
+
+#### Research gate, 25 September 2026
+
+- This exact boundary (a small label and icon on the approved action-orange fill) was already
+  researched and recorded the same day in DASH-ORANGE-01 and ORDERS-ORANGE-01 (including its
+  correction), and it is still current: W3C/WAI *Understanding SC 1.4.3 Contrast (Minimum)*
+  (4.5:1 normal text, 3:1 large text) and *Understanding SC 1.4.11 Non-text Contrast* (3:1 for
+  the graphic parts that identify a control or its state). Android's Material 3 guidance that
+  brand-accent roles must not be confused with status roles also applies: orange is used only as
+  the selected-brand indicator on a category, and category selection is not a
+  success/warning/danger state. No new source was needed because the pair, the threshold and the
+  decision are identical to the recorded cards; re-sourcing would repeat the same citation.
+- Boundary: web-layer only - one token pair inside an existing palette block plus CategorySidebar
+  declarations. No Kotlin, plugin, package, data or lifecycle change; the Capacitor Android
+  boundary is unchanged.
+
+##### Changes (3 files, no new file)
+
+- `src/globals.css:215-216` - the already-approved action-orange pair is declared inside the
+  existing `[data-products-palette]` block (`--olaso-trial-action: #e06a00`,
+  `--olaso-trial-action-ink: #1c211b`), never at `:root`. That block is carried by the Products
+  screen root and all five portalled Products dialogs, so the pair reaches only Products.
+- `src/features/products/components/CategorySidebar/CategorySidebar.module.css` - `.indicator`
+  background (line 60) and `.uncategorizedActive` background (line 148) read
+  `var(--olaso-trial-action, var(--olaso-green))`; `.categoryActive` colour (line 94) and
+  `.categoryActive strong` / `.categoryActive small` (lines 134, 138) read
+  `var(--olaso-trial-action-ink, var(--olaso-white))`. Every declaration keeps its previous
+  teal/white value as the fallback. `.addCategory` (line 164) and the `Add product` button are
+  NOT touched and stay `var(--olaso-green)`.
+- `scripts/check-navigation.mjs:187-194` - assertions for the token pair, the two pill
+  backgrounds, the three active-ink declarations and the unchanged `.addCategory` teal.
+
+#### Measured pairs (computed from the declared values)
+
+| Surface | Fill | Ink | Ratio | Threshold |
+| --- | --- | --- | --- | --- |
+| selected category pill / Uncategorized | `#e06a00` | `#1c211b` | 4.86:1 (name, count, icon) | 4.5:1 text, 3:1 glyph - pass |
+| unselected category | sidebar `#e9eff0` | `#283029` / `#59645b` | 11.70:1 / 5.32:1 | unchanged |
+| Add category / Add product | transparent / `#01363e` | `#01363e` / `#ffffff` | unchanged teal | unchanged |
+
+#### Browser evidence at exactly 1340 x 800 (real CategorySidebar, dev-only fixture)
+
+- `All` and `Coffee`: the sliding pill renders `rgb(224,106,0)` and the active name, count and
+  icon render `rgb(28,33,27)`, each measured **4.86:1**. `Uncategorized` renders no pill and
+  instead `rgb(224,106,0)` on `.uncategorizedActive`, same ink and ratio.
+  `--olaso-trial-action` resolves `#e06a00` and `--olaso-trial-action-ink` `#1c211b` on the
+  screen root, while the `documentElement` value of `--olaso-trial-action` is empty, proving no
+  `:root` promotion.
+- Unchanged and confirmed: unselected name/count `rgb(40,48,41)` / `rgb(89,100,91)`,
+  `Add category` ink and `Add product` fill `rgb(1,54,62)`, canvas `rgb(240,247,243)`, sidebar
+  and column head `rgb(233,239,240)`, Available `rgb(232,243,230)` and unavailable
+  `rgb(255,240,238)` chips; 1340 x 800 with no overflow.
+- Hover / focus / pressed: CategorySidebar has no author `:hover`, `:focus` or `:active` rule, so
+  those states keep the same orange fill and dark ink (**4.86:1**). Keyboard focus uses the
+  browser default ring: with `:focus-visible` forced through the devtools protocol it computed
+  `outline: 1px auto rgb(16,16,16)`, near-black on the orange fill and well above 3:1. The
+  missing author ring is pre-existing for every category button and was neither introduced nor
+  worsened by this trial.
+
+#### Device evidence (installed build, 1340 x 804, Redmi 22081283G)
+
+- Read-only category walk (category filters only): `All products`, `Coffee`, `Matcha & Tea`,
+  `Cold & Sweet` and `Bakery & Savoury` each render the pill `rgb(224,106,0)` with name, count
+  and icon `rgb(28,33,27)` (**4.86:1**); `Uncategorized` (0 products) renders
+  `rgb(224,106,0)` on the active row with the same ink and shows the existing empty table and
+  empty editor. `Add category` ink and `Add product` fill stay `rgb(1,54,62)`.
+- Unchanged on device: canvas `rgb(240,247,243)`, sidebar/column head `rgb(233,239,240)`,
+  selected-row band `rgb(228,236,236)`, Available/Linked `rgb(232,243,230)` with the
+  `rgb(55,165,99)` dot, amber recipe `rgb(245,240,228)` and unavailable `rgb(255,240,238)`; one
+  highlighted row on each non-empty category and none on the empty one; the WebView console was
+  empty; 1340 x 804 with nothing clipped.
+- The shared `PeriodCalendar`, Header, Settings, POS and Dashboard were not opened or changed by
+  this trial; only the two Products-scoped tokens were added.
+
+#### Checks
+
+- `npm run build` 0. `npm run check:navigation` 0 with the new assertions.
+  `npm run check:products-selection` 0. `npm run check:local-catalog` 0.
+  `npm run check:product-configuration` 0. `npm run check:css-scope` still reports only the four
+  pre-existing App/Lock keyframe findings (exit 1 is the recorded baseline).
+- Built CSS carries `._indicator_*{background:var(--olaso-trial-action,var(--olaso-green));...}`,
+  the `.categoryActive*` ink rule and
+  `.uncategorizedActive{background:var(--olaso-trial-action,...)}`, with an untouched
+  `.addCategory{...color:var(--olaso-green)}` and `.addProduct{...background:var(--olaso-green)}`.
+- Install: `node scripts/build-android-beta.mjs` with `JAVA_HOME` set to the toolchain JDK 21
+  built the APK (140 tasks); `adb install -r --no-streaming` succeeded (`firstInstallTime`
+  unchanged at 2026-09-24 22:17:12, `lastUpdateTime` 2026-09-25 20:30:43), so data was
+  preserved. APK SHA-256
+  `A05B30B66C94560403E8509FB09CC3356293AA578536491323DC01DE7BF3B076`. No product save/delete,
+  sale, print, cancellation, reseed or other data write was performed.
+
+#### Captures
+
+- Device: `tmp/products-orange/redmi-1340x804-orange-{all,coffee,matcha-tea,cold,bakery,uncategorized}.png`.
+- Browser: `tmp/products-orange/browser-1340x800-orange-selected-{All,Coffee,Uncategorized}.png`
+  and `tmp/products-orange/browser-1340x800-orange-focus-ring.png`.
+- Raw device reads: `tmp/products-orange/device-run.log` (the unlock value is redacted there and
+  was never logged, stored or printed by the tooling).
+
+#### Limitations (not acceptance)
+
+- This is a palette TRIAL only; the colour is not accepted. The owner must judge the orange
+  against the teal table and the white cards on the device. Products is still not done and the
+  numbered UI-04 21-skill passes have not started.
+- The crossfade edge was not re-measured this turn because the trial adds no canvas or frame
+  token; the frame strip still comes from the recorded NAV-PALETTE-01 / `frameMint` mechanism,
+  which already covers Products and is unchanged.
+- CategorySidebar has no author focus ring (pre-existing, unchanged). FR and owner-versus-manager
+  roles were not exercised.
+
+#### Status and exact next action
+
+- Reversible, owner-requested orange TRIAL on the Products selected category only. Not accepted,
+  screen not done. No commit or push.
+- Exact next action: the owner reviews the Redmi All / Coffee / Matcha & Tea / Uncategorized
+  captures and either accepts the orange selected-category look or asks to revert it. Reverting
+  is the two `--olaso-trial-action*` declarations plus the five CategorySidebar reads.
+
+#### Owner rejection and revert, 25 September 2026
+
+- **Owner decision:** the owner saw the orange selected category and rejected it. The selected
+  category returns to its exact previous appearance: `.indicator` and `.uncategorizedActive`
+  backgrounds are `var(--olaso-green)` again and `.categoryActive` plus its `strong` and `small`
+  are `var(--olaso-white)` again, with no trial token left in that stylesheet.
+- The two `--olaso-trial-action` / `--olaso-trial-action-ink` declarations stay in
+  `[data-products-palette]` because the replacement CTA trial below consumes the same approved
+  pair; nothing of the rejected look remains in `CategorySidebar.module.css`, which is guarded by
+  a `doesNotMatch` assertion.
+- The approved Products palette, the selection fix, the editor-sync correction and every
+  unrelated dirty change are preserved. Provisional, reversible and not accepted.
+
+### PRODUCTS-SELECT-01 — Products selection/highlight synchronization (root-cause fix, provisional), 25 September 2026
+
+#### Owner contract
+
+- The owner reported that `All products` opens with no row visibly highlighted while other
+  categories highlight the last row (Coffee, Matcha & Tea) or the first (Cold & Sweet,
+  Bakery & Savoury), and asked for one global root-cause fix covering existing, newly created
+  and Uncategorized categories with no per-category special cases.
+- Contract: the selected product, the editor and the visibly highlighted row must stay
+  synchronized. On the first loaded display and on every category, search, availability, sort
+  and page change, keep the current selection only while it is still on the displayed page;
+  otherwise select the first displayed row. With zero rows, clear the selection and show the
+  existing empty editor. A category switch must not select through the raw
+  `management.products` order. Retained state must still be preserved when it is consistent on
+  return (DESIGN.md 'Interaction and State'), together with every filter, pagination,
+  add/delete/manager flow and draft-safety behaviour, and there must be no transient
+  previous-page row or empty-editor flash during the page reset if that is avoidable.
+- No colour or orange change in this card; the owner decides that separately after seeing the
+  bug fix. Provisional: still not the numbered UI-04 21-skill pass, and Products is not done.
+
+#### Research gate, 25 September 2026
+
+- Official current React guidance: *You Might Not Need an Effect* (https://react.dev/learn/you-might-not-need-an-effect)
+  - a value that can be calculated from existing props or state should be derived during
+  render rather than stored and synchronized in an Effect, because the Effect form renders
+  once with the stale value and only then corrects it; `useEffect` is for synchronizing with
+  external systems and user-action state belongs in the event handler. `useState`
+  (https://react.dev/reference/react/useState) documents *adjusting state during render*:
+  store the previous value in state, compare during render, call the setter only under a
+  condition that eventually becomes false, and React "discards the current JSX output and
+  immediately retries rendering with the updated state, before rendering children" - the docs
+  explicitly prefer it to an Effect for synchronously adjusting state from newly rendered
+  values. *Preserving and Resetting State* (https://react.dev/learn/preserving-and-resetting-state)
+  - state persists while a component keeps its position, and `key` is the reset mechanism.
+  The `useRef` reference (https://react.dev/reference/react/useRef) notes that a ref does not
+  trigger a re-render, so it is unsuitable for a value that drives what is displayed.
+- Diagnosis this replaces: the page reset lived in a ref plus an Effect and the first
+  selection in a second one-shot Effect whose `|| selectedProductId` guard then blocked every
+  later correction. Device evidence reproduced both symptoms and proved the indicator itself
+  is correct, so the defect is purely which product gets selected.
+- Alternatives considered: keeping the Effects (rejected - commits and paints one frame with
+  the stale page and an off-page selection, which the owner forbade); doing it in `useMemo`
+  (rejected - memoization caches a value and is not a state-synchronization mechanism);
+  resetting the editor with `key` (rejected - fixes the wrong component and would discard the
+  draft on every selection change); clearing the selection on category switch (rejected -
+  contradicts the Products DOX rule that list selection and editor content stay synchronized);
+  and deriving the selection with no state at all (impossible here - `useProductManagement`
+  is called before `visibleProducts` exists, so the displayed id cannot come from the hook's
+  own output in one pass).
+- Decision: derive the page and the on-page test during render and use the documented
+  render-phase state adjustment only for the two state writes, so React retries before any
+  paint. Boundary: web-layer React only; no Kotlin, plugin, package, data or lifecycle change.
+
+##### Changes and verification - Products selection
+
+- **Change (2 source files + 1 new check, no new abstraction):**
+  - `src/features/products/ProductsScreen.tsx` — the `filterKey` ref-plus-Effect page reset and
+    the one-shot first-selection Effect are replaced by one exported pure rule and two
+    render-phase adjustments. `resolvePageSelection(pageProducts, selectedProductId)` returns
+    the selection when it is on the displayed page, otherwise that page's first row, and
+    `undefined` for an empty page. During render, a changed `filterKey` resets the page and the
+    rule corrects the selection, so React retries before any paint instead of committing a
+    stale frame. `requestedPage = filtersChanged ? 0 : page` means the current render already
+    slices the first page while the state catches up. The category handler is now
+    `onSelectCategory={setSelectedCategoryId}`, so a switch never selects through the raw
+    `management.products` order. `useEffect` and `useRef` are no longer imported there.
+  - `scripts/check-products-selection.mjs` and the `check:products-selection` npm script — a
+    behaviour test that lifts the real rule out of the source (the same
+    `stripTypeScriptTypes` technique `check-orders.mjs` uses) and exercises the matrix below.
+- **Behavioural check matrix (all passing, `npm run check:products-selection`):** zero rows ->
+  `undefined` for both a set and an absent selection; one row -> that row for a matching,
+  non-matching and absent selection; many rows -> every on-page selection retained;
+  off-page, unknown and absent selections -> the first displayed row; a category switch -> the
+  new category's first row; page two -> an on-page selection kept, a page-one selection
+  replaced by page two's first row; a dynamic/empty category -> cleared, then its first row
+  once populated; and idempotence, so the render-phase adjustment converges rather than loops.
+- **Device evidence (installed build `6984495A…`, 1340 x 804), read-only navigation only:**
+
+| Case | Before the fix | After the fix |
+| --- | --- | --- |
+| All products, fresh | pressed **none**, indicator **absent**, editor **Espresso** (page 2) | pressed **Hojicha Latte** (row 1), indicator at index 0 (top 257), editor **Hojicha Latte** |
+| Coffee (9) | pressed **Espresso** (row 7), index **6**, top 647 | pressed **Caramel Mac** (row 1), index 0, top 257 |
+| Matcha & Tea (2) | pressed **Ceremonial Matcha** (row 2) | pressed **Hojicha Latte** (row 1) |
+| Cold & Sweet (2) | pressed Sparkling Lemonade (row 1) | pressed **Sparkling Lemonade** (row 1), unchanged |
+| Bakery & Savoury (2) | pressed Butter Croissant (row 1) | pressed **Butter Croissant** (row 1), unchanged |
+| Uncategorized (0) | no rows, no indicator, editor empty | no rows, no indicator, editor empty, unchanged |
+| All products page 2 | (not previously reachable with a highlight) | pressed **Cappuccino** (row 1), index 0, editor Cappuccino |
+| All products page 3 | - | pressed **Brioche** (only row), index 0, editor Brioche |
+
+- **Retention (DESIGN.md 'state the operator left it'):** Coffee with Caramel Mac on page 1 was
+  left for Dashboard (confirmed the live screen actually changed) and returning to Products
+  restored Coffee, Caramel Mac and page 1 exactly.
+- **Flash measurement:** a rAF sampler recorded every animation frame across three switches
+  (All -> Coffee, Coffee -> Uncategorized, Uncategorized -> All; 353 frames). Frames with
+  visible rows but no highlighted row: **0**. Frames with a highlighted row and a mismatched
+  editor: 2, both of which were the editor panel's own local form-seeding lag
+  (`ProductEditorPanel.tsx:89-107` sets `name` in an Effect after render, so its identity label
+  renders the `{name || t('New product')}` fallback for one frame). That lag is pre-existing,
+  is unchanged by this card, and is not the list-highlight divergence; the one-line remedy is
+  the same render-phase adjustment inside that component (a `key` on the panel would remount it
+  and close any open sub-dialog, so it is not the smallest fix).
+- **Checks:** `npm run build` 0; `npm run check:products-selection` 0; `npm run check:navigation`
+  0; `npm run check:css-scope` still only the four pre-existing App/Lock keyframe findings;
+  `npm run check:local-catalog` 0; `npm run check:product-configuration` 0. No check needed a
+  PIN or secret and none was bypassed.
+- **Install:** `npm run android:beta` passed (140 tasks); `adb install -r --no-streaming`
+  returned Success; `firstInstallTime` unchanged at 2026-09-24 22:17:12 and `lastUpdateTime`
+  2026-09-25 20:06:37, so data was preserved. No product save or delete, sale, print, reseed or
+  data write was performed.
+- **Captures:** `tmp/products-palette/fix-products-initial-all.png`, `-Coffee.png`,
+  `-Matcha-Tea.png`, `-Cold-Sweet.png`, `-Bakery-Savoury.png`, `-Uncategorized.png`,
+  `-all-page2.png`, `-all-page3.png`.
+- **Limitations:** paging now moves the selection to that page's first row, which is what the
+  owner's contract specifies; the editor follows, and it already re-seeds its form on a product
+  change, so no draft is silently kept. The one-frame editor label lag above remains. FR,
+  owner-versus-manager roles and a category with products spread over several pages were not
+  exercised on device beyond All products.
+- **Status:** the reported divergence is fixed and verified; the palette is untouched and no
+  colour or orange decision was made. Provisional: still not the numbered UI-04 21-skill pass,
+  Products is not done, and the UI-04 workflow simplification remains queued.
+- **Exact next action:** the owner reviews the by-category captures and either accepts the
+  selection fix or names further behaviour; then decides the editor label lag, and only after
+  that the orange-accent question.
+
+#### Correction, 25 September 2026 - editor form seeding, closing the last one-frame mismatch
+
+- **Why:** the rAF evidence above showed the highlighted row changing on the first committed
+  frame while `ProductEditorPanel` rendered `New product` for one frame, because its local form
+  values were seeded in an Effect that runs after paint.
+- **Change (1 source file plus the existing check):** `ProductEditorPanel.tsx` exports two pure
+  rules - `productFormIdentity(product, defaultCategoryId)`, the identity that decides when to
+  re-seed, built from exactly the previous Effect's dependencies (product id, revision, photo,
+  default category), and `productFormSeed(product, defaultCategoryId, categories)`, the name,
+  category, price, availability and photo values with the previous default-category fallback
+  chain. The seeding Effect is replaced by a render-phase previous-identity adjustment so React
+  retries before any paint. No `key` remount: that would also discard this panel's own
+  Sizes/Choices/Recipe dialog state and its save message. The separate message-clearing Effect
+  is deliberately untouched so a save confirmation still paints.
+- **Behavioural check:** `check:products-selection` now also lifts those two rules from the real
+  source and asserts the seeding matrix - a selected product seeds its own name, category,
+  price, availability and photo; a zero price stays an empty field; an unavailable product is
+  not marked available; with nothing selected the category falls back to the operator default,
+  then the first active one, then empty, with the other fields empty (the existing empty and
+  new-product flows); and the identity changes only for a different product, revision, photo or
+  default category, so an unrelated re-render cannot discard a draft.
+- **Device evidence (rAF, every animation frame, installed build `44553F19...`):** All->Coffee
+  (123 frames), Coffee->Uncategorized (127), Uncategorized->All (126), page 1->2 (131), 2->3
+  (133), 3->1 (133). Every transition committed in exactly two states, the before and the after.
+  Frames with visible rows but no highlighted row: **0**. Frames where the editor identity
+  differed from the highlighted row: **0**. Frames where the name field differed from the
+  highlighted row: **0**, with the price and category label tracking the row in every state
+  (32/Matcha & Tea for Hojicha Latte, 27/Coffee for Caramel Mac, 17/Coffee for Cappuccino,
+  18/Bakery & Savoury for Brioche). The earlier `New product` frame is gone.
+- **Checks:** `npm run build` 0; `npm run check:products-selection` 0; `npm run check:navigation`
+  0; `check:css-scope` unchanged; `check:local-catalog` 0; `check:product-configuration` 0.
+  Install preserved data (`firstInstallTime` unchanged, `lastUpdateTime` 2026-09-25 20:19:09).
+- **Limitations:** the editor still clears its save message on a product change through its own
+  Effect (unchanged; clearing it during render would wipe the confirmation before it paints).
+  FR and owner-versus-manager roles were not exercised.
+- **Status:** the list/editor synchronization is complete for the inspected flows. Provisional;
+  palette and orange untouched; no commit or push.
+
+#### Correction 2, 25 September 2026 - a real category change always restarts at the destination's first row
+
+- **Owner counterexample:** `All products` to `Coffee` selected Caramel Mac (Coffee's first row),
+  but returning to `All products` incorrectly kept Caramel Mac because that product is also on the
+  All page (it was All's third row). `Matcha & Tea` selected its second row and returning to `All`
+  kept it too. Required invariant: on every actual category change - including to and from `All`,
+  a future category and `Uncategorized` - the destination page's first row is selected, or the
+  selection clears when that page has no rows, even when the previously selected product exists in
+  the destination. The raw `management.products` order must never decide what is highlighted.
+- **Change (`ProductsScreen.tsx`):** `resolvePageSelection` takes a third `categoryChanged`
+  argument and returns the page's first row immediately when it is set. The component tracks the
+  applied category in its own `appliedCategoryId` state using the same render-phase
+  \"adjust state during render\" pattern already used for the filter key, so a sidebar click or a
+  programmatic move after create or delete counts as a real change while paging, search,
+  availability and sort keep the previous retain-while-displayed rule. Within an unchanged
+  category an explicit product selection is still retained. `saveProduct` marks its destination as
+  applied so saving a product into another category still selects the product that was just
+  written instead of jumping to that category's first row.
+- **All paths that set the category were traced:** the sidebar `onSelectCategory`, the product
+  save (destination category), the category save (a new id, or the same id on rename) and the
+  category delete (back to `all`). No path special-cases a category by name; `Uncategorized` and
+  any newly created category go through the same rule because an empty destination page clears the
+  selection.
+- **Regression check (`scripts/check-products-selection.mjs`):** added the owner's exact cases -
+  the previously selected product present on the destination page still yields the first row,
+  populated and empty `Uncategorized`, a dynamic new category, a name-sorted destination, page two
+  of a category change, retention and pagination while the category is unchanged, and idempotence
+  so the list and the editor converge on the same product.
+- **Device evidence (installed build, 1340 x 804, read-only):** every transition was sampled across
+  requestAnimationFrame frames and reported `rowsWithoutHighlight: 0`, `editorVsRow: 0` and
+  `nameVsRow: 0`, committing in two states (the previous and the new one). `All -> Coffee` landed
+  on Caramel Mac; `Coffee -> All` landed on Hojicha Latte (All's first row) instead of keeping
+  Caramel Mac; `All -> Matcha & Tea` landed on Hojicha Latte; `Matcha & Tea -> All`, `Cold &
+  Sweet -> All` and `Uncategorized -> All` all landed on All's first row; `All -> Uncategorized`
+  cleared the highlight and the editor to the existing empty state; re-clicking the same category
+  with Caramel Mac selected retained Caramel Mac in a single state; page one to page two selected
+  Cappuccino. Console empty.
+- **Checks:** `npm run build` 0; `npm run check:products-selection` 0; `npm run check:navigation`
+  0; `npm run check:local-catalog` 0; `npm run check:product-configuration` 0.
+- Captures: the `fix2-*` device set listed under PRODUCTS-ORANGE-02.
+- **Status:** provisional, not the numbered UI-04 pass, and this correction itself changes no
+  colour or orange.
+
+### PRODUCTS-PALETTE-01 — Products-only palette trial (provisional), 25 September 2026
+
+#### Owner authorization and constraints
+
+- The owner authorized the Products page as the next screen in the same owner-led staged
+  process as Dashboard and Orders, and chose DeepSeek as the route. Scope is a bounded palette
+  TRIAL, not the UI-04 workflow simplification: canvas to the accepted pale mint-grey
+  `#f0f7f3`; white panels and cards unchanged; the accepted dark teal `#01363e` for formerly
+  nonsemantic green actions and selection; neutral light tints using only already-accepted
+  values; the catalog, sidebar, table and editor covered; shared dropdowns reached through a
+  Products ancestor scope only; and the five portalled dialog roots carrying the same scope.
+  No cream or old-green flash at the navigation edge, using the existing `frameMint` mechanism.
+- Preserved deliberately: the semantic green Available / Active / Recipe-linked chips, amber
+  recipe and warning states, red unavailable / delete / error, all functionality, artwork
+  scale, layout, data and unrelated dirty work. No orange accent on Products until the owner
+  has seen the base palette. No shared `MenuSelect` edits and no broad global override.
+- Contrast requirements: the table column labels and the category count / placeholder must
+  stay at or above 4.5:1 on the chosen tints, and the selected, hover, pressed, focus and
+  disabled states must stay legible.
+- Provisional: this is not the numbered UI-04 21-skill audit, no skill pass was started, and
+  the screen is not marked done or accepted.
+
+#### Research gate, 25 September 2026
+
+- Official guidance checked for this exact problem: W3C/WAI *Understanding SC 1.4.11 Non-text
+  Contrast* - inactive components are exempt from the 3:1 requirement, but a component that is
+  being navigated to is operable, so an author-styled focus indicator must still reach 3:1
+  against its adjacent colours; it does not require the focused and unfocused states to differ
+  by 3:1 (that is SC 2.4.13, AAA). *Understanding SC 1.4.3 Contrast (Minimum)* - normal text
+  4.5:1 and large text 3:1, with 14 pt bold about 18.5-18.66 CSS px, and an explicit warning
+  that 4.499:1 must not be rounded up. Android's Material 3 guidance (*Create an accessible
+  and personalized theme and brand*) - `primary`/`secondary`/`tertiary` are brand-accent roles
+  while `error` is a status role, and reusing a status colour as branding can make ordinary UI
+  appear to report a problem; the test is whether removing the colour changes the meaning from
+  brand/action to problem/status.
+- Inheritance and portal boundary reused from the recorded ORDERS-PALETTE-01 gate (MDN *Using
+  CSS custom properties*, React `createPortal`, Capacitor's Android package model) rather than
+  re-sourced: a custom property inherits only to descendants of its declaring element, and a
+  portal renders into `document.body`, so it keeps the React tree but not the CSS inheritance
+  tree. The search limit was reached on that query, so no new source was added for that half.
+- Decision from the guidance: re-point only accent roles (the canvas, the brand green and the
+  neutral surface tokens), never `error`, `warning` or `success`; keep every author-styled
+  focus ring at or above 3:1; and hold every small label at or above 4.5:1 without rounding.
+  Alternatives rejected: re-pointing `--olaso-success` / `--olaso-green-icon` would erase the
+  Available / Active / Recipe-linked meaning, exactly the status-as-branding mistake the
+  Material guidance warns about; editing `MenuSelect.module.css` would reach its 13 other
+  importers across Reports, Settings and Stock; and a `:root` override would leak into every
+  other screen and the transition, the failure already proven in NAV-PALETTE-01.
+- Boundary: web-layer only. No Kotlin, plugin, package, data or lifecycle change.
+
+##### Changes and verification - Products
+
+- **Change (6 files, no new file):**
+  - `src/globals.css` — one `[data-products-palette]` block: `--olaso-canvas: #f0f7f3`,
+    `--olaso-green: #01363e`, `--olaso-green-soft: #e9eff0`, `--olaso-table-head: #e9eff0`,
+    `--olaso-product-head: #e9eff0`, `--olaso-table-selected: #e4ecec`,
+    `--olaso-product-art: #e4ecec`. `--olaso-success`, `--olaso-green-ink`,
+    `--olaso-green-icon`, `--olaso-gold*` and `--olaso-danger*` are deliberately not
+    re-pointed. The four neutral surface tokens are re-pointed once instead of at each of
+    their 15 use sites.
+  - `src/features/products/ProductsScreen.tsx:137` — `data-products-palette` on the screen `<main>`.
+  - `src/features/products/components/CategoryDialog/CategoryDialog.tsx:47`,
+    `ProductDialog.tsx:63`, `SizesEditorDialog.tsx:38`, `RecipeEditorDialog.tsx:123` and
+    `ProductChoiceSectionDialog.tsx:242` — `data-products-palette` on each overlay root.
+  - `src/App.tsx:391` — `frameMint` now also covers `Products`, so the 4px strip follows it.
+  - Four small labels take the existing darker `--olaso-text-service` token because the tints
+    pushed them below 4.5:1: `ProductList.module.css` `.columns span` (the column labels,
+    4.22:1 before the trial and 3.95:1 on the tint, now 5.32:1), `CategorySidebar.module.css`
+    `.category small` (category count, 3.33 -> 5.32), `CategorySidebar.module.css`
+    `.sidebar p` (menu-group hint, 3.54 -> 5.32) and `ProductEditorPanel.module.css`
+    `.option small` (choice-chip detail, 3.54 -> 5.32).
+  - `ProductEditorPanel.module.css` `.optionSelected` background now reads the re-pointed
+    `--olaso-table-selected`, so the selected choice chip is teal ink on the accepted
+    teal-gray rather than on the preserved success green.
+  - `scripts/check-navigation.mjs` — assertions for the block, the screen root, all five
+    portals, the frame strip and the four corrected labels.
+- **Measured pairs (computed from the declared values):** white on `#01363e` 13.14:1 (every
+  filled button and selected chip); teal on white 13.14:1; `--olaso-text-dark-soft` on the
+  tinted chips 11.70:1; the four corrected labels 5.32:1 each; teal on `#e4ecec` 10.95:1 (the
+  active product icon); teal on `#e9eff0` 11.30:1; `--olaso-green-ink` on `--olaso-green-icon`
+  5.57:1 and `--olaso-gold` on `--olaso-status-gold` 4.51:1, both preserved and unchanged.
+- **Browser evidence at exactly 1340 x 800** (real panes and two real dialogs with sample
+  props): canvas `rgb(240,247,243)`; tokens `--olaso-green #01363e`, `--olaso-green-soft
+  #e9eff0`, `--olaso-green-icon #e8f3e6` (preserved), `--olaso-table-head`/`--olaso-product-head
+  #e9eff0, `--olaso-table-selected`/`--olaso-product-art` #e4ecec, `--olaso-success #37a563`,
+  `--olaso-danger #ff6863`, `--olaso-gold #886923`; sidebar and column-head `rgb(233,239,240)`;
+  the hint, category count and column labels `rgb(89,100,91)`; the row band and active icon
+  `rgb(228,236,236)` with a `rgb(1,54,62)` glyph; the Available / Linked chips still
+  `rgb(232,243,230)` with `rgb(46,107,67)` ink and the unavailable chip `rgb(255,240,238)`
+  with `rgb(255,104,99)`; Add product and Save `rgb(1,54,62)` with white ink; `:root`'s own
+  `--olaso-green` still `#006a2b` and `html`/`body` still cream, so the palette never leaks;
+  `documentElement` 1340 x 800 with nothing clipped.
+- **Device evidence (installed build, 1340 x 804):** the same token set and the same rendered
+  values on the live catalog and editor, plus all five dialogs opened for real and never
+  saved — each reported `data-products-palette="true"` on its overlay root, `--olaso-green
+  #01363e`, `--olaso-table-head` #e9eff0, `--olaso-green-icon` #e8f3e6 preserved, a white card
+  and a teal Save with white ink. The artwork picker's selected swatch resolved
+  `border-color rgb(1,54,62)` with `background rgba(0,0,0,0)` — see the finding below. The
+  page surface read `rgb(240,247,243)` while Products was visible, proving the frame strip
+  follows the screen and no cream edge appears; the WebView console was empty and the final
+  state returned to the catalog with no dialog open.
+- **Verified unchanged:** Available, Active and Recipe-linked chips; the amber recipe chip;
+  the red unavailable chip and the Delete action; artwork scale and the unchanged artwork
+  files; every panel's geometry; the shared Header and nav; the shared `MenuSelect` module
+  and its other 13 importers. No `MenuSelect.module.css`, `:root` or global override was
+  touched, and no orange was introduced.
+- **Findings reported, not changed:** the artwork picker's `background: var(--olaso-soft-green)`
+  at `CategoryArtworkPicker.module.css:38` references a token defined nowhere in `globals.css`,
+  the theme source or the built CSS, so the declaration is invalid at computed-value time and
+  the selected swatch falls back to transparent — verified on the device. Selection is still
+  carried by the teal border and the artwork, so no change was needed for this trial; a
+  one-line fix would be `var(--olaso-table-selected)`. Separately, the shared
+  `MenuSelect.module.css` `.selected` rule is inert: `.menu button` (0,2,1) outranks it
+  (0,1,0) for colour, background and weight, so the chosen option is never visually
+  distinguished — a pre-existing defect in a component the owner scoped out of this pass.
+  The `--olaso-green-soft` re-point is therefore inert today but prevents a pale-green fill
+  should that specificity ever be corrected.
+- **Checks:** `npm run build` 0; `npm run check:navigation` 0 with the new assertions;
+  `npm run check:css-scope` still reports only the four pre-existing App/Lock keyframe
+  findings; `npm run check:local-catalog` 0 (local-first catalog and recipe transaction
+  checks passed); `npm run check:product-configuration` 0 (resolver and product cost range
+  checks passed). No check required a PIN or secret, and none was bypassed. No save, delete,
+  sale, print, reseed or data write was performed; every dialog was closed with its own close
+  control.
+- **Install:** `npm run android:beta` passed (140 tasks). `adb install -r --no-streaming`
+  returned Success (the streamed install hangs on this MIUI device); `firstInstallTime`
+  unchanged at 2026-09-24 22:17:12 and `lastUpdateTime` 2026-09-25 19:28:29, so data was
+  preserved. APK SHA-256
+  `AF252A0BDC630DB1AB93596206FDFB1B0B57522453417743E5503A20B56103D2`; the APK's own CSS
+  carries the `[data-products-palette]` block.
+- **Captures:** `tmp/products-palette/redmi-1340x804-products-catalog.png`, `-product-dialog.png`,
+  `-category-dialog.png`, `-sizes-dialog.png`, `-choices-dialog.png`, `-recipe-dialog.png`,
+  `-final.png`; browser
+  `tmp/products-palette/browser-1340x800-products-catalog.png`, `-category-dialog.png`,
+  `-product-dialog-menu.png`.
+- **Limitations:** the selected-row band and the selected choice chip were read in the browser
+  fixture but the retained development data had no selected product row or selected choice
+  value, so those two surfaces are proven by computed style and source rather than on device.
+  FR, manager-vs-owner role differences and the cashier case (which never mounts Products) were
+  not exercised. The red remove glyph in the recipe and choice dialogs sits at 2.44:1 on the
+  tinted surface, down from 2.60:1 before the trial on the previous fill; it was already below
+  the 3:1 graphic threshold and the red was preserved as instructed rather than darkened to
+  `--olaso-danger-ink` (which measures 4.31:1 there and is the one-line remedy if the owner
+  wants it). The browser fixture reproduces the panes and two dialogs rather than the live
+  app, and the browser `html`/`body` stay cream because the fixture has no app shell.
+- **Status:** palette TRIAL only. It is not the numbered UI-04 21-skill audit, no skill pass
+  was started, and Products is not marked done or accepted. The UI-04 workflow simplification
+  requirement is untouched and still queued.
+- **Exact next action:** the owner reviews the catalog, editor and the five dialogs on the
+  Redmi and accepts the base palette or names changes, then decides whether to (a) darken the
+  red remove glyph to `--olaso-danger-ink`, (b) fix the undefined `--olaso-soft-green` to
+  `--olaso-table-selected`, and (c) whether any orange accent should follow on Products.
+  Commit and push only after that acceptance.
+
+### DASH-ORANGE-01 — Dashboard-only orange brand emphasis on the Net Sales value (provisional), 25 September 2026
+
+#### Owner authorization and constraints
+
+- The owner approved the exact two-part orange-accent trial we recommended and asked for
+  sequential delivery, Dashboard first then Orders. For Dashboard, ONLY the large Net Sales
+  numeric value takes the already-approved POS action orange `#e06a00`; its own label, the
+  three summary metrics, badges, semantic colours and all geometry stay unchanged. The tint
+  is a brand emphasis, not a positive/negative status. If the value does not qualify as
+  large/bold text against its real fill, the colour must not be forced and Dashboard stays
+  as it is.
+- Provisional: this is not the Dashboard 21-skill review and Dashboard is not marked
+  complete. The sequential 21-skill passes remain paused as the State pointer records.
+
+#### Research gate and measured decision, 25 September 2026
+
+- Official guidance re-read for this exact boundary: W3C/WAI *Understanding SC 1.4.3
+  Contrast (Minimum)* - 4.5:1 for normal text and 3:1 for large text, large text being at
+  least 14pt (18.66px) bold or 18pt (24px); W3C/WAI *Understanding SC 1.4.11 Non-text
+  Contrast* - 3:1 for the parts of a graphic needed to identify a control or its state, with
+  the note that an icon accompanied by visible text which already identifies the control is
+  not required to satisfy it independently, and that inactive controls are excluded. The
+  Android/Capacitor boundary is unchanged: CSS plus one class name in the React layer, no
+  Kotlin, plugin, package or lifecycle change.
+- Existing orange token choice: the app already carries the owner-approved action orange as
+  `--olaso-trial-action: #e06a00` (`globals.css`, declared inside `[data-pos-palette]`), the
+  deepened logo orange first sampled in BRAND-COLOR-01. It is not declared at `:root`, so it
+  does not resolve in Dashboard or Orders scope; the smallest reuse is to declare that same
+  existing token in each screen's own palette block rather than invent a new token or repeat
+  a literal. No new token, no new colour.
+- Measured on the live Redmi at 1340 x 804 before any change: the Net Sales value
+  `.netValue` renders **44px / weight 700** in `rgb(16,22,17)` on the `.panel` fill
+  `rgb(255,255,255)`. 44px bold is far above the 18.66px bold large-text threshold, so the
+  3:1 threshold applies, and the measured orange-on-white pair is **3.37:1**, which passes.
+  The value qualifies, no resize is needed, and the intervention proceeds.
+- Explicitly not a status colour: orange is not one of the app's semantic colours (green
+  success, amber warning, red danger), and no metric value, badge or comparison chip changes.
+
+##### Changes and verification - Dashboard
+
+- Change (3 files, no new file): `DashboardScreen.module.css` adds `--olaso-trial-action:
+  #e06a00;` to the `.screen` palette block so the existing approved orange resolves in
+  Dashboard scope and is never promoted to `:root`; `SalesPulse.module.css` adds one rule
+  `.netValueBrand { color: var(--olaso-trial-action, var(--olaso-text)) }`; `SalesPulse.tsx`
+  applies that class only when a value is present, so the loading/unavailable placeholder
+  dash keeps the normal text colour.
+- Device evidence (installed build): the Net Sales value renders `rgb(224,106,0)` at 44px/700
+  on the white panel fill `rgb(255,255,255)`; the NET SALES label and the 4px accent stay
+  `rgb(1,54,62)`; all three metric values stay `rgb(16,22,17)` at 22px; the comparison chip,
+  badges, chart and geometry are unchanged; `--olaso-trial-action` resolves `#e06a00`;
+  viewport 1340 x 804 with no overflow.
+- Browser parity at exactly 1340 x 800 (real components): the same values, plus a
+  like-for-like before/after pair made by reverting only the brand colour in the same DOM
+  (`rgb(16,22,17)` before, `rgb(224,106,0)` after) with every other measured value identical.
+  Loading and error states render the neutral dash at `rgb(16,22,17)`; the loaded `empty`
+  state shows `0,00 MAD` in orange.
+- Checks: `npm run build` 0; `npm run check:navigation` 0 with the new assertion;
+  `npm run check:css-scope` still reports only the four pre-existing App/Lock keyframe
+  findings.
+- Captures: `tmp/orders-verify/orange-before-dashboard.png` and `orange-after-dashboard.png`
+  (same device, previous and current build); `tmp/orange-trial/
+  browser-1340x800-dashboard-before.png` and `-after.png`.
+- Status: provisional and not owner-accepted; the Dashboard 21-skill passes remain paused.
+- Exact next action: owner reviews this Dashboard pair; the Orders half is recorded below.
+
+### ORDERS-ORANGE-01 — Orders-only orange printer glyph in the Reprint action (provisional), 25 September 2026
+
+#### Owner authorization and constraints
+
+- Second half of the same approved two-part trial, delivered after Dashboard: ONLY the printer
+  glyph inside the enabled Reprint button takes `#e06a00`. The button fill stays the dark teal,
+  its label stays white, and Cancel, the Completed/Synced chips, warning and danger colours do
+  not change. The disabled Reprint must not show an orange glyph. Scoped to the Orders Reprint
+  action only, not the shared printer icon, the Header Report action or Reports. No layout or
+  click-behaviour change, and no new token or dependency.
+
+#### Research gate and measured decision, 25 September 2026
+
+- Same official guidance as DASH-ORANGE-01, both sections re-read for this boundary, with the
+  directly relevant note that an icon accompanied by visible text already identifying the
+  control is not required to satisfy SC 1.4.11 independently, and that inactive controls are
+  excluded - which is why the disabled state is deliberately left with its existing grey.
+- Measured before any change on the live Redmi: the Reprint button renders fill
+  `rgb(1,54,62)`, label `rgb(255,255,255)` and a `rgb(255,255,255)` glyph, enabled
+  (`disabled: false`). Orange on that teal fill measures **3.90:1** (>=3:1), and the
+  unchanged white label on teal stays **13.14:1**. The existing disabled glyph pair
+  (`--olaso-disabled` on `--olaso-readonly`) already measures 2.52:1 and is left untouched;
+  it is a pre-existing inactive-control state excluded by SC 1.4.11, and tinting it orange
+  would be exactly the misleading active signal the owner forbade.
+
+##### Changes and verification - Orders
+
+- Change (3 files, no new file): `globals.css` adds `--olaso-trial-action: #e06a00;` to
+  `[data-orders-palette]`; `OrderDetailPanel.module.css` adds one rule
+  `.reprint:not(:disabled) svg { color: var(--olaso-trial-action, var(--olaso-white)) }` so
+  only the enabled button's glyph changes and the fill and label are untouched;
+  `scripts/check-navigation.mjs` gains assertions for both trials.
+- Device evidence (installed build): the enabled Reprint renders fill `rgb(1,54,62)`, label
+  `rgb(255,255,255)` and glyph `rgb(224,106,0)`; Cancel stays `rgb(255,104,99)` on a
+  transparent fill; the Orders-opened calendar still carries `data-orders-palette="true"`
+  with `rgb(233,239,240)` in-range days and teal endpoints; the cancellation dialog still
+  carries the attribute with its `rgb(255,104,99)` confirm; the shared Header report glyph
+  stays `rgb(40,48,41)`, proving the change did not reach the shared printer/report icon;
+  the WebView console was empty; viewport 1340 x 804.
+- Browser parity at exactly 1340 x 800 (real components): the same enabled values, plus the
+  disabled state forced in the DOM - button `rgb(248,250,247)` and glyph `rgb(154,161,155)`,
+  so a disabled Reprint shows NO orange - and a before/after pair made by reverting only the
+  glyph colour (`rgb(255,255,255)` before, `rgb(224,106,0)` after).
+- Checks: `npm run build` 0; `npm run check:navigation` 0; `npm run check:css-scope` only the
+  four pre-existing findings; `npm run check:orders` passed its historical receipt and
+  signed-option assertions and then stopped at its protected `OLASO_OWNER_PIN` restore gate -
+  protected and unrun, not a pass.
+- Install: `npm run android:beta` passed (140 tasks, BUILD SUCCESSFUL). The streamed
+  `adb install -r` hung on this MIUI device (the vendor behaviour already recorded in the
+  ledger), so the APK was installed with `adb install -r --no-streaming`, which returned
+  Success; `firstInstallTime` unchanged at 2026-09-24 22:17:12 and `lastUpdateTime`
+  2026-09-25 18:52:34, so app data was preserved. The APK's own CSS carries
+  `--olaso-trial-action:#e06a00` in the Dashboard chunk, twice in the index chunk (the POS and
+  Orders scopes) and
+  `._reprint_*:not(:disabled) svg{color:var(--olaso-trial-action,var(--olaso-white))}` in the
+  Orders chunk.
+- Captures: `tmp/orders-verify/orange-before-orders.png`, `orange-after-orders.png`,
+  `orange-after-orders-cancel-dialog.png`, `orange-after-orders-final.png`;
+  `tmp/orange-trial/browser-1340x800-orders-before.png`, `-after.png`, `-disabled.png`.
+- Limitations: the disabled Reprint could not be produced on the live tablet because the
+  retained sale is already printed, so that state is proven in the real-component browser
+  render and by the CSS guard rather than on device. FR, the cashier role and a real print
+  were not exercised. Provisional and not owner-accepted; no 21-skill pass was started and
+  neither screen is complete.
+- Exact next action: owner reviews both screens' captures and accepts the two orange accents
+  or names changes, then commit and push. Do not start the 21-skill passes.
+
+#### Correction, 25 September 2026 - the full orange enabled Reprint button replaces the icon-only trial
+
+Supersedes this card's 'Exact next action' above.
+
+- **Owner decision:** replace the icon-only orange with a full orange enabled Reprint action.
+  Background is the existing accepted action orange `#e06a00`; both the label and the printer
+  glyph take the existing POS orange-action dark ink `#1c211b`. That exact pair measures
+  4.86:1. Dashboard's approved orange Net Sales trial is unchanged.
+- **Change (3 files, no new file):** `globals.css` adds `--olaso-trial-action-ink: #1c211b;`
+  to `[data-orders-palette]` beside the orange; `OrderDetailPanel.module.css` sets `.reprint`
+  `color: var(--olaso-trial-action-ink, var(--olaso-white))` and
+  `background: var(--olaso-trial-action, var(--olaso-green))`, and the icon-only
+  `.reprint:not(:disabled) svg` rule was DELETED rather than layered over;
+  `scripts/check-navigation.mjs` swaps its assertion for the new button rules and the
+  ink-token declaration. No new token, colour or dependency; no layout or behaviour change.
+- **Pressed state, measured not assumed:** the previous `filter: brightness(0.88)` would dim
+  both sides of the new pair and drop the label to 4.02:1, below the 4.5:1 small-text
+  threshold. The pressed rule now swaps the two existing action tokens instead
+  (`background: --olaso-trial-action-ink`, `color: --olaso-trial-action`), which is the same
+  4.86:1 pair inverted, so the press cue is kept without a contrast loss.
+- **Contrast in every reachable visual state** (computed from the declared values):
+
+| State | Fill | Label / glyph | Ratio | Threshold |
+| --- | --- | --- | --- | --- |
+| enabled default | `#e06a00` | `#1c211b` | 4.86:1 | 4.5:1 text, 3:1 glyph - pass |
+| enabled pressed (token swap) | `#1c211b` | `#e06a00` | 4.86:1 | pass |
+| enabled focus-visible | unchanged `#e06a00` / `#1c211b` | teal ring `#01363e` | 4.86:1; ring 13.14:1 on the white panel and 3.90:1 against the orange | pass |
+| disabled (unchanged) | `#f8faf7` | `#9aa19b` | 2.52:1 | inactive control, excluded by SC 1.4.11 |
+
+- **Device evidence (installed build):** the enabled Reprint renders background
+  `rgb(224,106,0)` with label and glyph `rgb(28,33,27)`; the disabled state renders background
+  `rgb(248,250,247)` with label and glyph `rgb(154,161,155)`, so no orange; Cancel stays
+  `rgb(255,104,99)`; the detail Completed chip stays `rgb(232,243,230)` and the metadata band
+  `rgb(233,239,240)`; the shared Header report glyph stays `rgb(40,48,41)`; Dashboard still
+  shows the orange Net Sales value at 44px; the WebView console was empty; viewport
+  1340 x 804.
+- **Browser evidence at exactly 1340 x 800 (real components):** the same default values; the
+  pressed state forced with the CDP `:active` pseudo-class read background `rgb(28,33,27)`
+  with label and glyph `rgb(224,106,0)`; focus forced read the unchanged pair with the teal
+  ring `rgb(1,54,62)`; disabled read the neutral pair; and a revert injection reproduced the
+  previous teal/white button for the like-for-like pair.
+- **Checks:** `npm run build` 0; `npm run check:navigation` 0; `npm run check:css-scope` only
+  the four pre-existing App/Lock keyframe findings; `npm run check:orders` passed its
+  historical receipt and signed-option assertions then stopped at its protected
+  `OLASO_OWNER_PIN` gate - protected and unrun, not a pass. The built `dist` carries
+  `._reprint_*{color:var(--olaso-trial-action-ink,var(--olaso-white));background:var(--olaso-trial-action,var(--olaso-green));border:0}`
+  and `._reprint_*:active:not(:disabled){...}` with no `svg` rule.
+- **Install:** `npm run android:beta` passed (140 tasks). `adb install -r --no-streaming`
+  returned Success (the streamed install hangs on this MIUI device); `firstInstallTime`
+  unchanged at 2026-09-24 22:17:12 and `lastUpdateTime` 2026-09-25 19:04:25, so data was
+  preserved. APK SHA-256
+  `FE7C2D48C26DC0025D0E418C6B8CA0DFB2FF73E7F89F26B258F3A51D0D19D3C3`; the APK's own
+  OrdersScreen chunk carries both corrected rules and no `svg` override. No sale, reprint,
+  cancellation, reseed or data write was performed.
+- **Captures:** `tmp/orders-verify/orange-full-after-orders.png` (enabled),
+  `orange-full-after-orders-disabled.png`, `orange-full-after-dashboard.png`,
+  `orange-full-after-orders-final.png`; browser
+  `tmp/orange-trial/browser-1340x800-orders-full-orange.png`, `-active.png`, `-disabled.png`,
+  `-before.png`.
+- **Limitations:** the pressed state is proven in the browser with a forced `:active` and by
+  the computed token swap, not by a physical held press - deliberately, because a held press
+  that releases on the button would fire a real reprint, which the owner forbade. FR, the
+  cashier role and a real print were not exercised. POS `.place` keeps its own
+  `brightness(0.88)` pressed filter and the same measured 4.02:1 consequence; that is a
+  pre-existing, out-of-scope condition recorded here for the owner.
+- **Status:** provisional and not owner-accepted; no 21-skill pass was started and neither
+  screen is complete.
+- **Exact next action:** owner reviews the enabled and disabled captures and accepts the full
+  orange Reprint or names changes, then commit and push.
+
+### ORDERS-PALETTE-01 — Orders-only palette first visual pass (provisional), 25 September 2026
+
+#### Owner authorization and constraints
+
+- The owner asked to move to Orders now and implement a bounded Orders-only palette
+  step, not the 21-skill Orders sequence: the Orders canvas becomes the already accepted
+  pale mint-grey `#F0F7F3`; nonsemantic legacy operational green in controls, copy,
+  focus rings, pager, status filter, date control and icon accents becomes the already
+  accepted dark teal `#01363E`; white cards, borders, typography and table geometry are
+  unchanged; Reprint is teal because it is a management action, not the POS orange.
+- Preserve semantics: the real Completed / Synced / Last sync success chips stay green,
+  warning amber and cancellation danger stay as they are, and the success green tokens
+  are not re-pointed to teal. Keep the existing table-head, metadata-band and
+  selected-row neutral fills for this first pass and add no new tints. No orange. Shared
+  Header and Settings unchanged; no POS, Dashboard or other screen body change.
+- The in-page Orders root owns the palette for its whole visible lifetime, the app frame
+  strip follows a visible Orders screen, and the Orders-opened PeriodCalendar and
+  CancellationDialog inherit an Orders-only scoped palette through the smallest existing
+  portal pattern while every other PeriodCalendar caller stays unchanged.
+- The owner explicitly recorded that the Dashboard 21 sequential skill passes remain
+  pending and must not be described as complete.
+
+#### Research gate, 25 September 2026
+
+- Sources checked 25 September 2026: MDN *Using CSS custom properties* — a custom
+  property is inherited by the declaring element's descendants and is not available to
+  siblings, so declaring it on the screen root cannot reach another screen and `:root` is
+  what makes it app-wide; official W3C/WAI *Understanding SC 1.4.11 Non-text Contrast* —
+  a custom focus indicator must reach at least 3:1 against its adjacent colour(s);
+  Capacitor's Android documentation — the web layer is bundled into the APK, so a CSS-only
+  change is delivered by the normal web build plus `cap sync` and needs no Kotlin, plugin
+  or native configuration change.
+- Choice: reuse the accepted NAV-PALETTE-01 / DASH-PALETTE-01 mechanism exactly — declare
+  the palette once on `[data-orders-palette]` in `globals.css` and put that attribute on
+  the Orders screen root and on the two portalled Orders surfaces. A React portal renders
+  into `document.body`, so it keeps the React tree but not the CSS inheritance tree and
+  cannot inherit from the screen root; that is why both portalled surfaces need the
+  attribute themselves instead of a `:root` rule, which would tint the app during the
+  crossfade (already rejected in NAV-PALETTE-01).
+- Android/Capacitor boundary verified as web-layer only: no Kotlin, plugin, storage,
+  lifecycle, networking or database code changed, so `android/AGENTS.md` needed no update.
+  The installed APK carries the new declaration (checked below).
+
+#### Changes (9 files, no new file)
+
+- `src/globals.css` — one `[data-orders-palette]` block re-pointing only
+  `--olaso-canvas: #f0f7f3`, `--olaso-green: #01363e` and `--olaso-copy-green: #01363e`.
+  `--olaso-success`, `--olaso-green-ink`, `--olaso-green-soft`, `--olaso-green-icon`,
+  `--olaso-gold*`, `--olaso-danger*`, `--olaso-panel-border`, `--olaso-line*` and the
+  table tokens are deliberately not re-pointed.
+- `src/App.tsx` — `frameMint` is now also true for `frameScreen === 'Orders'`, so the 4px
+  strip below the 800px shell follows a visible Orders screen.
+- `src/features/orders/OrdersScreen.tsx` — `data-orders-palette` on the screen `<main>`.
+- `src/features/orders/components/OrdersListPanel/OrdersListPanel.module.css` — the
+  `.today` chip glyph is pinned to `--olaso-green-ink` so the semantic Last-sync chip
+  stays wholly green while the accent token moves; `.retry` becomes an accent-outline
+  recovery control (`color: var(--olaso-green)`, `background: transparent`) and its
+  pressed state reuses the file's existing `rgb(0 0 0 / 8%)` neutral layer instead of a
+  success-green fill.
+- `src/features/orders/components/OrdersTable/OrdersTable.module.css` — `.emptyAction:active`
+  uses `filter: brightness(0.88)` like `.reprint`, so the pressed state no longer flips to
+  a success-green fill under the accent.
+- `src/features/orders/components/CancellationDialog/CancellationDialog.tsx` —
+  `data-orders-palette` on the portalled overlay root (this component is Orders-only).
+- `src/components/PeriodCalendar/PeriodCalendar.tsx` — one optional `ordersPalette` prop
+  that puts `data-orders-palette` on the portalled overlay root; no other behaviour,
+  markup or style changes, and every other caller keeps the legacy green calendar.
+- `src/features/orders/components/OrdersListPanel/OrdersListPanel.tsx` — passes
+  `ordersPalette` to the Orders-opened calendar.
+- `scripts/check-navigation.mjs` — assertions that `[data-orders-palette]` declares the
+  palette exactly once with those three values, does not re-point success/danger/amber,
+  the Orders screen root and both portalled Orders surfaces carry the attribute, and
+  `frameMint` follows Orders.
+
+#### Measured pairs, 25 September 2026 (computed from the declared values)
+
+| Pair | Contrast | Threshold | Result |
+| --- | --- | --- | --- |
+| accent `#01363e` on the white panel | 13.13:1 | 4.5:1 text | pass |
+| accent `#01363e` on the mint canvas `#f0f7f3` | 12.07:1 | 3:1 focus ring | pass |
+| preserved Last-sync chip `#2e6b43` on `#edf5eb` | 6.44:1 | 4.5:1 text | preserved, unchanged |
+| preserved attention `#886923` on `#f4f0e5` | 4.51:1 | 4.5:1 text | preserved, unchanged |
+| preserved danger `#b63e3a` on `#fff0ee` | 5.07:1 | 4.5:1 text | preserved, unchanged |
+| mint canvas against the white card | 1.09:1 | n/a | tint boundary only, same as the accepted POS/Dashboard canvas |
+
+#### Verification actually run, 25 September 2026
+
+- `npm run build` exit 0. The built `dist` CSS carries
+  `[data-orders-palette]{--olaso-canvas:#f0f7f3;--olaso-green:#01363e;--olaso-copy-green:#01363e}`
+  and no success/danger/amber token inside that block.
+- `npm run check:navigation` exit 0 with the new assertions. `npm run check:css-scope` still
+  reports only the four pre-existing App/Lock keyframe `from`/`to` findings; the new rule
+  added none. `git diff --check` clean apart from the pre-existing CRLF notices.
+- Protected and unrun: `npm run check:orders` passed its static local-history, receipt,
+  pagination, reprint and retry assertions and then stopped at its protected
+  `OLASO_OWNER_PIN` restore gate; `npm run check:dashboard`, drawn only as a no-regression
+  probe, stopped at the same missing-PIN gate **before** its destructive `seed:dev` step, so
+  no reseed or data write occurred. Neither is a pass. No sale, print, cancellation or
+  inventory write was performed at any point.
+- Real-component browser render at exactly 1340 x 800 (the real `OrdersListPanel`,
+  `OrderDetailPanel`, `CancellationDialog` and `PeriodCalendar` in the real theme; untracked
+  tooling in `tmp/orders-palette/`), palette ON: canvas `rgb(240,247,243)`;
+  `--olaso-green` and `--olaso-copy-green` `#01363e`; the status-filter pill, date icon,
+  pager current, Reprint fill, empty-state Clear-filters fill, Retry border and every focus
+  ring `rgb(1,54,62)`; the Last-sync chip glyph and ink `rgb(46,107,67)` on `rgb(237,245,235)`;
+  the detail Completed chip `rgb(46,107,67)` on `rgb(232,243,230)`; the table head
+  `rgb(243,246,241)`; the selected-row band and metadata band unchanged; Cancelled and
+  Needs-sync chips `rgb(182,62,58)` on `rgb(255,240,238)`; the attention chip
+  `rgb(136,105,35)` on `rgb(245,240,228)`; the payment dot `rgb(55,165,99)`. `documentElement`
+  was 1340 x 800 in every state with no console errors or warnings.
+- Portal scoping proven in the same render: the Orders-opened calendar overlay reported
+  `data-orders-palette=true` with a teal selected preset and day, and the cancellation-dialog
+  overlay reported `data-orders-palette=true`; the same calendar rendered without the prop
+  (simulating Reports/Products/Stock/Settings) reported no attribute and stayed the legacy
+  operational green `rgb(0,106,43)`.
+- No leak proven: with Orders showing teal, `documentElement`'s own `--olaso-green` was still
+  `#006a2b` and the `html`/`body` background still `rgb(248,247,234)`, so the palette never
+  reaches `:root`. The same render with the attribute off returned the full legacy state
+  (canvas `rgb(248,247,234)`, indicator and Reprint `rgb(0,106,43)`).
+- APK and install: `npm run android:beta` passed with the repository JDK 21 (140 tasks,
+  BUILD SUCCESSFUL). APK `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `622CB3AB643EE66612B1268F2786AB3B68767B20B3E0FF3F02C335C49A190212`, 27830073 bytes.
+  `adb install -r` on the connected Redmi 22081283G (serial XOPFAQGYNNGYVGPR) returned
+  Success with no uninstall; `versionCode 11`, `firstInstallTime` unchanged at
+  2026-09-24 22:17:12, `lastUpdateTime` 2026-09-25 17:21:21, so app data was preserved. The
+  APK's own `assets/public/assets/index-CwxpyicY.css` contains the `[data-orders-palette]`
+  declaration, so the installed build carries the change.
+- Graphify queried before touching code (3,137 nodes / 6,442 edges; the Orders screen,
+  PeriodCalendar, OverlayPortal and CancellationDialog all present). Not refreshed: this
+  pass adds no file, symbol or edge.
+
+#### Limitations (not acceptance)
+
+- Provisional first visual pass only; it is not the Orders 21-skill review and Orders is not
+  accepted. No design, brand or architecture authority was updated, so `DESIGN.md` still
+  records the earlier contract that the Orders status pill uses the green pill, which this
+  provisional pass contradicts until the owner accepts or rejects it.
+- The physical Redmi capture could not be repeated for this pass: the app had auto-locked to
+  its PIN-protected Lock screen and no owner PIN is available in this session, so no PIN was
+  guessed and no bypass was attempted. The fresh pre-change Orders capture from the discovery
+  step (`tmp/orders-discovery/redmi-orders-or-current.png`) remains the last physical Orders
+  evidence; the after-state proof is the real-component browser render at 1340 x 800 plus the
+  installed-APK CSS check. There is therefore no physical before/after pair, and the
+  POS -> Orders and Orders -> other-screen live crossfade was not photographed.
+- The crossfade itself was verified by the unchanged NAV-PALETTE-01 mechanism, the
+  source-level `frameScreen = visibleLeaving ?? visibleContent` derivation and the new
+  `frameMint` assertion, not by a fresh device frame study.
+- Retained pale-green fills that were not in the owner's convert list are deliberate for this
+  pass because re-pointing the shared `--olaso-green-soft` / `--olaso-green-icon` tokens would
+  also flip the real semantic chips: the first-item icon disc (`rgb(232,243,230)`) and the
+  calendar in-range day fill stay as they are. Breaking that shared-token coupling, or tinting
+  those surfaces, is an owner decision for a later pass and needs a tint value the owner has
+  not yet approved.
+- The payment-method label is now accent teal while its paid dot stays success green, and the
+  fixture's default selected order was in the needs-sync state, so the green Completed chip was
+  proven both by its unchanged tokens and by rendering the completed order
+  (`browser-1340x800-detail-completed.png`).
+- TalkBack speech, enlarged OS text, RTL and long expansion remain unverified; the `.ready`
+  status rule in `OrdersTable.module.css` is dead code and was left as found.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty work
+  (including the pre-existing PeriodCalendar CSS, Dashboard, POS, brand and ledger edits) is
+  preserved untouched, and the temporary preview tooling lives under the gitignored `tmp/`.
+
+#### Exact next action
+
+- Owner reviews the Orders palette on the real components
+  (`tmp/orders-palette/browser-1340x800-live.png`, `browser-1340x800-detail-completed.png`,
+  `browser-1340x800-calendar.png`, `browser-1340x800-cancel-dialog.png`,
+  `browser-1340x800-empty.png`, `browser-1340x800-error-retry.png`,
+  `browser-1340x800-french.png`, `browser-1340x800-palette-off.png`) and on the unlocked
+  tablet, and accepts it or names changes — the retained pale-green first-item icon disc and
+  calendar in-range fill, the payment-label/dot split and the teal Reprint are the visible
+  open items. Then commit and push; do not start the 21-skill Orders sequence or the Products
+  card, and leave Settings and the pending Dashboard passes untouched.
+
+#### Correction, 25 September 2026 — every Orders-owned surface adopts the palette
+
+Supersedes the ORDERS-PALETTE-01 'Exact next action' above.
+
+##### Owner instruction
+
+- Every Orders-owned component and pop-up must adopt the new palette, not only the static
+  body. Remove the remaining *nonsemantic* green-family fills using only the two
+  already-approved teal-grays `#e9eff0` and `#e4ecec`, without recolouring true
+  success/sync/warning/danger states and without touching geometry. Choose the lighter
+  `#e9eff0` for table head / metadata band / calendar range and the slightly stronger
+  `#e4ecec` for the selected row and item disc if contrast works. Scope through
+  Orders-owned variables with a fallback so a PeriodCalendar opened by
+  Reports/Products/Stock/Settings is unchanged.
+
+##### Research reused, not repeated
+
+- The card's recorded official research already covers this exact CSS boundary, so no new
+  source was required: MDN *Using CSS custom properties* (a custom property inherits to the
+  declaring element's descendants and is not available to siblings, which is what makes the
+  fallback pattern screen-scoped), W3C *Understanding SC 1.4.11 Non-text Contrast* and
+  *SC 1.4.3 Contrast (Minimum)*, and the Capacitor Android package model. The only new work
+  was measuring the specific new pairs, done below with the recorded method (compute from the
+  declared values, never estimate).
+
+##### Change (5 files, no new file)
+
+- `src/globals.css` — `[data-orders-palette]` gains two Orders-scoped custom properties:
+  `--orders-tint: #e9eff0` (the POS `--olaso-green-soft` / Dashboard `--dashboard-tint`
+  value) and `--orders-tint-strong: #e4ecec` (the POS `--olaso-green-icon` value). No new
+  colour value was invented.
+- `src/features/orders/components/OrdersTable/OrdersTable.module.css` — `.indicator`
+  (selected table row) now reads `var(--orders-tint-strong, var(--olaso-table-selected))`;
+  the unused `.ready` rule was deleted.
+- `src/features/orders/components/OrderDetailPanel/OrderDetailPanel.module.css` —
+  `.metadata` (detail metadata band) reads `var(--orders-tint, var(--olaso-table-head))`;
+  `.itemIconActive` (first-item icon disc) reads
+  `var(--orders-tint-strong, var(--olaso-green-icon))`.
+- `src/components/PeriodCalendar/PeriodCalendar.module.css` — `.inRange` reads
+  `var(--orders-tint, var(--olaso-green-icon))`.
+- `scripts/check-navigation.mjs` — regression assertions that the two tints are declared
+  once in the Orders block and that all four fallback declarations keep their original token.
+
+##### Contrast measured before implementing (WCAG 2.2, text 4.5:1 / graphic 3:1)
+
+| Element on the new fill | Fill | Before | After | Result |
+| --- | --- | --- | --- | --- |
+| Selected-row order number / total `#101611` | `#e4ecec` | 16.69:1 | 15.29:1 | pass |
+| Selected-row service `#59645b` | `#e4ecec` | 5.62:1 | 5.15:1 | pass |
+| Selected-row count `#283029` | `#e4ecec` | 12.37:1 | 11.33:1 | pass |
+| Selected-row time `#758078` | `#e4ecec` | 3.74:1 | 3.42:1 | already below AA; carries the owner-deferred `--olaso-text-time` finding |
+| Detail metadata value `#101611` | `#e9eff0` | 16.83:1 | 15.78:1 | pass |
+| Detail metadata icon `#01363e` | `#e9eff0` | 12.05:1 | 11.30:1 | pass (3:1 graphic) |
+| Detail metadata label `#748078` | `#e9eff0` | 3.78:1 | 3.54:1 | already below AA; carries the owner-deferred `--olaso-text-meta` finding |
+| Calendar day `#101611` | `#e9eff0` | 16.07:1 | 15.78:1 | pass |
+| Calendar out-of-month day `#8a938c` | `#e9eff0` | 2.77:1 | 2.72:1 | already below AA; decorative out-of-month days |
+| First-item icon glyph `#01363e` | `#e4ecec` | 11.51:1 | 10.95:1 | pass (3:1 graphic) |
+
+##### Table-head row deliberately held
+
+- The requested tint cannot be applied to `OrdersTable` `.head` without creating a new
+  failure. `--olaso-table-label` `#68736a` measures **4.53:1** on the current
+  `--olaso-table-head` `#f3f6f1` (passes AA) and **4.25:1** on `#e9eff0` (fails), and
+  `#e4ecec` is worse at **4.12:1**. The head fill was therefore left as-is rather than
+  cross from pass to fail. Two bounded options for the owner: (a) tint `.head` and move the
+  Orders header label to the existing `--olaso-text-service` `#59645b`, which measures
+  5.32:1 on `#e9eff0`, at the cost of a slightly heavier header; or (b) tint `.head` and
+  accept 4.25:1 as an explicit exception.
+
+##### Evidence, installed build, 25 September 2026
+
+- APK `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `DFEDAD16C5A29A12CA2DCBA579766D67C367A25F246D89709DFCBC2295E9FBD0`, 27830073 bytes,
+  built by `npm run android:beta` (140 tasks, BUILD SUCCESSFUL) with the repository JDK 21.
+  `adb install -r` on the Redmi 22081283G (serial XOPFAQGYNNGYVGPR) returned Success with no
+  uninstall; `firstInstallTime` unchanged at 2026-09-24 22:17:12, `lastUpdateTime`
+  2026-09-25 18:12:43, so app data was preserved. The APK's own
+  `assets/public/assets/index-Ctlnr4qO.css` carries
+  `--orders-tint:#e9eff0;--orders-tint-strong:#e4ecec`.
+- Live computed styles on the installed build (`main[aria-label="Atelika orders"]`,
+  `data-orders-palette="true"`): `--orders-tint #e9eff0`, `--orders-tint-strong #e4ecec`,
+  canvas `rgb(240,247,243)`; selected table row `rgb(228,236,236)`; detail metadata band
+  `rgb(233,239,240)`; first-item icon disc `rgb(228,236,236)` with a `rgb(1,54,62)` glyph;
+  status-filter pill, pager current and Reprint `rgb(1,54,62)`.
+- Semantics unchanged on the same reads: Last-sync chip `rgb(237,245,235)` with
+  `rgb(46,107,67)` ink; detail Completed chip `rgb(232,243,230)`; paid dot `rgb(55,165,99)`;
+  table `Completed · Synced` chip neutral; filter track `rgb(241,243,239)`.
+- A full element scan of the live Orders subtree (visible elements only, across the normal,
+  calendar-open and cancel-dialog states) found exactly three legacy green-family fills and
+  no legacy cream surface and no legacy brand-green text: the Last-sync chip (semantic), the
+  detail Completed chip (semantic), and the held table-head row. Nothing accidental remains.
+- Calendar: the Orders-opened calendar overlay reported `data-orders-palette="true"`, and the
+  in-range days rendered `#E9EFF0` (pixel-sampled `rgb(233,239,240)`) against the teal
+  selected endpoints. The captured calendar is visibly open with the 21-25 September
+  multi-day band (`corr-1340x804-orders-calendar-open.png`).
+- Crossfade re-verified on the device for Orders -> POS, POS -> Orders, Orders -> Dashboard
+  and Dashboard -> Orders: 100-102 frames each, 8-12 samples with the outgoing slot still
+  visible, `offenders: []` (no visible screen ever showed `rgb(248,247,234)` or `#006a2b`),
+  the frame strip stayed mint and the nav pill stayed `rgb(1,54,62)` in every frame. The
+  WebView console was empty.
+- Other PeriodCalendar callers proven unchanged in a real-component render: with the Orders
+  palette the overlay carried the attribute and `--orders-tint` `#e9eff0`; the same calendar
+  rendered without the prop reported no attribute, an empty `--orders-tint`, and its original
+  fills (`rgb(232,243,230)` in-range days, `rgb(0,106,43)` selected preset/day).
+- Checks: `npm run build` exit 0; `npm run check:navigation` exit 0 with the new assertions;
+  `npm run check:css-scope` still reports only the four pre-existing App/Lock keyframe
+  findings; `git diff --check` clean. `npm run check:orders` passed its historical receipt
+  and signed-option assertions and then stopped at its protected `OLASO_OWNER_PIN` restore
+  gate - protected and unrun, not a pass. No sale, print, cancellation or data write was
+  performed; the cancellation dialog was opened and closed with Keep order.
+- Captures: `tmp/orders-verify/corr-1340x804-orders-full.png`,
+  `corr-1340x804-orders-calendar-open.png`, `corr-1340x804-orders-cancel-dialog.png`,
+  `corr-1340x804-orders-final.png`.
+- Graphify was queried before the change (3,137 nodes / 6,442 edges; Orders screen,
+  PeriodCalendar, OverlayPortal and CancellationDialog present). Not refreshed: this
+  correction adds no file, symbol or edge.
+
+##### Limitations (not acceptance)
+
+- Provisional; still not the Orders 21-skill review and Orders is not accepted. No design,
+  brand or architecture authority was updated, so `DESIGN.md` still records the earlier
+  green-pill contract.
+- The table-head row is the one requested target not changed, for the measured AA reason
+  above; it needs an owner choice between the two bounded options.
+- The selected-row time and the metadata band's small label were already below AA before this
+  change and stay below it (3.74 -> 3.42 and 3.78 -> 3.54); both carry the owner's previously
+  deferred faint-token finding and are disclosed rather than silently accepted.
+- Physical coverage is the EN owner role on one tablet; FR, the cashier role, live
+  cloud-outage/loading transitions and a real print were not exercised on device, and the
+  crossfade sampler runs on the JS thread beside React rather than a hardware vsync trace.
+
+##### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty work is
+  preserved untouched.
+
+##### Exact next action
+
+- Owner reviews the four captures and decides the table-head row: tint it and move the
+  Orders header label to `--olaso-text-service` (5.32:1), tint it and accept 4.25:1, or leave
+  it as it is. Then commit and push; do not start the 21-skill Orders sequence, the Products
+  card, or the pending Dashboard passes.
+
+#### Correction 2, 25 September 2026 — no accessibility regression on any Orders surface
+
+Supersedes the previous correction's 'Exact next action' above.
+
+##### Owner instruction
+
+- The table-head row was the sole remaining nonsemantic legacy green-family fill and had to
+  adopt the palette with no accessibility regression: tint `.head` with the existing Orders
+  `--orders-tint` and a safe fallback, then take only the table-head small labels to the
+  existing darker `--olaso-text-service` (`#59645b`, measured 5.32:1 on `#e9eff0`) rather
+  than accept 4.25:1. The two small-text regressions the earlier tints caused - the
+  selected-row time and the detail metadata small label - were corrected with the same
+  existing token. Every other colour, geometry, semantic and screen stays untouched.
+
+##### Change (3 files, no new file)
+
+- `src/features/orders/components/OrdersTable/OrdersTable.module.css` - `.head` reads
+  `var(--orders-tint, var(--olaso-table-head))`; `.head > span` (column labels) and
+  `.when span` (row time) read `var(--olaso-text-service)`.
+- `src/features/orders/components/OrderDetailPanel/OrderDetailPanel.module.css` - one added
+  rule `.metaItem small { color: var(--olaso-text-service) }` for the tinted metadata band.
+  `.itemCopy small` (the item option line, which sits on the white card) deliberately keeps
+  `--olaso-text-meta`.
+- `scripts/check-navigation.mjs` - assertions for the tinted head and the three corrected
+  labels, and removal of a stray `+` prefix an earlier ledger patch had written before the
+  final `console.log` (valid `+expr`, so it ran, but wrong).
+
+##### Measured contrast (WCAG 2.2 SC 1.4.3, computed from the declared values)
+
+| Element | Fill | Before | After | Result |
+| --- | --- | --- | --- | --- |
+| Table-head label `#68736a` -> `#59645b` | `#e9eff0` | 4.25:1 | 5.32:1 | pass |
+| Selected-row time `#758078` -> `#59645b` | `#e4ecec` | 3.42:1 | 5.15:1 | pass |
+| Metadata band label `#748078` -> `#59645b` | `#e9eff0` | 3.54:1 | 5.32:1 | pass |
+| Same token in the palette-off fallback | `#f3f6f1` / `#f0f6ed` | - | 5.67:1 / 5.62:1 | pass |
+| Item option line (token unchanged, white card) | `#ffffff` | 4.12:1 | 4.12:1 | unchanged, pre-existing owner-deferred `--olaso-text-meta` finding |
+
+##### Evidence, installed build, 25 September 2026
+
+- APK `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `C2273ABD802554337C5E8645423568F8EBA52285818AD6A34DDE5FCFA53461E2`, 27830073 bytes,
+  built by `npm run android:beta` (140 tasks, BUILD SUCCESSFUL) with the repository JDK 21.
+  `adb install -r` on the Redmi 22081283G (serial XOPFAQGYNNGYVGPR) returned Success with no
+  uninstall; `firstInstallTime` unchanged at 2026-09-24 22:17:12, `lastUpdateTime`
+  2026-09-25 18:26:37, so app data was preserved. The APK's own
+  `assets/public/assets/OrdersScreen-Bc3_xqW2.css` carries
+  `._head_*{background:var(--orders-tint,var(--olaso-table-head));height:40px}`,
+  `._head_* >span{color:var(--olaso-text-service)...}` and
+  `._metaItem_* small{color:var(--olaso-text-service)}`.
+- Live computed styles on the Redmi at 1340 x 804: head fill `rgb(233,239,240)`; head label,
+  row time and metadata label all `rgb(89,100,91)`; item option line still `rgb(116,128,120)`;
+  selected row `rgb(228,236,236)`; metadata band `rgb(233,239,240)`; item disc
+  `rgb(228,236,236)`; canvas `rgb(240,247,243)`; Last-sync chip `rgb(237,245,235)`; detail
+  Completed chip `rgb(232,243,230)`; paid dot `rgb(55,165,99)`; Reprint `rgb(1,54,62)`.
+- An element scan across the normal, calendar-open and cancel-dialog states now returns TWO
+  legacy green-family fills and nothing else - the Last-sync chip and the detail Completed
+  chip, both intentional semantic success - with no cream surface and no legacy brand-green
+  text. The table-head entry the previous scan reported is gone.
+- Calendar: the Orders-opened overlay reported `data-orders-palette="true"` with five
+  in-range cells rendering `rgb(233,239,240)` and teal selected endpoints, captured visibly
+  open with the 21-25 September band.
+- Crossfade re-verified on device for Orders -> POS, POS -> Orders, Orders -> Dashboard and
+  Dashboard -> Orders: 100-103 frames each, 9-10 with the outgoing slot still visible,
+  `offenders: []` (no visible screen showed `rgb(248,247,234)` or `#006a2b`), the frame strip
+  mint in every frame; WebView console empty.
+- Browser parity at exactly 1340 x 800 with the real components: the same head fill, the
+  same `#59645b` labels, band, row and disc values. A calendar rendered without the Orders
+  palette still reported no overlay attribute and its original fills (`rgb(232,243,230)`
+  in-range, `rgb(0,106,43)` selected), so other PeriodCalendar callers remain unchanged.
+- Checks: `npm run build` 0; `npm run check:navigation` 0 with the new assertions;
+  `npm run check:css-scope` still reports only the four pre-existing App/Lock keyframe
+  findings; `node --check scripts/check-navigation.mjs` clean; `git diff --check` clean;
+  `npm run check:orders` passed its historical receipt and signed-option assertions then
+  stopped at its protected `OLASO_OWNER_PIN` gate - protected and unrun, not a pass. No sale,
+  print, cancellation or data write; the cancellation dialog was opened and closed with
+  Keep order.
+- Captures: `tmp/orders-verify/final-1340x804-orders-full.png`,
+  `final-1340x804-orders-calendar-open.png`, `final-1340x804-orders-cancel-dialog.png`,
+  `final-1340x804-orders-final.png`, and the browser
+  `tmp/orders-palette/final-browser-1340x800-orders.png`.
+- Graphify was queried before the change (3,137 nodes / 6,442 edges). Not refreshed: this
+  correction adds no file, symbol or edge.
+
+##### Limitations (not acceptance)
+
+- Provisional; still not the Orders 21-skill review and Orders is not accepted.
+- Out-of-month calendar days inside a range keep `--olaso-text-faint` (2.72:1 on `#e9eff0`).
+  They were already below AA before any tint and the token is shared app-wide, so they are
+  reported rather than changed.
+- The item option line still measures 4.12:1 on the white card; that is the pre-existing,
+  owner-deferred `--olaso-text-meta` finding, left as instructed.
+- Physical coverage is the EN owner role on one tablet; FR, the cashier role, live
+  loading/outage transitions and a real print were not exercised on device, and the
+  crossfade sampler runs on the JS thread beside React rather than a hardware vsync trace.
+
+##### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty work is
+  preserved untouched.
+
+##### Exact next action
+
+- Owner reviews the four device captures and the browser capture and accepts the Orders
+  palette or names changes. Then commit and push; do not start the 21-skill Orders sequence,
+  the Products card, or the pending Dashboard passes.
+
+### BRAND-COLOR-01 — POS-only brand-action colour trial (provisional), 24 September 2026
+
+#### Owner authorization and constraints
+
+- Owner asked for one reversible POS-only colour trial that keeps the accepted
+  dark teal POS background, the exact cropped Atelika logo, the white
+  nav/cart/category/product surfaces and all geometry, and replaces operational
+  green where it means selection or action: dark teal for the selected top-nav
+  pill, mint + dark teal for the selected category on the dark canvas, and one
+  orange Place order action with dark readable text. Every remaining POS green
+  usage was to be assigned deliberately to brand-interactive versus
+  success/availability, never to warning or danger. Candidate values may be
+  provisional and documented; no final global palette may be declared.
+
+#### Research gate, 24 September 2026
+
+- Official guidance recorded before implementing: W3C WCAG 2.2 SC 1.4.3
+  Contrast (Minimum) AA — 4.5:1 normal text, 3:1 large
+  (https://www.w3.org/TR/WCAG22/#contrast-minimum); SC 1.4.11 Non-text
+  Contrast AA — 3:1 for the parts of a control needed to identify it or its
+  state (https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html);
+  SC 1.4.1 Use of Color — colour is never the only cue
+  (https://www.w3.org/WAI/WCAG22/understanding/use-of-color.html); Material 3
+  colour roles: surface vs onSurface vs primary, every pair checked
+  (https://m3.material.io/styles/color/roles).
+- Android/Capacitor boundary unchanged from POS-BG-01/02: this is CSS values
+  plus scoped aliases in the React layer. No Kotlin, no new plugin, no new
+  package; Capacitor serves the built stylesheet
+  (https://capacitorjs.com/docs).
+- Skills read in full for this pass: graphify (query before exploring),
+  better-colors (measure the rendered pair then report; one colour one meaning;
+  fill exactly one action per view; name primitives by hue and roles by role),
+  color-system (AA/AAA thresholds; do not rely on colour alone), design-token
+  (alias layer, no raw values in components), better-accessibility (non-text
+  and focus contrast; colour is never the only cue), and Ponytail at full
+  intensity.
+
+#### Source colour sampling (measured, not invented)
+
+- Logo mint, from `assets/brand/atelika-wordmark-transparent.png` (1139 x 359):
+  dominant opaque letter colour rgb(180, 240, 213) = `#B4F0D5`.
+- Logo accent orange, same asset: dominant rgb(252, 117, 1) = `#FC7501`.
+- Category artwork: all six `assets/category-art/*.webp` are flat
+  rgb(0, 106, 43) = `#006A2B` opaque.
+- Teal `#01363E` is reused from the accepted POS canvas (POS-BG-01).
+
+#### Exact trial-only values (extending the POS-BG-02 scope)
+
+| Role | Value | Note |
+| --- | --- | --- |
+| POS selection / interactive | `#01363E` | `--olaso-trial-select`; also re-points the green family below |
+| Selected category fill | `#B4F0D5` | `--olaso-trial-mint`; the measured logo mint |
+| Selected category ink + artwork | `#01363E` | `--olaso-trial-mint-ink` |
+| Primary action (Place order) | `#E06A00` | `--olaso-trial-action`; deepened from logo orange `#FC7501` |
+| Primary action ink | `#1C211B` | `--olaso-trial-action-ink` |
+| Success / availability feedback | `#006A2B` | `--olaso-trial-success-ink`; semantics unchanged |
+| Re-pointed green family | `--olaso-green`/`--olaso-border` -> `#01363E`; `--olaso-green-soft` `#E9EFF0`; `--olaso-green-icon` `#E4ECEC` | POS scope only |
+| Artwork colouring filter | `invert(94.9%) sepia(97.4%) saturate(300.9%) hue-rotate(152.7deg) brightness(32.4%) contrast(145.7%)` | solves the flat `#006A2B` artwork to `#01363E` exactly |
+
+#### Changes (7 files, no new file)
+
+- `src/App.tsx` — one derived flag `posBrandColorTrial = activeScreen === 'POS'`
+  and a `data-pos-brand-trial` attribute on the existing shell, alongside the
+  POS-BG-02 `data-pos-trial` attribute.
+- `src/globals.css` — one `:root:has([data-pos-brand-trial='true'])` block with
+  the role aliases and the green-family re-point. `:root` scope is required so
+  the portalled payment and customization dialogs inherit the roles; the block
+  matches only while POS is the active screen. No primitive token edited and no
+  other screen affected.
+- `src/features/pos/components/CategoryCard/CategoryCard.module.css` — active
+  border and fill read the mint alias; active status/name/count read the
+  mint-ink alias; active illustration reads the art-filter alias.
+- `src/features/pos/components/PrimaryAction/PrimaryAction.module.css` —
+  `.place` fill and ink read the action aliases.
+- `src/features/pos/components/ReceiptRail/ReceiptRail.module.css` — `.success`
+  reads the pinned success ink so availability feedback stays green.
+- `src/features/pos/components/SearchField/SearchField.module.css` — the
+  hardcoded `#086A35` outline now reads the select alias with its original
+  value as the fallback.
+- `src/features/pos/components/TopNavigation/TopNavigation.module.css` — the
+  nav item focus ring reads the select alias with its previous value as the
+  fallback.
+- Built CSS confirms `:root:has([data-pos-brand-trial=true])` carries all seven
+  aliases and the four re-pointed tokens.
+
+#### Role mapping (every audited POS green usage)
+
+| POS usage | Baseline | Trial value | Assigned role |
+| --- | --- | --- | --- |
+| Selected top-nav pill (`.indicator`) | `#006A2B` | `#01363E` | brand-interactive: selection |
+| Nav item focus ring | `#0B6B36` | `#01363E` | brand-interactive: focus |
+| Selected category fill + border | `#006A2B` | `#B4F0D5` | brand-interactive: selection on the dark canvas |
+| Selected category ink + artwork | white | `#01363E` | brand-interactive: selection ink |
+| Service segments (Dine In / Take Away) | `#006A2B` | `#01363E` | brand-interactive: selection |
+| Payment segments (Cash / Card) | `#006A2B` | `#01363E` | brand-interactive: selection |
+| Product add button and product/chip/cart/field outlines | `#006A2B`/`#0B6B36` | `#01363E` | brand-interactive: add action + control outline |
+| Search field outline | `#086A35` | `#01363E` | brand-interactive: control outline |
+| Offert toggle ON | `#006A2B` | `#01363E` | brand-interactive: selection |
+| Focus rings on white surfaces | `#006A2B` | `#01363E` | brand-interactive: focus |
+| Pressed tints (green-soft / green-icon) | `#EDF5EB`/`#E8F3E6` | `#E9EFF0`/`#E4ECEC` | brand-interactive: pressed tint |
+| Place order (`.place`) | `#006A2B` + white | `#E06A00` + `#1C211B` | primary action: the single hero action |
+| Dialog primary/add (payment confirm, customization Add to order) | `#006A2B` | `#01363E` | brand-interactive: add/confirm action |
+| Dialog selected option, option upcharge, checkbox accent | green | `#01363E` / teal tint | brand-interactive: selection |
+| Payment quick amount and split method pressed | `#006A2B` | `#01363E` | brand-interactive: selection |
+| Receipt success feedback (`.success`) | `#006A2B` | `#006A2B` | success / availability: unchanged |
+| Warning/danger (`.warning .status`, `.remove`, clear cart, error) | `#FF6863` | unchanged | danger: unchanged |
+
+#### Measured rendered contrast (device framebuffer, no estimates)
+
+| Pair | Baseline | Trial | Requirement |
+| --- | --- | --- | --- |
+| Selected nav pill fill vs white nav | 6.78:1 | 13.14:1 | >= 3:1 |
+| Nav pill text vs its fill | 6.78:1 | 13.14:1 | >= 4.5:1 |
+| Selected category fill vs canvas | 1.94:1 (fail) | 10.24:1 | >= 3:1 |
+| Selected category text vs fill | 6.78:1 | 10.24:1 | >= 4.5:1 |
+| Selected category artwork vs fill | 6.78:1 | 10.61:1 | >= 3:1 |
+| Selected category fill vs unselected card | 6.78:1 | 1.28:1 | visual separation (weak) |
+| Service/payment selected text vs fill | 6.78:1 | 13.14:1 | >= 4.5:1 |
+| Place order ink vs fill | 6.78:1 | 4.86:1 | >= 4.5:1 |
+| Place order fill vs white rail | 6.78:1 | 3.37:1 | >= 3:1 |
+| Payment confirm text vs fill | 6.78:1 | 13.14:1 | >= 4.5:1 |
+| Quick-amount selected text vs fill | 6.78:1 | 13.14:1 | >= 4.5:1 |
+
+The baseline green selected category sat at only 1.94:1 against the accepted
+teal canvas; the mint fill lifts it to 10.24:1. The trial's one weak pair is the
+selected-vs-unselected category card at 1.28:1 (mint vs white), which is carried
+by the fill sweep, the ink/artwork flip and `aria-pressed` rather than colour
+alone. The raw logo orange `#FC7501` measured 2.73:1 against the white rail, so
+the deepened `#E06A00` is used instead.
+
+#### Verification actually run, 24 September 2026
+
+- `npm run build` passed (tsc + vite). `npm run check:pos` passed. `npm run
+  check:css-scope` reports only the same four pre-existing App/Lock keyframe
+  `from`/`to` findings; the new rules added none.
+- Packaging: `npm run android:beta` passed (Gradle assembleDebug). APK
+  `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `72F9A58436508AF1BC28F5B396765011253BB44D18A2A8FD875C90DFB5F177B8`, 27219593
+  bytes.
+- `adb install -r` over the connected Redmi 22081283G (XOPFAQGYNNGYVGPR)
+  succeeded with no uninstall and no data clear; the cold start shows the
+  Atelika Lock screen. The owner app-Lock PIN was used only to unlock, and is
+  never printed or logged (the harness redacts six-digit values).
+- Live render at 1340 x 804 CSS, 2000 x 1200 framebuffer. Computed styles on
+  POS: `--olaso-green`/`--olaso-border` `#01363e`, `--olaso-trial-mint`
+  `#b4f0d5`, `--olaso-trial-action` `#e06a00`; selected category fill
+  rgb(180, 240, 213); Place order fill rgb(224, 106, 0) with ink
+  rgb(28, 33, 27).
+- States captured in both the trial and the green baseline from the same live
+  DOM by adding/removing `data-pos-brand-trial`: default POS with a filled cart,
+  selected category, empty search, customization dialog, cash payment dialog
+  with a given amount, and disabled Place order on an empty cart. Captures:
+  `tmp/colortrial/m2-pos-{after,before}.png`, `m2-payment-{after,before}.png`,
+  `m2-modifier-{after,before}.png`, plus the wider set
+  `tmp/colortrial/*-{after,before}.png`.
+- POS-only scoping checked live: Dashboard reported
+  `data-pos-brand-trial=null`, `--olaso-green` `#006a2b` and canvas `#f8f7ea`;
+  returning to POS restored the trial (`tmp/colortrial/scope-dashboard.png`,
+  `scope-pos.png`).
+- Header/TopNavigation touch check: all six screens were opened on the device
+  (`Dashboard`, `POS`, `Orders`, `Products`, `Stock`, `Reports`); only POS
+  carried the trial. Each other screen reported `data-pos-brand-trial=null`
+  with `--olaso-green` `#006a2b`, and none showed clipping. Captures
+  `tmp/colortrial/sweep-*.png`.
+- No WebView console errors or warnings (the 60-message ring was empty) and a
+  filtered logcat read for chromium/Console/Capacitor produced no entries. No
+  clipping seen in any captured state.
+- No sale created: Place order opened the cash dialog, the dialog was
+  cancelled, the cart cleared, and the existing order history was unchanged.
+- Reversibility: removing `data-pos-brand-trial` returns the exact green
+  baseline with no rebuild; the attribute is set only while POS is active.
+- Graphify was queried before code inspection (POS screen colour tokens:
+  selection, canvas, category, navigation, place order). It was not refreshed:
+  this pass adds no file or module edge.
+
+#### Limitations (not acceptance)
+
+- Verified on the Redmi at 1340 x 804 CSS (the active session's viewport); the
+  browser at exactly 1340 x 800 was not separately re-photographed.
+- The inactive category artwork stays operational green. It is content, not a
+  selection/action colour, so the trial left it; it now sits beside the teal
+  selected card and is the most visible open item. A one-line candidate exists
+  (apply the same art filter to the unselected `.illustration`) if the owner
+  wants it.
+- The selected category is only 1.28:1 from an unselected white card; selection
+  is carried by the sweep, the ink/artwork flip and `aria-pressed`, not colour
+  alone. A stronger difference is an owner choice.
+- The action orange is the deepened `#E06A00`, not the raw logo `#FC7501`
+  (2.73:1 on the white rail). Whether to keep the raw logo value is an owner
+  choice.
+- `npm run check:sales` was not run: it needs the owner PIN as a test-restore
+  secret and drives real sales, which the owner's "do not complete a sale"
+  instruction excludes. No checkout, persistence or sale logic changed in this
+  pass, so `npm run check:pos` plus the CSS scope check cover the change.
+- Dialog primary actions (payment confirm, customization Add to order) are teal,
+  not orange, following the owner's "add buttons -> brand-interactive"
+  instruction; whether the modal primary should also take the orange is an open
+  owner choice.
+- Provisional only: not a palette decision, not propagated, no brand or design
+  authority updated; `DESIGN.md`, `BRAND.md` and `untitled.pen` are untouched.
+
+#### Publication
+
+- Not committed and not pushed, pending owner review. Unrelated dirty files and
+  untracked asset folders are preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the POS trial on the unlocked device and accepts it or names
+  changes (the mint value / selected-vs-unselected difference, the unselected
+  artwork colour, the action orange variant, and whether the modal primary
+  action should also be orange). Do not propagate it, do not mark it approved or
+  done, and commit and push only after that acceptance.
+
+#### BRAND-COLOR-01 follow-up — POS pill rounding and category recolour (provisional), 24 September 2026
+
+##### Owner authorization
+
+- Owner's 24 September follow-up to the same POS trial: (1) the selected POS
+  top-nav pill reads too rounded, so give only the POS indicator a less rounded
+  corner (16px is the smallest named candidate, versus the 23px baseline);
+  (2) the selected category should use the trial's action orange with dark
+  readable text and the white knockout artwork (the original), not mint; (3) the
+  unselected category artwork should carry the brand teal tint at its original
+  opacity. Still POS-only, provisional and reversible behind the same
+  `data-pos-brand-trial` attribute. Other screens, the nav container, the
+  Orders/Products green pill, the geometry, the dark teal canvas and the exact
+  logo are untouched. It closes the two open items the first pass listed (the
+  unselected-artwork one-line candidate and the weak selected-vs-unselected
+  difference).
+
+##### Research gate, 24 September 2026
+
+- Same authorities as BRAND-COLOR-01, re-affirmed: WCAG 2.2 SC 1.4.3 Contrast
+  (Minimum) 4.5:1 text, SC 1.4.11 Non-text Contrast 3:1 for the selected
+  artwork graphic and the selected fill against the dark canvas, and SC 1.4.1
+  Use of Color (selection is still carried by the fill sweep, the ink/artwork
+  flip and `aria-pressed`, not colour alone).
+- Skills re-read for this pass: graphify (query before exploring), better-colors
+  (one colour one meaning; fill exactly one action per view), color-system
+  (AA/AAA thresholds; never colour alone), design-token (alias layer, no raw
+  value in a component) and Ponytail at full intensity.
+
+##### Changes (3 files, no new file)
+
+- `src/globals.css` — dropped the now-unused `--olaso-trial-mint` and
+  `--olaso-trial-mint-ink` aliases (no stale mint); added
+  `--olaso-trial-nav-radius: 16px`. The selected category now shares the
+  existing `--olaso-trial-action` and `--olaso-trial-action-ink`.
+- `src/features/pos/components/CategoryCard/CategoryCard.module.css` — active
+  border, fill and status/name/count ink read the action aliases; the active
+  illustration is the literal `brightness(0) invert(1)` white knockout; the
+  base `.illustration` reads `var(--olaso-trial-art-filter, none)`, so only
+  POS re-tints the unselected artwork and every other screen keeps the original
+  green.
+- `src/features/pos/components/TopNavigation/TopNavigation.module.css` — only
+  `.indicator` reads `var(--olaso-trial-nav-radius, 23px)`, so the POS pill is
+  16px while `.item`, `.navigation` and every other screen stay at 23px.
+
+##### Measured values (computed from the exact trial values, no estimates)
+
+| Element | Baseline | Follow-up | Requirement |
+| --- | --- | --- | --- |
+| POS nav indicator radius | 23px | 16px | visibly less rounded |
+| Orders / other nav indicator radius | 23px | 23px | unchanged |
+| Selected category fill | mint `#B4F0D5` | orange `#E06A00` | one action colour |
+| Selected category ink | teal `#01363E` | `#1C211B` | >= 4.5:1 |
+| Selected artwork filter | teal art filter | `brightness(0) invert(1)` | >= 3:1 graphic |
+| Selected fill vs dark canvas | 10.24:1 | 3.90:1 | >= 3:1 |
+| White artwork vs selected fill | 10.61:1 | 3.37:1 | >= 3:1 |
+| Selected ink vs selected fill | 10.24:1 | 4.86:1 | >= 4.5:1 |
+| Selected fill vs unselected card | 1.28:1 | 3.37:1 | visual separation |
+| Unselected artwork (teal, 0.46) vs white card | 2.18:1 (green) | 2.64:1 (teal) | decorative illustration |
+
+The orange lifts the previously weak selected-vs-unselected separation from
+1.28:1 to 3.37:1 and keeps the selected fill 3.90:1 from the dark canvas. The
+white knockout on orange is 3.37:1 (>= 3:1 non-text). The unselected teal
+artwork keeps its original 0.46 opacity and is a decorative category
+illustration whose 2.64:1 is not a control boundary; the category name carries
+the meaning.
+
+##### Verification actually run, 24 September 2026
+
+- `npm run build` passed (tsc + vite). `npm run check:pos` passed.
+  `npm run check:css-scope` still reports only the same four pre-existing
+  App/Lock keyframe `from`/`to` findings (exit 1 baseline unchanged); the new
+  rules added none.
+- Built CSS confirms the five remaining trial role aliases plus
+  `--olaso-trial-nav-radius:16px`, and
+  `border-radius:var(--olaso-trial-nav-radius,23px)` on the indicator.
+- Packaging: `npm run android:beta` passed (check:android + cap sync + Gradle
+  `testDebugUnitTest assembleDebug`). APK
+  `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `71DCDBE99471B73C84D6F31334A5E93FEEF7690F3E0052950D1CE49F524A5955`,
+  27219593 bytes.
+- `adb install -r` over the connected Redmi 22081283G (XOPFAQGYNNGYVGPR)
+  succeeded with no uninstall and no data clear; the cold start shows the
+  Atelika Lock screen. No sale created, no data reset.
+- Protected and unrun: the on-device computed-style readback (POS indicator
+  radius versus Orders) and the device screenshots. The app cold-starts to the
+  protected owner Lock, and `OLASO_OWNER_PIN` is unset in this session; the
+  repo requires it via environment only (`goals/options/TABLET-TESTING.md`,
+  `goals/options/PROTOCOL.md`, `tools/recovery/TABLET_ADB_CONTROL.md`) and
+  never stores it. Recorded protected/unrun, not a pass, pending owner unlock.
+- Graphify was queried before code inspection (POS navigation and category
+  colour/geometry tokens). Not refreshed: this pass adds no file or module edge.
+
+##### Limitations (not acceptance)
+
+- Device measurement and screenshots are pending owner unlock, so the 16px
+  versus 23px rendered radii are confirmed from the built CSS and the computed
+  values, not yet from the live framebuffer.
+- Dialogs were not re-photographed: no rule in the payment or customization
+  dialogs changed in this follow-up.
+- Provisional only: not a palette decision, not propagated, no brand or design
+  authority updated; `DESIGN.md`, `BRAND.md` and `untitled.pen` are left
+  untouched (the first pass left them untouched and this follow-up only changes
+  trial values).
+
+##### Publication
+
+- Not committed and not pushed, pending owner review. Unrelated dirty files and
+  untracked asset folders are preserved untouched.
+
+##### Exact next action
+
+- Owner unlocks the tablet (or supplies `OLASO_OWNER_PIN`) so the agent captures
+  the POS nav pill at 16px beside the Orders 23px pill and the selected/unselected
+  categories, then accepts or names changes. Do not propagate, do not mark it
+  approved or done, and commit and push only after that acceptance.
+
+#### BRAND-COLOR-01 follow-up rollback — owner rejected the preview, 24 September 2026
+
+- The owner saw the 16px POS pill and orange/teal artwork trial on the tablet and
+  rejected it. The pill looked wrong; the unselected artwork became gray rather
+  than preserving the intended two-colour artwork logic, and selected artwork
+  became all white. The narrow preview also failed to map the proposed orange
+  consistently across the POS. These are observed failures, not an accepted
+  brand rule.
+- Restored only that follow-up's edits in `src/globals.css`,
+  `CategoryCard.module.css`, and `TopNavigation.module.css`: the POS pill is
+  23px again; selected category fill/ink/artwork return to the earlier mint/
+  teal trial; unselected art returns to its original green. The earlier POS
+  dark background and brand-action trial remain unchanged and provisional.
+  No commit, push, or other screen change.
+- The owner's proposed next direction is an orange-selected category with the
+  original artwork's two-colour swap preserved, plus a coordinated review of
+  product-card and plus-button outlines. This is a new bounded design decision,
+  not implemented by this rollback. Inspect the actual artwork pixels and
+  render states before any new recolour; do not use a blanket CSS filter that
+  turns the whole illustration into one colour.
+- Exact next action: verify this narrow rollback and report its build/device
+  status honestly, then agree the complete POS colour mapping with the owner
+  before another preview. Do not treat the superseded follow-up's old 'owner
+  unlocks' next action as current.
+
+##### Rollback verification, 24 September 2026
+
+- Verified by a read-only audit; no further CSS change. The working tree and the
+  installed APK both carry the earlier BRAND-COLOR-01 state: `trial-nav-radius`
+  is absent (POS pill back to 23px), the `--olaso-trial-mint` /
+  `--olaso-trial-mint-ink` aliases are present, and no filter sits on the base
+  `.illustration`, so unselected artwork is the original green again.
+- Packaging and install: `npm run android:beta` produced
+  `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `AC8DF3F95D03178F1E84D882884DB49736D1AD88D38C075376281F486AFD131F`. The
+  apparently interrupted `adb install -r` did complete on the connected Redmi
+  22081283G (XOPFAQGYNNGYVGPR): the on-device
+  `/data/app/~~gaHL7P9_.../com.olaso.pos-.../base.apk` pulls back with the same
+  SHA-256, and `dumpsys package com.olaso.pos` reports `versionCode 11` and
+  `lastUpdateTime 2026-09-24 16:52:24`. No uninstall, no data clear, no PIN
+  needed; nothing left to re-run.
+- Rollback scope confirmed narrow: only the follow-up's three files reverted; the
+  earlier POS dark background and brand-action trial, and every unrelated dirty
+  file, remain untouched.
+- Note for the next design pass: the six `assets/category-art/*.webp` are
+  single-colour green line art (`#006A2B`) on transparency (measured: dominant
+  `rgb(0,106,43)` with only alpha variation). The "green plus white interior"
+  look is green strokes over the white card, not two pixel colours, so the
+  selected-state swap is the `brightness(0) invert(1)` knockout over the fill.
+
+#### BRAND-COLOR-01 follow-up 2 — POS-only coherent orange interaction (provisional), 24 September 2026
+
+##### Owner authorization and constraints
+
+- Owner approved one reversible POS-only *coherent orange interaction* preview and
+  named the complaints as a set, not a single patch: the current POS top-nav pill
+  "looks ugly" while the Current order Dine In/Take Away and Cash/Card selected
+  pills look much better, so those existing controls are the visual/geometry
+  reference. Do not repeat the rejected 16px indicator and do not assume radius
+  alone fixes it.
+- Required mapping: one orange for everything POS-interactive - nav, category,
+  product cards/plus, service and payment segmented controls, quick amounts,
+  cart lines/Offert, search/chips, modifier and payment dialogs, action buttons.
+  The category assets are single-colour strokes on transparency, so unselected
+  must be orange strokes on the white card and selected must be white strokes on
+  the orange card. The rejected teal/grey art filter is forbidden.
+- Preserved: semantic success/availability green, danger/error red, the neutral
+  white surfaces, the Atelika logo, the dark teal canvas, all geometry and every
+  other screen. Preview stays behind the existing POS trial attributes; no
+  commit or push until owner visual acceptance; no new dependency.
+
+##### Research gate, 24 September 2026
+
+- Re-confirmed authorities: WCAG 2.2 SC 1.4.3 Contrast (Minimum) 4.5:1 text /
+  3:1 large text (https://www.w3.org/TR/WCAG22/#contrast-minimum); SC 1.4.11
+  Non-text Contrast 3:1 for control boundaries and state graphics
+  (https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html); SC 1.4.1
+  Use of Color, so selection keeps its fill sweep, ink/artwork flip and
+  `aria-pressed` rather than colour alone
+  (https://www.w3.org/WAI/WCAG22/understanding/use-of-color.html).
+- Skills read in full for this pass: graphify (queried before code), better-colors
+  (one colour one meaning; fill exactly one action per view; measure the rendered
+  pair and never estimate), color-system (AA/AAA thresholds, colour never alone),
+  design-token (alias layer, no raw values in components), better-accessibility
+  (verify a custom focus ring against every adjacent colour) and Ponytail at full
+  intensity.
+- Android/Capacitor boundary unchanged: CSS values plus POS-scoped aliases in the
+  React layer. No Kotlin, no plugin, no package.
+
+##### Source sampling and the solved artwork filter
+
+- Orange is the already-measured Atelika logo accent `rgb(252,117,1)`, deepened
+  to `#e06a00` so a filled surface clears 3:1 against both the white rail (3.37)
+  and the dark canvas (3.90). Sample unchanged from BRAND-COLOR-01.
+- Category artwork: six `assets/category-art/*.webp`, flat `rgb(0,106,43)`
+  strokes on transparency (alpha-only variation). The orange stroke recolour is a
+  solved CSS filter chain, `brightness(0) invert(41.6%) sepia(81.4%)
+  saturate(3695.4%) hue-rotate(31.4deg) brightness(101.4%) contrast(197.5%)`,
+  which maps the strokes to `rgb(225,106,0)` - hue 28.2, saturation 1.00 - with
+  alpha untouched. It was measured back from the rendered element, not assumed:
+  the sampler renders orange strokes on white (and on the teal canvas) and the
+  original green on every non-POS screen. No teal and no grey anywhere.
+
+##### Exact POS-only values (extending the existing trial block)
+
+| Role | Value | Note |
+| --- | --- | --- |
+| Interactive fill / outline / ring | `#e06a00` | `--olaso-green`, `--olaso-border`, `--olaso-trial-select`, `--olaso-trial-action` |
+| Ink on an orange fill | `#1c211b` | `--olaso-trial-action-ink`; 4.89:1 on the fill |
+| Text on white | `#a64b00` | `--olaso-trial-action-ink-strong`; 5.79:1, because the bright fill is only 3.37:1 there |
+| Pressed tints | `#fdeee0` / `#fbe3cd` | `--olaso-green-soft` / `--olaso-green-icon` |
+| Artwork stroke filter | the solved chain above | `--olaso-trial-art-filter` |
+| Success / availability | `#006a2b` | `--olaso-trial-success-ink`, unchanged |
+| Removed | `--olaso-trial-mint`, `--olaso-trial-mint-ink` | no stale mint left in src or dist |
+
+##### The nav pill (the named complaint)
+
+- The reference difference was measured, not guessed: the Current order segmented
+  indicator sits inside a 1px framed white track, while the POS nav track had no
+  frame and its indicator was the same colour as the surrounding teal band over
+  its full 46px height, so it read as a hole rather than a pill.
+- Treatment: the nav indicator becomes the orange fill with dark ink, and the POS
+  nav track gets the reference's 1px frame as an inset ring
+  (`box-shadow: inset 0 0 0 1px var(--olaso-trial-action, transparent)`), which
+  is a no-op on every other screen. Radius stays 23px and height stays 46px: the
+  570x46 outer geometry is untouched and no layout shift is possible. The
+  indicator is 46px on a 570x46 track exactly as before.
+- Result: the POS nav pill and the segmented pills now share one language - white
+  track, 1px orange frame, orange pill, dark ink.
+
+##### Changes (8 files, no new token file, no dependency)
+
+- `src/globals.css` - the POS trial block now carries the orange alias set and
+  re-points the interactive green family to orange; success stays green.
+- `src/features/pos/components/CategoryCard/CategoryCard.module.css` - active
+  fill/border read the action alias; active status/name/count read the action
+  ink; the base `.illustration` reads the art filter so unselected art is orange
+  in POS only, and the active illustration keeps the white knockout.
+- `TopNavigation.module.css` - the track frame and the dark ink on the orange
+  selected item.
+- `SegmentedControl.module.css`, `PaymentMethodControl.module.css` - dark ink on
+  the orange selected segment.
+- `PrimaryAction.module.css` - the Split label moves to the deeper orange and the
+  shared focus ring moves to the dark ink so it clears both the white rail and the
+  orange fill.
+- `PaymentDialog.module.css` - share price to the deeper orange; method, quick
+  amount and Confirm inks to the dark ink.
+- `ModifierSelectionDialog.module.css` - the upcharge to the deeper orange and
+  the Add button ink to the dark ink.
+- `ProfileControl.module.css` - the selected language segment ink to dark.
+- `Header.module.css` - the skip link text to the deeper orange.
+
+##### Verification actually run, 24 September 2026
+
+- `npm run build` passed (tsc + vite). `npm run check:pos` passed.
+  `npm run check:navigation` passed. `npm run check:css-scope` still reports
+  only the same four pre-existing App/Lock keyframe `from`/`to` findings; the
+  new rules added none.
+- Built CSS confirms the new aliases, the inlined filter and the inset ring, and
+  zero `trial-mint` / `trial-nav-radius` left.
+- Visual acceptance evidence (owner unlock was unavailable, so the owner-approved
+  isolated real-component browser fixture was used; untracked, in `tmp`, excluded
+  from the bundle by `tsconfig` `include: ["src"]`): the real Header, nav,
+  SearchField, CategoryRow, ProductGrid, ReceiptRail and both POS dialogs rendered
+  inside the real theme and the real trial attributes at 1340x800 in headless
+  Chrome. Captures: `tmp/orange-shots/pos-full.png`, `pos-before.png` (same
+  screen with the brand attribute off), `pos-modifier.png`, `pos-payment.png`,
+  `other-screen-nav.png` (both attributes off, Orders active, green baseline and
+  no nav frame) and `compare-nav-vs-segmented.png`.
+- Measured from those renders (not estimates): nav pill ink on fill 4.80:1,
+  segmented ink on fill 4.89:1, selected category ink on fill 4.89:1, selected
+  category artwork on fill 3.37:1, selected fill on the dark canvas 3.90:1, the
+  orange fill/outline on the white track 3.37:1, quick-amount ink on fill 4.88:1,
+  the deeper orange on white 5.79:1. The unselected orange strokes sit at the
+  existing 0.46 opacity (1.72:1 on white) as a decorative illustration whose
+  meaning is carried by the category name, matching the baseline treatment.
+- Packaging and install: `npm run android:beta` passed with JDK 21. APK
+  `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `E2958B27D0DBD3D4B78C5C23250FF72EA44E264CD6CCB054595B0ABEC0ACCFB8`,
+  27219593 bytes. `adb install -r` over the connected Redmi 22081283G
+  (XOPFAQGYNNGYVGPR) returned `Success`; the pulled on-device `base.apk`
+  hashes identically, `firstInstallTime` is unchanged at 2026-09-20 17:12:04
+  (data preserved), `lastUpdateTime` 2026-09-24 17:20:10. No uninstall, no data
+  clear, no PIN needed, no sale created.
+- Graphify queried before code inspection (POS nav indicator vs segmented control
+  geometry). Not refreshed: this pass adds no file or module edge.
+
+##### Limitations (not acceptance)
+
+- Device framebuffer capture and the on-device computed-style readback were not
+  run: the app cold-starts to the protected owner Lock and no owner PIN is
+  available in this session. The screenshots are the real components in a real
+  browser at 1340x800, which is browser evidence, not tablet evidence.
+- The fixture reproduces the POS screen composition rather than the live app, so
+  it does not exercise the Activity/visited-screen retention path; no layout code
+  changed, so that risk is limited to the colour aliases.
+- The QuickAddRow chips remain `display: none` in its own base rule (pre-existing,
+  unrelated to colour); their outline token is mapped to orange for whenever they
+  do render.
+- The payment dialog's Confirm was captured in its disabled state (short tender);
+  the enabled Confirm shares the rail's verified Place order tokens.
+- The nav frame is a 1px inset ring rather than a border so the 570x46 geometry is
+  untouched; the reference control uses a real 1px border, so the two tracks match
+  visually but not in box model.
+- Provisional only: no palette decision, not propagated, no brand/design authority
+  updated; `DESIGN.md`, `BRAND.md` and `untitled.pen` are untouched. The 16px
+  indicator stays rejected and absent.
+
+##### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files and untracked asset folders are preserved untouched. The fixture lives
+  under the gitignored `tmp/`.
+
+##### Exact next action
+
+- Owner reviews POS on the unlocked tablet and accepts or names changes (the
+  orange value, the nav frame, the unselected artwork opacity, the deeper-orange
+  text rule). Do not propagate it, do not mark it approved or done, and commit and
+  push only after that acceptance.
+
+#### BRAND-COLOR-01 follow-up 3 — owner-corrected narrow orange scope, 24 September 2026
+
+- Owner rejected follow-up 2. Orange was requested only for the selected
+  category, the category artwork swap (orange strokes on white when unselected;
+  white strokes on orange when selected), product-card and plus-button outlines,
+  and the existing Place order action. Orange on the Dine In/Take Away and
+  Cash/Card pills, profile avatar ring, EN/FR selector, top navigation pill,
+  and other POS controls was an assistant prompting error, not owner approval.
+- Keep the prior dark teal canvas and the earlier teal selection/control mapping.
+  The POS top-nav pill was separately reported as awkward: preserve its teal
+  identity, use a slightly distinct teal fill `#0e5360` against the canvas
+  `#01363e`, a 1px framed white track like the Current order controls, and a
+  modest 20px inner radius (the rejected 16px was too sharp). Other screens'
+  navigation remains unchanged. This is a visual trial, not a settled token.
+- `src/globals.css` restores the POS teal aliases for `--olaso-green`, border,
+  focus and pressed tints, retains `#e06a00` only as the targeted action/accent,
+  and retains the orange-only category-art filter. `CategoryCard.module.css`
+  keeps orange selected fill and white-stroke artwork, with orange strokes on
+  unselected white cards. `ProductCard.module.css` explicitly uses the orange
+  trial token for the 2px card outline and the plus button's outline/glyph;
+  outside the trial the old 1.2px plus outline remains. `PrimaryAction.module.css`
+  retains the orange Place order button. `TopNavigation.module.css` takes the
+  POS-only teal fill/frame/radius. The follow-up-2 orange-only ink overrides in
+  Header, ProfileControl, SegmentedControl, PaymentMethodControl, PaymentDialog,
+  ModifierSelectionDialog and the Split button were removed; teal/white returns.
+- Applicable guidance reused from this card's 24 September research: [WCAG 2.2
+  non-text contrast](https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html)
+  (3:1 meaningful outlines/state graphics), [minimum text contrast](https://www.w3.org/WAI/WCAG22/understanding/contrast-minimum.html)
+  (4.5:1 normal text), and use of colour (state not hue alone). The orange
+  `#e06a00` was already measured 3.37:1 against white; dark ink `#1c211b`
+  was measured 4.86:1 on orange. The distinct teal nav fill and framed track
+  solve the observed same-colour cutout; rendered review is still required.
+- `npm run build`, `npm run check:pos`, and `npm run check:navigation` passed on
+  the narrow CSS revision. `npm run check:css-scope` remains red only for the
+  four pre-existing App/Lock keyframe `from`/`to` findings; no new finding.
+  A 1340x800 real-component browser capture is
+  `tmp/pos-color-corrected-3.png`; it shows the intended scope without clipping.
+  The first two captures showed that a same-colour pill still looked like a
+  cutout, so the final browser candidate uses a distinct teal fill within a
+  real 1px framed track. Browser evidence is not physical-device acceptance.
+- `npm run android:beta` passed with the existing JDK 21, producing APK SHA-256
+  `EB79FFCA08A154F337CE38611B70E9DB76F4537D973CD3FA1772AF6C3D7B0C16`.
+  `adb install -r` on the connected Redmi 22081283G returned Success;
+  `dumpsys package` reports versionCode 11, unchanged firstInstallTime
+  `2026-09-20 17:12:04`, and lastUpdateTime `2026-09-24 17:34:30`.
+  Installation preserved data. Owner tablet visual acceptance is still pending;
+  no sale was made and no PIN was used.
+- No commit or push. Preserve unrelated dirty work. Exact next action: owner
+  unlocks the installed app and judges the corrected POS on the Redmi; record
+  any visual feedback before treating a colour as final or propagating it to
+  other screens.
+
+### POS-EVAL-01 — read-only one-item POS balance check on the Redmi, 25 September 2026 (no code change)
+
+- Owner asked for a read-only visual evaluation of orange balance with an active
+  order. No source, colour, data or order was changed: the only mutations were the
+  draft cart (one Espresso) and the device screenshot.
+- Method: unlocked the installed Atelika beta with the owner PIN (used
+  transiently, never printed or stored), stayed on POS, and added exactly one
+  seeded Espresso through its Customize order dialog with the optional extra left
+  unchecked ("Add to order · 10,00 MAD"). Place order then read enabled with a
+  10,00 MAD total and the rail showed one line (Regular · 10,00 MAD x 1). No order
+  was placed, nothing was printed, cancelled or seeded.
+- Values: Place order background `rgb(224,106,0)` with the label `rgb(28,33,27)`
+  (`--olaso-trial-action-ink`), 4.86:1, passing AA; plus buttons `#e06a00` outline
+  and glyph on white at 3.37:1, passing the 3:1 non-text threshold. Selected
+  states remain the unified `#01363e` (nav pill, Dine In, Cash, selected category)
+  on the `#f0f7f3` canvas.
+- Balance and layout: a framebuffer histogram puts orange at 1.05% of the screen
+  against 5.50% deep teal, so orange reads as an action accent rather than a
+  field. No clipping: documentElement 1340 x 804, right-most element edge 1340,
+  bottom-most 804.
+- Captures: `tmp/posbg03/device-pos-one-item.png` (native 2000 x 1200),
+  `tmp/posbg03/crop-one-grid.png`, `tmp/posbg03/crop-one-placeorder.png`,
+  `tmp/posbg03/crop-placeorder-zoom.png`.
+- Limitations: one product only, owner role only, 1340 x 804 CSS rather than the
+  documentary 1340 x 800; the draft cart is left in place for the owner to review
+  or clear. The first 3x crop misread the Place order label as white until a 6x
+  zoom and the pixel histogram showed the dark `#1C211B` ink.
+- No commit or push; no files changed by this check.
+
+### POS-NAV-01 — unify the active nav pill with the selected segment teal (owner-approved), 24 September 2026
+
+#### Owner authorization and constraints
+
+- Owner approved one POS-only trial: the active top-navigation pill and the
+  selected category-card background must be EXACTLY the deep teal the selected
+  Dine In and Cash segments already use, reusing the existing token rather than a
+  new shade. Everything else is preserved: the selected/unselected category
+  inversion and legibility, the white header, the dark-teal logo and its
+  alignment, the near-neutral mint canvas, the product outlines, and the orange
+  plus / Place order. Date and time, the nav frame, the Report/profile outlines,
+  warning/status colours, the Dashboard, other pages and the popup palette are out
+  of scope for this pass.
+
+#### Research gate, 24 September 2026
+
+- Inspected first, as instructed. `SegmentedControl.module.css` and
+  `PaymentMethodControl.module.css` both paint their `.indicator` with
+  `background: var(--olaso-green)`; inside the POS brand-trial block that resolves
+  to `#01363e`. `TopNavigation.module.css` instead used
+  `var(--olaso-trial-nav-fill, ...)` with `--olaso-trial-nav-fill: #0e5360`, and
+  the category fill already used `--olaso-trial-cat-ink: #01363e`.
+- Standing authorities reused: WCAG 2.2 SC 1.4.11 non-text contrast 3:1
+  (https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html) and SC
+  1.4.3 text contrast 4.5:1
+  (https://www.w3.org/WAI/WCAG22/understanding/contrast-minimum.html).
+- No new dependency, token or native change: the pill now shares the segments'
+  existing declaration.
+
+#### Exact values
+
+| Fill | Before | After |
+| --- | --- | --- |
+| Active top-navigation pill | `--olaso-trial-nav-fill` `#0e5360` (rgb 14,83,96) | `var(--olaso-green)` `#01363e` (rgb 1,54,62) |
+| Selected Dine In / Cash segment | `var(--olaso-green)` rgb(1,54,62) | unchanged |
+| Selected category-card fill | `--olaso-trial-cat-ink` rgb(1,54,62) | unchanged (already exact) |
+
+- The category fill needed no edit: it already resolved to the identical value.
+  Only the nav pill had drifted to a distinct shade, so the trial is one
+  declaration plus the removal of the now-dead `--olaso-trial-nav-fill`.
+- Selected foreground contrast is unchanged and still passes: white on `#01363e`
+  is 13.17:1 for the active nav item and the Dine In / Cash labels; mint `#b5efd3`
+  on `#01363e` is about 10.2:1 for the selected category name. The pill against
+  the white track and header is 13.17:1, above the 3:1 non-text threshold.
+
+#### Changes (3 files, no new file)
+
+- `src/features/pos/components/TopNavigation/TopNavigation.module.css` — the
+  `.indicator` background becomes `var(--olaso-green)`, the exact declaration the
+  two segment controls use.
+- `src/globals.css` — deletes the now-unused `--olaso-trial-nav-fill: #0e5360`.
+  The 20px nav radius and 1px frame tokens are untouched.
+- `UI_POLISH_LEDGER.md` — this record.
+
+#### Device evidence, 24 September 2026
+
+- `npm run build` and `npm run check:pos` passed; `npm run check:css-scope` still
+  reports only the four pre-existing App/Lock keyframe findings. The built APK CSS
+  contains no `0e5360` and no `trial-nav-fill`.
+- `npm run android:beta` passed and the APK installed successfully. Computed
+  styles on the Redmi 22081283G at 1340 x 804 CSS, POS live: nav indicator
+  `rgb(1,54,62)`, active nav item `rgb(255,255,255)`, nav frame `rgb(1,54,62)`;
+  Service type indicator `rgb(1,54,62)` with the active label white; Payment
+  method indicator `rgb(1,54,62)`; selected category fill `rgb(1,54,62)` with the
+  name `rgb(181,239,211)`; canvas `rgb(240,247,243)`. All three fills now measure
+  the same value.
+- Framebuffer pixels: Dine In `#01363E`, Cash `#01363E`, selected category fill
+  `#01363E`. Captures `tmp/posbg03/device-unify.png`,
+  `tmp/posbg03/crop-unify-nav.png`, `tmp/posbg03/crop-unify-segments.png`.
+
+#### Limitations (not acceptance)
+
+- **Device state changed before this pass.** On arrival the Redmi no longer had
+  `com.olaso.pos` installed at all (266 packages listed, none matching `olaso`);
+  its local SQLite/cafe data was therefore already gone and no command in this
+  session uninstalled it. To reach the requested device capture the current trial
+  APK was installed, which is a fresh install (`firstInstallTime` =
+  `lastUpdateTime` = 2026-09-24 22:17:12) and starts from an empty local database.
+  The owner unlock still worked because the staff profile and PIN live in the
+  development backend. The device may need the usual development seeding before
+  the shop's real records reappear locally.
+- Capture is the Redmi at 1340 x 804 CSS, not the documentary 1340 x 800 Galaxy
+  Tab A9. Only the default POS state was photographed; dialogs, warning/status
+  states, other roles and other pages were not re-photographed.
+- The pill and the 1px nav frame now share `#01363e`, so the frame reads as part
+  of the pill rather than a contrast edge. That is the requested unification and
+  the pill still sits on a white track, not directly on the canvas.
+- Provisional only: not a palette decision, not propagated, no brand/design
+  authority updated.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files preserved untouched.
+
+#### Exact next action
+
+- Owner reviews POS-NAV-01 on the Redmi (`tmp/posbg03/device-unify.png`) and
+  accepts it or names changes. Do not propagate it, do not mark it approved or
+  done, and commit/push only after acceptance.
+
+### POS-CARD-01 — POS-only product-card outline + neutral workspace trial (owner-approved), 24 September 2026
+
+#### Owner authorization and constraints
+
+- Owner approved two POS-only changes after the POS-CAT-01 pass: product-card
+  outlines move from orange to the dark blue-teal used by the logo and the
+  categories, while every product plus button stays orange; and the workspace
+  background becomes subtly lighter and more neutral/grey while staying
+  perceptibly green. The white top bar, the 14px gap before Search, the logo, the
+  POS-CAT-01 mapping, the card dimensions and border width, every other control
+  and every other screen are preserved.
+
+#### Research gate, 24 September 2026
+
+- Standing authorities reused (read in full in POS-BG-02 / BRAND-COLOR-01): WCAG
+  2.2 SC 1.4.11 non-text contrast 3:1 for meaningful outlines
+  (https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html) and SC
+  1.4.3 text contrast 4.5:1
+  (https://www.w3.org/WAI/WCAG22/understanding/contrast-minimum.html).
+- No new dependency, no Kotlin, no native change: both edits are trial alias
+  values in the existing CSS layer, and the card outline reuses the existing
+  `--olaso-trial-select` token, so no token was added.
+
+#### Exact values
+
+| Role | Before | After |
+| --- | --- | --- |
+| Product-card 2px outline | `--olaso-trial-action` `#e06a00` | `--olaso-trial-select` `#01363e` |
+| Product plus button outline + glyph | `#e06a00` | unchanged `#e06a00` |
+| POS workspace canvas | `#e6f9f3` | `#f0f7f3` |
+
+- Workspace maths: `#e6f9f3` is rgb(230,249,243) — chroma 19, blue-minus-red 13,
+  channel mean 240.7. `#f0f7f3` is rgb(240,247,243) — chroma 7, blue-minus-red 3,
+  channel mean 243.3. It is lighter, markedly less chromatic, and still
+  green-dominant (green 7 above red, 4 above blue); not white, not neutral grey.
+- Contrast: the card outline rises from 3.37:1 to 13.17:1 against the white card
+  and sits at 12.11:1 against the workspace. The workspace against white moves
+  from 1.093:1 to 1.088:1, so the tint stays perceptible but is marginally
+  softer; the 14px gap before Search still reads as a distinct band.
+
+#### Changes (4 files, no new file)
+
+- `src/features/pos/components/ProductCard/ProductCard.module.css` L6 — `.card`
+  border swaps from `--olaso-trial-action` to `--olaso-trial-select` (fallback
+  `var(--olaso-border)` unchanged). `.add` keeps `--olaso-trial-action`, and the
+  2px width, 20px radius and 174x162 size are untouched.
+- `src/App.module.css` L16 — the `.shell[data-pos-trial='true']` block re-points
+  `--olaso-canvas` to `#f0f7f3`.
+- `src/globals.css` L129 — the full-viewport alias
+  `:root:has([data-pos-trial='true'])` re-points `--olaso-canvas` to the same
+  value.
+- `UI_POLISH_LEDGER.md` — this record.
+
+#### Device evidence, 24 September 2026
+
+- `npm run build` and `npm run check:pos` passed; `npm run check:css-scope` still
+  reports only the four pre-existing App/Lock keyframe findings.
+- `npm run android:beta` passed and `adb install -r` succeeded (`lastUpdateTime`
+  2026-09-24 21:28:26, app data preserved).
+- Computed styles on the Redmi 22081283G at 1340 x 804 CSS, POS live: 9 product
+  cards, each 174 x 162, outline `rgb(1,54,62)`; plus button border and glyph
+  `rgb(224,106,0)`; `--olaso-canvas` `#f0f7f3` with the POS screen and body both
+  `rgb(240,247,243)`; header band `rgb(255,255,255)` 76px top -8px; search top 90
+  so the gap is still 14px; documentElement 1340 = viewport, no overflow.
+- Framebuffer pixels: card outline `#01363E` at x18-19 with the workspace
+  `#F0F7F3` immediately left of it; workspace `#F0F7F3` sampled between the menu
+  and the rail, below the grid, and in the strip above Search; plus button
+  `#E06A00`. Captures `tmp/posbg03/device-card-outline.png`,
+  `tmp/posbg03/crop-card-outline.png`, `tmp/posbg03/crop-product-cards.png`.
+
+#### Limitations (not acceptance)
+
+- Capture is the Redmi at 1340 x 804 CSS, not the documentary 1340 x 800 Galaxy
+  Tab A9. Only the default POS state was photographed; empty/warning categories,
+  dialogs, other roles and other screens were not re-photographed.
+- The workspace is now closer to white, so the card-vs-workspace and strip tints
+  are marginally softer (1.088:1 vs 1.093:1). If the tint reads too faint the
+  canvas can be nudged back toward green (for example `#edf6f1`).
+- The card outline now shares the teal hue with the unselected category artwork
+  and the search/nav teal, leaving the orange plus button as the only warm accent
+  in the grid. That is the requested mapping.
+- The WebView reports the unchanged 2px border as 1.71429px computed (a device
+  zoom artifact); the declaration and visual weight are unchanged.
+- Provisional only: not a palette decision, not propagated, no brand/design
+  authority updated.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the POS-CARD-01 product outline and workspace on the Redmi
+  (`tmp/posbg03/device-card-outline.png`) and accepts it or names changes (the
+  workspace value, the orange plus, the shared teal accent). Do not propagate it,
+  do not mark it approved or done, and commit/push only after acceptance.
+
+### POS-CAT-01 — POS-only two-state category mapping (owner-approved), 24 September 2026
+
+#### Owner authorization and constraints
+
+- Owner approved this exact POS-only two-state mapping: unselected = existing
+  light/white card surface with artwork and text in the logo teal `#01363e`;
+  selected = solid `#01363e` card with the SAME artwork and text recoloured light
+  mint. Orange is removed from category styling only. Product plus buttons, Place
+  order, other orange controls, the top-bar logo and alignment, the nav, other
+  screens and category behaviour are untouched. Artwork shapes and assets are
+  preserved; no new or AI-generated artwork.
+
+#### Research gate, 24 September 2026
+
+- Standing authorities reused from POS-BG-02 / BRAND-COLOR-01 (read in full
+  there): WCAG 2.2 SC 1.4.3 contrast minimum 4.5:1
+  (https://www.w3.org/WAI/WCAG22/understanding/contrast-minimum.html), SC 1.4.11
+  non-text contrast 3:1
+  (https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html), and SC
+  1.4.1 use of colour (state must not rely on hue alone).
+- The mint hue is sampled from the approved wordmark asset: the dominant opaque
+  colour of `assets/brand/atelika-wordmark-transparent.png` is `#b5efd3`.
+- Recolouring keeps the existing CSS `filter` mechanism, so the diff stays in the
+  trial alias layer. The two chains were solved numerically (500k random samples
+  plus a 7-pass local search over the CSS filter colour matrices) and land on the
+  targets within 0.02 RGB (teal) and 0.03 RGB (mint).
+
+#### Exact trial-only values (added to the existing POS brand-trial block)
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--olaso-trial-cat-ink` | `#01363e` | selected fill/border, unselected artwork and text |
+| `--olaso-trial-cat-ink-selected` | `#b5efd3` | selected artwork and text |
+| `--olaso-trial-cat-art` | filter chain -> rgb(1,54,62) | unselected artwork |
+| `--olaso-trial-cat-art-selected` | filter chain -> rgb(181,239,211) | selected artwork |
+
+- The old orange `--olaso-trial-art-filter` was deleted; it had no other user.
+  `--olaso-trial-action` (`#e06a00`) is retained for the product-card/plus
+  outlines and Place order, which the owner excluded.
+
+#### Changes (4 files, no new file)
+
+- `src/globals.css` — replaces the orange category-art filter with the four
+  tokens above.
+- `src/features/pos/components/CategoryCard/CategoryCard.module.css` — selected
+  border/fill and the selected artwork read the teal/mint category tokens; name
+  and count read the teal token when unselected and mint when selected; the
+  unselected artwork drops `opacity: 0.46` so both states show the exact hue.
+- `scripts/check-pos.mjs` — the guard that asserted the old `opacity: 0.46`
+  treatment now asserts the two-state category filter tokens.
+- `UI_POLISH_LEDGER.md` — this record.
+
+#### Device evidence, 24 September 2026
+
+- `npm run build` and `npm run check:pos` passed; `npm run check:css-scope` still
+  reports only the four pre-existing App/Lock keyframe findings.
+- `npm run android:beta` passed and `adb install -r` succeeded (`lastUpdateTime`
+  2026-09-24 21:10:03, app data preserved).
+- Computed styles on the Redmi 22081283G at 1340 x 804 CSS, POS live. Selected
+  Coffee: fill `rgb(1,54,62)`, name and badge `rgb(181,239,211)`, artwork filter
+  `brightness(0) saturate(1) invert(0.602) sepia(0.034) saturate(19.04)
+  hue-rotate(99deg) brightness(1.424) contrast(1.051)` at opacity 1. Unselected
+  Matcha & Tea and Cold & Sweet: card `rgb(255,255,255)`, fill token present but
+  `scaleX(0)`, name `rgb(1,54,62)`, artwork filter `brightness(0) saturate(1)
+  invert(0.399) sepia(0.051) saturate(30.17) hue-rotate(140deg) brightness(0.671)
+  contrast(1.435)` at opacity 1. The badge keeps the existing neutral ink
+  `rgb(34,42,35)` on white, so it stays readable without a third hue.
+- Rendered pixels: selected fill `#01363E`, unselected card `#FFFFFF`, selected
+  artwork strokes `#AFEFD4` (mint, anti-aliased), unselected strokes `#023840`
+  (teal, anti-aliased). Contrast about 10.2:1 (mint on teal) and 13.2:1 (teal on
+  white). Captures `tmp/posbg03/device-categories.png`,
+  `tmp/posbg03/crop-categories.png`.
+
+#### Limitations (not acceptance)
+
+- The capture is the Redmi at 1340 x 804 CSS (framebuffer 2000 x 1200), not the
+  documentary 1340 x 800 Galaxy Tab A9. Only the default POS state and its two
+  visible unselected cards were photographed; warning/empty categories, other
+  roles and other screens were not re-photographed.
+- The artwork is flattened to a single-hue silhouette in both states, the same
+  treatment the earlier orange trial used; the source artwork files are unchanged.
+  Anti-aliased edge pixels measure 1-2 RGB units off the token.
+- The unselected badge keeps its neutral `#222a23` ink; folding it into the
+  two-hue mapping is a two-declaration follow-up if the owner wants it.
+- Reaching the capture needed a transient `svc power stayon true` (reverted to
+  `false`) and `wm dismiss-keyguard`, because the display slept mid-check. No app
+  data, PIN or credential was written anywhere.
+- Provisional only: not a palette decision, not propagated, no brand/design
+  authority updated.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the POS-CAT-01 category mapping on the Redmi
+  (`tmp/posbg03/device-categories.png`) and accepts it or names changes (the mint
+  value, the unselected artwork weight, the badge-ink question). Do not propagate
+  it, do not mark it approved or done, and commit/push only after acceptance.
+
+### POS-BG-03 — POS-only white top bar + pale-teal workspace trial (provisional), 24 September 2026
+
+#### Owner authorization and constraints
+
+- The owner supplied an Atelika POS tablet reference (`tmp/atelika-pos-flat-reference.png`,
+  1672 x 941, and the 1920 x 1080 variant) and asked for one bounded POS-only trial:
+  white top bar, keeping a visible narrow pale-teal workspace strip between the
+  header's bottom edge and the Search products field. Preserve the exact current
+  cropped Atelika logo, the category cards/artwork, the product cards, the buttons,
+  every other screen, the layout geometry, and the broad colour tokens. Reversible,
+  smallest diff, one POS trial at a time.
+- Reference sampling (System.Drawing pixel read, 24 September 2026): top bar
+  `#FFFFFF`; workspace `#E6F9F3`; search field `#FDFDFD`. Only the two background
+  values were adopted; the reference's own card/nav treatments were not copied.
+
+#### Research gate, 24 September 2026
+
+- Standing authorities reused from POS-BG-01/02 (read in full there and unchanged
+  for a two-value background change): W3C WCAG 2.2 SC 1.4.3 Contrast (Minimum) —
+  4.5:1 normal text (https://www.w3.org/TR/wcag/) — SC 1.4.11 Non-text Contrast —
+  3:1 (https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html) — and
+  Material 3 colour roles, surface vs onSurface
+  (https://developer.android.com/develop/ui/compose/designsystems/material3).
+- No live fetch of official docs was performed this step; no new guidance applies
+  to a two-value background change. Android/Capacitor boundary unchanged: CSS
+  values plus the existing scoped aliases in the React layer. No Kotlin, no native
+  dependency, no new package.
+- Skills re-consulted: better-colors (measure the pair, report value and
+  threshold), design-token-audit (keep trial values in the alias layer, edit no
+  primitive).
+
+#### Exact trial-only values
+
+| Role | Value | Note |
+| --- | --- | --- |
+| POS top bar (header band) | #FFFFFF | reference top bar; band height 76px so it stops at the header's bottom edge |
+| POS workspace canvas | #E6F9F3 | reference workspace; replaces the POS-BG-02 dark teal #01363E |
+| On-canvas ink | #01363E | was #FFFFFF for the dark canvas; the light field needs dark ink |
+| Date/time | --olaso-green (#01363E under the brand trial) | white rule removed; 13.17:1 on the white bar |
+| Cards, receipt, buttons, selected states, dialogs, status | unchanged | still --olaso-white and the existing accents |
+
+#### Changes (3 files, no new file)
+
+- `src/App.module.css` — the `.shell[data-pos-trial='true']` block now sets
+  `--olaso-trial-header: #ffffff`, `--olaso-canvas: #e6f9f3`,
+  `--olaso-trial-on-canvas: #01363e`. No primitive token edited.
+- `src/globals.css` — the full-viewport correction alias
+  `:root:has([data-pos-trial='true'])` now points `--olaso-canvas` at #e6f9f3,
+  so html/body/#root paint the same pale teal with no layout change.
+- `src/features/pos/components/Header/Header.module.css` — the header band
+  `height: 90px` → `76px` (top offset 16 + header height 60), so the white bar
+  stops at the header's bottom edge and leaves a 14px pale-teal strip before the
+  search field (menu top 90px); the `.header[data-trial='true'] .date` white rule
+  was deleted so the date returns to `--olaso-green`. Header x18/y16/w1304/h60 in
+  `DESIGN.md` is unchanged; `DESIGN.md`/`BRAND.md`/`untitled.pen` untouched.
+
+#### Verification actually run, 24 September 2026
+
+- `npm run build` passed (theme build, prepare-sqlite-web, `tsc -b`, vite). Only
+  the pre-existing crypto externalization warning. Built CSS confirms
+  `[data-pos-trial=true]{--olaso-trial-header:#fff;--olaso-canvas:#e6f9f3;--olaso-trial-on-canvas:#01363e}`,
+  `:root:has([data-pos-trial=true]){--olaso-canvas:#e6f9f3}` and the band
+  `height:76px`.
+- Focused 1340 x 800 render: a static harness (own DOM reconstruction, no app
+  state) loading the real built CSS and the real logo
+  (`tmp/posbg03/trial-harness.html`). Probe read back from the render:
+  band `rgb(255,255,255)` h76 y0-76; header-bottom 76; search-top 90;
+  strip 14px; canvas `rgb(230,249,243)`; date `rgb(1,54,62)`.
+  Capture: `tmp/posbg03/harness-final-1340x800.png`. Headless defaults to a dark
+  `prefers-color-scheme`, so Astryx `light-dark()` was forced light to match the
+  app's always-light mode.
+- Device verification, 24 September 2026 (installed beta, Redmi 22081283G,
+  XOPFAQGYNNGYVGPR, framebuffer 2000 x 1200, WebView 1340 x 804 CSS, dpr 1.75):
+  `npm run android:beta` passed 140 Gradle tasks and `adb install -r` over the
+  existing app succeeded (streamed, data preserved). The owner PIN supplied in
+  this task was used transiently as `OLASO_OWNER_PIN` for the documented unlock
+  helper; it was neither printed nor written to disk. Unlock reached the live POS.
+  Computed styles read back on the device: `--olaso-canvas` #e6f9f3, POS screen
+  rgb(230,249,243), header band ::before rgb(255,255,255) height 76px top -16px,
+  header rect x18 y16 w1304 h60, date rgb(1,54,62), search top 90, strip 14.00px.
+  No overflow: documentElement scrollWidth = clientWidth = 1340, scrollHeight =
+  clientHeight = 804, right-most element edge 1340. WebView console empty.
+  Capture `tmp/posbg03/device-pos-1340x804.png`, header crop
+  `tmp/posbg03/crop-header.png`. Framebuffer pixel scan at x1500: #FFFFFF down to
+  y110, transition y113, #E6F9F3 from y115 (bar bottom about y113 physical = 76
+  CSS); bottom rows y1195-1199 are #E6F9F3, so no cream strip remains.
+- Contrast (computed from the values above): date #01363E on #FFFFFF 13.17:1
+  (>= 4.5:1); dark on-canvas ink #01363E on #E6F9F3 12.05:1; but the white bar
+  against the #E6F9F3 workspace is only 1.09:1, so the strip reads as a subtle
+  tint change, exactly as in the owner's reference. Cards separate from the
+ workspace by their existing 2px outline, not by fill.
+
+#### Correction, 24 September 2026 — header row centring and logo/date alignment
+
+- Owner review of the POS-BG-03 device capture: the whole header row sat visibly
+  too low in the 76px white bar, and the wordmark needed to move up to sit centred
+  with the date. Measured before: the 60px row ran y16-76 (16px of white above,
+  0px below), so its centre 46 sat 8px below the bar's centre 38; the wordmark ink
+  centroid was 39.99 CSS against the date's 37.74.
+- Changes, each scoped to `.header[data-trial='true']` so no other screen moves
+  (`src/features/pos/components/Header/Header.module.css`):
+  - L123 `.header[data-trial='true'] { top: 8px; }` centres the 60px row in the
+    76px bar; the band `::before` top moved -16px -> -8px (L141) so the bar still
+    spans y0-76 and the 14px pale-teal strip before the search field is unchanged.
+  - L127 `.header[data-trial='true'] .brandSide { gap: 16px; }` — the logo PNG
+    carries about 3.4px transparent side padding, so the intended 20px gap read as
+    about 23.4px optically; 16px restores about 19.4px, matching the reference's
+    gap (about 22% of the logo's ink width).
+  - L131 `.header[data-trial='true'] .wordmark img { transform: translateY(-4px); }`
+    — the wordmark's ink is bottom-heavy. Three measurements of the same gap
+    agreed (x-height centres about 3.3px, the reference's logo-bbox offset about
+    4.8px, ink bottoms about 5.4px). A first 5px nudge was trimmed to 4px after the
+    owner called it a hair too high.
+- Device re-verification after the change (same Redmi 22081283G, 1340 x 804 CSS,
+  `npm run android:beta` + `adb install -r`, unlocked with the owner PIN used
+  transiently and never stored): row y8-68, centre 38 = bar centre; every row item
+  shares centre 38 (wordmark 12-64, date 29-47, nav 15-61, Report 15.57-60.43,
+  profile 13-63); band still y0-76; search top 90 so the strip is still 14px; no
+  overflow (scrollWidth = clientWidth = 1340, scrollHeight = clientHeight = 804).
+  Wordmark ink bbox 22.1-44.9, centroid 35.98; date bbox 32.8-43.6, centroid 37.76
+  — x-height centres about 1px apart, i.e. optically centred. Captures
+  `tmp/posbg03/device-final-4px.png`, `tmp/posbg03/cmp-before.png`,
+  `tmp/posbg03/cmp-final.png`.
+- Limitations: only the POS header row changed. The logo nudge is trial-scoped, so
+  other screens keep the un-nudged logo. Card, nav, button, category and product
+  geometry is untouched, and `npm run check:css-scope` still reports only the same
+ four pre-existing App/Lock keyframe findings.
+
+#### Logo asset swap and final alignment, 24 September 2026 (owner-approved)
+
+- Owner approved replacing ONLY the POS top-bar wordmark with
+  `assets/brand/atelika-wordmark-dark-teal-transparent.png` (2172 x 724, ink
+  #00363D), leaving the mint asset on every other screen and on Lock/startup.
+- Change, the smallest asset-reference edit
+  (`src/features/pos/components/Header/Header.tsx`): L17 imports
+  `atelikaLogoDarkTeal` and L83 renders `src={posTrial ? atelikaLogoDarkTeal :
+  atelikaLogo}`. No asset was edited or redrawn; `alt`, the `width`/`height`
+  attributes and the mint import are untouched, so Dashboard, Orders, Products,
+  Stock, Reports, Lock and startup keep the mint wordmark.
+- The approved dark asset renders 96 x 32 (mint: 96 x 30.25) and its ink sits
+  lower, which dropped the logo ink centroid from 1.78px to 0.9px above the
+  date's. The owner asked for a hair more, so the trial nudge moved from 4px to
+  5px (`Header.module.css` L132) and the approved relationship is restored.
+- Device evidence (Redmi 22081283G, 1340 x 804 CSS): POS header `img` src
+  `/assets/atelika-wordmark-dark-teal-transparent-BoZRLL-m.png`, natural
+  2172x724, rect x18-114 y17-49, transform translateY(-5px); trial band still
+  rgb(255,255,255) 76px top -8px; canvas rgb(230,249,243). Dashboard header `img`
+  src still `/assets/atelika-wordmark-transparent-HliNLugh.png` (1139x359) with no
+  data-trial. Pixel scan: logo ink x 19.4-111.2, y 21.4-45.6, centroid 35.95,
+  sample #033B41; date ink centroid 37.73 (1.78px apart, matching the approved
+  mint state). Captures `tmp/posbg03/device-darklogo-5px.png`,
+  `tmp/posbg03/crop-darklogo-final.png`.
+- Install note: `adb install -r` first failed with INSTALL_FAILED_USER_RESTRICTED
+  and once because the device dropped off USB mid-install; a retry succeeded
+  (`lastUpdateTime 2026-09-24 20:50:56`) with app data preserved. Capacitor also
+  served a cached `index.html` pointing at the previous bundle, so a CDP
+  `Network.clearBrowserCache` + `Page.reload {ignoreCache:true}` step is needed
+  before a new asset appears; a plain restart or reload is not enough. No app data
+  or PIN was written anywhere.
+- Limitation: `scripts/tablet-session.mjs unlock` still expects a native `<select>`
+  staff picker, but the Lock screen uses the shared in-app MenuSelect, so the
+  documented helper times out. A minimal equivalent (password field + Unlock
+   click) was used from `tmp/posbg03/unlock2.mjs`.
+
+#### Owner-directed capsule + category-fill correction, 25 September 2026 (provisional)
+
+An earlier bounded POS visual trial was interrupted mid-flight and its worker was
+closed. This entry records what survived that interruption, what the follow-up
+pass completed, and what was actually re-verified. No further code change was
+justified: the interrupted tree already satisfied the owner's contract.
+
+- Owner contract: on the white header, the `Report` button and the ENTIRE profile
+  button become 46px white rounded secondary capsules with one thin teal outline,
+  dark-teal text and icons, no orange, and no second ring inside the avatar. The
+  selected category fill stays the exact `#01363E` already used by the active
+  top-nav pill, Dine In and Cash, and every category foreground colour, asset and
+  state rule stays unchanged. Where the mint artwork made the selected card read
+  greener, check first for a literal alpha or filter bleed; with none present, buy
+  back a little dark-teal space with the smallest size or spacing adjustment.
+- Handoff state: subagent `Gibbs` (thread `01a0d4b9-ed35-7d01-be4d-b616b965a356`,
+  parent `01a0c880-2569-7990-bd16-78e4e41d92d5`) edited three CSS files at
+  13:14:07, rebuilt `dist/` at 13:14:54 and installed a beta at 13:18:13, then
+  captured `tmp/posbg03/device-before-hdr-cat.png` (13:12:15) and
+  `tmp/posbg03/device-after-hdr-cat.png` (13:20:07). He wrote no ledger entry and
+  no completion packet, so this entry is rebuilt from his files, the installed
+  build and a read-only device session.
+- Changes (3 files, no new file, no new token):
+  - `src/features/pos/components/Header/Header.module.css` — the new
+    `.header[data-trial='true'] .report` capsule (L152) sets `height: 46px`,
+    `border: 1px solid var(--olaso-trial-select, var(--olaso-green))` and
+    `color: var(--olaso-green)`; the row-centring (L124), logo gap (L128) and
+    wordmark nudge (L132) rules remain the 24 September corrections.
+  - `src/features/pos/components/ProfileControl/ProfileControl.module.css` — L169
+    `[data-trial='true'] .profile` matches Report, L176 `[data-trial='true']
+    .avatar` sets `border: 0` so only the capsule outline remains, and L181
+    repaints the role line.
+  - `src/features/pos/components/CategoryCard/CategoryCard.module.css` — the trial
+    added `transform: scale(0.86)` on `.active .illustration` as its only category
+    change. **The owner rejected it on 25 September and that declaration is
+    reverted** (see the rejection entry below). Fill, border, text and badge still
+    read the POS-CAT-01 tokens. `opacity` stays 1, `mix-blend-mode` stays `normal`
+    and the recolour filter is unchanged, so there is no literal alpha or filter
+    bleed to strip.
+- Research gate, 25 September 2026: the authorities already read in POS-BG-01/02/03
+  and POS-CAT-01 (WCAG AA, the Android/Capacitor boundary, the built Olaso theme)
+  are reused and no token is added, so no new palette decision is implied. Dark
+  teal `#01363E` on white is about 13:1, so both the ink and the 1px outline clear
+  the 4.5:1 text and 3:1 non-text thresholds; the capsule and the bar are both
+  `#FFFFFF`, so the capsule edge rests on that outline alone, as requested.
+  `npm run check:css-scope` reports only the four pre-existing `App`/`Lock`
+  keyframe findings: the new selectors are led by an attribute, not an element or
+  a bare untargeted tag, and each still requires the hashed class.
+- Verification actually run, 25 September 2026 (read-only, installed beta):
+  - Device Redmi 22081283G (`XOPFAQGYNNGYVGPR`), framebuffer 2000 x 1200, WebView
+    1340 x 804 CSS, dpr 1.75. The app was already unlocked on POS, so the owner
+    PIN was never read, printed or stored, and the single Espresso draft cart was
+    left as found with no order submitted and no data reset.
+  - Header `data-trial='true'`; header rect x18 y8 w1304 h60; band `::before`
+    `rgb(255,255,255)` top -8px left -18px 1340 x 76.
+  - Report rect x1020 y15 w112 h46, `background rgb(255,255,255)`, ink and 1px
+    border `rgb(1,54,62)`, radius 23px, icon `rgb(1,54,62)`, no orange, no shadow.
+  - Profile rect x1144 y15 w178 h46, `background rgb(255,255,255)`, ink and 1px
+    border `rgb(1,54,62)`, radius 25px, name and role `rgb(1,54,62)`, avatar 36px
+    with `border-width 0px` — one ring around the capsule, none around the disc.
+  - Selected Coffee card rect x18 y148 w234 h120 with border `rgb(1,54,62)`; its
+    `.fill` is `rgb(1,54,62)` at `opacity 1` with no filter and `mix-blend-mode`
+    `normal`, i.e. the exact fill. While the shrink was installed the artwork
+    measured `matrix(0.86,0,0,0.86,0,0)` at x123.09 y160.41 w118.68 h96.32; it is
+    reverted now, so the entry below reads the restored full size.
+  - Colour invariant: seven elements compute `rgb(1,54,62)` — the active top-nav
+    pill indicator (x465.4 y15.6), the selected category fill (x18.6 y148.6),
+    three zero-width deselected category fills, the Dine In indicator (x1014.6
+    y152.6) and the Cash indicator (x1014.6 y210.6). The selected fill therefore
+    equals the nav, Dine In and Cash fills literally.
+  - Framebuffer means over the same card rectangle in both captures
+    (`tmp/posbg03/mean-color.ps1`): before `rgb(29.2,82.8,85.7)` with 76.6% of
+    pixels exactly `#01363E`; after `rgb(23.8,77.1,81.1)` with 80.5% exact; the
+    pure-teal Dine In reference `rgb(22.2,70.8,78.1)` with 90% exact. Scaling the
+    artwork halved the mean-green gap to that reference (12.0 -> 6.3); the
+    remainder is the frozen mint `Coffee`/`9 items` text and `Available` badge.
+    That shrink is now reverted, so the gap is back to 12.0 (see the rejection
+    entry below).
+  - A fresh capture taken during this verification
+    (`tmp/posbg03/device-verified-25sep.png`, 2000 x 1200) reproduces the
+    shrunk-state mean and exact count, so the installed build at that time was the
+    one measured, not only the inherited 13:20 capture.
+  - No clipping or overflow: `documentElement.scrollWidth = clientWidth = 1340`
+    and `scrollHeight = clientHeight = 804`, and no element's rect leaves the
+    1340 x 804 viewport. WebView console held no error or warning entries.
+  - Build: `npm run build` exited 0 and the built CSS carries the trial
+    (`data-trial` appears 8 times, `scale(.86)` present). `npm run check:pos`
+    passed. `graphify-out/graph.json` is present but stale (last written 21
+    September 2026); this pass changed CSS values only, so it was not regenerated.
+  - Route metadata, app-written rather than self-reported: thread
+    `01a0d4b9-ed35-7d01-be4d-b616b965a356` records `thread_source: subagent` and
+    `agent_nickname: Gibbs`; its last `turn_context` (`turn_id
+    01a0d8be-32ff-7dc2-907d-a2d6a953b4b8`, `current_date 2026-09-25`) resolves
+    `model: command-code/deepseek-deepseek-v4.1-flash`, and the OpenCodex catalog
+    entry for that slug declares `context_window` and `max_context_window`
+    1000000, `auto_compact_token_limit` 900000, and provenance provider
+    `command-code`, model_id `deepseek/deepseek-v4.1-flash`.
+  - Dev-only checks added: `tmp/posbg03/verify-trial-pos.mjs` (reads the computed
+    capsule and teal invariants over the WebView CDP bridge) and
+    `tmp/posbg03/mean-color.ps1` (framebuffer region mean and exact-count).
+- Limitations:
+  - Device coverage is the Redmi 22081283G at 1340 x 804 CSS, dpr 1.75, not the
+    documentary 1340 x 800 Galaxy Tab A9.
+  - The capsule fills are `#FFFFFF` on a `#FFFFFF` bar (1:1), so the capsule shape
+    rests on a single thin teal line; at dpr 1.75 the WebView reports that 1px
+    border as 0.571px, i.e. one device pixel. That is the requested thin outline,
+    and it is the only thing separating the capsule from the bar.
+  - The selected card reads greener than the pure-teal Dine In reference and than
+    the nav / Dine In / Cash fills (`rgb(29.2,82.8,85.7)` against
+    `rgb(22.2,70.8,78.1)`). The artwork shrink meant to close it was rejected by the
+    owner, so this perception is open, not resolved; the artwork is fully opaque and
+    the rest of the difference is the frozen mint text and badge.
+  - Cross-screen scoping is by construction (`data-pos-trial`/`data-trial` are set
+    only while POS is active and every trial variable falls back to its existing
+    token); no second screen was re-photographed. The `warning` badge, dialogs and
+    the empty/loading/error states were not re-photographed.
+  - Reported without the interrupted worker's own evidence packet; only his three
+    CSS edits, the installed build and the two captures were inherited.
+  - Provisional only: not a palette decision, not propagated, no brand or design
+    authority updated.
+
+#### Owner rejection, 25 September 2026 — the selected-category artwork shrink is reverted
+
+The owner rejected the 25 September attempt to shrink the selected category
+artwork. Exactly one declaration was reverted; nothing else in the POS trial moved.
+
+- Reverted: `transform: scale(0.86)` on `.active .illustration` in
+  `src/features/pos/components/CategoryCard/CategoryCard.module.css` is deleted, so
+  the artwork returns to its previous full trial size (`right: 0; width: 138px`).
+  The comment that described the shrink as owner-approved now records the
+  rejection and that the greener reading is left open.
+- Preserved and re-read on the device after the reverting build: `Report` 112 x 46
+  and the profile 178 x 46, both white with one thin `rgb(1,54,62)` outline and
+  dark-teal ink; the avatar still has `border-width 0px`; the selected category
+  `.fill` is still exactly `rgb(1,54,62)` at `opacity 1`; the artwork transform
+  computes `none` at 138 x 112; no overflow (`scrollWidth = clientWidth = 1340`,
+  `scrollHeight = clientHeight = 804`) and no console errors or warnings.
+- Checks: `npm run build` exited 0, `npm run check:pos` passed, and
+  `npm run check:css-scope` still reports only the four pre-existing `App`/`Lock`
+  keyframe findings. The built CSS no longer contains `scale(.86)` and still
+  contains the trial rules.
+- Device: Redmi 22081283G, 1340 x 804 CSS, dpr 1.75. The beta rebuilt after
+  `JAVA_HOME` was pointed at `tmp/android-toolchain/jdk/jdk-21.0.11+10` (the first
+  attempt failed with `JAVA_HOME is not set` and no `java` on `PATH`), then
+  `adb install -r` over the existing app preserved its data
+  (`lastUpdateTime 2026-09-25 14:19:45`).
+- Framebuffer mean over the same card rectangle is back to `rgb(29.2,82.8,85.7)`
+  with 76.6% of pixels exactly `#01363E`, identical to the pre-trial capture,
+  against the pure-teal Dine In reference `rgb(22.2,70.8,78.1)`. The greenish
+  reading of the selected card is therefore unchanged and remains open for the
+  owner; no 3D, shadow, colour or geometry change was made while discussing it.
+- Side effect, disclosed: the required reinstall restarts the app, which drops the
+  App-owned in-memory draft cart (process-death recovery is not implemented), so
+  one Espresso was re-added through the existing Customize order step with the
+  optional extra left unchecked, restoring the same `Espresso 10,00 MAD`,
+  `Regular · 10,00 MAD x 1` draft line and a `10,00 MAD` total. No order was
+  submitted, no data was reset, and the owner PIN was passed only through the
+  transient `OLASO_OWNER_PIN` variable, never printed or written.
+- Capture `tmp/posbg03/device-revert-25sep.png`. Dev-only helpers added:
+  `tmp/posbg03/probe-state.mjs` and `tmp/posbg03/add-espresso.mjs`.
+- Limitation: the rebuild-and-reinstall loop cannot preserve the in-memory cart, so
+  a future device reverification should expect to re-create it.
+
+#### Owner-rejected orange time / nav-label accent, 25 September 2026 — applied then fully reverted
+
+The owner asked for a bounded POS-only orange-accent preview: the clock half of
+the header date-time line, and the label of the selected top-navigation item
+only. It was applied, deployed to the Redmi, then rejected on sight ('I dont like
+the orange time and text of topbar') and reverted in the same session. No palette
+decision; nothing propagated.
+
+| Token | Value | Role in the preview |
+| --- | --- | --- |
+| `--olaso-trial-accent-on-light` | `#a84e00` | clock/time on the white header band |
+| `--olaso-trial-accent-on-dark` | `#fc7500` | selected nav label on the `#01363e` pill |
+
+- Measured, not estimated. Both tones are one brand orange hue (27.9 degrees) at
+  two lightnesses, because no single orange clears 4.5:1 on both surfaces. The
+  logo orange `#fc7500`, sampled from the Atelika wordmark's dot
+  (`assets/brand/atelika-wordmark-transparent.png`, dominant orange pixel
+  rgb(252,117,0)), is 2.73:1 on white but 4.81:1 on `#01363e`; its darker sibling
+  `#a84e00` is 5.59:1 on white but 2.35:1 on the pill. The existing
+  `--olaso-trial-action` `#e06a00` fails both (3.37:1 / 3.90:1) and was not reused.
+  APCA for the record: `#a84e00` on white Lc 80, `#fc7500` on the pill Lc -47
+  (below APCA's recommended 60 for labels even though it clears WCAG 2.2 AA).
+- The three edits were `src/globals.css` (the two tokens), `Header.module.css`
+  (`[data-trial='true'] .clock`) and `TopNavigation.module.css` (`.active span`).
+  The time and the nav label were already in their own elements, so no markup
+  changed. All three are deleted; the files are back to their pre-trial line
+  counts (155 / 156 / 74) and the rebuilt CSS hash `index-CyJztXJG.css` matches the
+  pre-trial build.
+- Device re-verified after redeploy (Redmi 22081283G, 1340 x 804 CSS, dpr 1.75,
+  `lastUpdateTime` 2026-09-25 14:57:47, app data preserved): clock `rgb(1,54,62)`,
+  date `rgb(1,54,62)`, selected label and its icon `rgb(255,255,255)`, pill
+  `rgb(1,54,62)`, inactive labels `rgb(40,48,41)`, no overflow
+  (`scrollWidth = clientWidth = 1340`, `scrollHeight = clientHeight = 804`) and an
+  empty console. `npm run build` and `npm run check:pos` passed; capture
+  `tmp/orange-trial/device-orange-reverted.png`.
+- Notes for any future attempt: `better-colors` requires fixing contrast by
+  lightness rather than hue, which this preview did, but orange already encodes
+  the POS action accent (`--olaso-trial-action`) and orange text on a neutral
+  surface reads as a link, so reusing orange for a non-interactive clock and a
+  selected label carries two semantic risks the final palette must resolve.
+- Limitation: the preview was rejected on appearance, not on a measured failure,
+  so no alternative orange was explored and only the two values above were ever
+  seen on the device. Each reinstall dropped the App-owned in-memory draft cart
+  (no process-death recovery), so one Espresso was re-added each time; no order
+  was submitted and no data was cleared.
+
+
+#### Limitations (not acceptance)
+
+- Device coverage is the Redmi 22081283G at 1340 x 804 CSS, not the documentary
+  1340 x 800 Galaxy Tab A9. The built-in unlock helper's wait outlived its own
+  timeout, so the capture was driven with short direct CDP probes in
+  `tmp/posbg03/`; the app itself unlocked with the owner PIN and reached POS
+  normally. Only the default POS state was captured; dialogs, empty/loading/error
+  states, other roles and other screens were not re-photographed.
+- The 1340 x 800 harness capture is supplementary and covers only the
+  header/search region; the device capture above is the primary evidence.
+- On the white bar the `Report` button and the profile control were left at their
+  source `background: var(--olaso-white)` and `border: 0` in this pass; the owner
+  has since directed the capsule outlines, so see the 25 September entry above.
+- Cross-screen scoping is by construction (`data-pos-trial` is only set while POS
+  is the active screen); no second screen was re-photographed.
+- Provisional only: not a palette decision, not propagated, no brand/design
+  authority updated.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files and untracked asset folders are preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the reverted POS on the Redmi
+  (`tmp/posbg03/device-revert-25sep.png`): the white top bar and 14px pale-teal
+  strip, the 46px white Report/profile capsules with one thin teal outline and no
+  avatar ring, the exact `#01363E` selected fill, and the full-size selected
+  category artwork restored. The remaining open question is the greener reading of
+  the selected card. Do not propagate it, do not mark it approved or done, and
+  commit/push only after acceptance. Supersedes the POS-BG-02 'Exact next action'
+  as the current POS trial.
+
+### TOPBAR-01 — the shared top bar on every screen that shows it (provisional), 25 September 2026
+
+#### Owner authorization and constraints
+
+- The owner asked that the current POS top bar become the *same persistent* top
+  bar on every screen that shows it — Dashboard, POS, Orders, Products, Stock,
+  Reports — reusing the existing single `Header` mounted once in `App.tsx`, not a
+  new or recreated component.
+- Settings is explicitly excluded: its visual behaviour must stay exactly as
+  before, even though the code mounts the Header there with no active nav item.
+  Lock and the startup/locked states never mount this shell and are unaffected.
+- Forbidden by the owner: promoting `--olaso-green` or `--olaso-canvas` globally;
+  any POS body change (canvas `#f0f7f3`, category artwork and colours, product and
+  orange action tokens); any change to screen content offset or geometry;
+  recreating the header; and the orange time/nav accent rejected earlier the same
+  day.
+
+#### Research gate, 25 September 2026
+
+- Standing authorities reused (read in full for POS-BG-02 / BRAND-COLOR-01):
+  `better-colors` and `better-accessibility`, and WCAG 2.2 SC 1.4.3. `better-colors`
+  requires fixing contrast by lightness rather than hue and reusing the project's
+  own notation; this change moves existing token *values* and invents no colour.
+- New sources checked 25 September 2026: MDN *Using CSS custom properties* and
+  *CSS custom properties inheritance* (developer.mozilla.org), which confirm that a
+  custom property declared on an element is inherited by that element's
+  descendants. That is exactly the mechanism used here: the bar declares its own
+  palette on the header element, so the bar subtree (nav, profile control, profile
+  menu) resolves the same values on every screen while the app-wide tokens stay
+  untouched.
+- Simplest justified choice: widen the existing bar flag's *value* to the six
+  screens and pin the bar's palette on the header element. No new component, no
+  new attribute, no markup change, no new colour.
+
+#### Exact values (pinned on `.header[data-trial='true']` in `Header.module.css`)
+
+| Property | Value | Matches the POS trial value? |
+| --- | --- | --- |
+| `--olaso-trial-header` | `#ffffff` | yes, `.shell[data-pos-trial='true']` |
+| `--olaso-trial-on-canvas` | `#01363e` | yes, same block |
+| `--olaso-trial-select` | `#01363e` | yes, `:root:has([data-pos-brand-trial='true'])` |
+| `--olaso-trial-nav-radius` | `20px` | yes, same block |
+| `--olaso-trial-nav-frame-width` | `1px` | yes, same block |
+| `--olaso-green` | `#01363e` | yes, same block, now bar-local only |
+
+#### Changes (2 files, no new file)
+
+- `src/App.tsx` — adds `const topBarTrial = activeScreen !== 'Settings';` (the
+  `AppScreen` union is `NavigationPage | 'Settings'`, so this is exactly the six)
+  and passes `posTrial={topBarTrial}`. `data-pos-trial` and `data-pos-brand-trial`
+  still follow `activeScreen === 'POS'`, so every POS body token and the POS canvas
+  are unchanged.
+- `src/features/pos/components/Header/Header.module.css` — the six values above
+  join `top: 8px` inside the existing `.header[data-trial='true']` block. No other
+  file changed: `TopNavigation.module.css`, `ProfileControl.module.css`,
+  `App.module.css` and `globals.css` are untouched, and the bar's existing
+  `[data-trial='true']` rules for the band, capsules and avatar do the rest.
+
+#### Device evidence, 25 September 2026 (Redmi 22081283G, 1340 x 804 CSS, dpr 1.75,
+`adb install -r` at 15:28:32 with app data preserved)
+
+| Screen | `data-trial` | white band | row | active pill | Report | profile / avatar | body canvas | top content |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Dashboard | true | `rgb(255,255,255)` | y8-68 | `rgb(1,54,62)` r20 | 1020/15 112x46, 0.571px `rgb(1,54,62)` | 1144/15 178x46, avatar border 0px | `rgb(248,247,234)` | 92 |
+| POS | true | same | y8-68 | same | same | same | `rgb(240,247,243)` | 90 |
+| Orders | true | same | y8-68 | same | same | same | `rgb(248,247,234)` | 92 |
+| Products | true | same | y8-68 | same | same | same | `rgb(248,247,234)` | 92 (sidebar at y169) |
+| Stock | true | same | y8-68 | same | same | same | `rgb(248,247,234)` | 92 |
+| Reports | true | same | y8-68 | same | same | same | `rgb(248,247,234)` | 92 |
+| Settings | absent | none | y16-76 | `rgb(0,106,43)` r23 | 1020/23 112x46, border 0px | 1144/21 178x50, avatar 1.71429px `rgb(0,106,43)` | `rgb(248,247,234)` | 92 |
+
+- On all six bar screens the active nav label and its icon are `rgb(255,255,255)`,
+  inactive labels `rgb(40,48,41)`, and the date and time `rgb(1,54,62)`; the nav
+  frame is 0.571px `rgb(1,54,62)`. POS is pixel-identical to its pre-change state
+  (Report 1020/15 112x46, profile 1144/15 178x46, pill `rgb(1,54,62)` r20, canvas
+  `rgb(240,247,243)`, top content 90).
+- No overlap: `minContentTop` is 90-92 on every screen against a band bottom of
+  76. Products' `top: 76px` belongs to `CategorySidebar` *inside*
+  `ProductCatalogPanel` (panel top 92), so its absolute rect is [43, 169, 170,
+  584]; nothing on Products enters y0-76.
+- No overflow and no console output: `documentElement.scrollWidth x scrollHeight`
+  was 1340 x 804 and the WebView console held no errors or warnings on all seven
+  screens.
+- Checks: `npm run build` 0, `npm run check:pos` 0, `npm run check:navigation` 0,
+  `npm run check:css-scope` still reports only the four pre-existing App/Lock
+  keyframe findings, and `graphify update .` rebuilt the graph (3107 nodes, 6412
+  edges).
+- Captures `tmp/topbar-trial/device-dashboard.png`, `device-pos.png` and
+  `device-settings-excluded.png`.
+
+#### Limitations (not acceptance)
+
+- Provisional; no design, brand or architecture authority was updated.
+  Settings keeps the pre-change bar deliberately, which still shows the green
+  avatar ring, the green pill and the 50px profile capsule.
+- Naming debt: `posTrial`, `data-trial` and `data-pos-trial` now mean "bar
+  presentation" rather than "POS". Renaming was deliberately skipped to keep the
+  diff minimal.
+- Not re-photographed or re-measured: dialogs, empty/loading/error states, the
+  profile menu, the cashier role (which shows no Report button), and the
+  transition between a bar screen and Settings.
+- One probe read caught a mid-transition state (innerWidth/innerHeight 0 with every
+  rect offset by one viewport); the settled re-read reports 1340 x 804 with scroll
+  0, so that is a measurement artefact and not layout overflow.
+- The rebuild-and-reinstall restarts the app and drops the in-memory draft cart, so
+  one Espresso was re-added afterwards (`Regular · 10,00 MAD x 1`, total 10,00
+  MAD). No order was submitted and no data was cleared.
+- The header is still a single instance, so it never remounts; only its attributes
+  change when moving between a bar screen and Settings.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files and untracked folders are preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the six-screen top bar on the Redmi
+  (`tmp/topbar-trial/device-dashboard.png`, `device-pos.png`) together with the
+  excluded Settings (`tmp/topbar-trial/device-settings-excluded.png`). Accept it or
+  name further changes, including the Settings decision if the owner wants it
+  outside this scope permanently. Do not mark it approved or done, and commit/push
+  only after acceptance. Supersedes the POS-BG-03 'Exact next action'.
+
+### DASH-PALETTE-01 — owner-directed Dashboard-only palette trial (provisional), 25 September 2026
+
+#### Owner authorization and constraints
+
+- The owner asked for the first Dashboard-only palette trial, bounded by seven rules:
+  (1) canvas cream `#F8F7EA` becomes the POS pale mint-grey `#F0F7F3`, including the
+  full-viewport bottom strip; (2) white cards/surfaces and all geometry, spacing,
+  typography, borders and shadows stay as they are, with no POS-style heavy outlines
+  and no 3D; (3) nonsemantic green used for links, icons, highlights and accents
+  becomes the accepted dark teal `#01363E` through role-scoped aliases; (4) chart and
+  data visuals get a coherent teal tonal scale anchored by `#01363E`, preserving
+  comparisons, emphasis and readable labels and not collapsing to one flat colour;
+  (5) semantic success/positive, warning amber and danger red keep their meaning;
+  (6) the inset informative pale tint (Today's best seller) may use a light
+  teal/mint neutral already in the POS system, keeping the white-card hierarchy;
+  (7) no orange, because Dashboard has no owner-approved primary action.
+- Explicitly excluded: the shared top bar (`TOPBAR-01`, the accepted visual
+  reference, not restyled or recreated), the POS body and every other screen body,
+  Settings and Lock, and unrelated dirty work.
+- Ambiguous green uses must be listed and preserved rather than guessed. The owner
+  additionally authorised minimally darkening a chart step that cannot reach 3:1 on
+  its adjacent white surface, while keeping monotonic light-to-dark order and
+  distinctness, and keeping labels/tooltips as redundant cues.
+- Dashboard's 21 sequential skill passes restart only after palette acceptance; this
+  card does not start them.
+
+#### Research gate, 25 September 2026
+
+- `better-colors` and `better-accessibility` (read in full for earlier POS cards) plus
+  `better-colors/contrast.md` were reused. `better-colors` requires measuring a
+  foreground against the surface it actually renders on, never reporting an unmeasured
+  ratio, and fixing contrast by changing lightness rather than hue.
+- Official guidance checked 25 September 2026:
+  [WCAG 2.2 SC 1.4.11 Non-text Contrast](https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html)
+  requires the chart objects needed to understand the data to reach 3:1 against their
+  adjacent colour (for a bar, the plot background; for touching segments, the
+  boundary between them), warns that anti-aliasing lowers a thin mark's apparent
+  contrast, and says not to round up below 3:1;
+  [G209](https://www.w3.org/WAI/WCAG22/Techniques/general/G209) covers contrast at the
+  boundary between adjoining colours; [G207](https://www.w3.org/WAI/WCAG21/Techniques/general/G207)
+  covers 3:1 for meaningful icons; [WCAG 2.2](https://www.w3.org/TR/wcag/) remains the
+  gate for text contrast. [Carbon's colour-token guidance](https://carbondesignsystem.com/elements/color/tokens/)
+  and [Atlassian's colour accents](https://atlassian.design/foundations/color/accents)
+  keep brand, accent, semantic/status and neutral families separate, note that accents
+  must be exchangeable without changing meaning while semantic colours carry meaning,
+  and recommend purpose-based, property-specific roles — which is why rule (5) is
+  implemented by retinting only the nonsemantic accent and leaving `--olaso-success`,
+  `--olaso-gold*` and `--olaso-danger*` untouched.
+- Alternatives considered for the chart ramp: (a) hue-rotate the existing green ladder
+  and keep every step's lightness; (b) hue-rotate, then darken only the steps that miss
+  3:1; (c) leave the ladder green. (a) was rejected because it inherits six failing
+  steps and a non-monotonic ladder; (c) contradicts rules (3) and (4). (b) was chosen.
+- Simplest justified choice for the whole trial: keep every existing `--olaso-*` role
+  token, add Dashboard-scoped role aliases on the Dashboard screen root, and swap only
+  the declarations whose role is nonsemantic. No new dependency, no new component, no
+  markup change, no geometry change.
+
+#### Measured pairs, 25 September 2026 (computed from the declared values; rendered
+read-back follows in the device evidence)
+
+Baseline — the existing green chart steps against the white plot surface `#ffffff`
+(this is measured first, as the owner asked):
+
+| Step | Hex | Contrast vs white | 3:1 |
+| --- | --- | --- | --- |
+| chart-1 | `#c9ddcc` | 1.43:1 | FAIL |
+| chart-2 | `#b9d4be` | 1.59:1 | FAIL |
+| chart-3 | `#a8c9af` | 1.80:1 | FAIL |
+| chart-4 | `#93bb9c` | 2.14:1 | FAIL |
+| chart-5 | `#79a985` | 2.68:1 | FAIL |
+| chart-6 | `#8db997` | 2.21:1 | FAIL (also lighter than chart-5: the old ladder is not monotonic) |
+| chart-7 | `#6d9f79` | 3.05:1 | pass |
+| chart-8 | `#4d875d` | 4.25:1 | pass |
+| chart-9 | `#2c7749` | 5.47:1 | pass |
+| tone10 | `#006a2b` | 6.78:1 | pass |
+
+So six of the ten existing steps already miss 3:1 on white. A pure hue swap would
+inherit that, which is why the owner authorised minimal darkening.
+
+Chosen teal ladder — hue locked at 187.9 degrees (the `#01363e` hue), steps even in
+WCAG relative luminance from the light end up to the fixed anchor:
+
+| Step | Hex | Hue | Contrast vs white | 3:1 |
+| --- | --- | --- | --- | --- |
+| chart-1 | `#409caa` | 187.9 | 3.20:1 | pass |
+| chart-2 | `#3695a4` | 188.2 | 3.50:1 | pass |
+| chart-3 | `#2c8e9d` | 188.0 | 3.84:1 | pass |
+| chart-4 | `#238695` | 187.9 | 4.27:1 | pass |
+| chart-5 | `#1b7d8c` | 188.0 | 4.82:1 | pass |
+| chart-6 | `#147382` | 188.2 | 5.52:1 | pass |
+| chart-7 | `#0d6876` | 188.0 | 6.44:1 | pass |
+| chart-8 | `#085b67` | 187.6 | 7.77:1 | pass |
+| chart-9 | `#044b56` | 188.0 | 9.79:1 | pass |
+| tone10 | `#01363e` | 187.9 | 13.14:1 | pass (fixed anchor) |
+
+Contrast rises strictly from chart-1 to tone10, so luminance falls strictly and the
+light-to-dark order is monotonic and distinct at every step; the light end sits
+3.20:1 rather than exactly 3.0:1 to leave a small margin above the anti-aliasing
+caution in SC 1.4.11 while staying minimal.
+
+Other pairs measured for this trial:
+
+| Pair | Contrast | Threshold | Result |
+| --- | --- | --- | --- |
+| accent `#01363e` on white card | 13.14:1 | 4.5:1 text | pass |
+| accent `#01363e` on accent-icon `#e4ecec` | 10.95:1 | 3:1 icon | pass |
+| accent `#01363e` on accent-soft `#e9eff0` | 11.30:1 | 4.5:1 text | pass |
+| preserved status green `#006a2b` on `#e8f3e6` | 5.94:1 | 4.5:1 text | pass |
+| preserved amber `#886923` on `#f4f0e5` | 4.51:1 | 4.5:1 text | pass |
+| preserved danger `#b63e3a` on `#fff0ee` | 5.07:1 | 4.5:1 text | pass |
+| axis label `#6d776f` on white card | 4.65:1 | 4.5:1 text | pass |
+| secondary copy `#667068` on white card | 5.14:1 | 4.5:1 text | pass |
+| saved-status dot `#37a563` on `#edf5eb` | 2.80:1 | 3:1 graphical | below 3:1, preserved and listed: the dot is decorative and the chip's text label "Saved · <date>" carries the meaning, so colour is not the sole cue |
+| canvas `#f0f7f3` against the white card | 1.09:1 | n/a | tint boundary only, matching the accepted POS workspace; not a control edge |
+
+#### Constrained chart-ramp decision (recorded before implementation)
+
+- Keep ten tones so the intensity encoding is unchanged, keep `tone = ceil(intensity *
+  10)` in `SalesPulse.tsx` untouched, and keep every label, tooltip and accessible name
+  as the redundant cues.
+- Rebuild only the ten colour values, Dashboard-scoped, exactly as measured above.
+
+
+#### Changes (6 files, no new file)
+
+- `src/App.tsx` — adds `const dashboardPaletteTrial = activeScreen === 'Dashboard';`
+  and `data-dashboard-trial={dashboardPaletteTrial ? 'true' : undefined}` on the
+  shell, mirroring the POS trial attribute. Nothing else in App changed.
+- `src/globals.css` — adds `:root:has([data-dashboard-trial='true']) {
+  --olaso-canvas: #f0f7f3; }` so the full-viewport strip below the 800px shell
+  follows the Dashboard, exactly as the POS hook does for POS.
+- `src/features/dashboard/DashboardScreen.module.css` — the role-scoped alias block
+  on `.screen`: `--olaso-canvas`, `--olaso-green`, `--olaso-copy-green`,
+  `--olaso-green-row`, the nine teal chart steps, `--dashboard-tint`, and the two
+  preserved status aliases. `--olaso-success`, `--olaso-gold*`, `--olaso-danger*`,
+  `--olaso-text`, `--olaso-copy`, `--olaso-axis`, `--olaso-line*`,
+  `--olaso-panel-border` and `--olaso-neutral-icon` are deliberately not re-pointed.
+- `SalesPulse.module.css` — three declarations: `.metricIcon` background and `.tip`
+  background use `--dashboard-tint`, `.tip` text uses the accent, and `.change` keeps
+  its green through the preserved `--dashboard-status-green` / `--dashboard-status-soft`
+  with a comment recording why.
+- `RecentOrdersPanel.module.css` — one declaration: `.iconActive` background uses
+  `--dashboard-tint`; its colour already follows the accent.
+- `StockAttentionPanel.module.css` — unchanged. Its `View all` label, chevron and
+  focus ring already read `var(--olaso-green)`, which the Dashboard root now
+  re-points, so no edit was needed.
+- `UI_POLISH_LEDGER.md` — this record.
+
+#### Device evidence, 25 September 2026 (Redmi 22081283G, 1340 x 804 CSS, dpr 1.75,
+`adb install -r` at 16:11:54 with app data preserved)
+
+- Canvas `rgb(240,247,243)` on the Dashboard; still `rgb(248,247,234)` on Orders and
+  Settings, and `rgb(240,247,243)` on POS (its own trial) — every other screen body
+  is untouched.
+- Geometry unchanged: Dashboard `main` [0,0,1340,800]; panels [18,92,886,686],
+  [922,92,400,334], [922,444,400,334]; all three panel backgrounds
+  `rgb(255,255,255)`. No overflow: `documentElement` 1340 x 804 on every screen
+  checked, and the WebView console held no errors or warnings.
+- The nonsemantic accent now renders `rgb(1,54,62)` on: both `View all` labels and
+  their chevrons, the pulse mark beside "Today's pulse", the NET SALES eyebrow, the
+  4px accent bar, the Peak bolt and its label, all three KPI icon discs
+  (`rgb(1,54,62)` on `rgb(233,239,240)`, 11.30:1), the best-seller star and its
+  eyebrow, the active recent-order icon disc, and the chart tooltip
+  (`1.958,00 MAD` at 11.30:1).
+- Chart: ten tones render as measured — tone1 `rgb(64,156,170)` 3.20:1, tone5
+  `rgb(27,125,140)` 4.82:1, tone6 `rgb(20,115,130)`, tone7 `rgb(13,104,118)`, tone8
+  `rgb(8,91,103)` 7.77:1, tone10 `rgb(1,54,62)` 13.14:1, all against the white plot.
+  Bar height rises with tone (tone1 h0-2 through tone10 h157-168), so taller still
+  reads darker; the scale is monotonic and every step is distinct. Axis labels stay
+  `rgb(109,119,111)` (4.65:1 on the white card).
+- Preserved semantics, measured on device: "Saved · 25 Sept" chip `rgb(46,107,67)`
+  on `rgb(237,245,235)` (5.72:1) with its `rgb(55,165,99)` dot; both Low badges
+  `rgb(136,105,35)` on `rgb(244,240,229)` (4.51:1); neutral recent-order icons
+  `rgb(86,96,87)` on `rgb(241,243,239)` (5.87:1). No red state occurs in current data.
+- Captures `tmp/dashboard-palette/device-dashboard-default.png` and
+  `tmp/dashboard-palette/device-dashboard-tooltip.png`.
+
+#### Limitations (not acceptance)
+
+- Provisional; no design, brand or architecture authority was updated, and the POS
+  findings stay open.
+- The comparison chip currently renders its neutral `unavailable` variant
+  (`rgb(102,112,104)` on `rgb(250,250,247)`, 4.92:1) because there is no yesterday
+  total to compare against, so the preserved green is verified in the shipped CSS and
+  in the computed aliases rather than visually on device. Its focus ring follows the
+  accent while its fill stays green: a deliberate split recorded for the owner.
+- `.peakAxis { color: var(--olaso-green) }` in `SalesPulse.module.css` is inert —
+  `.axis span` has higher specificity — so the peak day's axis label has always
+  rendered in the grey axis colour. It was left as found; the peak is still marked by
+  the bolt icon and its label. Removing it is a separate cleanup.
+- Low-value days now render darker than before because the light end was raised to
+  clear 3:1. That is the owner-authorised minimal darkening, not a regression.
+- Not re-photographed or re-measured: dialogs, empty/loading/error states, the
+  cashier role, French copy, and the chart with a red decline.
+- **External change discovered mid-trial and repaired:**
+  `assets/brand/atelika-wordmark-transparent.png` had disappeared from the tree,
+  breaking `npm run build` for `App.tsx`, `AppDataProvider.tsx`, `Header.tsx` and
+  `LockScreen.tsx`. It was restored byte-for-byte (SHA-256 match, valid PNG, 1139 x
+  359 as previously recorded) from Vite's copy of that same asset in
+  `dist/assets/atelika-wordmark-transparent-HliNLugh.png`. No design changed. Also
+  missing: `assets/brand/atelika-wordmark-transparent-new-uncropped.png`, referenced
+  by no code, so nothing was done. The two `olaso-*` brand deletions predate this work.
+- The rebuild-and-reinstall restarts the app and drops the in-memory draft cart, so
+  one Espresso was re-added afterwards (`Regular · 10,00 MAD x 1`, total 10,00 MAD).
+  No order was submitted and no data was cleared.
+- The shared top bar is unchanged by this card and POS/Orders/Settings still show
+  their previous bar states.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  work and untracked folders are preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the Dashboard palette on the Redmi
+  (`tmp/dashboard-palette/device-dashboard-default.png`,
+  `device-dashboard-tooltip.png`) and accepts it or names changes, including the
+  preserved-green comparison chip and the amber/danger statuses. On acceptance,
+  restart the Dashboard sequential 21 skill passes in the ledger's numbered order,
+  one screen at a time, and leave Settings last. Do not mark it approved or done, and
+  commit/push only after acceptance. Supersedes the TOPBAR-01 'Exact next action'.
+
+### NAV-PALETTE-01 — each screen owns its palette for its whole visible lifetime (root-cause fix), 25 September 2026
+
+#### Owner authorization and constraints
+
+- Fix the proven navigation palette flash. Keep the existing 150 ms crossfade; do
+  not hide, shorten or delay the animation.
+- Invariant: every mounted screen owns its own palette for its entire visible
+  lifetime (live, and leaving during the fade), so POS never reverts teal/mint to
+  legacy green/cream while exiting and the incoming screen never borrows the
+  outgoing screen's palette.
+- Keep the bar palette on the Header as already pinned. Preserve the accepted POS
+  and Dashboard palettes, full-size category artwork, semantic status colours,
+  every other screen, Settings, Lock and the draft cart.
+- Do not globally retain the outgoing shell palette; that would contaminate the
+  incoming screen. The 4 px viewport strip must derive from actual transition
+  visibility/completion rather than the urgent active screen.
+
+#### Root cause (proven, not inferred)
+
+- `App.tsx:134` runs `setScreen(page)` **outside** `startTransition`, so
+  `activeScreen` flips at click time while `leavingScreen`/`fade` are deferred to
+  the transition (`App.tsx:135-145`). The shell's palette attributes were derived
+  from that urgent value (`App.tsx:398-400`, `posBackgroundTrial = activeScreen ===
+  'POS'` at line 376), and the palette itself lived on the shell (`App.module.css`
+  `.shell[data-pos-trial='true']`, `globals.css`
+  `:root:has([data-pos-brand-trial='true'])`) — a sibling of every screen slot.
+- The outgoing screen stays `data-live` at opacity 1 until the fade commits and
+  keeps painting through the 150 ms crossfade, so it was repainted with its
+  palette already withdrawn. rAF timeline for POS → Orders: at t=17 POS was mint
+  `rgb(240,247,243)` with the Dine In pill and selected category fill teal
+  `rgb(1,54,62)`; at **t=163** the shell attributes were already null, the body had
+  flipped to cream `rgb(248,247,234)`, and the POS slot was **still `data-live` at
+  opacity 1** painting cream with `rgb(0,106,43)` fills — 34 ms *before*
+  `fade='prepare'` at t=197. Pixel grabs agree: one adb frame after the tap the
+  still-visible POS read pill `rgb(0,106,43)`, card fill `rgb(0,106,43)`, canvas
+  `rgb(248,247,234)`.
+- Dashboard never flashed because DASH-PALETTE-01 declared its palette on the
+  Dashboard `.screen` element, proving that screen-root ownership is the fix.
+  Falsified by the same frames: a header flash (the band and `header[data-trial]`
+  were constant) and an over-long animation (the reversion completed before the
+  fade began).
+
+#### Research gate, 25 September 2026
+
+- MDN [Using CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascading_variables/Using_custom_properties)
+  and [CSS inheritance](https://developer.mozilla.org/en-US/docs/Web/CSS/inheritance),
+  checked 25 September 2026: a custom property is declared by its selector and
+  inherits to descendants only — never to siblings or unrelated elements — and
+  `:root` is what makes it global. That is exactly why a shell-scoped palette
+  cannot follow a screen.
+- React [createPortal](https://react.dev/reference/react-dom/createPortal), checked
+  25 September 2026: a portal keeps the React tree but changes the DOM tree, and CSS
+  inheritance follows the DOM tree, so content portalled into `document.body` does
+  not inherit custom properties scoped on a React ancestor. The documented remedies
+  are global tokens, a `body` + theme attribute, **applying the variables to the
+  portal root**, or mounting the portal inside the themed subtree.
+- `better-colors` / `better-accessibility` (read in full for earlier cards) and WCAG
+  2.2 SC 1.4.11 were reused: measure the pair that actually renders, and fix the
+  responsible layer rather than masking the symptom.
+- Alternatives rejected. Extending the shell flags to include the leaving screen:
+  one shell cannot hold two palettes, so the incoming screen would borrow the
+  outgoing one — the contamination the owner forbade. Keeping the palette on `body`
+  while POS is visible: the same contamination, app-wide. Portalling the POS dialogs
+  into the POS screen element: the slot's own stacking context (opacity transition)
+  would place dialogs beneath the shared top bar.
+- Chosen mechanism (the documented portal-root approach, smallest safe change):
+  declare the POS palette once on `[data-pos-palette]` in `globals.css`, then put
+  that attribute on the POS screen root and on the two portalled POS dialog roots.
+  The strip becomes one derived `data-frame-mint` attribute computed from the
+  visible frame (`visibleLeaving ?? visibleContent`), so it changes exactly at fade
+  completion instead of at the click.
+
+#### Token and portal audit, before moving any declaration
+
+- POS consumers of the re-pointed tokens (`--olaso-green`, `--olaso-border`,
+  `--olaso-green-soft`, `--olaso-green-icon`) and the `--olaso-trial-*` family,
+  all inside the POS screen root: CategoryCard, OrderItemCard, PaymentMethodControl,
+  PrimaryAction, ProductCard, ProductGrid, QuantityStepper, QuickAddRow, ReceiptRail,
+  SearchField, SegmentedControl.
+- Siblings, already pinned by TOPBAR-01 on the Header element: Header,
+  TopNavigation, ProfileControl.
+- Outside the screen root and therefore requiring their own scope:
+  **ModifierSelectionDialog** (9 re-pointed declarations) and **PaymentDialog** (6),
+  both portalled to `document.body` via `src/components/OverlayPortal.tsx:40`.
+  Their `.overlay` rules use only `--olaso-panel-border`, `--olaso-white`,
+  `--olaso-copy`, `--olaso-text` and `--olaso-muted`, none of which the POS palette
+  re-points, so scoping onto the overlay root changes only POS-owned colours.
+- Not affected: `LabeledField` (no importer left), `PeriodCalendar` and `MenuSelect`
+  (used only by Orders, Reports, Products, Stock, Settings and Lock, never POS).
+  `MenuSelect` and `ProfileControl` use native `popover` and stay DOM descendants,
+  so they inherit normally.
+
+#### Changes (7 files, no new file)
+
+- `src/globals.css` — the POS palette moves from
+  `:root:has([data-pos-brand-trial='true'])` to `[data-pos-palette]` and gains
+  `--olaso-canvas` and `--olaso-trial-on-canvas`. The two `:root:has(...)` strip
+  hooks are replaced by one `:root:has([data-frame-mint='true'])` that sets
+  **`--olaso-frame-canvas`**, a token of its own: html/body/#root now read
+  `var(--olaso-frame-canvas, var(--olaso-canvas))`. The separation matters — the
+  screens read `--olaso-canvas` for their own backgrounds, so overriding that at
+  `:root` tinted the incoming screen while the outgoing one was still fading (seen
+  on the first attempt and fixed here).
+- `src/App.module.css` — the `.shell[data-pos-trial='true']` block is deleted.
+- `src/App.tsx` — the three active-screen palette flags and their shell attributes
+  are replaced by `const frameScreen = visibleLeaving ?? visibleContent`, a derived
+  `frameMint`, and one `data-frame-mint` attribute. The `topBarTrial`/`posTrial` bar
+  flag is unchanged.
+- `src/features/pos/PosScreen.tsx` — `data-pos-palette` on the POS `<main>`.
+- `ModifierSelectionDialog.tsx` and `PaymentDialog.tsx` — `data-pos-palette` on each
+  overlay root: the only two POS token consumers outside the PosScreen root, because
+  `src/components/OverlayPortal.tsx:40` renders them into `document.body`.
+- `scripts/check-navigation.mjs` — the regression assertions below.
+- `UI_POLISH_LEDGER.md` — this record.
+
+#### Regression check added (no new framework)
+
+`npm run check:navigation` now also asserts: `frameScreen` derives from
+`visibleLeaving ?? visibleContent`; no `data-pos-trial` / `data-pos-brand-trial` /
+`data-dashboard-trial` remains in `App.tsx`; `[data-pos-palette]` declares the POS
+palette exactly once, including `--olaso-green: #01363e`; the strip hook sets
+`--olaso-frame-canvas`; the frame rule reads
+`var(--olaso-frame-canvas, var(--olaso-canvas))`; and both portalled POS dialogs
+carry `data-pos-palette`. It fails if a screen palette is ever re-attached to the
+active screen or a portal scope is forgotten.
+
+#### Device evidence, 25 September 2026 (Redmi 22081283G, 1340 x 804 CSS, dpr 1.75,
+`adb install -r` at 16:44:29, app data preserved)
+
+- rAF transition matrix over 14 ordered pairs (POS, Dashboard, Orders, Products,
+  Stock, Reports, Settings), asserting per pair: the outgoing screen's palette
+  values (`bg`, Dine In pill, selected-category fill, Dashboard metric accent) never
+  change while that slot is painted (`data-live`/`data-leave` present and opacity
+  > 0.05); the incoming screen's palette never changes while painted; the strip never
+  changes while the outgoing screen is visible; the `--olaso-canvas` token never
+  changes; the bar only changes on Settings pairs. **All 14 PASS, 0 failures.**
+- rAF timeline POS → Dashboard: t=8 POS mint `rgb(240,247,243)` with pill and
+  selected fill teal `rgb(1,54,62)`; t=173 fade `prepare`, POS leaving at opacity 1
+  with the **same** mint/teal; t=273 opacity 0.69; t=352 opacity 0.02 — mint/teal
+  throughout; t=397 Dashboard live, still mint/teal. The strip stayed mint in every
+  frame and the hidden Orders/Products/Stock/Reports slots stayed cream.
+- Pixel proof of the reported route (tap Orders from POS, two frames one adb
+  round-trip apart, same sample points as the pre-fix capture): pill
+  `rgb(1,54,62)`, selected-category fill `rgb(1,54,62)`, canvas `rgb(240,247,243)` in
+  **both** frames — against `rgb(0,106,43)`, `rgb(0,106,43)` and `rgb(248,247,234)`
+  before the fix. Captures `tmp/nav-flash/fixed-0-on-pos.png` and
+  `fixed-1-immediate.png`, with the pre-fix pair `grab-0-on-pos.png` /
+  `grab-1-immediate.png` for contrast.
+- Settled screens: POS and Dashboard both `band rgb(255,255,255)`,
+  `header[data-trial]="true"`, pill `rgb(1,54,62)`, screen background
+  `rgb(240,247,243)`, top content 90/92, `documentElement` 1340 x 804 and an empty
+  console. Dashboard's palette (metric accent `rgb(1,54,62)`, white cards) and the
+  POS body are unchanged. Captures `tmp/nav-flash/fixed-pos.png`,
+  `tmp/nav-flash/fixed-dashboard.png`.
+- Checks: `npm run build` 0, `npm run check:pos` 0, `npm run check:navigation` 0
+  (with the new assertions), `npm run check:css-scope` still only the four
+  pre-existing App/Lock keyframe findings.
+
+#### Limitations (not acceptance)
+
+- The sampler runs on the JS thread beside React, so frame timestamps are its rAF
+  cadence (16-30 ms), not a hardware vsync trace; the pixel grabs are single frames
+  that bracket a transition and cannot be pinned to an exact frame.
+- `data-pos-palette` must be added to any future POS overlay rendered through
+  `OverlayPortal` outside the POS screen root; `check-navigation` guards the two
+  that exist today.
+- Settings still changes its bar on entry and exit by owner decision, so that pair
+  intentionally fails a "bar constant" assertion and the check exempts it.
+- New attribute names (`data-pos-palette`, `data-frame-mint`) replace the retired
+  `data-pos-trial` / `data-dashboard-trial`.
+- The rebuild-and-reinstall restarts the app and drops the in-memory cart, so one
+  Espresso was re-added (`Regular · 10,00 MAD x 1`, total 10,00 MAD). No order was
+  submitted and no data was cleared.
+- The owner accepted the Dashboard palette visually, but the sequential 21-skill
+  rerun stays paused until this fix is accepted.
+
+#### Publication
+
+- Not committed and not pushed.
+
+#### Exact next action
+
+- Owner re-checks navigation on the Redmi (POS → Orders, POS → Dashboard,
+  Dashboard → Orders, Orders → POS and the Settings pair) and accepts the fix; the
+  Dashboard sequential 21 skill passes then restart in the ledger's numbered order,
+  one screen at a time, with Settings last. Do not mark anything approved or done,
+  and commit/push only after acceptance. Supersedes the DASH-PALETTE-01
+  'Exact next action'.
+
+
+#### Owner authorization and constraints
+
+- Owner asked to see the entire POS screen background in the same dark teal as
+  the top bar, POS screen only. Same constraints as POS-BG-01: preserve the exact
+  cropped logo pixels, the white cards/receipt surfaces, the layout geometry and
+  every other screen; correct only the contrast/readability regressions the dark
+  canvas requires (text, icons and controls directly on the canvas); do not
+  recolor buttons, selected states, dialogs or status colors. Reversible,
+  smallest diff, no new theme architecture. Provisional, not a palette decision.
+
+#### Research gate, 24 September 2026
+
+- Official guidance recorded before implementing: W3C WCAG 2.2 SC 1.4.3 Contrast
+  (Minimum), AA — 4.5:1 normal text, 3:1 large text (https://www.w3.org/TR/wcag/).
+  SC 1.4.11 Non-text Contrast, AA — a focus indicator must keep at least 3:1
+  against adjacent colors
+  (https://www.w3.org/WAI/WCAG22/understanding/non-text-contrast.html). SC 2.4.13
+  Focus Appearance (AAA) and technique C40 (two-color focus indicator) use the
+  same idea (https://www.w3.org/WAI/WCAG22/Techniques/css/C40). Material 3
+  dark-theme color roles: surface = page background, onSurface = primary text and
+  icons, surfaceContainer* for cards, and every foreground/background pair must be
+  checked
+  (https://developer.android.com/develop/ui/compose/designsystems/material3).
+- Android/design boundary unchanged from POS-BG-01: this is a CSS value plus one
+  scoped alias in the React layer. No Kotlin, no native dependency, no new
+  package. The measured teal #01363E is reused from POS-BG-01 (owner-image
+  background median).
+- Skills read for this pass (in full): better-colors (measure the rendered pair,
+  report value and threshold, change only when asked), better-accessibility
+  (non-text and focus contrast, do not rely on color alone), color-system (AA/AAA
+  thresholds: text 4.5:1, UI 3:1), design-token-audit (keep the change in the
+  alias layer; no primitive edits).
+
+#### Exact trial-only values (extending the POS-BG-01 scope)
+
+| Role | Value | Note |
+| --- | --- | --- |
+| POS body canvas | #01363E | same measured teal as the header band, so the header reads as one field |
+| On-canvas ink / indicator | #ffffff | new trial alias --olaso-trial-on-canvas; overrides only the on-canvas items below |
+| Cards, receipt rail, buttons, selected states, dialogs, status | unchanged | still read --olaso-white and the existing accent/status tokens |
+
+#### Changes (7 files, no new file)
+
+- src/App.module.css — the trial block re-points --olaso-canvas from #e7ede4 to
+  #01363E and adds --olaso-trial-on-canvas: #ffffff. No primitive token edited.
+- src/features/pos/components/ProductGrid/ProductGrid.module.css — the .empty
+  color and the .grid scrollbar thumb now read
+  var(--olaso-trial-on-canvas, original-value), so the POS baseline is exact when
+  the trial is off.
+- On-canvas focus rings read the same token with their green fallback:
+  SearchField .search:focus-within, QuickAddRow .chip:focus-visible, CategoryCard
+  .button:focus-visible, Header .report:focus-visible and .skipLink:focus, and a
+  new ProfileControl .profile:focus-visible rule (the white popover keeps green).
+- Built CSS confirms
+  [data-pos-trial=true]{--olaso-trial-header:#01363e;--olaso-canvas:#01363e;--olaso-trial-on-canvas:#fff}
+  and five outline:2px solid var(--olaso-trial-on-canvas,var(--olaso-green))
+  usages plus the profile outline-color. POS scoping is unchanged: the attribute
+  is only set when POS is the active screen.
+- DESIGN.md, BRAND.md and untitled.pen are untouched (trial, not an approved
+  change). The POS-BG-01 header band rule was kept to avoid extra churn; it is now
+  visually merged with the canvas and therefore redundant.
+
+#### Measured rendered contrast (device framebuffer, no estimates)
+
+| Pair | POS-BG-01 baseline | POS-BG-02 trial | Requirement |
+| --- | --- | --- | --- |
+| canvas vs header band | #e7ede4 / #01363e | #01363e / #01363e | single field |
+| white card vs canvas | 1.19:1 | 12.18:1 | visual separation |
+| white rail vs canvas | 1.19:1 | 13.14:1 | visual separation |
+| muted #566057 on canvas | 5.5:1 | 2.01:1 (fail) | corrected to white |
+| green #006a2b on canvas | 5.4:1 | 1.94:1 (fail) | corrected to white |
+| empty message vs canvas | n/a | 13.14:1 | >= 4.5:1 |
+| date/time vs band | 13.14:1 | 13.14:1 | >= 4.5:1 |
+| logo ink vs band | 9.74:1 | 9.74:1 | artwork (unchanged) |
+
+The only genuine failures were the muted-grey empty message and the green
+focus/scrollbar indicators that now sit on the dark field; both are corrected to
+the white trial ink inside POS scope. Text that stays on white cards/rail is
+unchanged.
+
+#### Verification actually run, 24 September 2026
+
+- npm run build passed (tsc + vite). npm run check:pos passed. npm run
+  check:css-scope reports only the same four pre-existing App/Lock keyframe
+  from/to findings; the new rules are class-scoped and added none.
+- Device render on the connected Redmi 22081283G (serial XOPFAQGYNNGYVGPR),
+  unlocked POS, viewport 1340 x 804 CSS, dpr 1.75, 2000 x 1200 framebuffer. The
+  shipped POS-BG-02 declarations were applied by injection on the already
+  unlocked session (same technique and values as dist), because adb install -r
+  forces a cold start back to the PIN-protected Lock screen.
+- Computed styles read back: shell token #fff, --olaso-canvas #01363e, POS screen
+  rgb(1,54,62); empty message rgb(255,255,255); search and category-card focus
+  rings rgb(255,255,255).
+- States captured: default POS, empty search result, search focus ring, keyboard
+  focus ring on a category card, customization dialog, cash payment dialog.
+- Both portal dialogs kept white surfaces, the existing green actions and the
+  dark scrim, with no clipping. The payment dialog was cancelled, not confirmed.
+- No sale created: the cart stayed empty, the payment dialog was cancelled and
+  the cart cleared; the existing order list was not changed.
+- No app console errors or warnings (WebView console empty).
+- Removing the injection returned the screen to rgb(231,237,228) (the POS-BG-01
+  state) and cleared the token: the trial is reversible without a rebuild.
+- Packaging: npm run android:beta passed (Gradle assembleDebug, 140 tasks,
+  JAVA_HOME tmp/android-toolchain/jdk/jdk-21.0.11+10). APK
+  android/app/build/outputs/apk/debug/app-debug.apk, SHA-256
+  7309E53B779F62C9ACE36B27494433BC3A82FC502B97D4A461BDC3112B691EDA, 27219593
+  bytes; APK CSS contains the trial declarations and the five focus-ring usages.
+- adb install -r over the Redmi succeeded (streamed, Success) with no uninstall
+  and no data clear. The cold start shows the Atelika Lock screen, so the
+  installed beta boots normally.
+- Graphify was queried before code inspection (POS screen background canvas header
+  background colors product cards cart layout styles). It was not refreshed: this
+  pass adds no file or module edge.
+- Captures: tmp/posbg/dev02-pos-baseline.png, dev02-pos-dark.png,
+  dev02-pos-empty.png, dev02-focus-search.png, dev02-focus-card.png,
+  dev02-choice-dialog.png, dev02-payment-dialog.png, dev02-pos-restored.png,
+  dev02-installed-lock.png.
+
+#### Limitations (not acceptance)
+
+- The POS render is the Redmi at 1340 x 804, not the Samsung Galaxy Tab A9 at
+  1340 x 800.
+- The POS was rendered with the shipped declarations injected on the already
+  unlocked session; it is not a capture of the freshly installed build, because
+  install -r always returns to the PIN-protected Lock screen and no device/owner
+  PIN is available here. The installed APK's possession of the declarations is
+  proven by APK inspection instead.
+- The .skipLink focus ring was added after the device render, so its own pixels
+  were not re-captured (the install had re-locked the device). It uses the exact
+  token mechanism measured white (13.14:1) on the search field and category card.
+- The .grid scrollbar thumb change could not be observed: the tested menus do not
+  overflow, and Android WebView overlay scrollbars may ignore scrollbar-color.
+- The header band is now visually identical to the canvas (redundant but
+  harmless); whether to delete it is an owner choice.
+- Cross-screen scoping is by construction plus the earlier removal test; a second
+  screen was not re-photographed because that also needs the unlocked session.
+- DESIGN.md still says white body text is not for Olaso Sage; this trial
+  deliberately departs from the cream baseline on the owner's explicit request
+  and still needs the owner's palette decision.
+- Provisional only: not a palette decision, not propagated, no brand/design
+  authority updated.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files and untracked asset folders are preserved untouched.
+
+#### Exact next action
+
+- Owner unlocks the installed beta on the Redmi and accepts the POS-BG-02 dark
+  background, or names changes (canvas value, band removal, the on-canvas ink
+  value). Do not propagate it, do not treat it as a rule, do not mark it approved
+  or done. Commit and push only after that acceptance.
+
+#### Correction, 24 September 2026 — bottom cream strip on a taller viewport
+
+Supersedes the POS-BG-02 'Exact next action' above.
+
+- **Owner-confirmed bug (fresh Redmi capture):**
+  `tmp/posbg/actual-device-current-20260924.png` (2000 x 1200 framebuffer) showed
+  the teal canvas to y1193, then six cream physical rows at y1194-1199 (`#F8F7EA`,
+  preceded by the `#F0F1E5` antialias row). Cause measured, not guessed: the Redmi
+  app viewport is 1340 x 804 CSS px (dpr 1.75), but `.shell` and the POS `.screen`
+  are a fixed 1340 x 800. The 4 CSS px below the shell exposed the base page
+  surface, which paints `var(--olaso-canvas)` and still resolved to the cream root
+  value `#f8f7ea`, because the POS-BG-02 trial re-points `--olaso-canvas` on the
+  descendant `.shell` only.
+- **Element proof (`tmp/posbg/probe-bottom.mjs`):** in the installed build
+  `html`, `body`, `#root` and `html[data-astryx-theme]` are all 804 px tall at
+  `rgb(248,247,234)`; `.shell` is 1340 x 800 and transparent; the POS `.screen` is
+  1340 x 800 at `rgb(1,54,62)`. Astryx puts `data-astryx-theme` on the `<html>`
+  element, so the exposed surface is the `globals.css` full-viewport baseline, not
+  the duplicated inline rule in `index.html`.
+- **Research gate, 24 September 2026:**
+  - CSS `:has()` is Baseline available, shipped in Chrome/Android WebView 105+;
+    WebView updates independently of the Android version, so the durable pattern
+    is the feature query `@supports selector(:has(*))`
+    (https://caniuse.com/css-has, https://developer.chrome.com/blog/has-m105).
+  - Capacitor Android renders in the device system WebView, so the engine version
+    varies by device and must be checked, not assumed
+    (https://capacitorjs.com/docs/android).
+  - Android web-app guidance for a document shorter than the WebView: put the
+    background on `html` (or a full-height wrapper) rather than leaving the
+    viewport unpainted (https://developer.android.com/guide/webapps/best-practices,
+    https://developer.android.com/develop/ui/views/layout/webapps/webview).
+  - Boundary decision is unchanged: a CSS value in the React layer. No Kotlin,
+    native dependency, package, or layout change. The connected Redmi reports
+    WebView `153.0.8010.36`, so `:has()` is safe here.
+- **Change (1 file, no new file):** `src/globals.css` adds, directly after the
+  full-viewport baseline it corrects,
+  `:root:has([data-pos-trial='true']) { --olaso-canvas: #01363e; }`. POS-only
+  (matches only while App sets `data-pos-trial`), reversible with that attribute,
+  and it changes no geometry, card, rail, dialog, or other screen. The colour is
+  the same measured teal already declared in the App.module.css trial block, kept
+  local to the provisional scope.
+  `src/AGENTS.md` assigns this full-viewport baseline to `globals.css`, and the
+  rule keys on the app-state attribute rather than a feature or component
+  selector, so the global-CSS boundary is respected.
+- **Verification actually run, 24 September 2026:**
+  - `npm run build` passed; built CSS carries
+    `:root:has([data-pos-trial=true]){--olaso-canvas:#01363e}`.
+  - `npm run check:pos` passed. `npm run check:css-scope` reports only the same
+    four pre-existing untouched App/Lock keyframe `from`/`to` findings; the
+    non-module `globals.css` change adds none.
+  - `npm run android:beta` passed with
+    `JAVA_HOME=tmp/android-toolchain/jdk/jdk-21.0.11+10` (Gradle 140 tasks). APK
+    `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+    `16880DD3128C215CA4C569BE5BA23F4967FFBBDDB69182AEF36769530E037AB5`, 27219593
+    bytes; the APK CSS carries the rule.
+  - `adb install -r` over the Redmi succeeded (data preserved, no uninstall, no
+    clear). Because `install -r` cold-starts into the PIN-protected Lock screen,
+    POS was reached with the owner's app Lock PIN (never printed) and the real
+    installed build — not an injection — was captured.
+  - Captures: `tmp/posbg/actual-device-after-fix-20260924.png` (POS, 1340 x 804),
+    `tmp/posbg/after-fix-lock.png`, `tmp/posbg/after-fix-dashboard.png`.
+  - Pixels: the fixed POS render is `rgb(1,54,62)` from y0 through y1199 including
+    the former strip rows y1194-1199; `tmp/posbg/check-bottom.py` reports 0
+    offenders, while the owner's pre-fix capture still fails the same check, so it
+    is sensitive to the bug.
+  - Computed styles: POS `html/body/#root` = `rgb(1,54,62)`, root token `#01363e`;
+    Lock and Dashboard keep `rgb(248,247,234)` / `#f8f7ea` with no `data-pos-trial`,
+    confirming POS scoping and cross-screen isolation on the device.
+  - Reference geometry: under CDP `Emulation.setDeviceMetricsOverride` (1340 x 800)
+    the shell bottom equals the viewport bottom (`exposedPx: 0`) and
+    `elementFromPoint` at the last row returns the POS `.screen`, so a 1340 x 800
+    viewport exposes nothing and the fix changes nothing there.
+  - WebView console was empty (no errors, no warnings).
+- **Limitations (not acceptance):**
+  - Device render is the Redmi at 1340 x 804; the 1340 x 800 reference was checked
+    by CDP emulated geometry, not a fresh Galaxy Tab A9 capture (none connected).
+  - During the 150 ms screen crossfade the trial attribute follows the incoming
+    `screen`, so entering POS can briefly paint the 4 px strip teal before the POS
+    screen finishes fading in; that is the incoming screen's correct colour and was
+    not separately photographed.
+  - Provisional only: still not a palette decision, not propagated, no brand/design
+    authority updated; DESIGN.md still records the cream baseline this trial departs
+    from on the owner's request.
+- **Publication:** Not committed and not pushed, pending owner acceptance.
+  Unrelated dirty files and untracked asset folders are preserved untouched.
+- **Exact next action:** owner reviews
+  `tmp/posbg/actual-device-after-fix-20260924.png` and accepts the full-viewport
+  teal POS background, or names changes. Commit and push only after acceptance;
+  keep the trial provisional until then.
+
+### POS-BG-01 — POS-only dark teal header + soft light body trial (provisional), 24 September 2026
+
+#### Owner authorization and constraints
+
+- Owner approved trying a POS-only background preview: a full-width dark teal
+  header behind the existing cropped Atelika logo, and a soft light non-white
+  POS body that keeps the existing white product/cart cards distinct. Explicitly
+  out of scope: recolour or recreate the logo, buttons, selection colours,
+  status colours, or product/card geometry. This is a visual trial, not the
+  final global palette; do not propagate it to other screens and do not declare
+  approved rules. Keep the diff minimum and reversible.
+
+#### Source colour sampling (required: a measured teal, not an invented hue)
+
+- Source image: `C:\Users\Ayman\AppData\Local\Temp\codex-clipboard-dbcf2eef-e1ba-460e-88ee-faee7decdb0b.png`
+  (owner-supplied Atelika wordmark on its dark background, 1254 x 1254 PNG,
+  798223 bytes, mtime 2026-09-24 14:08:14). Sampled with Pillow 12.3.0 on
+  24 September 2026 (`tmp/posbg/sample_bg.py`).
+- Background median over 26082 non-wordmark samples: `#01363E`; mean `#01363D`;
+  dominant 6-step quartile bucket `#00363C`. Corner/mid/bottom patches all sat
+  at `#01353B`–`#01373E`, so the field is a near-flat dark teal with a faint
+  gradient. The trial band uses the measured median `#01363E` exactly.
+- The same image's mint logo ink measures `#D0FFEE` and only reaches 12.02:1 on
+  that teal, against about 1.2:1 on the current cream surface. This is the
+  concern the trial is testing.
+
+#### Research gate, 24 September 2026
+
+- Official colour-role guidance was already researched in the root instruction
+  chain and is reused here: [Carbon color overview](https://carbondesignsystem.com/elements/color/overview/)
+  and [Atlassian foundations colour](https://atlassian.design/foundations/color).
+  Both separate neutral surfaces from brand/accent and from status colour, and
+  both require each foreground pair to be checked on the surface it renders on.
+  This trial therefore adds one scoped neutral/brand surface and changes no
+  accent, selection or status token.
+- `better-colors` was read in full: measure the rendered pair, report the value
+  and threshold, and change the colour only when asked. `color-system` and
+  `design-token` were read for the role/alias-token boundary: the trial re-points
+  the existing `--olaso-canvas` alias only inside the POS scope and adds one
+  trial alias `--olaso-trial-header`, rather than editing primitives.
+
+#### Exact trial-only values
+
+| Role | Value | Note |
+| --- | --- | --- |
+| Header band | `#01363E` | Measured owner-image background median |
+| Band geometry | full 1340 px width, y 0–90 | Behind the whole header row (header box y 16–76: 16 px above, 14 px below); flush with the search row at y 90 |
+| POS body canvas | `#E7EDE4` | Provisional soft light sage; overrides `--olaso-canvas` only in POS scope |
+| Date/time text on band | `var(--olaso-white)` | Existing `#006A2B` green failed at 1.94:1 on teal |
+| Logo | unchanged | No recolour, no recreation, no reposition |
+
+#### Changes (4 files, no new file)
+
+- `src/App.tsx` — one derived flag `posBackgroundTrial = activeScreen === 'POS'`,
+  a `data-pos-trial` attribute on the existing shell, and one `posTrial` prop to
+  the shared Header. `activeScreen` is already permission-capped.
+- `src/App.module.css` — `.shell[data-pos-trial='true']` re-points
+  `--olaso-canvas` to `#E7EDE4` and defines `--olaso-trial-header: #01363E`.
+- `src/features/pos/components/Header/Header.tsx` — optional `posTrial` prop to
+  `data-trial` on the header element; no other markup change.
+- `src/features/pos/components/Header/Header.module.css` — the band as the
+  header's own `::before` (so it paints behind the shared header only when the
+  attribute is present) and the white date colour in trial scope.
+- Built CSS confirms: `._shell_*[data-pos-trial=true]{--olaso-trial-header:#01363e;--olaso-canvas:#e7ede4}`
+  and `._header_*[data-trial=true]:before{...height:90px...}` and
+  `._header_*[data-trial=true] ._date_*{color:var(--olaso-white)}`. Scoping to
+  POS is by construction: the attribute is only set when POS is the active
+  screen, so the band and light canvas cannot appear on Dashboard, Orders,
+  Products, Stock, Reports, Settings, or Lock.
+- `DESIGN.md`, `BRAND.md` and `untitled.pen` are deliberately untouched: this is
+  a trial awaiting acceptance, not an approved design change.
+
+#### Measured rendered contrast (actual device framebuffer, not estimates)
+
+Measured from the captured PNGs (`tmp/posbg/measure_device2.py`):
+
+| Pair | Baseline | Trial | Requirement |
+| --- | --- | --- | --- |
+| Logo ink vs header field | 1.23:1 | **9.74:1** | artwork; large-form mark |
+| Date/time text vs header field | 13.1:1 | **13.14:1** | >= 4.5:1 |
+| White card/rail vs body canvas | 1.08:1 | **1.19:1** | visual separation (no WCAG threshold) |
+| Body ink `#101611` on trial canvas | 17.0:1 | 15.5:1 | >= 4.5:1 |
+| Muted `#566057` on trial canvas | 6.1:1 | 5.5:1 | >= 4.5:1 |
+| Existing green date on teal (before fix) | — | 1.94:1 (fails) | corrected to white |
+
+The only genuine failure found was the shared green date/time text on the new
+teal field; it was corrected to white inside trial scope without touching the
+logo. Header nav, Report and the profile control keep their existing white
+surfaces, so their dark text is unchanged. The product/cart cards, the cart rail
+and both portal dialogs keep white surfaces and their existing green actions.
+
+#### Verification actually run, 24 September 2026
+
+- `npm run build` passed (tsc + vite). `npm run check:pos` passed.
+  `npm run check:css-scope` still reports only the four pre-existing App/Lock
+  keyframe `from`/`to` findings; the two new rules are class-scoped and added no
+  finding.
+- Device render on the connected Redmi `22081283G` (serial `XOPFAQGYNNGYVGPR`),
+  unlocked POS, viewport 1340 x 804 CSS, dpr 1.75, 2000 x 1200 framebuffer. The
+  shipped trial declarations were applied by toggling the two shipped data
+  attributes (the same values in `dist`), because an `adb install -r` cold start
+  always returns to the PIN-protected Lock screen. Computed styles read back as
+  screen `rgb(231, 237, 228)` = `#E7EDE4`, band `::before` `rgb(1, 54, 62)` =
+  `#01363E` at `90px`, date `rgb(255, 255, 255)`. After removal, the screen read
+  `rgb(248, 247, 234)` and the band `rgba(0, 0, 0, 0)`, and the restored capture
+  was byte-identical to the pre-trial baseline (470,316 bytes both).
+- Dialogs under the new background: the customization dialog (`Add to order`) and
+  the cash payment dialog were opened and captured over the trial POS; both kept
+  white surfaces, the existing green primary actions and the dark scrim, with no
+  clipping. The payment dialog was then cancelled, not confirmed.
+- No sale was created: the Orders list's latest order was `0926-0002` before and
+  after, and the cart returned to empty (`Add a product to begin.`, `0,00 MAD`).
+  No café data was reset.
+- No app console errors or warnings: the WebView console was empty and focused
+  `logcat` showed only this session's own diagnostic SQLite line, no chromium or
+  Capacitor errors.
+- Packaging: `npm run android:beta` passed (Gradle assembleDebug, 140 tasks,
+  `JAVA_HOME` = `tmp/android-toolchain/jdk/jdk-21.0.11+10`). APK
+  `android/app/build/outputs/apk/debug/app-debug.apk`, SHA-256
+  `EE9E74CFF05666BF61026B2B836B8629997DA7AFE875817BB253A30028B5B064`, 27219593
+  bytes. The APK contains the trial in `assets/public/assets/index-CbYxRTYV.css`
+  and `assets/public/assets/index-Cn17XPiC.js`.
+- `adb install -r` over the Redmi succeeded (streamed install, `Success`) with no
+  uninstall and no data clear. A cold start after install showed the Atelika
+  Lock screen, so the app is installed and booting normally.
+- Graphify was queried before code inspection (`graphify query "POS screen
+  header background colors product cards cart layout styles"`). It was not
+  refreshed: this pass adds one optional prop, one derived flag and two CSS
+  rules, so it adds no file or module edge; the stale-graph note from LAUNCH-03
+  still stands.
+- Captures: `tmp/posbg/dev-pos-baseline.png`, `tmp/posbg/dev-pos-trial.png`,
+  `tmp/posbg/dev-choice-dialog.png`, `tmp/posbg/dev-payment-dialog.png`,
+  `tmp/posbg/dev-pos-restored.png`, `tmp/posbg/dev-installed-lock.png`.
+
+#### Limitations (not acceptance)
+
+- The POS render is the Redmi at 1340 x 804, not the Samsung Galaxy Tab A9 at
+  1340 x 800; the reference-device caveat stands.
+- The POS was rendered by toggling the shipped attributes with the shipped
+  declarations on the already-unlocked session. It is not a capture of the
+  freshly installed build: `adb install -r` forces a cold start that always
+  returns to the PIN-protected Lock screen, and no device or owner PIN is
+  available here, so the PIN was not guessed and the installed POS/photographic
+  re-verification is **protected/unrun**. The installed APK's possession of the
+  trial CSS and JS is proven by APK inspection instead.
+- POS-only scoping is proven by the code path and the built selectors, and by
+  removal restoring the exact baseline; it was not re-photographed live on a
+  second screen because that also needs the unlocked session.
+- The band is a straight full-width rectangle with square bottom corners, 90 px
+  tall. Height, bottom rounding, and a logo-only band instead of a whole-header
+  band are open owner choices; the whole-header band is this pass's
+  interpretation of "full-width dark teal header".
+- Provisional only: this is not a palette decision, not an approved rule, not
+  propagated to any other screen, and no brand/design authority was updated.
+
+#### Publication
+
+- Not committed and not pushed, pending owner visual acceptance. Unrelated dirty
+  files and untracked asset folders are preserved untouched.
+
+#### Exact next action
+
+- Owner unlocks the installed beta on the Redmi and accepts the POS background
+  trial, or names changes (band height/rounding, canvas value, logo-only band).
+  Do not propagate it, do not treat it as a rule, and do not mark it approved or
+  done. Commit and push only after that acceptance.
+
+### LAUNCH-04 — accepted Atelika wordmark re-derivation, 24 September 2026
+
+#### Owner authorization and constraints
+
+- Owner supplied one accepted logo replacement: the cropped transparent Atelika
+  wordmark already in the tree at
+  `assets/brand/atelika-wordmark-transparent-new-uncropped.png` (the file name is
+  historical; the owner cropped it in place). Use that accepted crop, not the
+  earlier draft, and change only the logo image everywhere. Palette, layout,
+  branding text, package identity and unrelated artwork stay untouched.
+- Asset-only pass: no React, native, CSS or business logic changed.
+
+#### Source verification before use, 24 September 2026
+
+- `assets/brand/atelika-wordmark-transparent-new-uncropped.png`: 1065 x 285,
+  RGBA, 227286 bytes, mtime 2026-09-24 14:19:12, SHA-256
+  `5430B870BAE22059EA2E56311C91A226061E1CB460133892B43ECC226232BE88`. Its alpha
+  bounding box is `(0, 0, 1065, 285)` with 108789 of 303525 pixels fully
+  transparent, so the artwork is already tightly cropped rather than a padded
+  canvas.
+- It is a distinct generation, not the earlier draft: the draft trimmed ink was
+  1071 x 292 (aspect 3.668) and this crop is 1065 x 285 (aspect 3.737). The mint
+  letters and the orange accent dot are unchanged, but the aspect differs, so
+  the mark was not assumed pixel-identical to the previous logo.
+- The previous live asset survives only in the ignored build copies
+  (`dist/assets/atelika-wordmark-transparent-Dzg9JMMC.png`, 1145 x 366, ink
+  1071 x 292, ink fraction 0.9354) and is used for comparison only.
+
+#### Research gate
+
+- No new Android, Capacitor or rendering boundary is introduced. This pass
+  reuses the LAUNCH-02 research (adaptive icon 108dp canvas with a 66dp safe
+  circle; Android 12 splash icon bounds 288dp with a 192dp visible circle;
+  Capacitor 8 serves the built assets) and the same ink-to-canvas discipline.
+  No package, plugin, timer or native code was added.
+
+#### Changes
+
+- Re-ran the documented derivation (`tmp/launch01/make_atelika_assets.py`, its
+  source re-pointed at the accepted crop): ink plus an even margin reproducing
+  the OLASO ink-to-canvas fraction 0.9347, so the rendered ink keeps its
+  previous width and no layout box moves.
+  - `assets/brand/atelika-wordmark-transparent.png` (new, 1139 x 359, ink
+    1065 x 285, ink fraction 0.9350, SHA-256
+    `BDA2969961D4D3A7266903DE61869EDFD412B0932DED9E447315EF41987981F9`) — the
+    single shared web asset behind all five web references plus `index.html`.
+  - `android/app/src/main/res/drawable-nodpi/atelika_launch_wordmark.png`
+    (1152 x 1152, ink fraction 0.6224) and
+    `drawable-nodpi/atelika_launcher_foreground.png` (1152 x 1152, ink
+    fraction 0.5825), same discipline; no artwork pixel was resampled.
+- Printer-resident logo re-derived from the same shared asset
+  (`tools/wd8260-receipt-lab/generate-nv-logo.cjs`):
+  `android/app/src/main/res/raw/olaso_nv_logo.bin` (3657 bytes, 95 x 300 dots,
+  header 38, 0, 12, 0) with its golden fixture
+  `tools/wd8260-receipt-lab/fixtures/nv-logo-write.bin`, and the golden SHA in
+  `scripts/check-android-beta.mjs` updated to
+  `C206C7E17A07DBF5043A32D5B219CFEA8EFD27DDA0B6F606E2CA6AD22C303F99`. This was
+  not optional: the receipt-lab check regenerates the bundled bin from the web
+  asset and compares it to the fixture, so leaving the old bin would fail
+  `npm run check:receipt-lab`.
+- Height hints updated only for the new 1139:359 canvas ratio: 225x72 to 225x71
+  (`index.html`, `src/App.tsx` x3, `src/data/AppDataProvider.tsx`), 320x102 to
+  320x101 (`src/features/settings/LockScreen.tsx`), 96x31 to 96x30
+  (`src/features/pos/components/Header/Header.tsx`). CSS widths are unchanged.
+- `BRAND.md` and `DESIGN.md` temporary-state notes updated to name the accepted
+  crop instead of the removed draft file.
+
+#### Verification actually run
+
+- Pillow 12.3.0 measured the source and outputs: web ink fraction 0.9350 (target
+  0.9347) and ratio 3.1727, inside the existing 2.6-3.6 guard; both Android icons
+  1152 x 1152 RGBA at 0.6224 and 0.5825; the orange accent is present (1282 web,
+  584 splash, 509 launcher pixels).
+- `npm run check:android` passed (asset presence, RGBA, ratio, startup width
+  parity, and NV-logo length/header/SHA).
+- `npm run check:receipt-lab` passed (receipt, raster-logo, NV-logo, LAN and
+  golden-byte checks).
+- `npm run build` passed (tsc + vite); `dist/index.html` now references the new
+  hashed asset `assets/atelika-wordmark-transparent-HliNLugh.png`.
+- `npm run android:beta` passed (Gradle assembleDebug, 140 tasks, JAVA_HOME set
+  to `tmp/android-toolchain/jdk/jdk-21.0.11+10`). APK SHA-256
+  `D12EB80B12FA8C329C80794DE2A7414349A72E6FB52F37928AD0CCC38D1DA664`, 27219593
+  bytes. The APK contains the new web asset, both 1152 x 1152 icons and the new
+  `res/raw/olaso_nv_logo.bin`.
+- `adb install -r` over the connected Redmi 22081283G (XOPFAQGYNNGYVGPR)
+  succeeded and preserved app data. No uninstall and no data clear.
+
+#### Limitations (not acceptance)
+
+- No on-screen device capture: the Redmi is on its own MIUI keyguard with the
+  screen off and no device or Olaso PIN is available, so the Lock, Header,
+  startup and Dashboard surfaces were not photographed. Their asset resolution,
+  size and box fit are proven by the build, the checks and the APK contents
+  only. This is the same limitation LAUNCH-03 recorded.
+- The printer-resident logo change is unverified on hardware; no printer is
+  connected. Only the generated bytes, header and golden fixture were checked.
+- Mint-on-cream contrast stays about 1.18:1 and the palette/background decision
+  is still the owner's. No palette work was done.
+- Graphify `graph.json` is still stale for the earlier structural change flagged
+  in LAUNCH-03; this pass is not structural and did not refresh it.
+
+#### Publication
+
+- Not committed and not pushed: asset-only replacement awaiting the owner
+  visual acceptance. Unrelated dirty files and untracked asset folders are
+  preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the installed beta on the Redmi and accepts the accepted Atelika
+  wordmark as the live logo, or asks for a change. Commit and push only after
+  that acceptance; do not treat LAUNCH-04 as accepted or as 100%.
+
+### LAUNCH-03 — visible Olaso to Atelika text rebrand, 23 September 2026
+
+#### Owner authorization and constraints
+
+- Owner authorized finishing the customer-visible rename only: visible text and
+  art. Deliberately unchanged this pass (later migration): the package
+  `com.olaso.pos`, SQLite `olaso_pos`, secure-storage aliases, signing key,
+  cloud/update URLs, environment-variable names, CSS tokens/data attributes and
+  historical docs. Complete safe visible text/art, migrate the persisted terminal
+  name without data loss, use image_gen for any photo edit, and do not claim
+  printer verification without hardware.
+
+#### Changes (visible text)
+
+- Android launcher label: `values/strings.xml` `app_name` and
+  `title_activity_main` now read "Atelika POS".
+- Capacitor `appName` "Atelika POS"; `index.html` `<title>` and startup
+  `aria-label`; document title in `src/App.tsx`; the access/recovery/locked
+  alert `aria-label`s.
+- Per-screen `aria-label`s on all six screens; Settings About
+  (`SettingsContentPanel.tsx`); Lock copy (`LockScreen.tsx`); update copy
+  (`src/data/appUpdate.ts`); the neutral category-artwork label
+  (`src/lib/categoryArtwork.ts`).
+- Terminal default name (`src/data/terminalSettings.ts`): new default
+  "Atelika POS" plus a guarded rename migration that rewrites only the exact
+  previous default `Olaso POS`. A name the owner typed in Settings is never
+  touched, so no device data is lost.
+- French dictionary (`src/lib/fr.ts`): the matching keys renamed.
+- Printer self-test text (`src/printing/printerDiagnostic.ts`) is now
+  "ATELIKA PRINTER TEST".
+- Cancellation dialog (`src/features/orders/components/CancellationDialog/CancellationDialog.tsx`):
+  completed here. Its French key had already been renamed, so leaving the English
+  source unchanged made the French dialog fall back to English. Fixed.
+
+#### Changes (visible art)
+
+- New `assets/brand/atelika-lock-drink-note.jpg`: an image_gen edit of the Lock
+  photo `olaso-lock-drink-note.jpg`. The printed cup mark reads "ATELIKA" and the
+  handwritten note reads "_ATELIKA"; the smoothie, dome lid, pink flowers, court,
+  tennis balls, shadows and light are preserved. `LockScreen.tsx` repoints to it;
+  the old OLASO photo stays in the tree.
+
+#### Verification actually run
+
+- `npm run build` passed (tsc + vite). `npm run check:settings` passed
+  (terminal name and printer test text). `npm run check:android` passed.
+- `npm run android:beta` (check:android, sync, Gradle
+  `testDebugUnitTest assembleDebug`, 140 tasks) passed. APK SHA-256
+  `ABE1D68B8FC7F933556772C551F3B23320DDB4EC0C057DD9A39381EEA9058F1B`.
+- `adb install -r` over the connected Redmi 22081283G succeeded and preserved
+  app data (versionName 1.4, versionCode 11).
+- Launcher label verified exactly from the built APK with `aapt2 dump badging`:
+  `application-label:'Atelika POS'` in every locale, icon resolving to
+  `mipmap-anydpi-v26/ic_launcher.xml` (Atelika adaptive foreground).
+- The backdrop edit was inspected visually: cup reads ATELIKA, note reads _ATELIKA.
+
+#### Limitations (not acceptance)
+
+- Device on-screen check of the Lock, Header, startup and Dashboard screens could
+  not be run: the Redmi is on its own device keyguard with the screen off, and no
+  device or Olaso PIN is available. No PIN was guessed and the unlocked session
+  could not be reached. The launcher label and icon are proven from the APK; the
+  in-app copy is proven by build and checks, not by a fresh device capture.
+- Graphify `graph.json` is stale for the prior structural change (StartupDots
+  removed, CometSpinner added). No incremental `/graphify . --update` was run in
+  this pass; this record flags it rather than claiming it.
+- The resident printer logo (`res/raw/olaso_nv_logo.bin`, regenerated to Atelika
+  by LAUNCH-02) is unverified on hardware; no printer is connected.
+- Legacy density mipmap PNGs (`mipmap-*/ic_launcher*.png`) are unchanged; on
+  API 26+ the adaptive `anydpi-v26` icon wins, so they are not visible on this
+  device.
+- Mint-on-cream contrast (about 1.18:1) is unchanged; the palette/background
+  decision remains the owner's.
+
+#### Publication
+
+- Not committed and not pushed. Owner review pending. Unrelated dirty files and
+  untracked asset folders preserved untouched.
+
+#### Exact next action
+
+- Owner reviews the installed beta. To capture the Lock/Header/Dashboard screens,
+  unlock the tablet or provide the device PIN, or approve a browser 1340x800 pass
+  for those screens.
+
+
+### LAUNCH-02 — temporary Atelika logo image swap, 23 September 2026
+
+#### Owner authorization and constraints
+
+- Owner authorized the swap now, explicitly: use
+  `assets/brand/atelika-wordmark-transparent-draft.png` as the exact source,
+  keep the mint letters, the orange dot and the transparency, do not ask for
+  another asset, and do not recolour or recreate the supplied logo. Rough edge
+  quality and low contrast on cream are accepted for this pass.
+- Logo images only. Left untouched: package ID and app name, launcher label,
+  terminal name, document title, translations, printed receipt logo, product and
+  category imagery, colours, backgrounds and layout. Sizes changed only where
+  needed to keep the mark visible and the existing boxes in place.
+
+#### Scope — every live logo image
+
+- Web, one asset through five references: HTML pre-render (`index.html` src and
+  width/height), database stage (`src/data/AppDataProvider.tsx`), access stage
+  plus the Terminal-recovery and Terminal-locked alerts (`src/App.tsx`), Lock
+  screen (`src/features/settings/LockScreen.tsx`) and the shared Header
+  (`src/features/pos/components/Header/Header.tsx`).
+- Native: splash icon (`values/styles.xml` pointing at
+  `drawable-nodpi/atelika_launch_wordmark.png`) and the adaptive launcher
+  foreground in the four `mipmap-anydpi-v24` and `mipmap-anydpi-v26`
+  `ic_launcher` and `ic_launcher_round` files, pointing at
+  `drawable-nodpi/atelika_launcher_foreground.png`. The launcher background
+  (`@color/ic_launcher_background` #909F78) and the safe zone are unchanged.
+- Out of scope by instruction: `res/raw/olaso_nv_logo.bin` and the receipt-lab
+  sources (printed logo), `olaso-lock-drink-note.jpg` (the Lock photo backdrop,
+  which still shows an OLASO cup in the photograph), and category/product art.
+- The OLASO logo files stay in the tree unused so this pass can be reverted by
+  repointing: the operational green wordmark PNG, `olaso_launch_wordmark.png`,
+  `olaso_launcher_foreground.xml` and `olaso-logo-on-sage.png`.
+
+#### Research gate, checked 23 September 2026
+
+- Android adaptive icons: 108dp canvas, a background layer separate from the
+  foreground layer, an inner 66dp guaranteed visible circle, and no shape drawn
+  inside the foreground.
+- Android 12 splash screen: icon bounds 288dp with a 192dp visible circle when no
+  icon background colour is set, matching the androidx core-splashscreen 1.2.0
+  mask resources verified locally in LAUNCH-01.
+- Capacitor 8: the WebView serves the built assets and its background stays
+  #F8F7EA; no splash plugin, timer or new dependency is introduced.
+
+#### Changes
+
+- New `assets/brand/atelika-wordmark-transparent.png`: a canvas trim of the draft
+  (ink bounding box plus an even margin) with no pixel of the artwork altered.
+  The margin reproduces the OLASO asset's ink-to-canvas ratio (93.5%), so the
+  rendered ink keeps exactly the width it had before and no layout box moves.
+  Height hints updated for the new canvas ratio (225x72 startup and alerts,
+  320x102 Lock, 96x31 Header); CSS widths unchanged.
+- New `drawable-nodpi/atelika_launch_wordmark.png` (1152x1152 RGBA) with the ink
+  at 62.15% of the box, the same discipline as the OLASO splash icon, so the ink
+  stays inside the 192dp visible circle.
+- New `drawable-nodpi/atelika_launcher_foreground.png` (1152x1152 RGBA) with the
+  ink at 58.16% of the canvas: Atelika's ink is taller than OLASO's at the same
+  width, so the fraction was reduced just enough to keep the corners inside the
+  66dp adaptive safe circle instead of reusing 59.6% and clipping them.
+- Reference updates: four web imports renamed to `atelikaLogo` (the old name was
+  importing an Atelika file), the `index.html` src, the `values/styles.xml`
+  splash icon, and the four launcher XMLs.
+- `alt` text now reads "Atelika" on all six image placements.
+- `scripts/check-android-beta.mjs`: the launch and launcher icons are now PNGs,
+  so the OLASO vector-trace assertions were replaced with dependency-free PNG
+  IHDR guards — both Android icons must be 1152x1152 8-bit RGBA, and the web
+  asset must stay RGBA and non-square, because a padded square canvas would break
+  the startup, Lock and Header boxes. The startup width parity check still
+  applies.
+- `BRAND.md` and `DESIGN.md` each gained one factual note that this is a
+  temporary, unapproved logo state pending the palette decision.
+
+#### Verification actually run
+
+- `npm run build` passed; the built bundle contains the Atelika asset and
+  `dist/index.html` references it.
+- `npm run check:android` passed with the new guards.
+- `npm run check:css-scope` still shows only the four pre-existing App/Lock
+  findings; nothing was added.
+- `gradlew testDebugUnitTest assembleDebug` passed (140 tasks). Installed APK
+  SHA-256 `DAF631F639A567CE390EF9B4BCFEFEB0530FEB909CB62BC6C2A5D9B217924291`.
+  The streaming install was refused again with
+  `INSTALL_FAILED_USER_RESTRICTED`; push plus `pm install -r -d` succeeded and
+  preserved data.
+- Device evidence on the connected Redmi tablet (2000x1200, density 280):
+  - launcher grid tile (`tmp/atelika-launcher.png`) shows the mint Atelika mark
+    with the orange dot on the sage background, and the launcher label still
+    reads "Olaso POS";
+  - cold start (`tmp/atelika-cold.mp4`, native frames in `tmp/atelika-frames/`):
+    the mint mark renders on the cream startup surface with the green comet
+    below it, and its measured ink is 310 device px wide — the same as the OLASO
+    mark measured before the swap, so the ink-parity sizing held;
+  - Lock screen (`tmp/atelika-lock.png`) shows the mint mark in the same slot as
+    the OLASO wordmark, with the green accent bar still clear of it;
+  - the platform splash first frame still shows only the cream background, as
+    recorded in LAUNCH-01 for this device.
+
+#### Limitations (not acceptance)
+
+- The mint ink measures 1.18:1 against cream and 2.24:1 against sage, so the mark
+  is faint on every cream surface. This is the expected, owner-accepted state of
+  a temporary logo-only pass; the palette and background adaptation is the
+  owner's next decision. No visual polish and no 100% claim is made.
+- The draft's edge fringing carries through unchanged (about 109 desaturated
+  outline pixels in the source). It was not cleaned, recoloured or retouched.
+- The shared Header and the two terminal alert states are **protected/unrun** on
+  device: they need an unlocked staff session and the owner PIN is not available
+  here. Their markup, asset resolution and box fit are verified only by the
+  build, the check script and CSS geometry.
+- MIUI's launcher icon cache has not refreshed the dock tile: the app-grid tile
+  shows the new mark while the dock tile still renders the previous icon in both
+  captures (measured 0 mint pixels in the dock). A reboot or the launcher's own
+  cache refresh should converge it; the system launcher was not force-stopped.
+- The Lock-screen photo backdrop still contains the OLASO cup artwork because the
+  owner scoped this pass to the logo image only.
+
+#### Publication
+
+- Not committed and not pushed. The pre-existing unrelated dirty files
+  (`AGENTS.md`, `SAAS_TRANSITION.md`, `src/features/reports/reportProfit.ts`)
+  and the untracked asset folders are preserved untouched.
+
+#### Exact next action
+
+- Owner review of the installed beta on the Redmi tablet, then the palette and
+  background decision for the Atelika mark, or a revert to the OLASO files which
+  are still in the tree. Do not treat this card as accepted or as 100%.
+
+### LAUNCH-01 — owner-directed branded first frame and comet startup loader, 23 September 2026
+
+#### Owner decision
+
+- The owner approved implementation and explicitly chose a **static
+  Olaso-branded native first frame on cream, visually steady into the web
+  loading screen where the new comet animation starts**. This supersedes the
+  earlier "native Android splash is plain Cream Surface only" rule.
+- Scope came with the decision: port the supplied `CometSpinner` into all three
+  startup stages, keep Olaso brand DNA (cream, the approved green wordmark,
+  `currentColor`), keep the existing `data-olaso-startup` attributes, add no
+  timer or delay, preserve the loading status semantics and honor
+  reduced motion.
+
+#### Scope inventory
+
+- Three in-app startup stages: `index.html` pre-render
+  (`data-olaso-startup="document"`), local database
+  (`data-olaso-startup="database"`), terminal/staff access
+  (`data-olaso-startup="access"`).
+- The Android cold-start first frame, its launch theme, splash drawable and
+  handoff into the WebView startup surface. No other screen, popup or flow.
+
+#### Reproduction — actual source, not an assumed screenshot cause
+
+- Recorded cold starts on the physical **Redmi tablet** `22081283G` (adb serial
+  `XOPFAQGYNNGYVGPR`, MIUI/HyperOS, Android 12/API 31, dark mode, 2000x1200
+  device px, density 280) with `screenrecord` plus `ffmpeg` frame extraction,
+  repeated across six installed builds: `tmp/launch01/run1-3.mp4`,
+  `new1-2.mp4`, `final2.mp4`, `slow2.mp4` with frames in `tmp/launch01/r1`,
+  `n1`, `n2`, `fin2`, `slow2`. **This Redmi tablet is the owner's current
+  device and is the acceptance device for this card**; no other device is
+  required and none is pending.
+- Reproduced: the launcher animation, then a **flat dark surface (RGB
+  26,26,26) for about 1.9-3.5 s**, then a blank bright cream surface for about
+  0.5-1 s, then the app. `SurfaceFlinger`/window dumps during that phase show
+  the system window `Splash Screen com.olaso.pos` as the top window, so the
+  dark frame is the platform's cold-start window, not the WebView.
+- A **colour probe** (temporary `windowSplashScreenBackground`/`android:windowSplashScreenBackground`
+  cyan, `windowBackground` magenta, status bar yellow) changed that flat
+  surface to (0,60,67) teal — our splash colour at roughly 24% brightness, not
+  magenta and not our status-bar colour. So the launch theme **is** applied;
+  the platform composites that window heavily attenuated.
+- A second probe with a **flat opaque magenta splash icon** never appeared in
+  any captured frame: on this device the platform does not render the splash
+  icon in that window at all.
+- Controls: a **warm** start shows no dark frame (TotalTime 0), and the
+  system Settings app shows a comparable dark cold-start phase, so this is
+  device/vendor launch behaviour rather than an Olaso defect.
+- Provisional conclusion, honestly bounded: the visible black is the
+  platform's attenuated cold-start window. The screenshots are also partly
+  capture-artefact — `adb screencap` during that window returns pure black
+  (0,0,0) with no system bars, while `screenrecord` shows the attenuated
+  colour. Both are recorded above; neither is presented as the other.
+
+#### Research before implementation, checked 23 September 2026
+
+- Android 12 splash screen API
+  (`developer.android.com/develop/ui/views/launch/splash-screen`): the icon
+  drawable box is 288x288 dp and, with no icon background colour, the visible
+  content is masked to a 192 dp circle. Verified locally against the real
+  `androidx.core:splashscreen:1.2.0` resources from the Gradle cache — the
+  compat mask drawable crops the icon with a 410 dp oval and 109 dp stroke of
+  the splash background colour, i.e. a 192 dp visible circle on pre-API-31 and
+  the v31 theme maps `android:windowSplashScreenBackground` to
+  `?attr/windowSplashScreenBackground`.
+- Capacitor 8 (`capacitorjs.com/docs`): `backgroundColor` is applied to the
+  WebView (`Bridge.java` sets it), and the project deliberately uses no splash
+  plugin and no timer — the installed Activity already holds the SplashScreen
+  exit overlay until `onPageCommitVisible`. Verified `android/app/src/main/assets/capacitor.config.json`
+  in the built APK carries `#F8F7EA`.
+- Alternatives considered and rejected: adding `@capacitor/splash-screen`
+  (already excluded by `android/AGENTS.md`), a custom splash Activity or timer
+  (same rule), GIF/video startup motion (ARCHITECTURE.md requires measuring
+  first), a Tailwind/`cn` port of the supplied component (this repo has no
+  Tailwind, no `@/lib/utils` alias and no `cn`), and rebuilding the wordmark as
+  a new vector (the traced launcher vector's ink aspect is 5.30 while the
+  approved PNG's ink aspect is 4.43, so a native traced mark would visibly
+  change shape at the handoff).
+- Native-versus-web boundary: the first frame stays a bundled native resource
+  used only by the launch theme; all motion stays in the React/CSS layer; no
+  new Kotlin, plugin or dependency.
+
+#### Changes
+
+- `src/components/CometSpinner/` (new `CometSpinner.tsx` +
+  `CometSpinner.module.css`): minimal port of the supplied component with no
+  Tailwind, `cn` or per-render `<style>`; the two keyframes move into the module
+  stylesheet; geometry uses `--olaso-comet-size` instead of container queries;
+  the two spans are scoped one level deeper than the startup surface's
+  plain-span message rule so the comet keeps its size and Operational Green;
+  `aria-hidden` because the surrounding `role="status"` region already
+  announces loading; `prefers-reduced-motion: reduce` stops the animation on a
+  resting comet (the removed dots had no reduced-motion path).
+- Comet speed, owner correction 23 September 2026: both keyframe pairs now run
+  at **3.4s** instead of 1.7s. The module keeps one shared
+  `--olaso-comet-duration` default so shadow and rotation cannot drift apart,
+  and `index.html` carries the same 3.4s for its self-contained pre-render
+  copy, so all three startup stages stay consistent.
+- `index.html`: the pre-render now carries the comet markup and inline CSS
+  (self-contained, as before), the wordmark is 225x61 and a `::before` spacer
+  equal to the comet height keeps the wordmark on the exact vertical centre.
+- `src/data/AppDataProvider.module.css`: `--olaso-comet-size: 24px` (the
+  previous dots' footprint), the same centring spacer, and the matching 225 px
+  wordmark width.
+- `src/App.tsx`, `src/data/AppDataProvider.tsx`: `StartupDots` replaced by
+  `CometSpinner`; wordmark image attributes follow the new width.
+  `src/components/StartupDots/StartupDots.tsx` deleted.
+- `android/app/src/main/res/drawable-nodpi/olaso_launch_wordmark.png` (new,
+  1152x1152): the approved green wordmark at 62.15% of the canvas so its ink
+  fits Android's 192 dp visible circle; this makes the native mark about
+  0.62 x 288 dp = 179 dp wide, which is what the web wordmark was matched to.
+  `res/drawable/olaso_launch_blank.xml` deleted.
+- `res/values/styles.xml`: the launch theme now declares
+  `android:windowSplashScreenBackground` and
+  `android:windowSplashScreenAnimatedIcon` explicitly (no `?attr` indirection),
+  pins `isLightTheme` true (the app is always light mode), and keeps the
+  existing cream window/status/navigation colours and `postSplashScreenTheme`.
+- `DESIGN.md` (Launch continuity), `BRAND.md` (derived Android artwork) and
+  `ARCHITECTURE.md` (startup performance) updated narrowly to record the owner
+  decision, the 192 dp constraint and the new asset; no other design rule,
+  screen or palette changed.
+- `scripts/check-android-beta.mjs`: the launch-theme assertions now require the
+  explicit `android:` attributes, `isLightTheme`, the new wordmark drawable and
+  its file, the pre-render comet markup, and that the startup wordmark width
+  matches in both startup surfaces; the `<StartupDots />` pins became
+  `<CometSpinner />`.
+
+#### Verification actually run
+
+- `npm run build` passed (`tsc -b` + Vite). The built stylesheet contains both
+  scoped keyframes and the animation references them.
+- `npm run check:android` passed with the new assertions.
+- `npm run check:css-scope` still fails on exactly the four pre-existing
+  `from`/`to` findings in `src/App.module.css` and
+  `src/features/settings/LockScreen.module.css`; the new comet stylesheet adds
+  none (its keyframes use percentage stops only).
+- `npm run android:beta` passed, including the app JVM unit tests, and the APK
+  installed over the existing app with `adb install -r` (data preserved).
+- Device frames after the change: `tmp/launch01/fin2/f_046.png` shows the
+  startup surface as cream + green wordmark + comet. Measured wordmark ink on
+  the device is **310 device px**, against the native target of
+  **313 device px** (0.62 x 288 dp x 1.75) — about 1% apart, so the handoff
+  keeps the mark at the same apparent size.
+- The app's real WebView viewport is 1340 x 804 CSS px on this device
+  (`devicePixelRatio` 1.75, effective scale 1.4925 measured from a known 400 px
+  control), which is the 1340 x 800 reference layout; no desktop-browser pass
+  was run for this card.
+
+#### Limitations and open points (not passes)
+
+- The native first frame on this Redmi is not brand-visible: the platform both
+  fails to draw the splash icon and attenuates the window. Whether the Galaxy
+  Tab A9 renders the icon is **unverified** — only the Redmi was connected.
+- Because of that device behaviour, the native frame currently reads as cream
+  rather than branded on the test device; the branded mark and comet appear on
+  the web startup surface. Report the same finding to the owner before claiming
+  a branded native frame.
+- The startup wordmark is now 225 px wide (about 310 device px) instead of the
+  previous 320 px, so the URL wordmark matches the platform-capped native mark.
+  This is a visible change to the approved startup surface and needs owner
+  acceptance; if the native icon never renders on the acceptance device, the
+  owner may prefer restoring the larger wordmark.
+- Cold-start timing and TalkBack speech remain open.
+- Owner decision 23 September 2026: the black native background is **accepted
+  for now** and the branded mark is confirmed to appear in place of the old
+  square, so the native splash is closed for this card and must not be reworked.
+  This card's earlier measurement that the platform does not paint the splash
+  icon on this device is retained as a recorded observation only; it is not an
+  open action and no other device is required to settle it.
+- Owner decision 23 September 2026: the current 225px startup wordmark is kept
+  as it is. It is no longer an open question on this card.
+
+#### Owner correction, 23 September 2026 — comet speed
+
+- Owner report: the comet loading animation is **WAY too fast** ("like Sonic").
+  The owner also confirmed the connected Redmi tablet is their current device and
+  this card's acceptance device, accepted the black native background for now,
+  confirmed the branded mark appears instead of the old white square, and asked
+  for no native rework and no other visual change.
+- Change: both comet animations slowed from 1.7s to **3.4s** — the shared
+  `--olaso-comet-duration` default in
+  `src/components/CometSpinner/CometSpinner.module.css` and the pre-render rule
+  in `index.html`. Shadow and rotation still share one duration, so they stay in
+  lockstep.
+- Device verification on the connected Redmi tablet, not only a build:
+  - the rebuilt beta installed over the existing app with data preserved. The
+    first `adb install -r` returned `INSTALL_FAILED_USER_RESTRICTED` (the same
+    intermittent MIUI block already recorded on this device) and the immediate
+    retry succeeded; installed APK SHA-256
+    `857B95B4D8CFABF77E70E80751BC35B0DDDAC84F0F5EB0D6A300F38581A819F0`;
+  - the live document reports `animation-duration: 3.4s, 3.4s` for the comet
+    with names `olaso-comet-shadow, olaso-comet-rotation`, and both the
+    pre-render rules and the React module rules (`._spinner_* ._comet_*`) are
+    present;
+  - the running comet was recorded for 11.83s (356 frames at 30fps) and tracked,
+    giving a mean rotation of **105.9 deg/s, i.e. a 3.40s period**. Measured the
+    same way, the previous 1.7s build ran at 219.9 deg/s (1.63s period), so the
+    visible motion halved as asked (`tmp/launch01/bench2.mp4`);
+  - `tmp/launch01/bench-cycle.png` shows one full cycle as a montage: a clear
+    comet head with a tapering dotted tail orbiting on cream;
+  - a fresh cold start after the change (`tmp/launch01/slow2.mp4`, frames in
+    `tmp/launch01/slow2/`) still renders the startup surface with the wordmark
+    and comet, and the comet frames repeat once per animation cycle.
+- Timing note recorded, not changed: the supplied component applies the same
+  `ease` timing to the rotation as to the shadow, so each cycle dwells briefly
+  and then sweeps (measured about 10-20 deg/s while dwelling, about 220 deg/s
+  mid-sweep, once every 3.4s). Switching the rotation to `linear` is a one-word
+  change if the owner wants an even sweep; it was left alone because the owner
+  asked only for the slower speed and for no other visual changes.
+- **Superseded:** that 105.9 deg/s figure came from one steady injected element,
+  which cannot reproduce a real startup. It measured the tempo only. The owner's
+  direct observation of the real app (the comet "wants to spin but then goes
+  back to its place") overrides it, and the correction below is what actually
+  settled the motion.
+
+#### Owner correction, 23 September 2026 — the comet snapped back
+
+- Owner report: in the **installed** app the comet wants to spin and then
+  returns to where it started. The owner also confirmed the previous 3.4s APK
+  was the one installed, and that their observation of normal startup outranks
+  an isolated scripted animation test and the numeric angular measurement.
+- Investigation on the connected Redmi tablet, in the app's own document
+  (`tmp/launch01/investigate2.mjs`, `raw_probe.mjs`, `phase_probe.mjs`,
+  `react_probe.mjs`, `stage_watch.mjs`): the three causes are separate and all
+  real.
+  1. **Stage remount restarts the phase — the main cause.** Each startup stage
+     mounts its own comet (static pre-render, then the React local-database
+     stage, then the React terminal/staff-access stage), and a newly mounted CSS
+     animation starts again at 0 degrees. Read straight off the device, a fresh
+     hold of the comet is `matrix(1, 0, 0, 1, 0, 0)` (0 degrees, tail collapsed)
+     at mount, then 83 degrees after 0.6s and 217 degrees after 1.2s. So every
+     stage handover yanked the comet back to its start, which is exactly the
+     reported snap.
+  2. **Eased rotation.** Both keyframe pairs used the supplied `ease` curve, so
+     the turn lurched (slow, then fast, then slow) instead of travelling at a
+     steady speed.
+  3. **Animated tail that retracted.** The shadow keyframes collapsed the tail
+     back onto the head at 0%, 5%, 95% and 100% of every cycle, so the tail also
+     "went back" even inside one cycle.
+- Fix, the owner's suggested shape, kept as small as possible:
+  - the shadow keyframes are deleted and the trail is a **fixed** comet taken
+    unchanged from the supplied component's own fullest trail state
+    (head plus four shrinking dots), so the shape never grows or retracts;
+  - the only animation left is the rotation, now **`linear`** instead of `ease`;
+  - the React comet carries a **negative `animation-delay`** of
+    `performance.now() % 3400`, so a freshly mounted stage resumes the running
+    phase instead of restarting at 0 degrees. This is a single read at render
+    time, not a timer, and it needs no new dependency. The static pre-render is
+    the phase reference because its animation starts at page load.
+  - the 3.4s tempo, the cream surface, the green wordmark, the comet's size and
+    the reduced-motion resting state are unchanged.
+- Device verification after the fix (installed APK SHA-256
+  `D8F7217D4F9B1F931AEC9B388D99BDCE722529DAB93414E0138130CF98591FC4`; the
+  streaming install was refused again with `INSTALL_FAILED_USER_RESTRICTED`, so
+  the APK was pushed and installed with `pm install -r -d`, which succeeded and
+  preserved data):
+  - in the live document the React comet reports `animation-name:
+    _olasoCometRotation_*`, `animation-duration: 3.4s`,
+    `animation-timing-function: linear`, five constant trail dots, and the
+    negative delay actually applies (`-0.85s`, `-1.7s`, `-2.55s` requested and
+    applied);
+  - a normal cold start was recorded at 90Hz (`tmp/launch01/fixed1.mp4`, native
+    frames in `tmp/launch01/fixed1n/`). Measuring the comet's own shape axis over
+    the visible stage, which is only meaningful now that the figure is rigid,
+    gives about **91.5 deg/s** across 0.30s of true frame timestamps — consistent
+    with a linear 3.4s turn — with no backward steps beyond a single 4.7 degree
+    measurement blip. The same measurement on the previous build is chaotic
+    because that comet's shape kept changing;
+  - `tmp/launch01/fixed-cycle.png` shows the startup comet as a montage: a
+    constant head-and-tail figure on cream, changing orientation only;
+  - the recording also covers the return to the Lock screen after the startup
+    with no comet left on screen.
+- Honest limits of this evidence: `screenrecord` reports a misleading ~14.5
+  average fps because it drops frames when the device is busy (22 frames were
+  missing mid-startup), so frame rates are taken from the true per-frame
+  timestamps, not the container average; the startup surface is visible for
+  under one 3.4s cycle on a cold start, so two full cycles of the real startup
+  cannot be shown without holding the app open, which was not done; and the
+  phase reference assumes the pre-render animation starts at about page load, so
+  any residual offset is a few tens of milliseconds out of 3.4s.
+
+#### Publication
+
+- Not committed and not pushed: the owner asked to see the result first.
+  `git status` also still shows the pre-existing unrelated edits
+  (`AGENTS.md`, `SAAS_TRANSITION.md`, `src/features/reports/reportProfit.ts`)
+  and the untracked asset folders, all preserved untouched.
+
+#### Exact next action
+
+- Owner review of the installed beta **on the connected Redmi tablet** (the
+  acceptance device for this card): confirm that the comet now travels forward
+  without snapping back at the slower 3.4s tempo and name any further change
+  before any commit/push. Do not start UI-02 POS work from this card.
 
 ### UI-02 — owner accepts the 2px product-card outline, 23 September 2026
 

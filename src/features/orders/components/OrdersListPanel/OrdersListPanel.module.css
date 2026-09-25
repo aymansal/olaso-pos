@@ -47,7 +47,10 @@
   gap: 7px;
   padding: 0 11px;
   border-radius: 15px;
-  color: var(--olaso-green);
+  /* Kept as the semantic "Last sync" success chip when the Orders palette moves
+     --olaso-green to teal: the glyph follows the chip's own green ink so the
+     whole chip stays green. */
+  color: var(--olaso-green-ink);
   background: var(--olaso-green-soft);
 }
 
@@ -278,8 +281,11 @@
   padding: 0 12px;
   border: 1px solid var(--olaso-green);
   border-radius: 17px;
-  color: var(--olaso-green-ink);
-  background: var(--olaso-green-soft);
+  /* Recovery control, not a success chip: it follows the screen accent and drops
+     the semantic green fill rather than leaving a green chip on the teal screen.
+     No new tint is introduced. */
+  color: var(--olaso-green);
+  background: transparent;
   font: inherit;
   font-size: 10px;
   font-weight: 700;
@@ -293,7 +299,7 @@
 }
 
 .retry:active {
-  background: var(--olaso-green-icon);
+  background: rgb(0 0 0 / 8%);
 }
 
 .pagination {

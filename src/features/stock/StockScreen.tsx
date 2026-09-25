@@ -95,7 +95,7 @@ export function StockScreen({
   }
 
   return (
-    <main className={styles.screen} aria-label={t('Olaso stock')}>
+    <main className={styles.screen} aria-label={t('Atelika stock')}>
       <StockInventoryPanel
         ingredients={pageIngredients}
         totalItems={visibleIngredients.length}

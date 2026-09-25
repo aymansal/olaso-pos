@@ -11,7 +11,10 @@ import { hasPermission } from '../../../../data/permissions';
 import type { ClockFormat } from '../../../../data/terminalSettings';
 import type { AppLanguage } from '../../../../lib/locale';
 import { useT } from '../../../../lib/locale';
-import olasoLogo from '../../../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
+import atelikaLogo from '../../../../../assets/brand/atelika-wordmark-transparent.png';
+/* POS-BG-03: owner-approved dark-teal wordmark for the POS top bar only; other
+   screens keep the mint asset. */
+import atelikaLogoDarkTeal from '../../../../../assets/brand/atelika-wordmark-dark-teal-transparent.png';
 import { ProfileControl } from '../ProfileControl/ProfileControl.tsx';
 
 interface HeaderProps {
@@ -24,6 +27,7 @@ interface HeaderProps {
   onLanguageChange: (language: AppLanguage) => Promise<void>;
   onPrintDailyReport?: () => Promise<void>;
   onSkipToContent?: () => void;
+  posTrial?: boolean;
 }
 
 export function Header({
@@ -36,6 +40,7 @@ export function Header({
   onLanguageChange,
   onPrintDailyReport,
   onSkipToContent,
+  posTrial,
 }: HeaderProps) {
   const t = useT();
   const [now, setNow] = useState(new Date());
@@ -68,14 +73,17 @@ export function Header({
     hour12: clockFormat === '12-hour',
   }).format(now);
   return (
-    <header className={styles.header}>
+    <header
+      className={styles.header}
+      data-trial={posTrial ? 'true' : undefined}
+    >
       {onSkipToContent ? <a className={styles.skipLink} href="#olaso-content" onClick={(event) => {
         event.preventDefault();
         onSkipToContent();
       }}>{t('Skip to content')}</a> : null}
       <div className={styles.brandSide}>
         <div className={styles.wordmark}>
-          <img src={olasoLogo} alt="Olaso" width={96} height={26} />
+          <img src={posTrial ? atelikaLogoDarkTeal : atelikaLogo} alt="Atelika" width={96} height={30} />
         </div>
         <time className={styles.date} dateTime={now.toISOString()}>
           <span className={styles.calendarDate}>{date} ·</span>

@@ -103,14 +103,25 @@
   letter-spacing: -1.8px;
 }
 
+/* DASH-ORANGE-01: owner-approved brand emphasis on the loaded Net Sales value only.
+   44px / 700 qualifies as large text, so the 3:1 large-text threshold applies and the
+   measured orange-on-white pair is 3.37:1. Applied only when a value is present, so the
+   loading/unavailable placeholder dash keeps the normal text colour. */
+.netValueBrand {
+  color: var(--olaso-trial-action, var(--olaso-text));
+}
+
 .change {
   min-height: 32px;
   flex-shrink: 0;
   gap: 5px;
   padding: 0 10px;
   border-radius: 14px;
-  color: var(--olaso-green);
-  background: var(--olaso-green-icon);
+  /* DASH-PALETTE-01: the comparison chip is ambiguous - it renders a positive
+     delta, a neutral "No comparison yet" and the Retry action in one style - so its
+     green is preserved and listed for the owner instead of being retinted. */
+  color: var(--dashboard-status-green);
+  background: var(--dashboard-status-soft);
   border: 0;
   font-family: inherit;
   font-size: 12px;
@@ -177,7 +188,7 @@
   height: 36px;
   border-radius: 50%;
   color: var(--olaso-green);
-  background: var(--olaso-green-soft);
+  background: var(--dashboard-tint);
 }
 
 .metricCopy {
@@ -334,8 +345,8 @@
   z-index: 1;
   padding: 3px 7px;
   border-radius: 10px;
-  color: var(--olaso-green-ink);
-  background: var(--olaso-green-soft);
+  color: var(--olaso-green);
+  background: var(--dashboard-tint);
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;

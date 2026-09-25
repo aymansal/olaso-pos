@@ -102,7 +102,7 @@ function parseManifest(raw: unknown): UpdateManifest {
   const notes = typeof value.notes === 'string' ? value.notes.trim() : undefined;
 
   if (packageId !== PACKAGE_ID) {
-    throw new Error('Update manifest package ID is not Olaso POS.');
+    throw new Error('Update manifest package ID is not Atelika POS.');
   }
   if (!Number.isInteger(versionCode) || versionCode < 1) {
     throw new Error('Update manifest version code is invalid.');
@@ -194,7 +194,7 @@ export async function installAvailableUpdate(
       throw new Error(opened.message);
     }
     throw new Error(
-      'Allow Olaso to install updates in Android settings, then tap Update again.',
+      'Allow Atelika to install updates in Android settings, then tap Update again.',
     );
   }
 

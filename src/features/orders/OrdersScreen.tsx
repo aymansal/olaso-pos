@@ -47,7 +47,7 @@ export function OrdersScreen() {
   }, [data.orders, selectedOrder]);
 
   return (
-    <main className={styles.screen} aria-label={t('Olaso orders')}>
+    <main className={styles.screen} data-orders-palette aria-label={t('Atelika orders')}>
       <OrdersListPanel
         orders={data.orders}
         selectedKey={selectedKey}

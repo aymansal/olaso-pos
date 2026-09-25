@@ -34,7 +34,12 @@ export type PrinterPreferences = Pick<
 
 type SettingsDatabase = Pick<SQLiteDBConnection, 'query' | 'run'>;
 
-const DEFAULT_TERMINAL_NAME = 'Olaso POS';
+const DEFAULT_TERMINAL_NAME = 'Atelika POS';
+/**
+ * Rename migration for the visible rebrand: only the exact previous default is
+ * rewritten. A terminal name the owner typed is never touched.
+ */
+const PREVIOUS_DEFAULT_TERMINAL_NAME = 'Olaso POS';
 const DEFAULT_PRINTER_PORT = 9100;
 
 function cleanTerminalName(value: string) {
@@ -150,7 +155,11 @@ export async function loadTerminalSettingsFromDatabase(
     (settings.values ?? []).map((row) => [String(row.key), String(row.value)]),
   );
   const deviceId = values.get('device_id') ?? `device-${idFactory()}`;
-  const terminalName = values.get('terminal_name') ?? DEFAULT_TERMINAL_NAME;
+  const storedTerminalName = values.get('terminal_name');
+  const terminalName =
+    storedTerminalName && storedTerminalName !== PREVIOUS_DEFAULT_TERMINAL_NAME
+      ? storedTerminalName
+      : DEFAULT_TERMINAL_NAME;
   const clockFormat = values.get('clock_format') ?? '24-hour';
   const receiptLanguage = values.get('receipt_language') ?? 'en';
   const applicationLanguage = values.get('application_language') ?? 'en';
@@ -170,7 +179,12 @@ export async function loadTerminalSettingsFromDatabase(
     ['auto_lock_minutes', String(autoLockMinutes)],
     ['session_locked', values.get('session_locked') ?? '0'],
   ]) {
-    if (!values.has(key)) await upsertSetting(database, key, value, now);
+    const stored = values.get(key);
+    const renamedPreviousDefault =
+      key === 'terminal_name' && stored === PREVIOUS_DEFAULT_TERMINAL_NAME;
+    if (!values.has(key) || renamedPreviousDefault) {
+      await upsertSetting(database, key, value, now);
+    }
   }
 
   const [syncState, pending] = await Promise.all([

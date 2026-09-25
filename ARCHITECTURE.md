@@ -900,11 +900,13 @@ Rules:
   uses the Olaso cream surface and approved artwork and transitions to a
   visually identical web startup surface; the default Capacitor artwork and
   blank white frames are not production states.
-- The native first frame is static and locally bundled. Optional brand motion
-  begins only on the visually identical web startup surface, never extends the
-  time before usable POS, and has a static reduced-motion path. Select its asset
-  format only after measuring APK weight, WebView decode, memory, and startup on
-  the physical tablet; GIF, video, and vector/CSS are candidates, not policy.
+- The native first frame is static and locally bundled: the approved green
+  wordmark inset on cream inside Android's 192dp visible splash-icon circle
+  (`res/drawable-nodpi/olaso_launch_wordmark.png`). Brand motion begins only on
+  the visually identical web startup surface as the CSS comet
+  (`src/components/CometSpinner`), never extends the time before usable POS, and
+  has a static reduced-motion path. Adding GIF, video, or another package for
+  startup motion still needs measurement on the physical device first.
 - Convex, DNS, Wi-Fi, and cloud synchronization never gate the first usable POS.
 - SQLite and terminal-lock restoration may gate cashier access, but they must
   share one visible startup flow. Do not create successive blank or visually

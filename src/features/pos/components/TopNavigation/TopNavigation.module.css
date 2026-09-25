@@ -6,6 +6,7 @@
   width: 570px;
   height: 46px;
   overflow: hidden;
+  border: var(--olaso-trial-nav-frame-width, 0) solid var(--olaso-trial-select, transparent);
   border-radius: 23px;
   background: var(--color-background-surface);
 }
@@ -16,7 +17,9 @@
   left: 0;
   width: calc(100% / var(--count, 1));
   height: 100%;
-  border-radius: 23px;
+  border-radius: var(--olaso-trial-nav-radius, 23px);
+  /* Owner-approved 24 September: the active pill is the exact fill the selected
+     Dine In / Cash segments use (`--olaso-green`), not a separate shade. */
   background: var(--olaso-green);
   opacity: var(--show, 1);
   transform: translateX(calc(var(--index, 0) * 100%));
@@ -34,7 +37,7 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  height: 46px;
+  height: 100%;
   gap: 6px;
   padding: 0;
   border: 0;
@@ -51,7 +54,7 @@
 }
 
 .item:focus-visible {
-  outline: 2px solid var(--color-border-emphasized);
+  outline: 2px solid var(--olaso-trial-select, var(--color-border-emphasized));
   outline-offset: -3px;
 }
 

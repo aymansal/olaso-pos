@@ -113,7 +113,7 @@
 
 .iconActive {
   color: var(--olaso-green);
-  background: var(--olaso-green-icon);
+  background: var(--dashboard-tint);
 }
 
 .number {

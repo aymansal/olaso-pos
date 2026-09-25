@@ -1,5 +1,6 @@
 .startup,
 :global(.olaso-startup) {
+  --olaso-comet-size: 24px;
   display: grid;
   min-height: 100vh;
   place-content: center;
@@ -10,10 +11,19 @@
   background: var(--olaso-canvas);
 }
 
+/* The wordmark must sit on the exact vertical centre the native first frame
+   centres it on, so the comet below it is balanced by an equal spacer above. */
+.startup::before,
+:global(.olaso-startup)::before {
+  content: '';
+  width: var(--olaso-comet-size);
+  height: var(--olaso-comet-size);
+}
+
 .logo,
 :global(.olaso-startup-logo) {
   display: block;
-  width: 320px;
+  width: 225px;
   height: auto;
 }
 

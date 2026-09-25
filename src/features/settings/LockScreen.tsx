@@ -23,8 +23,8 @@ import {
 } from '../../data/operationalCache';
 import type { TerminalSettings } from '../../data/terminalSettings';
 import { isStaffRole, type StaffRole } from '../../data/permissions';
-import olasoLogo from '../../../assets/brand/olaso-wordmark-operational-green-transparent.png';
-import lockBackground from '../../../assets/brand/olaso-lock-drink-note.jpg';
+import atelikaLogo from '../../../assets/brand/atelika-wordmark-transparent.png';
+import lockBackground from '../../../assets/brand/atelika-lock-drink-note.jpg';
 import { LockStaffSelect } from './components/LockStaffSelect/LockStaffSelect';
 import { useLanguage, useT } from '../../lib/locale';
 import styles from './LockScreen.module.css';
@@ -242,20 +242,20 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
 
   return (
     <main className={styles.screen}>
-      <section className={styles.brandSide} aria-label={t('Olaso terminal')}>
+      <section className={styles.brandSide} aria-label={t('Atelika terminal')}>
         <img className={styles.backdrop} src={lockBackground} alt="" aria-hidden="true" />
         <span className={styles.backdropWash} aria-hidden="true" />
         <img
           className={styles.wordmark}
-          src={olasoLogo}
-          alt="Olaso"
+          src={atelikaLogo}
+          alt="Atelika"
           width={320}
-          height={78}
+          height={101}
         />
         <span className={styles.accent} />
         <div className={styles.brandMessage}>
           <h1>{t('Every sale.')}<br />{t('Every gram.')}</h1>
-          <p>{t('Your Olaso terminal is locked and ready for the next shift.')}</p>
+          <p>{t('Your Atelika terminal is locked and ready for the next shift.')}</p>
         </div>
         <div className={styles.connection}>
           {online
@@ -274,7 +274,7 @@ export function LockScreen({ settings, onUnlock }: LockScreenProps) {
       </section>
 
       <section className={styles.unlockSide} aria-labelledby="unlock-title">
-        <h2 id="unlock-title">{t('Unlock Olaso')}</h2>
+        <h2 id="unlock-title">{t('Unlock Atelika')}</h2>
 
         <div className={styles.field}>
           <span id="lock-staff-label">{t('Staff member')}</span>

@@ -128,7 +128,9 @@
 }
 
 .columns span {
-  color: var(--olaso-product-label);
+  /* Owner-named requirement: the column labels keep >=4.5:1 on the tinted head row
+     (--olaso-product-label measured 4.22:1 before and 3.95:1 on the tint). */
+  color: var(--olaso-text-service);
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.7px;

@@ -64,10 +64,15 @@ decision changes.
   acting. Dashboard is first and Lock is last. No personal design choices:
   trace changes to applicable skill rules or owner decisions; unresolved choices
   and skill conflicts go to the owner, not an invented preference.
-  Work on one screen at a time using all its applicable listed skills. Read
-  them first, consolidate overlapping checks/findings, and reuse valid evidence.
-  Report the combined result and stop for owner acceptance before the next
-  screen; do not claim 100% with unresolved checks or exceptions.
+  Work on one screen at a time and process its applicable listed skills in the
+  ledger's numbered order, one complete skill pass at a time. Read each skill
+  before its pass; record its checklist, findings, justified corrections,
+  verification and honest status before proceeding. When a later skill repeats
+  an already-fixed requirement, verify and reuse that result instead of making
+  the same change twice; never use overlap to skip the later skill pass. Give
+  one combined report only after every individual pass, then stop for owner
+  acceptance before the next screen. Do not claim 100% with unresolved checks
+  or exceptions.
 - `SAAS_TRANSITION.md` owns the wider SaaS plan, concerns and historical work.
   Read its current direction alongside the UI ledger when resuming.
 - The owner chooses one step at a time. UI polish comes first, then security

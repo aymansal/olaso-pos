@@ -283,7 +283,7 @@ async function unlock(role, existingSession) {
     `(()=>{const button=[...document.querySelectorAll('button')].find(item=>/Unlock|Déverrouiller/.test(item.innerText)&&!item.innerText.includes('/'));if(!button||button.disabled)throw Error('Unlock button missing');button.click();return true})()`,
   );
   await session.waitFor(
-    `(()=>document.querySelector('main[aria-label="Olaso point of sale"],main[aria-label="Caisse Olaso"]')||document.querySelector('[data-olaso-nav="primary"]')?true:false)()`,
+    `(()=>document.querySelector('main[aria-label="Atelika point of sale"],main[aria-label="Caisse Atelika"]')||document.querySelector('[data-olaso-nav="primary"]')?true:false)()`,
     45_000,
   );
   return session;
@@ -395,7 +395,7 @@ async function smoke() {
   await step('return-pos', async () => {
     await click('POS', session);
     await session.waitFor(
-      `(()=>document.querySelector('main[aria-label="Olaso point of sale"]')?true:false)()`,
+      `(()=>document.querySelector('main[aria-label="Atelika point of sale"]')?true:false)()`,
       20_000,
     );
   });

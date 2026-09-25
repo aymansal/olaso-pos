@@ -46,7 +46,7 @@ const nvWrite = fs.readFileSync(path.join(out, 'nv-logo-write.bin'));
 const nvRecall = fs.readFileSync(path.join(out, 'nv-logo-recall.bin'));
 assert.deepEqual([...nvWrite.subarray(0, 5)], [0x1b, 0x40, 0x1c, 0x71, 0x01], 'NV write must initialize and define exactly one image');
 assert.equal(nvWrite[5], 38, 'pre-rotated NV header must put the 304-dot padded height first');
-assert.equal(nvWrite[7], 8, 'pre-rotated NV header must put the 64-dot padded width second');
+assert.equal(nvWrite[7], 12, 'pre-rotated NV header must put the 96-dot padded width second');
 assert.equal(nvWrite.length, 9 + nvWrite[5] * nvWrite[7] * 8, 'NV image byte count must match its encoded dimensions');
 assert.ok(nvWrite.subarray(9).some(byte => byte !== 0), 'NV logo image must not be blank');
 assert.ok(nvWrite.subarray(-32).every(byte => byte === 0), 'NV logo must end with four blank padded raster rows');

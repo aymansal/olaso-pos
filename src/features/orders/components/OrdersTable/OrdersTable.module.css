@@ -20,7 +20,8 @@
 
 .head {
   height: 40px;
-  background: var(--olaso-table-head);
+  /* Orders-owned tint when the palette is active; the original fill when it is not. */
+  background: var(--orders-tint, var(--olaso-table-head));
 }
 
 .head > span,
@@ -35,7 +36,9 @@
 }
 
 .head > span {
-  color: var(--olaso-table-label);
+  /* The head fill is tinted, so the labels take the existing darker token
+     (#59645b, 5.32:1 on #e9eff0) instead of --olaso-table-label (4.25:1 there). */
+  color: var(--olaso-text-service);
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.8px;
@@ -54,7 +57,8 @@
   left: 0;
   width: 100%;
   height: 55px;
-  background: var(--olaso-table-selected);
+  /* Orders-owned tint when the palette is active; the original fill when it is not. */
+  background: var(--orders-tint-strong, var(--olaso-table-selected));
   transform: translateY(calc(var(--index, 0) * 55px));
   transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
@@ -133,7 +137,8 @@
 }
 
 .when span {
-  color: var(--olaso-text-time);
+  /* Regressed by the selected-row tint; #59645b keeps 5.15:1 on #e4ecec. */
+  color: var(--olaso-text-service);
   font-weight: 500;
 }
 
@@ -157,11 +162,6 @@
 .preparing {
   color: var(--olaso-gold);
   background: var(--olaso-status-gold);
-}
-
-.ready {
-  color: var(--olaso-green-ink);
-  background: var(--olaso-green-icon);
 }
 
 .completed {
@@ -206,7 +206,9 @@
 }
 
 .emptyAction:active {
-  background: var(--olaso-green-ink);
+  /* Follows the accent fill the same way .reprint does, instead of flipping to a
+     success-green pressed colour once the Orders palette moves. */
+  filter: brightness(0.88);
 }
 
 @media (prefers-reduced-motion: reduce) {

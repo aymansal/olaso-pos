@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useProductManagement } from '../../data/useProductManagement';
 import { useT } from '../../lib/locale';
 import { CategoryDialog } from './components/CategoryDialog/CategoryDialog';
@@ -22,6 +22,26 @@ function productInCategory(product: ManagedProduct, categoryId: string) {
   if (categoryId === 'all') return true;
   if (categoryId === UNCATEGORIZED_ID) return !product.categoryId;
   return product.categoryId === categoryId;
+}
+
+/**
+ * The product the list highlight and the editor must agree on for one displayed page.
+ *
+ * A real category change always lands on the destination page's first row, even when the
+ * previously selected product also appears in that destination, because the raw
+ * management.products order must never decide what is highlighted. Within an unchanged category
+ * the current selection is kept while it is on the displayed page, otherwise the page's first
+ * row is taken; an empty page returns undefined so the editor shows its existing empty state.
+ */
+export function resolvePageSelection(
+  pageProducts: ManagedProduct[],
+  selectedProductId?: string,
+  categoryChanged = false,
+) {
+  if (categoryChanged) return pageProducts[0]?.id;
+  return pageProducts.some((product) => product.id === selectedProductId)
+    ? selectedProductId
+    : pageProducts[0]?.id;
 }
 
 export function ProductsScreen() {
@@ -65,32 +85,50 @@ export function ProductsScreen() {
     sort,
   ]);
 
+  // Category, search, availability and sort changes return to the first page. This reset and
+  // the selection correction below are adjusted during render (React's documented
+  // "storing information from previous renders" pattern) rather than in an Effect, because an
+  // Effect commits and paints one frame with the stale page and an off-page selection first.
   const filterKey = `${availability}\u0000${search}\u0000${selectedCategoryId}\u0000${sort}`;
-  const previousFilters = useRef(filterKey);
-  useEffect(() => {
-    if (previousFilters.current === filterKey) return;
-    previousFilters.current = filterKey;
+  const [appliedFilterKey, setAppliedFilterKey] = useState(filterKey);
+  const filtersChanged = appliedFilterKey !== filterKey;
+  if (filtersChanged) {
+    setAppliedFilterKey(filterKey);
     setPage(0);
-  }, [filterKey]);
+  }
 
-  useEffect(() => {
-    if (management.isLoading || management.error || selectedProductId) return;
-    setSelectedProductId(visibleProducts[0]?.id);
-  }, [
-    management.error,
-    management.isLoading,
-    selectedProductId,
-    visibleProducts,
-  ]);
+  // A real category change (a sidebar click, or a programmatic move after create or delete) is
+  // tracked separately from the other filters so the selection rule below can restart from the
+  // destination's first row instead of carrying the previous category's selection across.
+  const [appliedCategoryId, setAppliedCategoryId] = useState(selectedCategoryId);
+  const categoryChanged = appliedCategoryId !== selectedCategoryId;
+  if (categoryChanged) setAppliedCategoryId(selectedCategoryId);
 
   const pageCount = management.isLoading
     ? 0
     : Math.max(1, Math.ceil(visibleProducts.length / PAGE_SIZE));
-  const safePage = pageCount === 0 ? 0 : Math.min(page, pageCount - 1);
+  const requestedPage = filtersChanged ? 0 : page;
+  const safePage = pageCount === 0 ? 0 : Math.min(requestedPage, pageCount - 1);
   const pageProducts = visibleProducts.slice(
     safePage * PAGE_SIZE,
     safePage * PAGE_SIZE + PAGE_SIZE,
   );
+
+  // Keep the highlighted row, the selection and the editor synchronized. A category change
+  // starts from the destination page's first row; every other filter or page change retains the
+  // selection while it stays on the displayed page. See resolvePageSelection above.
+  const pageSelection = resolvePageSelection(
+    pageProducts,
+    selectedProductId,
+    categoryChanged,
+  );
+  if (
+    !management.isLoading &&
+    !management.error &&
+    pageSelection !== selectedProductId
+  ) {
+    setSelectedProductId(pageSelection);
+  }
 
   const visibleCategories = useMemo(
     () => management.categories,
@@ -129,12 +167,16 @@ export function ProductsScreen() {
 
   async function saveProduct(input: ProductSaveInput) {
     const result = await management.saveProduct(input);
+    const destination = input.categoryId || UNCATEGORIZED_ID;
     setSelectedProductId(result.id);
-    setSelectedCategoryId(input.categoryId || UNCATEGORIZED_ID);
+    setSelectedCategoryId(destination);
+    // A save deliberately selects the product it just wrote, so moving it to another category
+    // must not be treated as a navigation to that category's first row.
+    setAppliedCategoryId(destination);
   }
 
   return (
-    <main className={styles.screen} aria-label={t('Olaso products')}>
+    <main className={styles.screen} data-products-palette aria-label={t('Atelika products')}>
       <ProductCatalogPanel
         categories={visibleCategories}
         uncategorizedCount={management.products.filter((product) => !product.categoryId).length}
@@ -153,13 +195,7 @@ export function ProductsScreen() {
         onSearchChange={setSearch}
         onAvailabilityChange={setAvailability}
         onSortChange={setSort}
-        onSelectCategory={(categoryId) => {
-          setSelectedCategoryId(categoryId);
-          const first = management.products.find((product) =>
-            productInCategory(product, categoryId),
-          );
-          setSelectedProductId(first?.id);
-        }}
+        onSelectCategory={setSelectedCategoryId}
         onSelectProduct={setSelectedProductId}
         onAddCategory={() => setCategoryEditor('new')}
         onRenameCategory={() =>

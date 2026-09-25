@@ -11,7 +11,9 @@
   row-gap: 8px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-color: var(--olaso-green) transparent;
+  /* Trial token: on the POS-BG-02 dark canvas the green thumb is unreadable;
+     the fallback keeps the baseline when the trial is off. */
+  scrollbar-color: var(--olaso-trial-on-canvas, var(--olaso-green)) transparent;
   scrollbar-width: thin;
 }
 
@@ -22,6 +24,7 @@
   margin: 0;
   grid-column: 1 / -1;
   place-items: center;
-  color: var(--olaso-muted);
+  /* The muted grey fails on the trial dark canvas; fallback preserves baseline. */
+  color: var(--olaso-trial-on-canvas, var(--olaso-muted));
   font-size: 13px;
 }

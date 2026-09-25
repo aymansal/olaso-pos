@@ -65,7 +65,7 @@ run('gh', [
   '--repo',
   RELEASES_REPO,
   '--title',
-  `Olaso POS ${versionName}`,
+  `Atelika POS ${versionName}`,
   '--notes',
   notes || `Signed release ${versionName} (versionCode ${versionCode}).`,
 ]);

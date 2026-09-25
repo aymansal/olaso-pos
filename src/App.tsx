@@ -22,8 +22,8 @@ import { StaffSessionProvider } from './data/sessionContext';
 import { ReconnectProvider } from './data/reconnectContext';
 import type { StaffSession } from './data/identitySession';
 import { hasPermission, type Permission } from './data/permissions';
-import olasoLogo from '../assets/brand/olaso-wordmark-operational-green-transparent.png';
-import { StartupDots } from './components/StartupDots/StartupDots';
+import atelikaLogo from '../assets/brand/atelika-wordmark-transparent.png';
+import { CometSpinner } from './components/CometSpinner/CometSpinner';
 import startupStyles from './data/AppDataProvider.module.css';
 import { printDailyOwnerReport } from './data/dailyOwnerReport.ts';
 
@@ -112,8 +112,8 @@ export function App() {
 
   useEffect(() => {
     document.title = staffSession && !terminal?.isLocked
-      ? `${translate(language, contentScreen)} · Olaso POS`
-      : 'Olaso POS';
+      ? `${translate(language, contentScreen)} · Atelika POS`
+      : 'Atelika POS';
   }, [contentScreen, language, staffSession, terminal?.isLocked]);
 
   function resetScreens() {
@@ -286,12 +286,12 @@ export function App() {
       <main
         className={startupStyles.startup}
         data-olaso-startup="access"
-        aria-label={translate(language, 'Loading Olaso')}
+        aria-label={translate(language, 'Loading Atelika')}
         aria-busy="true"
         role="status"
       >
-        <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
-        <StartupDots />
+        <img className={startupStyles.logo} src={atelikaLogo} alt="Atelika" width={225} height={71} />
+        <CometSpinner />
       </main>
       </LocaleProvider>
     );
@@ -312,7 +312,7 @@ export function App() {
     return (
       <LocaleProvider language={language}>
       <main className={startupStyles.startup} aria-label={translate(language, 'Terminal recovery')} role="alert">
-        <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
+        <img className={startupStyles.logo} src={atelikaLogo} alt="Atelika" width={225} height={71} />
         <strong>{translate(language, 'Terminal locked')}</strong>
         <span>{startupError ?? translate(language, 'Terminal settings are unavailable. POS remains locked.')}</span>
         <button type="button" onClick={() => void restoreTerminal()}>
@@ -347,7 +347,7 @@ export function App() {
     return (
       <LocaleProvider language={language}>
       <main className={startupStyles.startup} aria-label={translate(language, 'Terminal locked')} role="alert">
-        <img className={startupStyles.logo} src={olasoLogo} alt="OLASO" width={320} height={87} />
+        <img className={startupStyles.logo} src={atelikaLogo} alt="Atelika" width={225} height={71} />
         <strong>{translate(language, 'Terminal locked')}</strong>
         <span>{translate(language, 'Staff session is unavailable. Lock and sign in again.')}</span>
         <button type="button" onClick={() => void lock()}>
@@ -369,11 +369,36 @@ export function App() {
       ? leavingScreen
       : undefined;
 
+  // Shared top bar (owner-approved 25 September 2026): the single Header mounted
+  // below keeps one presentation on every screen that shows it. AppScreen is
+  // NavigationPage | 'Settings', so this is exactly Dashboard, POS, Orders,
+  // Products, Stock and Reports. Settings is excluded by owner decision and keeps
+  // its previous bar; Lock and the startup states never mount this shell.
+  const topBarTrial = activeScreen !== 'Settings';
+
+  // Screen-owned palettes (NAV-PALETTE-01, 25 September 2026). POS declares its
+  // palette on its own screen root and Dashboard on its .screen, so a mounted screen
+  // keeps its colours for its whole visible lifetime - it never reverts while it is
+  // still fading out, and the incoming screen never borrows the outgoing one. The
+  // only app-frame colour is the 4px strip below the 800px shell, which follows the
+  // frame actually on screen: the outgoing screen until the fade completes, then the
+  // incoming one, rather than the urgent active screen.
+  const frameScreen = visibleLeaving ?? visibleContent;
+  // Orders joined the mint frame strip on 25 September 2026: its own screen
+  // palette paints the same pale mint-grey, so the 4px strip below the 800px
+  // shell must follow a visible Orders screen too.
+  const frameMint = frameScreen === 'POS' || frameScreen === 'Dashboard'
+    || frameScreen === 'Orders' || frameScreen === 'Products';
+
   return (
     <LocaleProvider language={language}>
     <StaffSessionProvider session={{ ...staffSession, deviceId: terminal.deviceId }}>
       <ReconnectProvider onSessionUnavailable={lock}>
-        <div className={appStyles.shell} ref={shell}>
+        <div
+          className={appStyles.shell}
+          ref={shell}
+          data-frame-mint={frameMint ? 'true' : undefined}
+        >
           <Header
             activePage={activeScreen === 'Settings' ? undefined : activeScreen}
             clockFormat={terminal.clockFormat}
@@ -384,6 +409,7 @@ export function App() {
             onLanguageChange={applyLanguage}
             onPrintDailyReport={staffSession.role === 'owner' ? printDailyReport : undefined}
             onSkipToContent={focusContent}
+            posTrial={topBarTrial}
           />
           {visitedScreens.map((visited) => {
             if (!hasPermission(staffSession.role, screenPermission[visited])) return null;

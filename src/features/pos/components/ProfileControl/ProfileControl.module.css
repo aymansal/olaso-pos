@@ -25,6 +25,12 @@
   outline-offset: 2px;
 }
 
+/* POS background trial: the trigger sits on the dark canvas, so its ring reads
+   from the trial token when present; the white popover keeps the green ring. */
+.profile:focus-visible {
+  outline-color: var(--olaso-trial-on-canvas, var(--olaso-green));
+}
+
 .profile:active,
 .menu > button:active {
   background: var(--olaso-soft);
@@ -155,4 +161,23 @@
 
 @media (prefers-reduced-motion: reduce) {
   .languageIndicator { transition: none; }
+}
+
+/* POS trial (data-trial lives on the shared header): the profile capsule matches
+   Report - white, 46px, one thin teal outline - and the avatar keeps no second
+   ring inside it. Scoped so every other screen keeps the current control. */
+[data-trial='true'] .profile {
+  height: 46px;
+  padding: 4px 10px;
+  border: 1px solid var(--olaso-trial-select, var(--olaso-green));
+  color: var(--olaso-green);
+}
+
+[data-trial='true'] .avatar {
+  border: 0;
+  color: var(--olaso-green);
+}
+
+[data-trial='true'] .profileCopy small {
+  color: var(--olaso-green);
 }

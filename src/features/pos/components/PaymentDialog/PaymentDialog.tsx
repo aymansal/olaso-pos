@@ -145,6 +145,7 @@ export function PaymentDialog({
     <OverlayPortal>
       <div
         className={styles.overlay}
+        data-pos-palette
         role="presentation"
         onPointerDown={(event) => {
           if (!locked && !processing) closeOnBackdrop(event, onCancel);

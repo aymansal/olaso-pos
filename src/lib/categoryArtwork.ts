@@ -3,7 +3,7 @@ export const DEFAULT_CATEGORY_ARTWORK_KEY = 'neutral';
 export const CATEGORY_ARTWORK_OPTIONS = [
   {
     key: DEFAULT_CATEGORY_ARTWORK_KEY,
-    label: 'Olaso',
+    label: 'Atelika',
     image: new URL('../../assets/category-art/neutral.webp', import.meta.url).href,
   },
   {

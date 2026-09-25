@@ -102,7 +102,7 @@ export function SalesPulse({
       <div className={styles.accent} />
       <p className={styles.netLabel}>{t('NET SALES')}</p>
       <div className={styles.netRow}>
-        <p className={styles.netValue}>
+        <p className={unavailable ? styles.netValue : `${styles.netValue} ${styles.netValueBrand}`}>
           {unavailable ? '—' : formatMoney(today?.netCentimes ?? 0)}
         </p>
         {error ? (

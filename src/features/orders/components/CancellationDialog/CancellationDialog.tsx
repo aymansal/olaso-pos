@@ -49,6 +49,7 @@ export function CancellationDialog({
     <OverlayPortal>
     <div
       className={styles.overlay}
+      data-orders-palette
       role="presentation"
       onPointerDown={(event) => closeOnBackdrop(event, onClose)}
     >
@@ -65,7 +66,7 @@ export function CancellationDialog({
           <span><h2 id="cancel-order-title">{t('Cancel {receiptNumber}', { receiptNumber })}</h2></span>
           <button type="button" onClick={onClose} aria-label={t('Close cancellation')}><X width={18} height={18} aria-hidden="true" /></button>
         </header>
-        <p id="cancel-order-description">{t('The original order stays in history and the saved stock is restored. Olaso does not refund or reverse card payments.')}</p>
+        <p id="cancel-order-description">{t('The original order stays in history and the saved stock is restored. Atelika does not refund or reverse card payments.')}</p>
         <label>
           <span>{t('Required reason')}</span>
           <textarea

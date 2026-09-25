@@ -53,6 +53,49 @@ function formatMad(centimes: number) {
   }).format(centimes / 100);
 }
 
+/**
+ * Identity of the product currently being edited. Any change means the editor form must be
+ * re-seeded; an unrelated re-render leaves it unchanged so a draft is never discarded.
+ */
+export function productFormIdentity(
+  product: ManagedProduct | undefined,
+  defaultCategoryId: string | undefined,
+) {
+  return [
+    product?.id ?? '',
+    product?.revision ?? '',
+    product?.imageJpeg ?? '',
+    defaultCategoryId ?? '',
+  ].join('\u0000');
+}
+
+/**
+ * The values the editor form must show. An unselected product yields empty values, and the
+ * category falls back to the operator's default active category and then to the first active
+ * one, so the existing empty and new-product flows are unchanged.
+ */
+export function productFormSeed(
+  product: ManagedProduct | undefined,
+  defaultCategoryId: string | undefined,
+  categories: ManagedCategory[],
+) {
+  return {
+    name: product?.name ?? '',
+    categoryId:
+      product?.categoryId ??
+      categories.find(
+        (category) =>
+          category.id === defaultCategoryId && category.status === 'active',
+      )?.id ??
+      categories.find((category) => category.status === 'active')?.id ??
+      '',
+    priceMad: product?.basePriceCentimes
+      ? String(product.basePriceCentimes / 100)
+      : '',
+    available: product?.status !== 'unavailable',
+    imageJpeg: product?.imageJpeg,
+  };
+}
 export function ProductEditorPanel({
   product,
   defaultCategoryId,
@@ -86,25 +129,23 @@ export function ProductEditorPanel({
   const [showSizes, setShowSizes] = useState(false);
   const [showChoices, setShowChoices] = useState(false);
 
-  useEffect(() => {
-    setName(product?.name ?? '');
-    setCategoryId(
-      product?.categoryId ??
-        categories.find(
-          (category) =>
-            category.id === defaultCategoryId && category.status === 'active',
-        )?.id ??
-        categories.find((category) => category.status === 'active')?.id ??
-        '',
-    );
-    setPriceMad(
-      product?.basePriceCentimes
-        ? String(product.basePriceCentimes / 100)
-        : '',
-    );
-    setAvailable(product?.status !== 'unavailable');
-    setImageJpeg(product?.imageJpeg);
-  }, [defaultCategoryId, product?.id, product?.revision, product?.imageJpeg]);
+  // Seed the form during render (React's "storing information from previous renders" pattern) so
+  // the identity label, name, price and category fields are already correct in the first frame
+  // committed after the selection changes; an Effect paints one frame of the previous product
+  // first. A `key` remount would be simpler but would also discard this panel's own dialog and
+  // message state, and the identity changes only when a different product is edited, so a draft
+  // survives while the same product stays selected.
+  const [seededIdentity, setSeededIdentity] = useState<string>();
+  const identity = productFormIdentity(product, defaultCategoryId);
+  if (seededIdentity !== identity) {
+    setSeededIdentity(identity);
+    const seed = productFormSeed(product, defaultCategoryId, categories);
+    setName(seed.name);
+    setCategoryId(seed.categoryId);
+    setPriceMad(seed.priceMad);
+    setAvailable(seed.available);
+    setImageJpeg(seed.imageJpeg);
+  }
 
   useEffect(() => {
     setMessage('');

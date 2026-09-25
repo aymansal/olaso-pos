@@ -1,0 +1,47 @@
+.spinner {
+  --comet-head: calc(var(--olaso-comet-size, 24px) * var(--olaso-comet-head-scale, 0.2));
+  --comet-radius: calc(var(--olaso-comet-size, 24px) * var(--olaso-comet-radius-scale, 0.83));
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--olaso-comet-size, 24px);
+  height: var(--olaso-comet-size, 24px);
+}
+
+/* Scoped one level deeper than the startup surface's plain-span message rule. */
+.spinner .comet {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  color: var(--olaso-green);
+  /* Fixed comet: head plus a tapering trailing arc, taken unchanged from the
+     supplied component's fullest trail state. It never grows or retracts, so
+     the only motion is a steady forward sweep. */
+  box-shadow:
+    0 calc(var(--comet-radius) * -1) 0 calc(var(--comet-head) * -2),
+    calc(var(--comet-radius) * -0.454) calc(var(--comet-radius) * -0.892) 0 calc(var(--comet-head) * -2.1),
+    calc(var(--comet-radius) * -0.777) calc(var(--comet-radius) * -0.629) 0 calc(var(--comet-head) * -2.2),
+    calc(var(--comet-radius) * -0.934) calc(var(--comet-radius) * -0.358) 0 calc(var(--comet-head) * -2.3),
+    calc(var(--comet-radius) * -0.988) calc(var(--comet-radius) * -0.108) 0 calc(var(--comet-head) * -2.385);
+  /* One linear turn: constant forward travel with no eased lurch, and every
+     360 degrees looks identical, so the loop has no seam. */
+  animation: olasoCometRotation var(--olaso-comet-duration, 3.4s) linear infinite;
+  transform: translateZ(0);
+}
+
+@keyframes olasoCometRotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner .comet {
+    animation: none;
+  }
+}

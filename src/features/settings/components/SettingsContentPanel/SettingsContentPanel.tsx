@@ -285,7 +285,7 @@ export function SettingsContentPanel({
         <header>
           <span>
             <h2 id="update-heading">{t('Update')}</h2>
-            <small>{t('Olaso POS')} {versionLabel}</small>
+            <small>{t('Atelika POS')} {versionLabel}</small>
           </span>
           <button
             className={styles.primary}

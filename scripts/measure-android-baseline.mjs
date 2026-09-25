@@ -135,7 +135,7 @@ const installObserver = `(()=>{
     if(visible('[data-olaso-startup="access"]'))mark('sqlite-ready');
     if(visible('input[type="password"]'))mark('lock-screen');
     if(visible('select')?.options.length)mark('lock-profiles-ready');
-    if(visible('main[aria-label="Olaso point of sale"]')){
+    if(visible('main[aria-label="Atelika point of sale"]')){
       mark('pos-shell');
       if(visible('[aria-label^="Add "]'))mark('cached-menu-ready');
     }

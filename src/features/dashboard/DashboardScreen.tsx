@@ -17,7 +17,7 @@ export function DashboardScreen({ onNavigate }: DashboardScreenProps) {
   const t = useT();
   const data = useDashboardData();
   return (
-    <main className={styles.screen} aria-label={t('Olaso operations dashboard')}>
+    <main className={styles.screen} aria-label={t('Atelika operations dashboard')}>
       <SalesPulse
         snapshot={data.snapshot}
         isLoading={data.isLoading}

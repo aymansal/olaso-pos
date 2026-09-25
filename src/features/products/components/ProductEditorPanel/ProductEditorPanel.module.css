@@ -395,7 +395,9 @@
 
 .optionSelected {
   border-color: var(--olaso-green);
-  background: var(--olaso-green-icon);
+  /* Selection tint, not a semantic chip: read the re-pointed neutral so teal ink sits on the
+     accepted teal-gray instead of the preserved success green. */
+  background: var(--olaso-table-selected);
 }
 
 .option > span {
@@ -408,7 +410,8 @@
 }
 
 .option small {
-  color: var(--olaso-text-meta);
+  /* The option chip surface is tinted; keep the detail label at >=4.5:1. */
+  color: var(--olaso-text-service);
   font-size: 7px;
   font-weight: 500;
 }

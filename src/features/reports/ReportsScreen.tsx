@@ -39,7 +39,7 @@ export function ReportsScreen() {
   const monthData = useReportsData(monthRange.fromDate, monthRange.toDate);
   const costs = useCostManagement((range.toDate || today).slice(0, 7));
   return (
-    <main className={styles.screen} aria-label={t('Olaso reports')}>
+    <main className={styles.screen} aria-label={t('Atelika reports')}>
       <ReportsAnalyticsPanel
         tab={tab}
         onTabChange={setTab}

@@ -501,7 +501,7 @@ export function PosScreen({
   }
 
   return (
-    <main className={styles.screen} aria-label={t('Olaso point of sale')}>
+    <main className={styles.screen} data-pos-palette aria-label={t('Atelika point of sale')}>
       <section className={styles.menu} aria-label={t('Product menu')}>
         <SearchField
           value={session.query}

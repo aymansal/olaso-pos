@@ -116,7 +116,8 @@
   height: 44px;
   padding: 0 18px;
   border-radius: 18px;
-  background: var(--olaso-table-head);
+  /* Orders-owned tint when the palette is active; the original fill when it is not. */
+  background: var(--orders-tint, var(--olaso-table-head));
   box-sizing: border-box;
 }
 
@@ -142,6 +143,13 @@
   color: var(--olaso-text-meta);
   font-size: 8px;
   font-weight: 600;
+}
+
+/* The detail metadata band is tinted, so its labels take the existing darker token
+   (#59645b, 5.32:1 on #e9eff0) instead of the fainter --olaso-text-meta. The item
+   option line stays on the white card and keeps its existing colour. */
+.metaItem small {
+  color: var(--olaso-text-service);
 }
 
 .body {
@@ -214,7 +222,8 @@
 
 .itemIconActive {
   color: var(--olaso-green);
-  background: var(--olaso-green-icon);
+  /* Orders-owned tint when the palette is active; the original fill when it is not. */
+  background: var(--orders-tint-strong, var(--olaso-green-icon));
 }
 
 .itemIcon img {
@@ -379,7 +388,12 @@
 }
 
 .reprint:active:not(:disabled) {
-  filter: brightness(0.88);
+  /* The default enabled pair is #1c211b on #e06a00 (4.86:1). A brightness filter would dim
+     both sides and drop the label to 4.02:1, below the 4.5:1 small-text threshold, so the
+     pressed state swaps the two existing action tokens instead: the same 4.86:1 pair
+     inverted, which keeps a clear press cue and the contrast. */
+  background: var(--olaso-trial-action-ink, var(--olaso-green));
+  color: var(--olaso-trial-action, var(--olaso-white));
 }
 
 .cancelOrder:active:not(:disabled) {
@@ -393,8 +407,8 @@
 
 .reprint {
   border: 0;
-  color: var(--olaso-white);
-  background: var(--olaso-green);
+  color: var(--olaso-trial-action-ink, var(--olaso-white));
+  background: var(--olaso-trial-action, var(--olaso-green));
 }
 
 .reprint:disabled {

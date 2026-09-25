@@ -97,6 +97,7 @@ export function PeriodCalendar({
   anchor,
   onChange,
   onClose,
+  ordersPalette,
 }: {
   mode: 'range' | 'day';
   fromDate: string;
@@ -108,6 +109,7 @@ export function PeriodCalendar({
   anchor: DOMRect;
   onChange: (range: PeriodRange, preset?: PeriodPreset) => void;
   onClose: () => void;
+  ordersPalette?: boolean;
 }) {
   const t = useT();
   const language = useLanguage();
@@ -161,6 +163,7 @@ export function PeriodCalendar({
     <OverlayPortal>
       <div
         className={styles.overlay}
+        data-orders-palette={ordersPalette ? 'true' : undefined}
         role="presentation"
         onClick={(event) => {
           if (event.target !== event.currentTarget) return;

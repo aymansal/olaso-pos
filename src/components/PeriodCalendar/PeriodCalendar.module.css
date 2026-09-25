@@ -121,7 +121,9 @@
 }
 
 .inRange {
-  background: var(--olaso-green-icon);
+  /* Orders-opened calendars carry the Orders tint; every other caller falls back to
+     the original fill, so Reports/Products/Stock/Settings calendars are unchanged. */
+  background: var(--orders-tint, var(--olaso-green-icon));
 }
 
 .selected,

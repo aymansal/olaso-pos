@@ -5,5 +5,31 @@
   width: 1340px;
   height: 800px;
   overflow: hidden;
+  /* DASH-PALETTE-01 (provisional, owner-directed Dashboard-only palette trial).
+     Role-scoped aliases: the canvas becomes the accepted POS pale mint-grey, the
+     nonsemantic brand green becomes the accepted dark teal, and the chart ramp
+     becomes a teal ladder anchored by #01363e. Semantic success, amber and danger
+     tokens are deliberately NOT re-pointed, so meanings survive. Scoped to this
+     element, so neither --olaso-green nor --olaso-canvas is promoted app-wide and
+     the shared header (a sibling) is untouched. Reverts by deleting this block. */
+  --olaso-canvas: #f0f7f3;
+  --olaso-green: #01363e;
+  --olaso-copy-green: #01363e;
+  --olaso-green-row: #e9eff0;
+  --olaso-chart-1: #409caa;
+  --olaso-chart-2: #3695a4;
+  --olaso-chart-3: #2c8e9d;
+  --olaso-chart-4: #238695;
+  --olaso-chart-5: #1b7d8c;
+  --olaso-chart-6: #147382;
+  --olaso-chart-7: #0d6876;
+  --olaso-chart-8: #085b67;
+  --olaso-chart-9: #044b56;
+  --dashboard-tint: #e9eff0;
+  --dashboard-status-green: #006a2b;
+  --dashboard-status-soft: #e8f3e6;
+  /* DASH-ORANGE-01: the owner-approved POS action orange, reused in this screen's own
+     palette scope (never promoted to :root) for the single Net Sales brand emphasis. */
+  --olaso-trial-action: #e06a00;
   background: var(--olaso-canvas);
 }

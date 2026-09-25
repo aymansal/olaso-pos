@@ -7,6 +7,7 @@
     "theme:build": "astryx theme build Olasotheme-theme.ts",
     "check:pos": "node scripts/check-pos.mjs",
     "check:product-image": "node --disable-warning=ExperimentalWarning scripts/check-product-image.mjs",
+    "check:products-selection": "node --disable-warning=ExperimentalWarning scripts/check-products-selection.mjs",
     "check:css-scope": "node scripts/check-css-scope.mjs",
     "check:convex": "convex codegen --typecheck enable",
     "seed:dev": "convex run seed:resetAndSeed \"{\\\"confirm\\\":\\\"RESET_OLASO_DEV\\\"}\"",

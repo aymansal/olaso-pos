@@ -3,16 +3,31 @@ const path = require('node:path');
 const sharp = require('sharp');
 
 const root = __dirname;
+const repo = path.join(root, '..', '..');
 const out = path.join(root, 'out');
+// The resident logo now carries the approved transparent Atelika wordmark. It is
+// a light mint on transparency, so a grey threshold would erase it: the alpha
+// channel is the ink mask and the printer's mono firmware prints that shape in
+// black. The bundled Android asset keeps its existing file name.
+const source = path.join(repo, 'assets', 'brand', 'atelika-wordmark-transparent.png');
+const bundled = path.join(
+  repo,
+  'android',
+  'app',
+  'src',
+  'main',
+  'res',
+  'raw',
+  'olaso_nv_logo.bin',
+);
+const inkThreshold = 128;
 
 async function main() {
-  const { data, info } = await sharp(path.join(root, 'assets', 'olaso-wordmark-black.svg'))
+  const { data, info } = await sharp(source)
     .resize({ width: 300 })
-    .flatten({ background: '#ffffff' })
     // The WD8260 rotates legacy NV images 90° clockwise when recalling them.
-    .rotate(270, { background: '#ffffff' })
-    .greyscale()
-    .threshold(128)
+    .rotate(270, { background: { r: 255, g: 255, b: 255, alpha: 0 } })
+    .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
 
@@ -29,8 +44,9 @@ async function main() {
         const x = byteX * 8 + bit;
         // Flip vertically before storage; the WD8260 transpose makes this horizontal on paper.
         const sourceY = info.height - 1 - y;
-        if (x < info.width && y < info.height && data[sourceY * info.width + x] === 0) {
-          row |= 0x80 >> bit;
+        if (x < info.width && y < info.height) {
+          const alpha = data[(sourceY * info.width + x) * 4 + 3];
+          if (alpha >= inkThreshold) row |= 0x80 >> bit;
         }
       }
       image[offset] = row;
@@ -59,8 +75,9 @@ async function main() {
   fs.mkdirSync(out, { recursive: true });
   fs.writeFileSync(path.join(out, 'nv-logo-write.bin'), write);
   fs.writeFileSync(path.join(out, 'nv-logo-recall.bin'), recall);
+  fs.writeFileSync(bundled, write);
 
-  console.log(`Generated ${info.width}x${info.height}-dot pre-rotated WD8260 NV logo (${image.length} image bytes)`);
+  console.log(`Generated ${info.width}x${info.height}-dot pre-rotated WD8260 NV logo (${image.length} image bytes) into ${path.relative(repo, bundled)}`);
 }
 
 main().catch(error => {

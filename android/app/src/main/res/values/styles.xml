@@ -19,8 +19,11 @@
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/olaso_cream</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/olaso_launch_blank</item>
+        <item name="android:windowSplashScreenBackground">@color/olaso_cream</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/atelika_launch_wordmark</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/atelika_launch_wordmark</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+        <item name="isLightTheme">true</item>
         <item name="android:windowBackground">@color/olaso_cream</item>
         <item name="android:statusBarColor">@color/olaso_cream</item>
         <item name="android:navigationBarColor">@color/olaso_cream</item>

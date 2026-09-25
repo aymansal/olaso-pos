@@ -103,5 +103,5 @@
 }
 
 .success {
-  color: var(--olaso-green);
+  color: var(--olaso-trial-success-ink, var(--olaso-green));
 }

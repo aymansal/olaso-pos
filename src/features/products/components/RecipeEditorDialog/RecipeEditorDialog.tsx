@@ -120,6 +120,7 @@ export function RecipeEditorDialog({
     <OverlayPortal>
       <div
         className={styles.overlay}
+        data-products-palette
         role="presentation"
         onPointerDown={(event) => closeOnBackdrop(event, onClose)}
       >

@@ -55,7 +55,7 @@ const initial = await loadTerminalSettingsFromDatabase(
   now,
 );
 assert.equal(initial.deviceId, 'device-settings-check');
-assert.equal(initial.terminalName, 'Olaso POS');
+assert.equal(initial.terminalName, 'Atelika POS');
 assert.equal(initial.clockFormat, '24-hour');
 assert.equal(initial.autoLockMinutes, 5);
 for (const minutes of [0, 5, 10, 15, 30]) {
@@ -260,7 +260,7 @@ await assert.rejects(
 
 const diagnostic = createPrinterTestBytes();
 assert.deepEqual([...diagnostic.subarray(0, 5)], [0x1b, 0x40, 0x1b, 0x74, 0x13]);
-assert.match(Buffer.from(diagnostic).toString('ascii'), /OLASO PRINTER TEST/);
+assert.match(Buffer.from(diagnostic).toString('ascii'), /ATELIKA PRINTER TEST/);
 assert.match(Buffer.from(diagnostic).toString('ascii'), /NOT A SALE/);
 assert.deepEqual([...diagnostic.subarray(-4)], [0x1d, 0x56, 0x42, 0x00]);
 assert.equal(diagnostic.indexOf(0x00, 5) >= 0, true);

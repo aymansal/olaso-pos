@@ -152,6 +152,7 @@ export function OrdersListPanel({
           {dateAnchor ? (
             <PeriodCalendar
               mode="range"
+              ordersPalette
               fromDate={fromDate}
               toDate={toDate}
               presets={[

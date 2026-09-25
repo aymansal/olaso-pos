@@ -116,7 +116,104 @@ body,
   min-height: 800px;
   margin: 0;
   overflow: hidden;
-  background: var(--olaso-canvas);
+  background: var(--olaso-frame-canvas, var(--olaso-canvas));
+}
+
+/* NAV-PALETTE-01: the app frame's own colour, for the strip the 800px shell cannot
+   paint on a taller viewport (Redmi 1340x804). It is a token of its own, not
+   --olaso-canvas, because the screens read --olaso-canvas for their own backgrounds:
+   overriding that at :root would tint the incoming screen while the outgoing one is
+   still fading. It follows the frame that is actually on screen - the outgoing screen
+   until the fade completes, then the incoming one - so the strip cannot pop. App.tsx
+   derives data-frame-mint from the visible frame. */
+:root:has([data-frame-mint='true']) {
+  --olaso-frame-canvas: #f0f7f3;
+}
+
+/* Screen-owned POS palette (NAV-PALETTE-01), replacing the earlier shell- and
+   :root-scoped trial tokens that made POS revert to legacy green/cream while it was
+   still visible during a screen crossfade. It is declared on an attribute rather
+   than :root so it reaches exactly the POS screen root and the portalled POS dialogs
+   and can never leak app-wide. Keep success green and danger red. */
+[data-pos-palette] {
+  --olaso-canvas: #f0f7f3;
+  --olaso-trial-on-canvas: #01363e;
+  --olaso-trial-select: #01363e;
+  --olaso-trial-action: #e06a00;
+  --olaso-trial-action-ink: #1c211b;
+  --olaso-trial-product-outline-width: 2px;
+  --olaso-trial-nav-radius: 20px;
+  --olaso-trial-nav-frame-width: 1px;
+  --olaso-trial-success-ink: #006a2b;
+  /* POS category two-state mapping, owner-approved 24 September: the light card
+     carries teal artwork and text, the selected card is solid teal with the same
+     artwork and text in mint. The filters flatten the artwork to a silhouette and
+     recolour it to those exact hues (solved to rgb(1,54,62) and rgb(181,239,211)).
+     Orange is no longer used by any category styling. */
+  --olaso-trial-cat-ink: #01363e;
+  --olaso-trial-cat-ink-selected: #b5efd3;
+  --olaso-trial-cat-art: brightness(0) saturate(100%) invert(39.9%) sepia(5.1%) saturate(3017%) hue-rotate(140deg) brightness(67.1%) contrast(143.5%);
+  --olaso-trial-cat-art-selected: brightness(0) saturate(100%) invert(60.2%) sepia(3.4%) saturate(1904%) hue-rotate(99deg) brightness(142.4%) contrast(105.1%);
+  --olaso-green: #01363e;
+  --olaso-border: #01363e;
+  --olaso-green-soft: #e9eff0;
+  --olaso-green-icon: #e4ecec;
+}
+
+/* Orders-owned palette (owner-directed, 25 September 2026). Same accepted
+   treatment as Dashboard: the canvas becomes the accepted POS pale mint-grey and
+   the nonsemantic brand green becomes the accepted dark teal. Success green
+   (--olaso-success, --olaso-green-ink, --olaso-green-soft, --olaso-green-icon),
+   warning amber and danger red are deliberately NOT re-pointed, so the real
+   Completed / Synced / Last sync chips keep their meaning. Declared once on an
+   attribute that reaches exactly the Orders screen root and the two portalled
+   Orders surfaces (a portal changes the DOM tree, so it cannot inherit from the
+   screen root), so it can never leak to another screen. */
+[data-orders-palette] {
+  --olaso-canvas: #f0f7f3;
+  --olaso-green: #01363e;
+  --olaso-copy-green: #01363e;
+  /* Orders-owned surface tints (correction, 25 September 2026). Both values are
+     the already-approved teal-grays: #e9eff0 is the POS palette's --olaso-green-soft
+     and Dashboard's --dashboard-tint, #e4ecec is the POS palette's --olaso-green-icon.
+     They are declared only here, so the fallback pattern
+     var(--orders-tint, <original>) in the Orders stylesheets and in PeriodCalendar
+     leaves every other screen and every other PeriodCalendar caller untouched. */
+  --orders-tint: #e9eff0;
+  --orders-tint-strong: #e4ecec;
+  /* ORDERS-ORANGE-01 (corrected): the owner-approved POS action orange pair, reused in this
+     screen's own palette scope (never promoted to :root) so the enabled Reprint action
+     carries the full orange fill with the dark action ink on its label and glyph. */
+  --olaso-trial-action: #e06a00;
+  --olaso-trial-action-ink: #1c211b;
+}
+
+/* Products-owned palette (owner-directed palette trial, 25 September 2026). Same accepted
+   treatment as Dashboard and Orders: the canvas becomes the accepted POS pale mint-grey and
+   the nonsemantic brand green becomes the accepted dark teal. Semantic success
+   (--olaso-success, --olaso-green-ink, --olaso-green-icon), warning amber and danger red are
+   deliberately NOT re-pointed, so Available / Active / Recipe-linked stay green and the
+   recipe, delete and error states keep their meaning. The neutral surface tokens are
+   re-pointed to the already-accepted teal-grays in one place rather than at each of their
+   sites. Declared once on an attribute that reaches exactly the Products screen root and the
+   five portalled Products dialogs, so it can never leak to another screen. No orange. */
+[data-products-palette] {
+  --olaso-canvas: #f0f7f3;
+  --olaso-green: #01363e;
+  /* Re-pointed because inside a Products subtree its only consumers are the shared dropdown's
+     selected option and this screen's own selection tints, never a semantic chip. */
+  --olaso-green-soft: #e9eff0;
+  --olaso-table-head: #e9eff0;
+  --olaso-product-head: #e9eff0;
+  --olaso-table-selected: #e4ecec;
+  --olaso-product-art: #e4ecec;
+  /* ORANGE TRIAL (owner-requested, reversible, Products-only): the already-approved POS action
+     orange pair, reused inside this screen's own palette scope so only the selected category
+     pill turns orange. Declared here, not at :root, so it cannot reach another screen; semantic
+     success/amber/danger are untouched. Reverting this pair plus the CategorySidebar reads
+     returns the pill to teal. */
+  --olaso-trial-action: #e06a00;
+  --olaso-trial-action-ink: #1c211b;
 }
 
 button,

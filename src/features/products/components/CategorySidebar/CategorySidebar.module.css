@@ -23,7 +23,9 @@
 
 .sidebar p {
   top: 34px;
-  color: var(--olaso-text-meta);
+  /* The sidebar surface is tinted, so its hint takes the existing darker token (5.32:1 on
+     #e9eff0) rather than the fainter --olaso-text-meta that measured 3.54:1 there. */
+  color: var(--olaso-text-service);
   font-size: 11px;
   font-weight: 500;
 }
@@ -121,7 +123,8 @@
 }
 
 .category small {
-  color: var(--olaso-text-placeholder);
+  /* Owner-named requirement: the category count keeps >=4.5:1 on the tinted sidebar. */
+  color: var(--olaso-text-service);
 }
 
 .categoryActive strong {

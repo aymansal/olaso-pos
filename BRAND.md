@@ -86,10 +86,32 @@ Olaso should feel like a club people naturally belong to, not a formal or precio
 - The launcher keeps the complete, uncropped white wordmark on the supplied
   digital Olaso Sage `#909F78`, centered within Android's adaptive-icon safe
   area.
-- The native Android splash uses plain Cream Surface only
-  (`olaso_launch_blank`). The one green OLASO wordmark for startup is the
-  approved transparent Operational Green PNG on the web/React cream surface,
-  not a second native logo.
+- The native Android first frame reuses that same approved transparent
+  Operational Green PNG, inset on `@color/olaso_cream`, so the wordmark does not
+  change between the native frame and the web/React cream startup surface. The
+  earlier plain cream `olaso_launch_blank` square was replaced by owner decision
+  on 23 September 2026.
+- Temporary state, 23 September 2026: every live logo image — native first
+  frame, launcher foreground, HTML pre-render, both loading stages, the two
+  terminal alerts, the Lock screen and the shared app header — currently shows
+  the owner-supplied Atelika wordmark through
+  [`assets/brand/atelika-wordmark-transparent.png`](assets/brand/atelika-wordmark-transparent.png),
+  a canvas-trimmed copy of the owner's accepted crop
+  `assets/brand/atelika-wordmark-transparent-new-uncropped.png` (re-derived 24
+  September 2026) whose mint
+  letters, orange dot and transparency are unchanged. It is not an approved
+  brand master, it is not the operational green the OLASO mark used, it measures
+  only 1.18:1 against the cream surface, and the owner has deferred the palette
+  and background decision. See `UI_POLISH_LEDGER.md` LAUNCH-02 before treating
+  any of this as settled brand direction.
+- Visible rename, 23 September 2026: customer-visible text now reads "Atelika"
+  (Android launcher label, Capacitor app name, document title, terminal default,
+  Settings, the Lock and startup copy, screen aria labels, the printer self-test
+  and the cancellation dialog, with matching French keys), and the Lock backdrop
+  photo is now the Atelika cup. Technical identifiers are deliberately unchanged
+  (package `com.olaso.pos`, database `olaso_pos`, secure-storage aliases, signing
+  key, cloud/update URLs, environment-variable names, CSS tokens/data attributes)
+  and move in a later migration. See `UI_POLISH_LEDGER.md` LAUNCH-03.
 - Status: application-specific reproductions of already approved artwork, not
   an official designer-provided compact icon or replacement logo master. A
   future separately approved compact mark can replace the launcher safely.

@@ -35,7 +35,7 @@ export function SizesEditorDialog({ product, sizes, onClose, onSave, onDelete }:
       setError(caught instanceof Error ? caught.message : 'Size save failed.');
     } finally { setSaving(false); }
   }
-  return <OverlayPortal><div className={styles.overlay} role="presentation" onPointerDown={(event) => closeOnBackdrop(event, onClose)}>
+  return <OverlayPortal><div className={styles.overlay} data-products-palette role="presentation" onPointerDown={(event) => closeOnBackdrop(event, onClose)}>
     <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="sizes-dialog-title">
       <header><span><small>{t('PRODUCT SIZES')}</small><h2 id="sizes-dialog-title">{t('Sizes · {name}', { name: product.name })}</h2></span>
         <button type="button" onClick={onClose} aria-label={t('Close sizes editor')}><X width={18} height={18} /></button></header>

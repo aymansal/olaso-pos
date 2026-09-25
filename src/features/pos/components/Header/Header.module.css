@@ -66,7 +66,7 @@
 .skipLink:focus {
   left: 0;
   z-index: 1;
-  outline: 2px solid var(--olaso-green);
+  outline: 2px solid var(--olaso-trial-on-canvas, var(--olaso-green));
   outline-offset: 2px;
 }
 
@@ -93,10 +93,76 @@
 }
 
 .report:focus-visible {
-  outline: 2px solid var(--olaso-green);
+  outline: 2px solid var(--olaso-trial-on-canvas, var(--olaso-green));
   outline-offset: 2px;
 }
 
 .report:active {
   background: var(--olaso-soft);
+}
+
+/* POS visual trial — provisional. Three scoped corrections inside the white bar:
+   1. The 60px header row was flush with the bar's bottom edge (16px above, 0px
+      below); it is centered now by moving the row to top 8px, so its centre 38
+      equals the 76px bar's centre. The band's top offset follows (-8px) so the
+      bar still spans y0-76 and the 14px pale-teal strip before the search field
+      (menu top 90px) is unchanged.
+   2. The logo PNG carries about 3.4px transparent padding on each side, so the
+      intended 20px gap rendered as about 23.4px optically. The gap is reduced to
+      16px, putting the visible logo-to-date gap at about 19.4px, matching the
+      reference's measured gap (about 22% of the logo's ink width).
+   3. The wordmark's ink is bottom-heavy and its letter bodies sat low against the
+      date line. Three independent measurements of the same gap agree: matching the
+      lowercase x-height centres needs about 3.3px, matching the owner reference's
+      logo-bbox offset (7.2% of the bar) needs about 4.8px, and matching the ink
+      bottoms needs about 5.4px. The logo is nudged up 5px. The mint asset settled
+      at 4px, but the owner-approved dark-teal asset (2172x724) renders 96x32 with
+      its ink 0.9px lower, which put the ink centroid 0.9px above the date's; 5px
+      restores the approved relationship (about 1.9px above, was 1.78px).
+   All three revert with the Header data-trial attribute and affect no other
+   screen. */
+.header[data-trial='true'] {
+  top: 8px;
+  /* Shared top bar (owner-approved 25 September 2026). The bar owns the palette it
+     paints with, so the same presentation is available on every screen that shows
+     it. On POS these repeat the shell's POS-trial values exactly, so POS is
+     unchanged. Scoped to the header element, so the app-wide --olaso-green and
+     --olaso-canvas are never promoted; every descendant of the bar (nav, profile,
+     profile menu) inherits this palette. */
+  --olaso-trial-header: #ffffff;
+  --olaso-trial-on-canvas: #01363e;
+  --olaso-trial-select: #01363e;
+  --olaso-trial-nav-radius: 20px;
+  --olaso-trial-nav-frame-width: 1px;
+  --olaso-green: #01363e;
+}
+
+.header[data-trial='true'] .brandSide {
+  gap: 16px;
+}
+
+.header[data-trial='true'] .wordmark img {
+  transform: translateY(-5px);
+}
+
+/* Provisional white bar behind the whole header row, sampled from the owner's
+   Atelika tablet reference (#ffffff). Spans y0-76: caption/row area plus the
+   8px of white below the row before the pale-teal strip. */
+.header[data-trial='true']::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -18px;
+  width: 1340px;
+  height: 76px;
+  background: var(--olaso-trial-header);
+  z-index: -1;
+}
+
+/* POS trial: Report reads as a secondary capsule matching the profile control
+   (white, 46px, thin teal outline, dark-teal ink, no orange). */
+.header[data-trial='true'] .report {
+  height: 46px;
+  border: 1px solid var(--olaso-trial-select, var(--olaso-green));
+  color: var(--olaso-green);
 }

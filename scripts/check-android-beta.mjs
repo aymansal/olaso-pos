@@ -30,14 +30,11 @@ const launchColors = readFileSync(
   'android/app/src/main/res/values/ic_launcher_background.xml',
   'utf8',
 );
-const launchWordmark = readFileSync(
-  'android/app/src/main/res/drawable/olaso_launch_blank.xml',
-  'utf8',
-);
-const launcherWordmark = readFileSync(
-  'android/app/src/main/res/drawable/olaso_launcher_foreground.xml',
-  'utf8',
-);
+const launchWordmarkIcon =
+  'android/app/src/main/res/drawable-nodpi/atelika_launch_wordmark.png';
+const launcherWordmarkIcon =
+  'android/app/src/main/res/drawable-nodpi/atelika_launcher_foreground.png';
+const webWordmark = 'assets/brand/atelika-wordmark-transparent.png';
 const adaptiveLauncher = readFileSync(
   'android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml',
   'utf8',
@@ -50,16 +47,30 @@ const legacyLauncher = readFileSync(
   'android/app/src/main/res/mipmap-anydpi-v24/ic_launcher.xml',
   'utf8',
 );
-const exactBrandTrace = readFileSync(
-  'tools/wd8260-receipt-lab/assets/olaso-wordmark-black.svg',
+const startupProvider = readFileSync('src/data/AppDataProvider.tsx', 'utf8');
+const startupStyles = readFileSync('src/data/AppDataProvider.module.css', 'utf8');
+const cometComponent = readFileSync(
+  'src/components/CometSpinner/CometSpinner.tsx',
   'utf8',
 );
-const startupProvider = readFileSync('src/data/AppDataProvider.tsx', 'utf8');
+const appStrings = readFileSync(
+  'android/app/src/main/res/values/strings.xml',
+  'utf8',
+);
+const cometStyles = readFileSync(
+  'src/components/CometSpinner/CometSpinner.module.css',
+  'utf8',
+);
 const application = readFileSync('src/App.tsx', 'utf8');
 const index = readFileSync('index.html', 'utf8');
 const main = readFileSync('src/main.tsx', 'utf8');
 
 assert.equal(capacitor.appId, 'com.olaso.pos');
+// Phase A visible rebrand: the customer-facing name is Atelika while the
+// package identity intentionally stays com.olaso.pos until the planned migration.
+assert.equal(capacitor.appName, 'Atelika POS');
+assert.match(appStrings, /name="app_name">Atelika POS</);
+assert.match(appStrings, /name="title_activity_main">Atelika POS</);
 assert.equal(capacitor.backgroundColor, '#F8F7EA');
 assert.equal(capacitor.plugins.SystemBars.insetsHandling, 'disable');
 assert.match(appBuild, /namespace = "com\.olaso\.pos"/);
@@ -80,9 +91,21 @@ assert.match(index, /user-scalable=no/);
 assert.doesNotMatch(index, /initial-scale/);
 assert.match(index, /class="olaso-startup"/);
 assert.match(index, /data-olaso-startup="document"/);
-assert.match(index, /olaso-wordmark-operational-green-transparent\.png/);
-assert.match(index, /olaso_startup_first/);
-assert.doesNotMatch(index, /Starting Olaso…/);
+assert.match(index, /atelika-wordmark-transparent\.png/);
+assert.match(index, /class="olaso-comet"/);
+assert.match(index, /class="olaso-comet-body"/);
+// The comet must travel forward at one steady tempo in both startup surfaces,
+// and the React phase offset must use that same cycle length.
+assert.match(index, /animation: olaso-comet-rotation 3\.4s linear infinite/);
+assert.doesNotMatch(index, /olaso-comet-shadow/);
+assert.match(
+  cometStyles,
+  /animation: olasoCometRotation var\(--olaso-comet-duration, 3\.4s\) linear infinite/,
+);
+assert.doesNotMatch(cometStyles, /olasoCometShadow/);
+assert.match(cometComponent, /COMET_CYCLE_MS = 3400/);
+assert.match(cometComponent, /animationDelay: phaseOffset\(\)/);
+assert.doesNotMatch(index, /Starting Atelika…/);
 assert.doesNotMatch(main, /Capacitor|zoom|innerWidth|outerWidth|screen\.width/);
 assert.match(launchColors, /name="ic_launcher_background">#909F78/);
 assert.match(launchColors, /name="olaso_cream">#F8F7EA/);
@@ -91,37 +114,66 @@ assert.match(launchTheme, /parent="Theme\.SplashScreen"/);
 assert.match(launchTheme, /name="windowSplashScreenBackground">@color\/olaso_cream/);
 assert.match(
   launchTheme,
-  /name="windowSplashScreenAnimatedIcon">@drawable\/olaso_launch_blank/,
+  /name="android:windowSplashScreenBackground">@color\/olaso_cream/,
 );
+assert.match(
+  launchTheme,
+  /name="windowSplashScreenAnimatedIcon">@drawable\/atelika_launch_wordmark/,
+);
+assert.match(
+  launchTheme,
+  /name="android:windowSplashScreenAnimatedIcon">@drawable\/atelika_launch_wordmark/,
+);
+assert.match(launchTheme, /name="isLightTheme">true/);
 assert.match(launchTheme, /name="postSplashScreenTheme">@style\/AppTheme\.NoActionBar/);
 assert.doesNotMatch(launchTheme, /@drawable\/splash/);
 assert.match(bridgeLayout, /android:background="@color\/olaso_cream"/);
 for (const launcher of [adaptiveLauncher, adaptiveRoundLauncher, legacyLauncher]) {
   assert.match(launcher, /@color\/ic_launcher_background/);
-  assert.match(launcher, /@drawable\/olaso_launcher_foreground/);
+  assert.match(launcher, /@drawable\/atelika_launcher_foreground/);
 }
-const sourceBrandPaths = [...exactBrandTrace.matchAll(/<path\b([^>]*)\/?\s*>/g)]
-  .filter((match) => match[1].match(/opacity="([^"]+)"/)?.[1] === '1')
-  .map((match) => match[1].match(/\bd="([^"]+)"/)?.[1].trim());
-assert.equal(sourceBrandPaths.length, 5);
-assert.match(launchWordmark, /<solid android:color="@color\/olaso_cream"/);
-for (const drawable of [launcherWordmark]) {
-  assert.match(drawable, /android:viewportWidth="2087"/);
-  assert.match(drawable, /android:viewportHeight="2087"/);
-  assert.match(drawable, /android:scaleX="0\.61"/);
-  assert.match(drawable, /android:scaleY="0\.61"/);
-  assert.deepEqual(
-    [...drawable.matchAll(/android:pathData="([^"]+)"/g)].map((match) => match[1]),
-    sourceBrandPaths,
-  );
+// Temporary Atelika pass: one wordmark image at three sizes. The web asset must
+// stay a trimmed wordmark (a padded square canvas would break the startup, lock
+// and header boxes) and both Android icons must stay square RGBA so the
+// platform cannot letterbox them or drop their transparency.
+function pngSize(path) {
+  const header = readFileSync(path);
+  return {
+    width: header.readUInt32BE(16),
+    height: header.readUInt32BE(20),
+    bitDepth: header[24],
+    colourType: header[25],
+  };
 }
-assert.match(launcherWordmark, /android:fillColor="#FFFFFF"/);
-assert.match(startupProvider, /<img className=\{styles\.logo\} src=\{olasoLogo\}/);
+for (const icon of [launchWordmarkIcon, launcherWordmarkIcon]) {
+  assert.ok(existsSync(icon), 'The Android logo icon is missing: ' + icon);
+  const size = pngSize(icon);
+  assert.equal(size.width, 1152);
+  assert.equal(size.height, 1152);
+  assert.equal(size.bitDepth, 8);
+  assert.equal(size.colourType, 6, 'Android logo icons must keep alpha');
+}
+assert.ok(existsSync(webWordmark), 'The web wordmark image is missing');
+const webWordmarkSize = pngSize(webWordmark);
+assert.equal(webWordmarkSize.colourType, 6, 'The web wordmark must keep alpha');
+const webWordmarkRatio = webWordmarkSize.width / webWordmarkSize.height;
+assert.ok(
+  webWordmarkRatio > 2.6 && webWordmarkRatio < 3.6,
+  'The web wordmark must stay trimmed rather than a padded square canvas',
+);
+const startupLogoWidth = /\.olaso-startup-logo[^}]*width: (\d+)px/.exec(index)?.[1];
+assert.ok(startupLogoWidth, 'index.html must size the startup wordmark');
+assert.equal(
+  startupLogoWidth,
+  /\.logo,[\s\S]*?width: (\d+)px/.exec(startupStyles)?.[1],
+  'The native-aligned startup wordmark width must match in both startup surfaces',
+);
+assert.match(startupProvider, /<img className=\{styles\.logo\} src=\{atelikaLogo\}/);
 assert.match(startupProvider, /data-olaso-startup="database"/);
-assert.match(startupProvider, /<StartupDots \/>/);
-assert.match(application, /<img className=\{startupStyles\.logo\} src=\{olasoLogo\}/);
+assert.match(startupProvider, /<CometSpinner \/>/);
+assert.match(application, /<img className=\{startupStyles\.logo\} src=\{atelikaLogo\}/);
 assert.match(application, /data-olaso-startup="access"/);
-assert.match(application, /<StartupDots \/>/);
+assert.match(application, /<CometSpinner \/>/);
 assert.match(
   application,
   /aria-label=\{translate\(language, 'Terminal locked'\)\} role="alert">[\s\S]*?<img className=\{startupStyles\.logo\}[\s\S]*?Staff session is unavailable/,
@@ -225,14 +277,14 @@ assert.match(secureSessionPlugin, /unregisterNetworkCallback/);
 assert.match(secureSessionPlugin, /notifyListeners\(NETWORK_STATUS_CHANGED/);
 assert.doesNotMatch(secureSessionPlugin, /Log\.|println|printStackTrace/);
 assert.deepEqual(nativeLogo, acceptedLogo);
-assert.equal(nativeLogo.length, 2441);
+assert.equal(nativeLogo.length, 3657);
 assert.deepEqual(
   [...nativeLogo.subarray(0, 9)],
-  [0x1b, 0x40, 0x1c, 0x71, 0x01, 38, 0, 8, 0],
+  [0x1b, 0x40, 0x1c, 0x71, 0x01, 38, 0, 12, 0],
 );
 assert.equal(
   createHash('sha256').update(nativeLogo).digest('hex').toUpperCase(),
-  'D5D3B835800970D7F81BD188311EC766DCF4F0867F2E9B697C227AD9F9818C76',
+  'C206C7E17A07DBF5043A32D5B219CFEA8EFD27DDA0B6F606E2CA6AD22C303F99',
 );
 assert.match(
   manifest,

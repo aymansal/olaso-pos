@@ -298,12 +298,33 @@ All primary touch targets are at least 44 by 44 pixels. Maintain at least 8 pixe
   mark, device shell, or unrelated loading card may appear between them.
 - Use approved Olaso artwork at its original proportions. Never type or
   reconstruct the wordmark for startup.
-- The native Android splash is plain Cream Surface only. The one green OLASO
-  wordmark appears afterward in HTML/React using
-  `assets/brand/olaso-wordmark-operational-green-transparent.png`, with three
-  bouncing Operational Green dots beneath it. Do not show a native green logo,
-  a duplicate mark, or `Starting Olaso…` during normal loading. Real
-  error/recovery states may still show useful failure text.
+- Owner decision, 23 September 2026: the native Android first frame is a static
+  branded Cream Surface. It shows the same approved green wordmark
+  (`assets/brand/olaso-wordmark-operational-green-transparent.png`, shipped as
+  `res/drawable-nodpi/olaso_launch_wordmark.png`) centred on `@color/olaso_cream`
+  as the HTML/React startup surface, so the mark does not change size, shape,
+  colour or position at the handoff. Android keeps the visible splash icon
+  inside a 192dp circle within the 288dp icon box, so the wordmark is inset to
+  about 62% of that box and the web wordmark matches it at 225px. Do not show
+  `Starting Olaso…` during normal loading; real error/recovery states may still
+  show useful failure text.
+- The single startup loading indicator is the Operational Green comet
+  (`src/components/CometSpinner`) in its three stages: the HTML pre-render, the
+  local-database stage, and the terminal/staff-access stage. Native stays static;
+  the comet rotates only on the web surface, at a linear 3.4s per cycle (3.4s
+  set by owner correction from 1.7s on 23 September 2026). Its shape is fixed —
+  a head with a tapering tail that never grows or retracts — and each startup
+  stage resumes the running phase rather than restarting, so the sweep always
+  travels forward and loops without a seam. Do not restore the bouncing dots,
+  the animated tail keyframes, the eased rotation, or the plain cream native
+  square.
+- Temporary logo state, 23 September 2026: the startup, lock and header logo
+  image is the owner-supplied Atelika wordmark (re-derived 24 September 2026
+  from the accepted crop) in place of the operational green
+  OLASO wordmark. Sizes were re-derived only so the mark stays visible and the
+  boxes do not move; colours, backgrounds and layout are unchanged. It is a
+  logo-only pass pending the owner's palette decision and is not polished visual
+  acceptance (mint is about 1.18:1 on cream). See `UI_POLISH_LEDGER.md` LAUNCH-02.
 - Keep the official white-on-sage square master for sage or dark brand
   placements; white artwork is not visible enough on the cream launch surface.
 - Startup artwork reserves its final size and stays visually stable while the
